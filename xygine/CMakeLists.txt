@@ -63,14 +63,6 @@ set(SOURCE
   src/Entity.cpp
   src/FileSystem.cpp
   src/FontResource.cpp
-  src/GameState.cpp
-  src/main.cpp
-  src/MenuBackgroundState.cpp
-  src/MenuJoinState.cpp
-  src/MenuLobbyState.cpp  
-  src/MenuMainState.cpp
-  src/MenuOptionState.cpp
-  src/MenuPauseState.cpp
   src/MessageBus.cpp
   src/Music.cpp
   src/ParticleController.cpp
@@ -89,7 +81,6 @@ set(SOURCE
   src/SoundPlayer.cpp
   src/State.cpp
   src/StateStack.cpp
-  src/StatsOverlayState.cpp
   src/TextDrawable.cpp
   src/UIButton.cpp
   src/UICheckBox.cpp

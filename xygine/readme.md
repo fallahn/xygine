@@ -1,6 +1,8 @@
 xygine
 ------
 
+![Logo by Baard](xygine.png?raw=true)
+
 2D Game Engine Framework built around SFML. I use this as the starting
 point for new projects, as it evolves slowly over time. The source for
 xygine is released under the zlib license in the hope that it may be
@@ -8,6 +10,7 @@ useful for other people - but offers no warranty that it is fit for any
 particular purpose, even those for which it was specifically written...
 
 /*********************************************************************
+
 Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
@@ -32,4 +35,5 @@ and must not be misrepresented as being the original software.
 
 3. This notice may not be removed or altered from any
 source distribution.
+
 *********************************************************************/
