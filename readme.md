@@ -1,7 +1,7 @@
 xygine
 ------
 
-![Logo by Baard](xygine.png?raw=true)
+![Logo by Baard](xygine/xygine.png?raw=true)
 
 2D Game Engine Framework built around SFML. I use this as the starting  
 point for new projects, as it evolves slowly over time. The source for  
@@ -48,8 +48,9 @@ however you will.
 
 is needed when using the state stack implementation of xygine. When  
 creating new game states (deriving from xy::State) they need to be  
-reqistered with the stateStack instance of your game. Hopefully at some  
-point in the future there will be an example of this for clarification.  
+registered with the stateStack instance of your game. See the Example  
+directory for a demo project which shows how to create a basic state  
+which uses the UI controls to create a menu.  
 
 Both
 
