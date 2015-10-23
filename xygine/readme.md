@@ -3,37 +3,116 @@ xygine
 
 ![Logo by Baard](xygine.png?raw=true)
 
-2D Game Engine Framework built around SFML. I use this as the starting
-point for new projects, as it evolves slowly over time. The source for
-xygine is released under the zlib license in the hope that it may be
-useful for other people - but offers no warranty that it is fit for any
-particular purpose, even those for which it was specifically written...
+2D Game Engine Framework built around SFML. I use this as the starting  
+point for new projects, as it evolves slowly over time. The source for  
+xygine is released under the zlib license in the hope that it may be  
+useful for other people - but offers no warranty that it is fit for any  
+particular purpose, even those for which it was specifically written...  
 
-/*********************************************************************
+#####Basic usage:
 
-Matt Marchant 2014 - 2015
-http://trederia.blogspot.com
+xygine compiles to a static library by default when using the included  
+CMake file. Linux / Mac maybe be able to compile a shared library (I  
+haven't tried it), but MSVC currently does not export any functions,  
+and probably won't until I see some reason to add the option. The  
+included solution / project file is for Visual Studio 2013, and mainly  
+there for my own convenience. Once you have compiled the library with  
+the compiler of your choice, simply link to your new project, along  
+with the SFML libraries. xygine requires all five components of SFML -  
+system, windows, graphics, audio and networking.  
 
-xygine - Zlib license.
+To use the library create a new class which inherits xy::App and  
+implement the virtual functions:
 
-This software is provided 'as-is', without any express or
-implied warranty. In no event will the authors be held
-liable for any damages arising from the use of this software.
+    void handleEvent(const sf::Event&);
+    void handleMessage(const Message&);
 
-Permission is granted to anyone to use this software for any purpose,
-including commercial applications, and to alter it and redistribute
-it freely, subject to the following restrictions:
+    void registerStates();
+    void updateApp(float dt);
+    void pauseApp(float dt);
+    void draw();
 
-1. The origin of this software must not be misrepresented;
-you must not claim that you wrote the original software.
-If you use this software in a product, an acknowledgment
-in the product documentation would be appreciated but
-is not required.
+and, optionally, override finalise(); if you have any code which  
+requires clean up on program exit.
 
-2. Altered source versions must be plainly marked as such,
-and must not be misrepresented as being the original software.
+    handleEvent()
 
-3. This notice may not be removed or altered from any
-source distribution.
+and  
 
-*********************************************************************/
+    handleMessage()
+
+pass on any window event and system messages respectively. Handle these  
+however you will.  
+
+    registerStates()
+
+is needed when using the state stack implementation of xygine. When  
+creating new game states (deriving from xy::State) they need to be  
+reqistered with the stateStack instance of your game. Hopefully at some  
+point in the future there will be an example of this for clarification.  
+
+Both
+
+    updateApp()
+
+and
+
+    pauseApp()
+
+pass on the current elapsed game time, fixed at 1/60 second. These are  
+used to update logic when xygine is either running or paused, for  
+example you may wish to make menus updatable while the game itself is  
+paused.
+
+    draw()
+
+is the top level draw function. getRenderWindow().clear() and  
+getRenderWindow().display() should both be called here, with your  
+drawing code called in between.
+
+Once you have created your app class, instanciate it in your main()  
+function and call run()
+
+    int main()
+    {
+    	MyApp game;
+    	game.run();
+    	return 0;
+    }
+
+
+######Why xygine?
+
+The name is simply derived from the fact that this is a 2D framework -   
+hence xy, followed by the gine part of engine (although technically  
+xygine isn't really an engine).
+
+
+-----------------------------------------------------------------------
+
+Matt Marchant 2014 - 2015  
+http://trederia.blogspot.com  
+
+xygine - Zlib license.  
+
+This software is provided 'as-is', without any express or  
+implied warranty. In no event will the authors be held  
+liable for any damages arising from the use of this software.  
+
+Permission is granted to anyone to use this software for any purpose,  
+including commercial applications, and to alter it and redistribute  
+it freely, subject to the following restrictions:  
+
+1. The origin of this software must not be misrepresented;  
+you must not claim that you wrote the original software.  
+If you use this software in a product, an acknowledgment  
+in the product documentation would be appreciated but  
+is not required.  
+
+2. Altered source versions must be plainly marked as such,  
+and must not be misrepresented as being the original software.  
+
+3. This notice may not be removed or altered from any  
+source distribution.  
+
+-----------------------------------------------------------------------
