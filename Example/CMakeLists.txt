@@ -57,26 +57,36 @@ endif()
 SET(xygine_DIR ${CMAKE_SOURCE_DIR}/../xygine/src)
 include(${xygine_DIR}/CMakeLists.txt)
 
-  
-if(WIN32)
-  add_library(xygine STATIC WIN32 ${xygine_SRC})
-else()
-  add_library(xygine STATIC ${xygine_SRC})
-endif()
-
 SET(EXAMPLE_SRC
   src/Game.cpp
   src/main.cpp
   src/MenuMainState.cpp)
 
-add_executable(xygine_example ${EXAMPLE_SRC})
+if(WIN32)
+  add_executable(xygine_example WIN32 ${EXAMPLE_SRC} ${xygine_SRC})
+else()
+  add_executable(xygine_example ${EXAMPLE_SRC} ${xygine_SRC})
+endif()
 
 target_link_libraries(xygine_example
-  ${xygine}
   ${SFML_LIBRARIES}
   ${SFML_DEPENDENCIES})
 
 if(UNIX)
   target_link_libraries(xygine_example
     ${X11_LIBRARIES})
+endif()
+
+#install executable
+install(TARGETS xygine_example
+  RUNTIME DESTINATION .)
+
+#install game data
+install(DIRECTORY assets
+  DESTINATION .)
+
+#install the OpenAL DLL
+if(WIN32)
+  install(FILES ${SFML_INCLUDE_DIR}/../bin/openal32.dll
+    DESTINATION .)
 endif()
