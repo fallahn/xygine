@@ -29,7 +29,7 @@ source distribution.
 #include <StateIds.hpp>
 #include <MenuMainState.hpp>
 
-#include <sfml/window/Event.hpp>
+#include <SFML/Window/Event.hpp>
 
 Game::Game()
     : m_stateStack({ getRenderWindow(), *this })

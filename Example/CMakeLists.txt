@@ -1,4 +1,4 @@
-project(xygine)
+project(xygine_example)
 cmake_minimum_required(VERSION 2.8)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -6,8 +6,8 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
-SET(xygine_STATIC_SFML FALSE CACHE BOOL "Choose whether SFML is linked statically or not.")
-SET(xygine_STATIC_RUNTIME FALSE CACHE BOOL "Use statically linked standard/runtime libraries? This option must match the one used for SFML.")
+SET(xygine_example_STATIC_SFML FALSE CACHE BOOL "Choose whether SFML is linked statically or not.")
+SET(xygine_example_STATIC_RUNTIME FALSE CACHE BOOL "Use statically linked standard/runtime libraries? This option must match the one used for SFML.")
 
 #use if you prefer clang, comment out if using g++ (4.9+)
 #SET(CMAKE_C_COMPILER    "/usr/bin/clang")
@@ -19,14 +19,14 @@ SET(xygine_STATIC_RUNTIME FALSE CACHE BOOL "Use statically linked standard/runti
 #SET(CMAKE_RANLIB        "/usr/bin/llvm-ranlib")
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-  if(xygine_STATIC_RUNTIME)
+  if(xygine_example_STATIC_RUNTIME)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++1y -static")
   else()
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++1y")
   endif()
 endif()
 
-if(xygine_STATIC_SFML)
+if(xygine_example_STATIC_SFML)
   SET(SFML_STATIC_LIBRARIES TRUE)
 endif()
 
@@ -46,15 +46,16 @@ endif()
 
 include_directories(
   ${SFML_INCLUDE_DIR}
-  ${CMAKE_SOURCE_DIR}/include)
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/../xygine/include)
 
 if(X11_FOUND)
   include_directories(${X11_INCLUDE_DIRS})
 endif()
 
 
-SET(xygine_DIR "src")
-include("src/CMakeLists.txt")
+SET(xygine_DIR ${CMAKE_SOURCE_DIR}/../xygine/src)
+include(${xygine_DIR}/CMakeLists.txt)
 
   
 if(WIN32)
@@ -63,11 +64,19 @@ else()
   add_library(xygine STATIC ${xygine_SRC})
 endif()
 
-target_link_libraries(xygine
+SET(EXAMPLE_SRC
+  src/Game.cpp
+  src/main.cpp
+  src/MenuMainState.cpp)
+
+add_executable(xygine_example ${EXAMPLE_SRC})
+
+target_link_libraries(xygine_example
+  ${xygine}
   ${SFML_LIBRARIES}
   ${SFML_DEPENDENCIES})
 
 if(UNIX)
-  target_link_libraries(xygine
+  target_link_libraries(xygine_example
     ${X11_LIBRARIES})
 endif()
