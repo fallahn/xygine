@@ -39,6 +39,7 @@ source distribution.
 #include <SFML/Graphics/Drawable.hpp>
 
 #include <vector>
+#include <functional>
 
 namespace xy
 {
@@ -55,6 +56,13 @@ namespace xy
             FrontFront,
             UI,
             Count
+        };
+
+        enum PostEffect
+        {
+            None = 0,
+            Bloom = 0x1,
+            ChromaticAbberation = 0x2
         };
 
         Scene(MessageBus&, bool createBuffers = true);
@@ -81,6 +89,10 @@ namespace xy
 
         void reset();
 
+        //enable available post effects via given bit mask
+        void setPostEffects(sf::Uint32 flags);
+
+        //enables output debug information when _DEBUG_ is defined
         void drawDebug(bool);
 
     private:
@@ -99,7 +111,14 @@ namespace xy
         mutable std::unique_ptr<PostBloom> m_bloomEffect;
         mutable std::unique_ptr<PostChromeAb> m_chromeAbEffect;
 
+        std::function<void(sf::RenderTarget&, sf::RenderStates)> m_currentRenderPath;
+
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
+
+        void defaultRenderPath(sf::RenderTarget&, sf::RenderStates) const;
+        void bloomRenderPath(sf::RenderTarget&, sf::RenderStates) const;
+        void chromeAbRenderPath(sf::RenderTarget&, sf::RenderStates) const;
+        void fullRenderPath(sf::RenderTarget&, sf::RenderStates) const;
     };
 }
 #endif //SCENE_HPP_

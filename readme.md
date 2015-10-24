@@ -117,6 +117,10 @@ xygine in the future.
     }
 
 
+For a detailed example of xygine take a look at  
+[Pseuthe](https://github.com/fallahn/pseuthe) which was built using an  
+early version of xygine.
+
 
 ######Why xygine?
 
