@@ -67,7 +67,7 @@ Component::Type ParticleController::type() const
 
 Component::UniqueType ParticleController::uniqueType() const
 {
-    return Component::UniqueType::ParticleController;
+    return Component::UniqueId::ParticleControllerId;
 }
 
 void ParticleController::entityUpdate(Entity&, float){}
@@ -93,14 +93,14 @@ void ParticleController::explosion(const sf::Vector2f& position, const sf::Color
     auto& children = m_entity->getChildren();
     auto child = std::find_if(children.begin(), children.end(), [](const Entity::Ptr& p)
     {
-        return !p->getComponent<ParticleSystem>(Component::UniqueType::ParticleSystem)->active();
+        return !p->getComponent<ParticleSystem>(Component::UniqueId::ParticleSystemId)->active();
     });
 
     if (child != children.end())
     {
         (*child)->setWorldPosition(position);
-        (*child)->getComponent<ParticleSystem>(Component::UniqueType::ParticleSystem)->start(5, 0.f, 0.1f);
-        (*child)->getComponent<ParticleSystem>(Component::UniqueType::ParticleSystem)->setColour(colour);
+        (*child)->getComponent<ParticleSystem>(Component::UniqueId::ParticleSystemId)->start(5, 0.f, 0.1f);
+        (*child)->getComponent<ParticleSystem>(Component::UniqueId::ParticleSystemId)->setColour(colour);
         //LOG("CLIENT fired existing explosion particles", Logger::Type::Info);
     }
     else

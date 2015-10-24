@@ -72,7 +72,7 @@ Component::Type ParticleSystem::type() const
 
 Component::UniqueType ParticleSystem::uniqueType() const
 {
-    return Component::UniqueType::ParticleSystem;
+    return Component::UniqueId::ParticleSystemId;
 }
 
 void ParticleSystem::entityUpdate(Entity& entity, float dt)

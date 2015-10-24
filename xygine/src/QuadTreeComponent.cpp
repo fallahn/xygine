@@ -61,7 +61,7 @@ Component::Type QuadTreeComponent::type() const
 
 Component::UniqueType QuadTreeComponent::uniqueType() const
 {
-    return Component::UniqueType::QuadTreeComponent;
+    return Component::UniqueId::QuadTreeComponentId;
 }
 
 void QuadTreeComponent::entityUpdate(Entity& entity, float dt)

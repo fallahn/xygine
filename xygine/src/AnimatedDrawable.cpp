@@ -80,7 +80,7 @@ Component::Type AnimatedDrawable::type() const
 
 Component::UniqueType AnimatedDrawable::uniqueType() const
 {
-    return Component::UniqueType::AnimatedDrawable;
+    return Component::UniqueId::AnimatedDrawableId;
 }
 
 void AnimatedDrawable::entityUpdate(Entity&, float dt)

@@ -47,7 +47,7 @@ Component::Type AnimationController::type() const
 
 Component::UniqueType AnimationController::uniqueType() const
 {
-    return Component::UniqueType::AnimationController;
+    return Component::UniqueId::AnimationControllerId;
 }
 
 void AnimationController::entityUpdate(Entity&, float){}
@@ -64,6 +64,6 @@ void AnimationController::handleMessage(const Message& msg)
 
 void AnimationController::onStart(Entity& entity)
 {
-    m_drawable = entity.getComponent<AnimatedDrawable>(Component::UniqueType::AnimatedDrawable);
+    m_drawable = entity.getComponent<AnimatedDrawable>(Component::UniqueId::AnimatedDrawableId);
     assert(m_drawable);
 }

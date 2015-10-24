@@ -64,7 +64,7 @@ void Scene::update(float dt)
     //add pending entities
     for (auto& p : m_pendingEntities)
     {
-        if (QuadTreeComponent* qc = p.second->getComponent<QuadTreeComponent>(Component::UniqueType::QuadTreeComponent))
+        if (QuadTreeComponent* qc = p.second->getComponent<QuadTreeComponent>(Component::UniqueId::QuadTreeComponentId))
         {
             m_quadTree.add(qc);
         }

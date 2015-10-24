@@ -39,7 +39,7 @@ Component::Type TextDrawable::type() const
 
 Component::UniqueType TextDrawable::uniqueType() const
 {
-    return Component::UniqueType::TextDrawable;
+    return Component::UniqueId::TextDrawableId;
 }
 
 void TextDrawable::entityUpdate(Entity&, float){}
