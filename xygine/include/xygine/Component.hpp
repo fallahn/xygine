@@ -53,21 +53,17 @@ namespace xy
             Script
         };
 
-        enum class UniqueType
+        using UniqueType = sf::Int32;
+
+        enum UniqueId
         {
-            AlienController,
-            AnimatedDrawable,
+            AnimatedDrawable = 0,
             AnimationController,
-            GameController,
-            HumanController,
-            LaserDrawable,
-            NetworkController,
             ParticleController,
             ParticleSystem,
-            PlayerController,
             QuadTreeComponent,
-            TerrainDrawable,
-            TextDrawable
+            TextDrawable,
+            Count
         };
 
         explicit Component(MessageBus&);
