@@ -9,6 +9,7 @@ xygine is released under the zlib license in the hope that it may be
 useful for other people - but offers no warranty that it is fit for any  
 particular purpose, even those for which it was specifically written...  
 
+
 #####Basic usage:
 
 xygine compiles to a static library by default when using the included  
@@ -80,6 +81,41 @@ function and call run()
     	game.run();
     	return 0;
     }
+
+
+#####Custom Components
+
+Custom components can easily be created by inheriting from xy::Component  
+and implementing its pure virtual functions. Two functions of note are  
+
+    type() const
+    
+and
+
+    uniqueType() const
+    
+which return IDs used internally by xygine. type() must return either  
+xy::Component::Type::drawable or xy::Component::Type::script (or possibly  
+xy::Component::Type::physics, although this is not implemented by default)  
+to indicated the general use of the component. Returning a drawable type  
+allows the engine to add the component to the rendering list, whereas  
+script type components are used to define some kind of logic or behviour.  
+Unique type IDs are used when accessing components attached to an entity.  
+Custom components require a unique ID (defined internally as sf::Int32)  
+which can be defined via an enum. xygine contains a few default components  
+whose IDs are found in xy::Component::UniqueId. To extend these the  
+recommended method is to create a new enum, where the first value is that  
+of xy::Component::UniqueId::count. This ensures custom IDs are not only  
+unique, but will remain so should more default components be added to  
+xygine in the future.
+
+    enum MyComponentID
+    {
+        TriangleComponent = xy::Component::UniqueId::count,
+        LogicComponent,
+        AIComponent //etc...
+    }
+
 
 
 ######Why xygine?
