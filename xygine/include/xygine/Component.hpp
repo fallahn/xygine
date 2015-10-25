@@ -57,12 +57,12 @@ namespace xy
 
         enum UniqueId
         {
-            AnimatedDrawable = 0,
-            AnimationController,
-            ParticleController,
-            ParticleSystem,
-            QuadTreeComponent,
-            TextDrawable,
+            AnimatedDrawableId = 0,
+            AnimationControllerId,
+            ParticleControllerId,
+            ParticleSystemId,
+            QuadTreeComponentId,
+            TextDrawableId,
             Count
         };
 

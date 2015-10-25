@@ -128,6 +128,7 @@ namespace xy
 
         //returns true if command was consumed and should not be passed on
         bool doCommand(const Command&, float);
+        //provide a bitmask of categories to which this entity should belong
         void addCommandCategories(sf::Int32);
 
         //returns the number of entities parented to this, including this
