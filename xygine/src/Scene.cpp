@@ -48,15 +48,6 @@ Scene::Scene(MessageBus& mb, bool createBuffers)
 {
     reset();
 
-/*    if (createBuffers)
-    {
-        m_sceneBufferA.create(1920u, 1080u)*/;
-    //    m_sceneBufferB.create(1920u, 1080u);
-
-    //    m_bloomEffect = std::make_unique<PostBloom>();
-    //    m_chromeAbEffect = std::make_unique<PostChromeAb>();
-    //}
-
     m_currentRenderPath = std::bind(&Scene::defaultRenderPath, this, _1, _2);
 }
 
@@ -81,7 +72,7 @@ void Scene::update(float dt)
         auto cmd = m_commandQueue.pop();
         for (auto& e : m_layers)
         {
-            e->doCommand(cmd, dt);
+            if (e->doCommand(cmd, dt)) break;
         }
     }
 

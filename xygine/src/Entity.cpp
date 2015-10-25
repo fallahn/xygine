@@ -260,18 +260,23 @@ Scene* Entity::getScene()
     return m_scene;
 }
 
-void Entity::doCommand(const Command& cmd, float dt)
+bool Entity::doCommand(const Command& cmd, float dt)
 {
-    for (auto& c : m_children)
-    {
-        c->doCommand(cmd, dt);
-    }
-    
-    if (cmd.entityID == m_uid ||
+    bool consumed = false;
+    if ((consumed = (cmd.entityID == m_uid)) ||
         (cmd.category & m_commandCategories))
     {
         cmd.action(*this, dt);
     }
+    if (consumed) return true;
+
+    for (auto& c : m_children)
+    {
+        consumed = c->doCommand(cmd, dt);
+        if (consumed) break;
+    }
+    
+    return consumed;
 }
 
 void Entity::addCommandCategories(sf::Int32 mask)

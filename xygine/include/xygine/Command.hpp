@@ -42,16 +42,12 @@ namespace xy
     {
         std::function<void(Entity&, float)> action;
         sf::Uint64 entityID = 0u;
+        using Category = sf::Int32;
         enum
         {
             None = 0,
-            Player = 0x1,
-            Alien = 0x2,
-            Particle = 0x4,
-            GameRules = 0x8,
-            Human = 0x10,
-            All = Player | Alien | Particle | GameRules | Human
-        }category = None;
+        };
+        Category category = None;
     };
 
     class CommandQueue final

@@ -3,7 +3,8 @@ xygine
 
 ![Logo by Baard](xygine/xygine.png?raw=true)
 
-2D Game Engine Framework built around SFML. I use this as the starting  
+2D Game Engine Framework built around SFML. xygine implements a scene  
+graph along with an Entity Component System.I use this as the starting  
 point for new projects, as it evolves slowly over time. The source for  
 xygine is released under the zlib license in the hope that it may be  
 useful for other people - but offers no warranty that it is fit for any  
@@ -97,7 +98,7 @@ and
 which return IDs used internally by xygine. type() must return either  
 xy::Component::Type::drawable or xy::Component::Type::script (or possibly  
 xy::Component::Type::physics, although this is not implemented by default)  
-to indicated the general use of the component. Returning a drawable type  
+to indicate the general use of the component. Returning a drawable type  
 allows the engine to add the component to the rendering list, whereas  
 script type components are used to define some kind of logic or behviour.  
 Unique type IDs are used when accessing components attached to an entity.  

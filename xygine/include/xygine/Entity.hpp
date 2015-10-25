@@ -126,7 +126,8 @@ namespace xy
         void setScene(Scene*);
         Scene* getScene();
 
-        void doCommand(const Command&, float);
+        //returns true if command was consumed and should not be passed on
+        bool doCommand(const Command&, float);
         void addCommandCategories(sf::Int32);
 
         //returns the number of entities parented to this, including this
