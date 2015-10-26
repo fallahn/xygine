@@ -169,10 +169,8 @@ void App::applyVideoSettings(const VideoSettings& settings)
 
     //m_renderWindow.setIcon(icon_width, icon_height, icon_arr);
 
-    Message msg;
-    msg.type = Message::Type::UI;
-    msg.ui.type = Message::UIEvent::ResizedWindow;
-    m_messageBus.post(msg);
+    auto msg = m_messageBus.post<Message::UIEvent>(Message::UIMessage);
+    msg->type = Message::UIEvent::ResizedWindow;
 }
 
 sf::Font& App::getFont(const std::string& path)
@@ -433,19 +431,24 @@ void App::handleMessages()
     {
         auto msg = m_messageBus.poll();
 
-        switch (msg.type)
+        switch (msg.id)
         {
-        case Message::Type::Player:
-            if (msg.player.action == Message::PlayerEvent::Spawned)
+        case Message::Type::PlayerMessage:
+        {
+            auto& msgData = msg.getData<Message::PlayerEvent>();
+            if (msgData.action == Message::PlayerEvent::Spawned)
             {
                 m_gameSettings.difficulty = m_pendingDifficulty;
             }
             break;
-        case Message::Type::UI:
-            switch (msg.ui.type)
+        }
+        case Message::Type::UIMessage:
+        {
+            auto& msgData = msg.getData<Message::UIEvent>();
+            switch (msgData.type)
             {
             case Message::UIEvent::RequestDifficultyChange:
-                m_pendingDifficulty = msg.ui.difficulty;
+                m_pendingDifficulty = msgData.difficulty;
                 break;
             case Message::UIEvent::RequestAudioMute:
                 m_audioSettings.muted = true;
@@ -454,7 +457,7 @@ void App::handleMessages()
                 m_audioSettings.muted = false;
                 break;
             case Message::UIEvent::RequestVolumeChange:
-                m_audioSettings.volume = msg.ui.value;
+                m_audioSettings.volume = msgData.value;
                 break;
             case Message::UIEvent::RequestControllerEnable:
                 m_gameSettings.controllerEnabled = true;
@@ -465,14 +468,17 @@ void App::handleMessages()
             default: break;
             }
             break;
-        case Message::Type::Network:
-            switch (msg.network.action)
+        }
+        case Message::Type::NetworkMessage:
+        {
+            auto& msgData = msg.getData<Message::NetworkEvent>();
+            switch (msgData.action)
             {
             case Message::NetworkEvent::RequestStartServer:
                 /*m_server = std::make_unique<GameServer>();
                 if (connect({ "127.0.0.1" }, GameServer::getPort()))
                 {
-                    m_stateStack.pushState(msg.network.stateID);
+                m_stateStack.pushState(msg.network.stateID);
                 }*/
                 break;
             case Message::NetworkEvent::RequestDisconnect:
@@ -482,18 +488,16 @@ void App::handleMessages()
                 disconnect();
                 if (connect({ m_destinationIP }, GameServer::getPort())) //TODO make port a variable
                 {
-                    Message newMsg;
-                    newMsg.type = Message::Type::Network;
-                    newMsg.network.action = Message::NetworkEvent::ConnectSuccess;
-                    m_messageBus.post(newMsg);
+                    auto msg = m_messageBus.post<Message::NetworkEvent>(Message::NetworkMessage);
+                    msg->action = Message::NetworkEvent::ConnectSuccess;
                 }
                 else
                 {
                     disconnect();
-                    Message newMsg;
-                    newMsg.type = Message::Type::Network;
-                    newMsg.network.action = Message::NetworkEvent::ConnectFail;
-                    m_messageBus.post(newMsg);
+
+                    auto msg = m_messageBus.post<Message::NetworkEvent>(Message::NetworkMessage);
+                    msg->action = Message::NetworkEvent::ConnectFail;
+
                     LOG("whoopsie", Logger::Type::Info);
                 }
                 break;
@@ -501,10 +505,10 @@ void App::handleMessages()
             default: break;
             }
             break;
+        }
         default: break;
         }
 
-        //m_stateStack.handleMessage(msg);
         handleMessage(msg);
     } 
 }

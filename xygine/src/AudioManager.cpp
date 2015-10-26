@@ -56,15 +56,6 @@ AudioManager::AudioManager()
     //m_musicPlayer.play("assets/sound/background.ogg", true);
 
     m_soundPlayer.setVolume(0.f);
-    //auto files = FileSystem::listFiles(impactSoundPath);
-    //for (const auto& file : files)
-    //{
-    //    if (FileSystem::getFileExtension(file) == ".wav")
-    //    {
-    //        /*m_impactSounds.emplace_back(sf::SoundBuffer());
-    //        m_impactSounds.back().loadFromFile(impactSoundPath + file);*/
-    //    }
-    //}
 }
 
 
@@ -89,30 +80,35 @@ void AudioManager::update(float dt)
 void AudioManager::handleMessage(const Message& msg)
 {
     //You has no seagulls.
-    switch (msg.type)
+    switch (msg.id)
     {
-    case Message::Type::Physics:
-        switch (msg.physics.event)
+    case Message::Type::PhysicsMessage:
+    {
+        auto& msgData = msg.getData<Message::PhysicsEvent>();
+        switch (msgData.event)
         {
         case Message::PhysicsEvent::Collision:
             if (m_muted) break;
-                
-                break;
+
+            break;
         default:break;
         }
         break;
-    case Message::Type::Entity:
+    }
+    case Message::Type::EntityMessage:
         if (!m_muted )
         {
 
         }
         break;
-    case Message::Type::UI:
-        switch (msg.ui.type)
+    case Message::Type::UIMessage:
+    {
+        auto& msgData = msg.getData<Message::UIEvent>();
+        switch (msgData.type)
         {
         case Message::UIEvent::RequestVolumeChange:
-            musicVolume = std::min(maxMusicVolume * msg.ui.value, maxMusicVolume);
-            fxVolume = std::min(maxFxVolume * msg.ui.value, maxFxVolume);
+            musicVolume = std::min(maxMusicVolume * msgData.value, maxMusicVolume);
+            fxVolume = std::min(maxFxVolume * msgData.value, maxFxVolume);
 
             if (fadeDelay <= 0)
             {
@@ -135,8 +131,12 @@ void AudioManager::handleMessage(const Message& msg)
         default: break;
         }
         break;
-    case Message::Type::Player:
-        switch (msg.player.action)
+    }
+    case Message::Type::PlayerMessage:
+    {
+        auto& msgData = msg.getData<Message::PlayerEvent>();
+
+        switch (msgData.action)
         {
         case Message::PlayerEvent::Spawned:
 
@@ -144,6 +144,7 @@ void AudioManager::handleMessage(const Message& msg)
         default:break;
         }
         break;
+    }
     default: break;
     }
 }

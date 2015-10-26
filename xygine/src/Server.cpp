@@ -324,33 +324,39 @@ void GameServer::pingClients()
 
 void GameServer::handleMessage(const Message& msg)
 {
-    switch (msg.type)
+    switch (msg.id)
     {
-    case Message::Type::Entity:
-        switch (msg.entity.action)
+    case Message::Type::EntityMessage:
+    {
+        auto& msgData = msg.getData<Message::EntityEvent>();
+        switch (msgData.action)
         {
         case Message::EntityEvent::Destroyed:
             break;
         default: break;
         }
         break;
-    case Message::Type::Player:
-        switch (msg.player.action)
+    }
+    case Message::Type::PlayerMessage:
+    {
+        auto& msgData = msg.getData<Message::PlayerEvent>();
+        switch (msgData.action)
         {
-        break;
+            break;
         case Message::PlayerEvent::Spawned:
         {
 
         }
-            break;
+        break;
         case Message::PlayerEvent::Died:
         {
 
         }
-            break;
+        break;
         default: break;
         }
         break;
+    }
     default: break;
     }
 }

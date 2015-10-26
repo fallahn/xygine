@@ -40,12 +40,10 @@ Component::Component(MessageBus& m)
 
 Component::~Component()
 {
-    Message msg;
-    msg.type = Message::Type::ComponentSystem;
-    msg.component.action = Message::ComponentEvent::Deleted;
-    msg.component.ptr = this;
-    msg.component.entityId = m_parentUID;
-    m_messageBus.post(msg);
+    auto msg = m_messageBus.post<Message::ComponentEvent>(Message::ComponentSystemMessage);
+    msg->action = Message::ComponentEvent::Deleted;
+    msg->ptr = this;
+    msg->entityId = m_parentUID;
 }
 
 //public
@@ -90,11 +88,6 @@ sf::FloatRect Component::globalBounds() const
 }
 
 //protected
-void Component::sendMessage(const Message& m)
-{
-    m_messageBus.post(m);
-}
-
 MessageBus& Component::getMessageBus() const
 {
     return m_messageBus;

@@ -54,12 +54,7 @@ void AnimationController::entityUpdate(Entity&, float){}
 
 void AnimationController::handleMessage(const Message& msg)
 {
-    if (msg.type == Message::Type::Entity 
-        && msg.entity.entity->getUID() == getParentUID())
-    {
 
-
-    }
 }
 
 void AnimationController::onStart(Entity& entity)

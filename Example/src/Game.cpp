@@ -54,10 +54,12 @@ void Game::handleEvent(const sf::Event& evt)
 
 void Game::handleMessage(const xy::Message& msg)
 {
-    switch (msg.type)
+    switch (msg.id)
     {
-    case xy::Message::Type::UI:
-        switch (msg.ui.type)
+    case xy::Message::Type::UIMessage:
+    {
+        auto& msgData = msg.getData<xy::Message::UIEvent>();
+        switch (msgData.type)
         {
         case xy::Message::UIEvent::ResizedWindow:
             m_stateStack.updateView();
@@ -65,6 +67,7 @@ void Game::handleMessage(const xy::Message& msg)
         default: break;
         }
         break;
+    }
     default: break;
     }
     

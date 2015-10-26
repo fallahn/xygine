@@ -180,11 +180,9 @@ void Entity::destroy()
     for (auto& c : m_children)
         c->destroy();
 
-    Message msg;
-    msg.type = Message::Type::Entity;
-    msg.entity.action = Message::EntityEvent::Destroyed;
-    msg.entity.entity = this;
-    m_messageBus.post(msg);
+    auto msg = m_messageBus.post<Message::EntityEvent>(Message::EntityMessage);
+    msg->action = Message::EntityEvent::Destroyed;
+    msg->entity = this;
 
     m_destroyed = true;
 }
@@ -209,38 +207,33 @@ void Entity::handleMessage(const Message& msg)
     for (auto& c : m_components)
         c->handleMessage(msg);
     
-    switch (msg.type)
+    switch (msg.id)
     {
-    //case Message::Type::Physics:
-    //    
-    //    if ((msg.physics.entityId[0] == m_uid || msg.physics.entityId[1] == m_uid))
-    //    {
-
-
-    //    }
-    //    break;
-    case Message::Type::ComponentSystem:
-        if (msg.component.entityId == m_uid)
+    case Message::Type::ComponentSystemMessage:
+    {
+        auto& msgData = msg.getData<Message::ComponentEvent>();
+        if (msgData.entityId == m_uid)
         {
-            switch (msg.component.action)
+            switch (msgData.action)
             {
             case Message::ComponentEvent::Deleted:
                 m_components.erase(std::remove_if(m_components.begin(), m_components.end(),
-                    [&msg](const Component::Ptr& p)
+                    [&msgData](const Component::Ptr& p)
                 {
-                    return msg.component.ptr == p.get();
+                    return msgData.ptr == p.get();
                 }), m_components.end());
 
                 m_drawables.erase(std::remove_if(m_drawables.begin(), m_drawables.end(),
-                    [&msg](const sf::Drawable* p)
+                    [&msgData](const sf::Drawable* p)
                 {
-                    return msg.component.ptr == (Component*)p;
+                    return msgData.ptr == (Component*)p;
                 }), m_drawables.end());
                 break;
             default: break;
             }
         }
         break;
+    }
     default: break;
     }
 

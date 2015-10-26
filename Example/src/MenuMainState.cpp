@@ -41,12 +41,10 @@ MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
 
     buildMenu();
 
-    xy::Message msg;
-    msg.type = xy::Message::Type::UI;
-    msg.ui.type = xy::Message::UIEvent::MenuOpened;
-    msg.ui.value = 0.f;
-    msg.ui.stateId = States::ID::MenuMain;
-    m_messageBus.post(msg);
+    auto msg = m_messageBus.post<xy::Message::UIEvent>(xy::Message::UIMessage);
+    msg->type = xy::Message::UIEvent::MenuOpened;
+    msg->value = 0.f;
+    msg->stateId = States::ID::MenuMain;
 }
 
 //public
@@ -141,10 +139,8 @@ void MenuMainState::close()
 {
     requestStackPop();
 
-    xy::Message msg;
-    msg.type = xy::Message::Type::UI;
-    msg.ui.type = xy::Message::UIEvent::MenuClosed;
-    msg.ui.value = 0.f;
-    msg.ui.stateId = States::ID::MenuMain;
-    m_messageBus.post(msg);
+    auto msg = m_messageBus.post<xy::Message::UIEvent>(xy::Message::UIMessage);
+    msg->type = xy::Message::UIEvent::MenuClosed;
+    msg->value = 0.f;
+    msg->stateId = States::ID::MenuMain;
 }

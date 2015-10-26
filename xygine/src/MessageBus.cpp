@@ -30,6 +30,17 @@ source distribution.
 
 using namespace xy;
 
+namespace
+{
+    const std::size_t bufferSize = 2048u;
+}
+
+MessageBus::MessageBus()
+    : m_currentBuffer   (bufferSize),
+    m_pendingBuffer     (bufferSize),
+    m_currentPointer    (m_pendingBuffer.data())
+{}
+
 Message MessageBus::poll()
 {
     Message m = m_currentMessages.front();
@@ -38,16 +49,13 @@ Message MessageBus::poll()
     return m;
 }
 
-void MessageBus::post(const Message& m)
-{
-    m_pendingMessages.push(m);
-}
-
 bool MessageBus::empty()
 {
     if (m_currentMessages.empty())
     {
         m_currentMessages.swap(m_pendingMessages);
+        m_currentBuffer.swap(m_pendingBuffer);
+        m_currentPointer = m_pendingBuffer.data();
         return true;
     }
     return false;

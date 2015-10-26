@@ -87,13 +87,14 @@ void Scene::handleMessage(const Message& msg)
     for (auto& e : m_layers)
         e->handleMessage(msg);
 
-    if (msg.type == Message::Type::Physics)
+    if (msg.id == Message::Type::PhysicsMessage)
     {
 
     }
-    else if (msg.type == Message::Type::UI)
+    else if (msg.id == Message::Type::UIMessage)
     {
-        switch (msg.ui.type)
+        auto& msgData = msg.getData<Message::UIEvent>();
+        switch (msgData.type)
         {
         case Message::UIEvent::MenuClosed:
 

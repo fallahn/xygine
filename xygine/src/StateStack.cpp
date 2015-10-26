@@ -67,12 +67,13 @@ void StateStack::handleEvent(const sf::Event& evt)
 
 void StateStack::handleMessage(const Message& msg)
 {
-    if (msg.type == Message::Type::UI)
+    if (msg.id == Message::Type::UIMessage)
     {
-        switch (msg.ui.type)
+        auto& msgData = msg.getData<Message::UIEvent>();
+        switch (msgData.type)
         {
         case Message::UIEvent::RequestState:
-            pushState(msg.ui.stateId);
+            pushState(msgData.stateId);
             break;
         default: break;
         }

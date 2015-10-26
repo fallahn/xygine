@@ -94,7 +94,11 @@ namespace xy
         virtual sf::FloatRect globalBounds() const;
 
     protected:
-        void sendMessage(const Message&);
+        template <typename T>
+        T* sendMessage(sf::Int32 id)
+        {
+            return m_messageBus.post<T>(id);
+        }
         MessageBus& getMessageBus() const;
 
     private:

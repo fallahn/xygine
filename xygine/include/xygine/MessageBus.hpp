@@ -36,6 +36,7 @@ source distribution.
 #include <SFML/Config.hpp>
 
 #include <queue>
+#include <cassert>
 
 namespace xy
 {
@@ -44,21 +45,24 @@ namespace xy
 
     class Message final
     {
+        friend class MessageBus;
     public:
-        enum class Type
+        using Id = sf::Int32;
+        enum Type
         {
-            Audio = 1,
-            Physics,
-            Entity,
-            UI,
-            Player,
-            ComponentSystem,
-            Network
-        }type;
+            AudioMessage = 0,
+            PhysicsMessage,
+            EntityMessage,
+            UIMessage,
+            PlayerMessage,
+            ComponentSystemMessage,
+            NetworkMessage,
+            Count
+        };
 
         struct AudioEvent
         {
-            sf::Uint64 entityId;
+            sf::Uint64 entityId = 0;
         };
 
         struct PhysicsEvent
@@ -78,8 +82,8 @@ namespace xy
                 Destroyed,
                 ChangedDirection
             }action;
-            Entity* entity;
-            sf::Int32 direction;
+            Entity* entity = nullptr;
+            sf::Int32 direction = 0;
         };
 
         struct UIEvent
@@ -97,8 +101,8 @@ namespace xy
                 RequestControllerDisable,
                 ResizedWindow
             }type;
-            float value;
-            StateId stateId;
+            float value = 0.f;
+            StateId stateId = -1;
             Difficulty difficulty;
         };
 
@@ -109,8 +113,8 @@ namespace xy
                 Died,
                 Spawned
             }action;
-            sf::Int32 timestamp;
-            sf::Uint64 entityID;
+            sf::Int32 timestamp = 0;
+            sf::Uint64 entityID = 0;
         };
 
         struct ComponentEvent
@@ -119,8 +123,8 @@ namespace xy
             {
                 Deleted
             }action;
-            sf::Uint64 entityId;
-            Component* ptr;
+            sf::Uint64 entityId = 0;
+            Component* ptr = nullptr;
         };
 
         struct NetworkEvent
@@ -135,33 +139,52 @@ namespace xy
                 ConnectFail,
                 StartReady
             }action;
-            StateId stateID;
+            StateId stateID = -1;
         };
 
-        union
+        Id id = -1;
+
+        template <typename T>
+        const T& getData() const
         {
-            AudioEvent audio;
-            PhysicsEvent physics;
-            EntityEvent entity;
-            UIEvent ui;
-            PlayerEvent player;
-            ComponentEvent component;
-            NetworkEvent network;
-        };
+            auto size = sizeof(T);
+            assert(size == m_dataSize);
+            return *static_cast<T*>(m_data);
+        }
+
+    private:
+        void* m_data;
+        std::size_t m_dataSize;
     };
 
     class MessageBus final
     {
     public:
-        MessageBus() = default;
+        MessageBus();
         ~MessageBus() = default;
         MessageBus(const MessageBus&) = delete;
         const MessageBus& operator = (const MessageBus&) = delete;
 
         //read and despatch all messages on the message stack
         Message poll();
-        //places a message on the message stack
-        void post(const Message& msg);
+        //places a message on the message stack, and returns a pointer to the data
+        //of type T, which needs to be filled in
+        template <typename T>
+        T* post(Message::Id id)
+        {
+            auto size = sizeof(T);
+            assert(size < 128); //limit custom data to 128 bytes
+            assert(m_currentBuffer.size() - (m_currentPointer - m_currentBuffer.data()) > size); //make sure we have enough room in the buffer
+
+            Message msg;
+            msg.id = id;
+            msg.m_dataSize = size;
+            msg.m_data = new (m_currentPointer)T();
+            m_currentPointer += size;
+
+            m_pendingMessages.push(msg);
+            return static_cast<T*>(msg.m_data);
+        }
 
         bool empty();
 
@@ -170,6 +193,10 @@ namespace xy
     private:
         std::queue<Message> m_currentMessages;
         std::queue<Message> m_pendingMessages;
+
+        std::vector<char> m_currentBuffer;
+        std::vector<char> m_pendingBuffer;
+        char* m_currentPointer;
     };
 }
 #endif
