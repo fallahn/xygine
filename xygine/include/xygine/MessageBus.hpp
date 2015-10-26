@@ -37,6 +37,7 @@ source distribution.
 
 #include <queue>
 #include <cassert>
+#include <type_traits>
 
 namespace xy
 {
@@ -144,9 +145,11 @@ namespace xy
 
         Id id = -1;
 
-        template <typename T>
+        template <typename T, typename std::enable_if<std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value>::type...>
         const T& getData() const
         {
+            //for some reason this isn't working on MSVC
+            //static_assert(std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value, "");
             auto size = sizeof(T);
             assert(size == m_dataSize);
             return *static_cast<T*>(m_data);
@@ -169,7 +172,7 @@ namespace xy
         Message poll();
         //places a message on the message stack, and returns a pointer to the data
         //of type T, which needs to be filled in
-        template <typename T>
+        template <typename T, typename std::enable_if<std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value>::type...>
         T* post(Message::Id id)
         {
             auto size = sizeof(T);
