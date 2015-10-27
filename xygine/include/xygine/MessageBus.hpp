@@ -146,12 +146,12 @@ namespace xy
         Id id = -1;
 
         template <typename T, typename std::enable_if<std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value>::type...>
+	//template <typename T>
         const T& getData() const
         {
             //for some reason this isn't working on MSVC
             //static_assert(std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value, "");
-            auto size = sizeof(T);
-            assert(size == m_dataSize);
+            assert(sizeof(T) == m_dataSize);
             return *static_cast<T*>(m_data);
         }
 
@@ -173,6 +173,7 @@ namespace xy
         //places a message on the message stack, and returns a pointer to the data
         //of type T, which needs to be filled in
         template <typename T, typename std::enable_if<std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value>::type...>
+	//template <typename T>
         T* post(Message::Id id)
         {
             auto dataSize = sizeof(T);

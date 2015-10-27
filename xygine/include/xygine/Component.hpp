@@ -30,6 +30,8 @@ source distribution.
 #ifndef COMPONENT_HPP_
 #define COMPONENT_HPP_
 
+#include <xygine/MessageBus.hpp>
+
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Rect.hpp>
 

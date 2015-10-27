@@ -26,7 +26,6 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/Component.hpp>
-#include <xygine/MessageBus.hpp>
 
 using namespace xy;
 
