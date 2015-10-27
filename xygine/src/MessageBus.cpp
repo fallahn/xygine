@@ -38,24 +38,31 @@ namespace
 MessageBus::MessageBus()
     : m_currentBuffer   (bufferSize),
     m_pendingBuffer     (bufferSize),
-    m_currentPointer    (m_pendingBuffer.data())
+    m_inPointer         (m_pendingBuffer.data()),
+    m_outPointer        (m_currentBuffer.data()),
+    m_currentCount      (0),
+    m_pendingCount      (0)
 {}
 
-Message MessageBus::poll()
+const Message& MessageBus::poll()
 {
-    Message m = m_currentMessages.front();
-    m_currentMessages.pop();
+    static auto size = sizeof(Message);
+    const Message& m = *reinterpret_cast<Message*>(m_outPointer);
+    m_outPointer += (size + m.m_dataSize);
+    m_currentCount--;
 
     return m;
 }
 
 bool MessageBus::empty()
 {
-    if (m_currentMessages.empty())
+    if (m_currentCount == 0)
     {
-        m_currentMessages.swap(m_pendingMessages);
         m_currentBuffer.swap(m_pendingBuffer);
-        m_currentPointer = m_pendingBuffer.data();
+        m_inPointer = m_pendingBuffer.data();
+        m_outPointer = m_currentBuffer.data();
+        m_currentCount = m_pendingCount;
+        m_pendingCount = 0;
         return true;
     }
     return false;
@@ -63,5 +70,5 @@ bool MessageBus::empty()
 
 std::size_t MessageBus::pendingMessageCount() const
 {
-    return m_currentMessages.size();
+    return m_pendingCount;
 }

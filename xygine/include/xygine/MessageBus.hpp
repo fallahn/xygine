@@ -35,7 +35,7 @@ source distribution.
 
 #include <SFML/Config.hpp>
 
-#include <queue>
+#include <vector>
 #include <cassert>
 #include <type_traits>
 
@@ -169,24 +169,26 @@ namespace xy
         const MessageBus& operator = (const MessageBus&) = delete;
 
         //read and despatch all messages on the message stack
-        Message poll();
+        const Message& poll();
         //places a message on the message stack, and returns a pointer to the data
         //of type T, which needs to be filled in
         template <typename T, typename std::enable_if<std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value>::type...>
         T* post(Message::Id id)
         {
-            auto size = sizeof(T);
-            assert(size < 128); //limit custom data to 128 bytes
-            assert(m_currentBuffer.size() - (m_currentPointer - m_currentBuffer.data()) > size); //make sure we have enough room in the buffer
+            auto dataSize = sizeof(T);
+            static auto msgSize = sizeof(Message);
+            assert(dataSize < 128); //limit custom data to 128 bytes
+            assert(m_pendingBuffer.size() - (m_inPointer - m_pendingBuffer.data()) > (dataSize + msgSize)); //make sure we have enough room in the buffer
 
-            Message msg;
-            msg.id = id;
-            msg.m_dataSize = size;
-            msg.m_data = new (m_currentPointer)T();
-            m_currentPointer += size;
+            Message* msg = new (m_inPointer)Message();
+            m_inPointer += msgSize;
+            msg->id = id;
+            msg->m_dataSize = dataSize;
+            msg->m_data = new (m_inPointer)T();
+            m_inPointer += dataSize;
 
-            m_pendingMessages.push(msg);
-            return static_cast<T*>(msg.m_data);
+            m_pendingCount++;
+            return static_cast<T*>(msg->m_data);
         }
 
         bool empty();
@@ -194,12 +196,13 @@ namespace xy
         std::size_t pendingMessageCount() const; //used for stats
 
     private:
-        std::queue<Message> m_currentMessages;
-        std::queue<Message> m_pendingMessages;
 
         std::vector<char> m_currentBuffer;
         std::vector<char> m_pendingBuffer;
-        char* m_currentPointer;
+        char* m_inPointer;
+        char* m_outPointer;
+        std::size_t m_currentCount;
+        std::size_t m_pendingCount;
     };
 }
 #endif
