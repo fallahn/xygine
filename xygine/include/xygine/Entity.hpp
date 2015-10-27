@@ -101,12 +101,13 @@ namespace xy
 
         //be warned this only returns the first found instance of this type
         template <typename T>
-        T* getComponent(Component::UniqueType uniqueType)
+        T* getComponent()
         {
-            auto result = std::find_if(m_components.begin(), m_components.end(), FindByUniqueType(uniqueType));
+            std::type_index idx(typeid(T));
+            auto result = std::find_if(m_components.begin(), m_components.end(), FindByTypeIndex(idx));
             if (result == m_components.end())
             {
-                result = std::find_if(m_pendingComponents.begin(), m_pendingComponents.end(), FindByUniqueType(uniqueType));
+                result = std::find_if(m_pendingComponents.begin(), m_pendingComponents.end(), FindByTypeIndex(idx));
                 if (result == m_pendingComponents.end())
                 {
                     return nullptr;
@@ -128,7 +129,6 @@ namespace xy
 
         //returns true if command was consumed and should not be passed on
         bool doCommand(const Command&, float);
-        //provide a bitmask of categories to which this entity should belong
         void addCommandCategories(sf::Int32);
 
         //returns the number of entities parented to this, including this
@@ -164,12 +164,12 @@ namespace xy
             std::string m_name;
         };
 
-        struct FindByUniqueType
+        struct FindByTypeIndex
         {
-            FindByUniqueType(Component::UniqueType ut) : m_uniqueType(ut){}
-            bool operator() (const Component::Ptr& c) { return (c->uniqueType() == m_uniqueType); }
+            FindByTypeIndex(const std::type_index& ti) : m_ti(ti){}
+            bool operator() (const Component::Ptr& c) { return c->uniqueType() == m_ti; }
         private:
-            Component::UniqueType m_uniqueType;
+            const std::type_index& m_ti;
         };
     };
 }

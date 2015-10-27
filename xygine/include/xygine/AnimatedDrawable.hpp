@@ -80,7 +80,6 @@ namespace xy
         const AnimatedDrawable& operator = (const AnimatedDrawable&) = delete;
 
         Component::Type type() const override;
-        Component::UniqueType uniqueType() const override;
         void entityUpdate(Entity&, float dt) override;
         void handleMessage(const Message&) override;
 

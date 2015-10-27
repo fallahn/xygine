@@ -35,7 +35,7 @@ source distribution.
 using namespace xy;
 
 AnimationController::AnimationController(MessageBus& mb)
-    : Component (mb),
+    : Component (mb, this),
     m_drawable  (nullptr)
 {}
 
@@ -43,11 +43,6 @@ AnimationController::AnimationController(MessageBus& mb)
 Component::Type AnimationController::type() const
 {
     return Component::Type::Script;
-}
-
-Component::UniqueType AnimationController::uniqueType() const
-{
-    return Component::UniqueId::AnimationControllerId;
 }
 
 void AnimationController::entityUpdate(Entity&, float){}
@@ -59,6 +54,6 @@ void AnimationController::handleMessage(const Message& msg)
 
 void AnimationController::onStart(Entity& entity)
 {
-    m_drawable = entity.getComponent<AnimatedDrawable>(Component::UniqueId::AnimatedDrawableId);
+    m_drawable = entity.getComponent<AnimatedDrawable>();
     assert(m_drawable);
 }

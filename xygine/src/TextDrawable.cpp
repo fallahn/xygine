@@ -30,16 +30,11 @@ source distribution.
 using namespace xy;
 
 TextDrawable::TextDrawable(MessageBus& mb)
-    : Component(mb){}
+    : Component(mb, this){}
 
 Component::Type TextDrawable::type() const
 {
     return Component::Type::Drawable;
-}
-
-Component::UniqueType TextDrawable::uniqueType() const
-{
-    return Component::UniqueId::TextDrawableId;
 }
 
 void TextDrawable::entityUpdate(Entity&, float){}

@@ -53,7 +53,7 @@ namespace
 using namespace xy;
 
 ParticleController::ParticleController(MessageBus& mb)
-    : Component (mb),
+    : Component (mb, this),
     m_entity    (nullptr)
 {
 
@@ -63,11 +63,6 @@ ParticleController::ParticleController(MessageBus& mb)
 Component::Type ParticleController::type() const
 {
     return Component::Type::Script;
-}
-
-Component::UniqueType ParticleController::uniqueType() const
-{
-    return Component::UniqueId::ParticleControllerId;
 }
 
 void ParticleController::entityUpdate(Entity&, float){}
@@ -93,14 +88,14 @@ void ParticleController::explosion(const sf::Vector2f& position, const sf::Color
     auto& children = m_entity->getChildren();
     auto child = std::find_if(children.begin(), children.end(), [](const Entity::Ptr& p)
     {
-        return !p->getComponent<ParticleSystem>(Component::UniqueId::ParticleSystemId)->active();
+        return !p->getComponent<ParticleSystem>()->active();
     });
 
     if (child != children.end())
     {
         (*child)->setWorldPosition(position);
-        (*child)->getComponent<ParticleSystem>(Component::UniqueId::ParticleSystemId)->start(5, 0.f, 0.1f);
-        (*child)->getComponent<ParticleSystem>(Component::UniqueId::ParticleSystemId)->setColour(colour);
+        (*child)->getComponent<ParticleSystem>()->start(5, 0.f, 0.1f);
+        (*child)->getComponent<ParticleSystem>()->setColour(colour);
         //LOG("CLIENT fired existing explosion particles", Logger::Type::Info);
     }
     else

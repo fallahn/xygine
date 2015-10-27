@@ -51,7 +51,6 @@ namespace xy
         ~ParticleSystem() = default;
 
         Component::Type type() const override;
-        Component::UniqueType uniqueType() const override;
         void entityUpdate(Entity&, float) override;
         void handleMessage(const Message&) override;
 

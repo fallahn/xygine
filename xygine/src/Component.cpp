@@ -30,14 +30,6 @@ source distribution.
 
 using namespace xy;
 
-Component::Component(MessageBus& m)
-    : m_messageBus  (m),
-    m_destroyed     (false),
-    m_parentUID     (0u)
-{
-
-}
-
 Component::~Component()
 {
     auto msg = m_messageBus.post<Message::ComponentEvent>(Message::ComponentSystemMessage);

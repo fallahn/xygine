@@ -39,7 +39,7 @@ namespace
 using namespace xy;
 
 QuadTreeComponent::QuadTreeComponent(MessageBus& mb, const sf::FloatRect& bounds)
-    : Component     (mb),
+    : Component     (mb, this),
     m_bounds        (bounds),
     m_quadTree      (nullptr),
     m_quadTreeNode  (nullptr),
@@ -57,11 +57,6 @@ QuadTreeComponent::~QuadTreeComponent()
 Component::Type QuadTreeComponent::type() const
 {
     return Component::Type::Physics;
-}
-
-Component::UniqueType QuadTreeComponent::uniqueType() const
-{
-    return Component::UniqueId::QuadTreeComponentId;
 }
 
 void QuadTreeComponent::entityUpdate(Entity& entity, float dt)

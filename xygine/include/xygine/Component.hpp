@@ -36,6 +36,9 @@ source distribution.
 #include <memory>
 #include <string>
 
+#include <typeinfo>
+#include <typeindex>
+
 namespace xy
 {
     class Entity;
@@ -45,6 +48,7 @@ namespace xy
     {
     public:
         using Ptr = std::unique_ptr<Component>;
+        using UniqueType = std::type_index;
 
         enum class Type
         {
@@ -53,26 +57,20 @@ namespace xy
             Script
         };
 
-        using UniqueType = sf::Int32;
+        template <typename T>
+        explicit Component(MessageBus& m, T*)
+            : m_messageBus  (m),
+            m_destroyed     (false),
+            m_parentUID     (0u),
+            m_typeIndex     (typeid(T)){}
 
-        enum UniqueId
-        {
-            AnimatedDrawableId = 0,
-            AnimationControllerId,
-            ParticleControllerId,
-            ParticleSystemId,
-            QuadTreeComponentId,
-            TextDrawableId,
-            Count
-        };
-
-        explicit Component(MessageBus&);
         virtual ~Component();
         Component(const Component&) = delete;
         const Component& operator = (const Component&) = delete;
 
         virtual Type type() const = 0;
-        virtual UniqueType uniqueType() const = 0;
+        const UniqueType& uniqueType() const { return m_typeIndex; };
+
         //this is called once per frame by the component's parent entity
         //providing the opportunity to update each other
         virtual void entityUpdate(Entity&, float) = 0;
@@ -107,6 +105,7 @@ namespace xy
 
         sf::Uint64 m_parentUID;
         std::string m_name;
+        UniqueType m_typeIndex;
     };
 }
 #endif //COMPONENT_HPP_

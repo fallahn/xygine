@@ -43,7 +43,7 @@ source distribution.
 using namespace xy;
 
 AnimatedDrawable::AnimatedDrawable(MessageBus& mb)
-    : Component     (mb),
+    : Component     (mb, this),
     m_shader        (nullptr),
     m_normalMap     (nullptr),
     m_frameCount    (0u),
@@ -56,7 +56,7 @@ AnimatedDrawable::AnimatedDrawable(MessageBus& mb)
     m_playing       (false){}
 
 AnimatedDrawable::AnimatedDrawable(MessageBus& mb, const sf::Texture& t)
-    : Component     (mb),
+    : Component     (mb, this),
     m_sprite        (t),
     m_shader        (nullptr),
     m_normalMap     (nullptr),
@@ -76,11 +76,6 @@ AnimatedDrawable::AnimatedDrawable(MessageBus& mb, const sf::Texture& t)
 Component::Type AnimatedDrawable::type() const
 {
     return Component::Type::Drawable;
-}
-
-Component::UniqueType AnimatedDrawable::uniqueType() const
-{
-    return Component::UniqueId::AnimatedDrawableId;
 }
 
 void AnimatedDrawable::entityUpdate(Entity&, float dt)

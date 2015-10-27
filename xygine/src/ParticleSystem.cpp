@@ -42,7 +42,7 @@ namespace
 using namespace xy;
 
 ParticleSystem::ParticleSystem(MessageBus& mb)
-    : Component         (mb),
+    : Component         (mb, this),
     m_texture           (nullptr),
     m_colour            (sf::Color::White),
     m_followParent      (false),
@@ -68,11 +68,6 @@ ParticleSystem::ParticleSystem(MessageBus& mb)
 Component::Type ParticleSystem::type() const
 {
     return Component::Type::Drawable;
-}
-
-Component::UniqueType ParticleSystem::uniqueType() const
-{
-    return Component::UniqueId::ParticleSystemId;
 }
 
 void ParticleSystem::entityUpdate(Entity& entity, float dt)
