@@ -130,6 +130,7 @@ namespace xy
         //returns true if command was consumed and should not be passed on
         bool doCommand(const Command&, float);
         void addCommandCategories(sf::Int32);
+        bool hasCommandCategories(sf::Int32);
 
         //returns the number of entities parented to this, including this
         sf::Uint32 size() const;
