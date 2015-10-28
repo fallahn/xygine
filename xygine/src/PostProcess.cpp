@@ -39,10 +39,13 @@ PostProcess::PostProcess(){}
 void PostProcess::applyShader(const sf::Shader& shader, sf::RenderTarget& dest)
 {
     auto outputSize = static_cast<sf::Vector2f>(dest.getSize());
+    auto newY = outputSize.x / 16.f * 9.f;
+    auto diff = (outputSize.y - newY) / 2.f;
+    outputSize.y = newY + diff;
 
     sf::VertexArray verts(sf::TrianglesStrip, 4);
-    verts[0] = { {}, { 0.f, 1.f } };
-    verts[1] = { { outputSize.x, 0.f }, { 1.f, 1.f } };
+    verts[0] = { {0.f, diff}, { 0.f, 1.f } };
+    verts[1] = { { outputSize.x, diff }, { 1.f, 1.f } };
     verts[2] = { { 0.f, outputSize.y }, sf::Vector2f() };
     verts[3] = { outputSize, { 1.f, 0 } };
 
