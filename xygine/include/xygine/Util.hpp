@@ -35,7 +35,7 @@ source distribution.
 #include <cmath>
 #include <random>
 #include <ctime>
-#include <cassert>
+#include <xygine/Assert.hpp>
 #include <sstream>
 
 namespace //is this not moot here as the anonymous namespace gets included in any TU which use this?
@@ -55,7 +55,7 @@ namespace xy
         {
             static inline std::vector<float> sine(float frequency, float amplitude = 1.f, float updateRate = 60.f)
             {
-                assert(frequency > 0 && amplitude > 0 && updateRate > 0);
+                XY_ASSERT(frequency > 0 && amplitude > 0 && updateRate > 0, "");
 
                 float stepCount = updateRate / frequency;
                 float step = TAU / stepCount;
@@ -97,7 +97,7 @@ namespace xy
             //splits a soring with a given token and returns a vector of results
             static inline std::vector<std::string> tokenize(const std::string& str, char delim, bool keepEmpty = false)
             {
-                assert(!str.empty());
+                XY_ASSERT(!str.empty(), "string empty");
                 std::stringstream ss(str);
                 std::string token;
                 std::vector<std::string> output;
@@ -199,14 +199,14 @@ namespace xy
         {
             static inline float value(float begin, float end)
             {
-                assert(begin < end);
+                XY_ASSERT(begin < end, "first value is not less than last value");
                 std::uniform_real_distribution<float> dist(begin, end);
                 return dist(rndEngine);
             }
 
             static inline int value(int begin, int end)
             {
-                assert(begin < end);
+                XY_ASSERT(begin < end, "first value is not less than last value");
                 std::uniform_int_distribution<int> dist(begin, end);
                 return dist(rndEngine);
             }

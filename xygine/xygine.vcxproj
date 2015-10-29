@@ -122,6 +122,7 @@
     <ClInclude Include="include\xygine\AnimatedDrawable.hpp" />
     <ClInclude Include="include\xygine\AnimationController.hpp" />
     <ClInclude Include="include\xygine\App.hpp" />
+    <ClInclude Include="include\xygine\Assert.hpp" />
     <ClInclude Include="include\xygine\AudioManager.hpp" />
     <ClInclude Include="include\xygine\Command.hpp" />
     <ClInclude Include="include\xygine\Component.hpp" />

@@ -31,7 +31,7 @@ source distribution.
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Window/Event.hpp>
 
-#include <cassert>
+#include <xygine/Assert.hpp>
 
 using namespace xy;
 using namespace ui;
@@ -200,7 +200,7 @@ bool Slider::contains(const sf::Vector2f& mousePos) const
 
 void Slider::setMaxValue(float value)
 {
-    assert(value > 0);
+    XY_ASSERT(value > 0, "value is not greater than zero");
     m_maxValue = value;
 }
 
@@ -258,7 +258,7 @@ void Slider::setLength(float length)
 
 void Slider::setValue(float value)
 {
-    assert(value <= m_maxValue && value >= 0);
+    XY_ASSERT(value <= m_maxValue && value >= 0, "value is out of range");
     auto pos = m_handleSprite.getPosition();
     if (m_direction == Direction::Horizontal)
     {

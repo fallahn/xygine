@@ -27,7 +27,7 @@ source distribution.
 
 #include <xygine/Reports.hpp>
 
-#include <cassert>
+#include <xygine/Assert.hpp>
 #include <algorithm>
 
 namespace
@@ -46,7 +46,7 @@ StatsReporter::StatsReporter()
 //public
 void StatsReporter::report(const std::string& name, const std::string& value)
 {
-    assert(!name.empty() && !value.empty());
+    XY_ASSERT(!name.empty() && !value.empty(), "empty string values are not allowed");
     sf::Lock lock(m_mutex);
     m_data[name] = value;
     m_rebuildString = true;

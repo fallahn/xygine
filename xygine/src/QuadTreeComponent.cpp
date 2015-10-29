@@ -29,7 +29,7 @@ source distribution.
 #include <xygine/QuadTreeNode.hpp>
 #include <xygine/Entity.hpp>
 
-#include <cassert>
+#include <xygine/Assert.hpp>
 
 namespace
 {
@@ -95,7 +95,7 @@ sf::FloatRect QuadTreeComponent::globalBounds() const
 sf::FloatRect QuadTreeComponent::globalBounds(sf::Int32 latency)
 {
     auto time = m_timer.getElapsedTime().asMilliseconds() - latency;
-    assert(time > 0);
+    XY_ASSERT(time > 0, "invalid time value");
     //reverse iterate because the newest transform is at the back
     auto transform = std::find_if(m_transformBuffer.rbegin(), m_transformBuffer.rend(),
         [time](const std::pair<sf::Int32, sf::Transform>& pair)

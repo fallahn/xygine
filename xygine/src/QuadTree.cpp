@@ -32,7 +32,7 @@ source distribution.
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
-#include <cassert>
+#include <xygine/Assert.hpp>
 
 namespace
 {
@@ -66,7 +66,7 @@ void QuadTree::reset()
 
 void QuadTree::add(QuadTreeComponent* qc)
 {
-    assert(created());
+    XY_ASSERT(created(), "quad tree not yet created");
 
     qc->setQuadTree(this);
 
@@ -85,13 +85,13 @@ void QuadTree::add(QuadTreeComponent* qc)
 
 const sf::FloatRect& QuadTree::getRootArea() const
 {
-    assert(created());
+    XY_ASSERT(created(), "quad tree not yet created");
     return m_rootNode->getArea();
 }
 
 std::vector<QuadTreeComponent*> QuadTree::queryArea(const sf::FloatRect& area)
 {
-    assert(created());
+    XY_ASSERT(created(), "quad tree not yet created");
 
     std::vector<QuadTreeComponent*> retVal;
 

@@ -58,7 +58,7 @@ void ForceAffector::operator() (Particle& p, float dt)
 
 void ForceAffector::setRandom(const sf::Vector2f& rangeStart, const sf::Vector2f& rangeEnd)
 {
-    assert(rangeStart.x < rangeEnd.x && rangeStart.y < rangeEnd.y);
+    XY_ASSERT(rangeStart.x < rangeEnd.x && rangeStart.y < rangeEnd.y, "invalid range value");
     
     m_randomStart = rangeStart;
     m_randomEnd = rangeEnd;

@@ -31,7 +31,7 @@ source distribution.
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-#include <cassert>
+#include <xygine/Assert.hpp>
 
 using namespace xy;
 
@@ -133,7 +133,7 @@ sf::View StateStack::updateView()
 State::Ptr StateStack::createState(StateId id)
 {
     auto result = m_factories.find(id);
-    assert(result != m_factories.end());
+    XY_ASSERT(result != m_factories.end(), "state factory is empty");
 
     return result->second();
 }

@@ -28,7 +28,7 @@ source distribution.
 #include <xygine/Music.hpp>
 #include <xygine/Log.hpp>
 
-#include <cassert>
+#include <xygine/Assert.hpp>
 #include <algorithm>
 
 using namespace xy;
@@ -71,7 +71,7 @@ bool MusicPlayer::playing() const
 
 void MusicPlayer::setVolume(float volume)
 {
-    assert(volume >= 0.f && volume <= 100.f);
+    XY_ASSERT(volume >= 0.f && volume <= 100.f, "volume value out of range 0 -100");
 
     m_volume = volume;
     if(m_music.getStatus() == sf::Music::Playing)

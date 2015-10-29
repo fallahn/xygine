@@ -29,6 +29,7 @@ source distribution.
 #include <xygine/Util.hpp>
 #include <xygine/Entity.hpp>
 #include <xygine/MessageBus.hpp>
+#include <xygine/Assert.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -135,7 +136,7 @@ void ParticleSystem::followParent(bool follow)
 
 void ParticleSystem::setParticleLifetime(float time)
 {
-    assert(time > 0);
+    XY_ASSERT(time > 0, "invalid time value");
     m_particleLifetime = time;
 }
 
@@ -146,20 +147,20 @@ void ParticleSystem::setInitialVelocity(const sf::Vector2f& vel)
 
 void ParticleSystem::setRandomInitialVelocity(const std::vector<sf::Vector2f>& randVelocities)
 {
-    assert(!randVelocities.empty());
+    XY_ASSERT(!randVelocities.empty(), "random velocity vector contains no values");
     m_randVelocities = randVelocities;
     m_randVelocity = true;
 }
 
 void ParticleSystem::setEmitRate(float rate)
 {
-    assert(rate > 0.f);
+    XY_ASSERT(rate > 0.f, "invalid emit rate");
     m_emitRate = rate;
 }
 
 void ParticleSystem::setRandomInitialPosition(const std::vector<sf::Vector2f>& positions)
 {
-    assert(!positions.empty());
+    XY_ASSERT(!positions.empty(), "position vetor contains no values");
     m_randPositions = positions;
     m_randPosition = true;
 }
@@ -171,8 +172,8 @@ void ParticleSystem::addAffector(Affector& a)
 
 void ParticleSystem::start(sf::Uint8 releaseCount, float startDelay, float duration)
 {
-    assert(releaseCount > 0);
-    assert(duration >= 0.f);
+    XY_ASSERT(releaseCount > 0, "release count not greater than zero");
+    XY_ASSERT(duration >= 0.f, "duration is less than zero");
     m_releaseCount = releaseCount;
     m_duration = duration;
     m_durationClock.restart();

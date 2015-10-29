@@ -37,7 +37,7 @@ source distribution.
 
 #include <xygine/picojson.h>
 
-#include <cassert>
+#include <xygine/Assert.hpp>
 #include <fstream>
 
 using namespace xy;
@@ -179,7 +179,7 @@ sf::Uint8 AnimatedDrawable::getFrameCount() const
 
 void AnimatedDrawable::setFrameRate(float rate)
 {
-    assert(rate >= 0.f);
+    XY_ASSERT(rate >= 0.f, "invalid frame rate value");
     m_frameRate = rate;
     //m_playing = (rate > 0.f);
 }
@@ -201,7 +201,7 @@ bool AnimatedDrawable::looped() const
 
 void AnimatedDrawable::play(sf::Int16 start, sf::Int16 end, sf::Int16 offset)
 {
-    assert(start < m_frameCount && (end < m_frameCount));
+    XY_ASSERT(start < m_frameCount && (end < m_frameCount), "frame value invalid");
 
     m_playing = !(start == end);// ? false : true;
     m_firstFrame = static_cast<sf::Uint8>(start);
@@ -350,7 +350,7 @@ void AnimatedDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 
 void AnimatedDrawable::setFrame(sf::Uint8 index)
 {
-    assert(index < m_frameCount);
+    XY_ASSERT(index < m_frameCount, "index out of range");
 
     auto position = m_textureSize.x / m_frameSize.x;
 

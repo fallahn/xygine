@@ -29,7 +29,7 @@ source distribution.
 #include <xygine/Util.hpp>
 #include <xygine/Log.hpp>
 
-#include <cassert>
+#include <xygine/Assert.hpp>
 
 using namespace xy;
 
@@ -64,7 +64,7 @@ QuadTree* QuadTreeNode::getTree() const
 
 void QuadTreeNode::add(QuadTreeComponent* qc)
 {
-    assert(qc);
+    XY_ASSERT(qc, "component pointer is null");
 
     //add to children if fits
     if (m_hasChildren)
@@ -116,7 +116,7 @@ void QuadTreeNode::update(QuadTreeComponent* qc)
         //if no node found add to quad tree outside root set
         if (!currentNode)
         {
-            assert(m_quadTree);
+            XY_ASSERT(m_quadTree, "quad tree is null");
 
             auto& outsideSet = m_quadTree->getOutsideRootSet();
             if (outsideSet.find(qc) != outsideSet.end()) return; //already added
@@ -133,7 +133,7 @@ void QuadTreeNode::update(QuadTreeComponent* qc)
 
 void QuadTreeNode::remove(QuadTreeComponent* qc)
 {
-    assert(!m_components.empty());
+    XY_ASSERT(!m_components.empty(), "no components to remove");
 
     m_components.erase(qc);
 
@@ -249,7 +249,7 @@ void QuadTreeNode::addToThis(QuadTreeComponent* qc)
 
 bool QuadTreeNode::addToChildren(QuadTreeComponent* qc)
 {
-    assert(m_hasChildren);
+    XY_ASSERT(m_hasChildren, "node has no children");
 
     auto position = getPossiblePosition(qc);
 
@@ -272,7 +272,7 @@ void QuadTreeNode::destroyChildren()
 
 void QuadTreeNode::split()
 {
-    assert(!m_hasChildren);
+    XY_ASSERT(!m_hasChildren, "node has children");
 
     sf::Vector2f areaHalfDims(m_area.width / 2.f, m_area.height / 2.f);
     sf::Vector2f areaPosition(m_area.left, m_area.top);

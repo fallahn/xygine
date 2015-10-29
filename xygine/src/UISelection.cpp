@@ -33,7 +33,7 @@ source distribution.
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Window/Event.hpp>
 
-#include <cassert>
+#include <xygine/Assert.hpp>
 
 using namespace xy;
 using namespace ui;
@@ -180,19 +180,19 @@ void Selection::addItem(const std::string& name, sf::Int32 value)
 
 const std::string& Selection::getSelectedText() const
 {
-    assert(m_items.size());
+    XY_ASSERT(!m_items.empty(), "items are empty");
     return m_items[m_selectedIndex]->name;
 }
 
 sf::Int32 Selection::getSelectedValue() const
 {
-    assert(m_items.size());
+    XY_ASSERT(!m_items.empty(), "items are empty");
     return m_items[m_selectedIndex]->value;
 }
 
 void Selection::setSelectedIndex(sf::Uint16 index)
 {
-    assert(index < m_items.size());
+    XY_ASSERT(index < m_items.size(), "index is out of range");
     m_selectedIndex = index;
     m_selectedText.setString(m_items[index]->name);
     updateText();

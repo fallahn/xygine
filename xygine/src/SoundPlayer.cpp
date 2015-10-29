@@ -30,7 +30,7 @@ source distribution.
 #include <SFML/Audio/Listener.hpp>
 
 #include <cmath>
-#include <cassert>
+#include <xygine/Assert.hpp>
 
 namespace
 {

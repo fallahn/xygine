@@ -31,7 +31,7 @@ source distribution.
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
-#include <cassert>
+#include <xygine/Assert.hpp>
 
 using namespace xy;
 using namespace ui;
@@ -119,7 +119,7 @@ bool ScoreList::contains(const sf::Vector2f& mousePos) const
 
 void ScoreList::scroll(float amount)
 {
-    assert(amount != 0);
+    XY_ASSERT(amount != 0, "value is zero");
     m_scrollTargetDistance = amount;
     m_scrollCurrentDistance = m_scrollTargetDistance;
     m_scrollSpeed = (amount > 0) ? scrollSpeed : -scrollSpeed;

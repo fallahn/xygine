@@ -44,7 +44,7 @@ source distribution.
 #include <SFML/Config.hpp>
 
 #include <vector>
-#include <cassert>
+#include <xygine/Assert.hpp>
 #include <type_traits>
 
 namespace xy
@@ -158,8 +158,8 @@ namespace xy
         const T& getData() const
         {
             //for some reason this isn't working on MSVC
-            //static_assert(std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value, "");
-            assert(sizeof(T) == m_dataSize);
+            //static_XY_ASSERT(std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value, "");
+            XY_ASSERT(sizeof(T) == m_dataSize, "size of supplied type is not equal to data size");
             return *static_cast<T*>(m_data);
         }
 
@@ -186,8 +186,8 @@ namespace xy
         {
             auto dataSize = sizeof(T);
             static auto msgSize = sizeof(Message);
-            assert(dataSize < 128); //limit custom data to 128 bytes
-            assert(m_pendingBuffer.size() - (m_inPointer - m_pendingBuffer.data()) > (dataSize + msgSize)); //make sure we have enough room in the buffer
+            XY_ASSERT(dataSize < 128, "message size exseeds 128 bytes"); //limit custom data to 128 bytes
+            XY_ASSERT(m_pendingBuffer.size() - (m_inPointer - m_pendingBuffer.data()) > (dataSize + msgSize), "buffer overflow"); //make sure we have enough room in the buffer
 
             Message* msg = new (m_inPointer)Message();
             m_inPointer += msgSize;

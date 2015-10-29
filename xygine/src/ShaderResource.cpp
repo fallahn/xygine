@@ -29,7 +29,7 @@ source distribution.
 
 #include <SFML/Graphics/Shader.hpp>
 
-#include <cassert>
+#include <xygine/Assert.hpp>
 
 using namespace xy;
 
@@ -39,7 +39,7 @@ ShaderResource::ShaderResource(){}
 sf::Shader& ShaderResource::get(Shader::Type type)
 {
     auto result = m_shaders.find(type);
-    assert(result != m_shaders.end()); //did you forget to preload this shader?
+    XY_ASSERT(result != m_shaders.end(), "shader not loaded"); //did you forget to preload this shader?
 
     return *result->second;
 }
@@ -50,7 +50,7 @@ void ShaderResource::preload(Shader::Type type, const std::string& vertShader, c
 #ifndef _DEBUG_
     shader->loadFromMemory(vertShader, fragShader);
 #else
-    assert(shader->loadFromMemory(vertShader, fragShader));
+    XY_ASSERT(shader->loadFromMemory(vertShader, fragShader), "failed to create shader");
 #endif //_DEBUG_
 
     m_shaders.insert(std::make_pair(type, std::move(shader)));

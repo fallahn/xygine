@@ -25,35 +25,35 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/AnimationController.hpp>
-#include <xygine/MessageBus.hpp>
-#include <xygine/Entity.hpp>
-#include <xygine/AnimatedDrawable.hpp>
+//custom assertion macro which is more verbose than standard assert
 
-#include <xygine/Assert.hpp>
+#ifndef XY_ASSERT_HPP_
+#define XY_ASSERT_HPP_
 
-using namespace xy;
+#include <xygine/Log.hpp>
 
-AnimationController::AnimationController(MessageBus& mb)
-    : Component (mb, this),
-    m_drawable  (nullptr)
-{}
+#include <sstream>
 
-//public
-Component::Type AnimationController::type() const
-{
-    return Component::Type::Script;
-}
+#ifdef _MSC_VER
+#define __func__ __FUNCTION__
+#endif //_MSC_VER
 
-void AnimationController::entityUpdate(Entity&, float){}
+#ifndef NDEBUG
+#define XY_ASSERT(condition, message) \
+do \
+{ \
+    if(!(condition)) \
+    { \
+        std::stringstream ss; \
+        ss << "Assertion failed in " << __FILE__ << " function " __func__ << " line " << __LINE__ << message; \
+        xy::Logger::log(ss.str(), xy::Logger::Type::Error, xy::Logger::Output::All); \
+        exit(1); \
+    } \
+}while (false)
 
-void AnimationController::handleMessage(const Message& msg)
-{
+#else
 
-}
+#define XY_XY_ASSERT(condition, message)
+#endif //NDBUG
 
-void AnimationController::onStart(Entity& entity)
-{
-    m_drawable = entity.getComponent<AnimatedDrawable>();
-    XY_ASSERT(m_drawable, "drawable is null");
-}
+#endif //XY_ASSERT_HPP_
