@@ -398,7 +398,7 @@ namespace SpriteEditor
 
         private void SaveData()
         {
-            Debug.assert(m_currentPath != null && m_currentPath != string.Empty);
+            Debug.Assert(m_currentPath != null && m_currentPath != string.Empty);
 
             string normalMap = (textBoxNormalMap.Text == string.Empty || textBoxNormalMap.Text == null) ? "none.png" : textBoxNormalMap.Text;
 

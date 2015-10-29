@@ -46,7 +46,7 @@ namespace SpriteEditor
 
         public Animation(string name, uint start, uint end, bool loop = true)
         {
-            Debug.assert(start <= end);
+            Debug.Assert(start <= end);
             m_startFrame = start;
             m_endFrame = end;
             m_loop = loop;
@@ -181,7 +181,7 @@ namespace SpriteEditor
         {
             set
             {
-                Debug.assert(value > 0f);
+                Debug.Assert(value > 0f);
                 m_frameRate = value;
             }
             get { return m_frameRate; }
@@ -205,7 +205,7 @@ namespace SpriteEditor
 
         public void Play(uint start, uint end)
         {
-            Debug.assert(start < m_frameCount && (end < m_frameCount));
+            Debug.Assert(start < m_frameCount && (end < m_frameCount));
 
             m_playing = !(start == end);
             m_currentFrame = m_firstFrame = start;
@@ -256,11 +256,11 @@ namespace SpriteEditor
 
         private void SetFrame(uint frame)
         {
-            Debug.assert(frame < m_frameCount);
+            Debug.Assert(frame < m_frameCount);
 
             uint position = m_textureSize.X / (uint)m_frameSize.X;
 
-            Debug.assert(position > 0);
+            Debug.Assert(position > 0);
 
             var x = frame % position;
             var y = frame / position;
