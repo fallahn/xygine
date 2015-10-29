@@ -40,7 +40,7 @@ source distribution.
 #include <SFML/System/Lock.hpp>
 
 #include <string>
-#include <unordered_map>
+#include <map>
 
 namespace xy
 {
@@ -60,7 +60,7 @@ namespace xy
         static StatsReporter reporter;
 
     private:
-        std::unordered_map<std::string, std::string> m_data;
+        std::map<std::string, std::string> m_data;
         std::string m_string;
         bool m_rebuildString;
 
