@@ -45,7 +45,7 @@ do \
     if(!(condition)) \
     { \
         std::stringstream ss; \
-        ss << "Assertion failed in " << __FILE__ << " function " __func__ << " line " << __LINE__ << message; \
+        ss << "Assertion failed in " << __FILE__ << ", function `" __func__ << "`, line " << __LINE__ << ": " << message; \
         xy::Logger::log(ss.str(), xy::Logger::Type::Error, xy::Logger::Output::All); \
         exit(1); \
     } \
