@@ -147,7 +147,8 @@ void ParticleSystem::setInitialVelocity(const sf::Vector2f& vel)
 
 void ParticleSystem::setRandomInitialVelocity(const std::vector<sf::Vector2f>& randVelocities)
 {
-    XY_ASSERT(!randVelocities.empty(), "random velocity vector contains no values");
+    //XY_ASSERT(!randVelocities.empty(), "random velocity vector contains no values");
+    if (randVelocities.empty()) return;
     m_randVelocities = randVelocities;
     m_randVelocity = true;
 }
@@ -160,7 +161,8 @@ void ParticleSystem::setEmitRate(float rate)
 
 void ParticleSystem::setRandomInitialPosition(const std::vector<sf::Vector2f>& positions)
 {
-    XY_ASSERT(!positions.empty(), "position vetor contains no values");
+    //XY_ASSERT(!positions.empty(), "position vetor contains no values");
+    if (positions.empty()) return;
     m_randPositions = positions;
     m_randPosition = true;
 }
@@ -337,4 +339,41 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     states.blendMode = m_blendMode;
     if (!m_followParent)states.transform = sf::Transform::Identity;
     rt.draw(m_vertices.data(), m_vertices.size(), sf::PrimitiveType::Quads, states);
+}
+
+
+
+//-------particle system definition------//
+ParticleSystem::Definition::Definition()
+{
+
+}
+
+ParticleSystem::Definition::Definition(const std::string& path)
+{
+    //TODO load / parse json file
+}
+
+ParticleSystem::Ptr ParticleSystem::Definition::createSystem(MessageBus& mb) const
+{
+    auto ps = std::make_unique<ParticleSystem>(mb);
+
+    if (texture) ps->setTexture(*texture);
+    ps->setColour(colour);
+    ps->setBlendMode(blendMode);
+    if (shader) ps->setShader(*shader);
+
+    ps->setParticleSize(particleSize);
+    ps->setPosition(particlePosition);
+    ps->followParent(followParent);
+
+    ps->setParticleLifetime(lifetime);
+    ps->setInitialVelocity(initialVelocity);
+    ps->setRandomInitialVelocity(randomInitialVelocities);
+    ps->setEmitRate(emitRate);
+    ps->setRandomInitialPosition(randomInitialPositions);
+
+    for (const auto& a : affectors) ps->addAffector(a);
+
+    return std::move(ps);
 }

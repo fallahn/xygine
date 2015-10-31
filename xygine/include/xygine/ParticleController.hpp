@@ -31,17 +31,22 @@ source distribution.
 #define PARTICLE_CONTROLLER_HPP_
 
 #include <xygine/Component.hpp>
+#include <xygine/ParticleSystem.hpp>
 
 #include <SFML/Graphics/Color.hpp>
 
 #include <vector>
+#include <map>
 
 namespace xy
 {
-    class ParticleSystem;
     class ParticleController final : public Component
     {
     public:
+       
+        
+        using SystemId = sf::Int32;
+
         explicit ParticleController(MessageBus&);
         ~ParticleController() = default;
 
@@ -50,10 +55,13 @@ namespace xy
         void handleMessage(const Message&) override;
         void onStart(Entity&);
 
-        void explosion(const sf::Vector2f&, const sf::Color& = sf::Color::White);
+        void addDefinition(SystemId, const ParticleSystem::Definition&);
+        void fire(SystemId, const sf::Vector2f& position);
+
     private:
 
         Entity* m_entity;
+        std::map<ParticleController::SystemId, std::pair<Entity*, ParticleSystem::Definition>> m_activeSystems;
     };
 }
 #endif //PARTICLE_CONTROLLER_HPP_

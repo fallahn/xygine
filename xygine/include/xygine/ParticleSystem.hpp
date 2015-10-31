@@ -47,6 +47,41 @@ namespace xy
         using Affector = std::function<void(Particle& p, float dt)>;
         using Ptr = std::unique_ptr<ParticleSystem>;
 
+        //used for particle system presets
+        class Definition final
+        {
+        public:
+            Definition();
+            explicit Definition(const std::string& path);
+            ~Definition() = default;
+            /*Definition(const Definition&) = delete;
+            Definition& operator = (const Definition) = delete;*/
+
+            sf::Uint8 releaseCount = 1u;
+            float delay = 0.f;
+            float duration = 1.f;
+
+            sf::Texture* texture = nullptr;
+            sf::Color colour = sf::Color::White;
+            sf::BlendMode blendMode;
+            sf::Shader* shader = nullptr;
+
+            sf::Vector2f particleSize = { 4.f, 4.f };
+            sf::Vector2f particlePosition;
+            bool followParent = false;
+
+            float lifetime = 2.f;
+            sf::Vector2f initialVelocity = { 1.f, 1.f };
+            std::vector<sf::Vector2f> randomInitialVelocities;
+            float emitRate = 30.f;
+            std::vector<sf::Vector2f> randomInitialPositions;
+
+            std::vector<Affector> affectors;
+
+            Ptr createSystem(MessageBus&) const;
+        };
+
+
         explicit ParticleSystem(MessageBus&);
         ~ParticleSystem() = default;
 
