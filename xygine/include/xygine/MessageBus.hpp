@@ -30,7 +30,7 @@ source distribution.
 #ifndef MESSAGE_BUS_HPP_
 #define MESSAGE_BUS_HPP_
 
-#define TEMPLATE_GUARD template <typename T, typename std::enable_if<std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value>::type...>
+#define TEMPLATE_GUARD template <typename T>//, typename std::enable_if<std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value>::type...>
 #ifdef __GNUC__ //GCC < 5 doesn't support these type traits
 #if __GNUC__ < 5
 #undef TEMPLATE_GUARD
@@ -153,7 +153,6 @@ namespace xy
 
         Id id = -1;
 
-        //template <typename T, typename std::enable_if<std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value>::type...>
         TEMPLATE_GUARD
         const T& getData() const
         {
@@ -180,7 +179,6 @@ namespace xy
         const Message& poll();
         //places a message on the message stack, and returns a pointer to the data
         //of type T, which needs to be filled in
-        //template <typename T, typename std::enable_if<std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value>::type...>
         TEMPLATE_GUARD
         T* post(Message::Id id)
         {
