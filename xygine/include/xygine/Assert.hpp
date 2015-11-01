@@ -53,7 +53,7 @@ do \
 
 #else
 
-#define XY_XY_ASSERT(condition, message)
+#define XY_ASSERT(condition, message)
 #endif //NDBUG
 
 #endif //XY_ASSERT_HPP_

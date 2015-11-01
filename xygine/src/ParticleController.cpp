@@ -101,7 +101,8 @@ void ParticleController::fire(SystemId id, const sf::Vector2f& position)
     {
         //if no inactive systems add a new one from the definition
         auto entity = std::make_unique<Entity>(getMessageBus());
-        entity->addComponent<ParticleSystem>(definition.createSystem(getMessageBus()));
+        auto ps = definition.createSystem(getMessageBus());
+        entity->addComponent<ParticleSystem>(ps);
         entity->setPosition(position);
         entity->getComponent<ParticleSystem>()->start(definition.releaseCount, definition.delay, definition.duration);
         ent->addChild(entity);
