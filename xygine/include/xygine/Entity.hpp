@@ -40,6 +40,7 @@ source distribution.
 
 #include <memory>
 #include <vector>
+#include <type_traits>
 
 namespace xy
 {
@@ -49,6 +50,9 @@ namespace xy
     {
     public:
         using Ptr = std::unique_ptr<Entity>;
+
+        template<typename CONDITION>
+        using enable_if = typename std::enable_if<CONDITION::value>::type;
 
         explicit Entity(MessageBus&);
         ~Entity() = default;
@@ -67,9 +71,10 @@ namespace xy
 
         void update(float dt);
 
-        template <typename T>
-        void addComponent(std::unique_ptr<T>& component)
+        template <typename T, enable_if<std::is_base_of<Component, T>>...>
+        T* addComponent(std::unique_ptr<T>& component)
         {
+            T* ret = component.get();
             Component::Ptr c(static_cast<Component*>(component.release()));
             if (c->type() == Component::Type::Drawable)
             {
@@ -78,10 +83,12 @@ namespace xy
             }
             c->setParentUID(m_uid);
             c->onStart(*this);
+            
             m_pendingComponents.push_back(std::move(c));
+            return ret;
         }
 
-        template <typename T>
+        template <typename T, enable_if<std::is_base_of<Component, T>>...>
         T* getComponent(const std::string& name)
         {
             if (name.empty()) return nullptr;
