@@ -107,9 +107,11 @@ void Scene::handleMessage(const Message& msg)
     }
 }
 
-void Scene::addEntity(Entity::Ptr& entity, Layer layer)
+Entity* Scene::addEntity(Entity::Ptr& entity, Layer layer)
 {
+    Entity* ret = entity.get();
     m_pendingEntities.push_back(std::make_pair(layer, std::move(entity)));
+    return ret;
 }
 
 Entity* Scene::findEntity(sf::Uint64 id)

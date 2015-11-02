@@ -72,7 +72,7 @@ namespace xy
 
         void update(float);
         void handleMessage(const Message&);
-        void addEntity(Entity::Ptr&, Layer);
+        Entity* addEntity(Entity::Ptr&, Layer);
         Entity* findEntity(sf::Uint64);
         Entity& getLayer(Layer);
 
