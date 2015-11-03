@@ -31,10 +31,10 @@ using namespace xy;
 
 PostBloom::PostBloom()
 {
-    m_shaderResource.preload(Shader::Type::PostAdditiveBlend, Shader::FullPass::vertex, Shader::PostAdditiveBlend::fragment);
-    m_shaderResource.preload(Shader::Type::PostBrightnessExtract, Shader::FullPass::vertex, Shader::PostBrightness::fragment);
-    m_shaderResource.preload(Shader::Type::PostDownSample, Shader::FullPass::vertex, Shader::PostDownSample::fragment);
-    m_shaderResource.preload(Shader::Type::PostGaussianBlur, Shader::FullPass::vertex, Shader::PostGaussianBlur::fragment);
+    m_shaderResource.preload(Shader::Type::AdditiveBlend, Shader::FullPass::vertex, Shader::PostAdditiveBlend::fragment);
+    m_shaderResource.preload(Shader::Type::BrightnessExtract, Shader::FullPass::vertex, Shader::PostBrightness::fragment);
+    m_shaderResource.preload(Shader::Type::DownSample, Shader::FullPass::vertex, Shader::PostDownSample::fragment);
+    m_shaderResource.preload(Shader::Type::GaussianBlur, Shader::FullPass::vertex, Shader::PostGaussianBlur::fragment);
 }
 
 //public
@@ -80,7 +80,7 @@ void PostBloom::initTextures(const sf::Vector2u& size)
 
 void PostBloom::filterBright(const sf::RenderTexture& src, sf::RenderTexture& dst)
 {
-    auto& shader = m_shaderResource.get(Shader::Type::PostBrightnessExtract);
+    auto& shader = m_shaderResource.get(Shader::Type::BrightnessExtract);
 
     shader.setParameter("u_sourceTexture", src.getTexture());
     applyShader(shader, dst);
@@ -99,7 +99,7 @@ void PostBloom::blurMultipass(RenderTextureArray& textures)
 
 void PostBloom::blur(const sf::RenderTexture& src, sf::RenderTexture& dst, const sf::Vector2f& offset)
 {
-    auto& shader = m_shaderResource.get(Shader::Type::PostGaussianBlur);
+    auto& shader = m_shaderResource.get(Shader::Type::GaussianBlur);
 
     shader.setParameter("u_sourceTexture", src.getTexture());
     shader.setParameter("u_offset", offset);
@@ -110,7 +110,7 @@ void PostBloom::blur(const sf::RenderTexture& src, sf::RenderTexture& dst, const
 
 void PostBloom::downSample(const sf::RenderTexture& src, sf::RenderTexture& dst)
 {
-    auto& shader = m_shaderResource.get(Shader::Type::PostDownSample);
+    auto& shader = m_shaderResource.get(Shader::Type::DownSample);
 
     shader.setParameter("u_sourceTexture", src.getTexture());
     shader.setParameter("u_sourceSize", sf::Vector2f(src.getSize()));
@@ -121,7 +121,7 @@ void PostBloom::downSample(const sf::RenderTexture& src, sf::RenderTexture& dst)
 
 void PostBloom::add(const sf::RenderTexture& src, const sf::RenderTexture& bloom, sf::RenderTarget& dst)
 {
-    auto& shader = m_shaderResource.get(Shader::Type::PostAdditiveBlend);
+    auto& shader = m_shaderResource.get(Shader::Type::AdditiveBlend);
 
     shader.setParameter("u_sourceTexture", src.getTexture());
     shader.setParameter("u_bloomTexture", bloom.getTexture());

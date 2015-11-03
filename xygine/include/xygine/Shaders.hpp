@@ -36,14 +36,15 @@ namespace xy
 {
     namespace Shader
     {
-        enum class Type
+        enum Type
         {
-            PostBrightnessExtract,
-            PostDownSample,
-            PostGaussianBlur,
-            PostAdditiveBlend,
-            PostChromeAb,
-            LightRay
+            BrightnessExtract,
+            DownSample,
+            GaussianBlur,
+            AdditiveBlend,
+            ChromeAb,
+            Lightray,
+            Count
         };
 
         namespace FullPass

@@ -32,6 +32,8 @@ source distribution.
 
 #include <xygine/Shaders.hpp>
 
+#include <SFML/Config.hpp>
+
 #include <map>
 #include <memory>
 
@@ -46,16 +48,18 @@ namespace xy
     {
     public:
 
+        using Id = sf::Int32;
+
         ShaderResource();
         ~ShaderResource() = default;
         ShaderResource(const ShaderResource&) = delete;
         const ShaderResource& operator = (const ShaderResource&) = delete;
 
-        sf::Shader& get(Shader::Type);
-        void preload(Shader::Type, const std::string&, const std::string&);
+        sf::Shader& get(Id);
+        void preload(Id, const std::string&, const std::string&);
 
     private:
-        std::map<Shader::Type, std::unique_ptr<sf::Shader>> m_shaders;
+        std::map<Id, std::unique_ptr<sf::Shader>> m_shaders;
     };
 }
 #endif //SHADER_RESOURCE_HPP_

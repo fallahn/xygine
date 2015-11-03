@@ -36,15 +36,15 @@ using namespace xy;
 ShaderResource::ShaderResource(){}
 
 //public
-sf::Shader& ShaderResource::get(Shader::Type type)
+sf::Shader& ShaderResource::get(ShaderResource::Id type)
 {
     auto result = m_shaders.find(type);
-    XY_ASSERT(result != m_shaders.end(), "shader not loaded"); //did you forget to preload this shader?
+    XY_ASSERT(result != m_shaders.end(), "shader not loaded - did you forget to preload this shader?");
 
     return *result->second;
 }
 
-void ShaderResource::preload(Shader::Type type, const std::string& vertShader, const std::string& fragShader)
+void ShaderResource::preload(ShaderResource::Id type, const std::string& vertShader, const std::string& fragShader)
 {
     auto shader = std::make_unique<sf::Shader>();
 #ifndef _DEBUG_
