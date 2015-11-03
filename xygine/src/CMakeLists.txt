@@ -27,7 +27,6 @@ set(xygine_SRC
   ${xygine_DIR}/SoundPlayer.cpp
   ${xygine_DIR}/State.cpp
   ${xygine_DIR}/StateStack.cpp
-  ${xygine_DIR}/TextDrawable.cpp
   ${xygine_DIR}/UIButton.cpp
   ${xygine_DIR}/UICheckBox.cpp
   ${xygine_DIR}/UIComboBox.cpp

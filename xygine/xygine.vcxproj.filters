@@ -102,9 +102,6 @@
     <ClCompile Include="src\StateStack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TextDrawable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\UIButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -237,9 +234,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\StateStack.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\TextDrawable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\Util.hpp">

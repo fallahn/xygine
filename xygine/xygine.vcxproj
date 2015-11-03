@@ -104,7 +104,6 @@
     <ClCompile Include="src\SoundPlayer.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
-    <ClCompile Include="src\TextDrawable.cpp" />
     <ClCompile Include="src\UIButton.cpp" />
     <ClCompile Include="src\UICheckBox.cpp" />
     <ClCompile Include="src\UIComboBox.cpp" />
@@ -153,7 +152,6 @@
     <ClInclude Include="include\xygine\SoundPlayer.hpp" />
     <ClInclude Include="include\xygine\State.hpp" />
     <ClInclude Include="include\xygine\StateStack.hpp" />
-    <ClInclude Include="include\xygine\TextDrawable.hpp" />
     <ClInclude Include="include\xygine\ui\Button.hpp" />
     <ClInclude Include="include\xygine\ui\CheckBox.hpp" />
     <ClInclude Include="include\xygine\ui\ComboBox.hpp" />
