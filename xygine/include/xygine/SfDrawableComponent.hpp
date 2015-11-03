@@ -33,6 +33,7 @@ source distribution.
 
 #include <xygine/Component.hpp>
 #include <xygine/Entity.hpp>
+#include <xygine/ShaderProperty.hpp>
 
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Drawable.hpp>
@@ -41,16 +42,15 @@ source distribution.
 
 namespace xy
 {
-    template<typename CONDITION>
-    using enable_if = typename std::enable_if<CONDITION::value>::type;
-
-    
-    template <class T, enable_if<std::is_base_of<sf::Drawable, T>>...> //TODO should also check transformable
-    class SfDrawableComponent final : public Component, public sf::Transformable, public sf::Drawable
+    template <class T>
+    class SfDrawableComponent final : public Component, public sf::Transformable, public sf::Drawable, public ShaderProperty
     {
     public:
         explicit SfDrawableComponent(MessageBus& mb)
-            : Component(mb, this) {}
+            : Component(mb, this)
+        {
+            static_assert(std::is_base_of<sf::Drawable, T>::value && std::is_base_of<sf::Transformable, T>::value, "must be sfml drawable and transformable");
+        }
         ~SfDrawableComponent() = default;
 
         Component::Type type() const override { return Component::Type::Drawable; }
@@ -74,6 +74,7 @@ namespace xy
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override
         {
             states.transform *= getTransform();
+            states.shader = getShader();
             rt.draw(m_drawable, states);
         }
     };
