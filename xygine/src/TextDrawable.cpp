@@ -27,6 +27,8 @@ source distribution.
 
 #include <xygine/TextDrawable.hpp>
 
+#include <SFML/Graphics/RenderTarget.hpp>
+
 using namespace xy;
 
 TextDrawable::TextDrawable(MessageBus& mb)
@@ -42,10 +44,82 @@ void TextDrawable::handleMessage(const Message&){}
 
 sf::FloatRect TextDrawable::localBounds() const
 {
-    return getLocalBounds();
+    return m_text.getLocalBounds();
 }
 
 sf::FloatRect TextDrawable::globalBounds() const
 {
-    return getGlobalBounds();
+    return m_text.getGlobalBounds();
+}
+
+sf::FloatRect TextDrawable::getLocalBounds() const
+{
+    return m_text.getLocalBounds();
+}
+
+sf::FloatRect TextDrawable::getGlobalBounds() const
+{
+    return m_text.getGlobalBounds();
+}
+
+void TextDrawable::setString(const std::string& str)
+{
+    m_text.setString(str);
+}
+
+void TextDrawable::setFont(const sf::Font& font)
+{
+    m_text.setFont(font);
+}
+
+void TextDrawable::setCharacterSize(sf::Uint32 size)
+{
+    m_text.setCharacterSize(size);
+}
+
+void TextDrawable::setStyle(sf::Uint32 style)
+{
+    m_text.setStyle(style);
+}
+
+void TextDrawable::setColour(const sf::Color& colour)
+{
+    m_text.setColor(colour);
+}
+
+const sf::String& TextDrawable::getString() const
+{
+    return m_text.getString();
+}
+
+const sf::Font* TextDrawable::getFont() const
+{
+    return m_text.getFont();
+}
+
+sf::Uint32 TextDrawable::getCharacterSize() const
+{
+    return m_text.getCharacterSize();
+}
+
+sf::Uint32 TextDrawable::getStyle() const
+{
+    return m_text.getStyle();
+}
+
+const sf::Color& TextDrawable::getColour() const
+{
+    return m_text.getColor();
+}
+
+sf::Vector2f TextDrawable::findCharacterPos(std::size_t pos) const
+{
+    return m_text.findCharacterPos(pos);
+}
+
+//private
+void TextDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    states.transform *= getTransform();
+    rt.draw(m_text, states);
 }

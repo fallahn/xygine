@@ -36,7 +36,7 @@ source distribution.
 
 namespace xy
 {
-    class TextDrawable final : public Component, public sf::Text
+    class TextDrawable final : public Component, public sf::Transformable, public sf::Drawable
     {
     public:
         explicit TextDrawable(MessageBus&);
@@ -46,11 +46,29 @@ namespace xy
         void entityUpdate(Entity&, float) override;
         void handleMessage(const Message&) override;
 
+        //urrrgh this is a mess
         sf::FloatRect localBounds() const override;
         sf::FloatRect globalBounds() const override;
 
+        sf::FloatRect getLocalBounds() const;
+        sf::FloatRect getGlobalBounds() const;
+
+        void setString(const std::string&);
+        void setFont(const sf::Font&);
+        void setCharacterSize(sf::Uint32);
+        void setStyle(sf::Uint32);
+        void setColour(const sf::Color&);
+        const sf::String& getString() const;
+        const sf::Font* getFont() const;
+        sf::Uint32 getCharacterSize() const;
+        sf::Uint32 getStyle() const;
+        const sf::Color& getColour() const;
+        sf::Vector2f findCharacterPos(std::size_t) const;
+
     private:
 
+        sf::Text m_text;
+        void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }
 
