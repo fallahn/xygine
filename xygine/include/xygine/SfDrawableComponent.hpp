@@ -25,12 +25,14 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//drawable component compatible with sfml shape objects
+//drawable component compatible with sfml drawable objects for quick wrapping
+//of objects such as shapes, sprites or text
 
-#ifndef SHAPE_DRAWBLE_HPP_
-#define SHAPE_DRAWABLE_HPP_
+#ifndef SF_DRAWABLE_COMPONENT_HPP_
+#define SF_DRAWABLE_COMPONENT_HPP_
 
 #include <xygine/Component.hpp>
+#include <xygine/Entity.hpp>
 
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Drawable.hpp>
@@ -42,29 +44,38 @@ namespace xy
     template<typename CONDITION>
     using enable_if = typename std::enable_if<CONDITION::value>::type;
 
-    template <class T, enable_if<std::is_base_of<sf::Shape, T>>...>
-    class ShapeDrawable final : public Component, public sf::Transformable, public sf::Drawable
+    
+    template <class T, enable_if<std::is_base_of<sf::Drawable, T>>...> //TODO should also check transformable
+    class SfDrawableComponent final : public Component, public sf::Transformable, public sf::Drawable
     {
     public:
-        explicit ShapeDrawable(MessageBus& mb)
+        explicit SfDrawableComponent(MessageBus& mb)
             : Component(mb, this) {}
-        ~ShapeDrawable() = default;
+        ~SfDrawableComponent() = default;
 
         Component::Type type() const override { return Component::Type::Drawable; }
-        void entityUpdate(Entity&, float) override {}
+        void entityUpdate(Entity& entity, float) override
+        {
+            m_globalBounds = entity.getWorldTransform().transformRect(m_drawable.getGlobalBounds());
+        }
         void handleMessage(const Message&) override {}
 
-        T& getShape() { return m_shape; }
+        T& getDrawable() { return m_drawable; }
 
+        sf::FloatRect globalBounds() const override
+        {
+            return m_globalBounds;
+        }
 
     private:
-        T m_shape;
+        T m_drawable;
+        sf::FloatRect m_globalBounds;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override
         {
             states.transform *= getTransform();
-            rt.draw(m_shape, states);
+            rt.draw(m_drawable, states);
         }
     };
 }
-#endif //SHAPE_DRAWABLE_HPP_
+#endif //SF_DRAWABLE_COMPONENT_HPP_
