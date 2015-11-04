@@ -61,6 +61,7 @@ namespace xy
         void push(const Command&);
         Command pop();
         bool empty() const;
+        std::size_t size() const { return m_queue.size(); }
 
     private:
         std::queue<Command> m_queue;

@@ -74,7 +74,7 @@ namespace xy
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override
         {
             states.transform *= getTransform();
-            states.shader = getShader();
+            states.shader = getActiveShader();
             rt.draw(m_drawable, states);
         }
     };

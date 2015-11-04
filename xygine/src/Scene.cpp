@@ -29,6 +29,7 @@ source distribution.
 #include <xygine/MessageBus.hpp>
 #include <xygine/TextDrawable.hpp>
 #include <xygine/QuadTreeComponent.hpp>
+#include <xygine/Reports.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -67,6 +68,7 @@ void Scene::update(float dt)
     m_pendingEntities.clear();
 
     //execute commands
+    REPORT("Commands this frame", std::to_string(m_commandQueue.size()));
     while (!m_commandQueue.empty())
     {
         auto cmd = m_commandQueue.pop();

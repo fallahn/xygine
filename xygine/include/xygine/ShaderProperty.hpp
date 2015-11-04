@@ -40,14 +40,17 @@ namespace xy
     class ShaderProperty
     {
     public:
-        ShaderProperty() : m_shader(nullptr){};
+        ShaderProperty() : m_shader(nullptr), m_activeShader(nullptr){};
         virtual ~ShaderProperty() = default;
 
-        void setShader(sf::Shader* shader) { m_shader = shader; }
-        const sf::Shader* getShader() const { return m_shader; }
+        void setShader(sf::Shader* shader) { m_shader = m_activeShader = shader; }
+        sf::Shader* getShader() const { return m_shader; }
+        const sf::Shader* getActiveShader() const { return m_activeShader; }
+        void setShaderActive(bool b = true) { m_activeShader = (b) ? m_shader : nullptr; }
 
     private:
         sf::Shader* m_shader;
+        sf::Shader* m_activeShader;
     };
 }
 
