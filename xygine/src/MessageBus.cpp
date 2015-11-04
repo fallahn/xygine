@@ -41,7 +41,8 @@ MessageBus::MessageBus()
     m_inPointer         (m_pendingBuffer.data()),
     m_outPointer        (m_currentBuffer.data()),
     m_currentCount      (0),
-    m_pendingCount      (0)
+    m_pendingCount      (0),
+    m_enabled           (true)
 {}
 
 const Message& MessageBus::poll()

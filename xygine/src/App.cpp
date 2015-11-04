@@ -119,6 +119,7 @@ void App::run()
         float fpsTime = 1.f / fpsClock.restart().asSeconds();
         REPORT("FPS", std::to_string(fpsTime));
     }
+    m_messageBus.disable(); //prevents spamming with loads of entity quit messages
 
     saveSettings();
     m_scores.save();

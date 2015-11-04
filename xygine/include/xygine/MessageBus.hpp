@@ -182,6 +182,8 @@ namespace xy
         TEMPLATE_GUARD
         T* post(Message::Id id)
         {
+            if (!m_enabled) return static_cast<T*>((void*)m_pendingBuffer.data());
+
             auto dataSize = sizeof(T);
             static auto msgSize = sizeof(Message);
             XY_ASSERT(dataSize < 128, "message size exseeds 128 bytes"); //limit custom data to 128 bytes
@@ -202,6 +204,8 @@ namespace xy
 
         std::size_t pendingMessageCount() const; //used for stats
 
+        void disable() { m_enabled = false; }
+
     private:
 
         std::vector<char> m_currentBuffer;
@@ -210,6 +214,8 @@ namespace xy
         char* m_outPointer;
         std::size_t m_currentCount;
         std::size_t m_pendingCount;
+
+        bool m_enabled;
     };
 }
 #endif
