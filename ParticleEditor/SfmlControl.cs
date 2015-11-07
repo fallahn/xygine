@@ -2,7 +2,7 @@
 Matt Marchant 2015
 http://trederia.blogspot.com
 
-xygine Sprite Editor - Zlib license.
+xygine Particle Editor - Zlib license.
 
 This software is provided 'as-is', without any express or
 implied warranty. In no event will the authors be held
@@ -36,7 +36,7 @@ using System.Windows.Forms;
 using SFML.Graphics;
 using SFML.Window;
 
-namespace SpriteEditor
+namespace ParticleEditor
 {
     public delegate void DrawDelegate(RenderWindow rw);
     public delegate void UpdateDelegate(float dt);

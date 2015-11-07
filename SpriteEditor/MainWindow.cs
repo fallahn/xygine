@@ -57,6 +57,9 @@ namespace SpriteEditor
             m_sfmlControl.DrawDelegates.Add(this.DrawSprite);
         }
 
+        /// <summary>
+        /// Updates the sfml control periodically
+        /// </summary>
         public void DispatchDrawingEvents()
         {
             m_sfmlControl.HandleEvents();
