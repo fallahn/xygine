@@ -26,12 +26,14 @@ source distribution.
 *********************************************************************/
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SFML.Window;
+using SFML.Graphics;
 
 namespace ParticleEditor
 {
@@ -118,6 +120,35 @@ namespace ParticleEditor
             {
                 m_particleSystem.randomInitialVelocities = (list.Count > 0) ? list : null;
             }
+        }
+
+        private Texture m_texture;
+        private void buttonTextureBrowse_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog od = new OpenFileDialog();
+            od.Filter = "JPEG files|*.jpg|Portable Network Graphic|*.png|Bitmap files|*.bmp";
+            if(od.ShowDialog() == DialogResult.OK)
+            {
+                m_texture = new Texture(od.FileName);
+                m_particleSystem.texture = m_texture;
+                textBoxTexturePath.Text = Path.GetFileName(od.FileName);
+            }
+        }
+
+        private void buttonTextureFit_Click(object sender, EventArgs e)
+        {
+            if(m_particleSystem.texture != null)
+            {
+                var texSize = m_particleSystem.texture.Size;
+                numericUpDownSizeX.Value = Math.Min(texSize.X, numericUpDownSizeX.Maximum);
+                numericUpDownSizeY.Value = Math.Min(texSize.Y, numericUpDownSizeY.Maximum);
+            }
+        }
+
+        private void sizeChanged(object sender, EventArgs e)
+        {
+            Vector2f size = new Vector2f((float)numericUpDownSizeX.Value, (float)numericUpDownSizeY.Value);
+            m_particleSystem.particleSize = size;
         }
     }
 }

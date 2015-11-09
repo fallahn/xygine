@@ -26,13 +26,6 @@ source distribution.
 *********************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using SFML.Graphics;
@@ -54,7 +47,6 @@ namespace ParticleEditor
         public MainWindow()
         {
             InitializeComponent();
-            //this.
 
             //add sfml control to layout
             splitContainer2.Panel1.Controls.Add(m_sfmlControl);
@@ -77,6 +69,9 @@ namespace ParticleEditor
             listBoxSpawnVelocities.ContextMenu.MenuItems[0].Click += itemDelete_click;
             listBoxSpawnVelocities.ContextMenu.MenuItems.Add("Clear");
             listBoxSpawnVelocities.ContextMenu.MenuItems[1].Click += itemsClear_click;
+
+            numericUpDownSizeX.ValueChanged += sizeChanged;
+            numericUpDownSizeY.ValueChanged += sizeChanged;
         }
 
 
@@ -92,32 +87,24 @@ namespace ParticleEditor
             m_sfmlControl.Draw();
         }
 
+        /// <summary>
+        /// Updates the movement of the particle system
+        /// </summary>
         private Stopwatch m_movementTimer = new Stopwatch();
-        private float m_angle = 0f;
-        private float m_radius = 50f;
-        private float tau = (float)Math.PI * 2f;
-        private float m_speed = 200f;
-        private float m_xVal = 200f;
+        private float xTarget = 200f;
+        private float yTarget = 80f;
         private void updateMotion()
         {
             float frameTime = m_movementTimer.ElapsedMilliseconds / 1000f;
-            m_angle += frameTime;
-
-            if (m_angle > tau)
-            {
-                m_angle -= tau;
-            }
             m_movementTimer.Restart();
 
-            if (m_particleSystem.position.X > m_speed
-                || m_particleSystem.position.X < -m_speed) m_xVal = -m_xVal;
+            Vector2f velocity = new Vector2f();
+            velocity.X = (xTarget - m_particleSystem.position.X);
+            velocity.Y = (yTarget - m_particleSystem.position.Y);
+            m_particleSystem.position += (velocity * frameTime);
 
-            Vector2f pos = new Vector2f
-            (
-                m_particleSystem.position.X + m_xVal * frameTime,
-                (float)Math.Cos(m_angle) * m_radius
-            );
-            m_particleSystem.position = pos;
+            if (Math.Abs(velocity.X) < 50f) xTarget = -xTarget;
+            if (Math.Abs(velocity.Y) < 50f) yTarget = -yTarget;
 
             //reset button label when finished
             if(!m_particleSystem.started)
@@ -125,5 +112,7 @@ namespace ParticleEditor
                 buttonStart.Text = "Start";
             }
         }
+
+
     }
 }
