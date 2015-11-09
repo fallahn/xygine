@@ -55,6 +55,8 @@ namespace SpriteEditor
             splitContainer2.Panel1.Controls.Add(m_sfmlControl);
             m_sfmlControl.Dock = DockStyle.Fill;
             m_sfmlControl.DrawDelegates.Add(this.DrawSprite);
+
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         /// <summary>
@@ -270,7 +272,7 @@ namespace SpriteEditor
             }
         }
 
-        //animtion data
+        //animation data
         private void numericUpDownAnimStart_ValueChanged(object sender, EventArgs e)
         {
             var maxValue = numericUpDownFrameCount.Value - 1;

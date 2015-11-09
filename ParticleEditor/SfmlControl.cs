@@ -73,6 +73,7 @@ namespace ParticleEditor
             //add resize event handler
             this.Resize += SfmlControl_Resize;
             SfmlControl_Resize(this, EventArgs.Empty);
+
         }
 
         void SfmlControl_Resize(object sender, EventArgs e)

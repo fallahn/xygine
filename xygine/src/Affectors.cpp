@@ -72,8 +72,7 @@ ColourAffector::ColourAffector(const sf::Color& start, const sf::Color& end, flo
 void ColourAffector::operator() (Particle& p, float dt)
 {
     float ratio = (m_duration - p.lifetime) / m_duration;
-    if (ratio > 1.f) ratio = 1.f;
-    if (ratio < 0.f) ratio = 0.f;
+    ratio = std::max(0.f, std::min(ratio, 1.f));
 
     p.colour.r = lerp(m_start.r, m_end.r, ratio);
     p.colour.g = lerp(m_start.g, m_end.g, ratio);

@@ -175,7 +175,7 @@ void ParticleSystem::addAffector(Affector& a)
 void ParticleSystem::start(sf::Uint8 releaseCount, float startDelay, float duration)
 {
     XY_ASSERT(releaseCount > 0, "release count not greater than zero");
-    XY_ASSERT(duration >= 0.f, "duration is less than zero");
+    //XY_ASSERT(duration >= 0.f, "duration is less than zero");
     m_releaseCount = releaseCount;
     m_duration = duration;
     m_durationClock.restart();
