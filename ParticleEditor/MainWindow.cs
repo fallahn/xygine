@@ -49,7 +49,7 @@ namespace ParticleEditor
             InitializeComponent();
 
             //add sfml control to layout
-            splitContainer2.Panel1.Controls.Add(m_sfmlControl);
+            splitContainer3.Panel2.Controls.Add(m_sfmlControl);
             m_sfmlControl.Dock = DockStyle.Fill;
 
             m_sfmlControl.DrawDelegates.Add(drawParticleSystem);
@@ -57,6 +57,9 @@ namespace ParticleEditor
             numericUpDownDuration.Value = -1;
 
             this.StartPosition = FormStartPosition.CenterScreen;
+
+            comboBoxBlendMode.DataSource = Enum.GetValues(typeof(BlendMode));
+            comboBoxBlendMode.SelectedItem = BlendMode.Add;
 
             listBoxSpawnPoints.ContextMenu = new ContextMenu();
             listBoxSpawnPoints.ContextMenu.MenuItems.Add("Delete");
@@ -72,8 +75,13 @@ namespace ParticleEditor
 
             numericUpDownSizeX.ValueChanged += sizeChanged;
             numericUpDownSizeY.ValueChanged += sizeChanged;
-        }
 
+            numericUpDownInitVelX.ValueChanged += velocityChanged;
+            numericUpDownInitVelY.ValueChanged += velocityChanged;
+
+            panelColour.Click += colour_Click;
+            panelColour.BackColorChanged += PanelColour_BackColorChanged;
+        }
 
 
         /// <summary>
@@ -112,7 +120,5 @@ namespace ParticleEditor
                 buttonStart.Text = "Start";
             }
         }
-
-
     }
 }

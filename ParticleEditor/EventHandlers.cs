@@ -53,7 +53,6 @@ namespace ParticleEditor
             }
         }
 
-
         private void buttonSpawnPosAdd_Click(object sender, EventArgs e)
         {
             listBoxSpawnPoints.Items.Add(numericUpDownSpawnPosX.Value.ToString()+ ", " + numericUpDownSpawnPosY.Value.ToString());
@@ -132,6 +131,7 @@ namespace ParticleEditor
                 m_texture = new Texture(od.FileName);
                 m_particleSystem.texture = m_texture;
                 textBoxTexturePath.Text = Path.GetFileName(od.FileName);
+                panelTexPreview.BackgroundImage = new System.Drawing.Bitmap(od.FileName);
             }
         }
 
@@ -149,6 +149,46 @@ namespace ParticleEditor
         {
             Vector2f size = new Vector2f((float)numericUpDownSizeX.Value, (float)numericUpDownSizeY.Value);
             m_particleSystem.particleSize = size;
+        }
+
+        private void buttonClearTexture_Click(object sender, EventArgs e)
+        {
+            m_texture = null;
+            m_particleSystem.texture = null;
+            textBoxTexturePath.Text = string.Empty;
+            panelTexPreview.BackgroundImage = null;
+        }
+
+        private void comboBoxBlendMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            m_particleSystem.blendMode = (BlendMode)comboBoxBlendMode.SelectedItem;
+        }
+
+        private void velocityChanged(object sender, EventArgs e)
+        {
+            Vector2f initVel = new Vector2f((float)numericUpDownInitVelX.Value, (float)numericUpDownInitVelY.Value);
+            m_particleSystem.initialVelocity = initVel;
+        }
+
+        private void colour_Click(object sender, EventArgs e)
+        {
+            ColorDialog cd = new ColorDialog();
+            cd.Color = panelColour.BackColor;
+            cd.AnyColor = true;
+            cd.FullOpen = true;
+            if(cd.ShowDialog() == DialogResult.OK)
+            {
+                panelColour.BackColor = cd.Color;
+            }
+        }
+
+        private void PanelColour_BackColorChanged(object sender, EventArgs e)
+        {
+            SFML.Graphics.Color colour = new Color();
+            colour.R = panelColour.BackColor.R;
+            colour.G = panelColour.BackColor.G;
+            colour.B = panelColour.BackColor.B;
+            m_particleSystem.colour = colour;
         }
     }
 }

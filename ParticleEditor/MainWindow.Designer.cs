@@ -30,11 +30,24 @@
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.enableMovementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backgroundColourToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buttonClearTexture = new System.Windows.Forms.Button();
+            this.panelTexPreview = new System.Windows.Forms.Panel();
+            this.label18 = new System.Windows.Forms.Label();
+            this.comboBoxBlendMode = new System.Windows.Forms.ComboBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.numericUpDownInitVelY = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownInitVelX = new System.Windows.Forms.NumericUpDown();
             this.label14 = new System.Windows.Forms.Label();
             this.buttonTextureFit = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
@@ -68,6 +81,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.panelColour = new System.Windows.Forms.Panel();
+            this.label19 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -76,7 +91,12 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInitVelY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInitVelX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSizeY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSizeX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDuration)).BeginInit();
@@ -118,7 +138,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.button1);
             this.splitContainer1.Panel2.Controls.Add(this.listBox1);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
-            this.splitContainer1.Size = new System.Drawing.Size(794, 549);
+            this.splitContainer1.Size = new System.Drawing.Size(794, 545);
             this.splitContainer1.SplitterDistance = 543;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -132,10 +152,21 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.menuStrip1);
+            this.splitContainer2.Panel1.Controls.Add(this.splitContainer3);
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.label19);
+            this.splitContainer2.Panel2.Controls.Add(this.panelColour);
+            this.splitContainer2.Panel2.Controls.Add(this.buttonClearTexture);
+            this.splitContainer2.Panel2.Controls.Add(this.panelTexPreview);
+            this.splitContainer2.Panel2.Controls.Add(this.label18);
+            this.splitContainer2.Panel2.Controls.Add(this.comboBoxBlendMode);
+            this.splitContainer2.Panel2.Controls.Add(this.label17);
+            this.splitContainer2.Panel2.Controls.Add(this.label15);
+            this.splitContainer2.Panel2.Controls.Add(this.label16);
+            this.splitContainer2.Panel2.Controls.Add(this.numericUpDownInitVelY);
+            this.splitContainer2.Panel2.Controls.Add(this.numericUpDownInitVelX);
             this.splitContainer2.Panel2.Controls.Add(this.label14);
             this.splitContainer2.Panel2.Controls.Add(this.buttonTextureFit);
             this.splitContainer2.Panel2.Controls.Add(this.label12);
@@ -152,18 +183,34 @@
             this.splitContainer2.Panel2.Controls.Add(this.numericUpDownDuration);
             this.splitContainer2.Panel2.Controls.Add(this.numericUpDownStartDelay);
             this.splitContainer2.Panel2.Controls.Add(this.numericUpDownReleaseCount);
-            this.splitContainer2.Size = new System.Drawing.Size(543, 549);
-            this.splitContainer2.SplitterDistance = 302;
+            this.splitContainer2.Size = new System.Drawing.Size(543, 545);
+            this.splitContainer2.SplitterDistance = 299;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.IsSplitterFixed = true;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.menuStrip1);
+            this.splitContainer3.Size = new System.Drawing.Size(543, 299);
+            this.splitContainer3.SplitterDistance = 25;
+            this.splitContainer3.TabIndex = 0;
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.optionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(543, 24);
-            this.menuStrip1.TabIndex = 0;
+            this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
@@ -173,31 +220,149 @@
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(36, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.openToolStripMenuItem.Text = "Open";
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.saveToolStripMenuItem.Text = "Save";
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.S)));
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
+            // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.enableMovementToolStripMenuItem,
+            this.backgroundColourToolStripMenuItem});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // enableMovementToolStripMenuItem
+            // 
+            this.enableMovementToolStripMenuItem.Checked = true;
+            this.enableMovementToolStripMenuItem.CheckOnClick = true;
+            this.enableMovementToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.enableMovementToolStripMenuItem.Name = "enableMovementToolStripMenuItem";
+            this.enableMovementToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
+            this.enableMovementToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.enableMovementToolStripMenuItem.Text = "Enable Movement";
+            // 
+            // backgroundColourToolStripMenuItem
+            // 
+            this.backgroundColourToolStripMenuItem.Name = "backgroundColourToolStripMenuItem";
+            this.backgroundColourToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
+            this.backgroundColourToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.backgroundColourToolStripMenuItem.Text = "Background Colour";
+            // 
+            // buttonClearTexture
+            // 
+            this.buttonClearTexture.Location = new System.Drawing.Point(195, 210);
+            this.buttonClearTexture.Name = "buttonClearTexture";
+            this.buttonClearTexture.Size = new System.Drawing.Size(67, 23);
+            this.buttonClearTexture.TabIndex = 27;
+            this.buttonClearTexture.Text = "Clear";
+            this.buttonClearTexture.UseVisualStyleBackColor = true;
+            this.buttonClearTexture.Click += new System.EventHandler(this.buttonClearTexture_Click);
+            // 
+            // panelTexPreview
+            // 
+            this.panelTexPreview.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.panelTexPreview.Location = new System.Drawing.Point(12, 67);
+            this.panelTexPreview.Name = "panelTexPreview";
+            this.panelTexPreview.Size = new System.Drawing.Size(250, 129);
+            this.panelTexPreview.TabIndex = 26;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(281, 51);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(64, 13);
+            this.label18.TabIndex = 25;
+            this.label18.Text = "Blend Mode";
+            // 
+            // comboBoxBlendMode
+            // 
+            this.comboBoxBlendMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxBlendMode.FormattingEnabled = true;
+            this.comboBoxBlendMode.Location = new System.Drawing.Point(284, 67);
+            this.comboBoxBlendMode.Name = "comboBoxBlendMode";
+            this.comboBoxBlendMode.Size = new System.Drawing.Size(140, 21);
+            this.comboBoxBlendMode.TabIndex = 24;
+            this.comboBoxBlendMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxBlendMode_SelectedIndexChanged);
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(280, 104);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(71, 13);
+            this.label17.TabIndex = 23;
+            this.label17.Text = "Initial Velocity";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(357, 122);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(14, 13);
+            this.label15.TabIndex = 22;
+            this.label15.Text = "Y";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(280, 122);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(14, 13);
+            this.label16.TabIndex = 21;
+            this.label16.Text = "X";
+            // 
+            // numericUpDownInitVelY
+            // 
+            this.numericUpDownInitVelY.Location = new System.Drawing.Point(377, 120);
+            this.numericUpDownInitVelY.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownInitVelY.Name = "numericUpDownInitVelY";
+            this.numericUpDownInitVelY.Size = new System.Drawing.Size(46, 20);
+            this.numericUpDownInitVelY.TabIndex = 20;
+            // 
+            // numericUpDownInitVelX
+            // 
+            this.numericUpDownInitVelX.Location = new System.Drawing.Point(300, 120);
+            this.numericUpDownInitVelX.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownInitVelX.Name = "numericUpDownInitVelX";
+            this.numericUpDownInitVelX.Size = new System.Drawing.Size(46, 20);
+            this.numericUpDownInitVelX.TabIndex = 19;
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(280, 188);
+            this.label14.Location = new System.Drawing.Point(281, 160);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(65, 13);
             this.label14.TabIndex = 18;
@@ -205,9 +370,9 @@
             // 
             // buttonTextureFit
             // 
-            this.buttonTextureFit.Location = new System.Drawing.Point(426, 210);
+            this.buttonTextureFit.Location = new System.Drawing.Point(283, 210);
             this.buttonTextureFit.Name = "buttonTextureFit";
-            this.buttonTextureFit.Size = new System.Drawing.Size(105, 23);
+            this.buttonTextureFit.Size = new System.Drawing.Size(140, 23);
             this.buttonTextureFit.TabIndex = 17;
             this.buttonTextureFit.Text = "Fit to Texture";
             this.buttonTextureFit.UseVisualStyleBackColor = true;
@@ -216,7 +381,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(354, 215);
+            this.label12.Location = new System.Drawing.Point(357, 178);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(14, 13);
             this.label12.TabIndex = 16;
@@ -225,7 +390,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(277, 215);
+            this.label13.Location = new System.Drawing.Point(280, 178);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(14, 13);
             this.label13.TabIndex = 15;
@@ -233,7 +398,7 @@
             // 
             // numericUpDownSizeY
             // 
-            this.numericUpDownSizeY.Location = new System.Drawing.Point(374, 213);
+            this.numericUpDownSizeY.Location = new System.Drawing.Point(377, 176);
             this.numericUpDownSizeY.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -255,7 +420,7 @@
             // 
             // numericUpDownSizeX
             // 
-            this.numericUpDownSizeX.Location = new System.Drawing.Point(297, 213);
+            this.numericUpDownSizeX.Location = new System.Drawing.Point(300, 176);
             this.numericUpDownSizeX.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -278,7 +443,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(9, 188);
+            this.label11.Location = new System.Drawing.Point(9, 50);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(46, 13);
             this.label11.TabIndex = 9;
@@ -286,7 +451,7 @@
             // 
             // buttonTextureBrowse
             // 
-            this.buttonTextureBrowse.Location = new System.Drawing.Point(236, 210);
+            this.buttonTextureBrowse.Location = new System.Drawing.Point(163, 210);
             this.buttonTextureBrowse.Name = "buttonTextureBrowse";
             this.buttonTextureBrowse.Size = new System.Drawing.Size(26, 23);
             this.buttonTextureBrowse.TabIndex = 8;
@@ -299,14 +464,14 @@
             this.textBoxTexturePath.Location = new System.Drawing.Point(12, 212);
             this.textBoxTexturePath.Name = "textBoxTexturePath";
             this.textBoxTexturePath.ReadOnly = true;
-            this.textBoxTexturePath.Size = new System.Drawing.Size(218, 20);
+            this.textBoxTexturePath.Size = new System.Drawing.Size(145, 20);
             this.textBoxTexturePath.TabIndex = 7;
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(456, 11);
+            this.buttonStart.Location = new System.Drawing.Point(444, 11);
             this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(75, 23);
+            this.buttonStart.Size = new System.Drawing.Size(87, 23);
             this.buttonStart.TabIndex = 6;
             this.buttonStart.Text = "Start";
             this.buttonStart.UseVisualStyleBackColor = true;
@@ -351,6 +516,11 @@
             this.numericUpDownDuration.Name = "numericUpDownDuration";
             this.numericUpDownDuration.Size = new System.Drawing.Size(57, 20);
             this.numericUpDownDuration.TabIndex = 2;
+            this.numericUpDownDuration.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
             // 
             // numericUpDownStartDelay
             // 
@@ -546,13 +716,29 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Affectors";
             // 
+            // panelColour
+            // 
+            this.panelColour.BackColor = System.Drawing.Color.White;
+            this.panelColour.Location = new System.Drawing.Point(444, 67);
+            this.panelColour.Name = "panelColour";
+            this.panelColour.Size = new System.Drawing.Size(87, 73);
+            this.panelColour.TabIndex = 28;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(441, 50);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(37, 13);
+            this.label19.TabIndex = 29;
+            this.label19.Text = "Colour";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(794, 549);
+            this.ClientSize = new System.Drawing.Size(794, 545);
             this.Controls.Add(this.splitContainer1);
-            this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(810, 584);
             this.MinimumSize = new System.Drawing.Size(810, 584);
@@ -564,13 +750,18 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInitVelY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInitVelX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSizeY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSizeX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDuration)).EndInit();
@@ -597,17 +788,12 @@
         private System.Windows.Forms.Button buttonSpawnVelAdd;
         private System.Windows.Forms.ListBox listBoxSpawnVelocities;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown numericUpDownDuration;
         private System.Windows.Forms.NumericUpDown numericUpDownStartDelay;
         private System.Windows.Forms.NumericUpDown numericUpDownReleaseCount;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.Button buttonStart;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
@@ -626,6 +812,26 @@
         private System.Windows.Forms.NumericUpDown numericUpDownSizeX;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Panel panelTexPreview;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.ComboBox comboBoxBlendMode;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.NumericUpDown numericUpDownInitVelY;
+        private System.Windows.Forms.NumericUpDown numericUpDownInitVelX;
+        private System.Windows.Forms.Button buttonClearTexture;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem enableMovementToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem backgroundColourToolStripMenuItem;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Panel panelColour;
     }
 }
 

@@ -46,7 +46,7 @@ namespace ParticleEditor
         }
 
         private Texture m_texture;
-        public Texture texture { get { return m_texture; } set { m_texture = value; m_texCoords = new Vector2f(m_texture.Size.X, m_texture.Size.Y); } }
+        public Texture texture { get { return m_texture; } set { m_texture = value; if(value != null) m_texCoords = new Vector2f(m_texture.Size.X, m_texture.Size.Y); } }
         public SFML.Graphics.Color colour { get; set; }
         public BlendMode blendMode { get; set; }
         public Shader shader { get; set; }

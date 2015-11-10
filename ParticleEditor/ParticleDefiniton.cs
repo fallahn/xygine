@@ -121,7 +121,7 @@ namespace ParticleEditor
         /// if this is set.
         /// </summary>
         public List<Point> RandomInitialPositions { get; set; }
-        //TODO how to represent affectors?
+        
 
         public ParticleDefiniton()
         {
