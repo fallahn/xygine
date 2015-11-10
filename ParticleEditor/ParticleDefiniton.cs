@@ -49,6 +49,7 @@ namespace ParticleEditor
         FloatRect TextureRect { get; set; }
     }
 
+    //TODO write other project settings such as enabeld movement and back colour
     
     /// <summary>
     /// represents the settings imported / exported between editor and xygine

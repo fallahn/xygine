@@ -55,7 +55,7 @@ namespace ParticleEditor
 
         private void buttonSpawnPosAdd_Click(object sender, EventArgs e)
         {
-            listBoxSpawnPoints.Items.Add(numericUpDownSpawnPosX.Value.ToString()+ ", " + numericUpDownSpawnPosY.Value.ToString());
+            listBoxSpawnPoints.Items.Add(numericUpDownSpawnPosX.Value.ToString() + ", " + numericUpDownSpawnPosY.Value.ToString());
             var list = parseList(listBoxSpawnPoints.Items);
             m_particleSystem.randomInitialPositions = (list.Count > 0) ? list : null;
         }
@@ -67,11 +67,11 @@ namespace ParticleEditor
             m_particleSystem.randomInitialVelocities = (list.Count > 0) ? list : null;
         }
 
-        private char[] delim = {','};
+        private char[] delim = { ',' };
         private List<Vector2f> parseList(ListBox.ObjectCollection items)
         {
             List<Vector2f> retVal = new List<Vector2f>();
-            foreach(string s in items)
+            foreach (string s in items)
             {
                 var pair = s.Split(delim);
                 Vector2f v = new Vector2f(float.Parse(pair[0]), float.Parse(pair[1]));
@@ -92,11 +92,11 @@ namespace ParticleEditor
             }
 
             var list = parseList(box.Items);
-            if(box == listBoxSpawnPoints)
+            if (box == listBoxSpawnPoints)
             {
                 m_particleSystem.randomInitialPositions = (list.Count > 0) ? list : null;
             }
-            else if(box == listBoxSpawnVelocities)
+            else if (box == listBoxSpawnVelocities)
             {
                 m_particleSystem.randomInitialVelocities = (list.Count > 0) ? list : null;
             }
@@ -126,7 +126,7 @@ namespace ParticleEditor
         {
             OpenFileDialog od = new OpenFileDialog();
             od.Filter = "JPEG files|*.jpg|Portable Network Graphic|*.png|Bitmap files|*.bmp";
-            if(od.ShowDialog() == DialogResult.OK)
+            if (od.ShowDialog() == DialogResult.OK)
             {
                 m_texture = new Texture(od.FileName);
                 m_particleSystem.texture = m_texture;
@@ -137,7 +137,7 @@ namespace ParticleEditor
 
         private void buttonTextureFit_Click(object sender, EventArgs e)
         {
-            if(m_particleSystem.texture != null)
+            if (m_particleSystem.texture != null)
             {
                 var texSize = m_particleSystem.texture.Size;
                 numericUpDownSizeX.Value = Math.Min(texSize.X, numericUpDownSizeX.Maximum);
@@ -176,7 +176,7 @@ namespace ParticleEditor
             cd.Color = panelColour.BackColor;
             cd.AnyColor = true;
             cd.FullOpen = true;
-            if(cd.ShowDialog() == DialogResult.OK)
+            if (cd.ShowDialog() == DialogResult.OK)
             {
                 panelColour.BackColor = cd.Color;
             }
@@ -189,6 +189,120 @@ namespace ParticleEditor
             colour.G = panelColour.BackColor.G;
             colour.B = panelColour.BackColor.B;
             m_particleSystem.colour = colour;
+        }
+
+        private void EnableMovementToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            m_particleSystem.position = new Vector2f();
+        }
+
+        private void backgroundColourToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog cd = new ColorDialog();
+            cd.AnyColor = true;
+            cd.FullOpen = true;
+            if (cd.ShowDialog() == DialogResult.OK)
+            {
+                SFML.Graphics.Color colour = new Color();
+                colour.R = cd.Color.R;
+                colour.G = cd.Color.G;
+                colour.B = cd.Color.B;
+                m_sfmlControl.BackgroundColour = colour;
+            }
+        }
+
+        private void NumericUpDownEmitRate_ValueChanged(object sender, EventArgs e)
+        {
+            m_particleSystem.emitRate = (float)numericUpDownEmitRate.Value;
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Save current file?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                saveAsToolStripMenuItem_Click(sender, e);
+            }
+
+            listBoxAffectors.Items.Clear();
+            listBoxSpawnPoints.Items.Clear();
+            listBoxSpawnVelocities.Items.Clear();
+
+            numericUpDownReleaseCount.Value = 1;
+            numericUpDownStartDelay.Value = 0;
+            numericUpDownDuration.Value = -1;
+            numericUpDownEmitRate.Value = 30;
+
+            panelTexPreview.BackgroundImage = null;
+            textBoxTexturePath.Text = string.Empty;
+
+            comboBoxBlendMode.SelectedItem = BlendMode.Add;
+
+            numericUpDownInitVelX.Value = 0;
+            numericUpDownInitVelY.Value = 0;
+            numericUpDownSizeX.Value = 2;
+            numericUpDownSizeY.Value = 2;
+
+            panelColour.BackColor = System.Drawing.Color.White;
+            numericUpDownLifetime.Value = 1;
+
+            numericUpDownSpawnPosX.Value = 0;
+            numericUpDownSpawnPosY.Value = 0;
+            numericUpDownSpawnVelX.Value = 0;
+            numericUpDownSpawnVelY.Value = 0;
+
+            m_texture = null;
+            //m_particleSystem = new ParticleSystem();
+            m_particleSystem.randomInitialPositions = null;
+            m_particleSystem.randomInitialVelocities = null;
+            m_filePath = string.Empty;
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (m_filePath == string.Empty)
+            {
+                saveAsToolStripMenuItem_Click(sender, e);
+            }
+            else
+            {
+                saveFile();
+            }
+
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sd = new SaveFileDialog();
+            sd.Filter = "xygine particle file|*.xyp";
+            if(sd.ShowDialog() == DialogResult.OK)
+            {
+                m_filePath = sd.FileName;
+                saveFile();
+            }
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //if(m_filePath != string.Empty)
+            {
+                if(MessageBox.Show("Save current file?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    saveAsToolStripMenuItem_Click(sender, e);
+                }
+            }
+
+            OpenFileDialog od = new OpenFileDialog();
+            od.Filter = "xygine particle file|*.xyp";
+            if(od.ShowDialog() == DialogResult.OK)
+            {
+                m_filePath = od.FileName;
+                loadFile();
+            }
+        }
+
+        private void NumericUpDownLifetime_ValueChanged(object sender, EventArgs e)
+        {
+            m_particleSystem.particleLifetime = (float)numericUpDownLifetime.Value;
         }
     }
 }

@@ -33,12 +33,19 @@
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableMovementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundColourToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label21 = new System.Windows.Forms.Label();
+            this.numericUpDownLifetime = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownEmitRate = new System.Windows.Forms.NumericUpDown();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.panelColour = new System.Windows.Forms.Panel();
             this.buttonClearTexture = new System.Windows.Forms.Button();
             this.panelTexPreview = new System.Windows.Forms.Panel();
             this.label18 = new System.Windows.Forms.Label();
@@ -79,10 +86,8 @@
             this.listBoxSpawnPoints = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.listBoxAffectors = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.panelColour = new System.Windows.Forms.Panel();
-            this.label19 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -95,6 +100,8 @@
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLifetime)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEmitRate)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInitVelY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInitVelX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSizeY)).BeginInit();
@@ -136,7 +143,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.listBoxSpawnPoints);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
             this.splitContainer1.Panel2.Controls.Add(this.button1);
-            this.splitContainer1.Panel2.Controls.Add(this.listBox1);
+            this.splitContainer1.Panel2.Controls.Add(this.listBoxAffectors);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Size = new System.Drawing.Size(794, 545);
             this.splitContainer1.SplitterDistance = 543;
@@ -156,6 +163,10 @@
             // 
             // splitContainer2.Panel2
             // 
+            this.splitContainer2.Panel2.Controls.Add(this.label21);
+            this.splitContainer2.Panel2.Controls.Add(this.numericUpDownLifetime);
+            this.splitContainer2.Panel2.Controls.Add(this.numericUpDownEmitRate);
+            this.splitContainer2.Panel2.Controls.Add(this.label20);
             this.splitContainer2.Panel2.Controls.Add(this.label19);
             this.splitContainer2.Panel2.Controls.Add(this.panelColour);
             this.splitContainer2.Panel2.Controls.Add(this.buttonClearTexture);
@@ -210,12 +221,13 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(543, 24);
-            this.menuStrip1.TabIndex = 1;
+            this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newToolStripMenuItem,
             this.openToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem});
@@ -223,12 +235,21 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(36, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // newToolStripMenuItem
+            // 
+            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+            this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+            // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.openToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
@@ -236,6 +257,7 @@
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
@@ -244,6 +266,7 @@
             | System.Windows.Forms.Keys.S)));
             this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -256,9 +279,7 @@
             // 
             // enableMovementToolStripMenuItem
             // 
-            this.enableMovementToolStripMenuItem.Checked = true;
             this.enableMovementToolStripMenuItem.CheckOnClick = true;
-            this.enableMovementToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.enableMovementToolStripMenuItem.Name = "enableMovementToolStripMenuItem";
             this.enableMovementToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
             this.enableMovementToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
@@ -270,6 +291,83 @@
             this.backgroundColourToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
             this.backgroundColourToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             this.backgroundColourToolStripMenuItem.Text = "Background Colour";
+            this.backgroundColourToolStripMenuItem.Click += new System.EventHandler(this.backgroundColourToolStripMenuItem_Click);
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(441, 160);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(43, 13);
+            this.label21.TabIndex = 23;
+            this.label21.Text = "Lifetime";
+            // 
+            // numericUpDownLifetime
+            // 
+            this.numericUpDownLifetime.DecimalPlaces = 1;
+            this.numericUpDownLifetime.Location = new System.Drawing.Point(444, 176);
+            this.numericUpDownLifetime.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownLifetime.Name = "numericUpDownLifetime";
+            this.numericUpDownLifetime.Size = new System.Drawing.Size(87, 20);
+            this.numericUpDownLifetime.TabIndex = 24;
+            this.numericUpDownLifetime.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // numericUpDownEmitRate
+            // 
+            this.numericUpDownEmitRate.DecimalPlaces = 2;
+            this.numericUpDownEmitRate.Location = new System.Drawing.Point(466, 14);
+            this.numericUpDownEmitRate.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.numericUpDownEmitRate.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownEmitRate.Name = "numericUpDownEmitRate";
+            this.numericUpDownEmitRate.Size = new System.Drawing.Size(56, 20);
+            this.numericUpDownEmitRate.TabIndex = 7;
+            this.numericUpDownEmitRate.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(407, 16);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(53, 13);
+            this.label20.TabIndex = 6;
+            this.label20.Text = "Emit Rate";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(441, 50);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(37, 13);
+            this.label19.TabIndex = 21;
+            this.label19.Text = "Colour";
+            // 
+            // panelColour
+            // 
+            this.panelColour.BackColor = System.Drawing.Color.White;
+            this.panelColour.Location = new System.Drawing.Point(444, 67);
+            this.panelColour.Name = "panelColour";
+            this.panelColour.Size = new System.Drawing.Size(87, 73);
+            this.panelColour.TabIndex = 22;
             // 
             // buttonClearTexture
             // 
@@ -287,7 +385,7 @@
             this.panelTexPreview.Location = new System.Drawing.Point(12, 67);
             this.panelTexPreview.Name = "panelTexPreview";
             this.panelTexPreview.Size = new System.Drawing.Size(250, 129);
-            this.panelTexPreview.TabIndex = 26;
+            this.panelTexPreview.TabIndex = 9;
             // 
             // label18
             // 
@@ -295,7 +393,7 @@
             this.label18.Location = new System.Drawing.Point(281, 51);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(64, 13);
-            this.label18.TabIndex = 25;
+            this.label18.TabIndex = 10;
             this.label18.Text = "Blend Mode";
             // 
             // comboBoxBlendMode
@@ -305,7 +403,7 @@
             this.comboBoxBlendMode.Location = new System.Drawing.Point(284, 67);
             this.comboBoxBlendMode.Name = "comboBoxBlendMode";
             this.comboBoxBlendMode.Size = new System.Drawing.Size(140, 21);
-            this.comboBoxBlendMode.TabIndex = 24;
+            this.comboBoxBlendMode.TabIndex = 11;
             this.comboBoxBlendMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxBlendMode_SelectedIndexChanged);
             // 
             // label17
@@ -314,7 +412,7 @@
             this.label17.Location = new System.Drawing.Point(280, 104);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(71, 13);
-            this.label17.TabIndex = 23;
+            this.label17.TabIndex = 12;
             this.label17.Text = "Initial Velocity";
             // 
             // label15
@@ -323,7 +421,7 @@
             this.label15.Location = new System.Drawing.Point(357, 122);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(14, 13);
-            this.label15.TabIndex = 22;
+            this.label15.TabIndex = 15;
             this.label15.Text = "Y";
             // 
             // label16
@@ -332,7 +430,7 @@
             this.label16.Location = new System.Drawing.Point(280, 122);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(14, 13);
-            this.label16.TabIndex = 21;
+            this.label16.TabIndex = 13;
             this.label16.Text = "X";
             // 
             // numericUpDownInitVelY
@@ -345,7 +443,7 @@
             -2147483648});
             this.numericUpDownInitVelY.Name = "numericUpDownInitVelY";
             this.numericUpDownInitVelY.Size = new System.Drawing.Size(46, 20);
-            this.numericUpDownInitVelY.TabIndex = 20;
+            this.numericUpDownInitVelY.TabIndex = 16;
             // 
             // numericUpDownInitVelX
             // 
@@ -365,7 +463,7 @@
             this.label14.Location = new System.Drawing.Point(281, 160);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(65, 13);
-            this.label14.TabIndex = 18;
+            this.label14.TabIndex = 17;
             this.label14.Text = "Particle Size";
             // 
             // buttonTextureFit
@@ -373,7 +471,7 @@
             this.buttonTextureFit.Location = new System.Drawing.Point(283, 210);
             this.buttonTextureFit.Name = "buttonTextureFit";
             this.buttonTextureFit.Size = new System.Drawing.Size(140, 23);
-            this.buttonTextureFit.TabIndex = 17;
+            this.buttonTextureFit.TabIndex = 28;
             this.buttonTextureFit.Text = "Fit to Texture";
             this.buttonTextureFit.UseVisualStyleBackColor = true;
             this.buttonTextureFit.Click += new System.EventHandler(this.buttonTextureFit_Click);
@@ -384,7 +482,7 @@
             this.label12.Location = new System.Drawing.Point(357, 178);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(14, 13);
-            this.label12.TabIndex = 16;
+            this.label12.TabIndex = 19;
             this.label12.Text = "Y";
             // 
             // label13
@@ -393,7 +491,7 @@
             this.label13.Location = new System.Drawing.Point(280, 178);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(14, 13);
-            this.label13.TabIndex = 15;
+            this.label13.TabIndex = 18;
             this.label13.Text = "X";
             // 
             // numericUpDownSizeY
@@ -411,7 +509,7 @@
             0});
             this.numericUpDownSizeY.Name = "numericUpDownSizeY";
             this.numericUpDownSizeY.Size = new System.Drawing.Size(46, 20);
-            this.numericUpDownSizeY.TabIndex = 14;
+            this.numericUpDownSizeY.TabIndex = 20;
             this.numericUpDownSizeY.Value = new decimal(new int[] {
             2,
             0,
@@ -446,7 +544,7 @@
             this.label11.Location = new System.Drawing.Point(9, 50);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(46, 13);
-            this.label11.TabIndex = 9;
+            this.label11.TabIndex = 8;
             this.label11.Text = "Texture:";
             // 
             // buttonTextureBrowse
@@ -454,7 +552,7 @@
             this.buttonTextureBrowse.Location = new System.Drawing.Point(163, 210);
             this.buttonTextureBrowse.Name = "buttonTextureBrowse";
             this.buttonTextureBrowse.Size = new System.Drawing.Size(26, 23);
-            this.buttonTextureBrowse.TabIndex = 8;
+            this.buttonTextureBrowse.TabIndex = 26;
             this.buttonTextureBrowse.Text = "...";
             this.buttonTextureBrowse.UseVisualStyleBackColor = true;
             this.buttonTextureBrowse.Click += new System.EventHandler(this.buttonTextureBrowse_Click);
@@ -465,14 +563,14 @@
             this.textBoxTexturePath.Name = "textBoxTexturePath";
             this.textBoxTexturePath.ReadOnly = true;
             this.textBoxTexturePath.Size = new System.Drawing.Size(145, 20);
-            this.textBoxTexturePath.TabIndex = 7;
+            this.textBoxTexturePath.TabIndex = 25;
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(444, 11);
+            this.buttonStart.Location = new System.Drawing.Point(444, 210);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(87, 23);
-            this.buttonStart.TabIndex = 6;
+            this.buttonStart.TabIndex = 29;
             this.buttonStart.Text = "Start";
             this.buttonStart.UseVisualStyleBackColor = true;
             this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
@@ -483,7 +581,7 @@
             this.label6.Location = new System.Drawing.Point(280, 16);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(47, 13);
-            this.label6.TabIndex = 5;
+            this.label6.TabIndex = 4;
             this.label6.Text = "Duration";
             // 
             // label5
@@ -492,7 +590,7 @@
             this.label5.Location = new System.Drawing.Point(141, 16);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(59, 13);
-            this.label5.TabIndex = 4;
+            this.label5.TabIndex = 2;
             this.label5.Text = "Start Delay";
             // 
             // label4
@@ -501,7 +599,7 @@
             this.label4.Location = new System.Drawing.Point(3, 16);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(77, 13);
-            this.label4.TabIndex = 3;
+            this.label4.TabIndex = 0;
             this.label4.Text = "Release Count";
             // 
             // numericUpDownDuration
@@ -515,7 +613,7 @@
             -2147483648});
             this.numericUpDownDuration.Name = "numericUpDownDuration";
             this.numericUpDownDuration.Size = new System.Drawing.Size(57, 20);
-            this.numericUpDownDuration.TabIndex = 2;
+            this.numericUpDownDuration.TabIndex = 5;
             this.numericUpDownDuration.Value = new decimal(new int[] {
             1,
             0,
@@ -533,7 +631,7 @@
             0});
             this.numericUpDownStartDelay.Name = "numericUpDownStartDelay";
             this.numericUpDownStartDelay.Size = new System.Drawing.Size(56, 20);
-            this.numericUpDownStartDelay.TabIndex = 1;
+            this.numericUpDownStartDelay.TabIndex = 3;
             // 
             // numericUpDownReleaseCount
             // 
@@ -545,7 +643,7 @@
             0});
             this.numericUpDownReleaseCount.Name = "numericUpDownReleaseCount";
             this.numericUpDownReleaseCount.Size = new System.Drawing.Size(41, 20);
-            this.numericUpDownReleaseCount.TabIndex = 0;
+            this.numericUpDownReleaseCount.TabIndex = 1;
             this.numericUpDownReleaseCount.Value = new decimal(new int[] {
             1,
             0,
@@ -558,7 +656,7 @@
             this.label9.Location = new System.Drawing.Point(87, 329);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(14, 13);
-            this.label9.TabIndex = 16;
+            this.label9.TabIndex = 7;
             this.label9.Text = "Y";
             // 
             // label10
@@ -567,7 +665,7 @@
             this.label10.Location = new System.Drawing.Point(10, 329);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(14, 13);
-            this.label10.TabIndex = 15;
+            this.label10.TabIndex = 5;
             this.label10.Text = "X";
             // 
             // numericUpDownSpawnPosY
@@ -580,7 +678,7 @@
             -2147483648});
             this.numericUpDownSpawnPosY.Name = "numericUpDownSpawnPosY";
             this.numericUpDownSpawnPosY.Size = new System.Drawing.Size(46, 20);
-            this.numericUpDownSpawnPosY.TabIndex = 14;
+            this.numericUpDownSpawnPosY.TabIndex = 8;
             // 
             // numericUpDownSpawnPosX
             // 
@@ -592,7 +690,7 @@
             -2147483648});
             this.numericUpDownSpawnPosX.Name = "numericUpDownSpawnPosX";
             this.numericUpDownSpawnPosX.Size = new System.Drawing.Size(46, 20);
-            this.numericUpDownSpawnPosX.TabIndex = 13;
+            this.numericUpDownSpawnPosX.TabIndex = 6;
             // 
             // label8
             // 
@@ -600,7 +698,7 @@
             this.label8.Location = new System.Drawing.Point(86, 518);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(14, 13);
-            this.label8.TabIndex = 12;
+            this.label8.TabIndex = 14;
             this.label8.Text = "Y";
             // 
             // label7
@@ -609,7 +707,7 @@
             this.label7.Location = new System.Drawing.Point(9, 518);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(14, 13);
-            this.label7.TabIndex = 11;
+            this.label7.TabIndex = 12;
             this.label7.Text = "X";
             // 
             // numericUpDownSpawnVelY
@@ -622,7 +720,7 @@
             -2147483648});
             this.numericUpDownSpawnVelY.Name = "numericUpDownSpawnVelY";
             this.numericUpDownSpawnVelY.Size = new System.Drawing.Size(46, 20);
-            this.numericUpDownSpawnVelY.TabIndex = 10;
+            this.numericUpDownSpawnVelY.TabIndex = 15;
             // 
             // numericUpDownSpawnVelX
             // 
@@ -634,14 +732,14 @@
             -2147483648});
             this.numericUpDownSpawnVelX.Name = "numericUpDownSpawnVelX";
             this.numericUpDownSpawnVelX.Size = new System.Drawing.Size(46, 20);
-            this.numericUpDownSpawnVelX.TabIndex = 9;
+            this.numericUpDownSpawnVelX.TabIndex = 13;
             // 
             // buttonSpawnVelAdd
             // 
             this.buttonSpawnVelAdd.Location = new System.Drawing.Point(160, 513);
             this.buttonSpawnVelAdd.Name = "buttonSpawnVelAdd";
             this.buttonSpawnVelAdd.Size = new System.Drawing.Size(75, 23);
-            this.buttonSpawnVelAdd.TabIndex = 8;
+            this.buttonSpawnVelAdd.TabIndex = 16;
             this.buttonSpawnVelAdd.Text = "Add";
             this.buttonSpawnVelAdd.UseVisualStyleBackColor = true;
             this.buttonSpawnVelAdd.Click += new System.EventHandler(this.buttonSpawnVelAdd_Click);
@@ -652,7 +750,7 @@
             this.listBoxSpawnVelocities.Location = new System.Drawing.Point(3, 386);
             this.listBoxSpawnVelocities.Name = "listBoxSpawnVelocities";
             this.listBoxSpawnVelocities.Size = new System.Drawing.Size(233, 121);
-            this.listBoxSpawnVelocities.TabIndex = 7;
+            this.listBoxSpawnVelocities.TabIndex = 11;
             // 
             // label3
             // 
@@ -660,7 +758,7 @@
             this.label3.Location = new System.Drawing.Point(3, 370);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(131, 13);
-            this.label3.TabIndex = 6;
+            this.label3.TabIndex = 10;
             this.label3.Text = "Random Spawn Velocities";
             // 
             // buttonSpawnPosAdd
@@ -668,7 +766,7 @@
             this.buttonSpawnPosAdd.Location = new System.Drawing.Point(161, 324);
             this.buttonSpawnPosAdd.Name = "buttonSpawnPosAdd";
             this.buttonSpawnPosAdd.Size = new System.Drawing.Size(75, 23);
-            this.buttonSpawnPosAdd.TabIndex = 5;
+            this.buttonSpawnPosAdd.TabIndex = 9;
             this.buttonSpawnPosAdd.Text = "Add";
             this.buttonSpawnPosAdd.UseVisualStyleBackColor = true;
             this.buttonSpawnPosAdd.Click += new System.EventHandler(this.buttonSpawnPosAdd_Click);
@@ -699,13 +797,13 @@
             this.button1.Text = "Add";
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // listBox1
+            // listBoxAffectors
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(3, 23);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(232, 121);
-            this.listBox1.TabIndex = 1;
+            this.listBoxAffectors.FormattingEnabled = true;
+            this.listBoxAffectors.Location = new System.Drawing.Point(3, 23);
+            this.listBoxAffectors.Name = "listBoxAffectors";
+            this.listBoxAffectors.Size = new System.Drawing.Size(232, 121);
+            this.listBoxAffectors.TabIndex = 1;
             // 
             // label1
             // 
@@ -715,23 +813,6 @@
             this.label1.Size = new System.Drawing.Size(49, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Affectors";
-            // 
-            // panelColour
-            // 
-            this.panelColour.BackColor = System.Drawing.Color.White;
-            this.panelColour.Location = new System.Drawing.Point(444, 67);
-            this.panelColour.Name = "panelColour";
-            this.panelColour.Size = new System.Drawing.Size(87, 73);
-            this.panelColour.TabIndex = 28;
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(441, 50);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(37, 13);
-            this.label19.TabIndex = 29;
-            this.label19.Text = "Colour";
             // 
             // MainWindow
             // 
@@ -744,6 +825,7 @@
             this.MinimumSize = new System.Drawing.Size(810, 584);
             this.Name = "MainWindow";
             this.Text = "Particle Editor";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
@@ -760,6 +842,8 @@
             this.splitContainer3.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLifetime)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEmitRate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInitVelY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInitVelX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSizeY)).EndInit();
@@ -779,7 +863,7 @@
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox listBoxAffectors;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button buttonSpawnPosAdd;
         private System.Windows.Forms.ListBox listBoxSpawnPoints;
@@ -832,6 +916,11 @@
         private System.Windows.Forms.ToolStripMenuItem backgroundColourToolStripMenuItem;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Panel panelColour;
+        private System.Windows.Forms.NumericUpDown numericUpDownEmitRate;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.NumericUpDown numericUpDownLifetime;
     }
 }
 

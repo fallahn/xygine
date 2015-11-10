@@ -51,22 +51,22 @@ namespace ParticleEditor
         public BlendMode blendMode { get; set; }
         public Shader shader { get; set; }
 
-        private Vector2f m_particleSize = new Vector2f(4f, 4f);
+        private Vector2f m_particleSize = new Vector2f(2f, 2f);
         public Vector2f particleSize { set { m_particleSize = value; } }
         private Vector2f m_position = new Vector2f();
         public Vector2f position { set { m_position = value; } get { return m_position; } }
         private bool m_followParent = false;
         public bool followParent { set { m_followParent = value; } }
         private float m_particleLifetime = 2f;
-        public float particleLifetime { set { m_particleLifetime = value; } }
+        public float particleLifetime { set { m_particleLifetime = value; } get { return m_particleLifetime; } }
         private Vector2f m_initialVelocity = new Vector2f();
-        public Vector2f initialVelocity { set { m_initialVelocity = value; } }
+        public Vector2f initialVelocity { set { m_initialVelocity = value; } get { return m_initialVelocity; } }
         private List<Vector2f> m_randomInitialVelocities = new List<Vector2f>();
-        public List<Vector2f> randomInitialVelocities { set { m_randomInitialVelocities = value; m_randomVelocity = (value == null)? false : true; } }
+        public List<Vector2f> randomInitialVelocities { set { m_randomInitialVelocities = value; m_randomVelocity = (value == null)? false : true; } get { return m_randomInitialVelocities; } }
         private float m_emitRate = 30f;
         public float emitRate { set { m_emitRate = value; } }
         private List<Vector2f> m_randomInitialPositions = new List<Vector2f>();
-        public List<Vector2f> randomInitialPositions { set { m_randomInitialPositions = value; m_randomPosition = (value == null) ? false : true; } }
+        public List<Vector2f> randomInitialPositions { set { m_randomInitialPositions = value; m_randomPosition = (value == null) ? false : true; } get { return m_randomInitialPositions; } }
 
         private List<IAffector> m_affectors = new List<IAffector>();
         public void addAffector(IAffector affector)
