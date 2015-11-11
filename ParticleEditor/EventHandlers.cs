@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using SFML.Window;
 using SFML.Graphics;
+using System.Drawing;
 
 namespace ParticleEditor
 {
@@ -184,7 +185,7 @@ namespace ParticleEditor
 
         private void PanelColour_BackColorChanged(object sender, EventArgs e)
         {
-            SFML.Graphics.Color colour = new Color();
+            SFML.Graphics.Color colour = new SFML.Graphics.Color();
             colour.R = panelColour.BackColor.R;
             colour.G = panelColour.BackColor.G;
             colour.B = panelColour.BackColor.B;
@@ -203,7 +204,7 @@ namespace ParticleEditor
             cd.FullOpen = true;
             if (cd.ShowDialog() == DialogResult.OK)
             {
-                SFML.Graphics.Color colour = new Color();
+                SFML.Graphics.Color colour = new SFML.Graphics.Color();
                 colour.R = cd.Color.R;
                 colour.G = cd.Color.G;
                 colour.B = cd.Color.B;
@@ -303,6 +304,77 @@ namespace ParticleEditor
         private void NumericUpDownLifetime_ValueChanged(object sender, EventArgs e)
         {
             m_particleSystem.particleLifetime = (float)numericUpDownLifetime.Value;
+        }
+
+        private void buttonAddAffector_Click(object sender, EventArgs e)
+        {
+            var selected = (AffectorType)comboBoxAffectors.SelectedItem;
+            AffectorWindow aw = new AffectorWindow(selected);
+            if(aw.ShowDialog() == DialogResult.OK)
+            {
+                var affector = aw.Affector;
+
+                m_particleSystem.addAffector(affector);
+                listBoxAffectors.Items.Add(affector.type().ToString());
+            }
+        }
+
+        private Random random = new Random();
+        private void buttonRandPos_Click(object sender, EventArgs e)
+        {
+            numericUpDownSpawnPosX.Value = random.Next(-40, 40);
+            numericUpDownSpawnPosY.Value = random.Next(-40, 40);
+        }
+
+        private void buttonRandVel_Click(object sender, EventArgs e)
+        {
+            numericUpDownSpawnVelX.Value = random.Next(-100, 100);
+            numericUpDownSpawnVelY.Value = random.Next(-100, 100);
+        }
+
+        private void buttonRandomForce_Click(object sender, EventArgs e)
+        {
+            numericUpDownForceX.Value = random.Next(-100, 100);
+            numericUpDownForceY.Value = random.Next(-100, 100);
+        }
+
+        private void numericUpDownForce_ValueChanged(object sender, EventArgs e)
+        {
+            if(listBoxAffectors.SelectedIndex > -1)
+            {
+                Vector2f force = new Vector2f((float)numericUpDownForceX.Value, (float)numericUpDownForceY.Value);
+                ((ForceAffector)m_particleSystem.Affectors[listBoxAffectors.SelectedIndex]).Force = force;
+            }
+        }
+
+        private void listBoxAffectors_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            panelForceAffector.Location = new Point(10000, 0); //move it out of the visible area
+
+            if (listBoxAffectors.SelectedIndex > -1)
+            {
+                int idx = listBoxAffectors.SelectedIndex;
+                string name = listBoxAffectors.Items[idx].ToString();
+                Point location = new Point(160, 23);
+                switch (name)
+                {
+                    case "Force":
+                        var force = ((ForceAffector)m_particleSystem.Affectors[idx]).Force;
+                        numericUpDownForceX.Value = (Decimal)force.X;
+                        numericUpDownForceY.Value = (Decimal)force.Y;
+                        panelForceAffector.Location = location;
+                        break;
+                    case "Colour":
+
+                        break;
+                    case "Scale":
+
+                        break;
+                    case "Rotation":
+
+                        break;
+                }
+            }
         }
     }
 }

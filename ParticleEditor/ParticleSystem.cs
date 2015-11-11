@@ -37,6 +37,34 @@ using System.Diagnostics;
 
 namespace ParticleEditor
 {
+    class Crosshair : Transformable, Drawable
+    {
+        private VertexArray m_vertexArray = new VertexArray(PrimitiveType.LinesStrip);
+        public Crosshair()
+        {
+            const float halfWidth = 5f;
+            Vertex v = new Vertex(new Vector2f(halfWidth, 0f), SFML.Graphics.Color.White);
+            m_vertexArray.Append(v);
+            v.Position = new Vector2f(-halfWidth, 0f);
+            m_vertexArray.Append(v);
+            v.Color = SFML.Graphics.Color.Transparent;
+            m_vertexArray.Append(v);
+            v.Position = new Vector2f(0f, -halfWidth);
+            m_vertexArray.Append(v);
+            v.Color = SFML.Graphics.Color.White;
+            m_vertexArray.Append(v);
+            v.Position = new Vector2f(0f, halfWidth);
+            m_vertexArray.Append(v);
+        }
+
+
+        public void Draw(RenderTarget target, RenderStates states)
+        {
+            states.Transform *= Transform;
+            target.Draw(m_vertexArray, states);
+        }
+    }
+
     class ParticleSystem : Drawable
     {
         public ParticleSystem()
@@ -46,7 +74,18 @@ namespace ParticleEditor
         }
 
         private Texture m_texture;
-        public Texture texture { get { return m_texture; } set { m_texture = value; if(value != null) m_texCoords = new Vector2f(m_texture.Size.X, m_texture.Size.Y); } }
+        public Texture texture
+        {
+            get
+            {
+                return m_texture;
+            }
+            set
+            {
+                m_texture = value;
+                if (value != null) m_texCoords = new Vector2f(m_texture.Size.X, m_texture.Size.Y);
+            }
+        }
         public SFML.Graphics.Color colour { get; set; }
         public BlendMode blendMode { get; set; }
         public Shader shader { get; set; }
@@ -62,17 +101,40 @@ namespace ParticleEditor
         private Vector2f m_initialVelocity = new Vector2f();
         public Vector2f initialVelocity { set { m_initialVelocity = value; } get { return m_initialVelocity; } }
         private List<Vector2f> m_randomInitialVelocities = new List<Vector2f>();
-        public List<Vector2f> randomInitialVelocities { set { m_randomInitialVelocities = value; m_randomVelocity = (value == null)? false : true; } get { return m_randomInitialVelocities; } }
+        public List<Vector2f> randomInitialVelocities
+        {
+            set
+            {
+                m_randomInitialVelocities = value;
+                m_randomVelocity = (value == null)? false : true;
+            }
+            get
+            {
+                return m_randomInitialVelocities;
+            }
+        }
         private float m_emitRate = 30f;
         public float emitRate { set { m_emitRate = value; } }
         private List<Vector2f> m_randomInitialPositions = new List<Vector2f>();
-        public List<Vector2f> randomInitialPositions { set { m_randomInitialPositions = value; m_randomPosition = (value == null) ? false : true; } get { return m_randomInitialPositions; } }
+        public List<Vector2f> randomInitialPositions
+        {
+            set
+            {
+                m_randomInitialPositions = value;
+                m_randomPosition = (value == null) ? false : true;
+            }
+            get
+            {
+                return m_randomInitialPositions;
+            }
+        }
 
         private List<IAffector> m_affectors = new List<IAffector>();
         public void addAffector(IAffector affector)
         {
             m_affectors.Add(affector);
         }
+        public List<IAffector> Affectors { get { return m_affectors; } set { m_affectors = value; } }
 
         private Queue<Particle> m_particles = new Queue<Particle>();
         public bool active { get { return (m_particles.Count > 0); } }
@@ -142,7 +204,7 @@ namespace ParticleEditor
                     }
                 }
             }
-
+            m_crosshair.Position = m_position;
         }
 
         public void move(Vector2f distance)
@@ -151,6 +213,7 @@ namespace ParticleEditor
         }
 
         private VertexArray m_vertices = new VertexArray(PrimitiveType.Quads);
+        private Crosshair m_crosshair = new Crosshair();
         public void Draw(RenderTarget target, RenderStates states)
         {
             if(m_needsUpdate)
@@ -164,6 +227,7 @@ namespace ParticleEditor
             states.BlendMode = blendMode;
             if (!m_followParent) states.Transform = Transform.Identity;
             target.Draw(m_vertices, states);
+            target.Draw(m_crosshair);
         }
 
 

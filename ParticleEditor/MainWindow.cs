@@ -63,10 +63,11 @@ namespace ParticleEditor
             m_sfmlControl.UpdateDelegates.Add(m_particleSystem.update);
             numericUpDownDuration.Value = -1;
 
-            this.StartPosition = FormStartPosition.CenterScreen;
-
             comboBoxBlendMode.DataSource = Enum.GetValues(typeof(BlendMode));
             comboBoxBlendMode.SelectedItem = BlendMode.Add;
+
+            comboBoxAffectors.DataSource = Enum.GetValues(typeof(AffectorType));
+            comboBoxAffectors.SelectedItem = AffectorType.Force;
 
             listBoxSpawnPoints.ContextMenu = new ContextMenu();
             listBoxSpawnPoints.ContextMenu.MenuItems.Add("Delete");
@@ -311,5 +312,6 @@ namespace ParticleEditor
                 dst.Add(str);
             }
         }
+
     }
 }

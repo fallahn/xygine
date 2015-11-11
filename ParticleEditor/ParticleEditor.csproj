@@ -75,6 +75,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Affectors.cs" />
+    <Compile Include="AffectorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AffectorWindow.Designer.cs">
+      <DependentUpon>AffectorWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="EventHandlers.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -91,6 +97,9 @@
     <Compile Include="SfmlControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="AffectorWindow.resx">
+      <DependentUpon>AffectorWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>

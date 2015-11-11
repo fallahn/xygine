@@ -26,16 +26,12 @@ source distribution.
 *********************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using SFML.Window;
 
 namespace ParticleEditor
 {
-    enum AffectorType
+    public enum AffectorType
     {
         Force,
         Colour,
@@ -43,16 +39,16 @@ namespace ParticleEditor
         Scale
     }
 
-    interface IAffector
+    public interface IAffector
     {
         void update(Particle p, float dt);
         AffectorType type();
     }
 
-    class ForceAffector : IAffector
+    public class ForceAffector : IAffector
     {
         private Vector2f m_force;
-        ForceAffector(Vector2f force)
+        public ForceAffector(Vector2f force)
         {
             m_force = force;
         }
@@ -66,15 +62,17 @@ namespace ParticleEditor
         {
             return AffectorType.Force;
         }
+
+        public Vector2f Force { get { return m_force; } set { m_force = value; } }
     }
 
-    class ColourAffector : IAffector
+    public class ColourAffector : IAffector
     {
         private SFML.Graphics.Color m_start;
         private SFML.Graphics.Color m_end;
         private float m_duration;
 
-        ColourAffector(SFML.Graphics.Color start, SFML.Graphics.Color end, float duration)
+        public ColourAffector(SFML.Graphics.Color start, SFML.Graphics.Color end, float duration)
         {
             m_start = start; m_end = end; m_duration = duration;
         }
@@ -98,17 +96,21 @@ namespace ParticleEditor
             p.Colour = c;
         }
 
+        public SFML.Graphics.Color StartColour { get { return m_start; } set { m_start = value; } }
+        public SFML.Graphics.Color EndColour { get { return m_end; } set { m_end = value; } }
+        public float Duration { get { return m_duration; } set { m_duration = value; } }
+
         private byte lerp(byte start, byte end, float distance)
         {
             float val = (end - start) * distance;
-            return (byte)(Convert.ToByte(val) + start);
+            return (byte)(val + (float)start);
         }
     }
 
-    class RotationAffector : IAffector
+    public class RotationAffector : IAffector
     {
         private float m_rotation;
-        RotationAffector(float rotation)
+        public RotationAffector(float rotation)
         {
             m_rotation = rotation;
         }
@@ -122,12 +124,14 @@ namespace ParticleEditor
         {
             p.Rotation += m_rotation * dt;
         }
+
+        public float Rotation { get { return m_rotation; } set { m_rotation = value; } }
     }
 
-    class ScaleAffector : IAffector
+    public class ScaleAffector : IAffector
     {
         private Vector2f m_scale;
-        ScaleAffector(Vector2f scale)
+        public ScaleAffector(Vector2f scale)
         {
             m_scale = scale;
         }
@@ -141,5 +145,7 @@ namespace ParticleEditor
         {
             p.Scale += (m_scale * dt);
         }
+
+        public Vector2f Scale { get { return m_scale; } set { m_scale = value; } }
     }
 }
