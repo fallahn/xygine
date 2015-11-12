@@ -91,7 +91,7 @@ namespace SpriteEditor
             ConfirmClose();
 
             OpenFileDialog od = new OpenFileDialog();
-            od.Filter = "Animation Files|*.cra";
+            od.Filter = "xygine Animation Files|*.xya";
             if (od.ShowDialog() == DialogResult.OK)
             {
                 try
@@ -148,7 +148,7 @@ namespace SpriteEditor
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog sd = new SaveFileDialog();
-            sd.Filter = "Animation Files|*.cra";
+            sd.Filter = "xygine Animation Files|*.xya";
             if(sd.ShowDialog() == DialogResult.OK)
             {
                 m_currentPath = sd.FileName;
