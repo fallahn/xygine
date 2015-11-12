@@ -81,6 +81,12 @@ namespace ParticleEditor
             listBoxSpawnVelocities.ContextMenu.MenuItems.Add("Clear");
             listBoxSpawnVelocities.ContextMenu.MenuItems[1].Click += itemsClear_click;
 
+            listBoxAffectors.ContextMenu = new ContextMenu();
+            listBoxAffectors.ContextMenu.MenuItems.Add("Delete");
+            listBoxAffectors.ContextMenu.MenuItems[0].Click += itemDelete_click;
+            listBoxAffectors.ContextMenu.MenuItems.Add("Clear");
+            listBoxAffectors.ContextMenu.MenuItems[1].Click += itemsClear_click;
+
             numericUpDownSizeX.ValueChanged += sizeChanged;
             numericUpDownSizeY.ValueChanged += sizeChanged;
 
@@ -169,7 +175,6 @@ namespace ParticleEditor
             pd.EmitRate = (float)numericUpDownEmitRate.Value;
             pd.InitialVelocity = new Point((int)m_particleSystem.initialVelocity.X, (int)m_particleSystem.initialVelocity.Y);
             pd.Lifetime = m_particleSystem.particleLifetime;
-            //pd.ParticlePosition = new Point((int)numericUpDownInitVelX.Value, (int)numericUpDownInitVelY.Value);
             pd.ParticleSize = new Size((int)numericUpDownSizeX.Value, (int)numericUpDownSizeY.Value);
             pd.RandomInitialPositions = new List<Point>();
             foreach(var v in m_particleSystem.randomInitialPositions)
@@ -181,6 +186,37 @@ namespace ParticleEditor
             {
                 pd.RandomInitialVelocites.Add(new Point((int)v.X, (int)v.Y));
             }
+            pd.Affectors = new List<AffectorDefinition>();
+            foreach(var a in m_particleSystem.Affectors)
+            {
+                AffectorDefinition ad = new AffectorDefinition();
+                ad.Type = a.type().ToString();
+                ad.Data = new List<float>();
+                switch (a.type())
+                {
+                    case AffectorType.Colour:
+                        ColourAffector ca = (ColourAffector)a;
+                        ad.Data.Add(colourToInt(ca.StartColour));
+                        ad.Data.Add(colourToInt(ca.EndColour));
+                        ad.Data.Add(ca.Duration);
+                        break;
+                    case AffectorType.Force:
+                        var force = ((ForceAffector)a).Force;
+                        ad.Data.Add(force.X);
+                        ad.Data.Add(force.Y);
+                        break;
+                    case AffectorType.Rotation:
+                        ad.Data.Add(((RotationAffector)a).Rotation);
+                        break;
+                    case AffectorType.Scale:
+                        var scale = ((ScaleAffector)a).Scale;
+                        ad.Data.Add(scale.X);
+                        ad.Data.Add(scale.Y);
+                        break;
+                }
+                pd.Affectors.Add(ad);
+            }
+
             pd.ReleaseCount = (byte)numericUpDownReleaseCount.Value;
             pd.Texture = textBoxTexturePath.Text;
 
@@ -269,6 +305,36 @@ namespace ParticleEditor
                     }
                     m_particleSystem.randomInitialVelocities = randVelocities;
                     updateListbox(listBoxSpawnVelocities.Items, randVelocities);
+                }
+
+                if(pd.Affectors.Count > 0)
+                {
+                    foreach(var ad in pd.Affectors)
+                    {
+                        if (ad.Type == AffectorType.Colour.ToString())
+                        {
+                            SFML.Graphics.Color start = intToColour((int)ad.Data[0]);
+                            SFML.Graphics.Color end = intToColour((int)ad.Data[1]);
+                            ColourAffector ca = new ColourAffector(start, end, ad.Data[2]);
+                            m_particleSystem.Affectors.Add(ca);
+                        }
+                        else if (ad.Type == AffectorType.Force.ToString())
+                        {
+                            ForceAffector fa = new ForceAffector(new Vector2f(ad.Data[0], ad.Data[1]));
+                            m_particleSystem.Affectors.Add(fa);
+                        }
+                        else if (ad.Type == AffectorType.Rotation.ToString())
+                        {
+                            RotationAffector ra = new RotationAffector(ad.Data[0]);
+                            m_particleSystem.Affectors.Add(ra);
+                        }
+                        else
+                        {
+                            ScaleAffector sa = new ScaleAffector(new Vector2f(ad.Data[0], ad.Data[1]));
+                            m_particleSystem.Affectors.Add(sa);
+                        }
+                        listBoxAffectors.Items.Add(ad.Type);
+                    }
                 }
 
                 numericUpDownReleaseCount.Value = pd.ReleaseCount;

@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 using System;
-
+using System.Collections.Generic;
 using SFML.Window;
 
 namespace ParticleEditor
@@ -147,5 +147,11 @@ namespace ParticleEditor
         }
 
         public Vector2f Scale { get { return m_scale; } set { m_scale = value; } }
+    }
+
+    public class AffectorDefinition
+    {
+        public string Type { get; set; }
+        public List<float> Data { get; set; }
     }
 }

@@ -87,19 +87,35 @@ namespace ParticleEditor
             var menu = item.GetContextMenu();
             ListBox box = menu.SourceControl as ListBox;
 
+            if (box != listBoxAffectors)
+            {
+                var list = parseList(box.Items);
+                if (box == listBoxSpawnPoints)
+                {
+                    m_particleSystem.randomInitialPositions = (list.Count > 0) ? list : null;
+                }
+                else if (box == listBoxSpawnVelocities)
+                {
+                    m_particleSystem.randomInitialVelocities = (list.Count > 0) ? list : null;
+                }
+            }
+            else
+            {
+                if (box.SelectedIndex > -1)
+                {
+                    if (m_particleSystem.Affectors[box.SelectedIndex].type() == AffectorType.Colour)
+                    {
+                        //reset colour
+                        PanelColour_BackColorChanged(this, EventArgs.Empty);
+                    }
+
+                    m_particleSystem.Affectors.RemoveAt(box.SelectedIndex);
+                }
+            }
+
             if (box.SelectedIndex > -1)
             {
                 box.Items.RemoveAt(box.SelectedIndex);
-            }
-
-            var list = parseList(box.Items);
-            if (box == listBoxSpawnPoints)
-            {
-                m_particleSystem.randomInitialPositions = (list.Count > 0) ? list : null;
-            }
-            else if (box == listBoxSpawnVelocities)
-            {
-                m_particleSystem.randomInitialVelocities = (list.Count > 0) ? list : null;
             }
         }
 
@@ -111,14 +127,18 @@ namespace ParticleEditor
 
             box.Items.Clear();
 
-            var list = parseList(box.Items);
             if (box == listBoxSpawnPoints)
             {
-                m_particleSystem.randomInitialPositions = (list.Count > 0) ? list : null;
+                m_particleSystem.randomInitialPositions = null;
             }
             else if (box == listBoxSpawnVelocities)
             {
-                m_particleSystem.randomInitialVelocities = (list.Count > 0) ? list : null;
+                m_particleSystem.randomInitialVelocities = null;
+            }
+            else if(box == listBoxAffectors)
+            {
+                m_particleSystem.Affectors.Clear();
+                PanelColour_BackColorChanged(this, EventArgs.Empty);
             }
         }
 
@@ -131,7 +151,7 @@ namespace ParticleEditor
             {
                 m_texture = new Texture(od.FileName);
                 m_particleSystem.texture = m_texture;
-                textBoxTexturePath.Text = Path.GetFileName(od.FileName);
+                textBoxTexturePath.Text = od.FileName;
                 panelTexPreview.BackgroundImage = new System.Drawing.Bitmap(od.FileName);
             }
         }
@@ -257,6 +277,7 @@ namespace ParticleEditor
             //m_particleSystem = new ParticleSystem();
             m_particleSystem.randomInitialPositions = null;
             m_particleSystem.randomInitialVelocities = null;
+            m_particleSystem.Affectors.Clear();
             m_filePath = string.Empty;
         }
 

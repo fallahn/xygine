@@ -171,7 +171,7 @@
             // 
             this.numericUpDownColour.DecimalPlaces = 1;
             this.numericUpDownColour.Increment = new decimal(new int[] {
-            5,
+            1,
             0,
             0,
             65536});

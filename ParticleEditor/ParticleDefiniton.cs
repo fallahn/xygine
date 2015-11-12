@@ -118,7 +118,10 @@ namespace ParticleEditor
         /// if this is set.
         /// </summary>
         public List<Point> RandomInitialPositions { get; set; }
-        
+        /// <summary>
+        /// List of affectors in this particle system
+        /// </summary>
+        public List<AffectorDefinition> Affectors { get; set; }
 
         public ParticleDefiniton()
         {
@@ -131,7 +134,6 @@ namespace ParticleEditor
             Lifetime = 2f;
             InitialVelocity = new Point(1, 1);
             EmitRate = 30f;
-
         }
     }
 }
