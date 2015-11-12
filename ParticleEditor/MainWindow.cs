@@ -36,6 +36,8 @@ using System.Drawing;
 using Newtonsoft.Json;
 using System.IO;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace ParticleEditor
 {
@@ -315,6 +317,7 @@ namespace ParticleEditor
                             SFML.Graphics.Color end = intToColour((int)ad.Data[1]);
                             ColourAffector ca = new ColourAffector(start, end, ad.Data[2]);
                             m_particleSystem.Affectors.Add(ca);
+                            m_particleSystem.colour = start;
                         }
                         else if (ad.Type == AffectorType.Force.ToString())
                         {
@@ -342,6 +345,7 @@ namespace ParticleEditor
                     m_particleSystem.texture = m_texture;
                     textBoxTexturePath.Text = Path.GetFileName(pd.Texture);
                     panelTexPreview.BackgroundImage = new System.Drawing.Bitmap(pd.Texture);
+                    fitPreviewImage();
                 }
                 else
                 {
@@ -384,6 +388,52 @@ namespace ParticleEditor
                 str = p.X.ToString() + ", " + p.Y.ToString();
                 dst.Add(str);
             }
+        }
+
+        private void fitPreviewImage()
+        {
+            var previewImg = panelTexPreview.BackgroundImage;
+            if (panelTexPreview.Width < previewImg.Width ||
+                panelTexPreview.Height < previewImg.Height)
+            {
+                //resize
+                if (previewImg.Width > previewImg.Height)
+                {
+                    float ratio = (float)previewImg.Height / previewImg.Width;
+                    previewImg = resizeImage(previewImg, panelTexPreview.Width, (int)(panelTexPreview.Width * ratio));
+                }
+                else
+                {
+                    float ratio = (float)previewImg.Width / previewImg.Height;
+                    previewImg = resizeImage(previewImg, (int)(panelTexPreview.Height * ratio), panelTexPreview.Height);
+                }
+            }
+            panelTexPreview.BackgroundImage = previewImg;
+        }
+
+        private Bitmap resizeImage(System.Drawing.Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
         }
     }
 }

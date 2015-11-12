@@ -110,6 +110,7 @@
             this.listBoxAffectors = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.buttonStart = new System.Windows.Forms.Button();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -272,7 +273,8 @@
             this.newToolStripMenuItem,
             this.openToolStripMenuItem,
             this.saveToolStripMenuItem,
-            this.saveAsToolStripMenuItem});
+            this.saveAsToolStripMenuItem,
+            this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(36, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -1159,6 +1161,14 @@
             this.buttonStart.UseVisualStyleBackColor = true;
             this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
             // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1302,6 +1312,7 @@
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.NumericUpDown numericUpDownScaleAffectorY;
         private System.Windows.Forms.NumericUpDown numericUpDownScaleAffectorX;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
     }
 }
 

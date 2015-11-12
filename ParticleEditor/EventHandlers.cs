@@ -26,17 +26,11 @@ source distribution.
 *********************************************************************/
 
 using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SFML.Window;
 using SFML.Graphics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 
 namespace ParticleEditor
 {
@@ -155,49 +149,9 @@ namespace ParticleEditor
                 m_particleSystem.texture = m_texture;
                 textBoxTexturePath.Text = od.FileName;
 
-                var previewImg = new Bitmap(od.FileName);
-                if(panelTexPreview.Width < previewImg.Width ||
-                    panelTexPreview.Height < previewImg.Height)
-                {
-                    //resize
-                    if(previewImg.Width > previewImg.Height)
-                    {
-                        float ratio = (float)previewImg.Height / previewImg.Width;
-                        previewImg = resizeImage(previewImg, panelTexPreview.Width, (int)(panelTexPreview.Width * ratio));
-                    }
-                    else
-                    {
-                        float ratio = (float)previewImg.Width / previewImg.Height;
-                        previewImg = resizeImage(previewImg, (int)(panelTexPreview.Height * ratio), panelTexPreview.Height);
-                    }
-                }
-                panelTexPreview.BackgroundImage = previewImg;
+                panelTexPreview.BackgroundImage = new Bitmap(od.FileName);
+                fitPreviewImage();
             }
-        }
-
-        private Bitmap resizeImage(System.Drawing.Image image, int width, int height)
-        {
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
-
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-            using (var graphics = Graphics.FromImage(destImage))
-            {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                using (var wrapMode = new ImageAttributes())
-                {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
-            }
-
-            return destImage;
         }
 
         private void buttonTextureFit_Click(object sender, EventArgs e)
@@ -368,6 +322,11 @@ namespace ParticleEditor
             }
         }
 
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
         private void NumericUpDownLifetime_ValueChanged(object sender, EventArgs e)
         {
             m_particleSystem.particleLifetime = (float)numericUpDownLifetime.Value;
@@ -383,6 +342,11 @@ namespace ParticleEditor
 
                 m_particleSystem.addAffector(affector);
                 listBoxAffectors.Items.Add(affector.type().ToString());
+
+                if(affector.type() == AffectorType.Colour)
+                {
+                    m_particleSystem.colour = ((ColourAffector)affector).StartColour;
+                }
             }
         }
 
@@ -434,6 +398,7 @@ namespace ParticleEditor
                 else
                 {
                     ((ColourAffector)m_particleSystem.Affectors[listBoxAffectors.SelectedIndex]).StartColour = newColour;
+                    m_particleSystem.colour = newColour;
                 }
             }
         }
