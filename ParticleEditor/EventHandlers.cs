@@ -35,6 +35,8 @@ using System.Windows.Forms;
 using SFML.Window;
 using SFML.Graphics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace ParticleEditor
 {
@@ -146,14 +148,56 @@ namespace ParticleEditor
         private void buttonTextureBrowse_Click(object sender, EventArgs e)
         {
             OpenFileDialog od = new OpenFileDialog();
-            od.Filter = "JPEG files|*.jpg|Portable Network Graphic|*.png|Bitmap files|*.bmp";
+            od.Filter = "Portable Network Graphic|*.png|JPEG files|*.jpg|Bitmap files|*.bmp";
             if (od.ShowDialog() == DialogResult.OK)
             {
                 m_texture = new Texture(od.FileName);
                 m_particleSystem.texture = m_texture;
                 textBoxTexturePath.Text = od.FileName;
-                panelTexPreview.BackgroundImage = new System.Drawing.Bitmap(od.FileName);
+
+                var previewImg = new Bitmap(od.FileName);
+                if(panelTexPreview.Width < previewImg.Width ||
+                    panelTexPreview.Height < previewImg.Height)
+                {
+                    //resize
+                    if(previewImg.Width > previewImg.Height)
+                    {
+                        float ratio = (float)previewImg.Height / previewImg.Width;
+                        previewImg = resizeImage(previewImg, panelTexPreview.Width, (int)(panelTexPreview.Width * ratio));
+                    }
+                    else
+                    {
+                        float ratio = (float)previewImg.Width / previewImg.Height;
+                        previewImg = resizeImage(previewImg, (int)(panelTexPreview.Height * ratio), panelTexPreview.Height);
+                    }
+                }
+                panelTexPreview.BackgroundImage = previewImg;
             }
+        }
+
+        private Bitmap resizeImage(System.Drawing.Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
         }
 
         private void buttonTextureFit_Click(object sender, EventArgs e)

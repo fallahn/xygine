@@ -451,6 +451,7 @@
             // panelTexPreview
             // 
             this.panelTexPreview.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.panelTexPreview.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.panelTexPreview.Location = new System.Drawing.Point(12, 67);
             this.panelTexPreview.Name = "panelTexPreview";
             this.panelTexPreview.Size = new System.Drawing.Size(250, 129);

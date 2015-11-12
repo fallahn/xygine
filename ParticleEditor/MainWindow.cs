@@ -274,16 +274,14 @@ namespace ParticleEditor
                 m_particleSystem.colour = intToColour(pd.Colour);
                 panelColour.BackColor = System.Drawing.Color.FromArgb(m_particleSystem.colour.A, m_particleSystem.colour.R, m_particleSystem.colour.G, m_particleSystem.colour.B);
 
-                numericUpDownStartDelay.Value = (Decimal)pd.Delay;
-                numericUpDownDuration.Value = (Decimal)pd.Duration;
-                numericUpDownEmitRate.Value = (Decimal)pd.EmitRate;
-                numericUpDownInitVelX.Value = (Decimal)pd.InitialVelocity.X;
-                numericUpDownInitVelY.Value = (Decimal)pd.InitialVelocity.Y;
-                numericUpDownLifetime.Value = (Decimal)pd.Lifetime;
-                //numericUpDownSpawnPosX.Value = (Decimal)pd.ParticlePosition.X;
-                //numericUpDownSpawnPosY.Value = (Decimal)pd.ParticlePosition.Y;
-                numericUpDownSizeX.Value = (Decimal)pd.ParticleSize.Width;
-                numericUpDownSizeY.Value = (Decimal)pd.ParticleSize.Height;
+                numericUpDownStartDelay.Value = (decimal)pd.Delay;
+                numericUpDownDuration.Value = (decimal)pd.Duration;
+                numericUpDownEmitRate.Value = (decimal)pd.EmitRate;
+                numericUpDownInitVelX.Value = pd.InitialVelocity.X;
+                numericUpDownInitVelY.Value = pd.InitialVelocity.Y;
+                numericUpDownLifetime.Value = (decimal)pd.Lifetime;
+                numericUpDownSizeX.Value = pd.ParticleSize.Width;
+                numericUpDownSizeY.Value = pd.ParticleSize.Height;
 
                 if (pd.RandomInitialPositions.Count > 0)
                 {
