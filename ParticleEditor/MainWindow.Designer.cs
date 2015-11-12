@@ -72,6 +72,17 @@
             this.numericUpDownDuration = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownStartDelay = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownReleaseCount = new System.Windows.Forms.NumericUpDown();
+            this.panelScaleAffector = new System.Windows.Forms.Panel();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label26 = new System.Windows.Forms.Label();
+            this.numericUpDownScaleAffectorY = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownScaleAffectorX = new System.Windows.Forms.NumericUpDown();
+            this.panelRotateAffector = new System.Windows.Forms.Panel();
+            this.numericUpDownRotationAffector = new System.Windows.Forms.NumericUpDown();
+            this.panelColourAffector = new System.Windows.Forms.Panel();
+            this.numericUpDownColourAffector = new System.Windows.Forms.NumericUpDown();
+            this.panelEndColour = new System.Windows.Forms.Panel();
+            this.panelStartColour = new System.Windows.Forms.Panel();
             this.buttonRandVel = new System.Windows.Forms.Button();
             this.buttonRandPos = new System.Windows.Forms.Button();
             this.panelForceAffector = new System.Windows.Forms.Panel();
@@ -121,6 +132,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReleaseCount)).BeginInit();
+            this.panelScaleAffector.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleAffectorY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleAffectorX)).BeginInit();
+            this.panelRotateAffector.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRotationAffector)).BeginInit();
+            this.panelColourAffector.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownColourAffector)).BeginInit();
             this.panelForceAffector.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownForceY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownForceX)).BeginInit();
@@ -143,6 +161,9 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.panelScaleAffector);
+            this.splitContainer1.Panel2.Controls.Add(this.panelRotateAffector);
+            this.splitContainer1.Panel2.Controls.Add(this.panelColourAffector);
             this.splitContainer1.Panel2.Controls.Add(this.buttonRandVel);
             this.splitContainer1.Panel2.Controls.Add(this.buttonRandPos);
             this.splitContainer1.Panel2.Controls.Add(this.panelForceAffector);
@@ -688,6 +709,184 @@
             0,
             0});
             // 
+            // panelScaleAffector
+            // 
+            this.panelScaleAffector.Controls.Add(this.label25);
+            this.panelScaleAffector.Controls.Add(this.label26);
+            this.panelScaleAffector.Controls.Add(this.numericUpDownScaleAffectorY);
+            this.panelScaleAffector.Controls.Add(this.numericUpDownScaleAffectorX);
+            this.panelScaleAffector.Location = new System.Drawing.Point(1159, 23);
+            this.panelScaleAffector.Name = "panelScaleAffector";
+            this.panelScaleAffector.Size = new System.Drawing.Size(76, 121);
+            this.panelScaleAffector.TabIndex = 34;
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(8, 33);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(14, 13);
+            this.label25.TabIndex = 18;
+            this.label25.Text = "Y";
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(8, 7);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(14, 13);
+            this.label26.TabIndex = 16;
+            this.label26.Text = "X";
+            // 
+            // numericUpDownScaleAffectorY
+            // 
+            this.numericUpDownScaleAffectorY.DecimalPlaces = 1;
+            this.numericUpDownScaleAffectorY.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownScaleAffectorY.Location = new System.Drawing.Point(28, 31);
+            this.numericUpDownScaleAffectorY.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownScaleAffectorY.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownScaleAffectorY.Name = "numericUpDownScaleAffectorY";
+            this.numericUpDownScaleAffectorY.Size = new System.Drawing.Size(46, 20);
+            this.numericUpDownScaleAffectorY.TabIndex = 19;
+            this.numericUpDownScaleAffectorY.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownScaleAffectorY.ValueChanged += new System.EventHandler(this.numericUpDownScaleAffector_ValueChanged);
+            // 
+            // numericUpDownScaleAffectorX
+            // 
+            this.numericUpDownScaleAffectorX.DecimalPlaces = 1;
+            this.numericUpDownScaleAffectorX.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownScaleAffectorX.Location = new System.Drawing.Point(28, 5);
+            this.numericUpDownScaleAffectorX.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownScaleAffectorX.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownScaleAffectorX.Name = "numericUpDownScaleAffectorX";
+            this.numericUpDownScaleAffectorX.Size = new System.Drawing.Size(46, 20);
+            this.numericUpDownScaleAffectorX.TabIndex = 17;
+            this.numericUpDownScaleAffectorX.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownScaleAffectorX.ValueChanged += new System.EventHandler(this.numericUpDownScaleAffector_ValueChanged);
+            // 
+            // panelRotateAffector
+            // 
+            this.panelRotateAffector.Controls.Add(this.numericUpDownRotationAffector);
+            this.panelRotateAffector.Location = new System.Drawing.Point(1159, 25);
+            this.panelRotateAffector.Name = "panelRotateAffector";
+            this.panelRotateAffector.Size = new System.Drawing.Size(76, 119);
+            this.panelRotateAffector.TabIndex = 33;
+            // 
+            // numericUpDownRotationAffector
+            // 
+            this.numericUpDownRotationAffector.DecimalPlaces = 1;
+            this.numericUpDownRotationAffector.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            65536});
+            this.numericUpDownRotationAffector.Location = new System.Drawing.Point(3, 3);
+            this.numericUpDownRotationAffector.Maximum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
+            this.numericUpDownRotationAffector.Minimum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownRotationAffector.Name = "numericUpDownRotationAffector";
+            this.numericUpDownRotationAffector.Size = new System.Drawing.Size(70, 20);
+            this.numericUpDownRotationAffector.TabIndex = 0;
+            this.numericUpDownRotationAffector.ValueChanged += new System.EventHandler(this.numericUpDownRotationAffector_ValueChanged);
+            // 
+            // panelColourAffector
+            // 
+            this.panelColourAffector.Controls.Add(this.numericUpDownColourAffector);
+            this.panelColourAffector.Controls.Add(this.panelEndColour);
+            this.panelColourAffector.Controls.Add(this.panelStartColour);
+            this.panelColourAffector.Location = new System.Drawing.Point(1159, 25);
+            this.panelColourAffector.Name = "panelColourAffector";
+            this.panelColourAffector.Size = new System.Drawing.Size(88, 119);
+            this.panelColourAffector.TabIndex = 32;
+            // 
+            // numericUpDownColourAffector
+            // 
+            this.numericUpDownColourAffector.DecimalPlaces = 1;
+            this.numericUpDownColourAffector.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownColourAffector.Location = new System.Drawing.Point(13, 87);
+            this.numericUpDownColourAffector.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericUpDownColourAffector.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownColourAffector.Name = "numericUpDownColourAffector";
+            this.numericUpDownColourAffector.Size = new System.Drawing.Size(62, 20);
+            this.numericUpDownColourAffector.TabIndex = 2;
+            this.numericUpDownColourAffector.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownColourAffector.ValueChanged += new System.EventHandler(this.numericUpDownColourAffector_ValueChanged);
+            // 
+            // panelEndColour
+            // 
+            this.panelEndColour.BackColor = System.Drawing.Color.White;
+            this.panelEndColour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelEndColour.Location = new System.Drawing.Point(13, 45);
+            this.panelEndColour.Name = "panelEndColour";
+            this.panelEndColour.Size = new System.Drawing.Size(61, 35);
+            this.panelEndColour.TabIndex = 1;
+            this.panelEndColour.Click += new System.EventHandler(this.panelAffectorColour_Click);
+            // 
+            // panelStartColour
+            // 
+            this.panelStartColour.BackColor = System.Drawing.Color.White;
+            this.panelStartColour.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelStartColour.Location = new System.Drawing.Point(13, 4);
+            this.panelStartColour.Name = "panelStartColour";
+            this.panelStartColour.Size = new System.Drawing.Size(61, 35);
+            this.panelStartColour.TabIndex = 0;
+            this.panelStartColour.Click += new System.EventHandler(this.panelAffectorColour_Click);
+            // 
             // buttonRandVel
             // 
             this.buttonRandVel.Location = new System.Drawing.Point(159, 436);
@@ -715,7 +914,7 @@
             this.panelForceAffector.Controls.Add(this.label24);
             this.panelForceAffector.Controls.Add(this.numericUpDownForceY);
             this.panelForceAffector.Controls.Add(this.numericUpDownForceX);
-            this.panelForceAffector.Location = new System.Drawing.Point(160, 23);
+            this.panelForceAffector.Location = new System.Drawing.Point(1160, 23);
             this.panelForceAffector.Name = "panelForceAffector";
             this.panelForceAffector.Size = new System.Drawing.Size(75, 121);
             this.panelForceAffector.TabIndex = 18;
@@ -998,6 +1197,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDuration)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReleaseCount)).EndInit();
+            this.panelScaleAffector.ResumeLayout(false);
+            this.panelScaleAffector.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleAffectorY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleAffectorX)).EndInit();
+            this.panelRotateAffector.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRotationAffector)).EndInit();
+            this.panelColourAffector.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownColourAffector)).EndInit();
             this.panelForceAffector.ResumeLayout(false);
             this.panelForceAffector.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownForceY)).EndInit();
@@ -1083,6 +1290,17 @@
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.NumericUpDown numericUpDownForceY;
         private System.Windows.Forms.NumericUpDown numericUpDownForceX;
+        private System.Windows.Forms.Panel panelColourAffector;
+        private System.Windows.Forms.NumericUpDown numericUpDownColourAffector;
+        private System.Windows.Forms.Panel panelEndColour;
+        private System.Windows.Forms.Panel panelStartColour;
+        private System.Windows.Forms.Panel panelRotateAffector;
+        private System.Windows.Forms.NumericUpDown numericUpDownRotationAffector;
+        private System.Windows.Forms.Panel panelScaleAffector;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.NumericUpDown numericUpDownScaleAffectorY;
+        private System.Windows.Forms.NumericUpDown numericUpDownScaleAffectorX;
     }
 }
 

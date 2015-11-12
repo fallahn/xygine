@@ -29,39 +29,39 @@
         private void InitializeComponent()
         {
             this.panelForce = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
+            this.buttonOk = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.numericUpDownForceY = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownForceX = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             this.panelColour = new System.Windows.Forms.Panel();
-            this.panelRotation = new System.Windows.Forms.Panel();
-            this.panelScale = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.numericUpDownColour = new System.Windows.Forms.NumericUpDown();
+            this.panelColourEnd = new System.Windows.Forms.Panel();
+            this.panelColourStart = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
+            this.panelRotation = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
+            this.numericUpDownRotation = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.panelScale = new System.Windows.Forms.Panel();
+            this.button3 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.numericUpDownScaleY = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownScaleX = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownRotation = new System.Windows.Forms.NumericUpDown();
-            this.panelColourStart = new System.Windows.Forms.Panel();
-            this.panelColourEnd = new System.Windows.Forms.Panel();
-            this.numericUpDownColour = new System.Windows.Forms.NumericUpDown();
-            this.buttonOk = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
             this.panelForce.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownForceY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownForceX)).BeginInit();
             this.panelColour.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownColour)).BeginInit();
             this.panelRotation.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRotation)).BeginInit();
             this.panelScale.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRotation)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownColour)).BeginInit();
             this.SuspendLayout();
             // 
             // panelForce
@@ -78,14 +78,15 @@
             this.panelForce.TabIndex = 1;
             this.panelForce.Visible = false;
             // 
-            // label1
+            // buttonOk
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(34, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Force";
+            this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.buttonOk.Location = new System.Drawing.Point(181, 18);
+            this.buttonOk.Name = "buttonOk";
+            this.buttonOk.Size = new System.Drawing.Size(75, 23);
+            this.buttonOk.TabIndex = 20;
+            this.buttonOk.Text = "OK";
+            this.buttonOk.UseVisualStyleBackColor = true;
             // 
             // label8
             // 
@@ -134,6 +135,15 @@
             this.numericUpDownForceX.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownForceX.TabIndex = 17;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(34, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Force";
+            // 
             // panelColour
             // 
             this.panelColour.Controls.Add(this.button1);
@@ -147,6 +157,73 @@
             this.panelColour.TabIndex = 2;
             this.panelColour.Visible = false;
             // 
+            // button1
+            // 
+            this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.button1.Location = new System.Drawing.Point(179, 33);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 21;
+            this.button1.Text = "OK";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDownColour
+            // 
+            this.numericUpDownColour.DecimalPlaces = 1;
+            this.numericUpDownColour.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            65536});
+            this.numericUpDownColour.Location = new System.Drawing.Point(112, 36);
+            this.numericUpDownColour.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericUpDownColour.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownColour.Name = "numericUpDownColour";
+            this.numericUpDownColour.Size = new System.Drawing.Size(53, 20);
+            this.numericUpDownColour.TabIndex = 3;
+            this.numericUpDownColour.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            // 
+            // panelColourEnd
+            // 
+            this.panelColourEnd.BackColor = System.Drawing.Color.White;
+            this.panelColourEnd.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelColourEnd.Location = new System.Drawing.Point(60, 16);
+            this.panelColourEnd.Name = "panelColourEnd";
+            this.panelColourEnd.Size = new System.Drawing.Size(46, 40);
+            this.panelColourEnd.TabIndex = 2;
+            this.panelColourEnd.Click += new System.EventHandler(this.panelColourEnd_Click);
+            // 
+            // panelColourStart
+            // 
+            this.panelColourStart.BackColor = System.Drawing.Color.White;
+            this.panelColourStart.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelColourStart.Location = new System.Drawing.Point(8, 16);
+            this.panelColourStart.Name = "panelColourStart";
+            this.panelColourStart.Size = new System.Drawing.Size(46, 40);
+            this.panelColourStart.TabIndex = 1;
+            this.panelColourStart.Click += new System.EventHandler(this.panelColourStart_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(37, 13);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Colour";
+            // 
             // panelRotation
             // 
             this.panelRotation.Controls.Add(this.button2);
@@ -157,6 +234,43 @@
             this.panelRotation.Size = new System.Drawing.Size(257, 59);
             this.panelRotation.TabIndex = 3;
             this.panelRotation.Visible = false;
+            // 
+            // button2
+            // 
+            this.button2.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.button2.Location = new System.Drawing.Point(179, 23);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 21;
+            this.button2.Text = "OK";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDownRotation
+            // 
+            this.numericUpDownRotation.DecimalPlaces = 1;
+            this.numericUpDownRotation.Location = new System.Drawing.Point(25, 26);
+            this.numericUpDownRotation.Maximum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            0});
+            this.numericUpDownRotation.Minimum = new decimal(new int[] {
+            360,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownRotation.Name = "numericUpDownRotation";
+            this.numericUpDownRotation.Size = new System.Drawing.Size(46, 20);
+            this.numericUpDownRotation.TabIndex = 1;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(5, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(47, 13);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Rotation";
             // 
             // panelScale
             // 
@@ -172,32 +286,15 @@
             this.panelScale.TabIndex = 4;
             this.panelScale.Visible = false;
             // 
-            // label2
+            // button3
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(5, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(37, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Colour";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(5, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(47, 13);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Rotation";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(34, 13);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Scale";
+            this.button3.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.button3.Location = new System.Drawing.Point(178, 18);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 24;
+            this.button3.Text = "OK";
+            this.button3.UseVisualStyleBackColor = true;
             // 
             // label5
             // 
@@ -232,10 +329,10 @@
             0,
             0});
             this.numericUpDownScaleY.Minimum = new decimal(new int[] {
-            1,
+            10,
             0,
             0,
-            65536});
+            -2147483648});
             this.numericUpDownScaleY.Name = "numericUpDownScaleY";
             this.numericUpDownScaleY.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownScaleY.TabIndex = 23;
@@ -260,10 +357,10 @@
             0,
             0});
             this.numericUpDownScaleX.Minimum = new decimal(new int[] {
-            1,
+            10,
             0,
             0,
-            65536});
+            -2147483648});
             this.numericUpDownScaleX.Name = "numericUpDownScaleX";
             this.numericUpDownScaleX.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownScaleX.TabIndex = 21;
@@ -273,101 +370,14 @@
             0,
             65536});
             // 
-            // numericUpDownRotation
+            // label4
             // 
-            this.numericUpDownRotation.DecimalPlaces = 1;
-            this.numericUpDownRotation.Location = new System.Drawing.Point(25, 26);
-            this.numericUpDownRotation.Maximum = new decimal(new int[] {
-            360,
-            0,
-            0,
-            0});
-            this.numericUpDownRotation.Minimum = new decimal(new int[] {
-            360,
-            0,
-            0,
-            -2147483648});
-            this.numericUpDownRotation.Name = "numericUpDownRotation";
-            this.numericUpDownRotation.Size = new System.Drawing.Size(46, 20);
-            this.numericUpDownRotation.TabIndex = 1;
-            // 
-            // panelColourStart
-            // 
-            this.panelColourStart.BackColor = System.Drawing.Color.White;
-            this.panelColourStart.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelColourStart.Location = new System.Drawing.Point(8, 16);
-            this.panelColourStart.Name = "panelColourStart";
-            this.panelColourStart.Size = new System.Drawing.Size(46, 40);
-            this.panelColourStart.TabIndex = 1;
-            this.panelColourStart.Click += new System.EventHandler(this.panelColourStart_Click);
-            // 
-            // panelColourEnd
-            // 
-            this.panelColourEnd.BackColor = System.Drawing.Color.White;
-            this.panelColourEnd.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelColourEnd.Location = new System.Drawing.Point(60, 16);
-            this.panelColourEnd.Name = "panelColourEnd";
-            this.panelColourEnd.Size = new System.Drawing.Size(46, 40);
-            this.panelColourEnd.TabIndex = 2;
-            this.panelColourEnd.Click += new System.EventHandler(this.panelColourEnd_Click);
-            // 
-            // numericUpDownColour
-            // 
-            this.numericUpDownColour.DecimalPlaces = 1;
-            this.numericUpDownColour.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            65536});
-            this.numericUpDownColour.Location = new System.Drawing.Point(112, 36);
-            this.numericUpDownColour.Maximum = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-            this.numericUpDownColour.Name = "numericUpDownColour";
-            this.numericUpDownColour.Size = new System.Drawing.Size(53, 20);
-            this.numericUpDownColour.TabIndex = 3;
-            // 
-            // buttonOk
-            // 
-            this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOk.Location = new System.Drawing.Point(181, 18);
-            this.buttonOk.Name = "buttonOk";
-            this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 20;
-            this.buttonOk.Text = "OK";
-            this.buttonOk.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button1.Location = new System.Drawing.Point(179, 33);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 21;
-            this.button1.Text = "OK";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // button2
-            // 
-            this.button2.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button2.Location = new System.Drawing.Point(179, 23);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 21;
-            this.button2.Text = "OK";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button3.Location = new System.Drawing.Point(178, 18);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 24;
-            this.button3.Text = "OK";
-            this.button3.UseVisualStyleBackColor = true;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(34, 13);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Scale";
             // 
             // AffectorWindow
             // 
@@ -391,14 +401,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownForceX)).EndInit();
             this.panelColour.ResumeLayout(false);
             this.panelColour.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownColour)).EndInit();
             this.panelRotation.ResumeLayout(false);
             this.panelRotation.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRotation)).EndInit();
             this.panelScale.ResumeLayout(false);
             this.panelScale.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRotation)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownColour)).EndInit();
             this.ResumeLayout(false);
 
         }

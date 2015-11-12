@@ -312,6 +312,5 @@ namespace ParticleEditor
                 dst.Add(str);
             }
         }
-
     }
 }

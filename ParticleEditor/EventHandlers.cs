@@ -347,9 +347,66 @@ namespace ParticleEditor
             }
         }
 
+        private void panelAffectorColour_Click(object sender, EventArgs e)
+        {
+            Panel panel = (Panel)sender;
+            var oldColour = panel.BackColor;
+            panel.BackColor = getColour();
+
+            if(oldColour != panel.BackColor)
+            {
+                SFML.Graphics.Color newColour = new SFML.Graphics.Color();
+                newColour.R = panel.BackColor.R;
+                newColour.G = panel.BackColor.G;
+                newColour.B = panel.BackColor.B;
+
+                if(panel == panelEndColour)
+                {
+                    ((ColourAffector)m_particleSystem.Affectors[listBoxAffectors.SelectedIndex]).EndColour = newColour;
+                }
+                else
+                {
+                    ((ColourAffector)m_particleSystem.Affectors[listBoxAffectors.SelectedIndex]).StartColour = newColour;
+                }
+            }
+        }
+
+        private void numericUpDownColourAffector_ValueChanged(object sender, EventArgs e)
+        {
+            ((ColourAffector)m_particleSystem.Affectors[listBoxAffectors.SelectedIndex]).Duration = (float)numericUpDownColourAffector.Value;
+        }
+
+        private System.Drawing.Color getColour()
+        {
+            ColorDialog cd = new ColorDialog();
+            cd.AllowFullOpen = true;
+            cd.AnyColor = true;
+            cd.FullOpen = true;
+
+            cd.ShowDialog();
+
+            var colour = cd.Color;
+            return colour;
+        }
+
+        private void numericUpDownRotationAffector_ValueChanged(object sender, EventArgs e)
+        {
+            ((RotationAffector)m_particleSystem.Affectors[listBoxAffectors.SelectedIndex]).Rotation = (float)numericUpDownRotationAffector.Value;
+        }
+
+        private void numericUpDownScaleAffector_ValueChanged(object sender, EventArgs e)
+        {
+            Vector2f newScale = new Vector2f((float)numericUpDownScaleAffectorX.Value, (float)numericUpDownScaleAffectorY.Value);
+            ((ScaleAffector)m_particleSystem.Affectors[listBoxAffectors.SelectedIndex]).Scale = newScale;
+        }
+
         private void listBoxAffectors_SelectedIndexChanged(object sender, EventArgs e)
         {
-            panelForceAffector.Location = new Point(10000, 0); //move it out of the visible area
+            Point outLoc = new Point(10000, 0);
+            panelForceAffector.Location = outLoc; //move it out of the visible area
+            panelColourAffector.Location = outLoc;
+            panelRotateAffector.Location = outLoc;
+            panelScaleAffector.Location = outLoc;
 
             if (listBoxAffectors.SelectedIndex > -1)
             {
@@ -360,18 +417,28 @@ namespace ParticleEditor
                 {
                     case "Force":
                         var force = ((ForceAffector)m_particleSystem.Affectors[idx]).Force;
-                        numericUpDownForceX.Value = (Decimal)force.X;
-                        numericUpDownForceY.Value = (Decimal)force.Y;
+                        numericUpDownForceX.Value = (decimal)force.X;
+                        numericUpDownForceY.Value = (decimal)force.Y;
                         panelForceAffector.Location = location;
                         break;
                     case "Colour":
-
+                        var ca = (ColourAffector)m_particleSystem.Affectors[idx];
+                        var colour = ca.StartColour;
+                        panelStartColour.BackColor = System.Drawing.Color.FromArgb(colour.R, colour.G, colour.B);
+                        colour = ca.EndColour;
+                        panelEndColour.BackColor = System.Drawing.Color.FromArgb(colour.R, colour.G, colour.B);
+                        numericUpDownColourAffector.Value = (decimal)ca.Duration;
+                        panelColourAffector.Location = location;
                         break;
                     case "Scale":
-
+                        var scale = ((ScaleAffector)m_particleSystem.Affectors[idx]).Scale;
+                        numericUpDownScaleAffectorX.Value = (decimal)scale.X;
+                        numericUpDownScaleAffectorY.Value = (decimal)scale.Y;
+                        panelScaleAffector.Location = location;
                         break;
                     case "Rotation":
-
+                        numericUpDownRotationAffector.Value = (decimal)((RotationAffector)m_particleSystem.Affectors[listBoxAffectors.SelectedIndex]).Rotation;
+                        panelRotateAffector.Location = location;
                         break;
                 }
             }
