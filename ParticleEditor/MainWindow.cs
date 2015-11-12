@@ -58,7 +58,7 @@ namespace ParticleEditor
             //add sfml control to layout
             splitContainer3.Panel2.Controls.Add(m_sfmlControl);
             m_sfmlControl.Dock = DockStyle.Fill;
-
+            m_sfmlControl.MouseClick += sfmlMouse_Click;
             m_sfmlControl.DrawDelegates.Add(drawParticleSystem);
             m_sfmlControl.UpdateDelegates.Add(m_particleSystem.update);
             numericUpDownDuration.Value = -1;
@@ -95,6 +95,15 @@ namespace ParticleEditor
             panelColour.BackColorChanged += PanelColour_BackColorChanged;
 
             enableMovementToolStripMenuItem.CheckedChanged += EnableMovementToolStripMenuItem_CheckedChanged;
+        }
+
+        private void sfmlMouse_Click(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                m_particleSystem.position = m_sfmlControl.pixelToCoords(e.Location);
+                m_defaultPos = m_particleSystem.position;
+            }
         }
 
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)

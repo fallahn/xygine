@@ -192,9 +192,11 @@ namespace ParticleEditor
             m_particleSystem.colour = colour;
         }
 
+        private Vector2f m_defaultPos = new Vector2f();
         private void EnableMovementToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
         {
-            m_particleSystem.position = new Vector2f();
+            m_particleSystem.position = m_defaultPos;
+            m_movementTimer.Restart();
         }
 
         private void backgroundColourToolStripMenuItem_Click(object sender, EventArgs e)

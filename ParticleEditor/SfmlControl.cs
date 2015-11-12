@@ -28,13 +28,11 @@ source distribution.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using SFML.Graphics;
 using SFML.Window;
+using System.Drawing;
 
 namespace ParticleEditor
 {
@@ -44,8 +42,8 @@ namespace ParticleEditor
     partial class SfmlControl : Control
     {
         private RenderWindow m_renderWindow;
-        private Color m_clearColour = new Color();
-        public Color BackgroundColour
+        private SFML.Graphics.Color m_clearColour = new SFML.Graphics.Color();
+        public SFML.Graphics.Color BackgroundColour
         {
             get { return m_clearColour; }
             set { m_clearColour = value; }
@@ -74,6 +72,11 @@ namespace ParticleEditor
             this.Resize += SfmlControl_Resize;
             SfmlControl_Resize(this, EventArgs.Empty);
 
+        }
+
+        public Vector2f pixelToCoords(Point p)
+        {
+            return m_renderWindow.MapPixelToCoords(new Vector2i(p.X, p.Y));
         }
 
         void SfmlControl_Resize(object sender, EventArgs e)

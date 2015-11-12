@@ -245,7 +245,7 @@ namespace ParticleEditor
                 m_accumulator -= interval;
                 for(var i = 0; i < m_releaseCount; ++i)
                 {
-                    if (m_randomPosition)  addParticle(m_position + m_randomInitialPositions[m_random.Next(0, m_randomInitialPositions.Count - 1)]);
+                    if (m_randomPosition)  addParticle(m_position + m_randomInitialPositions[m_random.Next(0, m_randomInitialPositions.Count)]);
                     else addParticle(m_position);
                 }
             }
@@ -259,7 +259,7 @@ namespace ParticleEditor
             p.Colour = colour;
             p.Lifetime = m_particleLifetime;
             p.Velocity = (m_randomVelocity) ?
-                m_randomInitialVelocities[m_random.Next(0, m_randomInitialVelocities.Count - 1)] : m_initialVelocity;
+                m_randomInitialVelocities[m_random.Next(0, m_randomInitialVelocities.Count)] : m_initialVelocity;
 
             m_particles.Enqueue(p);
         }
