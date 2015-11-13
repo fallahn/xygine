@@ -353,14 +353,14 @@ namespace ParticleEditor
         private Random random = new Random();
         private void buttonRandPos_Click(object sender, EventArgs e)
         {
-            numericUpDownSpawnPosX.Value = random.Next(-40, 40);
-            numericUpDownSpawnPosY.Value = random.Next(-40, 40);
+            numericUpDownSpawnPosX.Value = random.Next(-trackBarPosScale.Value, trackBarPosScale.Value);
+            numericUpDownSpawnPosY.Value = random.Next(-trackBarPosScale.Value, trackBarPosScale.Value);
         }
 
         private void buttonRandVel_Click(object sender, EventArgs e)
         {
-            numericUpDownSpawnVelX.Value = random.Next(-100, 100);
-            numericUpDownSpawnVelY.Value = random.Next(-100, 100);
+            numericUpDownSpawnVelX.Value = random.Next(-trackBarVelScale.Value, trackBarVelScale.Value);
+            numericUpDownSpawnVelY.Value = random.Next(-trackBarVelScale.Value, trackBarVelScale.Value);
         }
 
         private void buttonRandomForce_Click(object sender, EventArgs e)
