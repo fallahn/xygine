@@ -209,6 +209,11 @@ namespace ParticleEditor
             Debug.Assert(m_filePath != string.Empty);
 
             ParticleDefiniton pd = new ParticleDefiniton();
+            pd.Editor = new EditorSettings();
+            pd.Editor.BackgroundColour = colourToInt(m_sfmlControl.BackgroundColour);
+            pd.Editor.EmitterPosition = new Point((int)m_defaultPos.X, (int)m_defaultPos.Y);
+            pd.Editor.EnableMovement = enableMovementToolStripMenuItem.Checked;
+
             pd.BlendMode = m_particleSystem.blendMode.ToString();
             pd.Colour = colourToInt(m_particleSystem.colour);
             pd.Delay = (float)numericUpDownStartDelay.Value;
@@ -302,6 +307,11 @@ namespace ParticleEditor
                     pd = srlz.Deserialize<ParticleDefiniton>(jr);
                 }
 
+                m_sfmlControl.BackgroundColour = intToColour(pd.Editor.BackgroundColour);
+                enableMovementToolStripMenuItem.Checked = pd.Editor.EnableMovement;
+                m_defaultPos = new Vector2f(pd.Editor.EmitterPosition.X, pd.Editor.EmitterPosition.Y);
+                m_particleSystem.position = m_defaultPos;
+
                 switch(pd.BlendMode)
                 {
                     case "Add":
@@ -331,6 +341,8 @@ namespace ParticleEditor
                 numericUpDownSizeX.Value = pd.ParticleSize.Width;
                 numericUpDownSizeY.Value = pd.ParticleSize.Height;
 
+                m_particleSystem.randomInitialPositions = null;
+                listBoxSpawnPoints.Items.Clear();
                 if (pd.RandomInitialPositions.Count > 0)
                 {
                     List<Vector2f> randPositions = new List<Vector2f>();
@@ -342,6 +354,8 @@ namespace ParticleEditor
                     updateListbox(listBoxSpawnPoints.Items, randPositions);
                 }
 
+                m_particleSystem.randomInitialVelocities = null;
+                listBoxSpawnVelocities.Items.Clear();
                 if(pd.RandomInitialVelocites.Count > 0)
                 {
                     List<Vector2f> randVelocities = new List<Vector2f>();

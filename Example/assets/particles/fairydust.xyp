@@ -1,4 +1,9 @@
 {
+  "Editor": {
+    "EmitterPosition": "0, 0",
+    "BackgroundColour": 255,
+    "EnableMovement": true
+  },
   "ReleaseCount": 2,
   "Delay": 0.0,
   "Duration": -1.0,

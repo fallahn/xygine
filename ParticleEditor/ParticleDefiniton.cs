@@ -45,13 +45,25 @@ namespace ParticleEditor
         FloatRect TextureRect { get; set; }
     }
 
-    //TODO write other project settings such as enabled movement and back colour
-    
+    public class EditorSettings
+    {
+        public EditorSettings()
+        {
+            BackgroundColour = 255;
+            EnableMovement = false;
+            EmitterPosition = new Point();
+        }
+        public Point EmitterPosition { get; set; }
+        public int BackgroundColour { get; set; }
+        public bool EnableMovement { get; set; }
+    }
+
     /// <summary>
     /// represents the settings imported / exported between editor and xygine
     /// </summary>
     class ParticleDefiniton
     {
+        public EditorSettings Editor { get; set; }
         /// <summary>
         /// How many particles are released when system started
         /// </summary>
