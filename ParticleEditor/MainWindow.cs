@@ -102,6 +102,43 @@ namespace ParticleEditor
             panelColour.BackColorChanged += PanelColour_BackColorChanged;
 
             enableMovementToolStripMenuItem.CheckedChanged += EnableMovementToolStripMenuItem_CheckedChanged;
+
+            loadAssetPaths();
+        }
+
+        private List<string> m_AssetPaths = new List<string>();
+        private void loadAssetPaths()
+        {
+            try
+            {
+                StreamReader sr = new StreamReader("settings.set");
+                string line;
+                while((line = sr.ReadLine()) != null)
+                {
+                    if(Directory.Exists(line)) m_AssetPaths.Add(line);
+                }
+                sr.Close();
+            }
+            catch
+            {
+                m_AssetPaths.Add(Directory.GetCurrentDirectory()); //just add current working dir
+            }
+        }
+        private void saveAssetPaths()
+        {
+            try
+            {
+                StreamWriter sw = new StreamWriter("settings.set");
+                foreach (string str in m_AssetPaths)
+                {
+                    sw.WriteLine(str);
+                }
+                sw.Close();
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message, "Failed to write settings file");
+            }
         }
 
         private void sfmlMouse_Click(object sender, MouseEventArgs e)
@@ -122,6 +159,7 @@ namespace ParticleEditor
                     saveAsToolStripMenuItem_Click(sender, e);
                 }
             }
+            saveAssetPaths();
         }
 
         /// <summary>
@@ -342,10 +380,31 @@ namespace ParticleEditor
                 numericUpDownReleaseCount.Value = pd.ReleaseCount;
                 if(!string.IsNullOrEmpty(pd.Texture))
                 {
-                    m_texture = new Texture(pd.Texture);
-                    m_particleSystem.texture = m_texture;
-                    textBoxTexturePath.Text = Path.GetFileName(pd.Texture);
-                    panelTexPreview.BackgroundImage = new System.Drawing.Bitmap(pd.Texture);
+                    string path = pd.Texture;
+                    if (!File.Exists(path))
+                    {
+                        //try reconstructing from known asset paths
+                        path = path.Replace('/', '\\');
+                        foreach (string str in m_AssetPaths)
+                        {
+                            string temp = str + "\\" + path;
+                            if (File.Exists(temp))
+                            {
+                                m_texture = new Texture(temp);
+                                m_particleSystem.texture = m_texture;
+                                textBoxTexturePath.Text = pd.Texture;
+                                panelTexPreview.BackgroundImage = new Bitmap(temp);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        m_texture = new Texture(pd.Texture);
+                        m_particleSystem.texture = m_texture;
+                        textBoxTexturePath.Text = pd.Texture;
+                        panelTexPreview.BackgroundImage = new Bitmap(pd.Texture);
+                    }
                     fitPreviewImage();
                 }
                 else
@@ -436,5 +495,6 @@ namespace ParticleEditor
 
             return destImage;
         }
+
     }
 }

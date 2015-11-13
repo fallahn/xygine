@@ -117,6 +117,7 @@
             this.trackBarVelScale = new System.Windows.Forms.TrackBar();
             this.trackBarPosScale = new System.Windows.Forms.TrackBar();
             this.toolTipControl = new System.Windows.Forms.ToolTip(this.components);
+            this.addAssetDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -329,7 +330,8 @@
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.enableMovementToolStripMenuItem,
-            this.backgroundColourToolStripMenuItem});
+            this.backgroundColourToolStripMenuItem,
+            this.addAssetDirectoryToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
@@ -339,14 +341,14 @@
             this.enableMovementToolStripMenuItem.CheckOnClick = true;
             this.enableMovementToolStripMenuItem.Name = "enableMovementToolStripMenuItem";
             this.enableMovementToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-            this.enableMovementToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.enableMovementToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.enableMovementToolStripMenuItem.Text = "Enable Movement";
             // 
             // backgroundColourToolStripMenuItem
             // 
             this.backgroundColourToolStripMenuItem.Name = "backgroundColourToolStripMenuItem";
             this.backgroundColourToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
-            this.backgroundColourToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            this.backgroundColourToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.backgroundColourToolStripMenuItem.Text = "Background Colour";
             this.backgroundColourToolStripMenuItem.Click += new System.EventHandler(this.backgroundColourToolStripMenuItem_Click);
             // 
@@ -1263,6 +1265,15 @@
             this.toolTipControl.SetToolTip(this.trackBarPosScale, "Random scale. Sets the maximum random value range between -1/1 and -40/40");
             this.trackBarPosScale.Value = 10;
             // 
+            // addAssetDirectoryToolStripMenuItem
+            // 
+            this.addAssetDirectoryToolStripMenuItem.Name = "addAssetDirectoryToolStripMenuItem";
+            this.addAssetDirectoryToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.A)));
+            this.addAssetDirectoryToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.addAssetDirectoryToolStripMenuItem.Text = "Add Asset Folder";
+            this.addAssetDirectoryToolStripMenuItem.Click += new System.EventHandler(this.addAssetDirectoryToolStripMenuItem_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1415,6 +1426,7 @@
         private System.Windows.Forms.TrackBar trackBarVelScale;
         private System.Windows.Forms.TrackBar trackBarPosScale;
         private System.Windows.Forms.ToolTip toolTipControl;
+        private System.Windows.Forms.ToolStripMenuItem addAssetDirectoryToolStripMenuItem;
     }
 }
 

@@ -31,6 +31,7 @@ using System.Windows.Forms;
 using SFML.Window;
 using SFML.Graphics;
 using System.Drawing;
+using System.IO;
 
 namespace ParticleEditor
 {
@@ -147,7 +148,20 @@ namespace ParticleEditor
             {
                 m_texture = new Texture(od.FileName);
                 m_particleSystem.texture = m_texture;
+
                 textBoxTexturePath.Text = od.FileName;
+                //trim name if stored in known path
+                foreach(string str in m_AssetPaths)
+                {
+                    int size = textBoxTexturePath.Text.Length;
+                    textBoxTexturePath.Text = textBoxTexturePath.Text.Replace(str, string.Empty);
+
+                    if (size > textBoxTexturePath.Text.Length)
+                    {
+                        textBoxTexturePath.Text = textBoxTexturePath.Text.Replace('\\', '/');
+                        break;
+                    }
+                }
 
                 panelTexPreview.BackgroundImage = new Bitmap(od.FileName);
                 fitPreviewImage();
@@ -330,6 +344,15 @@ namespace ParticleEditor
         private void NumericUpDownLifetime_ValueChanged(object sender, EventArgs e)
         {
             m_particleSystem.particleLifetime = (float)numericUpDownLifetime.Value;
+        }
+
+        private void addAssetDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fb = new FolderBrowserDialog();
+            if (fb.ShowDialog() == DialogResult.OK)
+            {
+                m_AssetPaths.Add(Directory.GetParent(fb.SelectedPath).FullName);
+            }
         }
 
         private void buttonAddAffector_Click(object sender, EventArgs e)
