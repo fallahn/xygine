@@ -96,9 +96,9 @@ namespace ParticleEditor
         public Vector2f position { set { m_position = value; } get { return m_position; } }
         private bool m_followParent = false;
         public bool followParent { set { m_followParent = value; } }
-        private float m_particleLifetime = 2f;
+        private float m_particleLifetime = 1f;
         public float particleLifetime { set { m_particleLifetime = value; } get { return m_particleLifetime; } }
-        private Vector2f m_initialVelocity = new Vector2f();
+        private Vector2f m_initialVelocity = new Vector2f(0f, -50f);
         public Vector2f initialVelocity { set { m_initialVelocity = value; } get { return m_initialVelocity; } }
         private List<Vector2f> m_randomInitialVelocities = new List<Vector2f>();
         public List<Vector2f> randomInitialVelocities
@@ -113,7 +113,7 @@ namespace ParticleEditor
                 return m_randomInitialVelocities;
             }
         }
-        private float m_emitRate = 30f;
+        private float m_emitRate = 1f;
         public float emitRate { set { m_emitRate = value; } }
         private List<Vector2f> m_randomInitialPositions = new List<Vector2f>();
         public List<Vector2f> randomInitialPositions

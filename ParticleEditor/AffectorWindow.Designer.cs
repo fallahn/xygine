@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.panelForce = new System.Windows.Forms.Panel();
             this.buttonOk = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
@@ -52,6 +53,7 @@
             this.numericUpDownScaleY = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownScaleX = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
+            this.toolTipText = new System.Windows.Forms.ToolTip(this.components);
             this.panelForce.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownForceY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownForceX)).BeginInit();
@@ -109,31 +111,38 @@
             // numericUpDownForceY
             // 
             this.numericUpDownForceY.Location = new System.Drawing.Point(101, 21);
+            this.numericUpDownForceY.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.numericUpDownForceY.Minimum = new decimal(new int[] {
-            100,
+            1000,
             0,
             0,
             -2147483648});
             this.numericUpDownForceY.Name = "numericUpDownForceY";
             this.numericUpDownForceY.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownForceY.TabIndex = 19;
+            this.toolTipText.SetToolTip(this.numericUpDownForceY, "Strength on Y axis to affect each particle");
             // 
             // numericUpDownForceX
             // 
             this.numericUpDownForceX.Location = new System.Drawing.Point(24, 21);
             this.numericUpDownForceX.Maximum = new decimal(new int[] {
-            500,
+            1000,
             0,
             0,
             0});
             this.numericUpDownForceX.Minimum = new decimal(new int[] {
-            500,
+            1000,
             0,
             0,
             -2147483648});
             this.numericUpDownForceX.Name = "numericUpDownForceX";
             this.numericUpDownForceX.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownForceX.TabIndex = 17;
+            this.toolTipText.SetToolTip(this.numericUpDownForceX, "Strength on X axis to affect each particle");
             // 
             // label1
             // 
@@ -189,6 +198,7 @@
             this.numericUpDownColour.Name = "numericUpDownColour";
             this.numericUpDownColour.Size = new System.Drawing.Size(53, 20);
             this.numericUpDownColour.TabIndex = 3;
+            this.toolTipText.SetToolTip(this.numericUpDownColour, "Duration in seconds in which to interpolate start and end colours");
             this.numericUpDownColour.Value = new decimal(new int[] {
             1,
             0,
@@ -203,6 +213,7 @@
             this.panelColourEnd.Name = "panelColourEnd";
             this.panelColourEnd.Size = new System.Drawing.Size(46, 40);
             this.panelColourEnd.TabIndex = 2;
+            this.toolTipText.SetToolTip(this.panelColourEnd, "Final colour of particle");
             this.panelColourEnd.Click += new System.EventHandler(this.panelColourEnd_Click);
             // 
             // panelColourStart
@@ -213,6 +224,7 @@
             this.panelColourStart.Name = "panelColourStart";
             this.panelColourStart.Size = new System.Drawing.Size(46, 40);
             this.panelColourStart.TabIndex = 1;
+            this.toolTipText.SetToolTip(this.panelColourStart, "Initial colour of particle");
             this.panelColourStart.Click += new System.EventHandler(this.panelColourStart_Click);
             // 
             // label2
@@ -250,18 +262,19 @@
             this.numericUpDownRotation.DecimalPlaces = 1;
             this.numericUpDownRotation.Location = new System.Drawing.Point(25, 26);
             this.numericUpDownRotation.Maximum = new decimal(new int[] {
-            360,
+            1080,
             0,
             0,
             0});
             this.numericUpDownRotation.Minimum = new decimal(new int[] {
-            360,
+            1080,
             0,
             0,
             -2147483648});
             this.numericUpDownRotation.Name = "numericUpDownRotation";
             this.numericUpDownRotation.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownRotation.TabIndex = 1;
+            this.toolTipText.SetToolTip(this.numericUpDownRotation, "Rotation in degrees per second to affect each particle");
             // 
             // label3
             // 
@@ -336,6 +349,7 @@
             this.numericUpDownScaleY.Name = "numericUpDownScaleY";
             this.numericUpDownScaleY.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownScaleY.TabIndex = 23;
+            this.toolTipText.SetToolTip(this.numericUpDownScaleY, "Amount to be added to each particle\'s Y scale per frame. May be negative");
             this.numericUpDownScaleY.Value = new decimal(new int[] {
             1,
             0,
@@ -364,6 +378,7 @@
             this.numericUpDownScaleX.Name = "numericUpDownScaleX";
             this.numericUpDownScaleX.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownScaleX.TabIndex = 21;
+            this.toolTipText.SetToolTip(this.numericUpDownScaleX, "Amount to be added to each particle\'s X scale per frame. May be negative");
             this.numericUpDownScaleX.Value = new decimal(new int[] {
             1,
             0,
@@ -438,5 +453,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.ToolTip toolTipText;
     }
 }

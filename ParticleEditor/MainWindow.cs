@@ -63,7 +63,6 @@ namespace ParticleEditor
             m_sfmlControl.MouseClick += sfmlMouse_Click;
             m_sfmlControl.DrawDelegates.Add(drawParticleSystem);
             m_sfmlControl.UpdateDelegates.Add(m_particleSystem.update);
-            numericUpDownDuration.Value = -1;
 
             comboBoxBlendMode.DataSource = Enum.GetValues(typeof(BlendMode));
             comboBoxBlendMode.SelectedItem = BlendMode.Add;
@@ -144,7 +143,7 @@ namespace ParticleEditor
         private float yTarget = 80f;
         private void updateMotion()
         {
-            if (enableMovementToolStripMenuItem.Checked)
+            if (m_particleSystem.started && enableMovementToolStripMenuItem.Checked)
             {
                 float frameTime = m_movementTimer.ElapsedMilliseconds / 1000f;
                 m_movementTimer.Restart();
@@ -162,6 +161,8 @@ namespace ParticleEditor
             if(!m_particleSystem.started)
             {
                 buttonStart.Text = "Start";
+                m_movementTimer.Restart();
+                m_particleSystem.position = m_defaultPos;
             }
         }
 

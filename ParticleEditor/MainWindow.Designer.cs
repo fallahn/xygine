@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -41,6 +43,15 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableMovementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundColourToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.numericUpDownEmitRate = new System.Windows.Forms.NumericUpDown();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.numericUpDownDuration = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownStartDelay = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownReleaseCount = new System.Windows.Forms.NumericUpDown();
             this.label22 = new System.Windows.Forms.Label();
             this.numericUpDownRotation = new System.Windows.Forms.NumericUpDown();
             this.label21 = new System.Windows.Forms.Label();
@@ -103,17 +114,9 @@
             this.listBoxAffectors = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.buttonStart = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.numericUpDownEmitRate = new System.Windows.Forms.NumericUpDown();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.numericUpDownDuration = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownStartDelay = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownReleaseCount = new System.Windows.Forms.NumericUpDown();
             this.trackBarVelScale = new System.Windows.Forms.TrackBar();
             this.trackBarPosScale = new System.Windows.Forms.TrackBar();
+            this.toolTipControl = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -126,6 +129,11 @@
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEmitRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDuration)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartDelay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReleaseCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRotation)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLifetime)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInitVelY)).BeginInit();
@@ -146,11 +154,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpawnPosX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpawnVelY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpawnVelX)).BeginInit();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEmitRate)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDuration)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartDelay)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReleaseCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVelScale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarPosScale)).BeginInit();
             this.SuspendLayout();
@@ -347,6 +350,134 @@
             this.backgroundColourToolStripMenuItem.Text = "Background Colour";
             this.backgroundColourToolStripMenuItem.Click += new System.EventHandler(this.backgroundColourToolStripMenuItem_Click);
             // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.numericUpDownEmitRate);
+            this.panel1.Controls.Add(this.label20);
+            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.numericUpDownDuration);
+            this.panel1.Controls.Add(this.numericUpDownStartDelay);
+            this.panel1.Controls.Add(this.numericUpDownReleaseCount);
+            this.panel1.Location = new System.Drawing.Point(-1, 2);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(546, 45);
+            this.panel1.TabIndex = 31;
+            // 
+            // numericUpDownEmitRate
+            // 
+            this.numericUpDownEmitRate.DecimalPlaces = 2;
+            this.numericUpDownEmitRate.Location = new System.Drawing.Point(472, 11);
+            this.numericUpDownEmitRate.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.numericUpDownEmitRate.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownEmitRate.Name = "numericUpDownEmitRate";
+            this.numericUpDownEmitRate.Size = new System.Drawing.Size(56, 20);
+            this.numericUpDownEmitRate.TabIndex = 15;
+            this.toolTipControl.SetToolTip(this.numericUpDownEmitRate, "Number of particles to emit per second");
+            this.numericUpDownEmitRate.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(413, 13);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(53, 13);
+            this.label20.TabIndex = 14;
+            this.label20.Text = "Emit Rate";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(286, 13);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(47, 13);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "Duration";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(147, 13);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(59, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Start Delay";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(9, 13);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(77, 13);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Release Count";
+            // 
+            // numericUpDownDuration
+            // 
+            this.numericUpDownDuration.DecimalPlaces = 3;
+            this.numericUpDownDuration.Location = new System.Drawing.Point(339, 11);
+            this.numericUpDownDuration.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownDuration.Name = "numericUpDownDuration";
+            this.numericUpDownDuration.Size = new System.Drawing.Size(57, 20);
+            this.numericUpDownDuration.TabIndex = 13;
+            this.toolTipControl.SetToolTip(this.numericUpDownDuration, "Number of seconds to emit particles for. Negative numbers release particles indef" +
+        "initely");
+            this.numericUpDownDuration.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            -2147483648});
+            // 
+            // numericUpDownStartDelay
+            // 
+            this.numericUpDownStartDelay.DecimalPlaces = 2;
+            this.numericUpDownStartDelay.Location = new System.Drawing.Point(212, 11);
+            this.numericUpDownStartDelay.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericUpDownStartDelay.Name = "numericUpDownStartDelay";
+            this.numericUpDownStartDelay.Size = new System.Drawing.Size(56, 20);
+            this.numericUpDownStartDelay.TabIndex = 11;
+            this.toolTipControl.SetToolTip(this.numericUpDownStartDelay, "Delay, in seconds, before particles start to emit");
+            // 
+            // numericUpDownReleaseCount
+            // 
+            this.numericUpDownReleaseCount.Location = new System.Drawing.Point(92, 11);
+            this.numericUpDownReleaseCount.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownReleaseCount.Name = "numericUpDownReleaseCount";
+            this.numericUpDownReleaseCount.Size = new System.Drawing.Size(41, 20);
+            this.numericUpDownReleaseCount.TabIndex = 9;
+            this.toolTipControl.SetToolTip(this.numericUpDownReleaseCount, "Number of particles to release on each emission");
+            this.numericUpDownReleaseCount.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // label22
             // 
             this.label22.AutoSize = true;
@@ -373,6 +504,7 @@
             this.numericUpDownRotation.Name = "numericUpDownRotation";
             this.numericUpDownRotation.Size = new System.Drawing.Size(87, 20);
             this.numericUpDownRotation.TabIndex = 29;
+            this.toolTipControl.SetToolTip(this.numericUpDownRotation, "Currently unused");
             // 
             // label21
             // 
@@ -400,6 +532,7 @@
             this.numericUpDownLifetime.Name = "numericUpDownLifetime";
             this.numericUpDownLifetime.Size = new System.Drawing.Size(87, 20);
             this.numericUpDownLifetime.TabIndex = 24;
+            this.toolTipControl.SetToolTip(this.numericUpDownLifetime, "Lifetime of each particle in seconds");
             this.numericUpDownLifetime.Value = new decimal(new int[] {
             1,
             0,
@@ -423,6 +556,7 @@
             this.panelColour.Name = "panelColour";
             this.panelColour.Size = new System.Drawing.Size(87, 73);
             this.panelColour.TabIndex = 22;
+            this.toolTipControl.SetToolTip(this.panelColour, "Colour with which particles are multiplied. Overridden by colour affectors");
             // 
             // buttonClearTexture
             // 
@@ -431,6 +565,7 @@
             this.buttonClearTexture.Size = new System.Drawing.Size(67, 23);
             this.buttonClearTexture.TabIndex = 27;
             this.buttonClearTexture.Text = "Clear";
+            this.toolTipControl.SetToolTip(this.buttonClearTexture, "Removes the currently set texture");
             this.buttonClearTexture.UseVisualStyleBackColor = true;
             this.buttonClearTexture.Click += new System.EventHandler(this.buttonClearTexture_Click);
             // 
@@ -460,6 +595,7 @@
             this.comboBoxBlendMode.Name = "comboBoxBlendMode";
             this.comboBoxBlendMode.Size = new System.Drawing.Size(140, 21);
             this.comboBoxBlendMode.TabIndex = 11;
+            this.toolTipControl.SetToolTip(this.comboBoxBlendMode, "OpenGL blend mode used to draw particles");
             this.comboBoxBlendMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxBlendMode_SelectedIndexChanged);
             // 
             // label17
@@ -500,6 +636,12 @@
             this.numericUpDownInitVelY.Name = "numericUpDownInitVelY";
             this.numericUpDownInitVelY.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownInitVelY.TabIndex = 16;
+            this.toolTipControl.SetToolTip(this.numericUpDownInitVelY, "Initial Y velocity of emitted particles. Overridden by random velocity values");
+            this.numericUpDownInitVelY.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            -2147483648});
             // 
             // numericUpDownInitVelX
             // 
@@ -512,6 +654,7 @@
             this.numericUpDownInitVelX.Name = "numericUpDownInitVelX";
             this.numericUpDownInitVelX.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownInitVelX.TabIndex = 19;
+            this.toolTipControl.SetToolTip(this.numericUpDownInitVelX, "Initial X velocity of emitted particles. Overridden by random velocity values");
             // 
             // label14
             // 
@@ -529,6 +672,7 @@
             this.buttonTextureFit.Size = new System.Drawing.Size(140, 23);
             this.buttonTextureFit.TabIndex = 28;
             this.buttonTextureFit.Text = "Fit to Texture";
+            this.toolTipControl.SetToolTip(this.buttonTextureFit, "Resizes initial particle size to match currently loaded texture");
             this.buttonTextureFit.UseVisualStyleBackColor = true;
             this.buttonTextureFit.Click += new System.EventHandler(this.buttonTextureFit_Click);
             // 
@@ -566,6 +710,7 @@
             this.numericUpDownSizeY.Name = "numericUpDownSizeY";
             this.numericUpDownSizeY.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownSizeY.TabIndex = 20;
+            this.toolTipControl.SetToolTip(this.numericUpDownSizeY, "Initial height of particles when spawned");
             this.numericUpDownSizeY.Value = new decimal(new int[] {
             2,
             0,
@@ -588,6 +733,7 @@
             this.numericUpDownSizeX.Name = "numericUpDownSizeX";
             this.numericUpDownSizeX.Size = new System.Drawing.Size(46, 20);
             this.numericUpDownSizeX.TabIndex = 13;
+            this.toolTipControl.SetToolTip(this.numericUpDownSizeX, "Initial width of particles when spawned");
             this.numericUpDownSizeX.Value = new decimal(new int[] {
             2,
             0,
@@ -610,6 +756,7 @@
             this.buttonTextureBrowse.Size = new System.Drawing.Size(26, 23);
             this.buttonTextureBrowse.TabIndex = 26;
             this.buttonTextureBrowse.Text = "...";
+            this.toolTipControl.SetToolTip(this.buttonTextureBrowse, "Browse for a particle texture");
             this.buttonTextureBrowse.UseVisualStyleBackColor = true;
             this.buttonTextureBrowse.Click += new System.EventHandler(this.buttonTextureBrowse_Click);
             // 
@@ -726,12 +873,12 @@
             65536});
             this.numericUpDownRotationAffector.Location = new System.Drawing.Point(3, 3);
             this.numericUpDownRotationAffector.Maximum = new decimal(new int[] {
-            360,
+            1080,
             0,
             0,
             0});
             this.numericUpDownRotationAffector.Minimum = new decimal(new int[] {
-            360,
+            1080,
             0,
             0,
             -2147483648});
@@ -806,6 +953,7 @@
             this.buttonRandVel.Size = new System.Drawing.Size(75, 23);
             this.buttonRandVel.TabIndex = 31;
             this.buttonRandVel.Text = "Random";
+            this.toolTipControl.SetToolTip(this.buttonRandVel, "Sets X/Y values to a random number within the currently selected range");
             this.buttonRandVel.UseVisualStyleBackColor = true;
             this.buttonRandVel.Click += new System.EventHandler(this.buttonRandVel_Click);
             // 
@@ -816,6 +964,7 @@
             this.buttonRandPos.Size = new System.Drawing.Size(75, 23);
             this.buttonRandPos.TabIndex = 30;
             this.buttonRandPos.Text = "Random";
+            this.toolTipControl.SetToolTip(this.buttonRandPos, "Sets X/Y values to a random number based on the range slider");
             this.buttonRandPos.UseVisualStyleBackColor = true;
             this.buttonRandPos.Click += new System.EventHandler(this.buttonRandPos_Click);
             // 
@@ -903,6 +1052,7 @@
             this.comboBoxAffectors.Name = "comboBoxAffectors";
             this.comboBoxAffectors.Size = new System.Drawing.Size(150, 21);
             this.comboBoxAffectors.TabIndex = 17;
+            this.toolTipControl.SetToolTip(this.comboBoxAffectors, resources.GetString("comboBoxAffectors.ToolTip"));
             // 
             // label9
             // 
@@ -995,6 +1145,7 @@
             this.buttonSpawnVelAdd.Size = new System.Drawing.Size(75, 23);
             this.buttonSpawnVelAdd.TabIndex = 16;
             this.buttonSpawnVelAdd.Text = "Add";
+            this.toolTipControl.SetToolTip(this.buttonSpawnVelAdd, "Adds the currently selected X/Y values to the list as a random spawn velocity");
             this.buttonSpawnVelAdd.UseVisualStyleBackColor = true;
             this.buttonSpawnVelAdd.Click += new System.EventHandler(this.buttonSpawnVelAdd_Click);
             // 
@@ -1005,6 +1156,8 @@
             this.listBoxSpawnVelocities.Name = "listBoxSpawnVelocities";
             this.listBoxSpawnVelocities.Size = new System.Drawing.Size(149, 134);
             this.listBoxSpawnVelocities.TabIndex = 11;
+            this.toolTipControl.SetToolTip(this.listBoxSpawnVelocities, "List of random velocities with which particles will spawn. Right click for option" +
+        "s.");
             // 
             // label3
             // 
@@ -1022,6 +1175,7 @@
             this.buttonSpawnPosAdd.Size = new System.Drawing.Size(75, 23);
             this.buttonSpawnPosAdd.TabIndex = 9;
             this.buttonSpawnPosAdd.Text = "Add";
+            this.toolTipControl.SetToolTip(this.buttonSpawnPosAdd, "Adds the currently selected values to the list of random spawn locations");
             this.buttonSpawnPosAdd.UseVisualStyleBackColor = true;
             this.buttonSpawnPosAdd.Click += new System.EventHandler(this.buttonSpawnPosAdd_Click);
             // 
@@ -1032,6 +1186,8 @@
             this.listBoxSpawnPoints.Name = "listBoxSpawnPoints";
             this.listBoxSpawnPoints.Size = new System.Drawing.Size(148, 134);
             this.listBoxSpawnPoints.TabIndex = 4;
+            this.toolTipControl.SetToolTip(this.listBoxSpawnPoints, "List of points relative to the emitter at which particles will spawn. Right click" +
+        " for options.");
             // 
             // label2
             // 
@@ -1049,6 +1205,7 @@
             this.buttonAddAffector.Size = new System.Drawing.Size(75, 23);
             this.buttonAddAffector.TabIndex = 2;
             this.buttonAddAffector.Text = "Add";
+            this.toolTipControl.SetToolTip(this.buttonAddAffector, "Adds an instance of he currently selected affector");
             this.buttonAddAffector.UseVisualStyleBackColor = true;
             this.buttonAddAffector.Click += new System.EventHandler(this.buttonAddAffector_Click);
             // 
@@ -1059,6 +1216,8 @@
             this.listBoxAffectors.Name = "listBoxAffectors";
             this.listBoxAffectors.Size = new System.Drawing.Size(149, 121);
             this.listBoxAffectors.TabIndex = 1;
+            this.toolTipControl.SetToolTip(this.listBoxAffectors, "List of affectors applied to current particle system. Click on an affector to see" +
+        " its properties");
             this.listBoxAffectors.SelectedIndexChanged += new System.EventHandler(this.listBoxAffectors_SelectedIndexChanged);
             // 
             // label1
@@ -1080,129 +1239,6 @@
             this.buttonStart.UseVisualStyleBackColor = true;
             this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
             // 
-            // panel1
-            // 
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.numericUpDownEmitRate);
-            this.panel1.Controls.Add(this.label20);
-            this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.numericUpDownDuration);
-            this.panel1.Controls.Add(this.numericUpDownStartDelay);
-            this.panel1.Controls.Add(this.numericUpDownReleaseCount);
-            this.panel1.Location = new System.Drawing.Point(-1, 2);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(546, 45);
-            this.panel1.TabIndex = 31;
-            // 
-            // numericUpDownEmitRate
-            // 
-            this.numericUpDownEmitRate.DecimalPlaces = 2;
-            this.numericUpDownEmitRate.Location = new System.Drawing.Point(472, 11);
-            this.numericUpDownEmitRate.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.numericUpDownEmitRate.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDownEmitRate.Name = "numericUpDownEmitRate";
-            this.numericUpDownEmitRate.Size = new System.Drawing.Size(56, 20);
-            this.numericUpDownEmitRate.TabIndex = 15;
-            this.numericUpDownEmitRate.Value = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(413, 13);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(53, 13);
-            this.label20.TabIndex = 14;
-            this.label20.Text = "Emit Rate";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(286, 13);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(47, 13);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "Duration";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(147, 13);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(59, 13);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Start Delay";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 13);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(77, 13);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Release Count";
-            // 
-            // numericUpDownDuration
-            // 
-            this.numericUpDownDuration.DecimalPlaces = 3;
-            this.numericUpDownDuration.Location = new System.Drawing.Point(339, 11);
-            this.numericUpDownDuration.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            -2147483648});
-            this.numericUpDownDuration.Name = "numericUpDownDuration";
-            this.numericUpDownDuration.Size = new System.Drawing.Size(57, 20);
-            this.numericUpDownDuration.TabIndex = 13;
-            this.numericUpDownDuration.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            -2147483648});
-            // 
-            // numericUpDownStartDelay
-            // 
-            this.numericUpDownStartDelay.DecimalPlaces = 2;
-            this.numericUpDownStartDelay.Location = new System.Drawing.Point(212, 11);
-            this.numericUpDownStartDelay.Maximum = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-            this.numericUpDownStartDelay.Name = "numericUpDownStartDelay";
-            this.numericUpDownStartDelay.Size = new System.Drawing.Size(56, 20);
-            this.numericUpDownStartDelay.TabIndex = 11;
-            // 
-            // numericUpDownReleaseCount
-            // 
-            this.numericUpDownReleaseCount.Location = new System.Drawing.Point(92, 11);
-            this.numericUpDownReleaseCount.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.numericUpDownReleaseCount.Name = "numericUpDownReleaseCount";
-            this.numericUpDownReleaseCount.Size = new System.Drawing.Size(41, 20);
-            this.numericUpDownReleaseCount.TabIndex = 9;
-            this.numericUpDownReleaseCount.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
             // trackBarVelScale
             // 
             this.trackBarVelScale.Location = new System.Drawing.Point(149, 359);
@@ -1212,6 +1248,7 @@
             this.trackBarVelScale.Size = new System.Drawing.Size(97, 45);
             this.trackBarVelScale.TabIndex = 35;
             this.trackBarVelScale.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.toolTipControl.SetToolTip(this.trackBarVelScale, "Sets the maximum random value range between -10/10 and -100/100");
             this.trackBarVelScale.Value = 10;
             // 
             // trackBarPosScale
@@ -1223,6 +1260,7 @@
             this.trackBarPosScale.Size = new System.Drawing.Size(97, 45);
             this.trackBarPosScale.TabIndex = 36;
             this.trackBarPosScale.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.toolTipControl.SetToolTip(this.trackBarPosScale, "Random scale. Sets the maximum random value range between -1/1 and -40/40");
             this.trackBarPosScale.Value = 10;
             // 
             // MainWindow
@@ -1254,6 +1292,12 @@
             this.splitContainer3.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEmitRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDuration)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartDelay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReleaseCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRotation)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownLifetime)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInitVelY)).EndInit();
@@ -1276,12 +1320,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpawnPosX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpawnVelY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpawnVelX)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEmitRate)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDuration)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStartDelay)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReleaseCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVelScale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarPosScale)).EndInit();
             this.ResumeLayout(false);
@@ -1376,6 +1414,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDownReleaseCount;
         private System.Windows.Forms.TrackBar trackBarVelScale;
         private System.Windows.Forms.TrackBar trackBarPosScale;
+        private System.Windows.Forms.ToolTip toolTipControl;
     }
 }
 

@@ -120,6 +120,29 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <metadata name="toolTipControl.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>131, 17</value>
+  </metadata>
+  <data name="comboBoxAffectors.ToolTip" xml:space="preserve">
+    <value>Force Affector:
+Applies the given force to each particle each frame
+
+Colour Affector:
+Linearly interpolates the particle's colour between
+two colours over the given duration
+
+Rotation Affector:
+Applies the given rotation in degrees per second to
+each particle
+
+Scale Affector:
+Adds the given scale to each particle's scale.
+Negative scales will make particles shrink, positive
+will make them grow</value>
+  </data>
+  <metadata name="toolTipControl.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>131, 17</value>
+  </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>49</value>
   </metadata>
