@@ -258,6 +258,15 @@ namespace ParticleEditor
                 saveAsToolStripMenuItem_Click(sender, e);
             }
 
+            m_particleSystem.stop();
+            buttonStart.Text = "Start";
+
+            Point outLoc = new Point(10000, 0);
+            panelForceAffector.Location = outLoc; //move it out of the visible area
+            panelColourAffector.Location = outLoc;
+            panelRotateAffector.Location = outLoc;
+            panelScaleAffector.Location = outLoc;
+
             listBoxAffectors.Items.Clear();
             listBoxSpawnPoints.Items.Clear();
             listBoxSpawnVelocities.Items.Clear();
@@ -265,7 +274,7 @@ namespace ParticleEditor
             numericUpDownReleaseCount.Value = 1;
             numericUpDownStartDelay.Value = 0;
             numericUpDownDuration.Value = -1;
-            numericUpDownEmitRate.Value = 30;
+            numericUpDownEmitRate.Value = 1;
 
             panelTexPreview.BackgroundImage = null;
             textBoxTexturePath.Text = string.Empty;
@@ -286,7 +295,6 @@ namespace ParticleEditor
             numericUpDownSpawnVelY.Value = 0;
 
             m_texture = null;
-            //m_particleSystem = new ParticleSystem();
             m_particleSystem.randomInitialPositions = null;
             m_particleSystem.randomInitialVelocities = null;
             m_particleSystem.Affectors.Clear();
@@ -319,6 +327,9 @@ namespace ParticleEditor
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            m_particleSystem.stop();
+            buttonStart.Text = "Start";
+            
             //if(m_filePath != string.Empty)
             {
                 if(MessageBox.Show("Save current file?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)

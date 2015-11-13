@@ -1,0 +1,50 @@
+{
+  "ReleaseCount": 4,
+  "Delay": 0.0,
+  "Duration": 0.2,
+  "Texture": "/assets/images/particles/dust.png",
+  "Colour": -1,
+  "BlendMode": "Add",
+  "ParticleSize": "16, 16",
+  "ParticlePosition": "0, 0",
+  "FollowParent": false,
+  "Lifetime": 1.5,
+  "InitialVelocity": "0, -50",
+  "RandomInitialVelocites": [
+    "-22, 12",
+    "2, -25",
+    "-25, 0",
+    "-9, -10"
+  ],
+  "EmitRate": 1.0,
+  "RandomInitialPositions": [
+    "6, -5",
+    "5, -6",
+    "5, -3",
+    "-3, -7",
+    "-4, 6",
+    "-3, 1"
+  ],
+  "Affectors": [
+    {
+      "Type": "Scale",
+      "Data": [
+        5.0,
+        5.0
+      ]
+    },
+    {
+      "Type": "Rotation",
+      "Data": [
+        -51.0
+      ]
+    },
+    {
+      "Type": "Force",
+      "Data": [
+        80.0,
+        -50.0
+      ]
+    }
+  ]
+}

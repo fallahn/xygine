@@ -218,14 +218,21 @@ namespace ParticleEditor
             pd.Lifetime = m_particleSystem.particleLifetime;
             pd.ParticleSize = new Size((int)numericUpDownSizeX.Value, (int)numericUpDownSizeY.Value);
             pd.RandomInitialPositions = new List<Point>();
-            foreach(var v in m_particleSystem.randomInitialPositions)
+            if (m_particleSystem.randomInitialPositions != null)
             {
-                pd.RandomInitialPositions.Add(new Point((int)v.X, (int)v.Y));
+                foreach (var v in m_particleSystem.randomInitialPositions)
+                {
+                    pd.RandomInitialPositions.Add(new Point((int)v.X, (int)v.Y));
+                }
             }
+
             pd.RandomInitialVelocites = new List<Point>();
-            foreach (var v in m_particleSystem.randomInitialVelocities)
+            if (m_particleSystem.randomInitialVelocities != null)
             {
-                pd.RandomInitialVelocites.Add(new Point((int)v.X, (int)v.Y));
+                foreach (var v in m_particleSystem.randomInitialVelocities)
+                {
+                    pd.RandomInitialVelocites.Add(new Point((int)v.X, (int)v.Y));
+                }
             }
             pd.Affectors = new List<AffectorDefinition>();
             foreach(var a in m_particleSystem.Affectors)
@@ -387,6 +394,7 @@ namespace ParticleEditor
                     {
                         //try reconstructing from known asset paths
                         path = path.Replace('/', '\\');
+                        bool loaded = false;
                         foreach (string str in m_AssetPaths)
                         {
                             string temp = str + "\\" + path;
@@ -396,7 +404,20 @@ namespace ParticleEditor
                                 m_particleSystem.texture = m_texture;
                                 textBoxTexturePath.Text = pd.Texture;
                                 panelTexPreview.BackgroundImage = new Bitmap(temp);
+                                loaded = true;
                                 break;
+                            }
+                        }
+                        if (!loaded)
+                        {
+                            //last ditch, try working dir
+                            string temp = Path.GetFileName(pd.Texture);
+                            if (File.Exists(temp))
+                            {
+                                m_texture = new Texture(temp);
+                                m_particleSystem.texture = m_texture;
+                                textBoxTexturePath.Text = pd.Texture;
+                                panelTexPreview.BackgroundImage = new Bitmap(temp);
                             }
                         }
                     }
@@ -421,6 +442,7 @@ namespace ParticleEditor
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Failed to open particle file");
+                MessageBox.Show("make sure asset paths are valid\n(Options->Add Asset Folder)");
             }
 
         }
