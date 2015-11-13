@@ -346,6 +346,8 @@ namespace ParticleEditor
                     updateListbox(listBoxSpawnVelocities.Items, randVelocities);
                 }
 
+                listBoxAffectors.Items.Clear();
+                m_particleSystem.Affectors.Clear();
                 if(pd.Affectors.Count > 0)
                 {
                     foreach(var ad in pd.Affectors)
