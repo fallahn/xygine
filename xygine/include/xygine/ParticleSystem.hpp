@@ -52,7 +52,6 @@ namespace xy
         {
         public:
             Definition();
-            explicit Definition(const std::string& path);
             ~Definition() = default;
             /*Definition(const Definition&) = delete;
             Definition& operator = (const Definition) = delete;*/
@@ -79,6 +78,7 @@ namespace xy
             std::vector<Affector> affectors;
 
             Ptr createSystem(MessageBus&) const;
+            void loadFromFile(const std::string&);
         };
 
 
@@ -91,8 +91,6 @@ namespace xy
 
         sf::FloatRect localBounds() const override;
         sf::FloatRect globalBounds() const override;
-
-        static Ptr create(Particle::Type, MessageBus&);
 
         void setTexture(const sf::Texture& t);
         void setColour(const sf::Color& colour);

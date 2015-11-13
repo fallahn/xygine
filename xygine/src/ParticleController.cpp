@@ -70,7 +70,7 @@ void ParticleController::onStart(Entity& entity)
 
 void ParticleController::addDefinition(SystemId id, const ParticleSystem::Definition& d)
 {
-    //TODO we can't current add definitions until this component has a parent entity
+    //TODO we can't currently add definitions until this component has a parent entity
     XY_ASSERT(m_entity, "this component must be added to an entity first");
     auto ent = std::make_unique<Entity>(getMessageBus());
     m_activeSystems[id] = std::make_pair(ent.get(), d);

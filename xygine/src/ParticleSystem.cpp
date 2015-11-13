@@ -342,16 +342,56 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 }
 
 
-
+#include <xygine/JsonUtil.hpp>
 //-------particle system definition------//
 ParticleSystem::Definition::Definition()
 {
 
 }
 
-ParticleSystem::Definition::Definition(const std::string& path)
+void ParticleSystem::Definition::loadFromFile(const std::string& path)
 {
-    //TODO load / parse json file
+    //load / parse json file
+    std::ifstream file(path);
+    if (!file.good() || !Util::File::validLength(file))
+    {
+        LOG("failed to open " + path + ", or file empty", Logger::Type::Error);
+        file.close();
+        return;
+    }
+
+    std::string jsonString;
+    while (!file.eof())
+    {
+        std::string temp;
+        file >> temp;
+        jsonString += temp;
+    }
+    if (jsonString.empty())
+    {
+        LOG(path + "failed to read, or file empty", Logger::Type::Error);
+        file.close();
+        return;
+    }
+    file.close();
+
+    //int ReleaseCount
+    //float Delay
+    //float Duration
+    //string Texture
+    //int Colour
+    //string BlendMode Add, Multiply, Alpha, None
+    //string pair ParticleSize
+    //string pair ParticlePosition
+    //bool FollowParent
+    //float Lifetime
+    //string pair InitialVelocity
+    //array string pair RandomInitialVelocities
+    //float EmitRate
+    //array string pair RandomInitialPositions
+    //array Affectors
+    //      string Type Force, Scale, Colour, Rotation
+    //      array float Data
 }
 
 ParticleSystem::Ptr ParticleSystem::Definition::createSystem(MessageBus& mb) const

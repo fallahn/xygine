@@ -36,14 +36,6 @@ namespace xy
 {
     struct Particle final : public sf::Transformable
     {
-        enum class Type
-        {
-            Trail,
-            Echo,
-            Sparkle,
-            Ident
-        };
-
         sf::Vector2f velocity;
         sf::Color colour;
         float rotation = 0.f;
