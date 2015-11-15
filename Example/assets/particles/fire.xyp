@@ -7,7 +7,7 @@
   "ReleaseCount": 3,
   "Delay": 0.0,
   "Duration": -1.0,
-  "Texture": "/assets/images/particles/fire.png",
+  "Texture": "assets/images/particles/fire.png",
   "Colour": -1,
   "BlendMode": "Add",
   "ParticleSize": "55, 40",

@@ -231,12 +231,12 @@ namespace ParticleEditor
                 }
             }
 
-            pd.RandomInitialVelocites = new List<Point>();
+            pd.RandomInitialVelocities = new List<Point>();
             if (m_particleSystem.randomInitialVelocities != null)
             {
                 foreach (var v in m_particleSystem.randomInitialVelocities)
                 {
-                    pd.RandomInitialVelocites.Add(new Point((int)v.X, (int)v.Y));
+                    pd.RandomInitialVelocities.Add(new Point((int)v.X, (int)v.Y));
                 }
             }
             pd.Affectors = new List<AffectorDefinition>();
@@ -356,10 +356,10 @@ namespace ParticleEditor
 
                 m_particleSystem.randomInitialVelocities = null;
                 listBoxSpawnVelocities.Items.Clear();
-                if(pd.RandomInitialVelocites.Count > 0)
+                if(pd.RandomInitialVelocities.Count > 0)
                 {
                     List<Vector2f> randVelocities = new List<Vector2f>();
-                    foreach(var v in pd.RandomInitialVelocites)
+                    foreach(var v in pd.RandomInitialVelocities)
                     {
                         randVelocities.Add(new Vector2f(v.X, v.Y));
                     }

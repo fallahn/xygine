@@ -159,6 +159,7 @@ namespace ParticleEditor
                     if (size > textBoxTexturePath.Text.Length)
                     {
                         textBoxTexturePath.Text = textBoxTexturePath.Text.Replace('\\', '/');
+                        textBoxTexturePath.Text.Remove(0, 1); //remove preceeding '/'
                         break;
                     }
                 }
@@ -362,7 +363,7 @@ namespace ParticleEditor
             FolderBrowserDialog fb = new FolderBrowserDialog();
             if (fb.ShowDialog() == DialogResult.OK)
             {
-                m_AssetPaths.Add(Directory.GetParent(fb.SelectedPath).FullName);
+                m_AssetPaths.Add(Directory.GetParent(fb.SelectedPath).FullName + "/");
             }
         }
 

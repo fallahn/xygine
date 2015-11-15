@@ -119,7 +119,7 @@ namespace ParticleEditor
         /// each time a new particle is spawned. Overrides InitialVelocity
         /// value if this is set
         /// </summary>
-        public List<Point> RandomInitialVelocites { get; set; }
+        public List<Point> RandomInitialVelocities { get; set; }
         /// <summary>
         /// Number of particles to emit in a second
         /// </summary>

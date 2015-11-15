@@ -7,7 +7,7 @@
   "ReleaseCount": 3,
   "Delay": 0.0,
   "Duration": 0.2,
-  "Texture": "/assets/images/particles/explosion.png",
+  "Texture": "assets/images/particles/explosion.png",
   "Colour": -1,
   "BlendMode": "Add",
   "ParticleSize": "10, 10",
