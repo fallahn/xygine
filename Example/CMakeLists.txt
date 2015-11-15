@@ -60,7 +60,8 @@ include(${xygine_DIR}/CMakeLists.txt)
 SET(EXAMPLE_SRC
   src/Game.cpp
   src/main.cpp
-  src/MenuMainState.cpp)
+  src/MenuMainState.cpp
+  src/OptionMenuState.cpp)
 
 if(WIN32)
   add_executable(xygine_example WIN32 ${EXAMPLE_SRC} ${xygine_SRC})
