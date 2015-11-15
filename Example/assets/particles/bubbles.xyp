@@ -7,7 +7,7 @@
   "ReleaseCount": 1,
   "Delay": 0.0,
   "Duration": -1.0,
-  "Texture": "/assets/images/particles/bubble.png",
+  "Texture": "assets/images/particles/bubble.png",
   "Colour": -1,
   "BlendMode": "Add",
   "ParticleSize": "7, 7",
@@ -15,7 +15,7 @@
   "FollowParent": false,
   "Lifetime": 2.6,
   "InitialVelocity": "0, -50",
-  "RandomInitialVelocites": [
+  "RandomInitialVelocities": [
     "8, -25",
     "3, -25",
     "-4, -25",

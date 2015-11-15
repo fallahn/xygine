@@ -33,16 +33,9 @@ namespace States
     enum ID
     {
         None = 0,
-        Game,
-        MenuBackground,
+        ParticleDemo,
         MenuMain,
-        MenuLobby,
-        MenuJoin,
-        MenuOptions,
-        MenuPaused,
-        Score,
-        Stats,
-        Title
+        MenuOptions
     };
 }
 

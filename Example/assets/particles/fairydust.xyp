@@ -15,7 +15,7 @@
   "FollowParent": false,
   "Lifetime": 1.6,
   "InitialVelocity": "0, -50",
-  "RandomInitialVelocites": [
+  "RandomInitialVelocities": [
     "22, -11",
     "-14, 19",
     "-25, 12",

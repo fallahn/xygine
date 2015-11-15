@@ -343,13 +343,16 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 
 
 #include <xygine/JsonUtil.hpp>
+#include <xygine/Util.hpp>
+#include <xygine/picojson.h>
+#include <xygine/App.hpp>
 //-------particle system definition------//
 ParticleSystem::Definition::Definition()
 {
 
 }
 
-void ParticleSystem::Definition::loadFromFile(const std::string& path)
+void ParticleSystem::Definition::loadFromFile(const std::string& path, App& appInstance)
 {
     //load / parse json file
     std::ifstream file(path);
@@ -375,23 +378,183 @@ void ParticleSystem::Definition::loadFromFile(const std::string& path)
     }
     file.close();
 
-    //int ReleaseCount
-    //float Delay
-    //float Duration
-    //string Texture
-    //int Colour
-    //string BlendMode Add, Multiply, Alpha, None
-    //string pair ParticleSize
-    //string pair ParticlePosition
-    //bool FollowParent
-    //float Lifetime
-    //string pair InitialVelocity
-    //array string pair RandomInitialVelocities
-    //float EmitRate
-    //array string pair RandomInitialPositions
-    //array Affectors
-    //      string Type Force, Scale, Colour, Rotation
-    //      array float Data
+    picojson::value pv;
+    auto err = picojson::parse(pv, jsonString);
+    if (err.empty())
+    {
+        //int ReleaseCount
+        if (pv.get("ReleaseCount").is<double>())
+        {
+            releaseCount = static_cast<sf::Uint8>(pv.get("ReleaseCount").get<double>());
+        }
+        //float Delay
+        if (pv.get("Delay").is<double>())
+        {
+            delay = static_cast<float>(pv.get("Delay").get<double>());
+        }
+        //float Duration
+        if (pv.get("Duration").is<double>())
+        {
+            duration = static_cast<float>(pv.get("Duration").get<double>());
+        }
+        //string Texture
+        if (pv.get("Texture").is<std::string>())
+        {
+            std::string texturePath = pv.get("Texture").get<std::string>();
+            if(!texturePath.empty()) texture = &appInstance.getTexture(texturePath);
+        }
+        //int Colour
+        if (pv.get("Colour").is<double>())
+        {
+            colour = Util::Json::colourFromInt(static_cast<sf::Int32>(pv.get("Colour").get<double>()));
+        }
+        //string BlendMode Add, Multiply, Alpha, None
+        if (pv.get("BlendMode").is<std::string>())
+        {
+            std::string mode = pv.get("BlendMode").get<std::string>();
+            if (mode == "Add") blendMode = sf::BlendAdd;
+            else if (mode == "Multiply") blendMode = sf::BlendMultiply;
+            else if (mode == "Alpha") blendMode = sf::BlendAlpha;
+            else blendMode = sf::BlendNone;
+        }
+        //string pair ParticleSize
+        if (pv.get("ParticleSize").is<std::string>())
+        {
+            particleSize = Util::Vector::vec2FromString<float>(pv.get("ParticleSize").get<std::string>());
+
+        }
+        //string pair ParticlePosition
+        if (pv.get("ParticlePosition").is<std::string>())
+        {
+            particlePosition = Util::Vector::vec2FromString<float>(pv.get("ParticlePosition").get<std::string>());
+        }
+        //bool FollowParent
+        if (pv.get("FollowParent").is<bool>())
+        {
+            followParent = pv.get("FollowParent").get<bool>();
+        }
+        //float Lifetime
+        if (pv.get("Lifetime").is<double>())
+        {
+            lifetime = static_cast<float>(pv.get("Lifetime").get<double>());
+        }
+        //string pair InitialVelocity
+        if (pv.get("InitialVelocity").is<std::string>())
+        {
+            initialVelocity = Util::Vector::vec2FromString<float>(pv.get("InitialVelocity").get<std::string>());
+        }
+        //array string pair RandomInitialVelocities
+        if (pv.get("RandomInitialVelocities").is<picojson::array>())
+        {
+            const auto& arr = pv.get("RandomInitialVelocities").get<picojson::array>();
+            if (!arr.empty())
+            {
+                for (const auto& v : arr)
+                {
+                    if (v.is<std::string>())
+                    {
+                        randomInitialVelocities.push_back(Util::Vector::vec2FromString<float>(v.get<std::string>()));
+                    }
+                }
+            }
+        }
+        //float EmitRate
+        if (pv.get("EmitRate").is<double>())
+        {
+            emitRate = static_cast<float>(pv.get("EmitRate").get<double>());
+        }
+        //array string pair RandomInitialPositions
+        if (pv.get("RandomInitialPositions").is<picojson::array>())
+        {
+            const auto& arr = pv.get("RandomInitialPositions").get<picojson::array>();
+            if (!arr.empty())
+            {
+                for (const auto& v : arr)
+                {
+                    if (v.is<std::string>())
+                    {
+                        randomInitialPositions.push_back(Util::Vector::vec2FromString<float>(v.get<std::string>()));
+                    }
+                }
+            }
+        }
+        //array Affectors
+        if (pv.get("Affectors").is<picojson::array>())
+        {
+            const auto& arr = pv.get("Affectors").get<picojson::array>();
+            if (!arr.empty())
+            {
+                for (const auto& v : arr)
+                {
+                    //string Type Force, Scale, Colour, Rotation
+                    std::string type;
+                    if (v.get("Type").is<std::string>()) type = v.get("Type").get<std::string>();
+                    
+                    if (type == "Force")
+                    {
+                        if (v.get("Data").is<picojson::array>())
+                        {
+                            const auto& d = v.get("Data").get<picojson::array>();
+                            if (d.size() > 1)
+                            {
+                                sf::Vector2f force;
+                                if (d[0].is<double>()) force.x = static_cast<float>(d[0].get<double>());
+                                if (d[1].is<double>()) force.y = static_cast<float>(d[1].get<double>());
+                                affectors.emplace_back(ForceAffector(force));
+                            }
+                        }
+                    }
+                    else if (type == "Scale")
+                    {
+                        if (v.get("Data").is<picojson::array>())
+                        {
+                            const auto& d = v.get("Data").get<picojson::array>();
+                            if (d.size() > 1)
+                            {
+                                sf::Vector2f scale;
+                                if (d[0].is<double>()) scale.x = static_cast<float>(d[0].get<double>());
+                                if (d[1].is<double>()) scale.y = static_cast<float>(d[1].get<double>());
+                                affectors.emplace_back(ScaleAffector(scale));
+                            }
+                        }
+                    }
+                    else if (type == "Colour")
+                    {
+                        if (v.get("Data").is<picojson::array>())
+                        {
+                            const auto& d = v.get("Data").get<picojson::array>();
+                            if (d.size() > 2)
+                            {
+                                sf::Color start, end;
+                                if (d[0].is<double>()) start = Util::Json::colourFromInt(static_cast<sf::Int32>(d[0].get<double>()));
+                                if (d[1].is<double>()) end = Util::Json::colourFromInt(static_cast<sf::Int32>(d[1].get<double>()));
+                                float cd = 1.f;
+                                if (d[2].is<double>()) cd = static_cast<float>(d[2].get<double>());
+                                affectors.emplace_back(ColourAffector(start, end, cd));
+                            }
+                        }
+                    }
+                    else if (type == "Rotation")
+                    {
+                        if (v.get("Data").is<picojson::array>())
+                        {
+                            const auto& d = v.get("Data").get<picojson::array>();
+                            if (!d.empty())
+                            {
+                                float rot = 0.f;
+                                if (d[0].is<double>()) rot = static_cast<float>(d[0].get<double>());
+                                affectors.emplace_back(RotateAffector(rot));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        Logger::log("Particle Definition: " + err, Logger::Type::Error, Logger::Output::All);
+    }
 }
 
 ParticleSystem::Ptr ParticleSystem::Definition::createSystem(MessageBus& mb) const

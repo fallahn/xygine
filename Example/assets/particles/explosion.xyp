@@ -15,7 +15,7 @@
   "FollowParent": false,
   "Lifetime": 1.5,
   "InitialVelocity": "0, 0",
-  "RandomInitialVelocites": [],
+  "RandomInitialVelocities": [],
   "EmitRate": 9.0,
   "RandomInitialPositions": [
     "4, 6",

@@ -85,7 +85,7 @@ void MenuMainState::buildMenu()
     const auto& font = getContext().appInstance.getFont("assets/fonts/VeraMono.ttf");
     
     auto button = std::make_shared<xy::ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/start_button.png"));
-    button->setText("Single Player");
+    button->setText("Start Demo");
     button->setAlignment(xy::ui::Alignment::Centre);
     button->setPosition(960.f, 475.f);
     button->setCallback([this]()
@@ -95,7 +95,7 @@ void MenuMainState::buildMenu()
     m_uiContainer.addControl(button);
 
     button = std::make_shared<xy::ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/start_button.png"));
-    button->setText("Host Multiplayer");
+    button->setText("Test");
     button->setAlignment(xy::ui::Alignment::Centre);
     button->setPosition(960.f, 575.f);
     button->setCallback([this]()
@@ -105,7 +105,7 @@ void MenuMainState::buildMenu()
     m_uiContainer.addControl(button);
 
     button = std::make_shared<xy::ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/start_button.png"));
-    button->setText("Join Multiplayer");
+    button->setText("Test");
     button->setAlignment(xy::ui::Alignment::Centre);
     button->setPosition(960.f, 675.f);
     button->setCallback([this]()
@@ -120,7 +120,8 @@ void MenuMainState::buildMenu()
     button->setPosition(960.f, 775.f);
     button->setCallback([this]()
     {
-
+        close();
+        requestStackPush(States::ID::MenuOptions);
     });
     m_uiContainer.addControl(button);
 
