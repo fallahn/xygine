@@ -25,19 +25,43 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef STATE_IDS_HPP_
-#define STATE_IDS_HPP_
+//particle system demo state
 
-namespace States
+#ifndef PARTICLE_DEMO_STATE_HPP_
+#define PARTICLE_DEMO_STATE_HPP_
+
+#include <StateIds.hpp>
+
+#include <xygine/State.hpp>
+#include <xygine/Scene.hpp>
+
+#include <SFML/Graphics/Text.hpp>
+
+namespace sf
 {
-    enum ID
-    {
-        None = 0,
-        ParticleDemo,
-        PhysicsDemo,
-        MenuMain,
-        MenuOptions
-    };
+    class Color;
 }
 
-#endif //STATE_IDS_HPP_
+class ParticleDemoState final : public xy::State
+{
+public:
+    ParticleDemoState(xy::StateStack& stateStack, Context context);
+    ~ParticleDemoState() = default;
+
+    bool update(float dt) override;
+    void draw() override;
+    bool handleEvent(const sf::Event& evt) override;
+    void handleMessage(const xy::Message&) override;
+    xy::StateId stateID() const override
+    {
+        return States::ID::ParticleDemo;
+    }
+private:
+
+    xy::MessageBus& m_messageBus;
+    xy::Scene m_scene;
+
+    sf::Text m_reportText;
+};
+
+#endif //PARTICLE_DEMO_STATE_HPP_

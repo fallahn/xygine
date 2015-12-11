@@ -85,22 +85,24 @@ void MenuMainState::buildMenu()
     const auto& font = getContext().appInstance.getFont("assets/fonts/VeraMono.ttf");
     
     auto button = std::make_shared<xy::ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/start_button.png"));
-    button->setText("Start Demo");
+    button->setText("Particle Demo");
     button->setAlignment(xy::ui::Alignment::Centre);
     button->setPosition(960.f, 475.f);
     button->setCallback([this]()
     {
-        //Do button stuff here
+        close();
+        requestStackPush(States::ID::ParticleDemo);
     });
     m_uiContainer.addControl(button);
 
     button = std::make_shared<xy::ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/start_button.png"));
-    button->setText("Test");
+    button->setText("Physics Demo");
     button->setAlignment(xy::ui::Alignment::Centre);
     button->setPosition(960.f, 575.f);
     button->setCallback([this]()
     {
-
+        close();
+        requestStackPush(States::ID::PhysicsDemo);
     });
     m_uiContainer.addControl(button);
 

@@ -73,6 +73,8 @@
     <ClInclude Include="include\Game.hpp" />
     <ClInclude Include="include\MenuMainState.hpp" />
     <ClInclude Include="include\MenuOptionState.hpp" />
+    <ClInclude Include="include\ParticleDemoState.hpp" />
+    <ClInclude Include="include\PhysicsDemoState.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +82,8 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MenuMainState.cpp" />
     <ClCompile Include="src\MenuOptionState.cpp" />
+    <ClCompile Include="src\ParticleDemoState.cpp" />
+    <ClCompile Include="src\PhysicsDemoState.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

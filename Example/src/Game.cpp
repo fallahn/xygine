@@ -29,6 +29,8 @@ source distribution.
 #include <StateIds.hpp>
 #include <MenuMainState.hpp>
 #include <MenuOptionState.hpp>
+#include <ParticleDemoState.hpp>
+#include <PhysicsDemoState.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -102,6 +104,6 @@ void Game::registerStates()
 {
     m_stateStack.registerState<MenuMainState>(States::ID::MenuMain);
     m_stateStack.registerState<MenuOptionState>(States::ID::MenuOptions);
-    //m_stateStack.registerState<MenuPauseState>(States::ID::MenuPaused);
-    //m_stateStack.registerState<GameState>(States::ID::Game);
+    m_stateStack.registerState<PhysicsDemoState>(States::ID::PhysicsDemo);
+    m_stateStack.registerState<ParticleDemoState>(States::ID::ParticleDemo);
 }
