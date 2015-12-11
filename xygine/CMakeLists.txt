@@ -40,12 +40,11 @@ if(UNIX)
   find_package(X11 REQUIRED)
 endif()
 
-#optional package manager on arch (PKGBUILD script currently missing)
-#include (FindPkgConfig)
-#PKG_SEARCH_MODULE(SFML 2 REQUIRED system window graphics audio)
+find_package(BOX2D REQUIRED)
 
 include_directories(
   ${SFML_INCLUDE_DIR}
+  ${BOX2D_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}/include)
 
 if(X11_FOUND)
@@ -65,7 +64,8 @@ endif()
 
 target_link_libraries(xygine
   ${SFML_LIBRARIES}
-  ${SFML_DEPENDENCIES})
+  ${SFML_DEPENDENCIES}
+  ${BOX2D_LIBRARIES})
 
 if(UNIX)
   target_link_libraries(xygine
