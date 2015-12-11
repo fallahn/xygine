@@ -54,7 +54,7 @@ public:
     void handleMessage(const xy::Message&) override;
     xy::StateId stateID() const override
     {
-        return States::ID::ParticleDemo;
+        return States::ID::PhysicsDemo;
     }
 private:
 

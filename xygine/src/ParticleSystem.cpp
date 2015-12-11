@@ -354,6 +354,8 @@ ParticleSystem::Definition::Definition()
 
 void ParticleSystem::Definition::loadFromFile(const std::string& path, App& appInstance)
 {
+    reset();
+
     //load / parse json file
     std::ifstream file(path);
     if (!file.good() || !Util::File::validLength(file))
@@ -579,4 +581,24 @@ ParticleSystem::Ptr ParticleSystem::Definition::createSystem(MessageBus& mb) con
     for (const auto& a : affectors) ps->addAffector(a);
 
     return std::move(ps);
+}
+
+//private
+void ParticleSystem::Definition::reset()
+{
+    releaseCount = 1u;
+    delay = 0.f;
+    duration = 1.f;
+    texture = nullptr;
+    colour = sf::Color::White;
+    blendMode = sf::BlendMode::BlendMode();
+    shader = nullptr;
+    particleSize = { 4.f, 4.f };
+    particlePosition = {};
+    followParent = false;
+    lifetime = 2.f;
+    initialVelocity = { 1.f, 1.f };
+    randomInitialVelocities.clear();
+    randomInitialPositions.clear();
+    affectors.clear();
 }

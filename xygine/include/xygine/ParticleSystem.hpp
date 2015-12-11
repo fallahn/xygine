@@ -79,6 +79,9 @@ namespace xy
 
             Ptr createSystem(MessageBus&) const;
             void loadFromFile(const std::string&, App&);
+
+        private:
+            void reset();
         };
 
 

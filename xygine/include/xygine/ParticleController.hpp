@@ -43,8 +43,7 @@ namespace xy
     class ParticleController final : public Component
     {
     public:
-       
-        
+           
         using SystemId = sf::Int32;
 
         explicit ParticleController(MessageBus&);

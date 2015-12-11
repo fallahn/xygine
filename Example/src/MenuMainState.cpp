@@ -45,6 +45,8 @@ MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
     msg->type = xy::Message::UIEvent::MenuOpened;
     msg->value = 0.f;
     msg->stateId = States::ID::MenuMain;
+
+    context.renderWindow.setMouseCursorVisible(false);
 }
 
 //public

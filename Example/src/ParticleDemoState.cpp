@@ -50,6 +50,18 @@ namespace
 
     const float joyDeadZone = 25.f;
     const float joyMaxAxis = 100.f;
+
+    enum ParticleType
+    {
+        Bubbles = 0,
+        DustPuff,
+        Explosion,
+        FairyDust,
+        Fire,
+        Count
+    };
+
+    sf::Uint64 controllerId = 0;
 }
 
 ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context)
@@ -63,13 +75,13 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
 
     m_reportText.setFont(context.appInstance.getFont("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
+
+    setupParticles();
+    context.renderWindow.setMouseCursorVisible(true);
 }
 
 bool ParticleDemoState::update(float dt)
-{
-    const auto& rw = getContext().renderWindow;
-    auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
-    
+{    
     m_scene.update(dt);
 
     m_reportText.setString(xy::StatsReporter::reporter.getString());
@@ -89,6 +101,19 @@ bool ParticleDemoState::handleEvent(const sf::Event& evt)
 {
     switch (evt.type)
     {
+    case sf::Event::MouseButtonReleased:
+    {
+        const auto& rw = getContext().renderWindow;
+        auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
+        xy::Command cmd;
+        cmd.entityID = controllerId;
+        cmd.action = [mousePos](xy::Entity& entity, float)
+        {
+            entity.getComponent<xy::ParticleController>()->fire(xy::Util::Random::value(0, ParticleType::Count - 1), mousePos);
+        };
+        m_scene.sendCommand(cmd);
+    }
+        break;
     case sf::Event::KeyPressed:
         switch (evt.key.code)
         {
@@ -171,3 +196,28 @@ void ParticleDemoState::handleMessage(const xy::Message& msg)
 }
 
 //private
+void ParticleDemoState::setupParticles()
+{
+    auto particleController = std::make_unique<xy::ParticleController>(m_messageBus);
+    auto entity = std::make_unique<xy::Entity>(m_messageBus);
+
+    auto pc = entity->addComponent<xy::ParticleController>(particleController);
+    xy::ParticleSystem::Definition pd;
+    pd.loadFromFile("assets/particles/bubbles.xyp", getContext().appInstance);
+    pc->addDefinition(ParticleType::Bubbles, pd);
+
+    pd.loadFromFile("assets/particles/dustpuff.xyp", getContext().appInstance);
+    pc->addDefinition(ParticleType::DustPuff, pd);
+
+    pd.loadFromFile("assets/particles/explosion.xyp", getContext().appInstance);
+    pc->addDefinition(ParticleType::Explosion, pd);
+
+    pd.loadFromFile("assets/particles/fairydust.xyp", getContext().appInstance);
+    pc->addDefinition(ParticleType::FairyDust, pd);
+
+    pd.loadFromFile("assets/particles/fire.xyp", getContext().appInstance);
+    pc->addDefinition(ParticleType::Fire, pd);
+
+    controllerId = entity->getUID();
+    m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
+}

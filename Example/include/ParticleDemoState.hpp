@@ -62,6 +62,8 @@ private:
     xy::Scene m_scene;
 
     sf::Text m_reportText;
+
+    void setupParticles();
 };
 
 #endif //PARTICLE_DEMO_STATE_HPP_
