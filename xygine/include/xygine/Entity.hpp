@@ -27,8 +27,8 @@ source distribution.
 
 //an entity defined by its collection of components
 
-#ifndef ENTITY_HPP_
-#define ENTITY_HPP_
+#ifndef XY_ENTITY_HPP_
+#define XY_ENTITY_HPP_
 
 #include <xygine/Log.hpp>
 #include <xygine/Command.hpp>
@@ -181,4 +181,4 @@ namespace xy
         };
     };
 }
-#endif //ENTITY_HPP_
+#endif //XY_ENTITY_HPP_

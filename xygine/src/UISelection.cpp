@@ -190,7 +190,7 @@ sf::Int32 Selection::getSelectedValue() const
     return m_items[m_selectedIndex]->value;
 }
 
-void Selection::setSelectedIndex(sf::Uint16 index)
+void Selection::setSelectedIndex(Index index)
 {
     XY_ASSERT(index < m_items.size(), "index is out of range");
     m_selectedIndex = index;
@@ -218,7 +218,7 @@ void Selection::selectItem(const std::string& name)
     }
 }
 
-void Selection::selectItem(sf::Uint16 val)
+void Selection::selectItem(Index val)
 {
     auto result = std::find_if(m_items.begin(), m_items.end(),
         [val](const Item::Ptr& p)

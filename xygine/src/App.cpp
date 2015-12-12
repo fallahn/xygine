@@ -30,6 +30,7 @@ source distribution.
 #include <xygine/Util.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/Reports.hpp>
+#include <xygine/physics/World.hpp>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -58,6 +59,8 @@ namespace
 
     int settingsIdent = 0x45504f44;
     int settingsVersion = 1;
+
+    sf::Clock frameClock;
 }
 
 App::App()
@@ -98,7 +101,6 @@ void App::run()
     m_renderWindow.setMouseCursorVisible(false);
 
     sf::Clock fpsClock;
-    sf::Clock frameClock;
 
     frameClock.restart();
     while (m_renderWindow.isOpen())
@@ -109,6 +111,8 @@ void App::run()
         while (timeSinceLastUpdate > timePerFrame)
         {
             timeSinceLastUpdate -= timePerFrame;
+
+            Physics::World::update(timePerFrame);
 
             handleEvents();
             handleMessages();
@@ -129,14 +133,14 @@ void App::run()
 
 void App::pause()
 {
-    //update = std::bind(&App::pauseApp, this, _1);
-    //TODO make this just block input, as game is networked
+    update = std::bind(&App::pauseApp, this, _1);
+    //TODO make this just block input, if game is networked
 }
 
 void App::resume()
 {
-    //update = std::bind(&App::updateApp, this, _1);
-    //frameClock.restart();
+    update = std::bind(&App::updateApp, this, _1);
+    frameClock.restart();
     timeSinceLastUpdate = 0.f;
 }
 
@@ -387,10 +391,10 @@ void App::handleEvents()
         switch (evt.type)
         {
         case sf::Event::LostFocus:
-            //pause();
+            pause();
             continue;
         case sf::Event::GainedFocus:
-            //resume();
+            resume();
             continue;
         case sf::Event::Closed:
             m_renderWindow.close();

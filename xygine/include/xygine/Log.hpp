@@ -27,8 +27,8 @@ source distribution.
 
 //flexible logging class
 
-#ifndef LOGGER_HPP_
-#define LOGGER_HPP_
+#ifndef XY_LOGGER_HPP_
+#define XY_LOGGER_HPP_
 
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
@@ -145,4 +145,4 @@ namespace xy
 #define LOG(message, type) xy::Logger::log(message, type);
 #endif //_DEBUG_
 
-#endif //LOGGER_HPP_
+#endif //XY_LOGGER_HPP_

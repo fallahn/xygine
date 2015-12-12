@@ -27,8 +27,8 @@ source distribution.
 
 //abstract base class for full screen post process effects
 
-#ifndef POST_PROCESS_HPP_
-#define POST_PROCESS_HPP_
+#ifndef XY_POST_PROCESS_HPP_
+#define XY_POST_PROCESS_HPP_
 
 namespace sf
 {
@@ -54,4 +54,4 @@ namespace xy
     };
 }
 
-#endif //POST_PROCESS_HPP_
+#endif //XY_POST_PROCESS_HPP_

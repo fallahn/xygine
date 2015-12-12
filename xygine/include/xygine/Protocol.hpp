@@ -27,8 +27,8 @@ source distribution.
 
 //spec for network protocol
 
-#ifndef NET_PROTOCOL_HPP_
-#define NET_PROTOCOL_HPP_
+#ifndef XY_NET_PROTOCOL_HPP_
+#define XY_NET_PROTOCOL_HPP_
 
 #include <SFML/Config.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -83,4 +83,4 @@ namespace xy
         };
     }
 }
-#endif //NET_PROTOCOL_HPP_
+#endif //XY_NET_PROTOCOL_HPP_

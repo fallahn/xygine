@@ -27,8 +27,8 @@ source distribution.
 
 //window drawable which may house a UI Container
 
-#ifndef UI_WINDOW_HPP_
-#define UI_WINDOW_HPP_
+#ifndef XY_UI_WINDOW_HPP_
+#define XY_UI_WINDOW_HPP_
 
 #include <xygine/ui/Container.hpp>
 
@@ -116,4 +116,4 @@ namespace xy
         };
     }
 }
-#endif //UI_WINDOW_HPP_
+#endif //XY_UI_WINDOW_HPP_

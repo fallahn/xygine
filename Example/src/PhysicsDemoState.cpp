@@ -61,6 +61,8 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 
     m_reportText.setFont(context.appInstance.getFont("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
+
+    m_physWorld.setGravity({ 0, 10 });
 }
 
 bool PhysicsDemoState::update(float dt)

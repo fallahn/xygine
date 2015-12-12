@@ -27,8 +27,8 @@ source distribution.
 
 //ui control for text input
 
-#ifndef UI_TEXTBOX_HPP_
-#define UI_TEXTBOX_HPP_
+#ifndef XY_UI_TEXTBOX_HPP_
+#define XY_UI_TEXTBOX_HPP_
 
 #include <xygine/ui/Control.hpp>
 
@@ -102,4 +102,4 @@ namespace xy
         };
     }
 }
-#endif //UI_TEXTBOX_H_
+#endif //XY_UI_TEXTBOX_H_

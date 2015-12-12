@@ -27,8 +27,8 @@ source distribution.
 
 //slider control
 
-#ifndef UI_SLIDER_HPP_
-#define UI_SLIDER_HPP_
+#ifndef XY_UI_SLIDER_HPP_
+#define XY_UI_SLIDER_HPP_
 
 #include <xygine/ui/Control.hpp>
 
@@ -125,4 +125,4 @@ namespace xy
         };
     }
 }
-#endif //UI_SLIDER_HPP_
+#endif //XY_UI_SLIDER_HPP_

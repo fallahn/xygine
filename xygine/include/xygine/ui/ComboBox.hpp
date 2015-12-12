@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef UI_COMBOBOX_HPP_
-#define UI_COMBOBOX_HPP_
+#ifndef XY_UI_COMBOBOX_HPP_
+#define XY_UI_COMBOBOX_HPP_
 
 #include <xygine/ui/Control.hpp>
 
@@ -63,10 +63,10 @@ namespace xy
 
             void setBackgroundColour(const sf::Color&);
             void setHighlightColour(const sf::Color&);
-            void setSelectedIndex(sf::Uint16 index);
+            void setSelectedIndex(Index index);
             sf::Uint32 size() const;
             void selectItem(const std::string&);
-            void selectItem(sf::Uint16);
+            void selectItem(Index);
 
         private:
             struct Item
@@ -88,8 +88,8 @@ namespace xy
             sf::RectangleShape m_dropDownShape;
             mutable sf::RectangleShape m_highlightShape;
 
-            sf::Uint16 m_selectedIndex;
-            sf::Uint16 m_nextIndex;
+            Index m_selectedIndex;
+            Index m_nextIndex;
             sf::Text m_selectedText;
 
             const sf::Font& m_font;
@@ -98,4 +98,4 @@ namespace xy
         };
     }
 }
-#endif //UI_COMBOBOX_HPP_
+#endif //XY_UI_COMBOBOX_HPP_

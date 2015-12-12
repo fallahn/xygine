@@ -27,8 +27,8 @@ source distribution.
 
 //manages spawning of particle systems on parent entity
 
-#ifndef PARTICLE_CONTROLLER_HPP_
-#define PARTICLE_CONTROLLER_HPP_
+#ifndef XY_PARTICLE_CONTROLLER_HPP_
+#define XY_PARTICLE_CONTROLLER_HPP_
 
 #include <xygine/Component.hpp>
 #include <xygine/ParticleSystem.hpp>
@@ -63,4 +63,4 @@ namespace xy
         std::map<ParticleController::SystemId, std::pair<Entity*, ParticleSystem::Definition>> m_activeSystems;
     };
 }
-#endif //PARTICLE_CONTROLLER_HPP_
+#endif //XY_PARTICLE_CONTROLLER_HPP_

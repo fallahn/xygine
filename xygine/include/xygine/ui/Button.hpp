@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef UI_BUTTON_HPP_
-#define UI_BUTTON_HPP_
+#ifndef XY_UI_BUTTON_HPP_
+#define XY_UI_BUTTON_HPP_
 
 #include <xygine/ui/Control.hpp>
 #include <xygine/Resource.hpp>
@@ -92,4 +92,4 @@ namespace xy
         };
     }
 }
-#endif //UI_BUTTON_HPP_
+#endif //XY_UI_BUTTON_HPP_

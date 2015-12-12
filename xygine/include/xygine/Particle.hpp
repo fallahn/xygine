@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef PARTICLE_HPP_
-#define PARTICLE_HPP_
+#ifndef XY_PARTICLE_HPP_
+#define XY_PARTICLE_HPP_
 
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -43,4 +43,4 @@ namespace xy
         sf::FloatRect textureRect;
     };
 }
-#endif //PARTICLE_HPP_
+#endif //XY_PARTICLE_HPP_

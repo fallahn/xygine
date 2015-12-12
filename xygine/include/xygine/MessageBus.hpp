@@ -27,8 +27,8 @@ source distribution.
 
 //message bus to allow inter-component communication
 
-#ifndef MESSAGE_BUS_HPP_
-#define MESSAGE_BUS_HPP_
+#ifndef XY_MESSAGE_BUS_HPP_
+#define XY_MESSAGE_BUS_HPP_
 
 #define TEMPLATE_GUARD template <typename T>//, typename std::enable_if<std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value>::type...>
 #ifdef __GNUC__ //GCC < 5 doesn't support these type traits
@@ -218,4 +218,4 @@ namespace xy
         bool m_enabled;
     };
 }
-#endif
+#endif //XY_MESSAGE_BUS_HPP_

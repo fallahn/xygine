@@ -27,8 +27,8 @@ source distribution.
 
 //checkbox control with text label
 
-#ifndef UI_CHECKBOX_HPP_
-#define UI_CHECKBOX_HPP_
+#ifndef XY_UI_CHECKBOX_HPP_
+#define XY_UI_CHECKBOX_HPP_
 
 #include <xygine/ui/Control.hpp>
 
@@ -100,4 +100,4 @@ namespace xy
         };
     }
 }
-#endif //UI_CHECKBOX_HPP_
+#endif //XY_UI_CHECKBOX_HPP_

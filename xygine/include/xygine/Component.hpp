@@ -27,8 +27,8 @@ source distribution.
 
 //abstract base class for entity components
 
-#ifndef COMPONENT_HPP_
-#define COMPONENT_HPP_
+#ifndef XY_COMPONENT_HPP_
+#define XY_COMPONENT_HPP_
 
 #include <xygine/MessageBus.hpp>
 
@@ -110,4 +110,4 @@ namespace xy
         UniqueType m_typeIndex;
     };
 }
-#endif //COMPONENT_HPP_
+#endif //XY_COMPONENT_HPP_

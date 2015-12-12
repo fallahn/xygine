@@ -27,8 +27,8 @@ source distribution.
 
 //plays music as requested by the current state
 
-#ifndef MUSIC_HPP_
-#define MUSIC_HPP_
+#ifndef XY_MUSIC_HPP_
+#define XY_MUSIC_HPP_
 
 #include <SFML/Audio/Music.hpp>
 
@@ -60,4 +60,4 @@ namespace xy
     };
 }
 
-#endif //MUSIC_HPP_
+#endif //XY_MUSIC_HPP_

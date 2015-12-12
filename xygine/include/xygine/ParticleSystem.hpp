@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef PARTICLESYS_HPP_
-#define PARTICLESYS_HPP_
+#ifndef XY_PARTICLESYS_HPP_
+#define XY_PARTICLESYS_HPP_
 
 #include <SFML/System/Clock.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
@@ -172,4 +172,4 @@ namespace xy
         m_affectors.push_back(a);
     }
 }
-#endif //PARTICLES_HPP_
+#endif //XY_PARTICLES_HPP_

@@ -27,8 +27,8 @@ source distribution.
 
 //allows classes to report data to a single point
 
-#ifndef REPORTS_HPP_
-#define REPORTS_HPP_
+#ifndef XY_REPORTS_HPP_
+#define XY_REPORTS_HPP_
 
 #ifdef _DEBUG_
 #define REPORT(name, value) xy::StatsReporter::reporter.report(name, value)
@@ -67,4 +67,4 @@ namespace xy
         sf::Mutex m_mutex;
     };
 }
-#endif //REPORTS_HPP_
+#endif //XY_REPORTS_HPP_

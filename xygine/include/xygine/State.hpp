@@ -27,8 +27,8 @@ source distribution.
 
 //abstract base class for game states
 
-#ifndef STATE_HPP_
-#define STATE_HPP_
+#ifndef XY_STATE_HPP_
+#define XY_STATE_HPP_
 
 #include <SFML/Graphics/View.hpp>
 
@@ -87,4 +87,4 @@ namespace xy
         Context m_context;
     };
 }
-#endif //STATE_HPP_
+#endif //XY_STATE_HPP_

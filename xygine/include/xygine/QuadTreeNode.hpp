@@ -27,8 +27,8 @@ source distribution.
 
 //node within the quad tree containing quad tree components
 
-#ifndef QUADTREE_NODE_HPP_
-#define QUADTREE_NODE_HPP_
+#ifndef XY_QUADTREE_NODE_HPP_
+#define XY_QUADTREE_NODE_HPP_
 
 #include <xygine/QuadTreeComponent.hpp>
 
@@ -93,4 +93,4 @@ namespace xy
         void clearDestroyed();
     };
 }
-#endif //QUADTREE_NODE_HPP_
+#endif //XY_QUADTREE_NODE_HPP_

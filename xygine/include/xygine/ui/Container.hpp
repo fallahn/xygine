@@ -27,8 +27,8 @@ source distribution.
 
 //contains one or more ui controls
 
-#ifndef UI_CONTAINER_HPP_
-#define UI_CONTAINER_HPP_
+#ifndef XY_UI_CONTAINER_HPP_
+#define XY_UI_CONTAINER_HPP_
 
 #include <xygine/ui/Control.hpp>
 #include <xygine/SoundPlayer.hpp>
@@ -64,12 +64,12 @@ namespace xy
             void setBackgroundTexture(const sf::Texture&);
         private:
             std::vector<Control::Ptr> m_controls;
-            sf::Int16 m_selectedIndex;
+            Index m_selectedIndex;
 
             sf::RectangleShape m_background;
 
             bool hasSelection() const;
-            void select(sf::Int16 index);
+            void select(Index index);
             void selectNext();
             void selectPrevious();
 
@@ -77,4 +77,4 @@ namespace xy
         };
     }
 }
-#endif //UI_CONTAINER_HPP_
+#endif //XY_UI_CONTAINER_HPP_

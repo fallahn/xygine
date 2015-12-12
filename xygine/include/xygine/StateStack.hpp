@@ -27,8 +27,8 @@ source distribution.
 
 //stack of game states
 
-#ifndef STATESTACK_HPP_
-#define STATESTACK_HPP_
+#ifndef XY_STATESTACK_HPP_
+#define XY_STATESTACK_HPP_
 
 #include <xygine/State.hpp>
 
@@ -100,4 +100,4 @@ namespace xy
 
     };
 }
-#endif //STATESTACK_HPP_
+#endif //XY_STATESTACK_HPP_

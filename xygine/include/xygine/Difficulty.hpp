@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DIFFICULTY_HPP_
-#define DIFFICULTY_HPP_
+#ifndef XY_DIFFICULTY_HPP_
+#define XY_DIFFICULTY_HPP_
 
 namespace xy
 {
@@ -38,4 +38,4 @@ namespace xy
     };
 }
 
-#endif //DIFFICULTY_HPP_
+#endif //XY_DIFFICULTY_HPP_

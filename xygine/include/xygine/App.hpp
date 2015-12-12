@@ -27,8 +27,8 @@ source distribution.
 
 //main entry point for the app
 
-#ifndef APP_HPP_
-#define APP_HPP_
+#ifndef XY_APP_HPP_
+#define XY_APP_HPP_
 
 #include <xygine/StateStack.hpp>
 #include <xygine/Resource.hpp>
@@ -151,8 +151,6 @@ namespace xy
         VideoSettings m_videoSettings;
         sf::RenderWindow m_renderWindow;
 
-        //StateStack m_stateStack;
-
         FontResource m_fontResource;
         TextureResource m_textureResource;
 
@@ -178,4 +176,4 @@ namespace xy
         void handleMessages();
     };
 }
-#endif //APP_HPP_
+#endif //XY_APP_HPP_

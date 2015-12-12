@@ -27,8 +27,8 @@ source distribution.
 
 //controls animations of entities composed of animated drawables
 
-#ifndef ANIMATION_CONTROLLER_HP__
-#define ANIMATION_CONTROLLER_HPP_
+#ifndef XY_ANIMATION_CONTROLLER_HP__
+#define XY_ANIMATION_CONTROLLER_HPP_
 
 #include <xygine/Component.hpp>
 
@@ -60,4 +60,4 @@ namespace xy
     };
 }
 
-#endif //AIMATION_CONTROLLER_HPP_
+#endif //XY_ANIMATION_CONTROLLER_HPP_

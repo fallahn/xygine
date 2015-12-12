@@ -27,8 +27,8 @@ source distribution.
 
 //base class for ui controls
 
-#ifndef UI_CONTROL_HPP_
-#define UI_CONTROL_HPP_
+#ifndef XY_UI_CONTROL_HPP_
+#define XY_UI_CONTROL_HPP_
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
@@ -44,6 +44,7 @@ namespace xy
 {
     namespace ui
     {
+        using Index = std::size_t;
         enum class Alignment
         {
             TopLeft,
@@ -87,8 +88,8 @@ namespace xy
             bool m_selected;
             bool m_active;
             bool m_visible;
-            sf::Uint16 m_index;
+            Index m_index;
         };
     }
 }
-#endif //UI_CONTROL_H_
+#endif //XY_UI_CONTROL_H_

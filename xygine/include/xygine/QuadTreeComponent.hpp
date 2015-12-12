@@ -27,8 +27,8 @@ source distribution.
 
 //represents an AABB for quad tree partitioning
 
-#ifndef QUADTREE_COMPONENT_HPP_
-#define QUADTREE_COMPONENT_HPP_
+#ifndef XY_QUADTREE_COMPONENT_HPP_
+#define XY_QUADTREE_COMPONENT_HPP_
 
 #include <xygine/Component.hpp>
 
@@ -79,4 +79,4 @@ namespace xy
         Entity* m_entity;
     };
 }
-#endif //QUADTREE_COMPONENT_HPP_
+#endif //XY_QUADTREE_COMPONENT_HPP_

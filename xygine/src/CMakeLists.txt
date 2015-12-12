@@ -13,6 +13,7 @@ set(xygine_SRC
   ${xygine_DIR}/Music.cpp
   ${xygine_DIR}/ParticleController.cpp
   ${xygine_DIR}/ParticleSystem.cpp
+  ${xygine_DIR}/PhysicsWorld.cpp
   ${xygine_DIR}/PostBloom.cpp
   ${xygine_DIR}/PostChromeAb.cpp
   ${xygine_DIR}/PostProcess.cpp

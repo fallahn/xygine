@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef UTIL_HPP_
-#define UTIL_HPP_
+#ifndef XY_UTIL_HPP_
+#define XY_UTIL_HPP_
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -258,4 +258,4 @@ namespace xy
         }
     }
 }
-#endif //UTIL_HPP_
+#endif //XY_UTIL_HPP_

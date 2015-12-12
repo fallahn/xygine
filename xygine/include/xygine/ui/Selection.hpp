@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef UI_SELECTION_HPP_
-#define UI_SELECTION_HPP_
+#ifndef XY_UI_SELECTION_HPP_
+#define XY_UI_SELECTION_HPP_
 
 #include <xygine/ui/Control.hpp>
 
@@ -65,10 +65,10 @@ namespace xy
             const std::string& getSelectedText() const;
             sf::Int32 getSelectedValue() const;
 
-            void setSelectedIndex(sf::Uint16);
+            void setSelectedIndex(Index);
             sf::Uint32 itemCount() const;
             void selectItem(const std::string&);
-            void selectItem(sf::Uint16);
+            void selectItem(Index);
 
             void setCallback(Callback);
 
@@ -96,7 +96,7 @@ namespace xy
             float m_length;
             sf::FloatRect m_bounds;
 
-            sf::Uint16 m_selectedIndex;
+            std::size_t m_selectedIndex;
             sf::Text m_selectedText;
 
             sf::Sprite m_prevArrow;
@@ -117,4 +117,4 @@ namespace xy
         };
     }
 }
-#endif //UI_SELECTION_HPP_
+#endif //XY_UI_SELECTION_HPP_

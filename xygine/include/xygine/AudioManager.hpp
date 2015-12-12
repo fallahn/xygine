@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef AUDIO_MANAGER_HPP_
-#define AUDIO_MANAGER_HPP_
+#ifndef XY_AUDIO_MANAGER_HPP_
+#define XY_AUDIO_MANAGER_HPP_
 
 #include <xygine/SoundPlayer.hpp>
 #include <xygine/Music.hpp>
@@ -66,4 +66,4 @@ namespace xy
         bool m_muted;
     };
 }
-#endif //AUDIO_MANAGER_HPP_
+#endif //XY_AUDIO_MANAGER_HPP_

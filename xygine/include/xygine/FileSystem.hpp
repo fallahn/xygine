@@ -27,8 +27,8 @@ source distribution.
 
 //static functions for cross platform file handling
 
-#ifndef FILE_SYS_HPP_
-#define FILE_SYS_HPP_
+#ifndef XY_FILE_SYS_HPP_
+#define XY_FILE_SYS_HPP_
 
 #include <string>
 #include <vector>
@@ -46,4 +46,4 @@ namespace xy
 
     };
 }
-#endif //FILE_SYS_HPP_
+#endif //XY_FILE_SYS_HPP_

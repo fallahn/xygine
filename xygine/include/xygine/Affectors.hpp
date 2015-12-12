@@ -27,8 +27,8 @@ source distribution.
 
 //affectors for particle systems
 
-#ifndef AFFECTORS_HPP_
-#define AFFECTORS_HPP_
+#ifndef XY_AFFECTORS_HPP_
+#define XY_AFFECTORS_HPP_
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -78,4 +78,4 @@ namespace xy
         sf::Vector2f m_scale;
     };
 }
-#endif //AFFECTORS_HPP_
+#endif //XY_AFFECTORS_HPP_

@@ -27,8 +27,8 @@ source distribution.
 
 //game server class
 
-#ifndef SERVER_HPP_
-#define SERVER_HPP_
+#ifndef XY_SERVER_HPP_
+#define XY_SERVER_HPP_
 
 #include <xygine/Entity.hpp>
 #include <xygine/Command.hpp>
@@ -116,4 +116,4 @@ namespace xy
         void updateClientLobbyState();
     };
 }
-#endif //SERVER_HPP_
+#endif //XY_SERVER_HPP_

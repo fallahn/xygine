@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef UI_SCORE_LIST_HPP_
-#define UI_SCORE_LIST_HPP_
+#ifndef XY_UI_SCORE_LIST_HPP_
+#define XY_UI_SCORE_LIST_HPP_
 
 #include <xygine/ui/Control.hpp>
 #include <xygine/Score.hpp>
@@ -60,7 +60,7 @@ namespace xy
 
             void scroll(float);
             void setList(const std::vector<Scores::Item>&);
-            void setIndex(sf::Uint32);
+            void setIndex(Index);
 
             float getVerticalSpacing() const;
         private:
@@ -78,4 +78,4 @@ namespace xy
         };
     }
 }
-#endif //UI_SCORE_LIST_HPP_
+#endif //XY_UI_SCORE_LIST_HPP_

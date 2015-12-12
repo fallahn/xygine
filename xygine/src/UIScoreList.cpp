@@ -141,7 +141,7 @@ void ScoreList::setList(const std::vector<Scores::Item>& list)
     updateTexts(0.f);
 }
 
-void ScoreList::setIndex(sf::Uint32 index)
+void ScoreList::setIndex(Index index)
 {
     if (index < m_texts.size()) //texts might be empty
     {

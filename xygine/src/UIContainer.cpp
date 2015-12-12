@@ -39,7 +39,7 @@ namespace
 }
 
 Container::Container()
-    : m_selectedIndex   (-1),
+    : m_selectedIndex   (0),
     m_background        (sf::Vector2f(1920.f, 1080.f))
 {
     m_background.setFillColor(sf::Color::Transparent);
@@ -177,7 +177,7 @@ bool Container::hasSelection() const
     return (m_selectedIndex >= 0);
 }
 
-void Container::select(sf::Int16 index)
+void Container::select(Index index)
 {
     if (m_controls[index]->selectable())
     {

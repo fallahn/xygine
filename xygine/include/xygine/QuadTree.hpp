@@ -27,8 +27,8 @@ source distribution.
 
 //quad tree class for spatial partitioning
 
-#ifndef QUADTREE_HPP_
-#define QUADTREE_HPP_
+#ifndef XY_QUADTREE_HPP_
+#define XY_QUADTREE_HPP_
 
 #include <xygine/QuadTreeNode.hpp>
 
@@ -69,4 +69,4 @@ namespace xy
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }
-#endif //QUADTREE_HPP_
+#endif //XY_QUADTREE_HPP_

@@ -27,8 +27,8 @@ source distribution.
 
 //resource manager
 
-#ifndef RESOURCES_HPP_
-#define RESOURCES_HPP_
+#ifndef XY_RESOURCES_HPP_
+#define XY_RESOURCES_HPP_
 
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Image.hpp>
@@ -111,4 +111,4 @@ namespace xy
         std::unique_ptr<sf::Font> errorHandle() override;
     };
 }
-#endif //RESOURCES_HPP_
+#endif //XY_RESOURCES_HPP_

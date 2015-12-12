@@ -25,43 +25,13 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//plays a given sound effect
+#include <xygine/physics/World.hpp>
 
-#ifndef XY_SOUND_PLAYER_HPP_
-#define XY_SOUND_PLAYER_HPP_
+std::function<void(float)> xy::Physics::World::update = [](float) {};
 
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
-#include <SFML/Audio/Sound.hpp>
+float xy::Physics::World::m_worldScale = 100.f;
+b2Vec2 xy::Physics::World::m_gravity = { 0.f, -9.8f };
+sf::Uint32 xy::Physics::World::m_velocityIterations = 6u;
+sf::Uint32 xy::Physics::World::m_positionIterations = 2u;
 
-#include <map>
-#include <list>
-
-namespace xy
-{
-    class SoundPlayer final
-    {
-    public:
-
-        SoundPlayer();
-        ~SoundPlayer() = default;
-        SoundPlayer(const SoundPlayer&) = delete;
-        const SoundPlayer& operator = (const SoundPlayer&) = delete;
-
-        void update();
-        void play(const sf::SoundBuffer&, bool = false);
-
-        void setListenerPosition(const sf::Vector2f& position);
-        sf::Vector2f getListenerPosition() const;
-
-        static void setVolume(float volume);
-        static float getVolume();
-
-    private:
-
-        std::list<sf::Sound> m_sounds;
-
-        void flushSounds();
-    };
-}
-#endif //XY_SOUND_PLAYER_HPP_
+xy::Physics::World::Ptr xy::Physics::World::m_world = nullptr;

@@ -27,8 +27,8 @@ source distribution.
 
 //read / write score data
 
-#ifndef SCORES_HPP_
-#define SCORES_HPP_
+#ifndef XY_SCORES_HPP_
+#define XY_SCORES_HPP_
 
 #include <xygine/Difficulty.hpp>
 
@@ -77,4 +77,4 @@ namespace xy
         std::vector<Item> m_hardScores;
     };
 }
-#endif //SCORES_HPP_
+#endif //XY_SCORES_HPP_

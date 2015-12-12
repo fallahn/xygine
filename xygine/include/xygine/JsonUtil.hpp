@@ -27,8 +27,8 @@ source distribution.
 
 //utility functions for working with picojson and sfml
 
-#ifndef JSON_UTIL_H_
-#define JSON_UTIL_H_
+#ifndef XY_JSON_UTIL_HPP_
+#define XY_JSON_UTIL_HPP_
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -112,4 +112,4 @@ namespace xy
         }
     } //UTIL
 } //xy
-#endif //JSON_UTIL_HPP_
+#endif //XY_JSON_UTIL_HPP_

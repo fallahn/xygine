@@ -27,8 +27,8 @@ source distribution.
 
 //drawable for animated  sprite sheets
 
-#ifndef ANISPRITE_HPP_
-#define ANISPRITE_HPP_
+#ifndef XY_ANISPRITE_HPP_
+#define XY_ANISPRITE_HPP_
 
 #include <xygine/Component.hpp>
 
@@ -140,4 +140,4 @@ namespace xy
         void setFrame(sf::Uint8 frame);
     };
 }
-#endif //ANISPRITE_HPP_
+#endif //XY_ANISPRITE_HPP_

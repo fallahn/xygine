@@ -27,8 +27,8 @@ source distribution.
 
 //root class containing scene entities
 
-#ifndef SCENE_HPP_
-#define SCENE_HPP_
+#ifndef XY_SCENE_HPP_
+#define XY_SCENE_HPP_
 
 #include <xygine/Entity.hpp>
 #include <xygine/PostBloom.hpp>
@@ -121,4 +121,4 @@ namespace xy
         void fullRenderPath(sf::RenderTarget&, sf::RenderStates) const;
     };
 }
-#endif //SCENE_HPP_
+#endif //XY_SCENE_HPP_

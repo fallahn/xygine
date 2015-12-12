@@ -27,8 +27,8 @@ source distribution.
 
 //source for shaders
 
-#ifndef SHADERS_HPP_
-#define SHADERS_HPP_
+#ifndef XY_SHADERS_HPP_
+#define XY_SHADERS_HPP_
 
 #include <string>
 
@@ -341,4 +341,4 @@ namespace xy
         }
     }
 }
-#endif //SHADERS_HPP_
+#endif //XY_SHADERS_HPP_

@@ -27,8 +27,8 @@ source distribution.
 
 //command class for targetting entities within a scene graph
 
-#ifndef COMMAND_HPP_
-#define COMMAND_HPP_
+#ifndef XY_COMMAND_HPP_
+#define XY_COMMAND_HPP_
 
 #include <SFML/Config.hpp>
 
@@ -67,4 +67,4 @@ namespace xy
         std::queue<Command> m_queue;
     };
 }
-#endif //COMMAND_HPP_
+#endif //XY_COMMAND_HPP_
