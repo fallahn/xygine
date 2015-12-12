@@ -48,6 +48,7 @@ namespace xy
     {
         class World final
         {
+            friend class RigidBody;
             using Ptr = std::unique_ptr<b2World>;
         public:
             World()
@@ -141,12 +142,6 @@ namespace xy
             static inline float boxToSfAngle(float rads)
             {
                 return -rads * 57.29578f;
-            }
-
-            static inline void updateReal(float dt)
-            {
-                XY_ASSERT(m_world, "Physics world has not been created");
-                m_world->Step(dt, m_velocityIterations, m_positionIterations);
             }
         };
     }

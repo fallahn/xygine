@@ -35,6 +35,8 @@ source distribution.
 #include <xygine/Log.hpp>
 #include <xygine/Util.hpp>
 
+#include <xygine/physics/RigidBody.hpp>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 
@@ -62,7 +64,8 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     m_reportText.setFont(context.appInstance.getFont("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
 
-    m_physWorld.setGravity({ 0, 10 });
+
+    createBodies();
 }
 
 bool PhysicsDemoState::update(float dt)
@@ -171,3 +174,14 @@ void PhysicsDemoState::handleMessage(const xy::Message& msg)
 }
 
 //private
+void PhysicsDemoState::createBodies()
+{
+    auto groundEntity = std::make_unique<xy::Entity>(m_messageBus);
+    groundEntity->setWorldPosition({ 0.f, 1000.f });
+    auto groundBody = std::make_unique<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Static);
+
+    //TODO add fixture 1920 * 80
+
+    groundEntity->addComponent<xy::Physics::RigidBody>(groundBody);
+    m_scene.addEntity(groundEntity, xy::Scene::Layer::BackMiddle);
+}

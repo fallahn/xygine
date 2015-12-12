@@ -64,6 +64,8 @@ private:
     xy::Physics::World m_physWorld;
 
     sf::Text m_reportText;
+
+    void createBodies();
 };
 
 #endif //PHYSICS_DEMO_STATE_HPP_

@@ -90,6 +90,7 @@
     <ClCompile Include="src\Music.cpp" />
     <ClCompile Include="src\ParticleController.cpp" />
     <ClCompile Include="src\ParticleSystem.cpp" />
+    <ClCompile Include="src\PhysicsRigidBody.cpp" />
     <ClCompile Include="src\PhysicsWorld.cpp" />
     <ClCompile Include="src\PostBloom.cpp" />
     <ClCompile Include="src\PostChromeAb.cpp" />
@@ -136,6 +137,7 @@
     <ClInclude Include="include\xygine\Particle.hpp" />
     <ClInclude Include="include\xygine\ParticleController.hpp" />
     <ClInclude Include="include\xygine\ParticleSystem.hpp" />
+    <ClInclude Include="include\xygine\physics\RigidBody.hpp" />
     <ClInclude Include="include\xygine\physics\World.hpp" />
     <ClInclude Include="include\xygine\PostBloom.hpp" />
     <ClInclude Include="include\xygine\PostChromeAb.hpp" />
