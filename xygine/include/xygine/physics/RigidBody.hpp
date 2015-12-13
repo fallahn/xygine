@@ -30,16 +30,18 @@ source distribution.
 //these components are added to an entity, and require shape
 //fixtures attached to them to have any affect. Entities with a rigid
 //body attached will be unable to have their position set manually as 
-//it will be automatically overriden by the physics simulation. Rigid
-//body propertiers must be applied before attaching then to their parent
-//entity, and further changes will not update the body's property.
+//it will be automatically overriden by the physics simulation.
 
 #ifndef XY_PHYSICS_RIGIDBODY_HPP_
 #define XY_PHYSICS_RIGIDBODY_HPP_
 
 #include <xygine/Component.hpp>
+#include <xygine/physics/CollisionShape.hpp>
 
 #include <Box2D/Dynamics/b2Body.h>
+
+#include <vector>
+#include <memory>
 
 namespace xy
 {
@@ -96,13 +98,33 @@ namespace xy
             //sets the scale of the gravity applied to this body
             //negative numbers can be used
             void setGravityScale(float);
-
-            //TODO adding fixtures
+            //adds a collision shape to this body. The original shape is
+            //unmodified (so it can be attached to multiple bodies) and
+            //a reference to the newly created shape is returned
+            template <typename T>
+            T* addCollisionShape(const T& cs)
+            {
+                static_assert(std::is_base_of<CollisionShape, T>::value, "Can only add shapes of collision type");
+                m_collisionShapes.emplace_back(std::make_unique<T>(cs));
+                auto& newShape = m_collisionShapes.back();
+                if (m_body)
+                {
+                    newShape->m_fixture = m_body->CreateFixture(&newShape->m_fixtureDef);
+                }
+                else
+                {
+                    m_pendingShapes.push_back(newShape.get());
+                }
+                return dynamic_cast<T*>(newShape.get());
+            }
 
         private:
 
             b2BodyDef m_bodyDef;
             b2Body* m_body;
+
+            std::vector<std::unique_ptr<CollisionShape>> m_collisionShapes;
+            std::vector<CollisionShape*> m_pendingShapes;
         };
     }
 }

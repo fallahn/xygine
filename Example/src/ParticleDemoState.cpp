@@ -54,7 +54,6 @@ namespace
     enum ParticleType
     {
         Bubbles = 0,
-        DustPuff,
         Explosion,
         FairyDust,
         Fire,
@@ -205,9 +204,6 @@ void ParticleDemoState::setupParticles()
     xy::ParticleSystem::Definition pd;
     pd.loadFromFile("assets/particles/bubbles.xyp", getContext().appInstance);
     pc->addDefinition(ParticleType::Bubbles, pd);
-
-    pd.loadFromFile("assets/particles/dustpuff.xyp", getContext().appInstance);
-    pc->addDefinition(ParticleType::DustPuff, pd);
 
     pd.loadFromFile("assets/particles/explosion.xyp", getContext().appInstance);
     pc->addDefinition(ParticleType::Explosion, pd);

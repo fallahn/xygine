@@ -30,15 +30,20 @@ source distribution.
 #include <xygine/Reports.hpp>
 #include <xygine/Entity.hpp>
 #include <xygine/Command.hpp>
+#include <xygine/SfDrawableComponent.hpp>
 
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/Util.hpp>
 
 #include <xygine/physics/RigidBody.hpp>
+#include <xygine/physics/CollisionRectangleShape.hpp>
+#include <xygine/physics/CollisionCircleShape.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 
 namespace
 {
@@ -180,8 +185,32 @@ void PhysicsDemoState::createBodies()
     groundEntity->setWorldPosition({ 0.f, 1000.f });
     auto groundBody = std::make_unique<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Static);
 
-    //TODO add fixture 1920 * 80
+    xy::Physics::CollisionRectangleShape groundShape({ 1920.f, 80.f });
+    groundBody->addCollisionShape(groundShape);
 
     groundEntity->addComponent<xy::Physics::RigidBody>(groundBody);
+
+    auto rect = std::make_unique<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
+    rect->getDrawable().setSize({ 1920.f, 80.f });
+    groundEntity->addComponent<xy::SfDrawableComponent<sf::RectangleShape>>(rect);
+
     m_scene.addEntity(groundEntity, xy::Scene::Layer::BackMiddle);
+
+    //------------//
+    auto ballEntity = std::make_unique<xy::Entity>(m_messageBus);
+    ballEntity->setWorldPosition({ 720.f, 540.f });
+    auto ballBody = std::make_unique<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
+
+    xy::Physics::CollisionCircleShape ballShape(25.f);
+    ballShape.setDensity(0.5f);
+    ballShape.setRestitution(0.8f);
+    ballBody->addCollisionShape(ballShape);
+    ballEntity->addComponent<xy::Physics::RigidBody>(ballBody);
+
+    auto circle = std::make_unique<xy::SfDrawableComponent<sf::CircleShape>>(m_messageBus);
+    circle->getDrawable().setRadius(25.f);
+    circle->getDrawable().setFillColor(sf::Color::Red);
+    ballEntity->addComponent<xy::SfDrawableComponent<sf::CircleShape>>(circle);
+
+    m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);
 }

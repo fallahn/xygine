@@ -57,6 +57,12 @@ void RigidBody::onStart(Entity& entity)
 
     m_body = World::m_world->CreateBody(&m_bodyDef);
     XY_ASSERT(m_body, "Failed to create physics body");
+
+    //check for any pending fixture creation
+    for (auto s : m_pendingShapes)
+    {
+        s->m_fixture = m_body->CreateFixture(&s->m_fixtureDef);
+    }
 }
 
 void RigidBody::destroy()
@@ -71,62 +77,64 @@ void RigidBody::destroy()
 
 void RigidBody::setLinearVelocity(const sf::Vector2f& velocity)
 {
-    XY_ASSERT(m_body = nullptr, "Body properties cannot be updated once attached to an entity");
     m_bodyDef.linearVelocity = World::sfToBoxVec(velocity);
+    if (m_body) m_body->SetLinearVelocity(m_bodyDef.linearVelocity);
 }
 
 void RigidBody::setAngularVelocity(float velocity)
 {
-    XY_ASSERT(m_body = nullptr, "Body properties cannot be updated once attached to an entity");
-    m_bodyDef.angularVelocity = World::sfToBoxAngle(velocity);
+    m_bodyDef.angularVelocity = velocity;
+    if (m_body) m_body->SetAngularVelocity(velocity);
 }
 
 void RigidBody::setLinearDamping(float damping)
 {
-    XY_ASSERT(m_body = nullptr, "Body properties cannot be updated once attached to an entity");
+    XY_ASSERT(damping >= 0, "Damping value must be positive");
     m_bodyDef.linearDamping = damping;
+    if (m_body) m_body->SetLinearDamping(damping);
 }
 
 void RigidBody::setAngularDamping(float damping)
 {
-    XY_ASSERT(m_body = nullptr, "Body properties cannot be updated once attached to an entity");
+    XY_ASSERT(damping >= 0, "Damping value must be positive");
     m_bodyDef.angularDamping = damping;
+    if (m_body) m_body->SetAngularDamping(damping);
 }
 
 void RigidBody::allowSleep(bool allow)
 {
-    XY_ASSERT(m_body = nullptr, "Body properties cannot be updated once attached to an entity");
     m_bodyDef.allowSleep = allow;
+    if (m_body) m_body->SetSleepingAllowed(allow);
 }
 
 void RigidBody::awakeOnSpawn(bool awake)
 {
-    XY_ASSERT(m_body = nullptr, "Body properties cannot be updated once attached to an entity");
     m_bodyDef.awake = awake;
+    if (m_body) m_body->SetAwake(awake);
 }
 
 void RigidBody::fixedRotation(bool fixed)
 {
-    XY_ASSERT(m_body = nullptr, "Body properties cannot be updated once attached to an entity");
     m_bodyDef.fixedRotation = fixed;
+    if (m_body) m_body->SetFixedRotation(fixed);
 }
 
 void RigidBody::isBullet(bool bullet)
 {
-    XY_ASSERT(m_body = nullptr, "Body properties cannot be updated once attached to an entity");
     m_bodyDef.bullet = bullet;
+    if (m_body) m_body->SetBullet(bullet);
 }
 
 void RigidBody::activeOnSpawn(bool active)
 {
-    XY_ASSERT(m_body = nullptr, "Body properties cannot be updated once attached to an entity");
     m_bodyDef.active = active;
+    if (m_body) m_body->SetActive(active);
 }
 
 void RigidBody::setGravityScale(float scale)
 {
-    XY_ASSERT(m_body = nullptr, "Body properties cannot be updated once attached to an entity");
     m_bodyDef.gravityScale = scale;
+    if (m_body) m_body->SetGravityScale(scale);
 }
 
 //private

@@ -49,6 +49,8 @@ namespace xy
         class World final
         {
             friend class RigidBody;
+            friend class CollisionCircleShape;
+            friend class CollisionRectangleShape;
             using Ptr = std::unique_ptr<b2World>;
         public:
             World()

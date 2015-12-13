@@ -81,6 +81,9 @@
     <ClCompile Include="src\AnimationController.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AudioManager.cpp" />
+    <ClCompile Include="src\PhysicsCollisionCircleShape.cpp" />
+    <ClCompile Include="src\PhysicsCollisionRectangleShape.cpp" />
+    <ClCompile Include="src\PhysicsCollisionShape.cpp" />
     <ClCompile Include="src\CommandQueue.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\Entity.cpp" />
@@ -137,6 +140,9 @@
     <ClInclude Include="include\xygine\Particle.hpp" />
     <ClInclude Include="include\xygine\ParticleController.hpp" />
     <ClInclude Include="include\xygine\ParticleSystem.hpp" />
+    <ClInclude Include="include\xygine\physics\CollisionCircleShape.hpp" />
+    <ClInclude Include="include\xygine\physics\CollisionRectangleShape.hpp" />
+    <ClInclude Include="include\xygine\physics\CollisionShape.hpp" />
     <ClInclude Include="include\xygine\physics\RigidBody.hpp" />
     <ClInclude Include="include\xygine\physics\World.hpp" />
     <ClInclude Include="include\xygine\PostBloom.hpp" />
@@ -151,6 +157,7 @@
     <ClInclude Include="include\xygine\Scene.hpp" />
     <ClInclude Include="include\xygine\Score.hpp" />
     <ClInclude Include="include\xygine\Server.hpp" />
+    <ClInclude Include="include\xygine\SfDrawableComponent.hpp" />
     <ClInclude Include="include\xygine\ShaderResource.hpp" />
     <ClInclude Include="include\xygine\Shaders.hpp" />
     <ClInclude Include="include\xygine\SoundPlayer.hpp" />
