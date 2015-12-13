@@ -60,7 +60,7 @@ SET(EXAMPLE_SRC
   src/Game.cpp
   src/main.cpp
   src/MenuMainState.cpp
-  src/OptionMenuState.cpp
+  src/MenuOptionState.cpp
   src/ParticleDemoState.cpp
   src/PhysicsDemoState.cpp)
 

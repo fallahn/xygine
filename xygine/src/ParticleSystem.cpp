@@ -591,7 +591,7 @@ void ParticleSystem::Definition::reset()
     duration = 1.f;
     texture = nullptr;
     colour = sf::Color::White;
-    blendMode = sf::BlendMode::BlendMode();
+    blendMode = sf::BlendAlpha;
     shader = nullptr;
     particleSize = { 4.f, 4.f };
     particlePosition = {};
