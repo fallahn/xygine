@@ -203,6 +203,16 @@ void PhysicsDemoState::createBodies()
 
     points =
     {
+        { 400.f, -350.f },
+        { 480.f, -330.f },
+        { 540.f, -320.f },
+        { 700.f, -305.f }
+    };
+    edgeShape.setPoints(points);
+    groundBody->addCollisionShape(edgeShape);
+
+    points =
+    {
         { 1800.f, -50.f },
         { 1880.f, -30.f },
         { 1920.f, -20.f },
@@ -210,7 +220,7 @@ void PhysicsDemoState::createBodies()
         { 1800.f, -100.f }
     };
     xy::Physics::CollisionPolygonShape polyShape(points);
-    groundBody->addCollisionShape(polyShape);
+    auto flaps = groundBody->addCollisionShape(polyShape);
 
     points =
     {
@@ -222,7 +232,7 @@ void PhysicsDemoState::createBodies()
     };
     polyShape.setPoints(points);
     polyShape.setRestitution(1.f);
-    groundBody->addCollisionShape(polyShape);
+    auto buns = groundBody->addCollisionShape(polyShape);
 
     groundEntity->addComponent<xy::Physics::RigidBody>(groundBody);
 
@@ -241,6 +251,11 @@ void PhysicsDemoState::createBodies()
     ballShape.setDensity(1.5f);
     ballShape.setRestitution(1.f);
     ballBody->addCollisionShape(ballShape);
+
+    ballShape.setRadius(50.f);
+    ballShape.setPosition({ 120.f, -34.f });
+    ballBody->addCollisionShape(ballShape);
+
     ballEntity->addComponent<xy::Physics::RigidBody>(ballBody);
 
     //auto circle = std::make_unique<xy::SfDrawableComponent<sf::CircleShape>>(m_messageBus);

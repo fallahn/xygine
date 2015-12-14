@@ -46,8 +46,8 @@ namespace xy
             //is relative to its parent, else it is in world coordinates
             CollisionRectangleShape(const sf::Vector2f& size, const sf::Vector2f& position = sf::Vector2f());
             ~CollisionRectangleShape() = default;
-            CollisionRectangleShape(const CollisionRectangleShape&) = default;
-            CollisionRectangleShape& operator = (const CollisionRectangleShape&) = default;
+            CollisionRectangleShape(const CollisionRectangleShape&);
+            void operator = (const CollisionRectangleShape&);
 
             CollisionShape::Type type() const override { return CollisionShape::Type::Box; }
 

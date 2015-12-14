@@ -16,9 +16,6 @@
     <Filter Include="Header Files\ui">
       <UniqueIdentifier>{6504bea1-1585-4658-9e33-71e7328f11e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Physics">
-      <UniqueIdentifier>{dec7a79f-802c-4b0c-8999-ba187c12e005}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\particles">
       <UniqueIdentifier>{de479968-03bd-4732-8069-8d6609ea57b7}</UniqueIdentifier>
     </Filter>
@@ -27,6 +24,9 @@
     </Filter>
     <Filter Include="Source Files\physics">
       <UniqueIdentifier>{b95dd385-02fa-4f54-90b4-e72695a89bec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\physics">
+      <UniqueIdentifier>{dec7a79f-802c-4b0c-8999-ba187c12e005}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -315,31 +315,31 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\World.hpp">
-      <Filter>Header Files\Physics</Filter>
+      <Filter>Header Files\physics</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\RigidBody.hpp">
-      <Filter>Header Files\Physics</Filter>
+      <Filter>Header Files\physics</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\CollisionShape.hpp">
-      <Filter>Header Files\Physics</Filter>
+      <Filter>Header Files\physics</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\CollisionCircleShape.hpp">
-      <Filter>Header Files\Physics</Filter>
+      <Filter>Header Files\physics</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\CollisionRectangleShape.hpp">
-      <Filter>Header Files\Physics</Filter>
+      <Filter>Header Files\physics</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\SfDrawableComponent.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\CollisionPolygonShape.hpp">
-      <Filter>Header Files\Physics</Filter>
+      <Filter>Header Files\physics</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\CollisionEdgeShape.hpp">
-      <Filter>Header Files\Physics</Filter>
+      <Filter>Header Files\physics</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\DebugDrawer.hpp">
-      <Filter>Header Files\Physics</Filter>
+      <Filter>Header Files\physics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

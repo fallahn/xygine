@@ -50,8 +50,8 @@ namespace xy
             //not attached to a rigid body, else they are relative to the rigidbody's position
             explicit CollisionPolygonShape(const std::vector<sf::Vector2f>& points);
             ~CollisionPolygonShape() = default;
-            CollisionPolygonShape(const CollisionPolygonShape&) = default;
-            CollisionPolygonShape& operator = (const CollisionPolygonShape&) = default;
+            CollisionPolygonShape(const CollisionPolygonShape&);
+            void operator = (const CollisionPolygonShape&);
 
             CollisionShape::Type type() const override { return CollisionShape::Type::Polygon; }
 

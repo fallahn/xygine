@@ -37,6 +37,19 @@ CollisionRectangleShape::CollisionRectangleShape(const sf::Vector2f& size, const
     setShape(m_rectangleShape);
 }
 
+CollisionRectangleShape::CollisionRectangleShape(const CollisionRectangleShape& other)
+{
+    std::memcpy(this, &other, sizeof(CollisionRectangleShape));
+    setShape(m_rectangleShape);
+}
+
+void CollisionRectangleShape::operator=(const CollisionRectangleShape& other)
+{
+    if (this == &other) return;
+    std::memcpy(this, &other, sizeof(CollisionRectangleShape));
+    setShape(m_rectangleShape);
+}
+
 //public
 void CollisionRectangleShape::setRect(const sf::Vector2f& size, const sf::Vector2f& position)
 {

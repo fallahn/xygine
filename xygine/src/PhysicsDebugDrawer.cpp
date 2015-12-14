@@ -37,6 +37,11 @@ source distribution.
 using namespace xy;
 using namespace xy::Physics;
 
+namespace
+{
+    const sf::Uint8 alpha = 140u;
+}
+
 DebugDraw::DebugDraw(sf::RenderTarget& rt)
     :m_renderTarget (rt)
 {
@@ -62,7 +67,11 @@ void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, cons
     {
         m_convexShape.setPoint(i, World::boxToSfVec(vertices[i]));
     }
-    m_convexShape.setFillColor(World::boxToSfColour(colour));
+    auto newColour = World::boxToSfColour(colour);
+    m_convexShape.setOutlineColor(newColour);
+    m_convexShape.setOutlineThickness(-1.f);
+    newColour.a = alpha;
+    m_convexShape.setFillColor(newColour);
     m_renderTarget.draw(m_convexShape);
 }
 
@@ -84,7 +93,12 @@ void DebugDraw::DrawSolidCircle(const b2Vec2& centre, float32 radius, const b2Ve
     m_circleShape.setRadius(newRadius);
     m_circleShape.setOrigin(newRadius, newRadius);
     m_circleShape.setPosition(World::boxToSfVec(centre));
-    m_circleShape.setFillColor(World::boxToSfColour(colour));
+
+    auto newColour = World::boxToSfColour(colour);
+    m_circleShape.setOutlineColor(newColour);
+    m_circleShape.setOutlineThickness(-1.f);
+    newColour.a = alpha;
+    m_circleShape.setFillColor(newColour);
     m_renderTarget.draw(m_circleShape);
 }
 

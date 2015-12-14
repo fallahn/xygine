@@ -37,6 +37,19 @@ CollisionPolygonShape::CollisionPolygonShape(const std::vector<sf::Vector2f>& po
     setShape(m_polyShape);
 }
 
+CollisionPolygonShape::CollisionPolygonShape(const CollisionPolygonShape& other)
+{
+    std::memcpy(this, &other, sizeof(CollisionPolygonShape));
+    setShape(m_polyShape);
+}
+
+void CollisionPolygonShape::operator= (const CollisionPolygonShape& other)
+{
+    if (&other == this) return;
+    std::memcpy(this, &other, sizeof(CollisionPolygonShape));
+    setShape(m_polyShape);
+}
+
 //public
 void CollisionPolygonShape::setPoints(const std::vector<sf::Vector2f>& points)
 {

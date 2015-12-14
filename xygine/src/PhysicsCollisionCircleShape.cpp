@@ -37,6 +37,19 @@ CollisionCircleShape::CollisionCircleShape(float radius)
     setShape(m_circleShape);
 }
 
+CollisionCircleShape::CollisionCircleShape(const CollisionCircleShape& other)
+{
+    std::memcpy(this, &other, sizeof(CollisionCircleShape));
+    setShape(m_circleShape);
+}
+
+void CollisionCircleShape::operator=(const CollisionCircleShape& other)
+{
+    if (&other == this) return;
+    std::memcpy(this, &other, sizeof(CollisionCircleShape));
+    setShape(m_circleShape);
+}
+
 //public
 void CollisionCircleShape::setPosition(const sf::Vector2f& position)
 {

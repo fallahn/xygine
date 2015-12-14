@@ -41,13 +41,16 @@ CollisionEdgeShape::CollisionEdgeShape(const std::vector<sf::Vector2f>& points, 
 CollisionEdgeShape::CollisionEdgeShape(const CollisionEdgeShape& other)
 {
     m_cloneContext = other.m_cloneContext;
+
     applyCloneContext();
     setShape(m_chainShape);
 }
 
 void CollisionEdgeShape::operator=(const CollisionEdgeShape& other)
 {
+    if (this == &other) return;
     m_cloneContext = other.m_cloneContext;
+
     applyCloneContext();
     setShape(m_chainShape);
 }
@@ -56,6 +59,7 @@ void CollisionEdgeShape::operator=(const CollisionEdgeShape& other)
 void CollisionEdgeShape::setPoints(const std::vector<sf::Vector2f>& points, Option option)
 {
     XY_ASSERT(points.size() > 1, "Not enough points to create a chain");
+    m_cloneContext.points.clear();
     for (const auto& p : points)
     {
         m_cloneContext.points.push_back(World::sfToBoxVec(p));
