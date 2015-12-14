@@ -32,12 +32,16 @@ source distribution.
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Config.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Color.hpp>
 
 #include <Box2D/Common/b2Math.h>
 #include <Box2D/Dynamics/b2World.h>
 
 #include <xygine/Assert.hpp>
 #include <xygine/Log.hpp>
+
+#include <xygine/physics/DebugDrawer.hpp>
 
 #include <memory>
 #include <functional>
@@ -46,20 +50,22 @@ namespace xy
 {
     namespace Physics
     {
-        class World final
+        class World final : public sf::Drawable
         {
             friend class RigidBody;
             friend class CollisionCircleShape;
             friend class CollisionRectangleShape;
             friend class CollisionPolygonShape;
             friend class CollisionEdgeShape;
+            friend class DebugDraw;
+
             using Ptr = std::unique_ptr<b2World>;
         public:
             World()
             {
                 XY_ASSERT(!m_world, "Physics world already created");
                 m_world = std::make_unique<b2World>(m_gravity);
-                //update = std::bind(&updateReal, std::placeholders::_1);
+                
                 update = [this](float dt)
                 {
                     XY_ASSERT(m_world, "Physics world has not been created");
@@ -109,6 +115,7 @@ namespace xy
             //performs a single physics step. this is automatically called by xygine and should
             //not be called elsewhere from within an application.
             static std::function<void(float)> update;
+
         private:
 
             static float m_worldScale;
@@ -117,6 +124,8 @@ namespace xy
             static sf::Uint32 m_positionIterations;
 
             static Ptr m_world;
+
+            mutable std::unique_ptr<DebugDraw> m_debugDraw;
 
             static inline b2Vec2 sfToBoxVec(const sf::Vector2f& vec)
             {
@@ -147,6 +156,30 @@ namespace xy
             {
                 return -rads * 57.29578f;
             }
+
+            static inline b2Color sfToBoxColour(const sf::Color& colour)
+            {
+                return
+                {
+                    static_cast<float>(colour.r) / 255.f,
+                    static_cast<float>(colour.g) / 255.f,
+                    static_cast<float>(colour.b) / 255.f,
+                    static_cast<float>(colour.a) / 255.f
+                };
+            }
+
+            static inline sf::Color boxToSfColour(const b2Color& colour)
+            {
+                return
+                {
+                    static_cast<sf::Uint8>(colour.r * 255.f),
+                    static_cast<sf::Uint8>(colour.g * 255.f),
+                    static_cast<sf::Uint8>(colour.b * 255.f),
+                    static_cast<sf::Uint8>(colour.a * 255.f)
+                };
+            }
+
+            void draw(sf::RenderTarget&, sf::RenderStates) const override;
         };
     }
 }

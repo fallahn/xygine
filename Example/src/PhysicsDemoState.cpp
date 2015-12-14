@@ -92,6 +92,7 @@ void PhysicsDemoState::draw()
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
     rw.setView(getContext().defaultView);
+    rw.draw(m_physWorld);
     rw.draw(m_reportText);
 }
 
@@ -197,14 +198,37 @@ void PhysicsDemoState::createBodies()
         {940.f, -120.f},
         {1100.f, -105.f}
     };
-    xy::Physics::CollisionEdgeShape edgeShape(points, xy::Physics::CollisionEdgeShape::Option::Loop);
+    xy::Physics::CollisionEdgeShape edgeShape(points/*, xy::Physics::CollisionEdgeShape::Option::Loop*/);
     groundBody->addCollisionShape(edgeShape);
+
+    points =
+    {
+        { 1800.f, -50.f },
+        { 1880.f, -30.f },
+        { 1920.f, -20.f },
+        { 1880.f, -185.f },
+        { 1800.f, -100.f }
+    };
+    xy::Physics::CollisionPolygonShape polyShape(points);
+    groundBody->addCollisionShape(polyShape);
+
+    points =
+    {
+        { 300.f, -50.f },
+        { 380.f, -30.f },
+        { 420.f, -20.f },
+        { 380.f, -185.f },
+        { 300.f, -100.f }
+    };
+    polyShape.setPoints(points);
+    polyShape.setRestitution(1.f);
+    groundBody->addCollisionShape(polyShape);
 
     groundEntity->addComponent<xy::Physics::RigidBody>(groundBody);
 
-    auto rect = std::make_unique<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
-    rect->getDrawable().setSize({ 1920.f, 80.f });
-    groundEntity->addComponent<xy::SfDrawableComponent<sf::RectangleShape>>(rect);
+    //auto rect = std::make_unique<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
+    //rect->getDrawable().setSize({ 1920.f, 80.f });
+    //groundEntity->addComponent<xy::SfDrawableComponent<sf::RectangleShape>>(rect);
 
     m_scene.addEntity(groundEntity, xy::Scene::Layer::BackMiddle);
 
@@ -214,16 +238,16 @@ void PhysicsDemoState::createBodies()
     auto ballBody = std::make_unique<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
 
     xy::Physics::CollisionCircleShape ballShape(25.f);
-    ballShape.setDensity(0.5f);
-    ballShape.setRestitution(0.8f);
+    ballShape.setDensity(1.5f);
+    ballShape.setRestitution(1.f);
     ballBody->addCollisionShape(ballShape);
     ballEntity->addComponent<xy::Physics::RigidBody>(ballBody);
 
-    auto circle = std::make_unique<xy::SfDrawableComponent<sf::CircleShape>>(m_messageBus);
-    circle->getDrawable().setRadius(25.f);
-    circle->getDrawable().setFillColor(sf::Color::Red);
-    circle->getDrawable().setOrigin(25.f, 25.f);
-    ballEntity->addComponent<xy::SfDrawableComponent<sf::CircleShape>>(circle);
+    //auto circle = std::make_unique<xy::SfDrawableComponent<sf::CircleShape>>(m_messageBus);
+    //circle->getDrawable().setRadius(25.f);
+    //circle->getDrawable().setFillColor(sf::Color::Red);
+    //circle->getDrawable().setOrigin(25.f, 25.f);
+    //ballEntity->addComponent<xy::SfDrawableComponent<sf::CircleShape>>(circle);
 
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);
 }

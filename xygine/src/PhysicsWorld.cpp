@@ -27,6 +27,9 @@ source distribution.
 
 #include <xygine/physics/World.hpp>
 
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
+
 std::function<void(float)> xy::Physics::World::update = [](float) {};
 
 float xy::Physics::World::m_worldScale = 100.f;
@@ -35,3 +38,13 @@ sf::Uint32 xy::Physics::World::m_velocityIterations = 6u;
 sf::Uint32 xy::Physics::World::m_positionIterations = 2u;
 
 xy::Physics::World::Ptr xy::Physics::World::m_world = nullptr;
+
+void xy::Physics::World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    if (!m_debugDraw)
+    {
+        m_debugDraw = std::make_unique<xy::Physics::DebugDraw>(rt);
+        m_world->SetDebugDraw(m_debugDraw.get());
+    }
+    m_world->DrawDebugData();
+}

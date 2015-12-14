@@ -168,6 +168,9 @@
     <ClCompile Include="src\PhysicsCollisionEdgeShape.cpp">
       <Filter>Source Files\physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\PhysicsDebugDrawer.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\Affectors.hpp">
@@ -333,6 +336,9 @@
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\CollisionEdgeShape.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\physics\DebugDrawer.hpp">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
   </ItemGroup>
