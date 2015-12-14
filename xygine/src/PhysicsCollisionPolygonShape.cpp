@@ -28,6 +28,8 @@ source distribution.
 #include <xygine/physics/CollisionPolygonShape.hpp>
 #include <xygine/physics/World.hpp>
 
+#include <cstring>
+
 using namespace xy;
 using namespace xy::Physics;
 

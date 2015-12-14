@@ -119,9 +119,10 @@ void App::run()
             update(timePerFrame);
         }
         draw();
-
+#ifdef _DEBUG_
         float fpsTime = 1.f / fpsClock.restart().asSeconds();
         REPORT("FPS", std::to_string(fpsTime));
+#endif //_DEBUG_
     }
     m_messageBus.disable(); //prevents spamming with loads of entity quit messages
 
