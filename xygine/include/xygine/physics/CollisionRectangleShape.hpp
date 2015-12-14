@@ -31,10 +31,9 @@ source distribution.
 #define XY_COLLISION_RECTANGLE_SHAPE_HPP_
 
 #include <xygine/physics/CollisionShape.hpp>
-
 #include <Box2D/Collision/Shapes/b2PolygonShape.h>
-
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Rect.hpp>
 
 namespace xy
 {
@@ -43,19 +42,31 @@ namespace xy
         class CollisionRectangleShape final : public CollisionShape
         {
         public:
-            explicit CollisionRectangleShape(const sf::Vector2f& size, const sf::Vector2f& position = sf::Vector2f());
+            //creates a box from a size and optional position. when attached to a rigidbody the position
+            //is relative to its parent, else it is in world coordinates
+            CollisionRectangleShape(const sf::Vector2f& size, const sf::Vector2f& position = sf::Vector2f());
             ~CollisionRectangleShape() = default;
             CollisionRectangleShape(const CollisionRectangleShape&) = default;
             CollisionRectangleShape& operator = (const CollisionRectangleShape&) = default;
 
             CollisionShape::Type type() const override { return CollisionShape::Type::Box; }
 
-            //resets the box's size and optional position
-            void setSize(const sf::Vector2f&, const sf::Vector2f& = sf::Vector2f());
+            //resets the box's size and optional position. when attached to a rigidbody the position
+            //is relative to its parent, else it is in world coordinates
+            void setRect(const sf::Vector2f& size, const sf::Vector2f& position = sf::Vector2f());
+            void setRect(const sf::FloatRect&);
+
+            //returns the current size of the box
+            const sf::Vector2f& getSize() const;
+            //returns the current position of the box, either in local coordinates if attached
+            //to a rigid body, else in world coordinates.
+            const sf::Vector2f& getPosition() const;
 
         private:
 
             b2PolygonShape m_rectangleShape;
+            sf::Vector2f m_size;
+            sf::Vector2f m_position;
         };
     }
 }

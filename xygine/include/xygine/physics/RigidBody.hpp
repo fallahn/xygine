@@ -37,6 +37,7 @@ source distribution.
 
 #include <xygine/Component.hpp>
 #include <xygine/physics/CollisionShape.hpp>
+#include <xygine/physics/World.hpp>
 
 #include <Box2D/Dynamics/b2Body.h>
 

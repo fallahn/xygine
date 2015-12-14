@@ -81,7 +81,9 @@
     <ClCompile Include="src\AnimationController.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AudioManager.cpp" />
+    <ClCompile Include="src\PhysicsCollisionEdgeShape.cpp" />
     <ClCompile Include="src\PhysicsCollisionCircleShape.cpp" />
+    <ClCompile Include="src\PhysicsCollisionPolygonShape.cpp" />
     <ClCompile Include="src\PhysicsCollisionRectangleShape.cpp" />
     <ClCompile Include="src\PhysicsCollisionShape.cpp" />
     <ClCompile Include="src\CommandQueue.cpp" />
@@ -141,6 +143,8 @@
     <ClInclude Include="include\xygine\ParticleController.hpp" />
     <ClInclude Include="include\xygine\ParticleSystem.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionCircleShape.hpp" />
+    <ClInclude Include="include\xygine\physics\CollisionEdgeShape.hpp" />
+    <ClInclude Include="include\xygine\physics\CollisionPolygonShape.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionRectangleShape.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionShape.hpp" />
     <ClInclude Include="include\xygine\physics\RigidBody.hpp" />

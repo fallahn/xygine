@@ -33,14 +33,32 @@ using namespace xy::Physics;
 
 CollisionRectangleShape::CollisionRectangleShape(const sf::Vector2f& size, const sf::Vector2f& position)
 {
-    setSize(size, position);
+    setRect(size, position);
     setShape(m_rectangleShape);
 }
 
 //public
-void CollisionRectangleShape::setSize(const sf::Vector2f& size, const sf::Vector2f& position)
+void CollisionRectangleShape::setRect(const sf::Vector2f& size, const sf::Vector2f& position)
 {
     auto boxSize = World::sfToBoxVec(size / 2.f);
     auto boxPosition = World::sfToBoxVec(position);
-    m_rectangleShape.SetAsBox(boxSize.x, boxSize.y, boxSize + boxPosition, 0.f);
+    m_rectangleShape.SetAsBox(boxSize.x, std::abs(boxSize.y), boxSize + boxPosition, 0.f);
+
+    m_size = size;
+    m_position = position;
+}
+
+void CollisionRectangleShape::setRect(const sf::FloatRect& size)
+{
+    setRect({ size.width, size.height }, { size.left, size.top });
+}
+
+const sf::Vector2f& CollisionRectangleShape::getSize() const
+{
+    return m_size;
+}
+
+const sf::Vector2f& CollisionRectangleShape::getPosition() const
+{
+    return m_position;
 }

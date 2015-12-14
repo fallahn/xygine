@@ -25,47 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//physics system demo state
-
-#ifndef PHYSICS_DEMO_STATE_HPP_
-#define PHYSICS_DEMO_STATE_HPP_
-
-#include <StateIds.hpp>
-
-#include <xygine/State.hpp>
-#include <xygine/Scene.hpp>
+#include <xygine/physics/CollisionPolygonShape.hpp>
 #include <xygine/physics/World.hpp>
 
-#include <SFML/Graphics/Text.hpp>
+using namespace xy;
+using namespace xy::Physics;
 
-namespace sf
+CollisionPolygonShape::CollisionPolygonShape(const std::vector<sf::Vector2f>& points)
 {
-    class Color;
+    setPoints(points);
+    setShape(m_polyShape);
 }
 
-class PhysicsDemoState final : public xy::State
+//public
+void CollisionPolygonShape::setPoints(const std::vector<sf::Vector2f>& points)
 {
-public:
-    PhysicsDemoState(xy::StateStack& stateStack, Context context);
-    ~PhysicsDemoState() = default;
-
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
-    void handleMessage(const xy::Message&) override;
-    xy::StateId stateID() const override
+    XY_ASSERT(points.size() <= b2_maxPolygonVertices, "Cannot create a polygon shape with more than " + std::to_string(b2_maxPolygonVertices) + " points");
+    XY_ASSERT(points.size() > 2, "Not enough points to create a polygon");
+    
+    std::vector<b2Vec2> newPoints;
+    for (const auto& p : points)
     {
-        return States::ID::PhysicsDemo;
+        newPoints.push_back(World::sfToBoxVec(p));
     }
-private:
-    xy::Physics::World m_physWorld;
-    xy::MessageBus& m_messageBus;
-    xy::Scene m_scene;
-
-
-    sf::Text m_reportText;
-
-    void createBodies();
-};
-
-#endif //PHYSICS_DEMO_STATE_HPP_
+    m_polyShape.Set(newPoints.data(), newPoints.size());
+}

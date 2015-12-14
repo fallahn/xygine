@@ -15,6 +15,8 @@ set(xygine_SRC
   ${xygine_DIR}/ParticleSystem.cpp
   ${xygine_DIR}/PhysicsCollisionShape.cpp
   ${xygine_DIR}/PhysicsCollisionCircleShape.cpp
+  ${xygine_DIR}/PhysicsCollisionEdgeShape.cpp
+  ${xygine_DIR}/PhysicsCollisionPolygonShape.cpp
   ${xygine_DIR}/PhysicsCollisionRectangleShape.cpp
   ${xygine_DIR}/PhysicsRigidBody.cpp
   ${xygine_DIR}/PhysicsWorld.cpp

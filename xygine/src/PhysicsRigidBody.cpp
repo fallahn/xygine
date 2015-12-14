@@ -63,6 +63,7 @@ void RigidBody::onStart(Entity& entity)
     {
         s->m_fixture = m_body->CreateFixture(&s->m_fixtureDef);
     }
+    m_pendingShapes.clear();
 }
 
 void RigidBody::destroy()

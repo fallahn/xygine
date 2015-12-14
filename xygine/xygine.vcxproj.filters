@@ -162,6 +162,12 @@
     <ClCompile Include="src\PhysicsCollisionRectangleShape.cpp">
       <Filter>Source Files\physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\PhysicsCollisionPolygonShape.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PhysicsCollisionEdgeShape.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\Affectors.hpp">
@@ -322,6 +328,12 @@
     </ClInclude>
     <ClInclude Include="include\xygine\SfDrawableComponent.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\physics\CollisionPolygonShape.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\physics\CollisionEdgeShape.hpp">
+      <Filter>Header Files\Physics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -39,6 +39,8 @@ source distribution.
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/physics/CollisionRectangleShape.hpp>
 #include <xygine/physics/CollisionCircleShape.hpp>
+#include <xygine/physics/CollisionEdgeShape.hpp>
+#include <xygine/physics/CollisionPolygonShape.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -188,6 +190,16 @@ void PhysicsDemoState::createBodies()
     xy::Physics::CollisionRectangleShape groundShape({ 1920.f, 80.f });
     groundBody->addCollisionShape(groundShape);
 
+    std::vector<sf::Vector2f> points = 
+    {
+        {800.f, -150.f},
+        {880.f, -130.f},
+        {940.f, -120.f},
+        {1100.f, -105.f}
+    };
+    xy::Physics::CollisionEdgeShape edgeShape(points, xy::Physics::CollisionEdgeShape::Option::Loop);
+    groundBody->addCollisionShape(edgeShape);
+
     groundEntity->addComponent<xy::Physics::RigidBody>(groundBody);
 
     auto rect = std::make_unique<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
@@ -198,7 +210,7 @@ void PhysicsDemoState::createBodies()
 
     //------------//
     auto ballEntity = std::make_unique<xy::Entity>(m_messageBus);
-    ballEntity->setWorldPosition({ 720.f, 540.f });
+    ballEntity->setWorldPosition({ 960.f, 540.f });
     auto ballBody = std::make_unique<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
 
     xy::Physics::CollisionCircleShape ballShape(25.f);
@@ -210,6 +222,7 @@ void PhysicsDemoState::createBodies()
     auto circle = std::make_unique<xy::SfDrawableComponent<sf::CircleShape>>(m_messageBus);
     circle->getDrawable().setRadius(25.f);
     circle->getDrawable().setFillColor(sf::Color::Red);
+    circle->getDrawable().setOrigin(25.f, 25.f);
     ballEntity->addComponent<xy::SfDrawableComponent<sf::CircleShape>>(circle);
 
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);
