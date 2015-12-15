@@ -220,7 +220,7 @@ void PhysicsDemoState::createBodies()
         { 1800.f, -100.f }
     };
     xy::Physics::CollisionPolygonShape polyShape(points);
-    auto flaps = groundBody->addCollisionShape(polyShape);
+    groundBody->addCollisionShape(polyShape);
 
     points =
     {
@@ -232,7 +232,7 @@ void PhysicsDemoState::createBodies()
     };
     polyShape.setPoints(points);
     polyShape.setRestitution(1.f);
-    auto buns = groundBody->addCollisionShape(polyShape);
+    groundBody->addCollisionShape(polyShape);
 
     groundEntity->addComponent<xy::Physics::RigidBody>(groundBody);
 

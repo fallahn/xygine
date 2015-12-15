@@ -41,8 +41,8 @@ namespace xy
     {
         struct CollisionFilter
         {
-            sf::Uint16 categoryFlags = 0u;
-            sf::Uint16 maskFlags = 0u;
+            sf::Uint16 categoryFlags = 0x0001;
+            sf::Uint16 maskFlags = 0xFFFF;
             sf::Int16 groupIndex = 0;
         };
 

@@ -37,6 +37,7 @@ source distribution.
 
 #include <xygine/Component.hpp>
 #include <xygine/physics/CollisionShape.hpp>
+#include <xygine/physics/JointDistance.hpp>
 #include <xygine/physics/World.hpp>
 
 #include <Box2D/Dynamics/b2Body.h>
@@ -57,6 +58,7 @@ namespace xy
 
         class RigidBody final : public Component
         {
+            friend class DistanceJoint;
         public:
             RigidBody(MessageBus&, BodyType);
             ~RigidBody() = default;
@@ -119,6 +121,7 @@ namespace xy
                 return dynamic_cast<T*>(newShape.get());
             }
 
+
         private:
 
             b2BodyDef m_bodyDef;
@@ -126,6 +129,8 @@ namespace xy
 
             std::vector<std::unique_ptr<CollisionShape>> m_collisionShapes;
             std::vector<CollisionShape*> m_pendingShapes;
+
+            std::vector<std::unique_ptr<Joint>> m_joints;
         };
     }
 }

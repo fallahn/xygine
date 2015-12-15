@@ -19,6 +19,7 @@ set(xygine_SRC
   ${xygine_DIR}/PhysicsCollisionPolygonShape.cpp
   ${xygine_DIR}/PhysicsCollisionRectangleShape.cpp
   ${xygine_DIR}/PhysicsDebugDrawer.cpp
+  ${xygine_DIR}/PhysicsJointDistance.cpp
   ${xygine_DIR}/PhysicsRigidBody.cpp
   ${xygine_DIR}/PhysicsWorld.cpp
   ${xygine_DIR}/PostBloom.cpp
