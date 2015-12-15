@@ -42,7 +42,7 @@ RigidBody::RigidBody(MessageBus& mb, BodyType type)
 
 //public
 void RigidBody::entityUpdate(Entity& entity, float dt)
-{
+{    
     entity.setRotation(World::boxToSfAngle(m_body->GetAngle()));
     entity.setWorldPosition(World::boxToSfVec(m_body->GetPosition()));
 }
