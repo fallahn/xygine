@@ -47,11 +47,13 @@ source distribution.
 #include <xygine/Assert.hpp>
 #include <type_traits>
 
+class b2Joint;
+class b2Fixture;
 namespace xy
 {
     class Component;
     class Entity;
-
+    
     class Message final
     {
         friend class MessageBus;
@@ -78,10 +80,17 @@ namespace xy
         {
             enum
             {
-                Collision
+                BeginContact,
+                EndContact,
+                JointDestroyed,
+                FixtureDestroyed
             }event;
 
-            sf::Uint64 entityId[2];
+            union //TODO do we really want to expose the b2 types here?
+            {
+                b2Joint* joint;
+                b2Fixture* fixture;
+            };
         };
 
         struct EntityEvent

@@ -46,7 +46,7 @@ DistanceJoint::DistanceJoint(const RigidBody& rbA, const sf::Vector2f& worldPosA
 //private
 const b2JointDef* DistanceJoint::getDefinition()
 {
-    XY_ASSERT(m_bodyA, m_bodyB, "Don't forget to set your Bodies!");
+    XY_ASSERT(m_bodyA && m_bodyB, "Don't forget to set your Bodies!");
     
     //apply def settings first
     m_definition.Initialize(m_bodyA->m_body, m_bodyB->m_body, m_anchorA, m_anchorB);

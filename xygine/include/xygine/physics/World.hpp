@@ -37,6 +37,7 @@ source distribution.
 
 #include <Box2D/Common/b2Math.h>
 #include <Box2D/Dynamics/b2World.h>
+#include <Box2D/Dynamics/b2WorldCallbacks.h>
 
 #include <xygine/Assert.hpp>
 #include <xygine/Log.hpp>
@@ -48,6 +49,7 @@ source distribution.
 
 namespace xy
 {
+    class MessageBus;
     namespace Physics
     {
         class World final : public sf::Drawable
@@ -62,7 +64,8 @@ namespace xy
 
             using Ptr = std::unique_ptr<b2World>;
         public:
-            World()
+            explicit World(MessageBus& mb)
+                : m_contactCallback(mb), m_destructionCallback(mb)
             {
                 XY_ASSERT(!m_world, "Physics world already created");
                 m_world = std::make_unique<b2World>(m_gravity);
@@ -72,6 +75,9 @@ namespace xy
                     XY_ASSERT(m_world, "Physics world has not been created");
                     m_world->Step(dt, m_velocityIterations, m_positionIterations);
                 };
+
+                m_world->SetContactListener(&m_contactCallback);
+                m_world->SetDestructionListener(&m_destructionCallback);
 
                 LOG("CLIENT created physics world", Logger::Type::Info);
             }
@@ -118,6 +124,38 @@ namespace xy
             static std::function<void(float)> update;
 
         private:
+
+            class ContactCallback final : public b2ContactListener
+            {
+            public:
+                explicit ContactCallback(MessageBus& mb) : m_messageBus(mb) {}
+                ~ContactCallback() = default;
+                ContactCallback(const ContactCallback&) = delete;
+                const ContactCallback& operator = (const ContactCallback&) = delete;
+
+                void BeginContact(b2Contact* contact) override;
+                void EndContact(b2Contact* contact) override;
+                void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override;
+                void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override;
+
+            private:
+                MessageBus& m_messageBus;
+            }m_contactCallback;
+
+            class DestructionCallback final : public b2DestructionListener
+            {
+            public:
+                explicit DestructionCallback(MessageBus& mb) : m_messageBus(mb) {}
+                ~DestructionCallback() = default;
+                DestructionCallback(const DestructionCallback&) = delete;
+                DestructionCallback& operator = (const DestructionCallback&) = delete;
+
+                void SayGoodbye(b2Joint*) override;
+                void SayGoodbye(b2Fixture*) override;
+
+            private:
+                MessageBus& m_messageBus;
+            }m_destructionCallback;
 
             static float m_worldScale;
             static b2Vec2 m_gravity;

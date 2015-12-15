@@ -26,20 +26,24 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/physics/World.hpp>
+#include <xygine/MessageBus.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
-std::function<void(float)> xy::Physics::World::update = [](float) {};
+using namespace xy;
+using namespace xy::Physics;
 
-float xy::Physics::World::m_worldScale = 100.f;
-b2Vec2 xy::Physics::World::m_gravity = { 0.f, -9.8f };
-sf::Uint32 xy::Physics::World::m_velocityIterations = 6u;
-sf::Uint32 xy::Physics::World::m_positionIterations = 2u;
+std::function<void(float)> World::update = [](float) {};
 
-xy::Physics::World::Ptr xy::Physics::World::m_world = nullptr;
+float World::m_worldScale = 100.f;
+b2Vec2 World::m_gravity = { 0.f, -9.8f };
+sf::Uint32 World::m_velocityIterations = 6u;
+sf::Uint32 World::m_positionIterations = 2u;
 
-void xy::Physics::World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+World::Ptr World::m_world = nullptr;
+
+void World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     if (!m_debugDraw)
     {
@@ -47,4 +51,44 @@ void xy::Physics::World::draw(sf::RenderTarget& rt, sf::RenderStates states) con
         m_world->SetDebugDraw(m_debugDraw.get());
     }
     m_world->DrawDebugData();
+}
+
+//contact callbacks
+void World::ContactCallback::BeginContact(b2Contact* contact)
+{
+    //TODO set body user data to entity UID
+    //TODO create buffer to store contact data for messages (as messages are delayed by 1 frame)
+    auto msg = m_messageBus.post<xy::Message::PhysicsEvent>(xy::Message::Type::PhysicsMessage);
+    msg->event = Message::PhysicsEvent::BeginContact;
+}
+
+void World::ContactCallback::EndContact(b2Contact* contact)
+{
+    auto msg = m_messageBus.post<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
+    msg->event = Message::PhysicsEvent::EndContact;
+}
+
+void World::ContactCallback::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
+{
+
+}
+
+void World::ContactCallback::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)
+{
+
+}
+
+//destruction callbacks
+void World::DestructionCallback::SayGoodbye(b2Joint* joint)
+{
+    auto msg = m_messageBus.post<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
+    msg->event = Message::PhysicsEvent::JointDestroyed;
+    msg->joint = joint;
+}
+
+void World::DestructionCallback::SayGoodbye(b2Fixture* fixture)
+{
+    auto msg = m_messageBus.post<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
+    msg->event = Message::PhysicsEvent::FixtureDestroyed;
+    msg->fixture = fixture;
 }

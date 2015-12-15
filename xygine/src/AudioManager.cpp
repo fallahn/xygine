@@ -87,10 +87,7 @@ void AudioManager::handleMessage(const Message& msg)
         auto& msgData = msg.getData<Message::PhysicsEvent>();
         switch (msgData.event)
         {
-        case Message::PhysicsEvent::Collision:
-            if (m_muted) break;
 
-            break;
         default:break;
         }
         break;

@@ -61,6 +61,7 @@ namespace
 
 PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     : State         (stateStack, context),
+    m_physWorld     (context.appInstance.getMessageBus()),
     m_messageBus    (context.appInstance.getMessageBus()),
     m_scene         (m_messageBus)
 {
