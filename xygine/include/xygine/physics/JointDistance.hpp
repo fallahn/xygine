@@ -45,14 +45,25 @@ namespace xy
             DistanceJoint(const RigidBody& bodyA, const sf::Vector2f& worldPosA, const sf::Vector2f& worldPosB);
             ~DistanceJoint() = default;
 
-            DistanceJoint(const DistanceJoint&) = delete;
-            DistanceJoint& operator = (const DistanceJoint&) = delete;
+            DistanceJoint(const DistanceJoint&) = default;
+            DistanceJoint& operator = (const DistanceJoint&) = default;
 
+            //get the type of this joint
             Joint::Type type() const override { return Joint::Type::Distance; }
+            //set whther or not the joined bodies collide with each other
             void canCollide(bool collide) override { m_definition.collideConnected = collide; }
-
-
-            //TODO get/set freq etc
+            //get the length of the distance between two joined bodies
+            float getLength() const;
+            //set the frequency, in hertz, of the constraint. recommended
+            //to be less than half the physics update rate
+            void setFrequency(float);
+            //get the current frequency, in hertz, of the constraint
+            float getFrequency() const;
+            //set the damping ratio of the constraint. must be positive and
+            //usually not much more than 1
+            void setDampingRatio(float);
+            //get the current damping ratio of the constraint
+            float getDampingRatio() const;
 
         private:
             const b2JointDef* getDefinition() override;
@@ -61,8 +72,6 @@ namespace xy
             b2Vec2 m_anchorA;
             b2Vec2 m_anchorB;
 
-            const RigidBody* m_bodyA;
-            const RigidBody* m_bodyB;
         };
     }
 }

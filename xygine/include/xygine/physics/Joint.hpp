@@ -36,6 +36,7 @@ namespace xy
 {
     namespace Physics
     {
+        class RigidBody;
         class Joint
         {
             friend class RigidBody;
@@ -52,7 +53,7 @@ namespace xy
                 Motor = b2JointType::e_motorJoint
             };
 
-            Joint() : m_joint(nullptr){}
+            Joint() : m_joint(nullptr), m_bodyA(nullptr), m_bodyB(nullptr){}
             virtual ~Joint() = default;
 
             virtual Type type() const = 0;
@@ -62,8 +63,22 @@ namespace xy
 
             virtual const b2JointDef* getDefinition() = 0;
 
+            void setRigidBodyA(const RigidBody* b) { m_bodyA = b; }
+            void setRigidBodyB(const RigidBody* b) { m_bodyB = b; }
+            const RigidBody* getRigidBodyA() const { return m_bodyA; }
+            const RigidBody* getRigidBodyB() const { return m_bodyB; }
+
+            template <typename T>
+            T* getJointAs() const
+            {
+                static_assert(std::is_base_of<b2Joint, T>::value, "Cannot cast to this type");
+                return dynamic_cast<T*>(m_joint);
+            }
+
         private:
             b2Joint* m_joint;
+            const RigidBody* m_bodyA;
+            const RigidBody* m_bodyB;
         };
     }
 }

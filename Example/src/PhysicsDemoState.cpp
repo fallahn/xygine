@@ -41,6 +41,7 @@ source distribution.
 #include <xygine/physics/CollisionCircleShape.hpp>
 #include <xygine/physics/CollisionEdgeShape.hpp>
 #include <xygine/physics/CollisionPolygonShape.hpp>
+#include <xygine/physics/JointDistance.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -67,7 +68,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 {
     m_scene.setView(context.defaultView);
     //m_scene.drawDebug(true);
-    m_scene.setPostEffects(xy::Scene::PostEffect::ChromaticAbberation);
+    //m_scene.setPostEffects(xy::Scene::PostEffect::ChromaticAbberation);
 
     m_reportText.setFont(context.appInstance.getFont("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
@@ -244,20 +245,16 @@ void PhysicsDemoState::createBodies()
     m_scene.addEntity(groundEntity, xy::Scene::Layer::BackMiddle);
 
     //------------//
-    auto ballEntity = std::make_unique<xy::Entity>(m_messageBus);
-    ballEntity->setWorldPosition({ 960.f, 540.f });
-    auto ballBody = std::make_unique<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
+    auto ballEntityA = std::make_unique<xy::Entity>(m_messageBus);
+    ballEntityA->setWorldPosition({ 960.f, 540.f });
+    auto ballBodyA = std::make_unique<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
 
     xy::Physics::CollisionCircleShape ballShape(25.f);
     ballShape.setDensity(1.5f);
     ballShape.setRestitution(1.f);
-    ballBody->addCollisionShape(ballShape);
+    ballBodyA->addCollisionShape(ballShape);
 
-    ballShape.setRadius(50.f);
-    ballShape.setPosition({ 120.f, -34.f });
-    ballBody->addCollisionShape(ballShape);
-
-    ballEntity->addComponent<xy::Physics::RigidBody>(ballBody);
+    auto ba = ballEntityA->addComponent<xy::Physics::RigidBody>(ballBodyA);
 
     //auto circle = std::make_unique<xy::SfDrawableComponent<sf::CircleShape>>(m_messageBus);
     //circle->getDrawable().setRadius(25.f);
@@ -265,5 +262,18 @@ void PhysicsDemoState::createBodies()
     //circle->getDrawable().setOrigin(25.f, 25.f);
     //ballEntity->addComponent<xy::SfDrawableComponent<sf::CircleShape>>(circle);
 
-    m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);
+    m_scene.addEntity(ballEntityA, xy::Scene::Layer::BackMiddle);
+
+    auto ballEntityB = std::make_unique<xy::Entity>(m_messageBus);
+    ballEntityB->setWorldPosition({ 440.f, 500.f });
+    auto ballBodyB = std::make_unique<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
+
+    ballShape.setRadius(50.f);
+    ballBodyB->addCollisionShape(ballShape);
+
+    auto bb = ballEntityB->addComponent<xy::Physics::RigidBody>(ballBodyB);
+    m_scene.addEntity(ballEntityB, xy::Scene::Layer::BackMiddle);
+
+    xy::Physics::DistanceJoint dj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
+    bb->addJoint(dj);
 }

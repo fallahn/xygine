@@ -121,6 +121,78 @@ namespace xy
                 return dynamic_cast<T*>(newShape.get());
             }
 
+            //adds a joint to this body. the rigid body with which the joint was constructed
+            //must not be the same as this one
+            template <typename T>
+            void addJoint(const T& joint)
+            {
+                static_assert(std::is_base_of<Joint, T>::value, "Must be of Joint type");
+                
+                XY_ASSERT(joint.getRigidBodyA() != this, "Cannot attach body to self");
+
+                m_joints.emplace_back(std::make_unique<T>(joint));
+                auto& newJoint = m_joints.back();
+                newJoint->setRigidBodyB(this);
+                if (m_body)
+                {
+                    newJoint->m_joint = m_body->GetWorld()->CreateJoint(newJoint->getDefinition());
+                }
+                else
+                {
+                    m_pendingJoints.push_back(newJoint.get());
+                }
+                //return dynamic_cast<T*>(newJoint.get());
+            }
+
+            //get the world position of this body's centre of mass
+            sf::Vector2f getWorldCentre() const;
+            //get the local position of this body's centre of mass
+            sf::Vector2f getLocalCentre() const;
+            //get the linear velocity of this body
+            sf::Vector2f getLinearVelocity() const;
+            //get the angular velocity of this body
+            float getAngularVelocity() const;
+            //get the linear damping of this body
+            float getLinearDamping() const;
+            //get the angular damping of this body
+            float getAngularDamping() const;
+            //get the gravity scale of this body
+            float getGravityScale() const;
+            //returns true if the isBullet property is set
+            bool isBullet() const;
+            //returns true if allowSleep flag is set
+            bool allowSleep() const;
+            //returns true if this body has fixed rotation
+            bool fixedRotation() const;
+            //get the mass in kilograms of this boy
+            float getMass() const;
+            //get the inertia of this body
+            float getInertia() const;
+
+            //set whether or not this body is awake
+            void awake(bool);
+            //returns true if this body is awake
+            bool awake() const;
+            //set whether or not this body is active
+            void active(bool);
+            //returns true if this body is active
+            bool active() const;
+
+            //applies a given force to this body at the given point
+            //if wake is true sleeping bodies will first be woken
+            void applyForce(const sf::Vector2f& force, const sf::Vector2f& point, bool wake = true);
+            //applies a given force to the centre of mass of this body
+            //if wake is true then sleeping bodies will be woken
+            void applyForceToCentre(const sf::Vector2f& force, bool wake = true);
+            //applies a given torque (rotation) to this body
+            //if wake is true then a sleeping body will be woken
+            void applyTorque(float, bool wake = true);
+            //applies a given linear impulse at a given point to the body
+            //if wake is true then this body will be woken when sleeping
+            void applyLinearImpulse(const sf::Vector2f& impulse, const sf::Vector2f& point, bool wake = true);
+            //applies an angular impulse to the body. if wake is true
+            //the body will be woken if it is sleeping
+            void applyAngularImpulse(float, bool wake = true);
 
         private:
 
@@ -131,6 +203,7 @@ namespace xy
             std::vector<CollisionShape*> m_pendingShapes;
 
             std::vector<std::unique_ptr<Joint>> m_joints;
+            std::vector<Joint*> m_pendingJoints;
         };
     }
 }

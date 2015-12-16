@@ -33,23 +33,60 @@ using namespace xy;
 using namespace xy::Physics;
 
 DistanceJoint::DistanceJoint(const RigidBody& rbA, const sf::Vector2f& worldPosA, const sf::Vector2f& worldPosB)
-    : m_bodyA   (&rbA),
-    m_bodyB     (nullptr)
 {
     m_anchorA = World::sfToBoxVec(worldPosA);
     m_anchorB = World::sfToBoxVec(worldPosB);
+
+    setRigidBodyA(&rbA);
 }
 
 //public
+float DistanceJoint::getLength() const
+{
+    auto joint = getJointAs<b2DistanceJoint>();
+    return (joint) ? World::boxToSfFloat(joint->GetLength()) : World::boxToSfFloat(m_definition.length);
+}
 
+void DistanceJoint::setFrequency(float freq)
+{
+    XY_ASSERT(freq > 0, "Frequency must be greater than 0");
+    m_definition.frequencyHz = freq;
+
+    auto joint = getJointAs<b2DistanceJoint>();
+    if (joint)
+    {
+        joint->SetFrequency(freq);
+    }
+}
+
+float DistanceJoint::getFrequency() const
+{
+    return m_definition.frequencyHz;
+}
+
+void DistanceJoint::setDampingRatio(float ratio)
+{
+    XY_ASSERT(ratio >= 0, "Damping ration should be positive");
+    m_definition.dampingRatio = ratio;
+    auto joint = getJointAs<b2DistanceJoint>();
+    if (joint)
+    {
+        joint->SetDampingRatio(ratio);
+    }
+}
+
+float DistanceJoint::getDampingRatio() const
+{
+    return m_definition.dampingRatio;
+}
 
 //private
 const b2JointDef* DistanceJoint::getDefinition()
 {
-    XY_ASSERT(m_bodyA && m_bodyB, "Don't forget to set your Bodies!");
+    XY_ASSERT(getRigidBodyA() && getRigidBodyB(), "Don't forget to set your Bodies!");
     
     //apply def settings first
-    m_definition.Initialize(m_bodyA->m_body, m_bodyB->m_body, m_anchorA, m_anchorB);
+    m_definition.Initialize(getRigidBodyA()->m_body, getRigidBodyB()->m_body, m_anchorA, m_anchorB);
 
     return static_cast<b2JointDef*>(&m_definition);
 }

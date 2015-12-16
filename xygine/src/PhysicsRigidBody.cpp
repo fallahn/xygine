@@ -57,6 +57,7 @@ void RigidBody::onStart(Entity& entity)
 
     m_body = World::m_world->CreateBody(&m_bodyDef);
     XY_ASSERT(m_body, "Failed to create physics body");
+    m_body->SetUserData(static_cast<void*>(&entity));
 
     //check for any pending fixture creation
     for (auto s : m_pendingShapes)
@@ -64,6 +65,12 @@ void RigidBody::onStart(Entity& entity)
         s->m_fixture = m_body->CreateFixture(&s->m_fixtureDef);
     }
     m_pendingShapes.clear();
+
+    for (auto s : m_pendingJoints)
+    {
+        s->m_joint = m_body->GetWorld()->CreateJoint(s->getDefinition());
+    }
+    m_pendingJoints.clear();
 }
 
 void RigidBody::destroy()
@@ -136,6 +143,118 @@ void RigidBody::setGravityScale(float scale)
 {
     m_bodyDef.gravityScale = scale;
     if (m_body) m_body->SetGravityScale(scale);
+}
+
+sf::Vector2f RigidBody::getWorldCentre() const
+{
+    XY_ASSERT(m_body, "Body not yet added to world");
+    return World::boxToSfVec(m_body->GetWorldCenter());
+}
+
+sf::Vector2f RigidBody::getLocalCentre() const
+{
+    XY_ASSERT(m_body, "Body not yet added to world");
+    return World::boxToSfVec(m_body->GetLocalCenter());
+}
+
+sf::Vector2f RigidBody::getLinearVelocity() const
+{
+    return World::boxToSfVec(m_bodyDef.linearVelocity);
+}
+
+float RigidBody::getAngularVelocity() const
+{
+    return m_bodyDef.angularVelocity;
+}
+
+float RigidBody::getLinearDamping() const
+{
+    return m_bodyDef.linearDamping;
+}
+
+float RigidBody::getAngularDamping() const
+{
+    return m_bodyDef.angularDamping;
+}
+
+float RigidBody::getGravityScale() const
+{
+    return m_bodyDef.gravityScale;
+}
+
+bool RigidBody::isBullet() const
+{
+    return m_bodyDef.bullet;
+}
+
+bool RigidBody::allowSleep() const
+{
+    return m_bodyDef.allowSleep;
+}
+
+bool RigidBody::fixedRotation() const
+{
+    return m_bodyDef.fixedRotation;
+}
+
+float RigidBody::getMass() const
+{
+    return (m_body) ? m_body->GetMass() : 0.f;
+}
+
+float RigidBody::getInertia() const
+{
+    return (m_body) ? m_body->GetInertia() : 0.f;
+}
+
+void RigidBody::awake(bool awake)
+{
+    if (m_body) m_body->SetAwake(awake);
+}
+
+bool RigidBody::awake() const
+{
+    return (m_body) ? m_body->IsAwake() : false;
+}
+
+void RigidBody::active(bool active)
+{
+    if (m_body) m_body->SetActive(active);
+}
+
+bool RigidBody::active() const
+{
+    return (m_body) ? m_body->IsActive() : false;
+}
+
+void RigidBody::applyForce(const sf::Vector2f& force, const sf::Vector2f& point, bool wake)
+{
+    XY_ASSERT(m_body, "Body not yet added to the world");
+    m_body->ApplyForce(World::sfToBoxVec(force), World::sfToBoxVec(point), wake);
+}
+
+void RigidBody::applyForceToCentre(const sf::Vector2f& force, bool wake)
+{
+    XY_ASSERT(m_body, "Body not yet added to world");
+    m_body->ApplyForceToCenter(World::sfToBoxVec(force), wake);
+}
+
+void RigidBody::applyTorque(float torque, bool wake)
+{
+    XY_ASSERT(m_body, "Body not yet added to world");
+    m_body->ApplyTorque(torque, wake);
+}
+
+void RigidBody::applyLinearImpulse(const sf::Vector2f& impulse, const sf::Vector2f& point, bool wake)
+{
+    XY_ASSERT(m_body, "Body not yet added to world");
+    m_body->ApplyLinearImpulse(World::sfToBoxVec(impulse), World::sfToBoxVec(point), wake);
+}
+
+void RigidBody::applyAngularImpulse(float impulse, bool wake)
+{
+    XY_ASSERT(m_body, "Body not yet added to world");
+    m_body->ApplyAngularImpulse(impulse, wake);
 }
 
 //private
