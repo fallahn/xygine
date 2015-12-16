@@ -32,6 +32,8 @@ source distribution.
 
 #include <Box2D/Dynamics/Joints/b2Joint.h>
 
+#include <type_traits>
+
 namespace xy
 {
     namespace Physics
