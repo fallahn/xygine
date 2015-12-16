@@ -42,9 +42,13 @@ namespace xy
 {
     class ParticleController final : public Component
     {
-    public:
-           
+    public:          
         using SystemId = sf::Int32;
+        using Ptr = std::unique_ptr<ParticleController>;
+    private:
+        using FactoryFunc = Ptr(&)(MessageBus&);
+    public:
+        static const FactoryFunc create;
 
         explicit ParticleController(MessageBus&);
         ~ParticleController() = default;

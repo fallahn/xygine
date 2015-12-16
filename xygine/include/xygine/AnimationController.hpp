@@ -38,6 +38,12 @@ namespace xy
     class AnimationController final : public Component
     {
     public:
+        using Ptr = std::unique_ptr<AnimationController>;
+    private:
+        using FactoryFunc = Ptr(&)(MessageBus&);
+    public:
+        static const FactoryFunc create;
+
         explicit AnimationController(MessageBus&);
         ~AnimationController() = default;
 

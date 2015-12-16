@@ -50,6 +50,10 @@ namespace xy
     {
     public:
         using Ptr = std::unique_ptr<Entity>;
+    private:
+        using FactoryFunc = Ptr(&)(MessageBus&);
+    public:
+        static const FactoryFunc create;
 
         template<typename CONDITION>
         using enable_if = typename std::enable_if<CONDITION::value>::type;

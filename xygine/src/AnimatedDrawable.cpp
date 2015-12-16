@@ -36,9 +36,10 @@ source distribution.
 #include <SFML/Graphics/Shader.hpp>
 
 #include <xygine/picojson.h>
-
 #include <xygine/Assert.hpp>
+
 #include <fstream>
+#include <memory>
 
 using namespace xy;
 

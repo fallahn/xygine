@@ -43,6 +43,8 @@ namespace
 
 using namespace xy;
 
+const Entity::FactoryFunc Entity::create = std::make_unique<Entity>;
+
 Entity::Entity(MessageBus& mb)
  : m_destroyed          (false),
  m_uid                  (uid++),

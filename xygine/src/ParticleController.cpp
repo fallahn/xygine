@@ -37,6 +37,8 @@ namespace
 
 using namespace xy;
 
+const ParticleController::FactoryFunc ParticleController::create = std::make_unique<ParticleController>;
+
 ParticleController::ParticleController(MessageBus& mb)
     : Component (mb, this),
     m_entity    (nullptr)
@@ -72,7 +74,7 @@ void ParticleController::addDefinition(SystemId id, const ParticleSystem::Defini
 {
     //TODO we can't currently add definitions until this component has a parent entity
     XY_ASSERT(m_entity, "this component must be added to an entity first");
-    auto ent = std::make_unique<Entity>(getMessageBus());
+    auto ent = Entity::create(getMessageBus());
     m_activeSystems[id] = std::make_pair(ent.get(), d);
     m_entity->addChild(ent);
 }
@@ -100,7 +102,7 @@ void ParticleController::fire(SystemId id, const sf::Vector2f& position)
     else
     {
         //if no inactive systems add a new one from the definition
-        auto entity = std::make_unique<Entity>(getMessageBus());
+        auto entity = Entity::create(getMessageBus());
         auto ps = definition.createSystem(getMessageBus());
         entity->addComponent<ParticleSystem>(ps);
         entity->setWorldPosition(position);

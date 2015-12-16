@@ -46,6 +46,13 @@ namespace xy
     class SfDrawableComponent final : public Component, public sf::Transformable, public sf::Drawable, public ShaderProperty
     {
     public:
+        using Ptr = std::unique_ptr<SfDrawableComponent<T>>;
+
+        static Ptr create(MessageBus& mb)
+        {
+            return std::move(std::make_unique<SfDrawableComponent<T>>(mb));
+        }
+
         explicit SfDrawableComponent(MessageBus& mb)
             : Component(mb, this)
         {

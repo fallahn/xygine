@@ -38,6 +38,8 @@ namespace
 
 using namespace xy;
 
+const QuadTreeComponent::FactoryFunc QuadTreeComponent::create = std::make_unique<QuadTreeComponent>;
+
 QuadTreeComponent::QuadTreeComponent(MessageBus& mb, const sf::FloatRect& bounds)
     : Component     (mb, this),
     m_bounds        (bounds),

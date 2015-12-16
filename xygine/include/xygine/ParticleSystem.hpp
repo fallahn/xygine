@@ -84,6 +84,10 @@ namespace xy
             void reset();
         };
 
+    private:
+        using FactoryFunc = Ptr(&)(MessageBus&);
+    public:
+        static const FactoryFunc create;
 
         explicit ParticleSystem(MessageBus&);
         ~ParticleSystem() = default;

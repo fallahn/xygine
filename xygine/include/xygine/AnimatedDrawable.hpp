@@ -72,6 +72,17 @@ namespace xy
     {
     public:
         using Ptr = std::unique_ptr<AnimatedDrawable>;
+
+        static Ptr create(MessageBus& mb)
+        {
+            return std::move(std::make_unique<AnimatedDrawable>(mb));
+        }
+
+        static Ptr create(MessageBus& mb, const sf::Texture& t)
+        {
+            return std::move(std::make_unique<AnimatedDrawable>(mb, t));
+        }
+
         explicit AnimatedDrawable(MessageBus&);
         AnimatedDrawable(MessageBus&, const sf::Texture& t);
         AnimatedDrawable(const AnimatedDrawable&) = delete;

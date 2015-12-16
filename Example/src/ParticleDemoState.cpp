@@ -197,8 +197,8 @@ void ParticleDemoState::handleMessage(const xy::Message& msg)
 //private
 void ParticleDemoState::setupParticles()
 {
-    auto particleController = std::make_unique<xy::ParticleController>(m_messageBus);
-    auto entity = std::make_unique<xy::Entity>(m_messageBus);
+    auto particleController = xy::ParticleController::create(m_messageBus);
+    auto entity = xy::Entity::create(m_messageBus);
 
     auto pc = entity->addComponent<xy::ParticleController>(particleController);
     xy::ParticleSystem::Definition pd;

@@ -187,9 +187,9 @@ void PhysicsDemoState::handleMessage(const xy::Message& msg)
 //private
 void PhysicsDemoState::createBodies()
 {
-    auto groundEntity = std::make_unique<xy::Entity>(m_messageBus);
+    auto groundEntity = xy::Entity::create(m_messageBus);
     groundEntity->setWorldPosition({ 0.f, 1000.f });
-    auto groundBody = std::make_unique<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Static);
+    auto groundBody = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Static);
 
     xy::Physics::CollisionRectangleShape groundShape({ 1920.f, 80.f });
     groundBody->addCollisionShape(groundShape);
@@ -239,16 +239,16 @@ void PhysicsDemoState::createBodies()
 
     groundEntity->addComponent<xy::Physics::RigidBody>(groundBody);
 
-    //auto rect = std::make_unique<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
+    //auto rect = xy::SfDrawableComponent<sf::RectangleShape>::create(m_messageBus);
     //rect->getDrawable().setSize({ 1920.f, 80.f });
     //groundEntity->addComponent<xy::SfDrawableComponent<sf::RectangleShape>>(rect);
 
     m_scene.addEntity(groundEntity, xy::Scene::Layer::BackMiddle);
 
     //------------//
-    auto ballEntityA = std::make_unique<xy::Entity>(m_messageBus);
+    auto ballEntityA = xy::Entity::create(m_messageBus);
     ballEntityA->setWorldPosition({ 960.f, 540.f });
-    auto ballBodyA = std::make_unique<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
+    auto ballBodyA = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
 
     xy::Physics::CollisionCircleShape ballShape(25.f);
     ballShape.setDensity(1.5f);
@@ -257,7 +257,7 @@ void PhysicsDemoState::createBodies()
 
     auto ba = ballEntityA->addComponent<xy::Physics::RigidBody>(ballBodyA);
 
-    //auto circle = std::make_unique<xy::SfDrawableComponent<sf::CircleShape>>(m_messageBus);
+    //auto circle = xy::SfDrawableComponent<sf::CircleShape>::create(m_messageBus);
     //circle->getDrawable().setRadius(25.f);
     //circle->getDrawable().setFillColor(sf::Color::Red);
     //circle->getDrawable().setOrigin(25.f, 25.f);
@@ -265,9 +265,9 @@ void PhysicsDemoState::createBodies()
 
     m_scene.addEntity(ballEntityA, xy::Scene::Layer::BackMiddle);
 
-    auto ballEntityB = std::make_unique<xy::Entity>(m_messageBus);
+    auto ballEntityB = xy::Entity::create(m_messageBus);
     ballEntityB->setWorldPosition({ 440.f, 500.f });
-    auto ballBodyB = std::make_unique<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
+    auto ballBodyB = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
 
     ballShape.setRadius(50.f);
     ballBodyB->addCollisionShape(ballShape);
