@@ -42,6 +42,7 @@ source distribution.
 #include <xygine/physics/CollisionEdgeShape.hpp>
 #include <xygine/physics/CollisionPolygonShape.hpp>
 #include <xygine/physics/JointDistance.hpp>
+#include <xygine/physics/JointFriction.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -274,6 +275,9 @@ void PhysicsDemoState::createBodies()
     auto bb = ballEntityB->addComponent<xy::Physics::RigidBody>(ballBodyB);
     m_scene.addEntity(ballEntityB, xy::Scene::Layer::BackMiddle);
 
-    xy::Physics::DistanceJoint dj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
+    /*xy::Physics::DistanceJoint dj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
     bb->addJoint(dj);
+
+    xy::Physics::FrictionJoint fj(*ba, { 960.f, 540.f });
+    bb->addJoint(fj);*/
 }

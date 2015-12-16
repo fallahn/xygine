@@ -25,79 +25,68 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/physics/JointDistance.hpp>
+#include <xygine/physics/JointFriction.hpp>
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/Assert.hpp>
 
 using namespace xy;
 using namespace xy::Physics;
 
-DistanceJoint::DistanceJoint(const RigidBody& rbA, const sf::Vector2f& worldPosA, const sf::Vector2f& worldPosB)
+FrictionJoint::FrictionJoint(const RigidBody& rbA, const sf::Vector2f& anchor)
 {
-    m_anchorA = World::sfToBoxVec(worldPosA);
-    m_anchorB = World::sfToBoxVec(worldPosB);
+    m_anchor = World::sfToBoxVec(anchor);
 
     setRigidBodyA(&rbA);
 }
 
 //public
-void DistanceJoint::canCollide(bool collide)
+void FrictionJoint::canCollide(bool collide)
 {
-    if(getJointAs<b2DistanceJoint>() == nullptr)
+    if(getJointAs<b2FrictionJoint>() == nullptr)
         m_definition.collideConnected = collide;
 }
 
-bool DistanceJoint::canCollide() const
+bool FrictionJoint::canCollide() const
 {
     return m_definition.collideConnected;
 }
 
-float DistanceJoint::getLength() const
+void FrictionJoint::setMaxFrictionForce(float force)
 {
-    auto joint = getJointAs<b2DistanceJoint>();
-    return (joint) ? World::boxToSfFloat(joint->GetLength()) : World::boxToSfFloat(m_definition.length);
-}
-
-void DistanceJoint::setFrequency(float freq)
-{
-    XY_ASSERT(freq > 0, "Frequency must be greater than 0");
-    m_definition.frequencyHz = freq;
-
-    auto joint = getJointAs<b2DistanceJoint>();
+    XY_ASSERT(force >= 0, "Friction should be a positive value");
+    m_definition.maxForce = force;
+    auto joint = getJointAs<b2FrictionJoint>();
     if (joint)
     {
-        joint->SetFrequency(freq);
+        joint->SetMaxForce(force);
     }
 }
 
-float DistanceJoint::getFrequency() const
+float FrictionJoint::getMaxFrictionForce() const
 {
-    return m_definition.frequencyHz;
+    return m_definition.maxForce;
 }
 
-void DistanceJoint::setDampingRatio(float ratio)
+void FrictionJoint::setMaxFrictionTorque(float torque)
 {
-    XY_ASSERT(ratio >= 0, "Damping ration should be positive");
-    m_definition.dampingRatio = ratio;
-    auto joint = getJointAs<b2DistanceJoint>();
+    XY_ASSERT(torque >= 0, "Friction should be a positive value");
+    m_definition.maxTorque = torque;
+    auto joint = getJointAs<b2FrictionJoint>();
     if (joint)
     {
-        joint->SetDampingRatio(ratio);
+        joint->SetMaxTorque(torque);
     }
 }
 
-float DistanceJoint::getDampingRatio() const
+float FrictionJoint::getMaxFrictionTorque() const
 {
-    return m_definition.dampingRatio;
+    return m_definition.maxTorque;
 }
 
 //private
-const b2JointDef* DistanceJoint::getDefinition()
+const b2JointDef* FrictionJoint::getDefinition()
 {
     XY_ASSERT(getRigidBodyA() && getRigidBodyB(), "Don't forget to set your Bodies!");
-    
-    //apply def settings first
-    m_definition.Initialize(getRigidBodyA()->m_body, getRigidBodyB()->m_body, m_anchorA, m_anchorB);
-
+    m_definition.Initialize(getRigidBodyA()->m_body, getRigidBodyB()->m_body, m_anchor);
     return static_cast<b2JointDef*>(&m_definition);
 }

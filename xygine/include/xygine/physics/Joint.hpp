@@ -58,6 +58,7 @@ namespace xy
 
             virtual Type type() const = 0;
             virtual void canCollide(bool) = 0;
+            virtual bool canCollide() const = 0;
 
         protected:
 

@@ -61,6 +61,7 @@ namespace xy
             friend class CollisionEdgeShape;
             friend class DebugDraw;
             friend class DistanceJoint;
+            friend class FrictionJoint;
 
             using Ptr = std::unique_ptr<b2World>;
         public:

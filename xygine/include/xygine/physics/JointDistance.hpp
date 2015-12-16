@@ -42,7 +42,7 @@ namespace xy
         class DistanceJoint final : public Joint
         {
         public:
-            DistanceJoint(const RigidBody& bodyA, const sf::Vector2f& worldPosA, const sf::Vector2f& worldPosB);
+            DistanceJoint(const RigidBody& bodyA, const sf::Vector2f& worldAnchorA, const sf::Vector2f& worldAnchorB);
             ~DistanceJoint() = default;
 
             DistanceJoint(const DistanceJoint&) = default;
@@ -50,12 +50,16 @@ namespace xy
 
             //get the type of this joint
             Joint::Type type() const override { return Joint::Type::Distance; }
-            //set whther or not the joined bodies collide with each other
-            void canCollide(bool collide) override { m_definition.collideConnected = collide; }
+            //set whether or not the joined bodies collide with each other
+            //cannot be updated once joint is added to a rigidbody
+            void canCollide(bool collide) override;
+            //returns true if joined bodies can collide with each other
+            bool canCollide() const override;
             //get the length of the distance between two joined bodies
             float getLength() const;
             //set the frequency, in hertz, of the constraint. recommended
-            //to be less than half the physics update rate
+            //to be less than half the physics update rate. Lower values
+            //soften the constraint allowing bodies to move closer
             void setFrequency(float);
             //get the current frequency, in hertz, of the constraint
             float getFrequency() const;

@@ -59,6 +59,7 @@ namespace xy
         class RigidBody final : public Component
         {
             friend class DistanceJoint;
+            friend class FrictionJoint;
         public:
             RigidBody(MessageBus&, BodyType);
             ~RigidBody() = default;
