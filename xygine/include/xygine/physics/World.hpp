@@ -62,6 +62,7 @@ namespace xy
             friend class DebugDraw;
             friend class DistanceJoint;
             friend class FrictionJoint;
+            friend class HingeJoint;
 
             using Ptr = std::unique_ptr<b2World>;
         public:

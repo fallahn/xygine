@@ -60,6 +60,7 @@ namespace xy
         {
             friend class DistanceJoint;
             friend class FrictionJoint;
+            friend class HingeJoint;
         public:
             using Ptr = std::unique_ptr<RigidBody>;
             static Ptr create(MessageBus& mb, BodyType bt)

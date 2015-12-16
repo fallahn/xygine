@@ -43,6 +43,7 @@ source distribution.
 #include <xygine/physics/CollisionPolygonShape.hpp>
 #include <xygine/physics/JointDistance.hpp>
 #include <xygine/physics/JointFriction.hpp>
+#include <xygine/physics/JointHinge.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -201,7 +202,7 @@ void PhysicsDemoState::createBodies()
         {940.f, -120.f},
         {1100.f, -105.f}
     };
-    xy::Physics::CollisionEdgeShape edgeShape(points/*, xy::Physics::CollisionEdgeShape::Option::Loop*/);
+    xy::Physics::CollisionEdgeShape edgeShape(points, xy::Physics::CollisionEdgeShape::Option::Loop);
     groundBody->addCollisionShape(edgeShape);
 
     points =
@@ -239,10 +240,6 @@ void PhysicsDemoState::createBodies()
 
     groundEntity->addComponent<xy::Physics::RigidBody>(groundBody);
 
-    //auto rect = xy::SfDrawableComponent<sf::RectangleShape>::create(m_messageBus);
-    //rect->getDrawable().setSize({ 1920.f, 80.f });
-    //groundEntity->addComponent<xy::SfDrawableComponent<sf::RectangleShape>>(rect);
-
     m_scene.addEntity(groundEntity, xy::Scene::Layer::BackMiddle);
 
     //------------//
@@ -256,12 +253,6 @@ void PhysicsDemoState::createBodies()
     ballBodyA->addCollisionShape(ballShape);
 
     auto ba = ballEntityA->addComponent<xy::Physics::RigidBody>(ballBodyA);
-
-    //auto circle = xy::SfDrawableComponent<sf::CircleShape>::create(m_messageBus);
-    //circle->getDrawable().setRadius(25.f);
-    //circle->getDrawable().setFillColor(sf::Color::Red);
-    //circle->getDrawable().setOrigin(25.f, 25.f);
-    //ballEntity->addComponent<xy::SfDrawableComponent<sf::CircleShape>>(circle);
 
     m_scene.addEntity(ballEntityA, xy::Scene::Layer::BackMiddle);
 
@@ -280,4 +271,7 @@ void PhysicsDemoState::createBodies()
 
     xy::Physics::FrictionJoint fj(*ba, { 960.f, 540.f });
     bb->addJoint(fj);*/
+
+    xy::Physics::HingeJoint hj(*ba, { 520.f, 540.f });
+    bb->addJoint(hj);
 }

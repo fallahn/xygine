@@ -177,6 +177,9 @@
     <ClCompile Include="src\PhysicsJointFriction.cpp">
       <Filter>Source Files\physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\PhysicsJointHinge.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\Affectors.hpp">
@@ -354,6 +357,9 @@
       <Filter>Header Files\physics</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\JointFriction.hpp">
+      <Filter>Header Files\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\physics\JointHinge.hpp">
       <Filter>Header Files\physics</Filter>
     </ClInclude>
   </ItemGroup>
