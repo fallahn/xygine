@@ -66,6 +66,7 @@ namespace xy
             friend class FrictionJoint;
             friend class HingeJoint;
             friend class SliderJoint;
+            friend class WheelJoint;
 
             using Ptr = std::unique_ptr<b2World>;
         public:
