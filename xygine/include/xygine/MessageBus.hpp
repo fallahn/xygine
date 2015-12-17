@@ -51,6 +51,12 @@ class b2Joint;
 class b2Fixture;
 namespace xy
 {
+    namespace Physics
+    {
+        class Joint;
+        class CollisionShape;
+    }
+
     class Component;
     class Entity;
     
@@ -86,10 +92,11 @@ namespace xy
                 FixtureDestroyed
             }event;
 
-            union //TODO do we really want to expose the b2 types here?
+            union
             {
-                b2Joint* joint;
-                b2Fixture* fixture;
+                Entity* contact[2];
+                Physics::Joint* joint;
+                Physics::CollisionShape* collisionShape;
             };
         };
 

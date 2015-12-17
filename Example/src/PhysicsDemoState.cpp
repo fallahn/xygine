@@ -270,10 +270,13 @@ void PhysicsDemoState::createBodies()
     bb->addJoint(dj);
 
     xy::Physics::FrictionJoint fj(*ba, { 960.f, 540.f });
-    bb->addJoint(fj);
+    bb->addJoint(fj);*/
 
     xy::Physics::HingeJoint hj(*ba, { 520.f, 540.f });
     hj.setLimits(90.f, 270.f);
     hj.limitEnabled(true);
-    bb->addJoint(hj);*/
+    bb->addJoint(hj);
+
+    xy::Physics::World::JointDestroyedCallback jc = [](const xy::Physics::Joint& jc) {std::cout << (int)jc.type() << std::endl; };
+    m_physWorld.addCallback(jc);
 }

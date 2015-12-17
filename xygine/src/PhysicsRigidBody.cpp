@@ -47,7 +47,33 @@ void RigidBody::entityUpdate(Entity& entity, float dt)
     entity.setWorldPosition(World::boxToSfVec(m_body->GetPosition()));
 }
 
-void RigidBody::handleMessage(const Message&) {}
+void RigidBody::handleMessage(const Message& msg)
+{
+    //check for any joint or shape destruction events
+    //and remove them from this body if they are ours
+    if (msg.id == Message::Type::PhysicsMessage)
+    {
+        auto& msgData = msg.getData<Message::PhysicsEvent>();
+        switch (msgData.event)
+        {
+        case Message::PhysicsEvent::FixtureDestroyed:
+            m_collisionShapes.erase(std::remove_if(m_collisionShapes.begin(), m_collisionShapes.end(),
+                [&msgData](const std::unique_ptr<CollisionShape>& cs)
+            {
+                return (cs.get() == msgData.collisionShape);
+            }), m_collisionShapes.end());
+            break;
+        case Message::PhysicsEvent::JointDestroyed:
+            m_joints.erase(std::remove_if(m_joints.begin(), m_joints.end(),
+                [&msgData](const std::unique_ptr<Joint>& joint)
+            {
+                return (joint.get() == msgData.joint);
+            }), m_joints.end());
+            break;;
+        default:break;
+        }
+    }
+}
 
 void RigidBody::onStart(Entity& entity)
 {
@@ -63,12 +89,14 @@ void RigidBody::onStart(Entity& entity)
     for (auto s : m_pendingShapes)
     {
         s->m_fixture = m_body->CreateFixture(&s->m_fixtureDef);
+        s->m_fixture->SetUserData(s);
     }
     m_pendingShapes.clear();
 
     for (auto s : m_pendingJoints)
     {
         s->m_joint = m_body->GetWorld()->CreateJoint(s->getDefinition());
+        s->m_joint->SetUserData(s);
     }
     m_pendingJoints.clear();
 }

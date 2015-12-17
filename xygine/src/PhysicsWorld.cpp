@@ -31,6 +31,10 @@ source distribution.
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
+#include <Box2D/Dynamics/b2Fixture.h>
+#include <Box2D/Dynamics/Joints/b2Joint.h>
+#include <Box2D/Dynamics/Contacts/b2Contact.h>
+
 using namespace xy;
 using namespace xy::Physics;
 
@@ -42,6 +46,16 @@ sf::Uint32 World::m_velocityIterations = 6u;
 sf::Uint32 World::m_positionIterations = 2u;
 
 World::Ptr World::m_world = nullptr;
+
+void World::addCallback(const JointDestroyedCallback& jdc)
+{
+    m_destructionCallback.addCallback(jdc);
+}
+
+void World::addCallback(const CollisionShapeDestroyedCallback& csdc)
+{
+    m_destructionCallback.addCallback(csdc);
+}
 
 void World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
@@ -56,8 +70,8 @@ void World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 //contact callbacks
 void World::ContactCallback::BeginContact(b2Contact* contact)
 {
-    //TODO set body user data to entity UID
-    //TODO create buffer to store contact data for messages (as messages are delayed by 1 frame)
+    //TODO wrap contact class and place on temporary buffer
+    //so pointer can be sent via message. Modify update func to clear buffer each frame
     auto msg = m_messageBus.post<xy::Message::PhysicsEvent>(xy::Message::Type::PhysicsMessage);
     msg->event = Message::PhysicsEvent::BeginContact;
 }
@@ -83,12 +97,32 @@ void World::DestructionCallback::SayGoodbye(b2Joint* joint)
 {
     auto msg = m_messageBus.post<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
     msg->event = Message::PhysicsEvent::JointDestroyed;
-    msg->joint = joint;
+    msg->joint = static_cast<Joint*>(joint->GetUserData());
+
+    for (const auto& cb : m_jointCallbacks)
+    {
+        cb(*msg->joint);
+    }
 }
 
 void World::DestructionCallback::SayGoodbye(b2Fixture* fixture)
 {
     auto msg = m_messageBus.post<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
     msg->event = Message::PhysicsEvent::FixtureDestroyed;
-    msg->fixture = fixture;
+    msg->collisionShape = static_cast<CollisionShape*>(fixture->GetUserData());
+
+    for (const auto& cb : m_collisionShapeCallbacks)
+    {
+        cb(*msg->collisionShape);
+    }
+}
+
+void World::DestructionCallback::addCallback(const World::JointDestroyedCallback& jc)
+{
+    m_jointCallbacks.push_back(jc);
+}
+
+void World::DestructionCallback::addCallback(const World::CollisionShapeDestroyedCallback& cscb)
+{
+    m_collisionShapeCallbacks.push_back(cscb);
 }

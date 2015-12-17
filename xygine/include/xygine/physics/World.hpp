@@ -52,6 +52,8 @@ namespace xy
     class MessageBus;
     namespace Physics
     {
+        class Joint;
+        class CollisionShape;
         class World final : public sf::Drawable
         {
             friend class RigidBody;
@@ -125,6 +127,14 @@ namespace xy
             //not be called elsewhere from within an application.
             static std::function<void(float)> update;
 
+
+            using JointDestroyedCallback = std::function<void(const Joint&)>;
+            using CollisionShapeDestroyedCallback = std::function<void(const CollisionShape&)>;
+            //adds a callback to be performed each time a joint is destroyed
+            void addCallback(const JointDestroyedCallback&);
+            //adds a callback to be performed each time a collision shape is destroyed
+            void addCallback(const CollisionShapeDestroyedCallback&);
+
         private:
 
             class ContactCallback final : public b2ContactListener
@@ -155,9 +165,16 @@ namespace xy
                 void SayGoodbye(b2Joint*) override;
                 void SayGoodbye(b2Fixture*) override;
 
+                void addCallback(const JointDestroyedCallback&);
+                void addCallback(const CollisionShapeDestroyedCallback&);
+
             private:
                 MessageBus& m_messageBus;
+                std::vector<JointDestroyedCallback> m_jointCallbacks;
+                std::vector<CollisionShapeDestroyedCallback> m_collisionShapeCallbacks;
             }m_destructionCallback;
+
+
 
             static float m_worldScale;
             static b2Vec2 m_gravity;

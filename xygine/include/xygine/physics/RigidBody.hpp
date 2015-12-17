@@ -111,7 +111,8 @@ namespace xy
             void setGravityScale(float);
             //adds a collision shape to this body. The original shape is
             //unmodified (so it can be attached to multiple bodies) and
-            //a reference to the newly created shape is returned
+            //a pointer to the newly created shape is returned. be aware
+            //that this pointer will become invalid should the body be destoyed
             template <typename T>
             T* addCollisionShape(const T& cs)
             {
@@ -121,6 +122,7 @@ namespace xy
                 if (m_body)
                 {
                     newShape->m_fixture = m_body->CreateFixture(&newShape->m_fixtureDef);
+                    newShape->m_fixture->SetUserData(newShape.get());
                 }
                 else
                 {
@@ -130,9 +132,10 @@ namespace xy
             }
 
             //adds a joint to this body. the rigid body with which the joint was constructed
-            //must not be the same as this one
+            //must not be the same as this one. returns a pointer to the created joint. be
+            //aware this pointer will become invalid if either attached bodies are destroyed
             template <typename T>
-            void addJoint(const T& joint)
+            T* addJoint(const T& joint)
             {
                 static_assert(std::is_base_of<Joint, T>::value, "Must be of Joint type");
                 
@@ -144,12 +147,13 @@ namespace xy
                 if (m_body)
                 {
                     newJoint->m_joint = m_body->GetWorld()->CreateJoint(newJoint->getDefinition());
+                    newJoint->m_joint->SetUserData(newJoint.get());
                 }
                 else
                 {
                     m_pendingJoints.push_back(newJoint.get());
                 }
-                //return dynamic_cast<T*>(newJoint.get());
+                return dynamic_cast<T*>(newJoint.get());
             }
 
             //get the world position of this body's centre of mass
