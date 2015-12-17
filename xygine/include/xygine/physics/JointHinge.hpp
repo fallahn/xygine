@@ -55,7 +55,33 @@ namespace xy
             //returns true if joined bodies can collide with each other
             bool canCollide() const override;
 
-            //TODO add property functions
+            //get the joint angle in degrees
+            float getJointAngle() const;
+            //get the joint speed in degrees per second
+            float getJointSpeed() const;
+            //set whether or not the joint limit is enabled
+            void limitEnabled(bool);
+            //returns true if the joint's limit is enabled
+            bool limitEnabled() const;
+            //get the joint's lower limit in degrees
+            float getLowerLimit() const;
+            //get the joint's upper limit in degrees
+            float getUpperLimit() const;
+            //set the joint's upper and lower limits in degrees
+            void setLimits(float upper, float lower);
+            //set whether or not the motor is enabled
+            void motorEnabled(bool);
+            //returns true if the motor is enabled
+            bool motorEnabled() const;
+            //sets the motor speed in degrees per second
+            void setMotorSpeed(float);
+            //gets the current speed of the motor in degrees per second
+            float getMotorSpeed() const;
+            //set the max motor torque
+            void setMaxMotorTorque(float);
+            //gets the maximum motor torque
+            float getMaxMotorTorque() const;
+
 
         private:
             const b2JointDef* getDefinition() override;

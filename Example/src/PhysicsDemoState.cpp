@@ -270,8 +270,10 @@ void PhysicsDemoState::createBodies()
     bb->addJoint(dj);
 
     xy::Physics::FrictionJoint fj(*ba, { 960.f, 540.f });
-    bb->addJoint(fj);*/
+    bb->addJoint(fj);
 
     xy::Physics::HingeJoint hj(*ba, { 520.f, 540.f });
-    bb->addJoint(hj);
+    hj.setLimits(90.f, 270.f);
+    hj.limitEnabled(true);
+    bb->addJoint(hj);*/
 }
