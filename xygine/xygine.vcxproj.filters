@@ -180,6 +180,9 @@
     <ClCompile Include="src\PhysicsJointHinge.cpp">
       <Filter>Source Files\physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\PhysicsJointSlider.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\Affectors.hpp">
@@ -360,6 +363,9 @@
       <Filter>Header Files\physics</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\JointHinge.hpp">
+      <Filter>Header Files\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\physics\JointSlider.hpp">
       <Filter>Header Files\physics</Filter>
     </ClInclude>
   </ItemGroup>

@@ -22,6 +22,7 @@ set(xygine_SRC
   ${xygine_DIR}/PhysicsJointDistance.cpp
   ${xygine_DIR}/PhysicsJointFriction.cpp
   ${xygine_DIR}/PhysicsJointHinge.cpp
+  ${xygine_DIR}/PhysicsJointSlider.cpp
   ${xygine_DIR}/PhysicsRigidBody.cpp
   ${xygine_DIR}/PhysicsWorld.cpp
   ${xygine_DIR}/PostBloom.cpp
