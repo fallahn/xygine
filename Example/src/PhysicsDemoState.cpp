@@ -46,6 +46,7 @@ source distribution.
 #include <xygine/physics/JointHinge.hpp>
 #include <xygine/physics/JointSlider.hpp>
 #include <xygine/physics/JointWheel.hpp>
+#include <xygine/physics/JointRope.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -286,11 +287,15 @@ void PhysicsDemoState::createBodies()
     sj.setMotorSpeed(-400.f);
     sj.setMaxMotorForce(5000.f);
     sj.motorEnabled(true);
-    bb->addJoint(sj);*/
+    bb->addJoint(sj);
 
     xy::Physics::WheelJoint wj(*ba, { 960.f, 540.f }, { 0.f, 10.f });
     wj.setSpringFrequency(0.f);
     bb->addJoint(wj);
+
+    xy::Physics::RopeJoint rj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
+    rj.canCollide(true);
+    bb->addJoint(rj);*/
 
     xy::Physics::World::JointDestroyedCallback jc = [](const xy::Physics::Joint& jc) {std::cout << (int)jc.type() << std::endl; };
     m_physWorld.addCallback(jc);

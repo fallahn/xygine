@@ -39,7 +39,7 @@ namespace xy
     namespace Physics
     {
         class RigidBody;
-        class HingeJoint : public Joint
+        class HingeJoint final : public Joint
         {
         public:
             HingeJoint(const RigidBody& bodyA, const sf::Vector2f& worldAnchorPos);
