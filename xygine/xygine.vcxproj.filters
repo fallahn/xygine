@@ -189,6 +189,9 @@
     <ClCompile Include="src\PhysicsJointRope.cpp">
       <Filter>Source Files\physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\PhysicsJointWeld.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\Affectors.hpp">
@@ -378,6 +381,9 @@
       <Filter>Header Files\physics</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\JointRope.hpp">
+      <Filter>Header Files\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\physics\JointWeld.hpp">
       <Filter>Header Files\physics</Filter>
     </ClInclude>
   </ItemGroup>

@@ -101,6 +101,7 @@
     <ClCompile Include="src\PhysicsJointHinge.cpp" />
     <ClCompile Include="src\PhysicsJointRope.cpp" />
     <ClCompile Include="src\PhysicsJointSlider.cpp" />
+    <ClCompile Include="src\PhysicsJointWeld.cpp" />
     <ClCompile Include="src\PhysicsJointWheel.cpp" />
     <ClCompile Include="src\PhysicsRigidBody.cpp" />
     <ClCompile Include="src\PhysicsWorld.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="include\xygine\physics\JointHinge.hpp" />
     <ClInclude Include="include\xygine\physics\JointRope.hpp" />
     <ClInclude Include="include\xygine\physics\JointSlider.hpp" />
+    <ClInclude Include="include\xygine\physics\JointWeld.hpp" />
     <ClInclude Include="include\xygine\physics\JointWheel.hpp" />
     <ClInclude Include="include\xygine\physics\RigidBody.hpp" />
     <ClInclude Include="include\xygine\physics\World.hpp" />

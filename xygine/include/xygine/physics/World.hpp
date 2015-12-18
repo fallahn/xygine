@@ -68,6 +68,7 @@ namespace xy
             friend class SliderJoint;
             friend class WheelJoint;
             friend class RopeJoint;
+            friend class WeldJoint;
 
             using Ptr = std::unique_ptr<b2World>;
         public:

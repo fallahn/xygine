@@ -47,6 +47,7 @@ source distribution.
 #include <xygine/physics/JointSlider.hpp>
 #include <xygine/physics/JointWheel.hpp>
 #include <xygine/physics/JointRope.hpp>
+#include <xygine/physics/JointWeld.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -63,7 +64,6 @@ namespace
 
     const float joyDeadZone = 25.f;
     const float joyMaxAxis = 100.f;
-
 }
 
 PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
@@ -253,7 +253,7 @@ void PhysicsDemoState::createBodies()
 
     xy::Physics::CollisionCircleShape ballShape(25.f);
     ballShape.setDensity(1.5f);
-    ballShape.setRestitution(0.1f);
+    ballShape.setRestitution(0.8f);
     ballBodyA->addCollisionShape(ballShape);
 
     auto ba = ballEntityA->addComponent<xy::Physics::RigidBody>(ballBodyA);
@@ -292,11 +292,14 @@ void PhysicsDemoState::createBodies()
 
     xy::Physics::WheelJoint wj(*ba, { 960.f, 540.f }, { 0.f, 10.f });
     wj.setSpringFrequency(0.f);
-    bb->addJoint(wj);*/
+    bb->addJoint(wj);
 
     xy::Physics::RopeJoint rj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
     rj.canCollide(true);
-    bb->addJoint(rj);
+    bb->addJoint(rj);*/
+
+    xy::Physics::WeldJoint wj(*ba, { 520.f, 540.f });
+    bb->addJoint(wj);
 
     xy::Physics::World::JointDestroyedCallback jc = [](const xy::Physics::Joint& jc) {std::cout << (int)jc.type() << std::endl; };
     m_physWorld.addCallback(jc);
