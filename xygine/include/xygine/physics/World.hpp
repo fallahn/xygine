@@ -43,6 +43,7 @@ source distribution.
 #include <xygine/Log.hpp>
 
 #include <xygine/physics/DebugDrawer.hpp>
+#include <xygine/physics/Contact.hpp>
 
 #include <memory>
 #include <functional>
@@ -135,10 +136,17 @@ namespace xy
 
             using JointDestroyedCallback = std::function<void(const Joint&)>;
             using CollisionShapeDestroyedCallback = std::function<void(const CollisionShape&)>;
+            using PreSolveCallback = std::function<void(Contact&)>;
+            using PostSolveCallback = PreSolveCallback;
+
             //adds a callback to be performed each time a joint is destroyed
             void addCallback(const JointDestroyedCallback&);
             //adds a callback to be performed each time a collision shape is destroyed
             void addCallback(const CollisionShapeDestroyedCallback&);
+            //adds a callback to the pre-solve listener
+            void addPreSolveCallback(const PreSolveCallback&);
+            //adds a callback to the post-solve listener
+            void addPostSolveCallback(const PostSolveCallback&);
 
         private:
 
@@ -155,8 +163,15 @@ namespace xy
                 void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override;
                 void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override;
 
+                void addPreSolveCallback(const PreSolveCallback&);
+                void addPostSolveCallback(const PostSolveCallback&);
+
             private:
                 MessageBus& m_messageBus;
+                Contact m_prePostContact;
+
+                std::vector<PreSolveCallback> m_preSolveCallbacks;
+                std::vector<PostSolveCallback> m_postSolveCallbacks;
             }m_contactCallback;
 
             class DestructionCallback final : public b2DestructionListener

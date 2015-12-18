@@ -215,15 +215,20 @@ namespace xy
             //the body will be woken if it is sleeping
             void applyAngularImpulse(float, bool wake = true);
 
+            //returns a vector of CollisionShapes attached to his body
+            const std::vector<CollisionShape::Ptr>& getCollisionShapes() const;
+            //returns a vector of Joints attached to this body
+            const std::vector<Joint::Ptr>& getJoints() const;
+
         private:
 
             b2BodyDef m_bodyDef;
             b2Body* m_body;
 
-            std::vector<std::unique_ptr<CollisionShape>> m_collisionShapes;
+            std::vector<CollisionShape::Ptr> m_collisionShapes;
             std::vector<CollisionShape*> m_pendingShapes;
 
-            std::vector<std::unique_ptr<Joint>> m_joints;
+            std::vector<Joint::Ptr> m_joints;
             std::vector<Joint*> m_pendingJoints;
 
             void removeJoint(const Joint*, bool);

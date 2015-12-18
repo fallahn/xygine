@@ -60,6 +60,8 @@ namespace xy
                 Edge
             };
 
+            using Ptr = std::unique_ptr<CollisionShape>;
+
             CollisionShape();
             virtual ~CollisionShape() = default;
             CollisionShape(const CollisionShape&) = default;

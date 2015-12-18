@@ -283,6 +283,16 @@ void RigidBody::applyAngularImpulse(float impulse, bool wake)
     m_body->ApplyAngularImpulse(impulse, wake);
 }
 
+const std::vector<CollisionShape::Ptr>& RigidBody::getCollisionShapes() const
+{
+    return m_collisionShapes;
+}
+
+const std::vector<Joint::Ptr>& RigidBody::getJoints() const
+{
+    return m_joints;
+}
+
 //private
 void RigidBody::removeJoint(const Joint* joint, bool raiseMessage)
 {

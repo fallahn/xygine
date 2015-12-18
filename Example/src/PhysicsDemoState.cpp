@@ -304,7 +304,4 @@ void PhysicsDemoState::createBodies()
 
     xy::Physics::MotorJoint mj(*ba);
     bb->addJoint(mj);*/
-
-    xy::Physics::World::JointDestroyedCallback jc = [](const xy::Physics::Joint& jc) {std::cout << (int)jc.type() << std::endl; };
-    m_physWorld.addCallback(jc);
 }

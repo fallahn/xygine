@@ -95,6 +95,7 @@
     <ClCompile Include="src\Music.cpp" />
     <ClCompile Include="src\ParticleController.cpp" />
     <ClCompile Include="src\ParticleSystem.cpp" />
+    <ClCompile Include="src\PhysicsContact.cpp" />
     <ClCompile Include="src\PhysicsDebugDrawer.cpp" />
     <ClCompile Include="src\PhysicsJointDistance.cpp" />
     <ClCompile Include="src\PhysicsJointFriction.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="include\xygine\physics\CollisionPolygonShape.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionRectangleShape.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionShape.hpp" />
+    <ClInclude Include="include\xygine\physics\Contact.hpp" />
     <ClInclude Include="include\xygine\physics\DebugDrawer.hpp" />
     <ClInclude Include="include\xygine\physics\Joint.hpp" />
     <ClInclude Include="include\xygine\physics\JointDistance.hpp" />

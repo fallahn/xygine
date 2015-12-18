@@ -46,6 +46,8 @@ namespace xy
         {
             friend class RigidBody;
         public:
+            using Ptr = std::unique_ptr<Joint>;
+
             enum class Type
             {
                 Distance = b2JointType::e_distanceJoint,

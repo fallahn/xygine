@@ -57,6 +57,16 @@ void World::addCallback(const CollisionShapeDestroyedCallback& csdc)
     m_destructionCallback.addCallback(csdc);
 }
 
+void World::addPreSolveCallback(const PreSolveCallback& psc)
+{
+    m_contactCallback.addPreSolveCallback(psc);
+}
+
+void World::addPostSolveCallback(const PostSolveCallback& psc)
+{
+    m_contactCallback.addPostSolveCallback(psc);
+}
+
 void World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     if (!m_debugDraw)
@@ -70,8 +80,6 @@ void World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 //contact callbacks
 void World::ContactCallback::BeginContact(b2Contact* contact)
 {
-    //TODO wrap contact class and place on temporary buffer
-    //so pointer can be sent via message. Modify update func to clear buffer each frame
     auto msg = m_messageBus.post<xy::Message::PhysicsEvent>(xy::Message::Type::PhysicsMessage);
     msg->event = Message::PhysicsEvent::BeginContact;
 }
@@ -84,13 +92,32 @@ void World::ContactCallback::EndContact(b2Contact* contact)
 
 void World::ContactCallback::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
 {
-
+    m_prePostContact.m_contact = contact;
+    for (auto& cb : m_preSolveCallbacks)
+    {
+        cb(m_prePostContact);
+    }
 }
 
 void World::ContactCallback::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)
 {
-
+    m_prePostContact.m_contact = contact;
+    for (auto cb : m_postSolveCallbacks)
+    {
+        cb(m_prePostContact);
+    }
 }
+
+void World::ContactCallback::addPreSolveCallback(const PreSolveCallback& psc)
+{
+    m_preSolveCallbacks.push_back(psc);
+}
+
+void World::ContactCallback::addPostSolveCallback(const PostSolveCallback& psc)
+{
+    m_postSolveCallbacks.push_back(psc);
+}
+
 
 //destruction callbacks
 void World::DestructionCallback::SayGoodbye(b2Joint* joint)

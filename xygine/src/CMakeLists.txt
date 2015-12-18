@@ -18,6 +18,7 @@ set(xygine_SRC
   ${xygine_DIR}/PhysicsCollisionEdgeShape.cpp
   ${xygine_DIR}/PhysicsCollisionPolygonShape.cpp
   ${xygine_DIR}/PhysicsCollisionRectangleShape.cpp
+  ${xygine_DIR}/PhysicsContact.cpp
   ${xygine_DIR}/PhysicsDebugDrawer.cpp
   ${xygine_DIR}/PhysicsJointDistance.cpp
   ${xygine_DIR}/PhysicsJointFriction.cpp
