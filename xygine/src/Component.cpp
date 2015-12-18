@@ -31,6 +31,7 @@ using namespace xy;
 
 Component::~Component()
 {
+    //TODO should this not be in destroy()?
     auto msg = m_messageBus.post<Message::ComponentEvent>(Message::ComponentSystemMessage);
     msg->action = Message::ComponentEvent::Deleted;
     msg->ptr = this;

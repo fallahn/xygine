@@ -108,7 +108,7 @@ void World::DestructionCallback::SayGoodbye(b2Joint* joint)
 void World::DestructionCallback::SayGoodbye(b2Fixture* fixture)
 {
     auto msg = m_messageBus.post<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
-    msg->event = Message::PhysicsEvent::FixtureDestroyed;
+    msg->event = Message::PhysicsEvent::CollisionShapeDestroyed;
     msg->collisionShape = static_cast<CollisionShape*>(fixture->GetUserData());
 
     for (const auto& cb : m_collisionShapeCallbacks)

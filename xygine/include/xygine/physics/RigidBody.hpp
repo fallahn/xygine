@@ -37,13 +37,15 @@ source distribution.
 
 #include <xygine/Component.hpp>
 #include <xygine/physics/CollisionShape.hpp>
-#include <xygine/physics/JointDistance.hpp>
+#include <xygine/physics/Joint.hpp>
 #include <xygine/physics/World.hpp>
 
 #include <Box2D/Dynamics/b2Body.h>
 
 #include <vector>
 #include <memory>
+
+using namespace std::placeholders;
 
 namespace xy
 {
@@ -126,6 +128,7 @@ namespace xy
                 {
                     newShape->m_fixture = m_body->CreateFixture(&newShape->m_fixtureDef);
                     newShape->m_fixture->SetUserData(newShape.get());
+                    newShape->destructionCallback = std::bind(&RigidBody::removeCollisionShape, this, _1, true);
                 }
                 else
                 {
@@ -151,6 +154,7 @@ namespace xy
                 {
                     newJoint->m_joint = m_body->GetWorld()->CreateJoint(newJoint->getDefinition());
                     newJoint->m_joint->SetUserData(newJoint.get());
+                    newJoint->destructionCallback = std::bind(&RigidBody::removeJoint, this, _1, true);
                 }
                 else
                 {
@@ -219,6 +223,9 @@ namespace xy
 
             std::vector<std::unique_ptr<Joint>> m_joints;
             std::vector<Joint*> m_pendingJoints;
+
+            void removeJoint(const Joint*, bool);
+            void removeCollisionShape(const CollisionShape*, bool);
         };
     }
 }

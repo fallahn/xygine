@@ -35,6 +35,8 @@ source distribution.
 
 #include <SFML/Config.hpp>
 
+#include <functional>
+
 namespace xy
 {
     namespace Physics
@@ -77,6 +79,10 @@ namespace xy
             //adds a sets of filter flags to define which type of shapes
             //this shape may collide with
             void addFilter(CollisionFilter);
+            //allow explicitly destroying this shape. note that although
+            //this raises an event on the message bus callbacks registered
+            //with the physics world will not be invoked
+            void destroy();
 
         protected:
             const b2FixtureDef getFixtureDef() const
@@ -92,6 +98,8 @@ namespace xy
         private:
             b2FixtureDef m_fixtureDef;
             b2Fixture* m_fixture;
+
+            std::function<void(const CollisionShape*)> destructionCallback;
         };
     }
 }

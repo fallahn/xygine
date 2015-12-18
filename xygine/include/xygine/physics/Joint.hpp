@@ -31,8 +31,11 @@ source distribution.
 #define XY_JOINT_HPP_
 
 #include <Box2D/Dynamics/Joints/b2Joint.h>
+#include <Box2D/Dynamics/b2Body.h>
+#include <Box2D/Dynamics/b2World.h>
 
 #include <type_traits>
+#include <functional>
 
 namespace xy
 {
@@ -62,6 +65,18 @@ namespace xy
             virtual void canCollide(bool) = 0;
             virtual bool canCollide() const = 0;
 
+            //allow explicitly destroying this joint. note that although
+            //this raises an event on the message bus callbacks registered
+            //with the physics world will not be invoked
+            void destroy()
+            {
+                if (m_joint)
+                {
+                    m_joint->GetBodyA()->GetWorld()->DestroyJoint(m_joint);
+                    destructionCallback(this);
+                }
+            }
+
         protected:
 
             virtual const b2JointDef* getDefinition() = 0;
@@ -82,6 +97,8 @@ namespace xy
             b2Joint* m_joint;
             const RigidBody* m_bodyA;
             const RigidBody* m_bodyB;
+
+            std::function<void(const Joint*)> destructionCallback;
         };
     }
 }

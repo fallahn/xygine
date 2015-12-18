@@ -56,20 +56,12 @@ void RigidBody::handleMessage(const Message& msg)
         auto& msgData = msg.getData<Message::PhysicsEvent>();
         switch (msgData.event)
         {
-        case Message::PhysicsEvent::FixtureDestroyed:
-            m_collisionShapes.erase(std::remove_if(m_collisionShapes.begin(), m_collisionShapes.end(),
-                [&msgData](const std::unique_ptr<CollisionShape>& cs)
-            {
-                return (cs.get() == msgData.collisionShape);
-            }), m_collisionShapes.end());
+        case Message::PhysicsEvent::CollisionShapeDestroyed:
+            removeCollisionShape(msgData.collisionShape, false);
             break;
         case Message::PhysicsEvent::JointDestroyed:
-            m_joints.erase(std::remove_if(m_joints.begin(), m_joints.end(),
-                [&msgData](const std::unique_ptr<Joint>& joint)
-            {
-                return (joint.get() == msgData.joint);
-            }), m_joints.end());
-            break;;
+            removeJoint(msgData.joint, false);
+            break;
         default:break;
         }
     }
@@ -90,6 +82,7 @@ void RigidBody::onStart(Entity& entity)
     {
         s->m_fixture = m_body->CreateFixture(&s->m_fixtureDef);
         s->m_fixture->SetUserData(s);
+        s->destructionCallback = std::bind(&RigidBody::removeCollisionShape, this, _1, true);
     }
     m_pendingShapes.clear();
 
@@ -97,6 +90,7 @@ void RigidBody::onStart(Entity& entity)
     {
         s->m_joint = m_body->GetWorld()->CreateJoint(s->getDefinition());
         s->m_joint->SetUserData(s);
+        s->destructionCallback = std::bind(&RigidBody::removeJoint, this, _1, true);
     }
     m_pendingJoints.clear();
 }
@@ -109,6 +103,10 @@ void RigidBody::destroy()
         m_body->GetWorld()->DestroyBody(m_body);
         m_body = nullptr;
     }
+
+    auto msg = sendMessage<Message::PhysicsEvent>(Message::PhysicsMessage);
+    msg->event = Message::PhysicsEvent::RigidBodyDestroyed;
+    msg->rigidBody = this;
 }
 
 void RigidBody::setLinearVelocity(const sf::Vector2f& velocity)
@@ -286,3 +284,40 @@ void RigidBody::applyAngularImpulse(float impulse, bool wake)
 }
 
 //private
+void RigidBody::removeJoint(const Joint* joint, bool raiseMessage)
+{
+    LOG("Joint size: " + std::to_string(m_joints.size()), Logger::Type::Info);
+    m_joints.erase(std::remove_if(m_joints.begin(), m_joints.end(),
+        [joint](const std::unique_ptr<Joint>& j)
+    {
+        return (j.get() == joint);
+    }), m_joints.end());
+    LOG("Joint size: " + std::to_string(m_joints.size()), Logger::Type::Info);
+    LOG("RigidBody rx'd joint destroyed evt", Logger::Type::Info);
+
+    if (raiseMessage)
+    {
+        auto msg = sendMessage<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
+        msg->event = Message::PhysicsEvent::JointDestroyed;
+        msg->joint = joint;
+    }
+}
+
+void RigidBody::removeCollisionShape(const CollisionShape* shape, bool raiseMessage)
+{
+    LOG("Shapes size: " + std::to_string(m_collisionShapes.size()), Logger::Type::Info);
+    m_collisionShapes.erase(std::remove_if(m_collisionShapes.begin(), m_collisionShapes.end(),
+        [shape](const std::unique_ptr<CollisionShape>& cs)
+    {
+        return (cs.get() == shape);
+    }), m_collisionShapes.end());
+    LOG("Shapes size: " + std::to_string(m_collisionShapes.size()), Logger::Type::Info);
+    LOG("Collision shape rx'd shape destroyed event", Logger::Type::Info);
+
+    if (raiseMessage)
+    {
+        auto msg = sendMessage<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
+        msg->event = Message::PhysicsEvent::CollisionShapeDestroyed;
+        msg->collisionShape = shape;
+    }
+}

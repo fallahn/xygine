@@ -40,11 +40,11 @@ source distribution.
 
 #include <xygine/State.hpp>
 #include <xygine/Difficulty.hpp>
+#include <xygine/Assert.hpp>
 
 #include <SFML/Config.hpp>
 
 #include <vector>
-#include <xygine/Assert.hpp>
 #include <type_traits>
 
 class b2Joint;
@@ -55,6 +55,7 @@ namespace xy
     {
         class Joint;
         class CollisionShape;
+        class RigidBody;
     }
 
     class Component;
@@ -89,14 +90,15 @@ namespace xy
                 BeginContact,
                 EndContact,
                 JointDestroyed,
-                FixtureDestroyed
+                CollisionShapeDestroyed,
+                RigidBodyDestroyed
             }event;
 
             union
             {
-                Entity* contact[2];
-                Physics::Joint* joint;
-                Physics::CollisionShape* collisionShape;
+                const Physics::Joint* joint;
+                const Physics::CollisionShape* collisionShape;
+                const Physics::RigidBody* rigidBody;
             };
         };
 

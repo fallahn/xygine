@@ -92,3 +92,12 @@ void CollisionShape::addFilter(CollisionFilter filter)
         m_fixture->SetFilterData(m_fixtureDef.filter);
     }
 }
+
+void CollisionShape::destroy()
+{
+    if (m_fixture)
+    {
+        m_fixture->GetBody()->DestroyFixture(m_fixture);
+        destructionCallback(this);
+    }
+}

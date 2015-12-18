@@ -63,6 +63,7 @@ namespace
 
     const float joyDeadZone = 25.f;
     const float joyMaxAxis = 100.f;
+
 }
 
 PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
@@ -152,7 +153,7 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
             
             break;
         case fireKey:
-            
+
             break;
         default: break;
         }
@@ -291,11 +292,11 @@ void PhysicsDemoState::createBodies()
 
     xy::Physics::WheelJoint wj(*ba, { 960.f, 540.f }, { 0.f, 10.f });
     wj.setSpringFrequency(0.f);
-    bb->addJoint(wj);
+    bb->addJoint(wj);*/
 
     xy::Physics::RopeJoint rj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
     rj.canCollide(true);
-    bb->addJoint(rj);*/
+    bb->addJoint(rj);
 
     xy::Physics::World::JointDestroyedCallback jc = [](const xy::Physics::Joint& jc) {std::cout << (int)jc.type() << std::endl; };
     m_physWorld.addCallback(jc);
