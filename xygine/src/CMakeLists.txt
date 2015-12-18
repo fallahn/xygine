@@ -22,6 +22,7 @@ set(xygine_SRC
   ${xygine_DIR}/PhysicsJointDistance.cpp
   ${xygine_DIR}/PhysicsJointFriction.cpp
   ${xygine_DIR}/PhysicsJointHinge.cpp
+  ${xygine_DIR}/PhysicsJointMotor.cpp
   ${xygine_DIR}/PhysicsJointRope.cpp
   ${xygine_DIR}/PhysicsJointSlider.cpp
   ${xygine_DIR}/PhysicsJointWeld.cpp

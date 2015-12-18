@@ -67,6 +67,7 @@ namespace xy
             friend class WheelJoint;
             friend class RopeJoint;
             friend class WeldJoint;
+            friend class MotorJoint;
         public:
             using Ptr = std::unique_ptr<RigidBody>;
             static Ptr create(MessageBus& mb, BodyType bt)

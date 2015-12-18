@@ -99,6 +99,7 @@
     <ClCompile Include="src\PhysicsJointDistance.cpp" />
     <ClCompile Include="src\PhysicsJointFriction.cpp" />
     <ClCompile Include="src\PhysicsJointHinge.cpp" />
+    <ClCompile Include="src\PhysicsJointMotor.cpp" />
     <ClCompile Include="src\PhysicsJointRope.cpp" />
     <ClCompile Include="src\PhysicsJointSlider.cpp" />
     <ClCompile Include="src\PhysicsJointWeld.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="include\xygine\physics\JointDistance.hpp" />
     <ClInclude Include="include\xygine\physics\JointFriction.hpp" />
     <ClInclude Include="include\xygine\physics\JointHinge.hpp" />
+    <ClInclude Include="include\xygine\physics\JointMotor.hpp" />
     <ClInclude Include="include\xygine\physics\JointRope.hpp" />
     <ClInclude Include="include\xygine\physics\JointSlider.hpp" />
     <ClInclude Include="include\xygine\physics\JointWeld.hpp" />
