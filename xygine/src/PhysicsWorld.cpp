@@ -47,24 +47,34 @@ sf::Uint32 World::m_positionIterations = 2u;
 
 World::Ptr World::m_world = nullptr;
 
-void World::addCallback(const JointDestroyedCallback& jdc)
+void World::addJointDestroyedCallback(const JointDestroyedCallback& jdc)
 {
-    m_destructionCallback.addCallback(jdc);
+    m_destructionListener.addCallback(jdc);
 }
 
-void World::addCallback(const CollisionShapeDestroyedCallback& csdc)
+void World::addCollisionShapeDestroyedCallback(const CollisionShapeDestroyedCallback& csdc)
 {
-    m_destructionCallback.addCallback(csdc);
+    m_destructionListener.addCallback(csdc);
 }
 
-void World::addPreSolveCallback(const PreSolveCallback& psc)
+void World::addPreSolveCallback(const ContactCallback& psc)
 {
-    m_contactCallback.addPreSolveCallback(psc);
+    m_contactListener.addPreSolveCallback(psc);
 }
 
-void World::addPostSolveCallback(const PostSolveCallback& psc)
+void World::addPostSolveCallback(const ContactCallback& psc)
 {
-    m_contactCallback.addPostSolveCallback(psc);
+    m_contactListener.addPostSolveCallback(psc);
+}
+
+void World::addContactBeginCallback(const ContactCallback& cb)
+{
+    m_contactListener.addContactBeginCallback(cb);
+}
+
+void World::addContactEndCallback(const ContactCallback& cb)
+{
+    m_contactListener.addContactEndCallback(cb);
 }
 
 void World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
@@ -78,49 +88,71 @@ void World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 }
 
 //contact callbacks
-void World::ContactCallback::BeginContact(b2Contact* contact)
+void World::ContactListener::BeginContact(b2Contact* contact)
 {
     auto msg = m_messageBus.post<xy::Message::PhysicsEvent>(xy::Message::Type::PhysicsMessage);
     msg->event = Message::PhysicsEvent::BeginContact;
+
+    m_currentContact.m_contact = contact;
+    for (auto& cb : m_beginCallbacks)
+    {
+        cb(m_currentContact);
+    }
 }
 
-void World::ContactCallback::EndContact(b2Contact* contact)
+void World::ContactListener::EndContact(b2Contact* contact)
 {
     auto msg = m_messageBus.post<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
     msg->event = Message::PhysicsEvent::EndContact;
+
+    m_currentContact.m_contact = contact;
+    for (auto& cb : m_endCallbacks)
+    {
+        cb(m_currentContact);
+    }
 }
 
-void World::ContactCallback::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
+void World::ContactListener::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
 {
-    m_prePostContact.m_contact = contact;
+    m_currentContact.m_contact = contact;
     for (auto& cb : m_preSolveCallbacks)
     {
-        cb(m_prePostContact);
+        cb(m_currentContact);
     }
 }
 
-void World::ContactCallback::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)
+void World::ContactListener::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)
 {
-    m_prePostContact.m_contact = contact;
+    m_currentContact.m_contact = contact;
     for (auto cb : m_postSolveCallbacks)
     {
-        cb(m_prePostContact);
+        cb(m_currentContact);
     }
 }
 
-void World::ContactCallback::addPreSolveCallback(const PreSolveCallback& psc)
+void World::ContactListener::addPreSolveCallback(const ContactCallback& psc)
 {
     m_preSolveCallbacks.push_back(psc);
 }
 
-void World::ContactCallback::addPostSolveCallback(const PostSolveCallback& psc)
+void World::ContactListener::addPostSolveCallback(const ContactCallback& psc)
 {
     m_postSolveCallbacks.push_back(psc);
 }
 
+void World::ContactListener::addContactBeginCallback(const ContactCallback& cb)
+{
+    m_beginCallbacks.push_back(cb);
+}
+
+void World::ContactListener::addContactEndCallback(const ContactCallback& cb)
+{
+    m_endCallbacks.push_back(cb);
+}
+
 
 //destruction callbacks
-void World::DestructionCallback::SayGoodbye(b2Joint* joint)
+void World::DestructionListener::SayGoodbye(b2Joint* joint)
 {
     auto msg = m_messageBus.post<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
     msg->event = Message::PhysicsEvent::JointDestroyed;
@@ -132,7 +164,7 @@ void World::DestructionCallback::SayGoodbye(b2Joint* joint)
     }
 }
 
-void World::DestructionCallback::SayGoodbye(b2Fixture* fixture)
+void World::DestructionListener::SayGoodbye(b2Fixture* fixture)
 {
     auto msg = m_messageBus.post<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
     msg->event = Message::PhysicsEvent::CollisionShapeDestroyed;
@@ -144,12 +176,12 @@ void World::DestructionCallback::SayGoodbye(b2Fixture* fixture)
     }
 }
 
-void World::DestructionCallback::addCallback(const World::JointDestroyedCallback& jc)
+void World::DestructionListener::addCallback(const World::JointDestroyedCallback& jc)
 {
     m_jointCallbacks.push_back(jc);
 }
 
-void World::DestructionCallback::addCallback(const World::CollisionShapeDestroyedCallback& cscb)
+void World::DestructionListener::addCallback(const World::CollisionShapeDestroyedCallback& cscb)
 {
     m_collisionShapeCallbacks.push_back(cscb);
 }

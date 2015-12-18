@@ -75,7 +75,7 @@ namespace xy
             using Ptr = std::unique_ptr<b2World>;
         public:
             explicit World(MessageBus& mb)
-                : m_contactCallback(mb), m_destructionCallback(mb)
+                : m_contactListener(mb), m_destructionListener(mb)
             {
                 XY_ASSERT(!m_world, "Physics world already created");
                 m_world = std::make_unique<b2World>(m_gravity);
@@ -86,8 +86,8 @@ namespace xy
                     m_world->Step(dt, m_velocityIterations, m_positionIterations);
                 };
 
-                m_world->SetContactListener(&m_contactCallback);
-                m_world->SetDestructionListener(&m_destructionCallback);
+                m_world->SetContactListener(&m_contactListener);
+                m_world->SetDestructionListener(&m_destructionListener);
 
                 LOG("CLIENT created physics world", Logger::Type::Info);
             }
@@ -136,51 +136,58 @@ namespace xy
 
             using JointDestroyedCallback = std::function<void(const Joint&)>;
             using CollisionShapeDestroyedCallback = std::function<void(const CollisionShape&)>;
-            using PreSolveCallback = std::function<void(Contact&)>;
-            using PostSolveCallback = PreSolveCallback;
+            using ContactCallback = std::function<void(Contact&)>;
 
             //adds a callback to be performed each time a joint is destroyed
-            void addCallback(const JointDestroyedCallback&);
+            void addJointDestroyedCallback(const JointDestroyedCallback&);
             //adds a callback to be performed each time a collision shape is destroyed
-            void addCallback(const CollisionShapeDestroyedCallback&);
+            void addCollisionShapeDestroyedCallback(const CollisionShapeDestroyedCallback&);
             //adds a callback to the pre-solve listener
-            void addPreSolveCallback(const PreSolveCallback&);
+            void addPreSolveCallback(const ContactCallback&);
             //adds a callback to the post-solve listener
-            void addPostSolveCallback(const PostSolveCallback&);
+            void addPostSolveCallback(const ContactCallback&);
+            //adds a callback to the contact begin listener
+            void addContactBeginCallback(const ContactCallback&);
+            //adds a callback to the contact end listener
+            void addContactEndCallback(const ContactCallback&);
 
         private:
 
-            class ContactCallback final : public b2ContactListener
+            class ContactListener final : public b2ContactListener
             {
             public:
-                explicit ContactCallback(MessageBus& mb) : m_messageBus(mb) {}
-                ~ContactCallback() = default;
-                ContactCallback(const ContactCallback&) = delete;
-                const ContactCallback& operator = (const ContactCallback&) = delete;
+                explicit ContactListener(MessageBus& mb) : m_messageBus(mb) {}
+                ~ContactListener() = default;
+                ContactListener(const ContactListener&) = delete;
+                const ContactListener& operator = (const ContactListener&) = delete;
 
                 void BeginContact(b2Contact* contact) override;
                 void EndContact(b2Contact* contact) override;
                 void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override;
                 void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override;
 
-                void addPreSolveCallback(const PreSolveCallback&);
-                void addPostSolveCallback(const PostSolveCallback&);
+                void addPreSolveCallback(const ContactCallback&);
+                void addPostSolveCallback(const ContactCallback&);
+                void addContactBeginCallback(const ContactCallback&);
+                void addContactEndCallback(const ContactCallback&);
 
             private:
                 MessageBus& m_messageBus;
-                Contact m_prePostContact;
+                Contact m_currentContact;
 
-                std::vector<PreSolveCallback> m_preSolveCallbacks;
-                std::vector<PostSolveCallback> m_postSolveCallbacks;
-            }m_contactCallback;
+                std::vector<ContactCallback> m_preSolveCallbacks;
+                std::vector<ContactCallback> m_postSolveCallbacks;
+                std::vector<ContactCallback> m_beginCallbacks;
+                std::vector<ContactCallback> m_endCallbacks;
+            }m_contactListener;
 
-            class DestructionCallback final : public b2DestructionListener
+            class DestructionListener final : public b2DestructionListener
             {
             public:
-                explicit DestructionCallback(MessageBus& mb) : m_messageBus(mb) {}
-                ~DestructionCallback() = default;
-                DestructionCallback(const DestructionCallback&) = delete;
-                DestructionCallback& operator = (const DestructionCallback&) = delete;
+                explicit DestructionListener(MessageBus& mb) : m_messageBus(mb) {}
+                ~DestructionListener() = default;
+                DestructionListener(const DestructionListener&) = delete;
+                DestructionListener& operator = (const DestructionListener&) = delete;
 
                 void SayGoodbye(b2Joint*) override;
                 void SayGoodbye(b2Fixture*) override;
@@ -192,7 +199,7 @@ namespace xy
                 MessageBus& m_messageBus;
                 std::vector<JointDestroyedCallback> m_jointCallbacks;
                 std::vector<CollisionShapeDestroyedCallback> m_collisionShapeCallbacks;
-            }m_destructionCallback;
+            }m_destructionListener;
 
 
 
