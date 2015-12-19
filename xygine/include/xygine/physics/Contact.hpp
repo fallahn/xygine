@@ -75,8 +75,6 @@ namespace xy
 
         private:
             b2Contact* m_contact = nullptr;
-            //TODO use something like a unique_ptr to provide
-            //storage when needing deep copies
         };
     }
 }

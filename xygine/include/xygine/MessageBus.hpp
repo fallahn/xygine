@@ -56,6 +56,7 @@ namespace xy
         class Joint;
         class CollisionShape;
         class RigidBody;
+        class Contact;
     }
 
     class Component;
@@ -99,6 +100,7 @@ namespace xy
                 const Physics::Joint* joint;
                 const Physics::CollisionShape* collisionShape;
                 const Physics::RigidBody* rigidBody;
+                const Physics::Contact* contact;
             };
         };
 
@@ -204,7 +206,7 @@ namespace xy
 
             auto dataSize = sizeof(T);
             static auto msgSize = sizeof(Message);
-            XY_ASSERT(dataSize < 128, "message size exseeds 128 bytes"); //limit custom data to 128 bytes
+            XY_ASSERT(dataSize < 128, "message size exceeds 128 bytes"); //limit custom data to 128 bytes
             XY_ASSERT(m_pendingBuffer.size() - (m_inPointer - m_pendingBuffer.data()) > (dataSize + msgSize), "buffer overflow " + std::to_string(m_pendingCount)); //make sure we have enough room in the buffer
 
             Message* msg = new (m_inPointer)Message();

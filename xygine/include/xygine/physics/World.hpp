@@ -83,6 +83,7 @@ namespace xy
                 update = [this](float dt)
                 {
                     XY_ASSERT(m_world, "Physics world has not been created");
+                    m_contactListener.resetBuffers();
                     m_world->Step(dt, m_velocityIterations, m_positionIterations);
                 };
 
@@ -143,9 +144,9 @@ namespace xy
             //adds a callback to be performed each time a collision shape is destroyed
             void addCollisionShapeDestroyedCallback(const CollisionShapeDestroyedCallback&);
             //adds a callback to the pre-solve listener
-            void addPreSolveCallback(const ContactCallback&);
+            void addContactPreSolveCallback(const ContactCallback&);
             //adds a callback to the post-solve listener
-            void addPostSolveCallback(const ContactCallback&);
+            void addContactPostSolveCallback(const ContactCallback&);
             //adds a callback to the contact begin listener
             void addContactBeginCallback(const ContactCallback&);
             //adds a callback to the contact end listener
@@ -156,7 +157,7 @@ namespace xy
             class ContactListener final : public b2ContactListener
             {
             public:
-                explicit ContactListener(MessageBus& mb) : m_messageBus(mb) {}
+                explicit ContactListener(MessageBus& mb);
                 ~ContactListener() = default;
                 ContactListener(const ContactListener&) = delete;
                 const ContactListener& operator = (const ContactListener&) = delete;
@@ -166,11 +167,12 @@ namespace xy
                 void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override;
                 void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override;
 
-                void addPreSolveCallback(const ContactCallback&);
-                void addPostSolveCallback(const ContactCallback&);
+                void addContactPreSolveCallback(const ContactCallback&);
+                void addContactPostSolveCallback(const ContactCallback&);
                 void addContactBeginCallback(const ContactCallback&);
                 void addContactEndCallback(const ContactCallback&);
 
+                void resetBuffers();
             private:
                 MessageBus& m_messageBus;
                 Contact m_currentContact;
@@ -179,6 +181,14 @@ namespace xy
                 std::vector<ContactCallback> m_postSolveCallbacks;
                 std::vector<ContactCallback> m_beginCallbacks;
                 std::vector<ContactCallback> m_endCallbacks;
+
+                std::vector<std::uint8_t> m_contactBuffer;
+                std::uint8_t* m_contactBufferPtr;
+
+                std::vector<Contact> m_messageContacts;
+                std::size_t m_messageIndex;
+
+                b2Contact* bufferContact(const b2Contact*);
             }m_contactListener;
 
             class DestructionListener final : public b2DestructionListener

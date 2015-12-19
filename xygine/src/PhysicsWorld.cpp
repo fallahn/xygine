@@ -27,6 +27,7 @@ source distribution.
 
 #include <xygine/physics/World.hpp>
 #include <xygine/MessageBus.hpp>
+#include <xygine/Assert.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -34,6 +35,8 @@ source distribution.
 #include <Box2D/Dynamics/b2Fixture.h>
 #include <Box2D/Dynamics/Joints/b2Joint.h>
 #include <Box2D/Dynamics/Contacts/b2Contact.h>
+
+#include <cstring>
 
 using namespace xy;
 using namespace xy::Physics;
@@ -57,14 +60,14 @@ void World::addCollisionShapeDestroyedCallback(const CollisionShapeDestroyedCall
     m_destructionListener.addCallback(csdc);
 }
 
-void World::addPreSolveCallback(const ContactCallback& psc)
+void World::addContactPreSolveCallback(const ContactCallback& psc)
 {
-    m_contactListener.addPreSolveCallback(psc);
+    m_contactListener.addContactPreSolveCallback(psc);
 }
 
-void World::addPostSolveCallback(const ContactCallback& psc)
+void World::addContactPostSolveCallback(const ContactCallback& psc)
 {
-    m_contactListener.addPostSolveCallback(psc);
+    m_contactListener.addContactPostSolveCallback(psc);
 }
 
 void World::addContactBeginCallback(const ContactCallback& cb)
@@ -88,10 +91,31 @@ void World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 }
 
 //contact callbacks
+namespace
+{
+    const std::size_t contactSize = sizeof(b2Contact);
+    const std::size_t maxBufferedContact = 1024u;
+}
+World::ContactListener::ContactListener(MessageBus& mb)
+    : m_messageBus      (mb),
+    m_contactBuffer     (maxBufferedContact * contactSize),
+    m_contactBufferPtr  (m_contactBuffer.data()),
+    m_messageContacts   (maxBufferedContact),
+    m_messageIndex      (0u)
+{
+
+
+}
+
 void World::ContactListener::BeginContact(b2Contact* contact)
 {
-    auto msg = m_messageBus.post<xy::Message::PhysicsEvent>(xy::Message::Type::PhysicsMessage);
+    XY_ASSERT(m_messageIndex < maxBufferedContact, "Buffer index out of range");
+    
+    m_messageContacts[m_messageIndex].m_contact = bufferContact(contact);
+    
+    auto msg = m_messageBus.post<Message::PhysicsEvent>(xy::Message::Type::PhysicsMessage);
     msg->event = Message::PhysicsEvent::BeginContact;
+    msg->contact = &m_messageContacts[m_messageIndex++];
 
     m_currentContact.m_contact = contact;
     for (auto& cb : m_beginCallbacks)
@@ -102,8 +126,13 @@ void World::ContactListener::BeginContact(b2Contact* contact)
 
 void World::ContactListener::EndContact(b2Contact* contact)
 {
+    XY_ASSERT(m_messageIndex < maxBufferedContact, "Buffer index out of range");
+    
+    m_messageContacts[m_messageIndex].m_contact = bufferContact(contact);
+
     auto msg = m_messageBus.post<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
     msg->event = Message::PhysicsEvent::EndContact;
+    msg->contact = &m_messageContacts[m_messageIndex++];
 
     m_currentContact.m_contact = contact;
     for (auto& cb : m_endCallbacks)
@@ -130,12 +159,12 @@ void World::ContactListener::PostSolve(b2Contact* contact, const b2ContactImpuls
     }
 }
 
-void World::ContactListener::addPreSolveCallback(const ContactCallback& psc)
+void World::ContactListener::addContactPreSolveCallback(const ContactCallback& psc)
 {
     m_preSolveCallbacks.push_back(psc);
 }
 
-void World::ContactListener::addPostSolveCallback(const ContactCallback& psc)
+void World::ContactListener::addContactPostSolveCallback(const ContactCallback& psc)
 {
     m_postSolveCallbacks.push_back(psc);
 }
@@ -150,6 +179,20 @@ void World::ContactListener::addContactEndCallback(const ContactCallback& cb)
     m_endCallbacks.push_back(cb);
 }
 
+void World::ContactListener::resetBuffers()
+{
+    m_contactBufferPtr = m_contactBuffer.data();
+    m_messageIndex = 0u;
+}
+
+b2Contact* World::ContactListener::bufferContact(const b2Contact* contact)
+{
+    XY_ASSERT((m_contactBuffer.size() - (int)m_contactBufferPtr) > contactSize, "This would cause a buffer overflow!");
+    b2Contact* retVal = reinterpret_cast<b2Contact*>(m_contactBufferPtr);
+    std::memcpy(m_contactBufferPtr, contact, contactSize);
+    m_contactBufferPtr += contactSize;
+    return retVal;
+}
 
 //destruction callbacks
 void World::DestructionListener::SayGoodbye(b2Joint* joint)
