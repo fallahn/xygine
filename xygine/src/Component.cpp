@@ -44,6 +44,11 @@ void Component::onStart(Entity&)
 
 }
 
+void Component::onDelayedStart(Entity&)
+{
+
+}
+
 void Component::destroy()
 {
     m_destroyed = true;

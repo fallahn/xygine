@@ -35,6 +35,7 @@ source distribution.
 #include <xygine/PostChromeAb.hpp>
 #include <xygine/Command.hpp>
 #include <xygine/QuadTree.hpp>
+#include <xygine/ComponentCamera.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
 
@@ -77,13 +78,11 @@ namespace xy
         Entity& getLayer(Layer);
 
         void setView(const sf::View& v);
-        const sf::View& getView() const;
-
-        void sendCommand(const Command&);
-
+        sf::View getView() const;
         sf::FloatRect getVisibleArea() const;
-        void setSceneWidth(float);
-        float getSceneWidth() const;
+        void setActiveCamera(const Camera*);
+        
+        void sendCommand(const Command&);
 
         std::vector<QuadTreeComponent*> queryQuadTree(const sf::FloatRect&);
 
@@ -99,8 +98,10 @@ namespace xy
         QuadTree m_quadTree; //must live longer than any entity
         std::vector<Entity::Ptr> m_layers;
         std::vector<std::pair<Layer, Entity::Ptr>> m_pendingEntities;
-        float m_sceneWidth;
-
+        
+        Camera::Ptr m_defaultCamera;
+        const Camera* m_activeCamera;
+        
         MessageBus& m_messageBus;
         CommandQueue m_commandQueue;
 
@@ -119,6 +120,7 @@ namespace xy
         void bloomRenderPath(sf::RenderTarget&, sf::RenderStates) const;
         void chromeAbRenderPath(sf::RenderTarget&, sf::RenderStates) const;
         void fullRenderPath(sf::RenderTarget&, sf::RenderStates) const;
+
     };
 }
 #endif //XY_SCENE_HPP_

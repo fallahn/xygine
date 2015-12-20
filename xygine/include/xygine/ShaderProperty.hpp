@@ -27,8 +27,8 @@ source distribution.
 
 //allows quickly adding a shader property to drawable components
 
-#ifndef SHADER_PROPERTY_HPP_
-#define SHADER_PROPERTY_HPP_
+#ifndef XY_SHADER_PROPERTY_HPP_
+#define XY_SHADER_PROPERTY_HPP_
 
 namespace sf
 {
@@ -54,4 +54,4 @@ namespace xy
     };
 }
 
-#endif //SHADER_PROPERTY_HPP_
+#endif //XY_SHADER_PROPERTY_HPP_

@@ -81,6 +81,7 @@
     <ClCompile Include="src\AnimationController.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AudioManager.cpp" />
+    <ClCompile Include="src\ComponentCamera.cpp" />
     <ClCompile Include="src\PhysicsCollisionEdgeShape.cpp" />
     <ClCompile Include="src\PhysicsCollisionCircleShape.cpp" />
     <ClCompile Include="src\PhysicsCollisionPolygonShape.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="include\xygine\AudioManager.hpp" />
     <ClInclude Include="include\xygine\Command.hpp" />
     <ClInclude Include="include\xygine\Component.hpp" />
+    <ClInclude Include="include\xygine\ComponentCamera.hpp" />
     <ClInclude Include="include\xygine\Difficulty.hpp" />
     <ClInclude Include="include\xygine\Entity.hpp" />
     <ClInclude Include="include\xygine\FileSystem.hpp" />
@@ -183,6 +185,7 @@
     <ClInclude Include="include\xygine\Score.hpp" />
     <ClInclude Include="include\xygine\Server.hpp" />
     <ClInclude Include="include\xygine\SfDrawableComponent.hpp" />
+    <ClInclude Include="include\xygine\ShaderProperty.hpp" />
     <ClInclude Include="include\xygine\ShaderResource.hpp" />
     <ClInclude Include="include\xygine\Shaders.hpp" />
     <ClInclude Include="include\xygine\SoundPlayer.hpp" />

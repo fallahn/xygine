@@ -42,7 +42,8 @@ using namespace xy;
 using namespace std::placeholders;
 
 Scene::Scene(MessageBus& mb, bool createBuffers)
-    : m_sceneWidth      (0.f),
+    : m_defaultCamera   (Camera::create(mb, { {960.f, 540.f}, {1920.f, 1080.f} })),
+    m_activeCamera      (m_defaultCamera.get()),
     m_messageBus        (mb),
     m_drawDebug         (false) 
 {
@@ -132,34 +133,36 @@ Entity& Scene::getLayer(Layer l)
 
 void Scene::setView(const sf::View& v)
 {
-    m_sceneBufferA.setView(v);
+    m_defaultCamera->setView(v);
+    m_activeCamera = m_defaultCamera.get();
 }
 
-const sf::View& Scene::getView() const
+sf::View Scene::getView() const
 {
-    return m_sceneBufferA.getView();
+    return m_activeCamera->getView();
+}
+
+sf::FloatRect Scene::getVisibleArea() const
+{
+    const auto& view = getView();
+    return sf::FloatRect(view.getCenter() - (view.getSize() / 2.f), view.getSize());
+}
+
+void Scene::setActiveCamera(const Camera* camera)
+{
+    if (camera) 
+    {
+        m_activeCamera = camera;
+    }
+    else
+    {
+        m_activeCamera = m_defaultCamera.get();
+    }
 }
 
 void Scene::sendCommand(const Command& cmd)
 {
     m_commandQueue.push(cmd);
-}
-
-sf::FloatRect Scene::getVisibleArea() const
-{
-    auto view = getView();
-    return sf::FloatRect(view.getCenter() - (view.getSize() / 2.f), view.getSize());
-}
-
-void Scene::setSceneWidth(float width)
-{
-    m_sceneWidth = width;
-    m_quadTree.create({ {-250.f, -250.f}, { width + 500.f, 1580.f } });
-}
-
-float Scene::getSceneWidth() const
-{
-    return m_sceneWidth;
 }
 
 std::vector<QuadTreeComponent*> Scene::queryQuadTree(const sf::FloatRect& area)
@@ -264,6 +267,7 @@ void Scene::bloomRenderPath(sf::RenderTarget& rt, sf::RenderStates states) const
     std::vector<sf::Vertex> entBounds;
 #endif //_DEBUG_
 
+    m_sceneBufferA.setView(m_activeCamera->getView());
     m_sceneBufferA.clear();
 
     for (const auto& e : m_layers)
@@ -294,6 +298,7 @@ void Scene::chromeAbRenderPath(sf::RenderTarget& rt, sf::RenderStates states) co
     std::vector<sf::Vertex> entBounds;
 #endif //_DEBUG_
 
+    m_sceneBufferA.setView(m_activeCamera->getView());
     m_sceneBufferA.clear();
 
     for (const auto& e : m_layers)
@@ -324,6 +329,7 @@ void Scene::fullRenderPath(sf::RenderTarget& rt, sf::RenderStates states) const
     std::vector<sf::Vertex> entBounds;
 #endif //_DEBUG_
 
+    m_sceneBufferA.setView(m_activeCamera->getView());
     m_sceneBufferA.clear();
 
     for (const auto& e : m_layers)

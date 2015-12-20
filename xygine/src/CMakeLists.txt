@@ -6,6 +6,7 @@ set(xygine_SRC
   ${xygine_DIR}/AudioManager.cpp
   ${xygine_DIR}/CommandQueue.cpp
   ${xygine_DIR}/Component.cpp
+  ${xygine_DIR}/ComponentCamera.cpp
   ${xygine_DIR}/Entity.cpp
   ${xygine_DIR}/FileSystem.cpp
   ${xygine_DIR}/FontResource.cpp

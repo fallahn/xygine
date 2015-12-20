@@ -147,6 +147,7 @@ void Entity::update(float dt)
     //copy any new components we may have aquired via update
     for (auto& c : m_pendingComponents)
     {
+        c->onDelayedStart(*this);
         m_components.push_back(std::move(c));
     }
     m_pendingComponents.clear();

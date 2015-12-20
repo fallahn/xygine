@@ -198,6 +198,9 @@
     <ClCompile Include="src\PhysicsContact.cpp">
       <Filter>Source Files\physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\ComponentCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\Affectors.hpp">
@@ -397,6 +400,12 @@
     </ClInclude>
     <ClInclude Include="include\xygine\physics\Contact.hpp">
       <Filter>Header Files\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\ShaderProperty.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\ComponentCamera.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

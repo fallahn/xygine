@@ -80,6 +80,10 @@ namespace xy
 
         //called when the component is first added to an entity
         virtual void onStart(Entity&);
+        //this is called when pending components are moved to a live
+        //entity. it offers a better guarentee that the entity is in
+        //a more complete state (such as having a valid scene)
+        virtual void onDelayedStart(Entity&);
 
         virtual void destroy();
         bool destroyed() const;

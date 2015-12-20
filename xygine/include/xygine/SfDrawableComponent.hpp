@@ -28,8 +28,8 @@ source distribution.
 //drawable component compatible with sfml drawable objects for quick wrapping
 //of objects such as shapes, sprites or text
 
-#ifndef SF_DRAWABLE_COMPONENT_HPP_
-#define SF_DRAWABLE_COMPONENT_HPP_
+#ifndef XY_SF_DRAWABLE_COMPONENT_HPP_
+#define XY_SF_DRAWABLE_COMPONENT_HPP_
 
 #include <xygine/Component.hpp>
 #include <xygine/Entity.hpp>
@@ -86,4 +86,4 @@ namespace xy
         }
     };
 }
-#endif //SF_DRAWABLE_COMPONENT_HPP_
+#endif //XY_SF_DRAWABLE_COMPONENT_HPP_

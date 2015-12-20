@@ -218,7 +218,7 @@ void GameServer::handlePacket(sf::Packet& packet, RemoteConnection& connection, 
     {
         //build world
         m_scene.reset();
-        m_scene.setSceneWidth(sceneWidth);
+        //m_scene.setSceneWidth(sceneWidth);
 
 
         //switch to updating clients with game info
