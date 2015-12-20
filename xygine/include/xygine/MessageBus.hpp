@@ -73,7 +73,6 @@ namespace xy
             PhysicsMessage,
             EntityMessage,
             UIMessage,
-            PlayerMessage,
             ComponentSystemMessage,
             NetworkMessage,
             Count
@@ -133,17 +132,6 @@ namespace xy
             float value = 0.f;
             StateId stateId = -1;
             Difficulty difficulty;
-        };
-
-        struct PlayerEvent
-        {
-            enum
-            {
-                Died,
-                Spawned
-            }action;
-            sf::Int32 timestamp = 0;
-            sf::Uint64 entityID = 0;
         };
 
         struct ComponentEvent

@@ -56,13 +56,7 @@ void ParticleController::entityUpdate(Entity&, float){}
 
 void ParticleController::handleMessage(const Message& msg)
 {
-    switch (msg.id)
-    {
-    case Message::Type::PlayerMessage:
 
-        break;
-    default: break;
-    }
 }
 
 void ParticleController::onStart(Entity& entity)

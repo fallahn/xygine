@@ -32,10 +32,10 @@ using namespace xy;
 Component::~Component()
 {
     //TODO should this not be in destroy()?
-    auto msg = m_messageBus.post<Message::ComponentEvent>(Message::ComponentSystemMessage);
-    msg->action = Message::ComponentEvent::Deleted;
-    msg->ptr = this;
-    msg->entityId = m_parentUID;
+    //auto msg = m_messageBus.post<Message::ComponentEvent>(Message::ComponentSystemMessage);
+    //msg->action = Message::ComponentEvent::Deleted;
+    //msg->ptr = this;
+    //msg->entityId = m_parentUID;
 }
 
 //public
@@ -52,6 +52,12 @@ void Component::onDelayedStart(Entity&)
 void Component::destroy()
 {
     m_destroyed = true;
+
+    //last one out hit the lights
+    auto msg = m_messageBus.post<Message::ComponentEvent>(Message::ComponentSystemMessage);
+    msg->action = Message::ComponentEvent::Deleted;
+    msg->ptr = this;
+    msg->entityId = m_parentUID;
 }
 
 bool Component::destroyed() const

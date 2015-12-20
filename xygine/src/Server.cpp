@@ -337,7 +337,7 @@ void GameServer::handleMessage(const Message& msg)
         }
         break;
     }
-    case Message::Type::PlayerMessage:
+    /*case Message::Type::PlayerMessage:
     {
         auto& msgData = msg.getData<Message::PlayerEvent>();
         switch (msgData.action)
@@ -356,7 +356,7 @@ void GameServer::handleMessage(const Message& msg)
         default: break;
         }
         break;
-    }
+    }*/
     default: break;
     }
 }

@@ -271,6 +271,8 @@ void PhysicsDemoState::createBodies()
     auto bb = ballEntityB->addComponent<xy::Physics::RigidBody>(ballBodyB);
     m_scene.addEntity(ballEntityB, xy::Scene::Layer::BackMiddle);
 
+
+
     /*xy::Physics::DistanceJoint dj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
     bb->addJoint(dj);
 
@@ -304,4 +306,6 @@ void PhysicsDemoState::createBodies()
 
     xy::Physics::MotorJoint mj(*ba);
     bb->addJoint(mj);*/
+
+
 }

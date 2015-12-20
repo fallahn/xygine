@@ -129,19 +129,6 @@ void AudioManager::handleMessage(const Message& msg)
         }
         break;
     }
-    case Message::Type::PlayerMessage:
-    {
-        auto& msgData = msg.getData<Message::PlayerEvent>();
-
-        switch (msgData.action)
-        {
-        case Message::PlayerEvent::Spawned:
-
-            break;
-        default:break;
-        }
-        break;
-    }
     default: break;
     }
 }

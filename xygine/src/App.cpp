@@ -439,15 +439,7 @@ void App::handleMessages()
 
         switch (msg.id)
         {
-        case Message::Type::PlayerMessage:
-        {
-            auto& msgData = msg.getData<Message::PlayerEvent>();
-            if (msgData.action == Message::PlayerEvent::Spawned)
-            {
-                m_gameSettings.difficulty = m_pendingDifficulty;
-            }
-            break;
-        }
+            //TODO raise a game started event and apply pending difficulty
         case Message::Type::UIMessage:
         {
             auto& msgData = msg.getData<Message::UIEvent>();

@@ -89,11 +89,7 @@ void Scene::handleMessage(const Message& msg)
     for (auto& e : m_layers)
         e->handleMessage(msg);
 
-    if (msg.id == Message::Type::PhysicsMessage)
-    {
-
-    }
-    else if (msg.id == Message::Type::UIMessage)
+    if (msg.id == Message::Type::UIMessage)
     {
         auto& msgData = msg.getData<Message::UIEvent>();
         switch (msgData.type)
@@ -105,6 +101,20 @@ void Scene::handleMessage(const Message& msg)
 
             break;
         default:break;
+        }
+    }
+    else if (msg.id == Message::ComponentSystemMessage)
+    {
+        auto& msgData = msg.getData<Message::ComponentEvent>();
+        switch (msgData.action)
+        {
+        case Message::ComponentEvent::Deleted:
+            if (msgData.ptr == m_activeCamera)
+            {
+                m_activeCamera = m_defaultCamera.get();
+            }
+            break;
+        default: break;
         }
     }
 }
