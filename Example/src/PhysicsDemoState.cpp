@@ -49,6 +49,7 @@ source distribution.
 #include <xygine/physics/JointRope.hpp>
 #include <xygine/physics/JointWeld.hpp>
 #include <xygine/physics/JointMotor.hpp>
+#include <xygine/physics/AffectorConstantForce.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -270,7 +271,7 @@ void PhysicsDemoState::createBodies()
     auto bb = ballEntityB->addComponent<xy::Physics::RigidBody>(ballBodyB);
     m_scene.addEntity(ballEntityB, xy::Scene::Layer::BackMiddle);
 
-
+    //bb->addAffector(xy::Physics::ConstantForceAffector({ 20.f, 0.f }, 40.f));
 
     /*xy::Physics::DistanceJoint dj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
     bb->addJoint(dj);

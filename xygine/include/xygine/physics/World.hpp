@@ -71,6 +71,7 @@ namespace xy
             friend class RopeJoint;
             friend class WeldJoint;
             friend class MotorJoint;
+            friend class ConstantForceAffector;
 
             using Ptr = std::unique_ptr<b2World>;
         public:

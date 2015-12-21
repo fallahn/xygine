@@ -45,6 +45,11 @@ void RigidBody::entityUpdate(Entity& entity, float dt)
 {    
     entity.setRotation(World::boxToSfAngle(m_body->GetAngle()));
     entity.setWorldPosition(World::boxToSfVec(m_body->GetPosition()));
+
+    for (auto& a : m_forceAffectors)
+    {
+        a(this);
+    }
 }
 
 void RigidBody::handleMessage(const Message& msg)
@@ -268,7 +273,7 @@ void RigidBody::applyForceToCentre(const sf::Vector2f& force, bool wake)
 void RigidBody::applyTorque(float torque, bool wake)
 {
     XY_ASSERT(m_body, "Body not yet added to world");
-    m_body->ApplyTorque(torque, wake);
+    m_body->ApplyTorque(World::sfToBoxFloat(torque), wake);
 }
 
 void RigidBody::applyLinearImpulse(const sf::Vector2f& impulse, const sf::Vector2f& point, bool wake)

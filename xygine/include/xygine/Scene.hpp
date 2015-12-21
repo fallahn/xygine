@@ -84,7 +84,8 @@ namespace xy
         //returns a floatrect representing the visible
         //area of the active camera. useful for quad tree queries
         sf::FloatRect getVisibleArea() const;
-        //sets the scene's currently active camera
+        //sets the scene's currently active camera. uses the 
+        //scene's default if nullptr is passed.
         void setActiveCamera(const Camera*);
         //set the clear colour of the scene's default camera
         //this only affects buffers used in post process effects

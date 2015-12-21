@@ -203,6 +203,8 @@ void Scene::reset()
     m_renderPasses.clear();
     m_renderPasses.reserve(10);
     m_currentRenderPath = std::bind(&Scene::defaultRenderPath, this, _1, _2);
+
+    m_activeCamera = m_defaultCamera.get();
 }
 
 void Scene::addPostProcess(PostProcess::Ptr& pp)
@@ -246,7 +248,7 @@ void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 
 void Scene::defaultRenderPath(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    rt.setView(getView());
+    rt.setView(m_activeCamera->getView());
  
 #ifdef _DEBUG_
     std::vector<sf::Vertex> entBounds;
