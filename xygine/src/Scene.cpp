@@ -37,7 +37,6 @@ namespace
 {
     const sf::Uint32 bufferWidth = 1920u;
     const sf::Uint32 bufferHeight = 1080u;
-    const sf::Color bufferClearColour(0u, 0u, 20u);
 }
 
 using namespace xy;
@@ -175,6 +174,11 @@ void Scene::setActiveCamera(const Camera* camera)
     }
 }
 
+void Scene::setClearColour(const sf::Color& colour)
+{
+    m_defaultCamera->setClearColour(colour);
+}
+
 void Scene::sendCommand(const Command& cmd)
 {
     m_commandQueue.push(cmd);
@@ -273,7 +277,7 @@ void Scene::postEffectRenderPath(sf::RenderTarget& rt, sf::RenderStates states) 
     //-------render scene to first buffer-----///
     auto firstBuffer = m_renderPasses.front().inBuffer;
     firstBuffer->setView(m_activeCamera->getView());
-    firstBuffer->clear(bufferClearColour);
+    firstBuffer->clear(m_activeCamera->getClearColour());
 #ifdef _DEBUG_
     std::vector<sf::Vertex> entBounds;
 #endif //_DEBUG_
@@ -302,7 +306,7 @@ void Scene::postEffectRenderPath(sf::RenderTarget& rt, sf::RenderStates states) 
         if (pass.outBuffer)
         {
             pass.outBuffer->setView(pass.outBuffer->getDefaultView());
-            pass.outBuffer->clear(bufferClearColour);
+            pass.outBuffer->clear(m_activeCamera->getClearColour());
             pass.postEffect->apply(*pass.inBuffer, *pass.outBuffer);
             pass.outBuffer->display();
         }

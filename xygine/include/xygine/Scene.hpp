@@ -86,6 +86,9 @@ namespace xy
         sf::FloatRect getVisibleArea() const;
         //sets the scene's currently active camera
         void setActiveCamera(const Camera*);
+        //set the clear colour of the scene's default camera
+        //this only affects buffers used in post process effects
+        void setClearColour(const sf::Color&);
         
         //send a command targetting one or more entities
         void sendCommand(const Command&);

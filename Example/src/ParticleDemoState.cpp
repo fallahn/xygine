@@ -76,6 +76,7 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     m_scene.addPostProcess(pp);
     pp = xy::PostBloom::create();
     m_scene.addPostProcess(pp);
+    m_scene.setClearColour({ 0u, 0u, 20u });
 
     m_reportText.setFont(context.appInstance.getFont("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);

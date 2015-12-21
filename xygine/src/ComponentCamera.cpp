@@ -39,7 +39,8 @@ Camera::Camera(MessageBus& mb, const sf::View& initialView)
     m_lockMask      (0u),
     m_rotation      (0.f),
     m_initialView   (initialView),
-    m_position      (initialView.getCenter())
+    m_position      (initialView.getCenter()),
+    m_lockToBounds  (false)
 {
 
 }
@@ -57,6 +58,13 @@ void Camera::lockTransform(Camera::TransformLock lock, bool locked)
 {
     sf::Int8 val = (1 << static_cast<sf::Int8>(lock));
     (locked) ? m_lockMask |= val : ~val;
+}
+
+void Camera::lockBounds(const sf::FloatRect& bounds, bool lock)
+{
+    XY_ASSERT(bounds.width > 0 && bounds.height > 0, "bounds size cannot have negative values");
+    m_lockToBounds = lock;
+    m_bounds = bounds;
 }
 
 void Camera::setZoom(float zoom)
@@ -93,6 +101,30 @@ sf::View Camera::getView() const
     {
         view.rotate(m_rotation);
     }
+
+    if (m_lockToBounds)
+    {
+        auto offset = m_initialView.getSize() / 2.f;
+        float edge = 0.f;
+        if (edge = (m_bounds.left + offset.x) > position.x)
+        {
+            position.x = edge;
+        }
+        else if (edge = ((m_bounds.left + m_bounds.width) - offset.x) < position.x)
+        {
+            position.x = edge;
+        }
+
+        if (edge = (m_bounds.top + offset.y) > position.y)
+        {
+            position.y = edge;
+        }
+        else if (edge = ((m_bounds.top + m_bounds.height) - offset.y) < position.y)
+        {
+            position.y = edge;
+        }
+    }
+
     view.setCenter(position);
     return view;
 }
@@ -101,4 +133,14 @@ void Camera::setView(const sf::View& view)
 {
     m_initialView = view;
     m_position = view.getCenter();
+}
+
+void Camera::setClearColour(const sf::Color& colour)
+{
+    m_clearColour = colour;
+}
+
+const sf::Color& Camera::getClearColour() const
+{
+    return m_clearColour;
 }

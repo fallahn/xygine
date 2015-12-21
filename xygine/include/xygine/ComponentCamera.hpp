@@ -32,6 +32,8 @@ source distribution.
 
 #include <xygine/Component.hpp>
 
+#include <SFML/Graphics/Color.hpp>
+
 namespace xy
 {
     class Camera final : public Component
@@ -62,6 +64,9 @@ namespace xy
         //prevent this camera moving along the X or Y axis
         //or lock its current rotation
         void lockTransform(TransformLock, bool = true);
+        //lock the camera within the bounds of the given rectangle
+        //such as when yo ureach the edge of a map
+        void lockBounds(const sf::FloatRect& bounds, bool = true);
         //set the zoom level of the camera
         void setZoom(float);
         //returns the current camera zoom amount
@@ -74,6 +79,10 @@ namespace xy
         //sets the initial view of the camera before it applies
         //the parent entity's transform
         void setView(const sf::View&);
+        //sets the colour to clear the scene buffer with when using this camera
+        void setClearColour(const sf::Color&);
+        //gets the current clear colour for this camera
+        const sf::Color& getClearColour() const;
 
     private:
         float m_zoom;
@@ -81,6 +90,9 @@ namespace xy
         float m_rotation;
         sf::View m_initialView;
         sf::Vector2f m_position;
+        sf::FloatRect m_bounds;
+        bool m_lockToBounds;
+        sf::Color m_clearColour;
     };
 }
 
