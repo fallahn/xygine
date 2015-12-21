@@ -27,6 +27,8 @@ source distribution.
 
 #include <xygine/PostBloom.hpp>
 
+#include <memory>
+
 using namespace xy;
 
 PostBloom::PostBloom()
@@ -56,6 +58,11 @@ void PostBloom::apply(const sf::RenderTexture& src, sf::RenderTarget& dest)
     m_firstPassTextures[1].display();
 
     add(src, m_firstPassTextures[1], dest);
+}
+
+PostProcess::Ptr PostBloom::create()
+{
+    return std::move(std::make_unique<PostBloom>());
 }
 
 //private

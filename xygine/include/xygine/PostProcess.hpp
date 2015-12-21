@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_POST_PROCESS_HPP_
 #define XY_POST_PROCESS_HPP_
 
+#include <memory>
+
 namespace sf
 {
     class RenderTarget;
@@ -37,20 +39,27 @@ namespace sf
     class Shader;
 }
 
+#include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/System/Vector2.hpp>
+
 namespace xy
 {
     class PostProcess
     {
     public:
+        using Ptr = std::unique_ptr<PostProcess>;
         PostProcess();
         virtual ~PostProcess() = default;
         PostProcess(const PostProcess&) = delete;
         const PostProcess& operator = (const PostProcess&) = delete;
 
         virtual void apply(const sf::RenderTexture&, sf::RenderTarget&) = 0;
+        //override this if you need to update shader parameters for example
+        virtual void update(float) {}
 
     protected:
         static void applyShader(const sf::Shader&, sf::RenderTarget&);
+
     };
 }
 

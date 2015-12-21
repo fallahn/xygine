@@ -41,7 +41,9 @@ namespace xy
         PostChromeAb();
 
         void apply(const sf::RenderTexture&, sf::RenderTarget&) override;
-        void update(float);
+        void update(float) override;
+
+        static PostProcess::Ptr create();
 
     private:
         ShaderResource m_shaderResource;

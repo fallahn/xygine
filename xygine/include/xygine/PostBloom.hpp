@@ -42,10 +42,12 @@ namespace xy
 {
     class PostBloom final : public PostProcess
     {
+
     public:
         PostBloom();
 
         void apply(const sf::RenderTexture&, sf::RenderTarget&) override;
+        static PostProcess::Ptr create();
 
     private:
         using RenderTextureArray = std::array<sf::RenderTexture, 2>;

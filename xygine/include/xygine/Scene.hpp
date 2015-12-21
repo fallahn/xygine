@@ -31,13 +31,13 @@ source distribution.
 #define XY_SCENE_HPP_
 
 #include <xygine/Entity.hpp>
-#include <xygine/PostBloom.hpp>
-#include <xygine/PostChromeAb.hpp>
+#include <xygine/PostProcess.hpp>
 #include <xygine/Command.hpp>
 #include <xygine/QuadTree.hpp>
 #include <xygine/ComponentCamera.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 
 #include <vector>
 #include <functional>
@@ -59,13 +59,6 @@ namespace xy
             Count
         };
 
-        enum PostEffect
-        {
-            None = 0,
-            Bloom = 0x1,
-            ChromaticAbberation = 0x2
-        };
-
         Scene(MessageBus&, bool createBuffers = true);
         ~Scene() = default;
         Scene(const Scene&) = delete;
@@ -73,23 +66,39 @@ namespace xy
 
         void update(float);
         void handleMessage(const Message&);
+        //moves an entity into the scene on to the given
+        //layer. returns a pointer to the entity
         Entity* addEntity(Entity::Ptr&, Layer);
+        //returns a pointer to the entity with given UID
+        //or nullptr if that entity does exist
         Entity* findEntity(sf::Uint64);
+        //returns a reference to the root entity
+        //of a given layer
         Entity& getLayer(Layer);
 
+        //sets the current scene view and activates
+        //the default scene camera
         void setView(const sf::View& v);
+        //returns the view of the current active camera
         sf::View getView() const;
+        //returns a floatrect representing the visible
+        //area of the active camera. useful for quad tree queries
         sf::FloatRect getVisibleArea() const;
+        //sets the scene's currently active camera
         void setActiveCamera(const Camera*);
         
+        //send a command targetting one or more entities
         void sendCommand(const Command&);
 
+        //returns a vector of quad tree components found in the
+        //queried area.
         std::vector<QuadTreeComponent*> queryQuadTree(const sf::FloatRect&);
 
+        //resets the scene removing all entities and post effects
         void reset();
 
-        //enable available post effects via given bit mask
-        void setPostEffects(sf::Uint32 flags);
+        //add a post effect to the end of the render chain
+        void addPostProcess(PostProcess::Ptr&);
 
         //enables output debug information when _DEBUG_ is defined
         void drawDebug(bool);
@@ -107,20 +116,23 @@ namespace xy
 
         bool m_drawDebug;
 
+        struct RenderPass
+        {
+            PostProcess::Ptr postEffect;
+            sf::RenderTexture* inBuffer = nullptr;
+            sf::RenderTexture* outBuffer = nullptr;
+        };
+        std::vector<RenderPass> m_renderPasses;
+
         mutable sf::RenderTexture m_sceneBufferA;
         mutable sf::RenderTexture m_sceneBufferB;
-        mutable std::unique_ptr<PostBloom> m_bloomEffect;
-        mutable std::unique_ptr<PostChromeAb> m_chromeAbEffect;
 
         std::function<void(sf::RenderTarget&, sf::RenderStates)> m_currentRenderPath;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
 
         void defaultRenderPath(sf::RenderTarget&, sf::RenderStates) const;
-        void bloomRenderPath(sf::RenderTarget&, sf::RenderStates) const;
-        void chromeAbRenderPath(sf::RenderTarget&, sf::RenderStates) const;
-        void fullRenderPath(sf::RenderTarget&, sf::RenderStates) const;
-
+        void postEffectRenderPath(sf::RenderTarget&, sf::RenderStates) const;
     };
 }
 #endif //XY_SCENE_HPP_

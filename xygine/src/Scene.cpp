@@ -35,7 +35,9 @@ source distribution.
 
 namespace
 {
-
+    const sf::Uint32 bufferWidth = 1920u;
+    const sf::Uint32 bufferHeight = 1080u;
+    const sf::Color bufferClearColour(0u, 0u, 20u);
 }
 
 using namespace xy;
@@ -48,8 +50,6 @@ Scene::Scene(MessageBus& mb, bool createBuffers)
     m_drawDebug         (false) 
 {
     reset();
-
-    m_currentRenderPath = std::bind(&Scene::defaultRenderPath, this, _1, _2);
 }
 
 //public
@@ -79,9 +79,14 @@ void Scene::update(float dt)
     }
 
     for (auto& e : m_layers)
+    {
         e->update(dt);
+    }
 
-    if(m_chromeAbEffect) m_chromeAbEffect->update(dt);
+    for (auto& pass : m_renderPasses)
+    {
+        pass.postEffect->update(dt);
+    }
 }
 
 void Scene::handleMessage(const Message& msg)
@@ -190,45 +195,37 @@ void Scene::reset()
     }
 
     m_quadTree.reset();
+
+    m_renderPasses.clear();
+    m_renderPasses.reserve(10);
+    m_currentRenderPath = std::bind(&Scene::defaultRenderPath, this, _1, _2);
 }
 
-void Scene::setPostEffects(sf::Uint32 flags)
+void Scene::addPostProcess(PostProcess::Ptr& pp)
 {
-    switch (flags)
+    if (m_renderPasses.empty())
     {
-    case PostEffect::None:
-    default:
-        m_bloomEffect.reset();
-        m_chromeAbEffect.reset();
+        m_sceneBufferA.create(bufferWidth, bufferHeight);
 
-        m_currentRenderPath = std::bind(&Scene::defaultRenderPath, this, _1, _2);
+        m_renderPasses.emplace_back();
+        m_renderPasses.back().postEffect = std::move(pp);
+        m_renderPasses.back().inBuffer = &m_sceneBufferA;
 
-        break;
-    case PostEffect::Bloom:
-        m_bloomEffect = std::make_unique<PostBloom>();
-        m_chromeAbEffect.reset();
-        m_sceneBufferA.create(1920u, 1080u);
+        m_currentRenderPath = std::bind(&Scene::postEffectRenderPath, this, _1, _2);
+    }
+    else
+    {
+        if (m_renderPasses.size() == 1)
+        {
+            m_sceneBufferB.create(bufferWidth, bufferHeight);
+        }
 
-        m_currentRenderPath = std::bind(&Scene::bloomRenderPath, this, _1, _2);
+        m_renderPasses.back().outBuffer = (m_renderPasses.back().inBuffer == &m_sceneBufferA) ? &m_sceneBufferB : &m_sceneBufferA;
+        auto newIn = m_renderPasses.back().outBuffer;
 
-        break;
-    case PostEffect::ChromaticAbberation:
-        m_bloomEffect.reset();
-        m_chromeAbEffect = std::make_unique<PostChromeAb>();
-        m_sceneBufferA.create(1920u, 1080u);
-
-        m_currentRenderPath = std::bind(&Scene::chromeAbRenderPath, this, _1, _2);
-
-        break;
-    case PostEffect::Bloom | PostEffect::ChromaticAbberation:
-        m_sceneBufferA.create(1920u, 1080u);
-        m_sceneBufferB.create(1920u, 1080u);
-
-        m_bloomEffect = std::make_unique<PostBloom>();
-        m_chromeAbEffect = std::make_unique<PostChromeAb>();
-
-        m_currentRenderPath = std::bind(&Scene::fullRenderPath, this, _1, _2);
-        break;
+        m_renderPasses.emplace_back();
+        m_renderPasses.back().postEffect = std::move(pp);
+        m_renderPasses.back().inBuffer = newIn;
     }
 }
 
@@ -266,115 +263,49 @@ void Scene::defaultRenderPath(sf::RenderTarget& rt, sf::RenderStates states) con
         rt.draw(m_quadTree);
     }
 #endif //_DEBUG_
-
+    rt.setView(rt.getDefaultView());
 }
 
-void Scene::bloomRenderPath(sf::RenderTarget& rt, sf::RenderStates states) const
+void Scene::postEffectRenderPath(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     rt.setView(rt.getDefaultView());
-    
+
+    //-------render scene to first buffer-----///
+    auto firstBuffer = m_renderPasses.front().inBuffer;
+    firstBuffer->setView(m_activeCamera->getView());
+    firstBuffer->clear(bufferClearColour);
 #ifdef _DEBUG_
     std::vector<sf::Vertex> entBounds;
 #endif //_DEBUG_
-
-    m_sceneBufferA.setView(m_activeCamera->getView());
-    m_sceneBufferA.clear();
 
     for (const auto& e : m_layers)
     {
 #ifdef _DEBUG_
         e->getVertices(entBounds);
 #endif //_DEBUG_
-        m_sceneBufferA.draw(*e, states);
+        firstBuffer->draw(*e, states);
     }
 
 #ifdef _DEBUG_
     if (m_drawDebug)
     {
-        m_sceneBufferA.draw(entBounds.data(), entBounds.size(), sf::PrimitiveType::LinesStrip);
-        m_sceneBufferA.draw(m_quadTree);
+        firstBuffer->draw(entBounds.data(), entBounds.size(), sf::PrimitiveType::LinesStrip);
+        firstBuffer->draw(m_quadTree);
     }
 #endif //_DEBUG_
+    firstBuffer->display();
 
-    m_sceneBufferA.display();
-    m_bloomEffect->apply(m_sceneBufferA, rt);
-}
 
-void Scene::chromeAbRenderPath(sf::RenderTarget& rt, sf::RenderStates states) const
-{
-    rt.setView(rt.getDefaultView());
-
-#ifdef _DEBUG_
-    std::vector<sf::Vertex> entBounds;
-#endif //_DEBUG_
-
-    m_sceneBufferA.setView(m_activeCamera->getView());
-    m_sceneBufferA.clear();
-
-    for (const auto& e : m_layers)
+    //----apply all post processes-----//
+    for (const auto& pass : m_renderPasses)
     {
-#ifdef _DEBUG_
-        e->getVertices(entBounds);
-#endif //_DEBUG_
-        m_sceneBufferA.draw(*e, states);
+        if (pass.outBuffer)
+        {
+            pass.outBuffer->setView(pass.outBuffer->getDefaultView());
+            pass.outBuffer->clear(bufferClearColour);
+            pass.postEffect->apply(*pass.inBuffer, *pass.outBuffer);
+            pass.outBuffer->display();
+        }
     }
-
-#ifdef _DEBUG_
-    if (m_drawDebug)
-    {
-        m_sceneBufferA.draw(entBounds.data(), entBounds.size(), sf::PrimitiveType::LinesStrip);
-        m_sceneBufferA.draw(m_quadTree);
-    }
-#endif //_DEBUG_
-
-    m_sceneBufferA.display();
-    m_chromeAbEffect->apply(m_sceneBufferA, rt);
-}
-
-void Scene::fullRenderPath(sf::RenderTarget& rt, sf::RenderStates states) const
-{
-    rt.setView(rt.getDefaultView());
-
-#ifdef _DEBUG_
-    std::vector<sf::Vertex> entBounds;
-#endif //_DEBUG_
-
-    m_sceneBufferA.setView(m_activeCamera->getView());
-    m_sceneBufferA.clear();
-
-    for (const auto& e : m_layers)
-    {
-#ifdef _DEBUG_
-        e->getVertices(entBounds);
-#endif //_DEBUG_
-        m_sceneBufferA.draw(*e, states);
-    }
-#ifdef _DEBUG_
-    if (m_drawDebug)
-    {
-        m_sceneBufferA.draw(entBounds.data(), entBounds.size(), sf::PrimitiveType::LinesStrip);
-        m_sceneBufferA.draw(m_quadTree);
-    }
-#endif //_DEBUG_
-    
-    m_sceneBufferA.display();
-
-#ifdef _DEBUG_
-    if (m_drawDebug)
-    {
-        m_bloomEffect->apply(m_sceneBufferA, rt);
-    }
-    else
-    {
-#endif //_DEBUG_
-
-        //apply post effects
-        m_sceneBufferB.clear();
-        m_bloomEffect->apply(m_sceneBufferA, m_sceneBufferB);
-        m_sceneBufferB.display();
-        m_chromeAbEffect->apply(m_sceneBufferB, rt);
-
-#ifdef _DEBUG_
-    }
-#endif //_DEBUG_
+    m_renderPasses.back().postEffect->apply(*m_renderPasses.back().inBuffer, rt);
 }

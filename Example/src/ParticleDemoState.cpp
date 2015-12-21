@@ -36,6 +36,8 @@ source distribution.
 #include <xygine/Util.hpp>
 
 #include <xygine/ParticleController.hpp>
+#include <xygine/PostBloom.hpp>
+#include <xygine/PostChromeAb.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -70,7 +72,10 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
 {
     m_scene.setView(context.defaultView);
     //m_scene.drawDebug(true);
-    m_scene.setPostEffects(xy::Scene::PostEffect::ChromaticAbberation);
+    xy::PostProcess::Ptr pp = xy::PostChromeAb::create();
+    m_scene.addPostProcess(pp);
+    pp = xy::PostBloom::create();
+    m_scene.addPostProcess(pp);
 
     m_reportText.setFont(context.appInstance.getFont("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);

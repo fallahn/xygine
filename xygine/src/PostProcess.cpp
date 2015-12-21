@@ -29,30 +29,44 @@ source distribution.
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
-#include <SFML/Graphics/VertexArray.hpp>
 
 using namespace xy;
 
-PostProcess::PostProcess(){}
+namespace
+{
+    sf::Vector2f outputSize;
+    sf::Vector2u lastSize;
+    sf::VertexArray vertexArray(sf::TrianglesStrip, 4);
+    void updateQuad()
+    {
+        auto newY = outputSize.x / 16.f * 9.f;
+        auto diff = (outputSize.y - newY) / 2.f;
+        outputSize.y = newY + diff;
+
+        vertexArray[0] = { { 0.f, diff },{ 0.f, 1.f } };
+        vertexArray[1] = { { outputSize.x, diff },{ 1.f, 1.f } };
+        vertexArray[2] = { { 0.f, outputSize.y }, sf::Vector2f() };
+        vertexArray[3] = { outputSize,{ 1.f, 0 } };
+    }
+}
+
+PostProcess::PostProcess() {}
 
 //protected
 void PostProcess::applyShader(const sf::Shader& shader, sf::RenderTarget& dest)
 {
-    auto outputSize = static_cast<sf::Vector2f>(dest.getSize());
-    auto newY = outputSize.x / 16.f * 9.f;
-    auto diff = (outputSize.y - newY) / 2.f;
-    outputSize.y = newY + diff;
-
-    sf::VertexArray verts(sf::TrianglesStrip, 4);
-    verts[0] = { {0.f, diff}, { 0.f, 1.f } };
-    verts[1] = { { outputSize.x, diff }, { 1.f, 1.f } };
-    verts[2] = { { 0.f, outputSize.y }, sf::Vector2f() };
-    verts[3] = { outputSize, { 1.f, 0 } };
+    auto size = dest.getSize();
+    if (lastSize != size)
+    {
+        outputSize = static_cast<sf::Vector2f>(size);
+        lastSize = size;
+        updateQuad();
+    }
 
     //All the seagulls are belong to us.
     sf::RenderStates states;
     states.shader = &shader;
     states.blendMode = sf::BlendNone;
 
-    dest.draw(verts, states);
+    dest.draw(vertexArray, states);
 }

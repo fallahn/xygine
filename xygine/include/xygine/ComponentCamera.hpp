@@ -46,7 +46,7 @@ namespace xy
         Camera(const Camera&) = delete;
         const Camera& operator = (const Camera&) = delete;
 
-        static FactoryFunc create;
+        static const FactoryFunc create;
 
         Component::Type type() const override { return Component::Type::Script; }
         void entityUpdate(Entity&, float) override;
