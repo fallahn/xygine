@@ -68,3 +68,13 @@ float ConstantForceAffector::getTorque() const
 {
     return m_torque;
 }
+
+void ConstantForceAffector::setWake(bool wake)
+{
+    m_wake = wake;
+}
+
+bool ConstantForceAffector::getWake() const
+{
+    return m_wake;
+}

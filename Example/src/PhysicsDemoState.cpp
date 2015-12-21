@@ -271,7 +271,7 @@ void PhysicsDemoState::createBodies()
     auto bb = ballEntityB->addComponent<xy::Physics::RigidBody>(ballBodyB);
     m_scene.addEntity(ballEntityB, xy::Scene::Layer::BackMiddle);
 
-    //bb->addAffector(xy::Physics::ConstantForceAffector({ 20.f, 0.f }, 40.f));
+    bb->addAffector(xy::Physics::ConstantForceAffector({ 20.f, 0.f }, 40.f));
 
     /*xy::Physics::DistanceJoint dj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
     bb->addJoint(dj);

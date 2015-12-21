@@ -55,11 +55,16 @@ namespace xy
             //sets the torque to be applied to the parent
             //body each frame
             void setTorque(float);
+            //sets whether or not to wake a sleeping body
+            void setWake(bool);
 
             //returns the current force value
             const sf::Vector2f& getForce() const;
             //returns the current torque value
             float getTorque() const;
+            //returns true if this force should wake
+            //a sleeping body
+            bool getWake() const;
 
         private:
             sf::Vector2f m_force;

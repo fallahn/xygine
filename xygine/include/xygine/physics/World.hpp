@@ -75,30 +75,9 @@ namespace xy
 
             using Ptr = std::unique_ptr<b2World>;
         public:
-            explicit World(MessageBus& mb)
-                : m_contactListener(mb), m_destructionListener(mb)
-            {
-                XY_ASSERT(!m_world, "Physics world already created");
-                m_world = std::make_unique<b2World>(m_gravity);
-                
-                update = [this](float dt)
-                {
-                    XY_ASSERT(m_world, "Physics world has not been created");
-                    m_contactListener.resetBuffers();
-                    m_world->Step(dt, m_velocityIterations, m_positionIterations);
-                };
-
-                m_world->SetContactListener(&m_contactListener);
-                m_world->SetDestructionListener(&m_destructionListener);
-
-                LOG("CLIENT created physics world", Logger::Type::Info);
-            }
-            ~World()
-            {
-                m_world.reset();
-                update = [](float) {};
-                LOG("CLIENT destroyed physics world", Logger::Type::Info);
-            }
+            explicit World(MessageBus& mb);
+            ~World();
+            
             World(const World&) = delete;
             const World& operator = (const World&) = delete;
 
@@ -220,6 +199,8 @@ namespace xy
             static sf::Uint32 m_positionIterations;
 
             static Ptr m_world;
+            //ugh I can't believe I restored to this
+            static World* m_instance;
 
             mutable std::unique_ptr<DebugDraw> m_debugDraw;
 

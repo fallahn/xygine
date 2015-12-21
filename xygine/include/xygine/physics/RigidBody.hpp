@@ -178,6 +178,10 @@ namespace xy
                 case Affector::Type::ConstantForce:
                     m_forceAffectors.push_back(affector);
                     break;
+                case Affector::Type::AreaForce:
+                    //add affector to list
+                    //register callback with world
+                    break;
                 default:break;
                 }
             }

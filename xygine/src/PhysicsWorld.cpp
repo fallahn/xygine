@@ -49,6 +49,36 @@ sf::Uint32 World::m_velocityIterations = 6u;
 sf::Uint32 World::m_positionIterations = 2u;
 
 World::Ptr World::m_world = nullptr;
+World* World::m_instance = nullptr;
+
+World::World(MessageBus& mb)
+    : m_contactListener(mb), m_destructionListener(mb)
+{
+    XY_ASSERT(!m_world, "Physics world already created");
+    m_world = std::make_unique<b2World>(m_gravity);
+
+    update = [this](float dt)
+    {
+        XY_ASSERT(m_world, "Physics world has not been created");
+        m_contactListener.resetBuffers();
+        m_world->Step(dt, m_velocityIterations, m_positionIterations);
+    };
+
+    m_world->SetContactListener(&m_contactListener);
+    m_world->SetDestructionListener(&m_destructionListener);
+
+    m_instance = this;
+
+    LOG("CLIENT created physics world", Logger::Type::Info);
+}
+
+World::~World()
+{
+    m_world.reset();
+    update = [](float) {};
+    m_instance = nullptr;
+    LOG("CLIENT destroyed physics world", Logger::Type::Info);
+}
 
 void World::addJointDestroyedCallback(const JointDestroyedCallback& jdc)
 {
