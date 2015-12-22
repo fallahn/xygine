@@ -51,7 +51,7 @@ namespace xy
             explicit CollisionPolygonShape(const std::vector<sf::Vector2f>& points);
             ~CollisionPolygonShape() = default;
             CollisionPolygonShape(const CollisionPolygonShape&);
-            void operator = (const CollisionPolygonShape&);
+            const CollisionPolygonShape& operator = (const CollisionPolygonShape&) = delete;
 
             CollisionShape::Type type() const override { return CollisionShape::Type::Polygon; }
 

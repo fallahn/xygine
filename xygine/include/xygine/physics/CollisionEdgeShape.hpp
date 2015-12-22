@@ -56,7 +56,7 @@ namespace xy
             CollisionEdgeShape(const std::vector<sf::Vector2f>& points, Option = Option::None);
             ~CollisionEdgeShape() = default;
             CollisionEdgeShape(const CollisionEdgeShape&);
-            void operator = (const CollisionEdgeShape&);
+            const CollisionEdgeShape& operator = (const CollisionEdgeShape&) = delete;
 
             CollisionShape::Type type() const override { return CollisionShape::Type::Edge; }
 

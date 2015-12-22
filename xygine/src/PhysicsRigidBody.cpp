@@ -46,9 +46,12 @@ void RigidBody::entityUpdate(Entity& entity, float dt)
     entity.setRotation(World::boxToSfAngle(m_body->GetAngle()));
     entity.setWorldPosition(World::boxToSfVec(m_body->GetPosition()));
 
-    for (auto& a : m_forceAffectors)
+    for (const auto & s : m_collisionShapes)
     {
-        a(this);
+        for (auto& f : s->m_constForceAffectors)
+        {
+            f(this);
+        }
     }
 }
 
@@ -80,7 +83,7 @@ void RigidBody::onStart(Entity& entity)
 
     m_body = World::m_world->CreateBody(&m_bodyDef);
     XY_ASSERT(m_body, "Failed to create physics body");
-    m_body->SetUserData(static_cast<void*>(&entity));
+    m_body->SetUserData(this);
 
     //check for any pending fixture creation
     for (auto s : m_pendingShapes)
@@ -88,6 +91,7 @@ void RigidBody::onStart(Entity& entity)
         s->m_fixture = m_body->CreateFixture(&s->m_fixtureDef);
         s->m_fixture->SetUserData(s);
         s->destructionCallback = std::bind(&RigidBody::removeCollisionShape, this, _1, true);
+        s->registerCallbacks();
     }
     m_pendingShapes.clear();
 

@@ -82,6 +82,7 @@
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AudioManager.cpp" />
     <ClCompile Include="src\ComponentCamera.cpp" />
+    <ClCompile Include="src\PhysicsAffectorAreaForce.cpp" />
     <ClCompile Include="src\PhysicsAffectorConstantForce.cpp" />
     <ClCompile Include="src\PhysicsCollisionEdgeShape.cpp" />
     <ClCompile Include="src\PhysicsCollisionCircleShape.cpp" />
@@ -156,9 +157,11 @@
     <ClInclude Include="include\xygine\ParticleController.hpp" />
     <ClInclude Include="include\xygine\ParticleSystem.hpp" />
     <ClInclude Include="include\xygine\physics\Affector.hpp" />
+    <ClInclude Include="include\xygine\physics\AffectorAreaForce.hpp" />
     <ClInclude Include="include\xygine\physics\AffectorConstantForce.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionCircleShape.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionEdgeShape.hpp" />
+    <ClInclude Include="include\xygine\physics\CollisionFilter.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionPolygonShape.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionRectangleShape.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionShape.hpp" />

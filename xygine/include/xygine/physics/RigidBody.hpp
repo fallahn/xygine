@@ -39,7 +39,6 @@ source distribution.
 #include <xygine/physics/CollisionShape.hpp>
 #include <xygine/physics/Joint.hpp>
 #include <xygine/physics/World.hpp>
-#include <xygine/physics/AffectorConstantForce.hpp>
 
 #include <Box2D/Dynamics/b2Body.h>
 
@@ -132,6 +131,7 @@ namespace xy
                     newShape->m_fixture = m_body->CreateFixture(&newShape->m_fixtureDef);
                     newShape->m_fixture->SetUserData(newShape.get());
                     newShape->destructionCallback = std::bind(&RigidBody::removeCollisionShape, this, _1, true);
+                    newShape->registerCallbacks();
                 }
                 else
                 {
@@ -164,26 +164,6 @@ namespace xy
                     m_pendingJoints.push_back(newJoint.get());
                 }
                 return dynamic_cast<T*>(newJoint.get());
-            }
-
-            //adds an affector to this body. the supplied affector is copied
-            //so modifying the original affector will not affect this body
-            template <typename T>
-            void addAffector(const T& affector)
-            {
-                static_assert(std::is_base_of<Affector, T>::value, "must be of affector type");
-                //affectors ar applied at different times so need to be stored in their own collections
-                switch (affector.type())
-                {
-                case Affector::Type::ConstantForce:
-                    m_forceAffectors.push_back(affector);
-                    break;
-                case Affector::Type::AreaForce:
-                    //add affector to list
-                    //register callback with world
-                    break;
-                default:break;
-                }
             }
 
             //get the world position of this body's centre of mass
@@ -251,8 +231,6 @@ namespace xy
 
             std::vector<Joint::Ptr> m_joints;
             std::vector<Joint*> m_pendingJoints;
-
-            std::vector<ConstantForceAffector> m_forceAffectors;
 
             void removeJoint(const Joint*, bool);
             void removeCollisionShape(const CollisionShape*, bool);

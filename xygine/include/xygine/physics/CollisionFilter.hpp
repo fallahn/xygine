@@ -25,44 +25,22 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/physics/CollisionCircleShape.hpp>
-#include <xygine/physics/World.hpp>
+#ifndef XY_COLLISION_FILTER_HPP_
+#define XY_COLLISION_FILTER_HPP_
 
-#include <cstring>
+#include <SFML/Config.hpp>
 
-using namespace xy;
-using namespace xy::Physics;
-
-CollisionCircleShape::CollisionCircleShape(float radius)
+namespace xy
 {
-    m_circleShape.m_radius = World::sfToBoxFloat(radius);
-    setShape(m_circleShape);
+    namespace Physics
+    {
+        struct CollisionFilter
+        {
+            sf::Uint16 categoryFlags = 0x0001;
+            sf::Uint16 maskFlags = 0xFFFF;
+            sf::Int16 groupIndex = 0;
+        };
+    }
 }
 
-CollisionCircleShape::CollisionCircleShape(const CollisionCircleShape& other)
-    : CollisionShape(other)
-{
-    m_circleShape = other.m_circleShape;
-    setShape(m_circleShape);
-}
-
-//public
-void CollisionCircleShape::setPosition(const sf::Vector2f& position)
-{
-    m_circleShape.m_p = World::sfToBoxVec(position);
-}
-
-sf::Vector2f CollisionCircleShape::getPosition() const
-{
-    return World::boxToSfVec(m_circleShape.m_p);
-}
-
-void CollisionCircleShape::setRadius(float radius)
-{
-    m_circleShape.m_radius = World::sfToBoxFloat(radius);
-}
-
-float CollisionCircleShape::getRadius() const
-{
-    return World::boxToSfFloat(m_circleShape.m_radius);
-}
+#endif //XY_COLLISION_FILTER_HPP_

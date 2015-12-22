@@ -31,23 +31,19 @@ source distribution.
 #ifndef XY_COLLISION_SHAPE_HPP_
 #define XY_COLLISION_SHAPE_HPP_
 
+#include <xygine/physics/AffectorConstantForce.hpp>
+#include <xygine/physics/AffectorAreaForce.hpp>
+
 #include <Box2D/Dynamics/b2Fixture.h>
 
-#include <SFML/Config.hpp>
-
 #include <functional>
+#include <vector>
 
 namespace xy
 {
     namespace Physics
     {
-        struct CollisionFilter
-        {
-            sf::Uint16 categoryFlags = 0x0001;
-            sf::Uint16 maskFlags = 0xFFFF;
-            sf::Int16 groupIndex = 0;
-        };
-
+        class Contact;
         class CollisionShape
         {
             friend class RigidBody;
@@ -64,7 +60,7 @@ namespace xy
 
             CollisionShape();
             virtual ~CollisionShape() = default;
-            CollisionShape(const CollisionShape&) = default;
+            CollisionShape(const CollisionShape& other) = default;
             CollisionShape& operator = (const CollisionShape&) = default;
 
             virtual Type type() const = 0;
@@ -86,6 +82,9 @@ namespace xy
             //with the physics world will not be invoked
             void destroy();
 
+            void addAffector(const ConstantForceAffector&);
+            void addAffector(const AreaForceAffector&);
+
         protected:
             const b2FixtureDef getFixtureDef() const
             {
@@ -100,6 +99,13 @@ namespace xy
         private:
             b2FixtureDef m_fixtureDef;
             b2Fixture* m_fixture;
+
+            std::vector<ConstantForceAffector> m_constForceAffectors;
+            std::vector<AreaForceAffector> m_areaAffectors;
+
+            void beginContactCallback(Contact&);
+            void preSolveContactCallback(Contact&);
+            void registerCallbacks();
 
             std::function<void(const CollisionShape*)> destructionCallback;
         };

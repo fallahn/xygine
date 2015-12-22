@@ -26,10 +26,14 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/physics/CollisionShape.hpp>
+#include <xygine/physics/Contact.hpp>
+#include <xygine/physics/World.hpp>
 #include <xygine/Assert.hpp>
 
 using namespace xy;
 using namespace xy::Physics;
+
+using namespace std::placeholders;
 
 CollisionShape::CollisionShape()
     : m_fixture(nullptr)
@@ -99,5 +103,64 @@ void CollisionShape::destroy()
     {
         m_fixture->GetBody()->DestroyFixture(m_fixture);
         destructionCallback(this);
+    }
+}
+
+void CollisionShape::addAffector(const ConstantForceAffector& fa)
+{
+    m_constForceAffectors.push_back(fa);
+}
+
+void CollisionShape::addAffector(const AreaForceAffector& fa)
+{
+    m_areaAffectors.push_back(fa);
+}
+//private
+void CollisionShape::beginContactCallback(Contact& contact)
+{
+    if (!contact.touching()) return;
+
+    CollisionShape* shapeA = contact.getCollisionShapeA();
+    CollisionShape* shapeB = contact.getCollisionShapeB();
+    if (shapeA != shapeB)
+    {
+        if (shapeA == this)
+        {
+            //do stuff to this
+
+
+            //do stuff to other            
+            for (auto& a : m_areaAffectors)
+            {
+                //TODO check masks for affectors
+                a(static_cast<RigidBody*>(shapeB->m_fixture->GetBody()->GetUserData()));
+            }
+        }
+        else if (shapeB == this)
+        {
+            //do stuff to this
+
+
+            //do stuff to other            
+            for (auto& a : m_areaAffectors)
+            {
+                //TODO check masks for affectors
+                a(static_cast<RigidBody*>(shapeA->m_fixture->GetBody()->GetUserData()));
+            }
+        }
+    }
+}
+
+void CollisionShape::preSolveContactCallback(Contact& contact)
+{
+
+}
+
+void CollisionShape::registerCallbacks()
+{
+    if (!m_areaAffectors.empty())
+    {
+        World::ContactCallback cb = std::bind(&CollisionShape::beginContactCallback, this, _1);
+        World::m_instance->addContactBeginCallback(cb);
     }
 }

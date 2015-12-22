@@ -58,6 +58,7 @@ namespace xy
         class World final : public sf::Drawable
         {
             friend class RigidBody;
+            friend class CollisionShape;
             friend class CollisionCircleShape;
             friend class CollisionRectangleShape;
             friend class CollisionPolygonShape;

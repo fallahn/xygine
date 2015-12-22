@@ -46,7 +46,7 @@ namespace xy
             explicit CollisionCircleShape(float radius);
             ~CollisionCircleShape() = default;
             CollisionCircleShape(const CollisionCircleShape&);
-            void operator = (const CollisionCircleShape&);
+            const CollisionCircleShape& operator = (const CollisionCircleShape&) = delete;
 
             CollisionShape::Type type() const override { return CollisionShape::Type::Circle; }
 

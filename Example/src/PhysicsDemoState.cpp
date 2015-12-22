@@ -50,6 +50,7 @@ source distribution.
 #include <xygine/physics/JointWeld.hpp>
 #include <xygine/physics/JointMotor.hpp>
 #include <xygine/physics/AffectorConstantForce.hpp>
+#include <xygine/physics/AffectorAreaForce.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -198,6 +199,8 @@ void PhysicsDemoState::createBodies()
     auto groundBody = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Static);
 
     xy::Physics::CollisionRectangleShape groundShape({ 1920.f, 80.f });
+    groundShape.setIsSensor(true);
+    groundShape.addAffector(xy::Physics::AreaForceAffector({ 0.f, -2000.f }, 200.f));
     groundBody->addCollisionShape(groundShape);
 
     std::vector<sf::Vector2f> points = 
@@ -266,12 +269,12 @@ void PhysicsDemoState::createBodies()
     auto ballBodyB = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
 
     ballShape.setRadius(50.f);
+    //ballShape.addAffector(xy::Physics::ConstantForceAffector({ 0.f, -200.f }, 80.f));
     ballBodyB->addCollisionShape(ballShape);
 
     auto bb = ballEntityB->addComponent<xy::Physics::RigidBody>(ballBodyB);
     m_scene.addEntity(ballEntityB, xy::Scene::Layer::BackMiddle);
 
-    bb->addAffector(xy::Physics::ConstantForceAffector({ 20.f, 0.f }, 40.f));
 
     /*xy::Physics::DistanceJoint dj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
     bb->addJoint(dj);

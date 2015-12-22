@@ -47,7 +47,7 @@ namespace xy
             CollisionRectangleShape(const sf::Vector2f& size, const sf::Vector2f& position = sf::Vector2f());
             ~CollisionRectangleShape() = default;
             CollisionRectangleShape(const CollisionRectangleShape&);
-            void operator = (const CollisionRectangleShape&);
+            const CollisionRectangleShape& operator = (const CollisionRectangleShape&) = delete;
 
             CollisionShape::Type type() const override { return CollisionShape::Type::Box; }
 

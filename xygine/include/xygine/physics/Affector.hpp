@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_AFFECTOR_HPP_
 #define XY_AFFECTOR_HPP_
 
+#include <memory>
+
 namespace xy
 {
     namespace Physics

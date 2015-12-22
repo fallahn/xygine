@@ -40,6 +40,7 @@ namespace xy
         class ConstantForceAffector final : public Affector
         {
         public:
+
             ConstantForceAffector(const sf::Vector2f& force, float torque = 0.f, bool wake = false);
             ~ConstantForceAffector() = default;
 

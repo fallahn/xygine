@@ -39,16 +39,8 @@ CollisionEdgeShape::CollisionEdgeShape(const std::vector<sf::Vector2f>& points, 
 }
 
 CollisionEdgeShape::CollisionEdgeShape(const CollisionEdgeShape& other)
+    : CollisionShape(other)
 {
-    m_cloneContext = other.m_cloneContext;
-
-    applyCloneContext();
-    setShape(m_chainShape);
-}
-
-void CollisionEdgeShape::operator=(const CollisionEdgeShape& other)
-{
-    if (this == &other) return;
     m_cloneContext = other.m_cloneContext;
 
     applyCloneContext();
