@@ -96,7 +96,7 @@ void CollisionShape::setIsSensor(bool sensor)
     }
 }
 
-void CollisionShape::addFilter(CollisionFilter filter)
+void CollisionShape::setFilter(CollisionFilter filter)
 {
     m_fixtureDef.filter.categoryBits = filter.categoryFlags;
     m_fixtureDef.filter.groupIndex = filter.groupIndex;
@@ -106,6 +106,24 @@ void CollisionShape::addFilter(CollisionFilter filter)
     {
         m_fixture->SetFilterData(m_fixtureDef.filter);
     }
+}
+
+CollisionFilter CollisionShape::getFilter() const
+{
+    CollisionFilter retVal;
+    if (m_fixture)
+    {
+        auto filter = m_fixture->GetFilterData();
+        retVal.categoryFlags = filter.categoryBits;
+        retVal.groupIndex = filter.groupIndex;
+        retVal.maskFlags = filter.maskBits;
+        return retVal;
+    }
+
+    retVal.categoryFlags = m_fixtureDef.filter.categoryBits;
+    retVal.groupIndex = m_fixtureDef.filter.groupIndex;
+    retVal.maskFlags = m_fixtureDef.filter.maskBits;
+    return retVal;
 }
 
 void CollisionShape::destroy()
@@ -126,6 +144,20 @@ void CollisionShape::addAffector(const AreaForceAffector& fa)
 {
     m_areaAffectors.push_back(fa);
 }
+
+void CollisionShape::clearAffectors()
+{
+    m_activeAffectors.clear();
+    m_areaAffectors.clear();
+    m_constForceAffectors.clear();
+
+    if (m_removeCallbacks)
+    {
+        World::m_instance->removeContactBeginCallback(m_beginCallbackIndex);
+        World::m_instance->removeContactEndCallback(m_endCallbackIndex);
+    }
+}
+
 //private
 void CollisionShape::beginContactCallback(Contact& contact)
 {
@@ -143,8 +175,11 @@ void CollisionShape::beginContactCallback(Contact& contact)
             //store affectors for other body
             for (auto& a : m_areaAffectors)
             {
-                //TODO check masks for affectors
-                m_activeAffectors.emplace_back(std::make_pair(&a, static_cast<RigidBody*>(shapeB->m_fixture->GetBody()->GetUserData())));
+                if ((a.useCollisionMask() && a.getCollisionMask().passes(shapeB->getFilter()))
+                    || !a.useCollisionMask())
+                {
+                    m_activeAffectors.emplace_back(std::make_pair(&a, static_cast<RigidBody*>(shapeB->m_fixture->GetBody()->GetUserData())));
+                }
             }
         }
         else if (shapeB == this)
@@ -155,8 +190,11 @@ void CollisionShape::beginContactCallback(Contact& contact)
             //remove affectors for other body       
             for (auto& a : m_areaAffectors)
             {
-                //TODO check masks for affectors
-                m_activeAffectors.emplace_back(std::make_pair(&a, static_cast<RigidBody*>(shapeA->m_fixture->GetBody()->GetUserData())));
+                if ((a.useCollisionMask() && a.getCollisionMask().passes(shapeA->getFilter()))
+                    || !a.useCollisionMask())
+                {
+                    m_activeAffectors.emplace_back(std::make_pair(&a, static_cast<RigidBody*>(shapeA->m_fixture->GetBody()->GetUserData())));
+                }
             }
         }
     }

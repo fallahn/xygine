@@ -78,14 +78,20 @@ namespace xy
             void setIsSensor(bool);
             //adds a sets of filter flags to define which type of shapes
             //this shape may collide with
-            void addFilter(CollisionFilter);
+            void setFilter(CollisionFilter);
+            //returns the currently set collision filter
+            CollisionFilter getFilter() const;
             //allow explicitly destroying this shape. note that although
             //this raises an event on the message bus callbacks registered
             //with the physics world will not be invoked
             void destroy();
 
+            //adds an affector which modifies the body to which
+            //this or a colliding CollisionShape is attached
             void addAffector(const ConstantForceAffector&);
             void addAffector(const AreaForceAffector&);
+            //removes all assigned to this CollisionShape
+            void clearAffectors();
 
         protected:
             const b2FixtureDef getFixtureDef() const

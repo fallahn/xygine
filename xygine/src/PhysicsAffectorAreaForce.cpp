@@ -46,13 +46,8 @@ AreaForceAffector::AreaForceAffector(const sf::Vector2f& force, float torque, bo
 
 void AreaForceAffector::apply(RigidBody* body)
 {        
-    //float linearDrag = 0.5f * (m_linearDrag * Util::Vector::lengthSquared(body->getLinearVelocity()));
-    body->applyForceToCentre(m_force, m_wake);
-
-    //auto angVel = body->getAngularVelocity();
-    //float angularDrag = 0.5f * (m_angularDrag * (angVel * angVel));
-    body->applyTorque(m_torque, m_wake);
-
+    body->applyForceToCentre(m_force - (body->getLinearVelocity() * m_linearDrag), m_wake);
+    body->applyTorque(m_torque - (body->getAngularVelocity() * m_angularDrag), m_wake);
 }
 
 void AreaForceAffector::setLinearDrag(float drag)

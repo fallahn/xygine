@@ -39,6 +39,11 @@ namespace xy
             sf::Uint16 categoryFlags = 0x0001;
             sf::Uint16 maskFlags = 0xFFFF;
             sf::Int16 groupIndex = 0;
+
+            bool passes(const CollisionFilter& other) const
+            {
+                return ((categoryFlags & other.maskFlags) != 0 && (other.categoryFlags & maskFlags) != 0);
+            }
         };
     }
 }

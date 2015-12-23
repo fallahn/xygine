@@ -195,55 +195,65 @@ void PhysicsDemoState::handleMessage(const xy::Message& msg)
 void PhysicsDemoState::createBodies()
 {
     auto groundEntity = xy::Entity::create(m_messageBus);
-    groundEntity->setWorldPosition({ 0.f, 1000.f });
+    groundEntity->setWorldPosition({ 0.f, 0.f });
     auto groundBody = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Static);
 
-    xy::Physics::CollisionRectangleShape groundShape({ 1920.f, 80.f });
-    groundShape.setIsSensor(true);
-    groundShape.addAffector(xy::Physics::AreaForceAffector({ 0.f, -8000.f }));
-    groundBody->addCollisionShape(groundShape);
+    xy::Physics::CollisionRectangleShape boxShape({ 1920.f, 80.f });
+    groundBody->addCollisionShape(boxShape);
+    boxShape.setRect({ 20.f, 920.f }, { 0.f, 80.f });
+    groundBody->addCollisionShape(boxShape);
+
+    boxShape.setRect({ 20.f, 920.f }, { 1900.f, 80.f });
+    groundBody->addCollisionShape(boxShape);
+
+    boxShape.setRect({ 1920.f, 80.f }, { 0.f, 1000.f });
+    groundBody->addCollisionShape(boxShape);
 
     std::vector<sf::Vector2f> points = 
     {
-        {800.f, -150.f},
-        {880.f, -130.f},
-        {940.f, -120.f},
-        {1100.f, -105.f}
+        {800.f, 850.f},
+        {880.f, 830.f},
+        {940.f, 820.f},
+        {1100.f, 805.f}
     };
     xy::Physics::CollisionEdgeShape edgeShape(points, xy::Physics::CollisionEdgeShape::Option::Loop);
     groundBody->addCollisionShape(edgeShape);
 
     points =
     {
-        { 400.f, -350.f },
-        { 480.f, -330.f },
-        { 540.f, -320.f },
-        { 700.f, -305.f }
+        { 400.f, 650.f },
+        { 480.f, 630.f },
+        { 540.f, 620.f },
+        { 700.f, 605.f }
     };
     edgeShape.setPoints(points);
     groundBody->addCollisionShape(edgeShape);
 
     points =
     {
-        { 1800.f, -50.f },
-        { 1880.f, -30.f },
-        { 1920.f, -20.f },
-        { 1880.f, -185.f },
-        { 1800.f, -100.f }
+        { 1700.f, 950.f },
+        { 1780.f, 930.f },
+        { 1820.f, 920.f },
+        { 1780.f, 815.f },
+        { 1700.f, 900.f }
     };
     xy::Physics::CollisionPolygonShape polyShape(points);
+    polyShape.addAffector(xy::Physics::AreaForceAffector({ -190.f, -4000.f }, 80.f));
+    polyShape.setIsSensor(true);
     groundBody->addCollisionShape(polyShape);
 
     points =
     {
-        { 300.f, -50.f },
-        { 380.f, -30.f },
-        { 420.f, -20.f },
-        { 380.f, -185.f },
-        { 300.f, -100.f }
+        { 300.f, 950.f },
+        { 380.f, 970.f },
+        { 420.f, 980.f },
+        { 380.f, 815.f },
+        { 300.f, 900.f }
     };
     polyShape.setPoints(points);
     polyShape.setRestitution(1.f);
+    polyShape.clearAffectors();
+    polyShape.addAffector(xy::Physics::AreaForceAffector({ 100.f, -4000.f }, -50.f));
     groundBody->addCollisionShape(polyShape);
 
     groundEntity->addComponent<xy::Physics::RigidBody>(groundBody);
