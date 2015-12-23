@@ -33,11 +33,13 @@ source distribution.
 
 #include <xygine/physics/AffectorConstantForce.hpp>
 #include <xygine/physics/AffectorAreaForce.hpp>
+#include <xygine/physics/World.hpp>
 
 #include <Box2D/Dynamics/b2Fixture.h>
 
 #include <functional>
 #include <vector>
+#include <set>
 
 namespace xy
 {
@@ -59,7 +61,7 @@ namespace xy
             using Ptr = std::unique_ptr<CollisionShape>;
 
             CollisionShape();
-            virtual ~CollisionShape() = default;
+            virtual ~CollisionShape();
             CollisionShape(const CollisionShape& other) = default;
             CollisionShape& operator = (const CollisionShape&) = default;
 
@@ -103,7 +105,15 @@ namespace xy
             std::vector<ConstantForceAffector> m_constForceAffectors;
             std::vector<AreaForceAffector> m_areaAffectors;
 
+            using AffectorPair = std::pair<Affector*, RigidBody*>;
+            std::vector<AffectorPair> m_activeAffectors;
+
+            World::CallbackIndex m_beginCallbackIndex;
+            World::CallbackIndex m_endCallbackIndex;
+            bool m_removeCallbacks;
+
             void beginContactCallback(Contact&);
+            void endContactCallback(Contact&);
             void preSolveContactCallback(Contact&);
             void registerCallbacks();
 

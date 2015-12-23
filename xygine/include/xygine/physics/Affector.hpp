@@ -54,7 +54,7 @@ namespace xy
             virtual ~Affector() = default;
 
             virtual Type type() const = 0;
-            virtual void operator ()(RigidBody*) = 0;
+            virtual void apply(RigidBody*) = 0;
 
         private:
 

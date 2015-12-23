@@ -50,7 +50,7 @@ namespace xy
             AreaForceAffector& operator = (const AreaForceAffector&) = default;
 
             Affector::Type type() const override { return Affector::Type::AreaForce; }
-            void operator()(RigidBody*) override;
+            void apply(RigidBody*) override;
 
             //sets the force as a vector to be applied
             //to the parent rigidbody each update

@@ -90,24 +90,44 @@ void World::addCollisionShapeDestroyedCallback(const CollisionShapeDestroyedCall
     m_destructionListener.addCallback(csdc);
 }
 
-void World::addContactPreSolveCallback(const ContactCallback& psc)
+World::CallbackIndex World::addContactPreSolveCallback(const ContactCallback& psc)
 {
-    m_contactListener.addContactPreSolveCallback(psc);
+    return m_contactListener.addContactPreSolveCallback(psc);
 }
 
-void World::addContactPostSolveCallback(const ContactCallback& psc)
+World::CallbackIndex World::addContactPostSolveCallback(const ContactCallback& psc)
 {
-    m_contactListener.addContactPostSolveCallback(psc);
+    return m_contactListener.addContactPostSolveCallback(psc);
 }
 
-void World::addContactBeginCallback(const ContactCallback& cb)
+World::CallbackIndex World::addContactBeginCallback(const ContactCallback& cb)
 {
-    m_contactListener.addContactBeginCallback(cb);
+    return m_contactListener.addContactBeginCallback(cb);
 }
 
-void World::addContactEndCallback(const ContactCallback& cb)
+World::CallbackIndex World::addContactEndCallback(const ContactCallback& cb)
 {
-    m_contactListener.addContactEndCallback(cb);
+    return m_contactListener.addContactEndCallback(cb);
+}
+
+void World::removeContactPreSolveCallback(World::CallbackIndex idx)
+{
+    m_contactListener.removeContactPreSolveCallback(idx);
+}
+
+void World::removeContactPostSolveCallback(World::CallbackIndex idx)
+{
+    m_contactListener.removeContactPostSolveCallback(idx);
+}
+
+void World::removeContactBeginCallback(World::CallbackIndex idx)
+{
+    m_contactListener.removeContactBeginCallback(idx);
+}
+
+void World::removeContactEndCallback(World::CallbackIndex idx)
+{
+    m_contactListener.removeContactEndCallback(idx);
 }
 
 void World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
@@ -119,6 +139,8 @@ void World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     }
     m_world->DrawDebugData();
 }
+
+
 
 //contact callbacks
 namespace
@@ -189,24 +211,54 @@ void World::ContactListener::PostSolve(b2Contact* contact, const b2ContactImpuls
     }
 }
 
-void World::ContactListener::addContactPreSolveCallback(const ContactCallback& psc)
+World::CallbackIndex World::ContactListener::addContactPreSolveCallback(const ContactCallback& psc)
 {
     m_preSolveCallbacks.push_back(psc);
+    return std::next(m_preSolveCallbacks.end(), - 1);
 }
 
-void World::ContactListener::addContactPostSolveCallback(const ContactCallback& psc)
+World::CallbackIndex World::ContactListener::addContactPostSolveCallback(const ContactCallback& psc)
 {
     m_postSolveCallbacks.push_back(psc);
+    return std::next(m_postSolveCallbacks.end(), -1);
 }
 
-void World::ContactListener::addContactBeginCallback(const ContactCallback& cb)
+World::CallbackIndex World::ContactListener::addContactBeginCallback(const ContactCallback& cb)
 {
     m_beginCallbacks.push_back(cb);
+    return std::next(m_beginCallbacks.end(), -1);
 }
 
-void World::ContactListener::addContactEndCallback(const ContactCallback& cb)
+World::CallbackIndex World::ContactListener::addContactEndCallback(const ContactCallback& cb)
 {
     m_endCallbacks.push_back(cb);
+    return std::next(m_endCallbacks.end(), -1);
+}
+
+void World::ContactListener::removeContactPreSolveCallback(World::CallbackIndex idx)
+{
+    XY_ASSERT(idx != m_preSolveCallbacks.end(), "invalid iterator");
+    m_preSolveCallbacks.erase(idx);
+}
+
+void World::ContactListener::removeContactPostSolveCallback(World::CallbackIndex idx)
+{
+    XY_ASSERT(idx != m_postSolveCallbacks.end(), "invalid iterator");
+    m_postSolveCallbacks.erase(idx);
+}
+
+void World::ContactListener::removeContactBeginCallback(World::CallbackIndex idx)
+{
+    XY_ASSERT(idx != m_beginCallbacks.end(), "invalid iterator");
+    m_beginCallbacks.erase(idx);
+    LOG("PHYSICS removed begin contact callback", Logger::Type::Info);
+}
+
+void World::ContactListener::removeContactEndCallback(World::CallbackIndex idx)
+{
+    XY_ASSERT(idx != m_endCallbacks.end(), "invalid iterator");
+    m_endCallbacks.erase(idx);
+    LOG("PHYSICS removed end contact callback", Logger::Type::Info);
 }
 
 void World::ContactListener::resetBuffers()

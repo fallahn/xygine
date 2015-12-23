@@ -50,7 +50,12 @@ void RigidBody::entityUpdate(Entity& entity, float dt)
     {
         for (auto& f : s->m_constForceAffectors)
         {
-            f(this);
+            f.apply(this);
+        }
+
+        for (auto& f : s->m_activeAffectors)
+        {
+            f.first->apply(f.second);
         }
     }
 }
@@ -194,12 +199,12 @@ sf::Vector2f RigidBody::getLocalCentre() const
 
 sf::Vector2f RigidBody::getLinearVelocity() const
 {
-    return World::boxToSfVec(m_bodyDef.linearVelocity);
+    return (m_body) ? World::boxToSfVec(m_body->GetLinearVelocity()) : World::boxToSfVec(m_bodyDef.linearVelocity);
 }
 
 float RigidBody::getAngularVelocity() const
 {
-    return m_bodyDef.angularVelocity;
+    return (m_body) ? m_body->GetAngularVelocity() : m_bodyDef.angularVelocity;
 }
 
 float RigidBody::getLinearDamping() const

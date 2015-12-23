@@ -27,8 +27,9 @@ source distribution.
 
 #include <xygine/physics/CollisionShape.hpp>
 #include <xygine/physics/Contact.hpp>
-#include <xygine/physics/World.hpp>
 #include <xygine/Assert.hpp>
+
+#include <algorithm>
 
 using namespace xy;
 using namespace xy::Physics;
@@ -36,9 +37,19 @@ using namespace xy::Physics;
 using namespace std::placeholders;
 
 CollisionShape::CollisionShape()
-    : m_fixture(nullptr)
+    : m_fixture         (nullptr),
+    m_removeCallbacks   (false)
 {
 
+}
+
+CollisionShape::~CollisionShape()
+{
+    if (m_removeCallbacks)
+    {
+        World::m_instance->removeContactBeginCallback(m_beginCallbackIndex);
+        World::m_instance->removeContactEndCallback(m_endCallbackIndex);
+    }
 }
 
 //public
@@ -126,26 +137,68 @@ void CollisionShape::beginContactCallback(Contact& contact)
     {
         if (shapeA == this)
         {
-            //do stuff to this
+            //store affectors for our body
 
 
-            //do stuff to other            
+            //store affectors for other body
             for (auto& a : m_areaAffectors)
             {
                 //TODO check masks for affectors
-                a(static_cast<RigidBody*>(shapeB->m_fixture->GetBody()->GetUserData()));
+                m_activeAffectors.emplace_back(std::make_pair(&a, static_cast<RigidBody*>(shapeB->m_fixture->GetBody()->GetUserData())));
             }
         }
         else if (shapeB == this)
         {
-            //do stuff to this
+            //remove affectors for our body
+
+
+            //remove affectors for other body       
+            for (auto& a : m_areaAffectors)
+            {
+                //TODO check masks for affectors
+                m_activeAffectors.emplace_back(std::make_pair(&a, static_cast<RigidBody*>(shapeA->m_fixture->GetBody()->GetUserData())));
+            }
+        }
+    }
+}
+
+void CollisionShape::endContactCallback(Contact& contact)
+{
+    CollisionShape* shapeA = contact.getCollisionShapeA();
+    CollisionShape* shapeB = contact.getCollisionShapeB();
+    if (shapeA != shapeB)
+    {
+        if (shapeA == this)
+        {
+            //do stuff to ours
 
 
             //do stuff to other            
             for (auto& a : m_areaAffectors)
             {
-                //TODO check masks for affectors
-                a(static_cast<RigidBody*>(shapeA->m_fixture->GetBody()->GetUserData()));
+                //hm, is this going to be an epic bottleneck?
+                auto pair(std::make_pair(&a, static_cast<RigidBody*>(shapeB->m_fixture->GetBody()->GetUserData())));
+                m_activeAffectors.erase(std::remove_if(m_activeAffectors.begin(), m_activeAffectors.end(),
+                    [&pair](const AffectorPair& p)
+                {
+                    return (pair.first == p.first && pair.second == p.second);
+                }), m_activeAffectors.end());
+            }
+        }
+        else if (shapeB == this)
+        {
+            //do stuff to ours
+
+
+            //do stuff to other            
+            for (auto& a : m_areaAffectors)
+            {
+                auto pair(std::make_pair(&a, static_cast<RigidBody*>(shapeA->m_fixture->GetBody()->GetUserData())));
+                m_activeAffectors.erase(std::remove_if(m_activeAffectors.begin(), m_activeAffectors.end(),
+                    [&pair](const AffectorPair& p)
+                {
+                    return (pair.first == p.first && pair.second == p.second);
+                }), m_activeAffectors.end());
             }
         }
     }
@@ -158,9 +211,14 @@ void CollisionShape::preSolveContactCallback(Contact& contact)
 
 void CollisionShape::registerCallbacks()
 {
-    if (!m_areaAffectors.empty())
+    if (!m_areaAffectors.empty() /*|| other things !empty()*/)
     {
         World::ContactCallback cb = std::bind(&CollisionShape::beginContactCallback, this, _1);
-        World::m_instance->addContactBeginCallback(cb);
+        m_beginCallbackIndex = World::m_instance->addContactBeginCallback(cb);
+
+        cb = std::bind(&CollisionShape::endContactCallback, this, _1);
+        m_endCallbackIndex = World::m_instance->addContactEndCallback(cb);
+
+        m_removeCallbacks = true;
     }
 }

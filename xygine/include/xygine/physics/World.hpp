@@ -47,6 +47,7 @@ source distribution.
 
 #include <memory>
 #include <functional>
+#include <list>
 
 namespace xy
 {
@@ -119,20 +120,32 @@ namespace xy
             using JointDestroyedCallback = std::function<void(const Joint&)>;
             using CollisionShapeDestroyedCallback = std::function<void(const CollisionShape&)>;
             using ContactCallback = std::function<void(Contact&)>;
+            using CallbackIndex = std::list<ContactCallback>::iterator;
 
             //adds a callback to be performed each time a joint is destroyed
             void addJointDestroyedCallback(const JointDestroyedCallback&);
             //adds a callback to be performed each time a collision shape is destroyed
             void addCollisionShapeDestroyedCallback(const CollisionShapeDestroyedCallback&);
-            //adds a callback to the pre-solve listener
-            void addContactPreSolveCallback(const ContactCallback&);
-            //adds a callback to the post-solve listener
-            void addContactPostSolveCallback(const ContactCallback&);
-            //adds a callback to the contact begin listener
-            void addContactBeginCallback(const ContactCallback&);
-            //adds a callback to the contact end listener
-            void addContactEndCallback(const ContactCallback&);
-
+            //adds a callback to the pre-solve listener. returns the callback
+            //index so callback my be unregistered again
+            CallbackIndex addContactPreSolveCallback(const ContactCallback&);
+            //adds a callback to the post-solve listener. returns the callback
+            //index so callback my be unregistered again
+            CallbackIndex addContactPostSolveCallback(const ContactCallback&);
+            //adds a callback to the contact begin listener. returns the callback
+            //index so callback my be unregistered again
+            CallbackIndex addContactBeginCallback(const ContactCallback&);
+            //adds a callback to the contact end listener. returns the callback
+            //index so callback my be unregistered again
+            CallbackIndex addContactEndCallback(const ContactCallback&);
+            //unregisters the presolve callback at the given index
+            void removeContactPreSolveCallback(CallbackIndex);
+            //unregisters the post solve callback at the given index
+            void removeContactPostSolveCallback(CallbackIndex);
+            //unregisters the contact begin callback at the given index
+            void removeContactBeginCallback(CallbackIndex);
+            //unregisters the contact end callback at the given index
+            void removeContactEndCallback(CallbackIndex);
         private:
 
             class ContactListener final : public b2ContactListener
@@ -148,20 +161,25 @@ namespace xy
                 void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override;
                 void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override;
 
-                void addContactPreSolveCallback(const ContactCallback&);
-                void addContactPostSolveCallback(const ContactCallback&);
-                void addContactBeginCallback(const ContactCallback&);
-                void addContactEndCallback(const ContactCallback&);
+                CallbackIndex addContactPreSolveCallback(const ContactCallback&);
+                CallbackIndex addContactPostSolveCallback(const ContactCallback&);
+                CallbackIndex addContactBeginCallback(const ContactCallback&);
+                CallbackIndex addContactEndCallback(const ContactCallback&);
+
+                void removeContactPreSolveCallback(CallbackIndex);
+                void removeContactPostSolveCallback(CallbackIndex);
+                void removeContactBeginCallback(CallbackIndex);
+                void removeContactEndCallback(CallbackIndex);
 
                 void resetBuffers();
             private:
                 MessageBus& m_messageBus;
                 Contact m_currentContact;
 
-                std::vector<ContactCallback> m_preSolveCallbacks;
-                std::vector<ContactCallback> m_postSolveCallbacks;
-                std::vector<ContactCallback> m_beginCallbacks;
-                std::vector<ContactCallback> m_endCallbacks;
+                std::list<ContactCallback> m_preSolveCallbacks;
+                std::list<ContactCallback> m_postSolveCallbacks;
+                std::list<ContactCallback> m_beginCallbacks;
+                std::list<ContactCallback> m_endCallbacks;
 
                 std::vector<std::uint8_t> m_contactBuffer;
                 std::uint8_t* m_contactBufferPtr;

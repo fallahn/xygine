@@ -42,7 +42,7 @@ ConstantForceAffector::ConstantForceAffector(const sf::Vector2f& force, float to
 }
 
 //public
-void ConstantForceAffector::operator()(RigidBody* body)
+void ConstantForceAffector::apply(RigidBody* body)
 {
     XY_ASSERT(body, "can't apply a force to null bodies");
     body->applyForceToCentre(m_force, m_wake);

@@ -200,7 +200,7 @@ void PhysicsDemoState::createBodies()
 
     xy::Physics::CollisionRectangleShape groundShape({ 1920.f, 80.f });
     groundShape.setIsSensor(true);
-    groundShape.addAffector(xy::Physics::AreaForceAffector({ 0.f, -2000.f }, 200.f));
+    groundShape.addAffector(xy::Physics::AreaForceAffector({ 0.f, -8000.f }));
     groundBody->addCollisionShape(groundShape);
 
     std::vector<sf::Vector2f> points = 

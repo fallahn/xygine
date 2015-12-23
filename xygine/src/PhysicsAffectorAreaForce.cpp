@@ -44,16 +44,15 @@ AreaForceAffector::AreaForceAffector(const sf::Vector2f& force, float torque, bo
 
 }
 
-void AreaForceAffector::operator()(RigidBody* body)
+void AreaForceAffector::apply(RigidBody* body)
 {        
-    sf::Vector2f linearDrag = m_force * (0.5f * (m_linearDrag * Util::Vector::lengthSquared(body->getLinearVelocity())));
-    body->applyForceToCentre(m_force - linearDrag, m_wake);
+    //float linearDrag = 0.5f * (m_linearDrag * Util::Vector::lengthSquared(body->getLinearVelocity()));
+    body->applyForceToCentre(m_force, m_wake);
 
-    auto angVel = body->getAngularVelocity();
-    float angularDrag = m_torque * (0.5f * (m_angularDrag * (angVel * angVel)));
-    body->applyTorque(m_torque - angularDrag, m_wake);
+    //auto angVel = body->getAngularVelocity();
+    //float angularDrag = 0.5f * (m_angularDrag * (angVel * angVel));
+    body->applyTorque(m_torque, m_wake);
 
-    LOG("buns", Logger::Type::Info);
 }
 
 void AreaForceAffector::setLinearDrag(float drag)
