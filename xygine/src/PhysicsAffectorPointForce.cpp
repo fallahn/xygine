@@ -27,6 +27,7 @@ source distribution.
 
 #include <xygine/physics/AffectorPointForce.hpp>
 #include <xygine/physics/RigidBody.hpp>
+#include <xygine/physics/CollisionShape.hpp>
 #include <xygine/Assert.hpp>
 #include <xygine/Util.hpp>
 

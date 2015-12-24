@@ -40,6 +40,7 @@ namespace xy
 {
     namespace Physics
     {
+        class CollisionShape;
         class PointForceAffector final : public Affector
         {
             friend class CollisionShape;
