@@ -51,6 +51,7 @@ source distribution.
 #include <xygine/physics/JointMotor.hpp>
 #include <xygine/physics/AffectorConstantForce.hpp>
 #include <xygine/physics/AffectorAreaForce.hpp>
+#include <xygine/physics/AffectorPointForce.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -253,7 +254,7 @@ void PhysicsDemoState::createBodies()
     polyShape.setPoints(points);
     polyShape.setRestitution(1.f);
     polyShape.clearAffectors();
-    polyShape.addAffector(xy::Physics::AreaForceAffector({ 100.f, -4000.f }, -50.f));
+    polyShape.addAffector(xy::Physics::PointForceAffector(50.f));
     groundBody->addCollisionShape(polyShape);
 
     groundEntity->addComponent<xy::Physics::RigidBody>(groundBody);

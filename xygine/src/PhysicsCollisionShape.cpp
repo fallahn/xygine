@@ -145,11 +145,17 @@ void CollisionShape::addAffector(const AreaForceAffector& fa)
     m_areaAffectors.push_back(fa);
 }
 
+void CollisionShape::addAffector(const PointForceAffector& a)
+{
+    m_pointAffectors.push_back(a);
+}
+
 void CollisionShape::clearAffectors()
 {
     m_activeAffectors.clear();
     m_areaAffectors.clear();
     m_constForceAffectors.clear();
+    m_pointAffectors.clear();
 
     if (m_removeCallbacks)
     {
@@ -169,33 +175,11 @@ void CollisionShape::beginContactCallback(Contact& contact)
     {
         if (shapeA == this)
         {
-            //store affectors for our body
-
-
-            //store affectors for other body
-            for (auto& a : m_areaAffectors)
-            {
-                if ((a.useCollisionMask() && a.getCollisionMask().passes(shapeB->getFilter()))
-                    || !a.useCollisionMask())
-                {
-                    m_activeAffectors.emplace_back(std::make_pair(&a, static_cast<RigidBody*>(shapeB->m_fixture->GetBody()->GetUserData())));
-                }
-            }
+            activateAffectors(shapeA, shapeB);
         }
         else if (shapeB == this)
         {
-            //remove affectors for our body
-
-
-            //remove affectors for other body       
-            for (auto& a : m_areaAffectors)
-            {
-                if ((a.useCollisionMask() && a.getCollisionMask().passes(shapeA->getFilter()))
-                    || !a.useCollisionMask())
-                {
-                    m_activeAffectors.emplace_back(std::make_pair(&a, static_cast<RigidBody*>(shapeA->m_fixture->GetBody()->GetUserData())));
-                }
-            }
+            activateAffectors(shapeB, shapeA);
         }
     }
 }
@@ -208,36 +192,11 @@ void CollisionShape::endContactCallback(Contact& contact)
     {
         if (shapeA == this)
         {
-            //do stuff to ours
-
-
-            //do stuff to other            
-            for (auto& a : m_areaAffectors)
-            {
-                //hm, is this going to be an epic bottleneck?
-                auto pair(std::make_pair(&a, static_cast<RigidBody*>(shapeB->m_fixture->GetBody()->GetUserData())));
-                m_activeAffectors.erase(std::remove_if(m_activeAffectors.begin(), m_activeAffectors.end(),
-                    [&pair](const AffectorPair& p)
-                {
-                    return (pair.first == p.first && pair.second == p.second);
-                }), m_activeAffectors.end());
-            }
+            deactivateAffectors(shapeA, shapeB);
         }
         else if (shapeB == this)
         {
-            //do stuff to ours
-
-
-            //do stuff to other            
-            for (auto& a : m_areaAffectors)
-            {
-                auto pair(std::make_pair(&a, static_cast<RigidBody*>(shapeA->m_fixture->GetBody()->GetUserData())));
-                m_activeAffectors.erase(std::remove_if(m_activeAffectors.begin(), m_activeAffectors.end(),
-                    [&pair](const AffectorPair& p)
-                {
-                    return (pair.first == p.first && pair.second == p.second);
-                }), m_activeAffectors.end());
-            }
+            deactivateAffectors(shapeB, shapeA);
         }
     }
 }
@@ -249,7 +208,7 @@ void CollisionShape::preSolveContactCallback(Contact& contact)
 
 void CollisionShape::registerCallbacks()
 {
-    if (!m_areaAffectors.empty() /*|| other things !empty()*/)
+    if (!m_areaAffectors.empty() || !m_pointAffectors.empty())
     {
         World::ContactCallback cb = std::bind(&CollisionShape::beginContactCallback, this, _1);
         m_beginCallbackIndex = World::m_instance->addContactBeginCallback(cb);
@@ -258,5 +217,76 @@ void CollisionShape::registerCallbacks()
         m_endCallbackIndex = World::m_instance->addContactEndCallback(cb);
 
         m_removeCallbacks = true;
+    }
+}
+
+void CollisionShape::applyAffectors()
+{
+    for (auto& t : m_activePointAffectors)
+    {
+        std::get<0>(t)->calcForce(std::get<1>(t), std::get<2>(t));
+    }
+
+    for(auto& a : m_activeAffectors)
+    {
+        a.first->apply(a.second);
+    }
+}
+
+void CollisionShape::activateAffectors(CollisionShape* thisShape, CollisionShape* otherShape)
+{
+    XY_ASSERT(thisShape && otherShape, "one or more shapes are nullptr");
+
+    //store affectors for our body
+
+
+    //store affectors for other body
+    for (auto& a : m_areaAffectors)
+    {
+        if ((a.useCollisionMask() && a.getCollisionMask().passes(otherShape->getFilter()))
+            || !a.useCollisionMask())
+        {
+            m_activeAffectors.emplace_back(std::make_pair(&a, static_cast<RigidBody*>(otherShape->m_fixture->GetBody()->GetUserData())));
+        }
+    }
+    for (auto& a : m_pointAffectors)
+    {
+        if ((a.useCollisionMask() && a.getCollisionMask().passes(otherShape->getFilter()))
+            || !a.useCollisionMask())
+        {
+            m_activeAffectors.emplace_back(std::make_pair(&a, static_cast<RigidBody*>(otherShape->m_fixture->GetBody()->GetUserData())));
+            m_activePointAffectors.emplace_back(std::make_tuple(&a, thisShape, otherShape));
+        }
+    }
+}
+
+void CollisionShape::deactivateAffectors(CollisionShape* thisShape, CollisionShape* otherShape)
+{
+    XY_ASSERT(thisShape && otherShape, "one or more shapes are nullptr");
+
+    //do stuff to ours
+
+
+    //do stuff to other            
+    for (auto& a : m_areaAffectors)
+    {
+        //hm, is this going to be an epic bottleneck?
+        //TODO we don't have to make a pair first we can feed in params separately
+        auto pair(std::make_pair(&a, static_cast<RigidBody*>(otherShape->m_fixture->GetBody()->GetUserData())));
+        m_activeAffectors.erase(std::remove_if(m_activeAffectors.begin(), m_activeAffectors.end(),
+            [&pair](const AffectorPair& p)
+        {
+            return (pair.first == p.first && pair.second == p.second);
+        }), m_activeAffectors.end());
+    }
+
+    for (auto& a : m_pointAffectors)
+    {
+        auto tuple(std::make_tuple(&a, thisShape, otherShape));
+        m_activePointAffectors.erase(std::remove_if(m_activePointAffectors.begin(), m_activePointAffectors.end(),
+            [&tuple](const PointTuple& pt)
+        {
+            return (tuple == pt);
+        }), m_activePointAffectors.end());
     }
 }

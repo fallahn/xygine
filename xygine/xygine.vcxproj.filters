@@ -207,6 +207,9 @@
     <ClCompile Include="src\PhysicsAffectorAreaForce.cpp">
       <Filter>Source Files\physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\PhysicsAffectorPointForce.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\Affectors.hpp">
@@ -423,6 +426,9 @@
       <Filter>Header Files\physics</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\physics\CollisionFilter.hpp">
+      <Filter>Header Files\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\physics\AffectorPointForce.hpp">
       <Filter>Header Files\physics</Filter>
     </ClInclude>
   </ItemGroup>

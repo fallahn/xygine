@@ -65,7 +65,7 @@ namespace xy
             //set the amount of angular drag to apply to the body
             void setAngularDrag(float);
             //set whether or not to use a collision mask
-            void useCollisionmask(bool m) { m_useMask = m; }
+            void useCollisionMask(bool m) { m_useMask = m; }
             //set the collision ask to use to filter out fixtures
             void setCollisionMask(CollisionFilter& cm) { m_collisionMask = cm; }
 

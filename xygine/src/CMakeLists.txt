@@ -16,6 +16,7 @@ set(xygine_SRC
   ${xygine_DIR}/ParticleSystem.cpp
   ${xygine_DIR}/PhysicsAffectorAreaForce.cpp
   ${xygine_DIR}/PhysicsAffectorConstantForce.cpp
+  ${xygine_DIR}/PhysicsAffectorPointForce.cpp
   ${xygine_DIR}/PhysicsCollisionShape.cpp
   ${xygine_DIR}/PhysicsCollisionCircleShape.cpp
   ${xygine_DIR}/PhysicsCollisionEdgeShape.cpp

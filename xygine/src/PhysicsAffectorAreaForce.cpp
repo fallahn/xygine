@@ -45,7 +45,8 @@ AreaForceAffector::AreaForceAffector(const sf::Vector2f& force, float torque, bo
 }
 
 void AreaForceAffector::apply(RigidBody* body)
-{        
+{   
+    XY_ASSERT(body, "body is nullptr");
     body->applyForceToCentre(m_force - (body->getLinearVelocity() * m_linearDrag), m_wake);
     body->applyTorque(m_torque - (body->getAngularVelocity() * m_angularDrag), m_wake);
 }

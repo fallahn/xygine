@@ -33,6 +33,7 @@ source distribution.
 
 #include <xygine/physics/AffectorConstantForce.hpp>
 #include <xygine/physics/AffectorAreaForce.hpp>
+#include <xygine/physics/AffectorPointForce.hpp>
 #include <xygine/physics/World.hpp>
 
 #include <Box2D/Dynamics/b2Fixture.h>
@@ -49,6 +50,7 @@ namespace xy
         class CollisionShape
         {
             friend class RigidBody;
+            friend class PointForceAffector;
         public:
             enum class Type
             {
@@ -90,7 +92,8 @@ namespace xy
             //this or a colliding CollisionShape is attached
             void addAffector(const ConstantForceAffector&);
             void addAffector(const AreaForceAffector&);
-            //removes all assigned to this CollisionShape
+            void addAffector(const PointForceAffector&);
+            //removes all affectors assigned to this CollisionShape
             void clearAffectors();
 
         protected:
@@ -110,9 +113,13 @@ namespace xy
 
             std::vector<ConstantForceAffector> m_constForceAffectors;
             std::vector<AreaForceAffector> m_areaAffectors;
+            std::vector<PointForceAffector> m_pointAffectors;
 
             using AffectorPair = std::pair<Affector*, RigidBody*>;
             std::vector<AffectorPair> m_activeAffectors;
+
+            using PointTuple = std::tuple<PointForceAffector*, CollisionShape*, CollisionShape*>;
+            std::vector<PointTuple> m_activePointAffectors;
 
             World::CallbackIndex m_beginCallbackIndex;
             World::CallbackIndex m_endCallbackIndex;
@@ -122,6 +129,10 @@ namespace xy
             void endContactCallback(Contact&);
             void preSolveContactCallback(Contact&);
             void registerCallbacks();
+
+            void applyAffectors();
+            void activateAffectors(CollisionShape*, CollisionShape*);
+            void deactivateAffectors(CollisionShape*, CollisionShape*);
 
             std::function<void(const CollisionShape*)> destructionCallback;
         };

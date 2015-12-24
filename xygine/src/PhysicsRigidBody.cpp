@@ -53,10 +53,7 @@ void RigidBody::entityUpdate(Entity& entity, float dt)
             f.apply(this);
         }
 
-        for (auto& f : s->m_activeAffectors)
-        {
-            f.first->apply(f.second);
-        }
+        s->applyAffectors();
     }
 }
 

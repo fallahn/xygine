@@ -84,6 +84,7 @@
     <ClCompile Include="src\ComponentCamera.cpp" />
     <ClCompile Include="src\PhysicsAffectorAreaForce.cpp" />
     <ClCompile Include="src\PhysicsAffectorConstantForce.cpp" />
+    <ClCompile Include="src\PhysicsAffectorPointForce.cpp" />
     <ClCompile Include="src\PhysicsCollisionEdgeShape.cpp" />
     <ClCompile Include="src\PhysicsCollisionCircleShape.cpp" />
     <ClCompile Include="src\PhysicsCollisionPolygonShape.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="include\xygine\physics\Affector.hpp" />
     <ClInclude Include="include\xygine\physics\AffectorAreaForce.hpp" />
     <ClInclude Include="include\xygine\physics\AffectorConstantForce.hpp" />
+    <ClInclude Include="include\xygine\physics\AffectorPointForce.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionCircleShape.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionEdgeShape.hpp" />
     <ClInclude Include="include\xygine\physics\CollisionFilter.hpp" />
