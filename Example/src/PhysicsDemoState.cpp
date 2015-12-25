@@ -254,7 +254,8 @@ void PhysicsDemoState::createBodies()
     polyShape.setPoints(points);
     polyShape.setRestitution(1.f);
     polyShape.clearAffectors();
-    polyShape.addAffector(xy::Physics::PointForceAffector(50.f));
+    xy::Physics::PointForceAffector pfa(-450.f);
+    polyShape.addAffector(pfa);
     groundBody->addCollisionShape(polyShape);
 
     groundEntity->addComponent<xy::Physics::RigidBody>(groundBody);

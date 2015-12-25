@@ -80,11 +80,22 @@ void CollisionShape::setDensity(float density)
     XY_ASSERT(density >= 0, "Density value must be a positive value");
 
     m_fixtureDef.density = density;
+    m_fixtureDef.shape->ComputeMass(&m_massData, m_fixtureDef.density);
     if (m_fixture)
     {
         m_fixture->SetDensity(density);
         m_fixture->GetBody()->ResetMassData();
     }
+}
+
+sf::Vector2f CollisionShape::getCentreOfMass() const
+{
+    return World::boxToSfVec(m_massData.center);
+}
+
+float CollisionShape::getMass() const
+{
+    return m_massData.mass;
 }
 
 void CollisionShape::setIsSensor(bool sensor)
@@ -235,6 +246,8 @@ void CollisionShape::applyAffectors()
 
 void CollisionShape::activateAffectors(CollisionShape* thisShape, CollisionShape* otherShape)
 {
+    //TODO pool this memory because its prime for fragmentation
+
     XY_ASSERT(thisShape && otherShape, "one or more shapes are nullptr");
 
     //store affectors for our body
@@ -262,6 +275,8 @@ void CollisionShape::activateAffectors(CollisionShape* thisShape, CollisionShape
 
 void CollisionShape::deactivateAffectors(CollisionShape* thisShape, CollisionShape* otherShape)
 {
+    //TODO pool this memory because its prime for fragmentation
+
     XY_ASSERT(thisShape && otherShape, "one or more shapes are nullptr");
 
     //do stuff to ours
@@ -288,5 +303,12 @@ void CollisionShape::deactivateAffectors(CollisionShape* thisShape, CollisionSha
         {
             return (tuple == pt);
         }), m_activePointAffectors.end());
+        //remember these are active in both
+        auto pair(std::make_pair(&a, static_cast<RigidBody*>(otherShape->m_fixture->GetBody()->GetUserData())));
+        m_activeAffectors.erase(std::remove_if(m_activeAffectors.begin(), m_activeAffectors.end(),
+            [&pair](const AffectorPair& p)
+        {
+            return (pair.first == p.first && pair.second == p.second);
+        }), m_activeAffectors.end());
     }
 }

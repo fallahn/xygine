@@ -75,6 +75,10 @@ namespace xy
             void setRestitution(float);
             //sets the denisty of this shape
             void setDensity(float);
+            //gets this shape's centre of mass
+            sf::Vector2f getCentreOfMass() const;
+            //gets the shape's mass in kilos based on its density
+            float getMass() const;
             //sets whether or not this shape is used as a sensor
             //in collision detection
             void setIsSensor(bool);
@@ -105,11 +109,13 @@ namespace xy
             void setShape(b2Shape& shape)
             {
                 m_fixtureDef.shape = &shape;
+                m_fixtureDef.shape->ComputeMass(&m_massData, m_fixtureDef.density);
             }
 
         private:
             b2FixtureDef m_fixtureDef;
             b2Fixture* m_fixture;
+            b2MassData m_massData;
 
             std::vector<ConstantForceAffector> m_constForceAffectors;
             std::vector<AreaForceAffector> m_areaAffectors;
@@ -135,6 +141,8 @@ namespace xy
             void deactivateAffectors(CollisionShape*, CollisionShape*);
 
             std::function<void(const CollisionShape*)> destructionCallback;
+
+
         };
     }
 }

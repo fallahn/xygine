@@ -47,6 +47,7 @@ void PointForceAffector::apply(RigidBody* body)
 {
     XY_ASSERT(body, "body is nullptr");
     body->applyForceToCentre(m_force - (body->getLinearVelocity() * m_linearDrag), m_wake);
+    body->applyTorque(-body->getAngularVelocity() * m_angularDrag);
 }
 
 void PointForceAffector::setLinearDrag(float drag)
@@ -67,24 +68,16 @@ void PointForceAffector::calcForce(CollisionShape* source, CollisionShape* dest)
     XY_ASSERT(source && dest, "shape must not be nullptr");
 
     //dest - source
-    sf::Vector2f destPos;
+    sf::Vector2f destPos = static_cast<RigidBody*>(dest->m_fixture->GetBody()->GetUserData())->getWorldCentre();
     if (m_targetPoint == Centroid::CollisionShape)
     {
-        destPos = World::boxToSfVec(dest->m_fixture->GetAABB(0).GetCenter() + dest->m_fixture->GetBody()->GetWorldCenter());
-    }
-    else
-    {
-        destPos = static_cast<RigidBody*>(dest->m_fixture->GetBody()->GetUserData())->getWorldCentre();
+        destPos += dest->getCentreOfMass();
     }
 
-    sf::Vector2f sourcePos;
+    sf::Vector2f sourcePos = static_cast<RigidBody*>(source->m_fixture->GetBody()->GetUserData())->getWorldCentre();
     if (m_sourcePoint == Centroid::CollisionShape)
     {
-        sourcePos = World::boxToSfVec(source->m_fixture->GetAABB(0).GetCenter() + source->m_fixture->GetBody()->GetWorldCenter());
-    }
-    else
-    {
-        sourcePos = static_cast<RigidBody*>(source->m_fixture->GetBody()->GetUserData())->getWorldCentre();
+        sourcePos += source->getCentreOfMass();
     }
 
     m_force = Util::Vector::normalise(destPos - sourcePos) * m_magnitude;

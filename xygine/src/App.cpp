@@ -86,7 +86,11 @@ App::App()
     }), m_videoSettings.AvailableVideoModes.end());
     std::reverse(m_videoSettings.AvailableVideoModes.begin(), m_videoSettings.AvailableVideoModes.end());
 
-    update = std::bind(&App::updateApp, this, _1);
+    update = [this](float dt)
+    {
+        Physics::World::update(dt);
+        updateApp(dt);
+    };
 }
 
 //public
@@ -112,8 +116,6 @@ void App::run()
         {
             timeSinceLastUpdate -= timePerFrame;
 
-            Physics::World::update(timePerFrame);
-
             handleEvents();
             handleMessages();
             update(timePerFrame);
@@ -134,15 +136,22 @@ void App::run()
 
 void App::pause()
 {
+    if(!connected())
     update = std::bind(&App::pauseApp, this, _1);
-    //TODO make this just block input, if game is networked
 }
 
 void App::resume()
 {
-    update = std::bind(&App::updateApp, this, _1);
-    frameClock.restart();
-    timeSinceLastUpdate = 0.f;
+    if (!connected())
+    {
+        update = [this](float dt)
+        {
+            Physics::World::update(dt);
+            updateApp(dt);
+        };
+        frameClock.restart();
+        timeSinceLastUpdate = 0.f;
+    }
 }
 
 const App::AudioSettings& App::getAudioSettings() const
