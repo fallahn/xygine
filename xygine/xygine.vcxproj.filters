@@ -216,6 +216,9 @@
     <ClCompile Include="src\ComponentParticleSystem.cpp">
       <Filter>Source Files\particles</Filter>
     </ClCompile>
+    <ClCompile Include="src\ComponentAudioListener.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\Affectors.hpp">
@@ -435,6 +438,9 @@
       <Filter>Header Files\components</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\components\SfDrawableComponent.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\AudioListener.hpp">
       <Filter>Header Files\components</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,7 +5,8 @@ set(xygine_SRC
   ${xygine_DIR}/CommandQueue.cpp
   ${xygine_DIR}/Component.cpp
   ${xygine_DIR}/ComponentAnimatedDrawable.cpp
-  ${xygine_DIR}/ComponentAnimationController.cpp  
+  ${xygine_DIR}/ComponentAnimationController.cpp 
+  ${xygine_DIR}/ComponentAudioListener.cpp
   ${xygine_DIR}/ComponentCamera.cpp
   ${xygine_DIR}/ComponentParticleController.cpp
   ${xygine_DIR}/ComponentParticleSystem.cpp  
