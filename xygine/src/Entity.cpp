@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/Entity.hpp>
-#include <xygine/Component.hpp>
+#include <xygine/components/Component.hpp>
 #include <xygine/MessageBus.hpp>
 #include <xygine/Command.hpp>
 #include <xygine/Scene.hpp>

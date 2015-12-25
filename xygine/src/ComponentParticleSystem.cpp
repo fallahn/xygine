@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/ParticleSystem.hpp>
+#include <xygine/components/ParticleSystem.hpp>
 #include <xygine/Util.hpp>
 #include <xygine/Entity.hpp>
 #include <xygine/MessageBus.hpp>

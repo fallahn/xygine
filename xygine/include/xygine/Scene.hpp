@@ -34,7 +34,7 @@ source distribution.
 #include <xygine/PostProcess.hpp>
 #include <xygine/Command.hpp>
 #include <xygine/QuadTree.hpp>
-#include <xygine/ComponentCamera.hpp>
+#include <xygine/components/Camera.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>

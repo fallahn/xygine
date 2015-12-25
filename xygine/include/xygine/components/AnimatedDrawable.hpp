@@ -30,7 +30,7 @@ source distribution.
 #ifndef XY_ANISPRITE_HPP_
 #define XY_ANISPRITE_HPP_
 
-#include <xygine/Component.hpp>
+#include <xygine/components/Component.hpp>
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>

@@ -28,14 +28,14 @@
     <Filter Include="Header Files\physics">
       <UniqueIdentifier>{dec7a79f-802c-4b0c-8999-ba187c12e005}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\components">
+      <UniqueIdentifier>{5731e970-7a90-46ff-8d69-c44440769f97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\components">
+      <UniqueIdentifier>{74c0f4b0-69e9-4268-8a79-b1ca6afd3c60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\AnimatedDrawable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AnimationController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -43,9 +43,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommandQueue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Entity.cpp">
@@ -75,9 +72,6 @@
     <ClCompile Include="src\QuadTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\QuadTreeComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\QuadTreeNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -104,12 +98,6 @@
     </ClCompile>
     <ClCompile Include="src\StateStack.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ParticleController.cpp">
-      <Filter>Source Files\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ParticleSystem.cpp">
-      <Filter>Source Files\particles</Filter>
     </ClCompile>
     <ClCompile Include="src\Affectors.cpp">
       <Filter>Source Files\particles</Filter>
@@ -198,9 +186,6 @@
     <ClCompile Include="src\PhysicsContact.cpp">
       <Filter>Source Files\physics</Filter>
     </ClCompile>
-    <ClCompile Include="src\ComponentCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\PhysicsAffectorConstantForce.cpp">
       <Filter>Source Files\physics</Filter>
     </ClCompile>
@@ -210,15 +195,30 @@
     <ClCompile Include="src\PhysicsAffectorPointForce.cpp">
       <Filter>Source Files\physics</Filter>
     </ClCompile>
+    <ClCompile Include="src\Component.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ComponentCamera.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\QuadTreeComponent.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ComponentAnimationController.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ComponentAnimatedDrawable.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ComponentParticleController.cpp">
+      <Filter>Source Files\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ComponentParticleSystem.cpp">
+      <Filter>Source Files\particles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\Affectors.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\AnimatedDrawable.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\AnimationController.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\App.hpp">
@@ -228,9 +228,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\Command.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\Component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\Entity.hpp">
@@ -254,12 +251,6 @@
     <ClInclude Include="include\xygine\Particle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\ParticleController.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\ParticleSystem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\xygine\PostBloom.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -273,9 +264,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\QuadTree.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\QuadTreeComponent.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\QuadTreeNode.hpp">
@@ -368,9 +356,6 @@
     <ClInclude Include="include\xygine\physics\CollisionRectangleShape.hpp">
       <Filter>Header Files\physics</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\SfDrawableComponent.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\xygine\physics\CollisionPolygonShape.hpp">
       <Filter>Header Files\physics</Filter>
     </ClInclude>
@@ -413,9 +398,6 @@
     <ClInclude Include="include\xygine\ShaderProperty.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\ComponentCamera.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\xygine\physics\Affector.hpp">
       <Filter>Header Files\physics</Filter>
     </ClInclude>
@@ -430,6 +412,30 @@
     </ClInclude>
     <ClInclude Include="include\xygine\physics\AffectorPointForce.hpp">
       <Filter>Header Files\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\AnimatedDrawable.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\AnimationController.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\Camera.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\Component.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\ParticleController.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\ParticleSystem.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\QuadTreeComponent.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\SfDrawableComponent.hpp">
+      <Filter>Header Files\components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

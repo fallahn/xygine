@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/Affectors.hpp>
-#include <xygine/ParticleSystem.hpp>
+#include <xygine/components/ParticleSystem.hpp>
 #include <xygine/Util.hpp>
 
 namespace

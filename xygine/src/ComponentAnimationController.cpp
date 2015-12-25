@@ -25,10 +25,10 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/AnimationController.hpp>
+#include <xygine/components/AnimationController.hpp>
 #include <xygine/MessageBus.hpp>
 #include <xygine/Entity.hpp>
-#include <xygine/AnimatedDrawable.hpp>
+#include <xygine/components/AnimatedDrawable.hpp>
 
 #include <xygine/Assert.hpp>
 

@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/QuadTreeComponent.hpp>
+#include <xygine/components/QuadTreeComponent.hpp>
 #include <xygine/QuadTreeNode.hpp>
 #include <xygine/Entity.hpp>
 

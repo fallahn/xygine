@@ -27,7 +27,7 @@ source distribution.
 
 #include <xygine/Scene.hpp>
 #include <xygine/MessageBus.hpp>
-#include <xygine/QuadTreeComponent.hpp>
+#include <xygine/components/QuadTreeComponent.hpp>
 #include <xygine/Reports.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>

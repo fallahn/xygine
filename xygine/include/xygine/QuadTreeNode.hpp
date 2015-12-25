@@ -30,7 +30,7 @@ source distribution.
 #ifndef XY_QUADTREE_NODE_HPP_
 #define XY_QUADTREE_NODE_HPP_
 
-#include <xygine/QuadTreeComponent.hpp>
+#include <xygine/components/QuadTreeComponent.hpp>
 
 #include <SFML/Graphics/Vertex.hpp>
 

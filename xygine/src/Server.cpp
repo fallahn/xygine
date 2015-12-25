@@ -29,7 +29,7 @@ source distribution.
 #include <xygine/Protocol.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/Util.hpp>
-#include <xygine/QuadTreeComponent.hpp>
+#include <xygine/components/QuadTreeComponent.hpp>
 #include <xygine/Reports.hpp>
 
 #include <SFML/Network/Packet.hpp>

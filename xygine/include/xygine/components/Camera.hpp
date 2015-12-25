@@ -30,7 +30,7 @@ source distribution.
 #ifndef XY_CAMERA_HPP_
 #define XY_CAMERA_HPP_
 
-#include <xygine/Component.hpp>
+#include <xygine/components/Component.hpp>
 
 #include <SFML/Graphics/Color.hpp>
 

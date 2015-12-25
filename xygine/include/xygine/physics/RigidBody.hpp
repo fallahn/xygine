@@ -35,7 +35,7 @@ source distribution.
 #ifndef XY_PHYSICS_RIGIDBODY_HPP_
 #define XY_PHYSICS_RIGIDBODY_HPP_
 
-#include <xygine/Component.hpp>
+#include <xygine/components/Component.hpp>
 #include <xygine/physics/CollisionShape.hpp>
 #include <xygine/physics/Joint.hpp>
 #include <xygine/physics/World.hpp>

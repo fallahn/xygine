@@ -1,19 +1,19 @@
 set(xygine_SRC
   ${xygine_DIR}/Affectors.cpp
-  ${xygine_DIR}/AnimatedDrawable.cpp
-  ${xygine_DIR}/AnimationController.cpp
   ${xygine_DIR}/App.cpp
   ${xygine_DIR}/AudioManager.cpp
   ${xygine_DIR}/CommandQueue.cpp
   ${xygine_DIR}/Component.cpp
+  ${xygine_DIR}/ComponentAnimatedDrawable.cpp
+  ${xygine_DIR}/ComponentAnimationController.cpp  
   ${xygine_DIR}/ComponentCamera.cpp
+  ${xygine_DIR}/ComponentParticleController.cpp
+  ${xygine_DIR}/ComponentParticleSystem.cpp  
   ${xygine_DIR}/Entity.cpp
   ${xygine_DIR}/FileSystem.cpp
   ${xygine_DIR}/FontResource.cpp
   ${xygine_DIR}/MessageBus.cpp
   ${xygine_DIR}/Music.cpp
-  ${xygine_DIR}/ParticleController.cpp
-  ${xygine_DIR}/ParticleSystem.cpp
   ${xygine_DIR}/PhysicsAffectorAreaForce.cpp
   ${xygine_DIR}/PhysicsAffectorConstantForce.cpp
   ${xygine_DIR}/PhysicsAffectorPointForce.cpp

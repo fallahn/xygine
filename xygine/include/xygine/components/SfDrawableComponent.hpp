@@ -31,7 +31,7 @@ source distribution.
 #ifndef XY_SF_DRAWABLE_COMPONENT_HPP_
 #define XY_SF_DRAWABLE_COMPONENT_HPP_
 
-#include <xygine/Component.hpp>
+#include <xygine/components/Component.hpp>
 #include <xygine/Entity.hpp>
 #include <xygine/ShaderProperty.hpp>
 

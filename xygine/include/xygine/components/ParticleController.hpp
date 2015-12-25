@@ -30,8 +30,8 @@ source distribution.
 #ifndef XY_PARTICLE_CONTROLLER_HPP_
 #define XY_PARTICLE_CONTROLLER_HPP_
 
-#include <xygine/Component.hpp>
-#include <xygine/ParticleSystem.hpp>
+#include <xygine/components/Component.hpp>
+#include <xygine/components/ParticleSystem.hpp>
 
 #include <SFML/Graphics/Color.hpp>
 

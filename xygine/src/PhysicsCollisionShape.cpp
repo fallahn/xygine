@@ -292,7 +292,7 @@ void CollisionShape::deactivateAffectors(CollisionShape* thisShape, CollisionSha
             [&pair](const AffectorPair& p)
         {
             return (pair.first == p.first && pair.second == p.second);
-        }), m_activeAffectors.end());
+        }));
     }
 
     for (auto& a : m_pointAffectors)
@@ -302,13 +302,13 @@ void CollisionShape::deactivateAffectors(CollisionShape* thisShape, CollisionSha
             [&tuple](const PointTuple& pt)
         {
             return (tuple == pt);
-        }), m_activePointAffectors.end());
+        }));
         //remember these are active in both
         auto pair(std::make_pair(&a, static_cast<RigidBody*>(otherShape->m_fixture->GetBody()->GetUserData())));
         m_activeAffectors.erase(std::remove_if(m_activeAffectors.begin(), m_activeAffectors.end(),
             [&pair](const AffectorPair& p)
         {
             return (pair.first == p.first && pair.second == p.second);
-        }), m_activeAffectors.end());
+        }));
     }
 }

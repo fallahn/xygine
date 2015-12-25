@@ -32,7 +32,7 @@ source distribution.
 #include <SFML/Graphics/VertexArray.hpp>
 
 #include <xygine/Affectors.hpp>
-#include <xygine/Component.hpp>
+#include <xygine/components/Component.hpp>
 #include <xygine/Particle.hpp>
 
 #include <deque>

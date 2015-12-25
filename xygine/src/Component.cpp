@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/Component.hpp>
+#include <xygine/components/Component.hpp>
 
 using namespace xy;
 

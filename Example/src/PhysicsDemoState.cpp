@@ -30,7 +30,7 @@ source distribution.
 #include <xygine/Reports.hpp>
 #include <xygine/Entity.hpp>
 #include <xygine/Command.hpp>
-#include <xygine/SfDrawableComponent.hpp>
+#include <xygine/components/SfDrawableComponent.hpp>
 
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>

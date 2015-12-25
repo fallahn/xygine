@@ -35,7 +35,7 @@ source distribution.
 #include <xygine/Log.hpp>
 #include <xygine/Util.hpp>
 
-#include <xygine/ParticleController.hpp>
+#include <xygine/components/ParticleController.hpp>
 #include <xygine/PostBloom.hpp>
 #include <xygine/PostChromeAb.hpp>
 

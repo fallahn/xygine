@@ -32,7 +32,7 @@ source distribution.
 
 #include <xygine/Log.hpp>
 #include <xygine/Command.hpp>
-#include <xygine/Component.hpp>
+#include <xygine/components/Component.hpp>
 
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Drawable.hpp>

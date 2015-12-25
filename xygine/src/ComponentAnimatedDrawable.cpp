@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/AnimatedDrawable.hpp>
+#include <xygine/components/AnimatedDrawable.hpp>
 #include <xygine/Resource.hpp>
 #include <xygine/Util.hpp>
 #include <xygine/JsonUtil.hpp>

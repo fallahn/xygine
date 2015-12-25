@@ -77,8 +77,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Affectors.cpp" />
-    <ClCompile Include="src\AnimatedDrawable.cpp" />
-    <ClCompile Include="src\AnimationController.cpp" />
+    <ClCompile Include="src\ComponentAnimatedDrawable.cpp" />
+    <ClCompile Include="src\ComponentAnimationController.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AudioManager.cpp" />
     <ClCompile Include="src\ComponentCamera.cpp" />
@@ -97,8 +97,8 @@
     <ClCompile Include="src\FontResource.cpp" />
     <ClCompile Include="src\MessageBus.cpp" />
     <ClCompile Include="src\Music.cpp" />
-    <ClCompile Include="src\ParticleController.cpp" />
-    <ClCompile Include="src\ParticleSystem.cpp" />
+    <ClCompile Include="src\ComponentParticleController.cpp" />
+    <ClCompile Include="src\ComponentParticleSystem.cpp" />
     <ClCompile Include="src\PhysicsContact.cpp" />
     <ClCompile Include="src\PhysicsDebugDrawer.cpp" />
     <ClCompile Include="src\PhysicsJointDistance.cpp" />
@@ -139,14 +139,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\Affectors.hpp" />
-    <ClInclude Include="include\xygine\AnimatedDrawable.hpp" />
-    <ClInclude Include="include\xygine\AnimationController.hpp" />
     <ClInclude Include="include\xygine\App.hpp" />
     <ClInclude Include="include\xygine\Assert.hpp" />
     <ClInclude Include="include\xygine\AudioManager.hpp" />
     <ClInclude Include="include\xygine\Command.hpp" />
-    <ClInclude Include="include\xygine\Component.hpp" />
-    <ClInclude Include="include\xygine\ComponentCamera.hpp" />
+    <ClInclude Include="include\xygine\components\AnimatedDrawable.hpp" />
+    <ClInclude Include="include\xygine\components\AnimationController.hpp" />
+    <ClInclude Include="include\xygine\components\Camera.hpp" />
+    <ClInclude Include="include\xygine\components\Component.hpp" />
+    <ClInclude Include="include\xygine\components\ParticleController.hpp" />
+    <ClInclude Include="include\xygine\components\ParticleSystem.hpp" />
+    <ClInclude Include="include\xygine\components\QuadTreeComponent.hpp" />
+    <ClInclude Include="include\xygine\components\SfDrawableComponent.hpp" />
     <ClInclude Include="include\xygine\Difficulty.hpp" />
     <ClInclude Include="include\xygine\Entity.hpp" />
     <ClInclude Include="include\xygine\FileSystem.hpp" />
@@ -155,8 +159,6 @@
     <ClInclude Include="include\xygine\MessageBus.hpp" />
     <ClInclude Include="include\xygine\Music.hpp" />
     <ClInclude Include="include\xygine\Particle.hpp" />
-    <ClInclude Include="include\xygine\ParticleController.hpp" />
-    <ClInclude Include="include\xygine\ParticleSystem.hpp" />
     <ClInclude Include="include\xygine\physics\Affector.hpp" />
     <ClInclude Include="include\xygine\physics\AffectorAreaForce.hpp" />
     <ClInclude Include="include\xygine\physics\AffectorConstantForce.hpp" />
@@ -185,14 +187,12 @@
     <ClInclude Include="include\xygine\PostProcess.hpp" />
     <ClInclude Include="include\xygine\Protocol.hpp" />
     <ClInclude Include="include\xygine\QuadTree.hpp" />
-    <ClInclude Include="include\xygine\QuadTreeComponent.hpp" />
     <ClInclude Include="include\xygine\QuadTreeNode.hpp" />
     <ClInclude Include="include\xygine\Reports.hpp" />
     <ClInclude Include="include\xygine\Resource.hpp" />
     <ClInclude Include="include\xygine\Scene.hpp" />
     <ClInclude Include="include\xygine\Score.hpp" />
     <ClInclude Include="include\xygine\Server.hpp" />
-    <ClInclude Include="include\xygine\SfDrawableComponent.hpp" />
     <ClInclude Include="include\xygine\ShaderProperty.hpp" />
     <ClInclude Include="include\xygine\ShaderResource.hpp" />
     <ClInclude Include="include\xygine\Shaders.hpp" />
