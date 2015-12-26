@@ -35,6 +35,7 @@ source distribution.
 #include <xygine/State.hpp>
 #include <xygine/Scene.hpp>
 #include <xygine/physics/World.hpp>
+#include <xygine/Resource.hpp>
 
 #include <SFML/Graphics/Text.hpp>
 
@@ -60,8 +61,8 @@ public:
 private:
     xy::Physics::World m_physWorld;
     xy::MessageBus& m_messageBus;
+    xy::SoundResource m_soundResource;
     xy::Scene m_scene;
-
 
     sf::Text m_reportText;
 

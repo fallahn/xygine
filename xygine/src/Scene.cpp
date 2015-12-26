@@ -28,10 +28,12 @@ source distribution.
 #include <xygine/Scene.hpp>
 #include <xygine/MessageBus.hpp>
 #include <xygine/components/QuadTreeComponent.hpp>
+#include <xygine/components/AudioListener.hpp>
 #include <xygine/Reports.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Audio/Listener.hpp>
 
 namespace
 {
@@ -205,6 +207,7 @@ void Scene::reset()
     m_currentRenderPath = std::bind(&Scene::defaultRenderPath, this, _1, _2);
 
     m_activeCamera = m_defaultCamera.get();
+    sf::Listener::setPosition({ 960.f, 540.f, AudioListener::getListenerDepth() });
 }
 
 void Scene::addPostProcess(PostProcess::Ptr& pp)

@@ -219,6 +219,9 @@
     <ClCompile Include="src\ComponentAudioListener.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
+    <ClCompile Include="src\ComponentAudioSource.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\Affectors.hpp">
@@ -441,6 +444,9 @@
       <Filter>Header Files\components</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\components\AudioListener.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\AudioSource.hpp">
       <Filter>Header Files\components</Filter>
     </ClInclude>
   </ItemGroup>

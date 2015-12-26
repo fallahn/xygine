@@ -42,13 +42,21 @@ namespace xy
     class AudioListener final : public Component
     {
     public:
+        using Ptr = std::unique_ptr<AudioListener>;
+    private:
+        using FactoryFunc = Ptr(&)(MessageBus&);
+    public:
         explicit AudioListener(MessageBus&);
         ~AudioListener();
 
-        Component::Type type() const { return Component::Type::Script; }
+        Component::Type type() const override { return Component::Type::Script; }
 
         void entityUpdate(Entity&, float) override;
         void handleMessage(const Message&) override;
+
+        static float getListenerDepth();
+
+        static const FactoryFunc create;
 
     private:
 

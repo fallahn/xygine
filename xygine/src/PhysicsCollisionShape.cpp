@@ -146,6 +146,11 @@ void CollisionShape::destroy()
     }
 }
 
+RigidBody* CollisionShape::getRigidBody() const
+{
+    return (m_fixture) ? static_cast<RigidBody*>(m_fixture->GetBody()->GetUserData()) : nullptr;
+}
+
 void CollisionShape::addAffector(const ConstantForceAffector& fa)
 {
     m_constForceAffectors.push_back(fa);

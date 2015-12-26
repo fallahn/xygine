@@ -82,6 +82,7 @@
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AudioManager.cpp" />
     <ClCompile Include="src\ComponentAudioListener.cpp" />
+    <ClCompile Include="src\ComponentAudioSource.cpp" />
     <ClCompile Include="src\ComponentCamera.cpp" />
     <ClCompile Include="src\PhysicsAffectorAreaForce.cpp" />
     <ClCompile Include="src\PhysicsAffectorConstantForce.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="include\xygine\components\AnimatedDrawable.hpp" />
     <ClInclude Include="include\xygine\components\AnimationController.hpp" />
     <ClInclude Include="include\xygine\components\AudioListener.hpp" />
+    <ClInclude Include="include\xygine\components\AudioSource.hpp" />
     <ClInclude Include="include\xygine\components\Camera.hpp" />
     <ClInclude Include="include\xygine\components\Component.hpp" />
     <ClInclude Include="include\xygine\components\ParticleController.hpp" />

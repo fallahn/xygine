@@ -47,6 +47,7 @@ namespace xy
     namespace Physics
     {
         class Contact;
+        class RigidBody;
         class CollisionShape
         {
             friend class RigidBody;
@@ -91,6 +92,9 @@ namespace xy
             //this raises an event on the message bus callbacks registered
             //with the physics world will not be invoked
             void destroy();
+            //returns a pointer to the shape's parent rigidbody
+            //if it exists, else returns nullptr
+            RigidBody* getRigidBody() const;
 
             //adds an affector which modifies the body to which
             //this or a colliding CollisionShape is attached

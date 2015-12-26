@@ -35,12 +35,10 @@ using namespace xy;
 namespace
 {
     AudioListener* instance = nullptr;
-
     const float listenerDepth = 900.f;
-    const float attenuation = 1.f;
-    const float minDistance2D = 700.f; //TODO why aren't we using minDist3D?
-    const float minDistance3D = std::sqrt((minDistance2D * minDistance2D) + (listenerDepth * listenerDepth));
 }
+
+AudioListener::FactoryFunc AudioListener::create = std::make_unique<AudioListener>;
 
 AudioListener::AudioListener(MessageBus& mb)
     : Component(mb, this)
@@ -68,3 +66,8 @@ void AudioListener::entityUpdate(Entity& entity, float)
 }
 
 void AudioListener::handleMessage(const Message&) {}
+
+float AudioListener::getListenerDepth()
+{
+    return listenerDepth;
+}

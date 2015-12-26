@@ -33,6 +33,7 @@ source distribution.
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 
 #include <memory>
 #include <array>
@@ -65,7 +66,7 @@ namespace xy
             std::unique_ptr<T> r = std::unique_ptr<T>(new T());
             if (path.empty() || !r->loadFromFile(path))
             {
-                m_resources[path] = errorHandle(); //error handle should return message endl
+                m_resources[path] = errorHandle();
             }
             else
             {
@@ -109,6 +110,18 @@ namespace xy
     private:
         sf::Font m_font;
         std::unique_ptr<sf::Font> errorHandle() override;
+    };
+
+    class SoundResource final : public BaseResource<sf::SoundBuffer>
+    {
+        std::unique_ptr<sf::SoundBuffer> errorHandle() override
+        {
+            std::array<sf::Int16, 20u> buffer;
+            std::memset(buffer.data(), 0, buffer.size());
+            auto sb = std::make_unique<sf::SoundBuffer>();
+            sb->loadFromSamples(buffer.data(), buffer.size(), 1, 48000);
+            return std::move(sb);
+        }
     };
 }
 #endif //XY_RESOURCES_HPP_

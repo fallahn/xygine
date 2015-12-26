@@ -30,7 +30,7 @@ source distribution.
 #include <xygine/Reports.hpp>
 #include <xygine/Entity.hpp>
 #include <xygine/Command.hpp>
-#include <xygine/components/SfDrawableComponent.hpp>
+#include <xygine/components/AudioSource.hpp>
 
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
@@ -190,6 +190,27 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
 void PhysicsDemoState::handleMessage(const xy::Message& msg)
 { 
     m_scene.handleMessage(msg);
+
+    if (msg.id == xy::Message::PhysicsMessage)
+    {
+        //play collision sounds
+        auto& msgData = msg.getData<xy::Message::PhysicsEvent>();
+        if (msgData.event == xy::Message::PhysicsEvent::BeginContact)
+        {
+            auto contact = msgData.contact;
+
+            xy::Command cmd;
+            cmd.entityID = contact->getCollisionShapeA()->getRigidBody()->getParentUID();
+            cmd.action = [](xy::Entity& entity, float)
+            {
+                auto sound = entity.getComponent<xy::AudioSource>();
+                if (sound) sound->play();
+            };
+            m_scene.sendCommand(cmd);
+            cmd.entityID = contact->getCollisionShapeB()->getRigidBody()->getParentUID();
+            m_scene.sendCommand(cmd);
+        }
+    }
 }
 
 //private
@@ -254,7 +275,7 @@ void PhysicsDemoState::createBodies()
     polyShape.setPoints(points);
     polyShape.setRestitution(1.f);
     polyShape.clearAffectors();
-    xy::Physics::PointForceAffector pfa(-450.f);
+    xy::Physics::PointForceAffector pfa(450.f);
     polyShape.addAffector(pfa);
     groundBody->addCollisionShape(polyShape);
 
@@ -274,6 +295,12 @@ void PhysicsDemoState::createBodies()
 
     auto ba = ballEntityA->addComponent<xy::Physics::RigidBody>(ballBodyA);
 
+    auto soundSource = xy::AudioSource::create(m_messageBus, m_soundResource);
+    soundSource->setSound("assets/sound/04.wav");
+    soundSource->setAttenuation(20.f);
+    soundSource->setMinimumDistance(400.f);
+    ballEntityA->addComponent<xy::AudioSource>(soundSource);
+
     m_scene.addEntity(ballEntityA, xy::Scene::Layer::BackMiddle);
 
     auto ballEntityB = xy::Entity::create(m_messageBus);
@@ -281,10 +308,15 @@ void PhysicsDemoState::createBodies()
     auto ballBodyB = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
 
     ballShape.setRadius(50.f);
-    //ballShape.addAffector(xy::Physics::ConstantForceAffector({ 0.f, -200.f }, 80.f));
     ballBodyB->addCollisionShape(ballShape);
 
     auto bb = ballEntityB->addComponent<xy::Physics::RigidBody>(ballBodyB);
+
+    soundSource = xy::AudioSource::create(m_messageBus, m_soundResource);
+    soundSource->setSound("assets/sound/04.wav");
+    soundSource->setAttenuation(20.f);
+    soundSource->setPitch(0.4f);
+    ballEntityB->addComponent<xy::AudioSource>(soundSource);
     m_scene.addEntity(ballEntityB, xy::Scene::Layer::BackMiddle);
 
 
