@@ -188,15 +188,15 @@ void App::applyVideoSettings(const VideoSettings& settings)
     msg->type = Message::UIEvent::ResizedWindow;
 }
 
-sf::Font& App::getFont(const std::string& path)
-{
-    return m_fontResource.get(path);
-}
-
-sf::Texture& App::getTexture(const std::string& path)
-{
-    return m_textureResource.get(path);
-}
+//sf::Font& App::getFont(const std::string& path)
+//{
+//    return m_fontResource.get(path);
+//}
+//
+//sf::Texture& App::getTexture(const std::string& path)
+//{
+//    return m_textureResource.get(path);
+//}
 
 MessageBus& App::getMessageBus()
 {

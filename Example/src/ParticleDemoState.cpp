@@ -78,7 +78,7 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     m_scene.addPostProcess(pp);
     m_scene.setClearColour({ 0u, 0u, 20u });
 
-    m_reportText.setFont(context.appInstance.getFont("assets/fonts/Console.ttf"));
+    m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
 
     setupParticles();
@@ -208,16 +208,16 @@ void ParticleDemoState::setupParticles()
 
     auto pc = entity->addComponent<xy::ParticleController>(particleController);
     xy::ParticleSystem::Definition pd;
-    pd.loadFromFile("assets/particles/bubbles.xyp", getContext().appInstance);
+    pd.loadFromFile("assets/particles/bubbles.xyp", m_textureResource);
     pc->addDefinition(ParticleType::Bubbles, pd);
 
-    pd.loadFromFile("assets/particles/explosion.xyp", getContext().appInstance);
+    pd.loadFromFile("assets/particles/explosion.xyp", m_textureResource);
     pc->addDefinition(ParticleType::Explosion, pd);
 
-    pd.loadFromFile("assets/particles/fairydust.xyp", getContext().appInstance);
+    pd.loadFromFile("assets/particles/fairydust.xyp", m_textureResource);
     pc->addDefinition(ParticleType::FairyDust, pd);
 
-    pd.loadFromFile("assets/particles/fire.xyp", getContext().appInstance);
+    pd.loadFromFile("assets/particles/fire.xyp", m_textureResource);
     pc->addDefinition(ParticleType::Fire, pd);
 
     controllerId = entity->getUID();

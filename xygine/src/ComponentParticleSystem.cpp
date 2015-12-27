@@ -347,14 +347,14 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 #include <xygine/JsonUtil.hpp>
 #include <xygine/Util.hpp>
 #include <xygine/picojson.h>
-#include <xygine/App.hpp>
+#include <xygine/Resource.hpp>
 //-------particle system definition------//
 ParticleSystem::Definition::Definition()
 {
 
 }
 
-void ParticleSystem::Definition::loadFromFile(const std::string& path, App& appInstance)
+void ParticleSystem::Definition::loadFromFile(const std::string& path, TextureResource& textureResource)
 {
     reset();
 
@@ -405,7 +405,7 @@ void ParticleSystem::Definition::loadFromFile(const std::string& path, App& appI
         if (pv.get("Texture").is<std::string>())
         {
             std::string texturePath = pv.get("Texture").get<std::string>();
-            if(!texturePath.empty()) texture = &appInstance.getTexture(texturePath);
+            if(!texturePath.empty()) texture = &textureResource.get(texturePath);
         }
         //int Colour
         if (pv.get("Colour").is<double>())

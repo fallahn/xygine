@@ -33,6 +33,7 @@ source distribution.
 #include <StateIds.hpp>
 
 #include <xygine/State.hpp>
+#include <xygine/Resource.hpp>
 #include <xygine/Scene.hpp>
 #include <xygine/physics/World.hpp>
 #include <xygine/Resource.hpp>
@@ -63,6 +64,9 @@ private:
     xy::MessageBus& m_messageBus;
     xy::SoundResource m_soundResource;
     xy::Scene m_scene;
+
+    xy::TextureResource m_textureResource;
+    xy::FontResource m_fontResource;
 
     sf::Text m_reportText;
 

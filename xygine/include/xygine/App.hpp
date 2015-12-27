@@ -99,8 +99,6 @@ namespace xy
 
         const GameSettings& getGameSettings() const;
 
-        sf::Font& getFont(const std::string& path);
-        sf::Texture& getTexture(const std::string& path);
         MessageBus& getMessageBus();
         sf::TcpSocket& getSocket();
 
@@ -150,9 +148,6 @@ namespace xy
 
         VideoSettings m_videoSettings;
         sf::RenderWindow m_renderWindow;
-
-        FontResource m_fontResource;
-        TextureResource m_textureResource;
 
         MessageBus m_messageBus;
 

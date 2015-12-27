@@ -11,6 +11,7 @@
 #include <StateIds.hpp>
 
 #include <xygine/State.hpp>
+#include <xygine/Resource.hpp>
 #include <xygine/ui/Container.hpp>
 
 #include <SFML/Graphics/Sprite.hpp>
@@ -39,6 +40,9 @@ private:
     sf::Sprite m_menuSprite;
     sf::Sprite m_cursorSprite;
     std::vector<sf::Text> m_texts;
+
+    xy::TextureResource m_textureResource;
+    xy::FontResource m_fontResource;
 
     xy::ui::Container m_uiContainer;
 

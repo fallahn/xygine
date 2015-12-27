@@ -33,6 +33,7 @@ source distribution.
 #include <StateIds.hpp>
 
 #include <xygine/State.hpp>
+#include <xygine/Resource.hpp>
 #include <xygine/ui/Container.hpp>
 
 #include <SFML/Graphics/Sprite.hpp>
@@ -59,6 +60,8 @@ private:
     xy::MessageBus& m_messageBus;
     xy::ui::Container m_uiContainer;
     sf::Sprite m_cursorSprite;
+    xy::TextureResource m_textureResource;
+    xy::FontResource m_fontResource;
 
     void buildMenu();
     void close();

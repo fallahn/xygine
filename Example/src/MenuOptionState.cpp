@@ -33,10 +33,10 @@ MenuOptionState::MenuOptionState(xy::StateStack& stateStack, Context context)
     //Util::Position::centreOrigin(m_menuSprite);
     //m_menuSprite.move(0.f, -40.f);
 
-    m_cursorSprite.setTexture(context.appInstance.getTexture("assets/images/ui/cursor.png"));
+    m_cursorSprite.setTexture(m_textureResource.get("assets/images/ui/cursor.png"));
     m_cursorSprite.setPosition(context.renderWindow.mapPixelToCoords(sf::Mouse::getPosition(context.renderWindow)));
     
-    const auto& font = context.appInstance.getFont("assets/fonts/N_E_B.ttf");
+    const auto& font = m_fontResource.get("assets/fonts/N_E_B.ttf");
     buildMenu(font);
 
     auto msg = m_messageBus.post<xy::Message::UIEvent>(xy::Message::UIMessage);
@@ -126,7 +126,7 @@ void MenuOptionState::handleMessage(const xy::Message& msg)
 //private
 void MenuOptionState::buildMenu(const sf::Font& font)
 {
-    auto soundSlider = std::make_shared<xy::ui::Slider>(font, getContext().appInstance.getTexture("assets/images/ui/slider_handle.png"), 375.f);
+    auto soundSlider = std::make_shared<xy::ui::Slider>(font, m_textureResource.get("assets/images/ui/slider_handle.png"), 375.f);
     soundSlider->setPosition(600.f, 470.f);
     soundSlider->setText("Volume");
     soundSlider->setMaxValue(1.f);
@@ -141,7 +141,7 @@ void MenuOptionState::buildMenu(const sf::Font& font)
     soundSlider->setValue(getContext().appInstance.getAudioSettings().volume); //set this *after* callback is set
     m_uiContainer.addControl(soundSlider);
 
-    auto muteCheckbox = std::make_shared<xy::ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
+    auto muteCheckbox = std::make_shared<xy::ui::CheckBox>(font, m_textureResource.get("assets/images/ui/checkbox.png"));
     muteCheckbox->setPosition(1070.f, 430.f);
     muteCheckbox->setText("Mute");
     muteCheckbox->setCallback([this](const xy::ui::CheckBox* checkBox)
@@ -153,7 +153,7 @@ void MenuOptionState::buildMenu(const sf::Font& font)
     m_uiContainer.addControl(muteCheckbox);
 
 
-    auto resolutionBox = std::make_shared<xy::ui::Selection>(font, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow.png"), 375.f);
+    auto resolutionBox = std::make_shared<xy::ui::Selection>(font, m_textureResource.get("assets/images/ui/scroll_arrow.png"), 375.f);
     resolutionBox->setPosition(600.f, 510.f);
 
     const auto& modes = getContext().appInstance.getVideoSettings().AvailableVideoModes;
@@ -174,7 +174,7 @@ void MenuOptionState::buildMenu(const sf::Font& font)
 
     m_uiContainer.addControl(resolutionBox);
 
-    auto fullscreenCheckbox = std::make_shared<xy::ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
+    auto fullscreenCheckbox = std::make_shared<xy::ui::CheckBox>(font, m_textureResource.get("assets/images/ui/checkbox.png"));
     fullscreenCheckbox->setPosition(1070.f, 510.f);
     fullscreenCheckbox->setText("Full Screen");
     fullscreenCheckbox->setCallback([this](const xy::ui::CheckBox*)
@@ -184,7 +184,7 @@ void MenuOptionState::buildMenu(const sf::Font& font)
     fullscreenCheckbox->check((getContext().appInstance.getVideoSettings().WindowStyle & sf::Style::Fullscreen) != 0);
     m_uiContainer.addControl(fullscreenCheckbox);
 
-    auto difficultySelection = std::make_shared<xy::ui::Selection>(font, getContext().appInstance.getTexture("assets/images/ui/scroll_arrow.png"), 375.f);
+    auto difficultySelection = std::make_shared<xy::ui::Selection>(font, m_textureResource.get("assets/images/ui/scroll_arrow.png"), 375.f);
     difficultySelection->setPosition(600.f, 590.f);
     difficultySelection->addItem("Easy", static_cast<int>(xy::Difficulty::Easy));
     difficultySelection->addItem("Medium", static_cast<int>(xy::Difficulty::Medium));
@@ -200,7 +200,7 @@ void MenuOptionState::buildMenu(const sf::Font& font)
     difficultySelection->selectItem(static_cast<int>(getContext().appInstance.getGameSettings().difficulty));
     m_uiContainer.addControl(difficultySelection);
 
-    auto controllerCheckbox = std::make_shared<xy::ui::CheckBox>(font, getContext().appInstance.getTexture("assets/images/ui/checkbox.png"));
+    auto controllerCheckbox = std::make_shared<xy::ui::CheckBox>(font, m_textureResource.get("assets/images/ui/checkbox.png"));
     controllerCheckbox->setPosition(1070.f, 590.f);
     controllerCheckbox->setText("Enable Controller");
     controllerCheckbox->setCallback([this](const xy::ui::CheckBox* checkBox)
@@ -212,7 +212,7 @@ void MenuOptionState::buildMenu(const sf::Font& font)
     controllerCheckbox->check(getContext().appInstance.getGameSettings().controllerEnabled);
     m_uiContainer.addControl(controllerCheckbox);
 
-    auto applyButton = std::make_shared<xy::ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
+    auto applyButton = std::make_shared<xy::ui::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
     applyButton->setText("Apply");
     applyButton->setAlignment(xy::ui::Alignment::Centre);
     applyButton->setPosition(840.f, 770.f);
@@ -231,7 +231,7 @@ void MenuOptionState::buildMenu(const sf::Font& font)
     });
     m_uiContainer.addControl(applyButton);
 
-    auto backButton = std::make_shared<xy::ui::Button>(font, getContext().appInstance.getTexture("assets/images/ui/button.png"));
+    auto backButton = std::make_shared<xy::ui::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
     backButton->setText("Back");
     backButton->setAlignment(xy::ui::Alignment::Centre);
     backButton->setPosition(1080.f, 770.f);

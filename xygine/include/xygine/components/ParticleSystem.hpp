@@ -41,6 +41,7 @@ source distribution.
 
 namespace xy
 {
+    class TextureResource;
     class ParticleSystem final : public Component, public sf::Drawable
     {
     public:
@@ -78,7 +79,7 @@ namespace xy
             std::vector<Affector> affectors;
 
             Ptr createSystem(MessageBus&) const;
-            void loadFromFile(const std::string&, App&);
+            void loadFromFile(const std::string&, TextureResource&);
 
         private:
             void reset();
