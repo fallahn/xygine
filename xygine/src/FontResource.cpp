@@ -64,11 +64,9 @@ FontResource::FontResource()
 		inputBlock[2] = static_cast<unsigned char>(base64Chars.find(fontDataPtr[i + 2]));
 		inputBlock[3] = static_cast<unsigned char>(base64Chars.find(fontDataPtr[i + 3]));
 
-		fontData[decodedCounter] = static_cast<unsigned char>((inputBlock[0] << 2) | ((inputBlock[1] & 0x30) >> 4));
-		fontData[decodedCounter + 1] = static_cast<unsigned char>(((inputBlock[1] & 0xf) << 4) | ((inputBlock[2] & 0x3c ) >> 2));
-		fontData[decodedCounter + 2] = static_cast<unsigned char>(((inputBlock[2] & 0x3 ) << 6) | inputBlock[3]);
-
-		decodedCounter += 3;
+		fontData[decodedCounter++] = static_cast<unsigned char>((inputBlock[0] << 2) | ((inputBlock[1] & 0x30) >> 4));
+		fontData[decodedCounter++] = static_cast<unsigned char>(((inputBlock[1] & 0xf) << 4) | ((inputBlock[2] & 0x3c ) >> 2));
+		fontData[decodedCounter++] = static_cast<unsigned char>(((inputBlock[2] & 0x3 ) << 6) | inputBlock[3]);
 	}
 
 	m_font.loadFromMemory(&fontData, fontData.size());
@@ -76,6 +74,5 @@ FontResource::FontResource()
 
 std::unique_ptr<sf::Font> FontResource::errorHandle()
 {
-	//Console::lout << " returning default font..." << std::endl;
-	return std::move(std::unique_ptr<sf::Font>(new sf::Font(m_font)));
+	return std::move(std::make_unique<sf::Font>(m_font));
 }

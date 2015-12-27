@@ -27,8 +27,10 @@ source distribution.
 
 #include <xygine/State.hpp>
 #include <xygine/StateStack.hpp>
+#include <xygine/App.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Event.hpp>
 
 using namespace xy;
 
@@ -38,11 +40,20 @@ State::Context::Context(sf::RenderWindow& rw, App& app)
 
 //-----------------------------------------------------
 
+namespace
+{
+    const float iconSize = 50.f;
+}
+
 State::State(StateStack& stateStack, Context context)
     : m_stateStack  (stateStack),
-    m_context       (context)
+    m_context       (context),
+    m_threadRunning (false),
+    m_loadingThread (&State::loadingScreenThread, this),
+    m_loadingIcon   ({iconSize, iconSize})
 {
-
+    m_loadingIcon.setOrigin(iconSize / 2.f, iconSize / 2.f);
+    m_loadingIcon.setPosition(iconSize, iconSize);
 }
 
 void State::setContext(Context c)
@@ -69,4 +80,40 @@ void State::requestStackClear()
 State::Context State::getContext() const
 {
     return m_context;
+}
+
+void State::launchLoadingScreen()
+{
+    m_context.appInstance.pause();
+    m_context.renderWindow.setActive(false);
+    m_threadRunning = true;
+    m_loadingThread.launch();
+}
+
+void State::quitLoadingScreen()
+{
+    m_threadRunning = false;
+    m_loadingThread.wait();
+    m_context.appInstance.resume();
+}
+
+void State::updateLoadingScreen(float dt, sf::RenderWindow& rw)
+{
+    m_loadingIcon.rotate(1400.f * dt);
+    rw.draw(m_loadingIcon);
+}
+
+void State::loadingScreenThread()
+{
+    sf::Event evt;
+    while (m_threadRunning)
+    {
+        //consume events
+        while (m_context.renderWindow.pollEvent(evt)) {}
+
+        m_context.renderWindow.clear();
+        updateLoadingScreen(m_threadClock.restart().asSeconds(), m_context.renderWindow);
+        m_context.renderWindow.display();
+    }
+    m_context.renderWindow.setActive(false);
 }

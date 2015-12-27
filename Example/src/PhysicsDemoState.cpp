@@ -76,14 +76,16 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     m_messageBus    (context.appInstance.getMessageBus()),
     m_scene         (m_messageBus)
 {
+    launchLoadingScreen();
     m_scene.setView(context.defaultView);
     //m_scene.drawDebug(true);
 
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
 
-
     createBodies();
+
+    quitLoadingScreen();
 }
 
 bool PhysicsDemoState::update(float dt)

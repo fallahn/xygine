@@ -31,8 +31,12 @@ source distribution.
 #define XY_STATE_HPP_
 
 #include <SFML/Graphics/View.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/System/Thread.hpp>
+#include <SFML/System/Clock.hpp>
 
 #include <memory>
+#include <atomic>
 
 namespace sf
 {
@@ -80,11 +84,26 @@ namespace xy
 
         Context getContext() const;
 
-        //TODO will we need loading screen? Could launch a new thread from here
+        //optionally call these at the beginning and end
+        //of a state ctor which loads a lot of resources
+        //main game updates are suspended so you MUST
+        //call quitLoadingScreen() when finished.
+        void launchLoadingScreen();
+        void quitLoadingScreen();
+
+        //optionally overload this to draw custom
+        //graphics. SYNCHRONISATION IS UP TO YOU.
+        virtual void updateLoadingScreen(float dt, sf::RenderWindow&);
 
     private:
         StateStack& m_stateStack;
         Context m_context;
+
+        std::atomic<bool> m_threadRunning;
+        sf::Thread m_loadingThread;
+        sf::Clock m_threadClock;
+        sf::RectangleShape m_loadingIcon;
+        void loadingScreenThread();
     };
 }
 #endif //XY_STATE_HPP_

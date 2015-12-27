@@ -70,6 +70,8 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     m_messageBus    (context.appInstance.getMessageBus()),
     m_scene         (m_messageBus)
 {
+    launchLoadingScreen();
+
     m_scene.setView(context.defaultView);
     //m_scene.drawDebug(true);
     xy::PostProcess::Ptr pp = xy::PostChromeAb::create();
@@ -83,6 +85,11 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
 
     setupParticles();
     context.renderWindow.setMouseCursorVisible(true);
+
+    //simulate a longer loading time
+    sf::sleep(sf::seconds(5.f));
+
+    quitLoadingScreen();
 }
 
 bool ParticleDemoState::update(float dt)

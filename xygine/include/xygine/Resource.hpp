@@ -37,6 +37,7 @@ source distribution.
 
 #include <memory>
 #include <array>
+#include <unordered_map>
 
 namespace xy
 {
@@ -63,7 +64,7 @@ namespace xy
                 }
             }
             //else attempt to load from file
-            std::unique_ptr<T> r = std::unique_ptr<T>(new T());
+            std::unique_ptr<T> r = std::make_unique<T>();
             if (path.empty() || !r->loadFromFile(path))
             {
                 m_resources[path] = errorHandle();
@@ -78,7 +79,7 @@ namespace xy
     protected:
         virtual std::unique_ptr<T> errorHandle() = 0;
     private:
-        std::map<std::string, std::unique_ptr<T>> m_resources;
+        std::unordered_map<std::string, std::unique_ptr<T>> m_resources;
     };
 
     class TextureResource final : public BaseResource<sf::Texture>
@@ -86,7 +87,7 @@ namespace xy
     private:
         std::unique_ptr<sf::Texture> errorHandle() override
         {
-            std::unique_ptr<sf::Texture> t(new sf::Texture());
+            std::unique_ptr<sf::Texture> t = std::make_unique<sf::Texture>();
             sf::Image i;
             i.create(20u, 20u, sf::Color(127u, 127u, 255u));
             t->loadFromImage(i);
@@ -97,7 +98,7 @@ namespace xy
     {
         std::unique_ptr<sf::Image> errorHandle() override
         {
-            std::unique_ptr<sf::Image> i(new sf::Image);
+            std::unique_ptr<sf::Image> i = std::make_unique<sf::Image>();
             i->create(20u, 20u, sf::Color::Green);
             return std::move(i);
         }
