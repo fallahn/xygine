@@ -106,20 +106,20 @@ sf::View Camera::getView() const
     {
         auto offset = m_initialView.getSize() / 2.f;
         float edge = 0.f;
-        if (edge = (m_bounds.left + offset.x) > position.x)
+        if ((edge = (m_bounds.left + offset.x)) > position.x)
         {
             position.x = edge;
         }
-        else if (edge = ((m_bounds.left + m_bounds.width) - offset.x) < position.x)
+        else if ((edge = ((m_bounds.left + m_bounds.width) - offset.x)) < position.x)
         {
             position.x = edge;
         }
 
-        if (edge = (m_bounds.top + offset.y) > position.y)
+        if ((edge = (m_bounds.top + offset.y)) > position.y)
         {
             position.y = edge;
         }
-        else if (edge = ((m_bounds.top + m_bounds.height) - offset.y) < position.y)
+        else if ((edge = ((m_bounds.top + m_bounds.height) - offset.y)) < position.y)
         {
             position.y = edge;
         }

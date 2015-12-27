@@ -38,6 +38,7 @@ source distribution.
 #include <memory>
 #include <array>
 #include <unordered_map>
+#include <cstring>
 
 namespace xy
 {
