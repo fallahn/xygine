@@ -28,15 +28,18 @@ source distribution.
 #include <xygine/physics/AffectorConstantForce.hpp>
 #include <xygine/physics/World.hpp>
 #include <xygine/physics/RigidBody.hpp>
+#include <xygine/physics/CollisionShape.hpp>
 #include <xygine/Assert.hpp>
 
 using namespace xy;
 using namespace xy::Physics;
 
 ConstantForceAffector::ConstantForceAffector(const sf::Vector2f& force, float torque, bool wake)
-    : m_force   (force),
-    m_torque    (torque),
-    m_wake      (wake)
+    : m_force       (force),
+    m_torque        (torque),
+    m_wake          (wake),
+    m_centroid      (Centroid::RigidBody),
+    m_parentShape   (nullptr)
 {
 
 }
@@ -45,7 +48,11 @@ ConstantForceAffector::ConstantForceAffector(const sf::Vector2f& force, float to
 void ConstantForceAffector::apply(RigidBody* body)
 {
     XY_ASSERT(body, "can't apply a force to null bodies");
-    body->applyForceToCentre(m_force, m_wake);
+    XY_ASSERT(m_parentShape, "affector not attached to collision shape");
+    (m_centroid == Centroid::RigidBody) ?
+        body->applyForceToCentre(m_force, m_wake)
+        :
+        body->applyForce(m_force, m_parentShape->getCentreOfMass(), m_wake);
     body->applyTorque(m_torque, m_wake);
 }
 
@@ -77,4 +84,14 @@ void ConstantForceAffector::setWake(bool wake)
 bool ConstantForceAffector::getWake() const
 {
     return m_wake;
+}
+
+void ConstantForceAffector::setCentre(Centroid c)
+{
+    m_centroid = c;
+}
+
+Affector::Centroid ConstantForceAffector::getCentre() const
+{
+    return m_centroid;
 }

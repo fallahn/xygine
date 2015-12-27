@@ -54,12 +54,6 @@ namespace xy
             Affector::Type type() const override { return Type::PointForce; }
             void apply(RigidBody*) override;
 
-            enum class Centroid
-            {
-                RigidBody,
-                CollisionShape
-            };
-
             //sets whether the target point of the force applied
             //should be the centre of mass of the target body
             //or the centroid of the colliding shape

@@ -37,8 +37,10 @@ namespace xy
 {
     namespace Physics
     {
+        class CollisionShape;
         class ConstantForceAffector final : public Affector
         {
+            friend class CollisionShape;
         public:
 
             ConstantForceAffector(const sf::Vector2f& force, float torque = 0.f, bool wake = false);
@@ -58,6 +60,10 @@ namespace xy
             void setTorque(float);
             //sets whether or not to wake a sleeping body
             void setWake(bool);
+            //sets if the force should be applied to the
+            //centre of mass of the collision shape or
+            //the centre of the collision shape's parent
+            void setCentre(Centroid);
 
             //returns the current force value
             const sf::Vector2f& getForce() const;
@@ -66,11 +72,17 @@ namespace xy
             //returns true if this force should wake
             //a sleeping body
             bool getWake() const;
+            //returns whether or not this force is set
+            //to be applied at the centre of mass of
+            //the collision shape or its parent body
+            Centroid getCentre() const;
 
         private:
             sf::Vector2f m_force;
             float m_torque;
             bool m_wake;
+            Centroid m_centroid;
+            CollisionShape* m_parentShape;
         };
     }
 }

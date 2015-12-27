@@ -154,6 +154,7 @@ RigidBody* CollisionShape::getRigidBody() const
 void CollisionShape::addAffector(const ConstantForceAffector& fa)
 {
     m_constForceAffectors.push_back(fa);
+    m_constForceAffectors.back().m_parentShape = this;
 }
 
 void CollisionShape::addAffector(const AreaForceAffector& fa)

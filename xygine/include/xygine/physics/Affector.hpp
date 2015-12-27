@@ -50,6 +50,12 @@ namespace xy
                 Platform
             };
 
+            enum class Centroid
+            {
+                RigidBody,
+                CollisionShape
+            };
+
             Affector() = default;
             virtual ~Affector() = default;
 

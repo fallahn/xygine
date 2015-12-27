@@ -308,6 +308,7 @@ void PhysicsDemoState::createBodies()
     auto ballBodyB = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
 
     ballShape.setRadius(50.f);
+    ballShape.addAffector(xy::Physics::ConstantForceAffector({ 120.f, -500.f }));
     ballBodyB->addCollisionShape(ballShape);
 
     auto bb = ballEntityB->addComponent<xy::Physics::RigidBody>(ballBodyB);
