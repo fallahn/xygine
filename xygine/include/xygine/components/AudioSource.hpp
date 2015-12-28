@@ -25,10 +25,6 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//represents a sound source in the scene. if the supplied sound file
-//is mono then the sound is automatically panned based on the parent 
-//entity's position and the position of the scene's audio listener
-
 #ifndef XY_AUDIO_SOURCE_HPP_
 #define XY_AUDIO_SOURCE_HPP_
 
@@ -42,6 +38,13 @@ source distribution.
 namespace xy
 {
     class SoundResource;
+    /*!
+    \brief Represents a sound source in the scene.
+    
+    if the supplied sound file is mono then the sound is automatically
+    panned based on the parent entity's position and the position of the
+    scene's audio listener
+    */
     class AudioSource final : public Component
     {
     public:
@@ -50,10 +53,11 @@ namespace xy
         using FactoryFunc = Ptr(&)(MessageBus&, SoundResource&);
     public:
         const static FactoryFunc create;
-
-        //long files such as music should normally
-        //be set to stream, whereas shorter files
-        //such as effects can be cached in memory.
+        /*!
+        long files such as music should normally
+        be set to stream, whereas shorter files
+        such as effects can be cached in memory.
+        */
         enum class Mode
         {
             Stream,
@@ -68,44 +72,97 @@ namespace xy
         void entityUpdate(Entity&, float) override;
         void handleMessage(const Message&) override;
         void destroy() override;
+        /*!
+        \brief Sets the sound to be played by this sound source.
 
-        //sets the sound to be played by this sound source.
-        //mode should reflect whether or not the sound should be
-        //streamed from disk or loaded into memory
+        \param path relative path to the sound file on disk
+        \param mode should reflect whether or not the sound should be
+        streamed from disk or loaded into memory
+        */
         void setSound(const std::string& path, Mode = Mode::Cached);
-        //sets the rate at which the volume of this sound is
-        //reduced as it moves away from the scene's audio listener
+        /*!
+        \brief Sets the attenuation rate
+        
+        sets the rate at which the volume of this sound is
+        reduced as it moves away from the scene's audio listener
+        \param amount must be greater than zero, set to 1 by default
+        */
         void setAttenuation(float);
-        //returns the current attenuation of this sound source
+        /*!
+        \brief Returns the current attenuation of this sound source
+        \see setAttenuation
+        */
         float getAttenuation() const;
-        //sets the minimum distance from the audio listener at which
-        //the sound source starts to become audible
+        /*!
+        \brief Sets the minimum distance from the audio listener at which
+        the sound source starts to become audible
+
+        \param float distance in world units
+        */
         void setMinimumDistance(float);
-        //gets the current minimum distance for this sound source
+        /*!
+        \brief Gets the current minimum distance for this sound source
+
+        \see setMinimumDistance
+        */
         float getMinimumDistance() const;
-        //sets the time in seconds before the sound reaches the
-        //currently set volume
+        /*!
+        \brief Sets the time before the sound reaches the
+        currently set maximum volume
+
+        \param float time in seconds for the fade duration
+        */
         void setFadeInTime(float);
-        //returns the current fade in time in seconds
+        /*!
+        \brief Returns the current fade in time in seconds
+
+        \see setFadeInTime
+        */
         float getFadeInTime() const;
-        //sets the maximum volume for this sound source
+        /*!
+        \brief Sets the maximum volume for this sound source
+
+        \param float new maximum volume. Must be between 0 and 100
+        */
         void setVolume(float);
-        //gets the current maximum volume for this source
+        /*!
+        \brief Gets the current maximum volume for this source
+
+        \see setVolume
+        */
         float getVolume() const;
-        //sets the pitch as a ratio where 1 is normal
+        /*!
+        \brief Sets the pitch of the sound by altering its playback
+        speed.
+        
+        \param float as a ratio where 1 is normal 2 is twice as fast etc.
+        */
         void setPitch(float);
-        //gets the current pitch of the audio source
+        /*!
+        \brief Gets the current pitch of the audio source
+
+        \see setPitch
+        */
         float getPitch() const;
 
         //void setFadeOutTime(float);
         //float getFadeOutTime() const;
 
-        //plays the sound from the beginning if the sound source
-        //is stopped, or resumes play if it is paused.
+        /*!
+        \brief plays the sound from the beginning if the sound source
+        is stopped, or resumes play if it is paused.
+
+        \param looped Sets whether or not the audio should be played
+        once or continually in a loop
+        */
         void play(bool looped = false);
-        //pauses playback of the sound if it is playing
+        /*!
+        \brief Pauses playback of the sound if it is playing
+        */
         void pause();
-        //stops and rewinds the sound if it is playing
+        /*!
+        \brief Stops and rewinds the sound if it is playing
+        */
         void stop();
 
         enum class Status
@@ -114,7 +171,9 @@ namespace xy
             Paused,
             Stopped
         };
-        //returns the current status of the sound source
+        /*!
+        \brief Returns the current status of the sound source
+        */
         Status getStatus() const;
 
     private:

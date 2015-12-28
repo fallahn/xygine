@@ -35,6 +35,13 @@ source distribution.
 namespace xy
 {
     class AnimatedDrawable;
+    /*!
+    \brief Animation Controller Component
+
+    When attached to an entity which also has an Animated Drawable
+    component attached the animation controller can be used to listen
+    for events and play specific animations accordingly.
+    */
     class AnimationController final : public Component
     {
     public:

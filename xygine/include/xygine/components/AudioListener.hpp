@@ -39,6 +39,20 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Audio listener component
+
+    The audio listener component defines where in the scene
+    the player's virtual ears are. Audio sources played in the scene
+    are automatically panned relative to the listener position. The
+    listener position also affects the falloff in volume of audio
+    sourcesthe further away they are from the listener. Usually
+    the audio listener would be attached to the same entity as the
+    active scene camera, or possibly the entity to which the player
+    is attached. There can only ever be one instance of a listener
+    in any scene, creating a new listener component automatically
+    destroys any existing ones.
+    */
     class AudioListener final : public Component
     {
     public:
@@ -54,6 +68,10 @@ namespace xy
         void entityUpdate(Entity&, float) override;
         void handleMessage(const Message&) override;
 
+        /*!
+        \brief Returns the theoretical depth, in world units
+        of the AudioListener component. This value is fixed.
+        */
         static float getListenerDepth();
 
         static const FactoryFunc create;
