@@ -269,7 +269,7 @@ void World::ContactListener::resetBuffers()
 
 b2Contact* World::ContactListener::bufferContact(const b2Contact* contact)
 {
-    XY_ASSERT((m_contactBuffer.size() - (int)m_contactBufferPtr) > contactSize, "This would cause a buffer overflow!");
+    XY_ASSERT((m_contactBuffer.size() - (std::uint64_t)m_contactBufferPtr) > contactSize, "This would cause a buffer overflow!");
     b2Contact* retVal = reinterpret_cast<b2Contact*>(m_contactBufferPtr);
     std::memcpy(m_contactBufferPtr, contact, contactSize);
     m_contactBufferPtr += contactSize;
