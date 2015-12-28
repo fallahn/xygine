@@ -49,7 +49,7 @@ namespace xy
     class Entity final : public sf::Transformable, public sf::Drawable
     {
     public:
-        using Ptr = detail::ObjectPool<Entity>::Ptr;
+        using Ptr = Detail::ObjectPool<Entity>::Ptr;
     private:
         class Priv final {};
     public:

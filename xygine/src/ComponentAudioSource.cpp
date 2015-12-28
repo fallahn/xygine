@@ -35,10 +35,10 @@ using namespace xy;
 
 namespace
 {
-
 }
 
 AudioSource::FactoryFunc AudioSource::create = std::make_unique<AudioSource>;
+
 
 AudioSource::AudioSource(MessageBus& mb, SoundResource& sr)
     :Component      (mb, this),

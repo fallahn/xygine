@@ -37,12 +37,20 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Represents a single animation which can be played by an AnimatedSprite
+    */
     struct Animation
     {
         friend class AnimatedDrawable;
         Animation(const std::string& name, sf::Int16 begin, sf::Int16 end, bool loop = true)
             : m_name(name), m_startFrame(begin), m_endFrame(end), m_loop(loop){}
 
+        /*!
+        \brief Gets the name of the animation
+
+        \returns std::string containing the name
+        */
         const std::string& getName() const
         {
             return m_name;
@@ -55,7 +63,9 @@ namespace xy
         bool m_loop;
     };
 
-    //functor for searching vectors of animations
+    /*!
+    \brief functor for searching vectors of animations
+    */
     struct FindAnimation
     {
         FindAnimation(const std::string& name) : m_name(name){}
@@ -68,16 +78,39 @@ namespace xy
     };
 
     class TextureResource;
+
+    /*!
+    \brief Provides an interface for animated sprites, allowing them to be attached to an entity
+
+    Animated Drawables are usually composed of a sprite sheet loaded int oa texture, and a set
+    of one or more animation ranges. Animations can be created by manually setting Animated Drawable
+    properties such as frame size and frame rate, or can be loaded from a specially formatted
+    animation data file saved as a json string. These files can be created with programs such as the
+    Sprite Animation editor included in the xygine repository.
+    */
     class AnimatedDrawable final : public sf::Drawable, public sf::Transformable, public Component
     {
     public:
         using Ptr = std::unique_ptr<AnimatedDrawable>;
 
+        /*!
+        \brief Factory function for creating AnimatedDrawable components
+
+        \param Reference to the active message bus
+        \returns unique_ptr containing the newly created component
+        */
         static Ptr create(MessageBus& mb)
         {
             return std::move(std::make_unique<AnimatedDrawable>(mb));
         }
 
+        /*!
+        \brief Factory function for creating AnimatedDrawable components
+
+        \param Reference to the active message bus
+        \param Texture to use for the Animated Sprite
+        \returns unique_ptr containing the newly created component
+        */
         static Ptr create(MessageBus& mb, const sf::Texture& t)
         {
             return std::move(std::make_unique<AnimatedDrawable>(mb, t));
@@ -97,32 +130,121 @@ namespace xy
         sf::FloatRect localBounds() const override;
         sf::FloatRect globalBounds() const override;
 
+        /*!
+        \brief Sets the texture used by the Animated Drawable
+        */
         void setTexture(const sf::Texture& t);
+        /*!
+        \brief Gets the texture used by the Animated Drawable
+
+        \returns a const pointer to the current texture or nullptr if no texture set
+        */
         const sf::Texture* getTexture() const;
+        /*!
+        \brief Sets an optional shader to be used when the component is drawn
+        */
         void setShader(sf::Shader& shader);
+        /*!
+        \brief Sets an optional normal map texture to be used if the component
+        uses a normal mapping shader
+        */
         void setNormalMap(const sf::Texture&);
+        /*!
+        \brief Sets the size of a single frame in the animation
+        */
         void setFrameSize(const sf::Vector2i& size);
+        /*!
+        \brief Gets the current frame size for the active animation
+        */
         const sf::Vector2i& getFrameSize() const;
+        /*!
+        \brief Sets the total number of frames in the current animation
+        */
         void setFrameCount(sf::Uint8 count);
+        /*!
+        \brief Gets the number of frames in the currently active animation
+        */
         sf::Uint8 getFrameCount() const;
+        /*!
+        \brief Sets the number of frames to be displayed per second for the active animation
+        */
         void setFrameRate(float rate);
+        /*!
+        \brief Gets the frame rate in frames per second for the active animation
+        */
         float getFrameRate() const;
+        /*!
+        \brief Set whether or not the current animation should be played looped
+        */
         void setLooped(bool looped);
+        /*!
+        \brief returns true if the current animation is looped, else returns false
+        */
         bool looped() const;
+        /*!
+        \brief Plays the current active animation
+
+        \param First frame to start playing from
+        \param Frame to stop the animation on. use -1 to play to the end
+        \param Offset into the animation, in frames, to start playing from
+        */
         void play(sf::Int16 start = 0, sf::Int16 end = -1, sf::Int16 offset = 0);
+        /*!
+        \brief Plays a given animation
+
+        \param An instance of an Animation struct to set the playback parameters
+        \param Offset in frames into the animation to start playing from
+        */
         void play(Animation a, sf::Int16 offset = 0);
+        /*!
+        \brief Play an animation from the internal list of animations
+
+        \param Index into the list of animations from which to play
+        \param Offset from the first frame of the animation to start from
+        */
         void playAnimation(sf::Uint32 index, sf::Int16 offset = 0);
+        /*!
+        \brief Returns true if the current animation is playing, else returns false
+        */
         bool playing() const;
+        /*!
+        \brief Pauses or unpauses the currently playing animation
+
+        \param true to pause the animation, else false to start playing from the current frame
+        */
         void setPaused(bool paused);
 
+        /*!
+        \brief Sets the colour with which the drawable is multiplied. White by default
+        */
         void setColour(const sf::Color& c);
+        /*!
+        \brief Sets the blend mode used when drawing. Defaults to BlendAlpha
+        */
         void setBlendMode(sf::BlendMode);
 
+        /*!
+        \brief Returns a vector in world coordinates representing the forward
+        facing direction of the Animated Drawable
+        */
         sf::Vector2f getForwardVector() const;
+        /*!
+        \brief Returns a vector in world coordinates representing the right
+        facing direction of the Animated Drawable
+        */
         sf::Vector2f getRightVector() const;
 
-        void loadAnimationData(const std::string& path);
+        /*!
+        \brief Loads a formatted json file containing animation information
+        as produced by the xygine sprite editor
 
+        \param Relative path to the json file
+        */
+        void loadAnimationData(const std::string& path);
+        /*!
+        \brief Returns a vector of Animation structs used by the drawable component
+        normally loaded from an animation data file
+        */
         const std::vector<Animation>& getAnimations()const;
 
     private:

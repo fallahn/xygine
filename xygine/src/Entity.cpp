@@ -43,7 +43,7 @@ namespace
     sf::Uint64 uid = 1u; //use 0 for no entity
     const std::size_t MAX_ENTS = 512u;
 
-    detail::ObjectPool<Entity> objectPool(MAX_ENTS);
+    Detail::ObjectPool<Entity> objectPool(MAX_ENTS);
 }
 
 Entity::Entity(MessageBus& mb, const Entity::Priv&)

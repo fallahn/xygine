@@ -112,6 +112,7 @@ namespace xy
         sf::Uint64 m_parentUID;
         std::string m_name;
         UniqueType m_typeIndex;
+
     };
 }
 #endif //XY_COMPONENT_HPP_

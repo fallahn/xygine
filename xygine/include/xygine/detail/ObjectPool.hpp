@@ -38,7 +38,7 @@ source distribution.
 
 namespace xy
 {
-    namespace detail
+    namespace Detail
     {
         template <class T>
         class ObjectPool final
