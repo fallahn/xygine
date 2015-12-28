@@ -33,6 +33,7 @@ source distribution.
 #include <xygine/Log.hpp>
 #include <xygine/Command.hpp>
 #include <xygine/components/Component.hpp>
+#include <xygine/detail/ObjectPool.hpp>
 
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Drawable.hpp>
@@ -44,24 +45,24 @@ source distribution.
 
 namespace xy
 {
-    //class Component;
     class Scene;
     class Entity final : public sf::Transformable, public sf::Drawable
     {
     public:
-        using Ptr = std::unique_ptr<Entity>;
+        using Ptr = detail::ObjectPool<Entity>::Ptr;
     private:
-        using FactoryFunc = Ptr(&)(MessageBus&);
+        class Priv final {};
     public:
-        static const FactoryFunc create;
 
         template<typename CONDITION>
         using enable_if = typename std::enable_if<CONDITION::value>::type;
 
-        explicit Entity(MessageBus&);
+        explicit Entity(MessageBus&, const Priv&);
         ~Entity() = default;
         Entity(const Entity&) = delete;
         Entity& operator = (const Entity&) = delete;
+
+        static Ptr create(MessageBus&);
 
         void addChild(Ptr&);
         Ptr removeChild(Entity&);

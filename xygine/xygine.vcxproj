@@ -155,6 +155,7 @@
     <ClInclude Include="include\xygine\components\ParticleSystem.hpp" />
     <ClInclude Include="include\xygine\components\QuadTreeComponent.hpp" />
     <ClInclude Include="include\xygine\components\SfDrawableComponent.hpp" />
+    <ClInclude Include="include\xygine\detail\ObjectPool.hpp" />
     <ClInclude Include="include\xygine\Difficulty.hpp" />
     <ClInclude Include="include\xygine\Entity.hpp" />
     <ClInclude Include="include\xygine\FileSystem.hpp" />

@@ -36,16 +36,17 @@ source distribution.
 
 #include <iostream>
 
+using namespace xy;
+
 namespace
 {
     sf::Uint64 uid = 1u; //use 0 for no entity
+    const std::size_t MAX_ENTS = 512u;
+
+    detail::ObjectPool<Entity> objectPool(MAX_ENTS);
 }
 
-using namespace xy;
-
-const Entity::FactoryFunc Entity::create = std::make_unique<Entity>;
-
-Entity::Entity(MessageBus& mb)
+Entity::Entity(MessageBus& mb, const Entity::Priv&)
  : m_destroyed          (false),
  m_uid                  (uid++),
  m_messageBus           (mb),
@@ -55,6 +56,11 @@ Entity::Entity(MessageBus& mb)
 {}
 
 //public
+Entity::Ptr Entity::create(MessageBus& mb)
+{
+    return std::move(objectPool.get(mb, Priv()));
+}
+
 void Entity::addChild(Entity::Ptr& child)
 {
     child->m_parent = this;

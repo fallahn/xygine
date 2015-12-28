@@ -77,6 +77,7 @@
     <ClInclude Include="include\ParticleDemoState.hpp" />
     <ClInclude Include="include\PhysicsDemoState.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
+    <ClInclude Include="include\TimedDestruction.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp" />

@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_LOGGER_HPP_
 #define XY_LOGGER_HPP_
 
+#include <xygine/FileSystem.hpp>
+
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
 
@@ -142,7 +144,12 @@ namespace xy
 #ifndef _DEBUG_
 #define LOG(message, type)
 #else
-#define LOG(message, type) xy::Logger::log(message, type);
+#define LOG(message, type) {\
+std::string fileName(__FILE__); \
+fileName = FileSystem::getFileName(fileName); \
+std::stringstream ss; \
+ss << message << " (" << fileName << ", " << __LINE__ << ")"; \
+xy::Logger::log(ss.str(), type);}
 #endif //_DEBUG_
 
 #endif //XY_LOGGER_HPP_

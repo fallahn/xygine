@@ -196,7 +196,7 @@ void Scene::reset()
     m_layers.clear();
     for (int i = 0; i < Layer::Count; ++i)
     {
-        m_layers.emplace_back(std::make_unique<Entity>(m_messageBus));
+        m_layers.emplace_back(Entity::create(m_messageBus));
         m_layers.back()->setScene(this);
     }
 

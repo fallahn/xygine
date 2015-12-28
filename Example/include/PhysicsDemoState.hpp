@@ -71,6 +71,8 @@ private:
     sf::Text m_reportText;
 
     void createBodies();
+
+    void randomBall();
 };
 
 #endif //PHYSICS_DEMO_STATE_HPP_

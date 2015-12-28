@@ -58,6 +58,8 @@ source distribution.
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 
+#include <TimedDestruction.hpp>
+
 namespace
 {
     const sf::Keyboard::Key upKey = sf::Keyboard::W;
@@ -96,6 +98,13 @@ bool PhysicsDemoState::update(float dt)
     m_scene.update(dt);
 
     m_reportText.setString(xy::StatsReporter::reporter.getString());
+
+    static sf::Clock clock;
+    if (clock.getElapsedTime().asSeconds() > 6.f)
+    {
+        clock.restart();
+        randomBall();
+    }
 
     return true;
 }
@@ -305,24 +314,7 @@ void PhysicsDemoState::createBodies()
 
     m_scene.addEntity(ballEntityA, xy::Scene::Layer::BackMiddle);
 
-    auto ballEntityB = xy::Entity::create(m_messageBus);
-    ballEntityB->setWorldPosition({ 440.f, 500.f });
-    auto ballBodyB = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
-
-    ballShape.setRadius(50.f);
-    ballShape.addAffector(xy::Physics::ConstantForceAffector({ 120.f, -500.f }));
-    ballBodyB->addCollisionShape(ballShape);
-
-    auto bb = ballEntityB->addComponent<xy::Physics::RigidBody>(ballBodyB);
-
-    soundSource = xy::AudioSource::create(m_messageBus, m_soundResource);
-    soundSource->setSound("assets/sound/04.wav");
-    soundSource->setAttenuation(20.f);
-    soundSource->setPitch(0.4f);
-    ballEntityB->addComponent<xy::AudioSource>(soundSource);
-    m_scene.addEntity(ballEntityB, xy::Scene::Layer::BackMiddle);
-
-
+    randomBall();
     /*xy::Physics::DistanceJoint dj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
     bb->addJoint(dj);
 
@@ -356,6 +348,32 @@ void PhysicsDemoState::createBodies()
 
     xy::Physics::MotorJoint mj(*ba);
     bb->addJoint(mj);*/
+}
 
+void PhysicsDemoState::randomBall()
+{
+    sf::Vector2i randPos(xy::Util::Random::value(20, 1850), xy::Util::Random::value(125, 350));
+    
+    auto ballEntityB = xy::Entity::create(m_messageBus);
+    ballEntityB->setWorldPosition(sf::Vector2f(randPos));
+    auto ballBodyB = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
 
+    xy::Physics::CollisionCircleShape ballShape(static_cast<float>(xy::Util::Random::value(25, 50)));
+    ballShape.setDensity(1.5f);
+    ballShape.setRestitution(xy::Util::Random::value(0.2f, 0.9f));
+    ballBodyB->addCollisionShape(ballShape);
+
+    ballEntityB->addComponent<xy::Physics::RigidBody>(ballBodyB);
+
+    auto soundSource = xy::AudioSource::create(m_messageBus, m_soundResource);
+    soundSource = xy::AudioSource::create(m_messageBus, m_soundResource);
+    soundSource->setSound("assets/sound/04.wav");
+    soundSource->setAttenuation(20.f);
+    soundSource->setPitch(xy::Util::Random::value(0.4f, 5.f));
+    ballEntityB->addComponent<xy::AudioSource>(soundSource);
+
+    auto td = std::make_unique<TimedDestruction>(m_messageBus);
+    ballEntityB->addComponent<TimedDestruction>(td);
+
+    m_scene.addEntity(ballEntityB, xy::Scene::Layer::BackMiddle);
 }

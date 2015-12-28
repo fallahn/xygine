@@ -122,3 +122,25 @@ std::string FileSystem::getFileExtension(const std::string& path)
     else
         return "";
 }
+
+std::string FileSystem::getFileName(const std::string& path)
+{
+    static auto searchFunc = [](const char seperator, const std::string& path)->std::string
+    {
+        std::size_t i = path.rfind(seperator, path.length());
+        if (i != std::string::npos)
+        {
+            return(path.substr(i + 1, path.length() - i));
+        }
+
+        return "";
+    };
+    
+
+#ifdef _WIN32 //try windows formatted paths first
+    std::string retVal = searchFunc('\\', path);
+    if (!retVal.empty()) return retVal;
+#endif
+
+    return searchFunc('/', path);
+}

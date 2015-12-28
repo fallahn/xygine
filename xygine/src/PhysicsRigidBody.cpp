@@ -326,14 +326,14 @@ void RigidBody::removeJoint(const Joint* joint, bool raiseMessage)
 
 void RigidBody::removeCollisionShape(const CollisionShape* shape, bool raiseMessage)
 {
-    LOG("Shapes size: " + std::to_string(m_collisionShapes.size()), Logger::Type::Info);
+    //LOG("Shapes size: " + std::to_string(m_collisionShapes.size()), Logger::Type::Info);
     m_collisionShapes.erase(std::remove_if(m_collisionShapes.begin(), m_collisionShapes.end(),
         [shape](const std::unique_ptr<CollisionShape>& cs)
     {
         return (cs.get() == shape);
     }), m_collisionShapes.end());
-    LOG("Shapes size: " + std::to_string(m_collisionShapes.size()), Logger::Type::Info);
-    LOG("Collision shape rx'd shape destroyed event", Logger::Type::Info);
+    //LOG("Shapes size: " + std::to_string(m_collisionShapes.size()), Logger::Type::Info);
+    //LOG("Collision shape rx'd shape destroyed event", Logger::Type::Info);
 
     if (raiseMessage)
     {

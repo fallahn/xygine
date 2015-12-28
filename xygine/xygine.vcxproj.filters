@@ -34,6 +34,9 @@
     <Filter Include="Source Files\components">
       <UniqueIdentifier>{74c0f4b0-69e9-4268-8a79-b1ca6afd3c60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\detail">
+      <UniqueIdentifier>{ac58e192-060f-48da-9404-03922fec33cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -448,6 +451,9 @@
     </ClInclude>
     <ClInclude Include="include\xygine\components\AudioSource.hpp">
       <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\detail\ObjectPool.hpp">
+      <Filter>Header Files\detail</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

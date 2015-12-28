@@ -25,26 +25,41 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//static functions for cross platform file handling
+//custom component which destroys its parent entity after a random amount of time
 
-#ifndef XY_FILE_SYS_HPP_
-#define XY_FILE_SYS_HPP_
+#ifndef TIMED_DESTRUCTION_HPP_
+#define TIMED_DESTRUCTION_HPP_
 
-#include <string>
-#include <vector>
+#include <xygine/components/Component.hpp>
+#include <xygine/Util.hpp>
+#include <xygine/Entity.hpp>
 
-namespace xy
+#include <SFML/System/Clock.hpp>
+
+class TimedDestruction final : public xy::Component
 {
-    class FileSystem final
+public:
+    TimedDestruction(xy::MessageBus& mb)
+        : Component(mb, this)
     {
-    public:
+        m_timeout = static_cast<float>(xy::Util::Random::value(5, 10));
+    }
 
-        static std::vector<std::string> listFiles(std::string path);
-        static std::string getFileExtension(const std::string& path);
-        static std::string getFileName(const std::string& path);
+    xy::Component::Type type() const override { return xy::Component::Type::Script; }
+    void entityUpdate(xy::Entity& ent, float) override
+    {
+        if (m_clock.getElapsedTime().asSeconds() > m_timeout)
+        {
+            ent.destroy();
+        }
+    }
 
-    private:
+    void handleMessage(const xy::Message&) override {}
 
-    };
-}
-#endif //XY_FILE_SYS_HPP_
+
+private:
+    float m_timeout;
+    sf::Clock m_clock;
+};
+
+#endif //TIMED_DESTRUCTION_HPP_
