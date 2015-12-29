@@ -105,3 +105,8 @@ void ParticleController::fire(SystemId id, const sf::Vector2f& position)
         LOG("CLIENT fired new particle system", Logger::Type::Info);
     }
 }
+
+void ParticleController::fire(SystemId id, Entity& entity)
+{
+    //TODO implement this
+}

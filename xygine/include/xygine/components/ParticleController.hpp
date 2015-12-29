@@ -40,6 +40,20 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Particle System controller component
+
+    The particle controller is a utility component for
+    firing particle systems, recycling its resources as much
+    as possible. Rather than create a new particle system
+    each time one is triggered, the controller will look for
+    existing inactive systems and use those. New systems are
+    created only when none are available. A scene will normally
+    only require a single controller attached to an entity in
+    the scene. Particle controllers are then able to be triggered
+    by sending a Command to its parent entity requesting a system
+    be fired.
+    */
     class ParticleController final : public Component
     {
     public:          
@@ -58,8 +72,42 @@ namespace xy
         void handleMessage(const Message&) override;
         void onStart(Entity&);
 
+        /*!
+        \brief Add a particle definition to the controller
+
+        Particle Definitions allow creating preset particle systems
+        either programatically, or via a loaded json file. When a
+        definition is added to the controller it is paired with the
+        given ID which can be used to identify a system when fired.
+
+        \param SystemId An integer value used to identify a particular
+        particle system definition
+        \param ParticleSystem::Definition used to create a set of
+        predefined values for a particle system
+
+        \see ParticleSystem::Definition
+        */
         void addDefinition(SystemId, const ParticleSystem::Definition&);
+        /*!
+        \brief Fires a particle system
+
+        If a particle system has been added with the given ID the system
+        is then started based on its definition paramters.
+
+        \param SystemId ID of the system to fire
+        \param position World space coordinates at which the system is fired
+        */
         void fire(SystemId, const sf::Vector2f& position);
+        /*!
+        \brief Fires a particle system
+
+        If a particle system has been added with the given ID the system
+        is then started based on its definition paramters.
+
+        \param SystemId ID of the system to fire
+        \param Entity entity to which the particle system should be attached
+        */
+        void fire(SystemId, Entity&);
 
     private:
 

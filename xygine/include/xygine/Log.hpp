@@ -146,7 +146,7 @@ namespace xy
 #else
 #define LOG(message, type) {\
 std::string fileName(__FILE__); \
-fileName = FileSystem::getFileName(fileName); \
+fileName = xy::FileSystem::getFileName(fileName); \
 std::stringstream ss; \
 ss << message << " (" << fileName << ", " << __LINE__ << ")"; \
 xy::Logger::log(ss.str(), type);}

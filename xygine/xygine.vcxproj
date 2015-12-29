@@ -76,7 +76,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Affectors.cpp" />
+    <ClCompile Include="src\ParticleAffectors.cpp" />
     <ClCompile Include="src\ComponentAnimatedDrawable.cpp" />
     <ClCompile Include="src\ComponentAnimationController.cpp" />
     <ClCompile Include="src\App.cpp" />
@@ -140,7 +140,7 @@
     <ClCompile Include="src\UIWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\xygine\Affectors.hpp" />
+    <ClInclude Include="include\xygine\ParticleAffectors.hpp" />
     <ClInclude Include="include\xygine\App.hpp" />
     <ClInclude Include="include\xygine\Assert.hpp" />
     <ClInclude Include="include\xygine\AudioManager.hpp" />

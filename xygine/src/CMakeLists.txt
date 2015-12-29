@@ -1,5 +1,4 @@
 set(xygine_SRC
-  ${xygine_DIR}/Affectors.cpp
   ${xygine_DIR}/App.cpp
   ${xygine_DIR}/AudioManager.cpp
   ${xygine_DIR}/CommandQueue.cpp
@@ -16,6 +15,7 @@ set(xygine_SRC
   ${xygine_DIR}/FontResource.cpp
   ${xygine_DIR}/MessageBus.cpp
   ${xygine_DIR}/Music.cpp
+  ${xygine_DIR}/ParticleAffectors.cpp
   ${xygine_DIR}/PhysicsAffectorAreaForce.cpp
   ${xygine_DIR}/PhysicsAffectorConstantForce.cpp
   ${xygine_DIR}/PhysicsAffectorPointForce.cpp

@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/Affectors.hpp>
+#include <xygine/ParticleAffectors.hpp>
 #include <xygine/components/ParticleSystem.hpp>
 #include <xygine/Util.hpp>
 
