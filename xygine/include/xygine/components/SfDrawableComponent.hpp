@@ -42,12 +42,24 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Templated drawable component for attaching standard SFML
+    drawables to entities.
+
+    This component is designed to be a utility component which allows attaching
+    standard SFML drawables such as Circle/Rectangle shapes, text or sprites to
+    an entity. As it relies on the SFML drawable base class it will also work 
+    with any other sf::Drawable derived classes, such as the controls from 
+    xygine's UI system.
+    */
     template <class T>
     class SfDrawableComponent final : public Component, public sf::Transformable, public sf::Drawable, public ShaderProperty
     {
     public:
         using Ptr = std::unique_ptr<SfDrawableComponent<T>>;
-
+        /*!
+        \brief Creates a new SfDrawableComponent
+        */
         static Ptr create(MessageBus& mb)
         {
             return std::move(std::make_unique<SfDrawableComponent<T>>(mb));
@@ -65,8 +77,13 @@ namespace xy
         {
             m_globalBounds = entity.getWorldTransform().transformRect(m_drawable.getGlobalBounds());
         }
-        void handleMessage(const Message&) override {}
+        
+        /*!
+        \brief Returns a reference to the underlying drawable
 
+        Allows access to the properties of the drawable type, such
+        as setting the font on a text objects or texture on a sprite.
+        */
         T& getDrawable() { return m_drawable; }
 
         sf::FloatRect globalBounds() const override

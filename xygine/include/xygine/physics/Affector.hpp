@@ -37,9 +37,18 @@ namespace xy
     namespace Physics
     {
         class RigidBody;
+        /*!
+        \brief Abstract base class for physics affectors
+
+        Affectors can be attachd to collision shapes to influence
+        parent rigidbodies or the bodies belonging to colliding shapes
+        */
         class Affector
         {
         public:
+            /*!
+            \brief Used to identify the specific type of concrete classes
+            */
             enum class Type
             {
                 ConstantForce,
@@ -49,7 +58,11 @@ namespace xy
                 PointForce,
                 Platform
             };
-
+            /*!
+            \brief Used to identify whether or not forces should be applied
+            the centre of parent rigidbosies or the centre of the CollisionShape
+            with which the affector is associated
+            */
             enum class Centroid
             {
                 RigidBody,
@@ -60,6 +73,10 @@ namespace xy
             virtual ~Affector() = default;
 
             virtual Type type() const = 0;
+            /*!
+            \brief Implemented by concrete classes to apply their effect
+            \param RigidBody RigidBody to which to apply the effect.
+            */
             virtual void apply(RigidBody*) = 0;
 
         private:

@@ -41,6 +41,18 @@ namespace xy
 {
     class QuadTree;
     class QuadTreeNode;
+    /*!
+    \brief QuadTree Component
+
+    Entities with QuadTree components attached are automatically added
+    to the scene's quad tree when the entity is added to the scene. 
+    Entities which are part of the quad tree are then legible to be
+    returned as part of a quad tree query via the scene. Quad tree
+    query results contain a list of quad tree components found in the
+    queried area - the parent entities can then be retrieved from the
+    resulting omponents.
+    \see Scene
+    */
     class QuadTreeComponent final : public Component
     {
     public:
@@ -59,17 +71,45 @@ namespace xy
         void onStart(Entity&) override;
         void destroy() override;
 
+        /*!
+        \brief Return the AABB of the quad tree component in local coords
+        */
         sf::FloatRect localBounds() const override;
+        /*!
+        \brief Return the component's AABB in world coordinates
+
+        Takes into account any translation or rotation of the parent entity.
+        */
         sf::FloatRect globalBounds() const override;
+        /*!
+        \brief Returns the component's AABB in world coordinates
+
+        Takes into account any translation or rotation of the parent entity.
+        QuadTree components buffer around 600ms of transforms so that bounds
+        queries can be performed over the network using lag compensation
+
+        \param latency Number of milliseconds in to hte past when querying
+        transform buffer.
+        */
         sf::FloatRect globalBounds(sf::Int32 latency);
 
+        /*!
+        \brief Used to update the quad tree once a component has been transformed
+        */
         void updateQuadTree();
+        /*!
+        \brief Removes this component from the quad tree
+        */
         void removeFromQuadTree();
 
         //TODO rather than expose these friend QuadTreeNode?
         void setQuadTree(QuadTree*);
         void setQuadTreeNode(QuadTreeNode*);
 
+        /*!
+        \brief Returns a pointer to the component's parent entity
+        or nullptr if not entity exists.
+        */
         Entity* getEntity();
 
     private:

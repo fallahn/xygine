@@ -261,11 +261,11 @@ namespace xy
         */
         void start(sf::Uint8 releaseCount = 1, float delay = 0.f, float duration = 0.f);
         /*!
-        \brief Returns true if the particle system is currently stated and emitting paticles
+        \brief Returns true if the particle system is currently started and emitting particles
         */
         bool started() const;
         /*!
-        \brief stops the particle system fro memitting particles
+        \brief stops the particle system from emitting particles
         */
         void stop();
         /*!

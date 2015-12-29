@@ -40,6 +40,16 @@ namespace xy
 {
     namespace Detail
     {
+        /*!
+        \brief Creates a memory pool of object type T
+
+        Utility class used on frequently allocated / deallocated
+        objects such as entities,with the aim of reducing memory
+        fragmentation. Returned objects are of unique_ptr type so
+        normal ownership semantics can be assumed, but custom
+        deletion means that unique_ptr parameter types have to be
+        specially considered.
+        */
         template <class T>
         class ObjectPool final
         {
@@ -47,6 +57,10 @@ namespace xy
             const std::size_t MAX_BUFFER_SIZE = 2048u;
         public:
             using Ptr = std::unique_ptr<T, std::function<void(T*)>>;
+            /*!
+            \brief Constructor.
+            \param size Maximum number of objects to store in the pool
+            */
             explicit ObjectPool(std::size_t size)
                 : m_poolBuffer  (size * sizeof(T)),
                 m_slots         (size),
@@ -63,9 +77,14 @@ namespace xy
             ~ObjectPool() = default;
             explicit ObjectPool(const ObjectPool&) = delete;
             ObjectPool& operator = (const ObjectPool&) = delete;
+            /*!
+            \brief Retrieves a unique_ptr of type T
 
-            //WARNING this returns nullptr if no space is available
-            //validity of returned objects should be checked.
+            WARNING this returns nullptr if no space is available
+            validity of returned objects should be checked.
+
+            \param args Constructor arguments for type T
+            */
             template <typename... Args>
             Ptr get(Args&&... args)
             {
