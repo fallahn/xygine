@@ -41,7 +41,7 @@ source distribution.
 
 namespace xy
 {
-    namespace ui
+    namespace UI
     {
         class Button final : public Control
         {

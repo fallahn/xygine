@@ -42,7 +42,7 @@ namespace sf
 
 namespace xy
 {
-    namespace ui
+    namespace UI
     {
         using Index = std::size_t;
         enum class Alignment

@@ -37,7 +37,7 @@ source distribution.
 
 namespace xy
 {
-    namespace ui
+    namespace UI
     {
         class ScoreList final : public Control
         {

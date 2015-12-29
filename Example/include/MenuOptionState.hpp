@@ -44,7 +44,7 @@ private:
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
 
-    xy::ui::Container m_uiContainer;
+    xy::UI::Container m_uiContainer;
 
     void buildMenu(const sf::Font&);
     void close();

@@ -32,7 +32,7 @@ source distribution.
 #include <SFML/Graphics/RenderStates.hpp>
 
 using namespace xy;
-using namespace ui;
+using namespace UI;
 
 Label::Label(const sf::Font& font)
     : m_text            ("", font),

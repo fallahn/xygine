@@ -34,7 +34,7 @@ source distribution.
 
 namespace xy
 {
-    namespace ui
+    namespace UI
     {
         class Label final : public Control
         {

@@ -28,7 +28,7 @@ source distribution.
 #include <xygine/ui/Control.hpp>
 
 using namespace xy;
-using namespace ui;
+using namespace UI;
 
 Control::Control()
     : m_selected    (false),

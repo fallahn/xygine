@@ -39,7 +39,7 @@ source distribution.
 
 namespace xy
 {
-    namespace ui
+    namespace UI
     {
         //not final, forms inherit from this
         class Container : public Control

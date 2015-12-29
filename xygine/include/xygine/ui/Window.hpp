@@ -48,7 +48,7 @@ namespace sf
 
 namespace xy
 {
-    namespace ui
+    namespace UI
     {
         class Window final : public sf::Drawable, public sf::Transformable
         {

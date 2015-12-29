@@ -33,7 +33,7 @@ source distribution.
 #include <SFML/Window/Event.hpp>
 
 using namespace xy;
-using namespace ui;
+using namespace UI;
 
 namespace
 {

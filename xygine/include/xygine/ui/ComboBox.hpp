@@ -36,7 +36,7 @@ source distribution.
 
 namespace xy
 {
-    namespace ui
+    namespace UI
     {
         class ComboBox final : public Control
         {
