@@ -54,11 +54,6 @@ Component::Type ParticleController::type() const
 
 void ParticleController::entityUpdate(Entity&, float){}
 
-void ParticleController::handleMessage(const Message& msg)
-{
-
-}
-
 void ParticleController::onStart(Entity& entity)
 {
     m_entity = &entity;

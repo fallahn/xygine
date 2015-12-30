@@ -67,7 +67,6 @@ namespace xy
 
         Component::Type type() const override;
         void entityUpdate(Entity&, float) override;
-        void handleMessage(const Message&) override;
         void onStart(Entity&) override;
         void destroy() override;
 

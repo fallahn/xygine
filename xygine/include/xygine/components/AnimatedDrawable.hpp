@@ -125,7 +125,6 @@ namespace xy
 
         Component::Type type() const override;
         void entityUpdate(Entity&, float dt) override;
-        void handleMessage(const Message&) override;
 
         sf::FloatRect localBounds() const override;
         sf::FloatRect globalBounds() const override;

@@ -70,8 +70,6 @@ void QuadTreeComponent::entityUpdate(Entity& entity, float dt)
     updateQuadTree(); //TODO can we only call this when needed? or is there no point checking?
 }
 
-void QuadTreeComponent::handleMessage(const Message&){}
-
 void QuadTreeComponent::onStart(Entity& entity)
 {
     m_transform = entity.getTransform();

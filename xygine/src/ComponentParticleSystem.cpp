@@ -80,11 +80,6 @@ void ParticleSystem::entityUpdate(Entity& entity, float dt)
         m_position = entity.getWorldPosition();
 }
 
-void ParticleSystem::handleMessage(const Message& msg)
-{
-    
-}
-
 sf::FloatRect ParticleSystem::localBounds() const
 {
     return m_bounds;

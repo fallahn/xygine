@@ -65,8 +65,6 @@ void AudioListener::entityUpdate(Entity& entity, float)
     sf::Listener::setPosition({ pos.x, -pos.y, listenerDepth });
 }
 
-void AudioListener::handleMessage(const Message&) {}
-
 float AudioListener::getListenerDepth()
 {
     return listenerDepth;

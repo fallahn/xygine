@@ -75,9 +75,6 @@ void AudioSource::entityUpdate(Entity& entity, float)
     }
 }
 
-void AudioSource::handleMessage(const Message&)
-{}
-
 void AudioSource::destroy()
 {
     Component::destroy();

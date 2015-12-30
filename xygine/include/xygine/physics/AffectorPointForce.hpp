@@ -41,6 +41,19 @@ namespace xy
     namespace Physics
     {
         class CollisionShape;
+        /*!
+        \brief Point Force Affector
+
+        Point force affectors apply a set force between two points
+        on the RigidBody of the CollisionShape hosting the affector
+        and the RigidBody of the intersecting CollisionShape. The
+        points can either be the centroid of either of the two 
+        RigidBodies, or the centroid of the intersecting CollisionShapes.
+        The force applied is along the axis between the two points
+        with the given magnitude of the affector. The magnitude can be
+        either positive or negative, foirceing the bodies apart or
+        pulling them toward each other.
+        */
         class PointForceAffector final : public Affector
         {
             friend class CollisionShape;
@@ -54,46 +67,109 @@ namespace xy
             Affector::Type type() const override { return Type::PointForce; }
             void apply(RigidBody*) override;
 
-            //sets whether the target point of the force applied
-            //should be the centre of mass of the target body
-            //or the centroid of the colliding shape
+            /*!
+            \brief Sets the target point of the force.
+            
+            The target point of the force can be the centre of mass
+            of the target body or the centroid of the colliding shape
+
+            \param point Either Centroid::RigidBody or Centroid CollisionShape
+            */
             void setTargetPoint(Centroid point) { m_targetPoint = point; }
-            //sets whether the source point of the force applied
-            //should be the centre of mass of the target body
-            //or the centroid of the colliding shape
+            /*!
+            \brief Sets the source point of the force applied.
+
+            The source point of the force can be the centre of mass of
+            the target body or the centroid of the colliding shape
+
+            \param point Either Centroid::RigidBody or Centroid CollisionShape
+            */
             void setSourcePoint(Centroid point) { m_sourcePoint = point; }
-            //set the magnitide of the force vector applied
+            /*!
+            \brief Set the magnitide of the force vector applied
+
+            The magnitude can be either positive or negative
+
+            \param magnitude Size pf the force value in world units
+            */
             void setMagnitude(float magnitude) { m_magnitude = magnitude; }
-            //set whether or not this affector should wake
-            //sleeping bodies on contact
+            /*!
+            \brief Set whether or not this affector should wake sleeping bodies on contact
+
+            \param wake set to true to wake sleeping bodies
+            */
             void setWake(bool wake) { m_wake = wake; }
-            //set the amount of linear drag applied to colliding
-            //bdies in the range 0-1
+            /*!
+            \brief Set the amount of linear drag applied
+            
+            linear drag is a force opposite to that of the colliding
+            bodies current velocity multiplied by the drag value.
+            Values should range 0 (no drag) to 1 (full drag, the force
+            applied is exactly opposite to the current velocity)
+
+            \param float The amount of drag to apply in range 0-1
+            */
             void setLinearDrag(float);
-            //set the amount of angular drag applied to colliding
-            //bodies in the range 0-1
+            /*!
+            \brief Set the amount of angular drag applied
+
+            angular drag is a force opposite to that of the colliding
+            bodies current angular velocity multiplied by the drag value.
+            Values should range 0 (no drag) to 1 (full drag, the force
+            applied is exactly opposite to the current velocity)
+
+            \param float The amount of drag to apply in range 0-1
+            */
             void setAngularDrag(float);
-            //set whether or not this affectors collision mask
-            //should be compared to that of colliding shapes
+            /*!
+            \brief Set whether or not to use a collision mask
+
+            A collision mask can be used with this affector to define
+            specific groups of intersecting entities which can be influenced
+            by this affector.
+            \see CollisionFilter
+            \param mask Set to true to use the collision mask
+            */
             void useCollisionMask(bool mask) { m_useCollisionMask = mask; }
-            //sets the collision filter to use when masking collisions
+            /*!
+            \brief Set the collision mask to use to filter out fixtures
+
+            \see useCollisionMask
+            \param filter The CollisionMask to use
+            */
             void setCollisionMask(CollisionFilter filter) { m_collisionMask = filter; }
 
-            //get which target point is currently set for this affector
+            /*!
+            \brief Get which target point is currently set for this affector
+            \see setTargetPoint
+            */
             Centroid getTargetPoint() const { return m_targetPoint; }
-            //get which source point is set for this affector
+            /*!
+            \brief Get which source point is set for this affector
+            \see setSourcePoint
+            */
             Centroid getSourcePoint() const { return m_sourcePoint; }
-            //get the current magnitude of this affector's force
+            /*!
+            \brief Get the current magnitude of this affector's force
+            */
             float getMagnitude() const { return m_magnitude; }
-            //get the amount of linear drag applied to colliding bodies
+            /*!
+            \brief Get the amount of linear drag applied to colliding bodies
+            */
             float getLinearDrag() const { return m_linearDrag; }
-            //get the amount of angular drag applied to colliding bodies
+            /*!
+            \brief Get the amount of angular drag applied to colliding bodies
+            */
             float getAngularDrag() const { return m_angularDrag; }
-            //returns true if this affector is set to apply its collision
-            //mask to colliding shapes
+            /*!
+            \brief Returns true if this affector is set to apply its collision
+            mask to colliding shapes
+            */
             bool useCollisionMask() const { return m_useCollisionMask; }
-            //get the current collision filter settings for this
-            //affectors collision mask
+            /*!
+            \brief Get the current collision filter settings for this
+            affectors collision mask
+            */
             const CollisionFilter& getCollisionMask() const { return m_collisionMask; }
 
         private:

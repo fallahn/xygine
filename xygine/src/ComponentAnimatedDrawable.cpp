@@ -118,11 +118,6 @@ void AnimatedDrawable::entityUpdate(Entity&, float dt)
     }
 }
 
-void AnimatedDrawable::handleMessage(const Message&)
-{
-
-}
-
 sf::FloatRect AnimatedDrawable::localBounds() const
 {
     //should we be using abs on frame size?

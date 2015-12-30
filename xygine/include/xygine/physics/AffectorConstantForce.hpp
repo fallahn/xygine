@@ -38,6 +38,10 @@ namespace xy
     namespace Physics
     {
         class CollisionShape;
+        /*!
+        \brief Applies a constant force to the parent body
+        of the owning CollisionShape
+        */
         class ConstantForceAffector final : public Affector
         {
             friend class CollisionShape;
@@ -52,29 +56,54 @@ namespace xy
             Affector::Type type() const override { return Affector::Type::ConstantForce; }
             void apply(RigidBody*) override;
 
-            //sets the force as a vector to be applied
-            //to the parent rigidbody each update
+            /*!
+            \brief Sets the force as a vector to be applied
+            to the parent rigidbody each update
+
+            \param sf::Vector2f A vector representing the direction
+            and magnitude of the force to be applied
+            */
             void setForce(const sf::Vector2f&);
-            //sets the torque to be applied to the parent
-            //body each frame
+            /*!
+            \brief Sets the torque to be applied to the parent
+            body each frame
+
+            \param float Amount of torque to apply
+            */
             void setTorque(float);
-            //sets whether or not to wake a sleeping body
+            /*!
+            \brief Sets whether or not to wake a sleeping body
+            
+            \param bool Set true to wake sleeping bodies
+            */
             void setWake(bool);
-            //sets if the force should be applied to the
-            //centre of mass of the collision shape or
-            //the centre of the collision shape's parent
+            /*!
+            \brief Sets if the force should be applied to the
+            centre of mass of the collision shape or
+            the centre of the collision shape's parent
+
+            \param Centroid Either Centroid::RigidBody or Centroid::CollisionShape
+            */
             void setCentre(Centroid);
 
-            //returns the current force value
+            /*!
+            \brief Returns the current force value
+            */
             const sf::Vector2f& getForce() const;
-            //returns the current torque value
+            /*!
+            \brief Returns the current torque value
+            */
             float getTorque() const;
-            //returns true if this force should wake
-            //a sleeping body
+            /*!
+            \brief Returns true if this force should wake
+            a sleeping body
+            */
             bool getWake() const;
-            //returns whether or not this force is set
-            //to be applied at the centre of mass of
-            //the collision shape or its parent body
+            /*!
+            \brief Returns whether or not this force is set
+            to be applied at the centre of mass of
+            the collision shape or its parent body
+            */
             Centroid getCentre() const;
 
         private:

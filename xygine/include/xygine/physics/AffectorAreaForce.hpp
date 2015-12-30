@@ -118,6 +118,7 @@ namespace xy
             \brief Set the collision mask to use to filter out fixtures
 
             \see useCollisionMask
+            \param cm The CollisionMask to use
             */
             void setCollisionMask(CollisionFilter& cm) { m_collisionMask = cm; }
 

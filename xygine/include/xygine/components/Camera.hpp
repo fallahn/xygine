@@ -63,7 +63,6 @@ namespace xy
 
         Component::Type type() const override { return Component::Type::Script; }
         void entityUpdate(Entity&, float) override;
-        void handleMessage(const Message&) override;
 
         enum class TransformLock
         {

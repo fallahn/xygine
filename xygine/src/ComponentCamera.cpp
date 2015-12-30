@@ -52,8 +52,6 @@ void Camera::entityUpdate(Entity& entity, float)
     m_rotation = entity.getRotation();
 }
 
-void Camera::handleMessage(const Message&) {}
-
 void Camera::lockTransform(Camera::TransformLock lock, bool locked)
 {
     sf::Int8 val = (1 << static_cast<sf::Int8>(lock));

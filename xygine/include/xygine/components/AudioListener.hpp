@@ -66,7 +66,6 @@ namespace xy
         Component::Type type() const override { return Component::Type::Script; }
 
         void entityUpdate(Entity&, float) override;
-        void handleMessage(const Message&) override;
 
         /*!
         \brief Returns the theoretical depth, in world units
