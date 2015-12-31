@@ -48,6 +48,12 @@ namespace xy
     {
         class Contact;
         class RigidBody;
+        /*!
+        \brief Abstract base class for creating CollisionShapes
+
+        CollisionShapes define the masse and shape of RigidBodies. Multiple
+        shapes can be affixed to a single body.
+        */
         class CollisionShape
         {
             friend class RigidBody;
@@ -70,38 +76,78 @@ namespace xy
 
             virtual Type type() const = 0;
 
-            //sets this collision shape's friction
+            /*!
+            \brief Sets this collision shape's friction
+            */
             void setFriction(float);
-            //sets this shape's restitution (bounciness)
+            /*!
+            \brief Sets this shape's restitution (bounciness)
+            */
             void setRestitution(float);
-            //sets the denisty of this shape
+            /*!
+            \brief Sets the denisty of this shape
+            */
             void setDensity(float);
-            //gets this shape's centre of mass
+            /*!
+            \brief Gets this shape's centre of mass
+
+            The centre of mass is a position relative to the parent RigidBody
+            */
             sf::Vector2f getCentreOfMass() const;
-            //gets the shape's mass in kilos based on its density
+            /*!
+            \brief Gets the shape's mass in kilos based on its density
+            */
             float getMass() const;
-            //sets whether or not this shape is used as a sensor
-            //in collision detection
+            /*!
+            \brief Sets whether or not this shape is used as a sensor
+            in collision detection
+
+            Sensors still report collisions which can be caught via
+            collision callbacks, but are not affected by the physics simulation
+            */
             void setIsSensor(bool);
-            //adds a sets of filter flags to define which type of shapes
-            //this shape may collide with
+            /*!
+            \brief Adds a sets of filter flags to define which type of shapes
+            this shape may collide with
+
+            \see CollisionFilter
+            */
             void setFilter(CollisionFilter);
-            //returns the currently set collision filter
+            /*!
+            \brief Returns the currently set collision filter
+            */
             CollisionFilter getFilter() const;
-            //allow explicitly destroying this shape. note that although
-            //this raises an event on the message bus callbacks registered
-            //with the physics world will not be invoked
+            /*!
+            \brief Allow explicitly destroying this shape. 
+            Note that although this raises an event on the message bus
+            callbacks registered with the physics world will not be invoked
+            */
             void destroy();
-            //returns a pointer to the shape's parent rigidbody
-            //if it exists, else returns nullptr
+            /*!
+            \brief Returns a pointer to the shape's parent rigidbody
+            
+            \returns nullptr if no RigidBody exists
+            */
             RigidBody* getRigidBody() const;
 
-            //adds an affector which modifies the body to which
-            //this or a colliding CollisionShape is attached
+            /*!
+            \brief Adds an affector
+            \see ConstantForceAffector
+            */
             void addAffector(const ConstantForceAffector&);
+            /*!
+            \brief Adds an affector
+            \see AreaForceAffector
+            */
             void addAffector(const AreaForceAffector&);
+            /*!
+            \brief Adds an affector
+            \see PointForceAffector
+            */
             void addAffector(const PointForceAffector&);
-            //removes all affectors assigned to this CollisionShape
+            /*!
+            \brief Removes all affectors assigned to this CollisionShape
+            */
             void clearAffectors();
 
         protected:

@@ -41,6 +41,11 @@ namespace xy
 {
     namespace Physics
     {
+        /*!
+        \brief Creates a 2-sided chain or loop CollisionShape from a series of points.
+
+        Useful for outlining static geometry or in some cases where concave polygons are needed
+        */
         class CollisionEdgeShape final : public CollisionShape
         {
         public:
@@ -50,9 +55,15 @@ namespace xy
                 GhostPoints,
                 Loop
             };
-            //creates an edge shape from the given list of points. If the GhostPoints option
-            //is supplied the first and last points will be created as ghost vertices. If
-            //the Loop option is supplied then the edges will created as a closed loop.
+            /*!
+            \brief Creates an edge shape from the given list of points.
+
+            If the GhostPoints option is supplied the first and last points will be created as ghost vertices. If
+            the Loop option is supplied then the edges will created as a closed loop.
+
+            \param points std:vector of sf::Vector2f representing point positions.
+            \param option Can be None, GhostPoints or Loop
+            */
             CollisionEdgeShape(const std::vector<sf::Vector2f>& points, Option = Option::None);
             ~CollisionEdgeShape() = default;
             CollisionEdgeShape(const CollisionEdgeShape&);
@@ -60,9 +71,15 @@ namespace xy
 
             CollisionShape::Type type() const override { return CollisionShape::Type::Edge; }
 
-            //creates an edge shape from the given list of points. If the GhostPoints option
-            //is supplied the first and last points will be created as ghost vertices. If
-            //the Loop option is supplied then the edges will created as a closed loop.
+            /*!
+            \brief Creates an edge shape from the given list of points.
+
+            If the GhostPoints option is supplied the first and last points will be created as ghost vertices. If
+            the Loop option is supplied then the edges will created as a closed loop.
+
+            \param points std:vector of sf::Vector2f representing point positions.
+            \param option Can be None, GhostPoints or Loop
+            */
             void setPoints(const std::vector<sf::Vector2f>&, Option = Option::None);
 
         private:

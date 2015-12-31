@@ -34,12 +34,22 @@ namespace xy
 {
     namespace Physics
     {
+        /*!
+        \brief Struct containing a collision filter mask
+
+        See the Box2D manual on collision filtering
+        */
         struct CollisionFilter
         {
             sf::Uint16 categoryFlags = 0x0001;
             sf::Uint16 maskFlags = 0xFFFF;
             sf::Int16 groupIndex = 0;
 
+            /*!
+            \brief Compare another filter to this
+            \param other Another CollisionFilter to compare to this one
+            \returns true if the given filter passes testing
+            */
             bool passes(const CollisionFilter& other) const
             {
                 return ((categoryFlags & other.maskFlags) != 0 && (other.categoryFlags & maskFlags) != 0);

@@ -43,11 +43,22 @@ namespace xy
 {
     namespace Physics
     {
+        /*!
+        \brief Creates a convex polygon shape with up to 8 points.
+
+        Concave shapes are not supported, but can be created by attaching 
+        multiple convex shapes to a single rigidbody, or you might consider
+        using a loop created with CollionEdgeShape instead
+        */
         class CollisionPolygonShape final : public CollisionShape
         {
         public:
-            //points is a vector of vertex positions. These are in world space when
-            //not attached to a rigid body, else they are relative to the rigidbody's position
+            /*!
+            \brief Constructor
+            
+            \param Points is a vector of vertex positions. These are in world space when
+            not attached to a rigid body, else they are relative to the rigidbody's position
+            */
             explicit CollisionPolygonShape(const std::vector<sf::Vector2f>& points);
             ~CollisionPolygonShape() = default;
             CollisionPolygonShape(const CollisionPolygonShape&);
@@ -55,9 +66,13 @@ namespace xy
 
             CollisionShape::Type type() const override { return CollisionShape::Type::Polygon; }
 
-            //sets the vertices of the polygon, in world coordinates if not attached to a rigidbody
-            //else in local coordinates relative to the parent body's position
-            void setPoints(const std::vector<sf::Vector2f>&);
+            /*!
+            \brief Sets the vertice of the CollisionPolygonShape
+
+            \param Points is a vector of vertex positions. These are in world space when
+            not attached to a rigid body, else they are relative to the rigidbody's position
+            */
+            void setPoints(const std::vector<sf::Vector2f>& points);
 
         private:
             b2PolygonShape m_polyShape;

@@ -40,6 +40,9 @@ namespace xy
 {
     namespace Physics
     {
+        /*!
+        \brief Circle shape specialisation of CollisionShape
+        */
         class CollisionCircleShape final : public CollisionShape
         {
         public:
@@ -50,13 +53,21 @@ namespace xy
 
             CollisionShape::Type type() const override { return CollisionShape::Type::Circle; }
 
-            //sets the position of this shape relative to the parent rigidbody
+            /*!
+            \brief Sets the position of this shape relative to the parent rigidbody
+            */
             void setPosition(const sf::Vector2f&);
-            //gets the circle's position relative to its parent rigidbody
+            /*!
+            \brief Gets the circle's position relative to its parent rigidbody
+            */
             sf::Vector2f getPosition() const;
-            //sets the circle's radius in pixels
+            /*!
+            \brief Sets the circle's radius in pixels
+            */
             void setRadius(float);
-            //gets the circle's current radius in pixels
+            /*!
+            \brief Gets the circle's current radius in pixels
+            */
             float getRadius() const;
 
         private:

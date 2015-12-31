@@ -39,11 +39,21 @@ namespace xy
 {
     namespace Physics
     {
+        /*!
+        \brief Defines a rectanglue CollisionShape wwhich can be attached to a RigidBody
+        */
         class CollisionRectangleShape final : public CollisionShape
         {
         public:
-            //creates a box from a size and optional position. when attached to a rigidbody the position
-            //is relative to its parent, else it is in world coordinates
+            /*!
+            \brief Creates a box from a size and optional position.
+
+            When attached to a rigidbody the position is relative to its parent,
+            else it is in world coordinates
+
+            \param size Size of the box in world units
+            \param position Position of the box relative to the parent body
+            */
             CollisionRectangleShape(const sf::Vector2f& size, const sf::Vector2f& position = sf::Vector2f());
             ~CollisionRectangleShape() = default;
             CollisionRectangleShape(const CollisionRectangleShape&);
@@ -51,15 +61,37 @@ namespace xy
 
             CollisionShape::Type type() const override { return CollisionShape::Type::Box; }
 
-            //resets the box's size and optional position. when attached to a rigidbody the position
-            //is relative to its parent, else it is in world coordinates
+            /*!
+            \brief Resets the box's size and optional position.
+
+            When attached to a rigidbody the position is relative to its parent,
+            else it is in world coordinates
+
+            \param size Size of the box in world units
+            \param position Position of the box relative to the parent RigidBody
+            */
             void setRect(const sf::Vector2f& size, const sf::Vector2f& position = sf::Vector2f());
+            /*!
+            \brief Resets the box's size and optional position.
+
+            When attached to a rigidbody the position is relative to its parent,
+            else it is in world coordinates
+
+            \param sf::FloatRect an sf::FloatRect representing the size and position of the
+            box in world units
+            */
             void setRect(const sf::FloatRect&);
 
-            //returns the current size of the box
+            /*!
+            \brief Returns the current size of the box
+            */
             const sf::Vector2f& getSize() const;
-            //returns the current position of the box, either in local coordinates if attached
-            //to a rigid body, else in world coordinates.
+            /*!
+            \brief Returns the current position of the box
+            
+            Coordinates are relative to the parent body if the CollsiionShape
+            has one, else they are in world coordinates.
+            */
             const sf::Vector2f& getPosition() const;
 
         private:
