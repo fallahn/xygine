@@ -36,6 +36,9 @@
     <ClInclude Include="include\TimedDestruction.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\RacingDemoState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -54,6 +57,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\PhysicsDemoState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RacingDemoState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

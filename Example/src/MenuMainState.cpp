@@ -109,12 +109,13 @@ void MenuMainState::buildMenu()
     m_uiContainer.addControl(button);
 
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
-    button->setText("Test");
+    button->setText("Racing Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 675.f);
     button->setCallback([this]()
     {
-
+        close();
+        requestStackPush(States::ID::RacingDemo);
     });
     m_uiContainer.addControl(button);
 

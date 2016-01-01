@@ -38,11 +38,6 @@ source distribution.
 
 #include <SFML/Graphics/Text.hpp>
 
-namespace sf
-{
-    class Color;
-}
-
 class ParticleDemoState final : public xy::State
 {
 public:

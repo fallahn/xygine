@@ -25,20 +25,43 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef STATE_IDS_HPP_
-#define STATE_IDS_HPP_
+//racing demo state
 
-namespace States
+#ifndef RACING_DEMO_STATE_HPP_
+#define RACING_DEMO_STATE_HPP_
+
+#include <StateIds.hpp>
+
+#include <xygine/State.hpp>
+#include <xygine/Resource.hpp>
+#include <xygine/Scene.hpp>
+
+#include <SFML/Graphics/Text.hpp>
+
+class RacingDemoState final : public xy::State
 {
-    enum ID
-    {
-        None = 0,
-        ParticleDemo,
-        PhysicsDemo,
-        RacingDemo,
-        MenuMain,
-        MenuOptions
-    };
-}
+public:
+    RacingDemoState(xy::StateStack& stateStack, Context context);
+    ~RacingDemoState() = default;
 
-#endif //STATE_IDS_HPP_
+    bool update(float dt) override;
+    void draw() override;
+    bool handleEvent(const sf::Event& evt) override;
+    void handleMessage(const xy::Message&) override;
+    xy::StateId stateID() const override
+    {
+        return States::ID::RacingDemo;
+    }
+private:
+
+    xy::MessageBus& m_messageBus;
+    xy::Scene m_scene;
+
+    xy::TextureResource m_textureResource;
+    xy::FontResource m_fontResource;
+
+    sf::Text m_reportText;
+
+};
+
+#endif //RACING_DEMO_STATE_HPP_

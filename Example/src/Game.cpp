@@ -31,6 +31,7 @@ source distribution.
 #include <MenuOptionState.hpp>
 #include <ParticleDemoState.hpp>
 #include <PhysicsDemoState.hpp>
+#include <RacingDemoState.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -106,4 +107,5 @@ void Game::registerStates()
     m_stateStack.registerState<MenuOptionState>(States::ID::MenuOptions);
     m_stateStack.registerState<PhysicsDemoState>(States::ID::PhysicsDemo);
     m_stateStack.registerState<ParticleDemoState>(States::ID::ParticleDemo);
+    m_stateStack.registerState<RacingDemoState>(States::ID::RacingDemo);
 }
