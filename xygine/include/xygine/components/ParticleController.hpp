@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014 - 2015
+Matt Marchant 2014 - 2016
 http://trederia.blogspot.com
 
 xygine - Zlib license.
@@ -52,7 +52,10 @@ namespace xy
     only require a single controller attached to an entity in
     the scene. Particle controllers are then able to be triggered
     by sending a Command to its parent entity requesting a system
-    be fired.
+    be fired. The controller is useful for creating effects
+    such as explosions which maybe be repeated around the scene
+    rather than particle systems attached to specific entities
+    such as trails.
     */
     class ParticleController final : public Component
     {
@@ -97,16 +100,6 @@ namespace xy
         \param position World space coordinates at which the system is fired
         */
         void fire(SystemId, const sf::Vector2f& position);
-        /*!
-        \brief Fires a particle system
-
-        If a particle system has been added with the given ID the system
-        is then started based on its definition paramters.
-
-        \param SystemId ID of the system to fire
-        \param Entity entity to which the particle system should be attached
-        */
-        void fire(SystemId, Entity&);
 
     private:
 

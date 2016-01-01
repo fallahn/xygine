@@ -25,7 +25,7 @@ xygine isn't really an engine).
 
 -----------------------------------------------------------------------
 
-Matt Marchant 2014 - 2015  
+Matt Marchant 2014 - 2016  
 http://trederia.blogspot.com  
 
 xygine - Zlib license.  

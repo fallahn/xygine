@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014 - 2015
+Matt Marchant 2014 - 2016
 http://trederia.blogspot.com
 
 xygine - Zlib license.
@@ -99,9 +99,4 @@ void ParticleController::fire(SystemId id, const sf::Vector2f& position)
         ent->addChild(entity);
         LOG("CLIENT fired new particle system", Logger::Type::Info);
     }
-}
-
-void ParticleController::fire(SystemId id, Entity& entity)
-{
-    //TODO implement this
 }
