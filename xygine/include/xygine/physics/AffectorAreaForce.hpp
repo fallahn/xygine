@@ -49,6 +49,7 @@ namespace xy
         */
         class AreaForceAffector final : public Affector
         {
+            friend class CollisionShape;
         public:
             /*!
             \brief Constructor
@@ -153,6 +154,7 @@ namespace xy
 
         private:
             sf::Vector2f m_force;
+            sf::Vector2f m_targetPoint;
             float m_torque;
             bool m_wake;
             float m_linearDrag;

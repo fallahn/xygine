@@ -265,6 +265,7 @@ void CollisionShape::activateAffectors(CollisionShape* thisShape, CollisionShape
         if ((a.useCollisionMask() && a.getCollisionMask().passes(otherShape->getFilter()))
             || !a.useCollisionMask())
         {
+            a.m_targetPoint = otherShape->getCentreOfMass();
             m_activeAffectors.emplace_back(std::make_pair(&a, static_cast<RigidBody*>(otherShape->m_fixture->GetBody()->GetUserData())));
         }
     }
