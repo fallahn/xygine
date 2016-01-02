@@ -225,6 +225,9 @@
     <ClCompile Include="src\ParticleAffectors.cpp">
       <Filter>Source Files\particles</Filter>
     </ClCompile>
+    <ClCompile Include="src\PolyBatch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -453,6 +456,9 @@
       <Filter>Header Files\detail</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\ParticleAffectors.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\PolyBatch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

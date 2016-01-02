@@ -36,6 +36,7 @@ set(xygine_SRC
   ${xygine_DIR}/PhysicsJointWheel.cpp
   ${xygine_DIR}/PhysicsRigidBody.cpp
   ${xygine_DIR}/PhysicsWorld.cpp
+  ${xygine_DIR}/PolyBatch.cpp
   ${xygine_DIR}/PostBloom.cpp
   ${xygine_DIR}/PostChromeAb.cpp
   ${xygine_DIR}/PostProcess.cpp

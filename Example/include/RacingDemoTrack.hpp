@@ -121,7 +121,7 @@ private:
         {
             m_data[Palette::Light].track = { 160, 160, 160 };
             m_data[Palette::Light].lane = { 204, 204, 204 };
-            m_data[Palette::Light].rumble = { 115, 115 , 115 };
+            m_data[Palette::Light].rumble = sf::Color::White;
             m_data[Palette::Light].grass = { 160, 230, 160 };
             
             m_data[Palette::Dark].track = { 160, 160, 160 };

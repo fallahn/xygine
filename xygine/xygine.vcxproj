@@ -113,6 +113,7 @@
     <ClCompile Include="src\PhysicsJointWheel.cpp" />
     <ClCompile Include="src\PhysicsRigidBody.cpp" />
     <ClCompile Include="src\PhysicsWorld.cpp" />
+    <ClCompile Include="src\PolyBatch.cpp" />
     <ClCompile Include="src\PostBloom.cpp" />
     <ClCompile Include="src\PostChromeAb.cpp" />
     <ClCompile Include="src\PostProcess.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="include\xygine\physics\JointWheel.hpp" />
     <ClInclude Include="include\xygine\physics\RigidBody.hpp" />
     <ClInclude Include="include\xygine\physics\World.hpp" />
+    <ClInclude Include="include\xygine\PolyBatch.hpp" />
     <ClInclude Include="include\xygine\PostBloom.hpp" />
     <ClInclude Include="include\xygine\PostChromeAb.hpp" />
     <ClInclude Include="include\xygine\PostProcess.hpp" />
