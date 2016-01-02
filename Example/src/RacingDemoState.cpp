@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <RacingDemoState.hpp>
+#include <RacingDemoTrack.hpp>
 
 #include <xygine/Reports.hpp>
 #include <xygine/Entity.hpp>
@@ -71,7 +72,9 @@ RacingDemoState::RacingDemoState(xy::StateStack& stateStack, Context context)
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
 
-
+    auto trackEnt = xy::Entity::create(m_messageBus);
+    trackEnt->addComponent<Track>(std::make_unique<Track>(m_messageBus));
+    m_scene.addEntity(trackEnt, xy::Scene::Layer::BackMiddle);
 
     quitLoadingScreen();
 }

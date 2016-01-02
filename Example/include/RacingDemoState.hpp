@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//racing demo state
+//racing demo state based on https://github.com/MORTAL2000/Car-Racing
 
 #ifndef RACING_DEMO_STATE_HPP_
 #define RACING_DEMO_STATE_HPP_

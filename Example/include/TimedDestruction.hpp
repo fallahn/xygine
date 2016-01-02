@@ -54,9 +54,6 @@ public:
         }
     }
 
-    void handleMessage(const xy::Message&) override {}
-
-
 private:
     float m_timeout;
     sf::Clock m_clock;

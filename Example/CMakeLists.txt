@@ -58,7 +58,8 @@ SET(EXAMPLE_SRC
   src/MenuOptionState.cpp
   src/ParticleDemoState.cpp
   src/PhysicsDemoState.cpp
-  src/RacingDemoState.cpp)
+  src/RacingDemoState.cpp
+  src/RacingDemoTrack.cpp)
 
 if(WIN32)
   add_executable(xygine_example WIN32 ${EXAMPLE_SRC} ${xygine_SRC})

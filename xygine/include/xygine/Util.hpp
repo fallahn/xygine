@@ -45,6 +45,7 @@ namespace //is this not moot here as the anonymous namespace gets included in an
     const float degToRad = PI / 180.f;
     const float radToDeg = 180.f / PI;
     const float TAU = PI * 2.f;
+    const float E = 2.71828f;
 }
 
 namespace xy

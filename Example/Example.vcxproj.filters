@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\racing demo">
+      <UniqueIdentifier>{597c1647-4a3f-43ca-a9a4-63e326b63490}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -39,6 +42,9 @@
     <ClInclude Include="include\RacingDemoState.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\RacingDemoTrack.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -61,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="src\RacingDemoState.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RacingDemoTrack.cpp">
+      <Filter>Source Files\racing demo</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

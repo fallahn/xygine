@@ -77,6 +77,7 @@
     <ClInclude Include="include\ParticleDemoState.hpp" />
     <ClInclude Include="include\PhysicsDemoState.hpp" />
     <ClInclude Include="include\RacingDemoState.hpp" />
+    <ClInclude Include="include\RacingDemoTrack.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
     <ClInclude Include="include\TimedDestruction.hpp" />
   </ItemGroup>
@@ -88,6 +89,7 @@
     <ClCompile Include="src\ParticleDemoState.cpp" />
     <ClCompile Include="src\PhysicsDemoState.cpp" />
     <ClCompile Include="src\RacingDemoState.cpp" />
+    <ClCompile Include="src\RacingDemoTrack.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
