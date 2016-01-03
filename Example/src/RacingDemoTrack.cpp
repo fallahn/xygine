@@ -38,7 +38,7 @@ namespace
 {
     const float SEGMENT_LENGTH = 200.f;
     const float CAMERA_DEPTH = (1.f / std::tan(50.f * degToRad));
-    const float CAMERA_HEIGHT = 1000.f;
+    const float CAMERA_HEIGHT = 2000.f;
     const std::size_t RUMBLE_LENGTH = 3u;
     const std::size_t DRAW_DISTANCE = 500u;
 
@@ -79,21 +79,22 @@ namespace
 }
 
 Track::Track(xy::MessageBus& mb)
-    : xy::Component (mb, this),
-    m_distance      (0.f),
-    m_trackLength   (0.f),
-    m_texture       (nullptr)
+    : xy::Component         (mb, this),
+    m_distance              (0.f),
+    m_trackLength           (0.f),
+    m_texture               (nullptr),
+    m_playerSegmentIndex    (0u)
 {
     auto num = 50.f;
     addTrackSection(num, num, num, 0.f, 0.f);
    
-    //auto height = 40.f;
-    //addTrackSection(num, num, num, 0, height / 2.f);
-    //addTrackSection(num, num, num, 0, -height);
-    //addTrackSection(num, num, num, 0, height);
-    //addTrackSection(num, num, num, 0, 0);
-    //addTrackSection(num, num, num, 0, height / 2.f);
-    //addTrackSection(num, num, num, 0, 0);
+    auto height = 40.f;
+    addTrackSection(num, num, num, 0, height / 2.f);
+    addTrackSection(num, num, num, 0, -height);
+    addTrackSection(num, num, num, 0, height);
+    addTrackSection(num, num, num, 0, 0);
+    addTrackSection(num, num, num, 0, height / 2.f);
+    addTrackSection(num, num, num, 0, 0);
 
 
     m_trackLength = SEGMENT_LENGTH * m_segments.size();
@@ -102,13 +103,34 @@ Track::Track(xy::MessageBus& mb)
 //public
 void Track::entityUpdate(xy::Entity&, float dt)
 {
-    m_distance += 12400.f * dt;
+
+}
+
+void Track::updatePosition(float playerSpeed, float playerOffset)
+{
+    //move along track
+    m_distance += playerSpeed;
 
     while (m_distance >= m_trackLength)
-        m_distance -= m_trackLength;
+    m_distance -= m_trackLength;
 
     while (m_distance < 0)
-        m_distance += m_trackLength;
+    m_distance += m_trackLength;
+
+    //update player location on track
+    auto idx = static_cast<std::size_t>(std::floor((m_distance + getCameraDepth()) / SEGMENT_LENGTH)) % m_segments.size();
+    if (idx != m_playerSegmentIndex)
+    {
+        m_playerSegmentIndex = idx;
+        //TODO emit new player segment index as message
+    }
+
+    //update camera coords
+    m_cameraPosition.x = playerOffset * TRACK_WIDTH;
+
+    const auto& playerSegment = m_segments[m_playerSegmentIndex];
+    auto playerPercent = percentRemaining(m_distance + getCameraDepth(), SEGMENT_LENGTH);
+    m_cameraPosition.y = CAMERA_HEIGHT + interpolate(playerSegment->pointA().world.y, playerSegment->pointB().world.y, playerPercent);
 }
 
 void Track::setTexture(const sf::Texture* t)
@@ -116,6 +138,11 @@ void Track::setTexture(const sf::Texture* t)
     m_texture = t;
 
     for (auto& seg : m_segments) seg->setTexture(t);
+}
+
+float Track::getCameraDepth() const
+{
+    return CAMERA_DEPTH * CAMERA_HEIGHT;
 }
 
 //private
@@ -136,15 +163,13 @@ void Track::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         bool looped = segment.getIndex() < baseSegment.getIndex();
         auto fog = exponentialFog(n / static_cast<float>(DRAW_DISTANCE), FOG_DENSITY);
 
-        auto camX = 0.f;// mPlayer->getOffset() * roadWidth;
-        auto camY = CAMERA_HEIGHT;// playerY + mCameraHeight;
         auto camZ = m_distance - (looped ? m_trackLength : 0.f);
 
         auto& pointA = segment.pointA();
         auto& pointB = segment.pointB();
 
-        pointA.project(camX - x, camY, camZ, CAMERA_DEPTH, VIEW_WIDTH, VIEW_HEIGHT, TRACK_WIDTH);
-        pointB.project(camX - x - dx, camY, camZ, CAMERA_DEPTH, VIEW_WIDTH, VIEW_HEIGHT, TRACK_WIDTH);
+        pointA.project(m_cameraPosition.x - x, m_cameraPosition.y, camZ, CAMERA_DEPTH, VIEW_WIDTH, VIEW_HEIGHT, TRACK_WIDTH);
+        pointB.project(m_cameraPosition.x - x - dx, m_cameraPosition.y, camZ, CAMERA_DEPTH, VIEW_WIDTH, VIEW_HEIGHT, TRACK_WIDTH);
 
         x += dx;
         dx += segment.getCurve();
@@ -327,7 +352,7 @@ void Track::Segment::updateVerts(float width, float fog)
     
     //fog
     m_fog.setVertexPositions(positions);
-    m_fog.setVertexColour(sf::Color(100u, 180u, 100u, 255u - static_cast<sf::Uint8>(fog * 255.f)));
+    m_fog.setVertexColour(sf::Color(100u, 180u, 100u, /*255u - static_cast<sf::Uint8>(fog * 255.f)*/0u));
 
     //rumble strip
     auto rumbleWidth1 = rumbleWidth(m_pointA.screen.w, laneCount);

@@ -27,6 +27,8 @@ source distribution.
 
 #include <RacingDemoState.hpp>
 #include <RacingDemoTrack.hpp>
+#include <RacingDemoPlayer.hpp>
+#include <CommandIds.hpp>
 
 #include <xygine/Reports.hpp>
 #include <xygine/Entity.hpp>
@@ -39,7 +41,10 @@ source distribution.
 #include <xygine/PostBloom.hpp>
 #include <xygine/PostChromeAb.hpp>
 
+#include <xygine/components/SfDrawableComponent.hpp>
+
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/Event.hpp>
 
 namespace
@@ -52,6 +57,7 @@ namespace
 
     const float joyDeadZone = 25.f;
     const float joyMaxAxis = 100.f;
+
 }
 
 RacingDemoState::RacingDemoState(xy::StateStack& stateStack, Context context)
@@ -67,24 +73,18 @@ RacingDemoState::RacingDemoState(xy::StateStack& stateStack, Context context)
     //m_scene.addPostProcess(pp);
     //pp = xy::PostBloom::create();
     //m_scene.addPostProcess(pp);
-    //m_scene.setClearColour({ 0u, 0u, 20u });
+    //m_scene.setClearColour({ 0u, 100u, 220u });
 
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
 
-    auto trackEnt = xy::Entity::create(m_messageBus);
-    auto trackComponent = trackEnt->addComponent<Track>(std::make_unique<Track>(m_messageBus));
-    m_scene.addEntity(trackEnt, xy::Scene::Layer::BackMiddle);
-
-    auto trackTex = &m_textureResource.get("assets/images/racing demo/paper_tex.png");
-    trackTex->setRepeated(true);
-    trackComponent->setTexture(trackTex);
+    buildScene();
 
     quitLoadingScreen();
 }
 
 bool RacingDemoState::update(float dt)
-{
+{    
     m_scene.update(dt);
 
     m_reportText.setString(xy::StatsReporter::reporter.getString());
@@ -101,7 +101,7 @@ void RacingDemoState::draw()
 }
 
 bool RacingDemoState::handleEvent(const sf::Event& evt)
-{
+{   
     switch (evt.type)
     {
     case sf::Event::MouseButtonReleased:
@@ -193,3 +193,28 @@ void RacingDemoState::handleMessage(const xy::Message& msg)
 }
 
 //private
+void RacingDemoState::buildScene()
+{
+    auto trackEnt = xy::Entity::create(m_messageBus);
+    trackEnt->addCommandCategories(RacingCommandIDs::TrackEnt);
+    auto trackComponent = trackEnt->addComponent<Track>(std::make_unique<Track>(m_messageBus));
+    m_scene.addEntity(trackEnt, xy::Scene::Layer::BackMiddle);
+
+    auto trackTex = &m_textureResource.get("assets/images/racing demo/paper_tex.png");
+    trackTex->setRepeated(true);
+    trackComponent->setTexture(trackTex);
+
+    auto playerEnt = xy::Entity::create(m_messageBus);
+    playerEnt->addCommandCategories(RacingCommandIDs::PlayerEnt);
+    auto playerSprite = playerEnt->addComponent<xy::SfDrawableComponent<sf::RectangleShape>>(std::make_unique<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus));
+    auto& rectangle = playerSprite->getDrawable();
+    rectangle.setSize({ 640.f, 300.f });
+    rectangle.setFillColor(sf::Color::Red);
+    xy::Util::Position::centreOrigin(rectangle);
+    playerEnt->setWorldPosition({ 960.f, 930.f });
+
+    auto playerController = playerEnt->addComponent<PlayerController>(std::make_unique<PlayerController>(m_messageBus));
+    playerController->setDepth(trackComponent->getCameraDepth());
+
+    m_scene.addEntity(playerEnt, xy::Scene::Layer::FrontRear);
+}

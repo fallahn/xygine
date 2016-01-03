@@ -71,11 +71,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\CommandIds.hpp" />
     <ClInclude Include="include\Game.hpp" />
     <ClInclude Include="include\MenuMainState.hpp" />
     <ClInclude Include="include\MenuOptionState.hpp" />
     <ClInclude Include="include\ParticleDemoState.hpp" />
     <ClInclude Include="include\PhysicsDemoState.hpp" />
+    <ClInclude Include="include\RacingDemoPlayer.hpp" />
     <ClInclude Include="include\RacingDemoState.hpp" />
     <ClInclude Include="include\RacingDemoTrack.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
@@ -88,6 +90,7 @@
     <ClCompile Include="src\MenuOptionState.cpp" />
     <ClCompile Include="src\ParticleDemoState.cpp" />
     <ClCompile Include="src\PhysicsDemoState.cpp" />
+    <ClCompile Include="src\RacingDemoPlayer.cpp" />
     <ClCompile Include="src\RacingDemoState.cpp" />
     <ClCompile Include="src\RacingDemoTrack.cpp" />
   </ItemGroup>

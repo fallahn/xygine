@@ -45,7 +45,7 @@ namespace xy
         using Category = sf::Int32;
         enum
         {
-            None = 0,
+            None = 0
         };
         Category category = None;
     };

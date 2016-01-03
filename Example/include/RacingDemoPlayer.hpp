@@ -25,46 +25,41 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//racing demo state based on:
-//https://github.com/MORTAL2000/Car-Racing
-//http://codeincomplete.com/posts/2012/6/23/javascript_racer_v1_straight/
+//player logic component for RacingDemo
 
-#ifndef RACING_DEMO_STATE_HPP_
-#define RACING_DEMO_STATE_HPP_
+#ifndef PLAYER_RACING_COMPONENT_HPP_
+#define PLAYER_RACING_COMPONENT_HPP_
 
-#include <StateIds.hpp>
+#include <xygine/components/Component.hpp>
 
-#include <xygine/State.hpp>
-#include <xygine/Resource.hpp>
-#include <xygine/Scene.hpp>
-
-#include <SFML/Graphics/Text.hpp>
-
-class RacingDemoState final : public xy::State
+class PlayerController final : public xy::Component
 {
 public:
-    RacingDemoState(xy::StateStack& stateStack, Context context);
-    ~RacingDemoState() = default;
+    PlayerController(xy::MessageBus&);
+    ~PlayerController() = default;
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
-    void handleMessage(const xy::Message&) override;
-    xy::StateId stateID() const override
-    {
-        return States::ID::RacingDemo;
-    }
+    xy::Component::Type type() const override { return xy::Component::Type::Script; }
+    void entityUpdate(xy::Entity&, float) override;
+
+    void setSpeed(float);
+    float getSpeed() const;
+
+    void setOffset(float);
+    float getOffset() const;
+
+    void setDepth(float);
+    float getDepth() const;
+
 private:
+    float m_speed;
+    float m_offset;
+    float m_depth;
 
-    xy::MessageBus& m_messageBus;
-    xy::Scene m_scene;
-
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
-
-    sf::Text m_reportText;
-
-    void buildScene();
+    sf::Uint16 m_inputMask;
+    void moveLeft(float);
+    void moveRight(float);
+    void adaptMovement(float);
+    void accelerate(float);
 };
 
-#endif //RACING_DEMO_STATE_HPP_
+#endif //PLAYER_RACING_COMPONENT_HPP_

@@ -46,9 +46,10 @@ public:
     xy::Component::Type type() const override { return xy::Component::Type::Drawable; }
 
     void entityUpdate(xy::Entity&, float) override;
-    void setDistance(float distance) { m_distance = distance; }
+    void updatePosition(float playerSpeed, float playerOffset);
     void setTexture(const sf::Texture*);
 
+    float getCameraDepth() const;
 private:
 
     struct Point final
@@ -91,25 +92,25 @@ private:
             : m_category    (cat),
             m_data          (Category::Count)
         {
-            m_data[Palette::Light].track = { 160, 160, 160 };
-            m_data[Palette::Light].lane = { 204, 204, 204 };
+            m_data[Palette::Light].track = { 160u, 160u, 160u };
+            m_data[Palette::Light].lane = { 204u, 204u, 204u };
             m_data[Palette::Light].rumble = sf::Color::White;
-            m_data[Palette::Light].grass = { 160, 230, 160 };
+            m_data[Palette::Light].grass = { 200u, 230u, 200u };
             
-            m_data[Palette::Dark].track = { 160, 160, 160 };
-            m_data[Palette::Dark].lane = { 160, 160, 160 };
-            m_data[Palette::Dark].rumble = { 227,107, 107 };
-            m_data[Palette::Dark].grass = { 100, 194, 100 };
+            m_data[Palette::Dark].track = { 160u, 160u, 160u };
+            m_data[Palette::Dark].lane = { 160u, 160u, 160u };
+            m_data[Palette::Dark].rumble = { 227u, 200u, 200u };
+            m_data[Palette::Dark].grass = { 200u, 230u, 200u };
 
             m_data[Palette::Start].track = sf::Color::White;
             m_data[Palette::Start].lane = sf::Color::White;
             m_data[Palette::Start].rumble = sf::Color::White;
-            m_data[Palette::Start].grass = { 16, 170, 16 };
+            m_data[Palette::Start].grass = { 150u, 170u, 150u };
 
             m_data[Palette::Finish].track = {};
             m_data[Palette::Finish].lane = {};
             m_data[Palette::Finish].rumble = {};
-            m_data[Palette::Finish].grass = { 16, 170, 16 };           
+            m_data[Palette::Finish].grass = { 150u, 170u, 150u };           
         }
         void setCategory(Category cat)
         {
@@ -200,6 +201,8 @@ private:
     float m_trackLength;
     const sf::Texture* m_texture;
     std::vector<Segment::Ptr> m_segments;
+    std::size_t m_playerSegmentIndex;
+    sf::Vector2f m_cameraPosition;
 
     void addTrackSegment(float curve, float y);
     void addTrackSection(float enter, float hold, float exit, float curve, float y);
