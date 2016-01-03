@@ -144,8 +144,8 @@ private:
             sf::Color rumble;
             sf::Color grass;
         };
+        Category m_category;       
         std::vector<Data> m_data;
-        Category m_category;
     };
 
     class Segment final : public sf::Drawable

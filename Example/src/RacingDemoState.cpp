@@ -197,7 +197,8 @@ void RacingDemoState::buildScene()
 {
     auto trackEnt = xy::Entity::create(m_messageBus);
     trackEnt->addCommandCategories(RacingCommandIDs::TrackEnt);
-    auto trackComponent = trackEnt->addComponent<Track>(std::make_unique<Track>(m_messageBus));
+    auto tc = std::make_unique<Track>(m_messageBus);
+    auto trackComponent = trackEnt->addComponent<Track>(tc);
     m_scene.addEntity(trackEnt, xy::Scene::Layer::BackMiddle);
 
     auto trackTex = &m_textureResource.get("assets/images/racing demo/paper_tex.png");
@@ -206,14 +207,16 @@ void RacingDemoState::buildScene()
 
     auto playerEnt = xy::Entity::create(m_messageBus);
     playerEnt->addCommandCategories(RacingCommandIDs::PlayerEnt);
-    auto playerSprite = playerEnt->addComponent<xy::SfDrawableComponent<sf::RectangleShape>>(std::make_unique<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus));
+    auto drawable = std::make_unique<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
+    auto playerSprite = playerEnt->addComponent<xy::SfDrawableComponent<sf::RectangleShape>>(drawable);
     auto& rectangle = playerSprite->getDrawable();
     rectangle.setSize({ 640.f, 300.f });
     rectangle.setFillColor(sf::Color::Red);
     xy::Util::Position::centreOrigin(rectangle);
     playerEnt->setWorldPosition({ 960.f, 930.f });
 
-    auto playerController = playerEnt->addComponent<PlayerController>(std::make_unique<PlayerController>(m_messageBus));
+    auto pc = std::make_unique<PlayerController>(m_messageBus);
+    auto playerController = playerEnt->addComponent<PlayerController>(pc);
     playerController->setDepth(trackComponent->getCameraDepth());
 
     m_scene.addEntity(playerEnt, xy::Scene::Layer::FrontRear);

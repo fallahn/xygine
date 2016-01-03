@@ -57,8 +57,8 @@ void PolyBatch::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 //-------Polygon-------//
 xy::Polygon::Polygon(PolyBatch& pb, std::size_t count)
     : m_batch       (pb),
-    m_vertexCount   (count),
-    m_vertexOffset  (pb.m_nextIndex)
+    m_vertexOffset  (pb.m_nextIndex),
+    m_vertexCount   (count)    
 {
     pb.m_nextIndex += count;
 }
@@ -83,7 +83,7 @@ void xy::Polygon::setVertexPosition(const sf::Vector2f& position, std::size_t in
 void xy::Polygon::setVertexPositions(const std::vector<sf::Vector2f>& positions)
 {
     XY_ASSERT(positions.size() <= m_vertexCount, "too many vertex positions");
-    for (auto i = m_vertexOffset, j = 0u; j < positions.size(); ++i, ++j)
+    for (unsigned i = m_vertexOffset, j = 0u; j < positions.size(); ++i, ++j)
     {
         m_batch.m_vertices[i].position = positions[j];
     }
@@ -101,7 +101,7 @@ void xy::Polygon::setVertexColour(const sf::Color& colour)
 void xy::Polygon::setVertexColours(const std::vector<sf::Color>& colours)
 {
     XY_ASSERT(colours.size() <= m_vertexCount, "too many vertex colours");
-    for (auto i = m_vertexOffset, j = 0u; j < colours.size(); ++i, ++j)
+    for (unsigned i = m_vertexOffset, j = 0u; j < colours.size(); ++i, ++j)
     {
         m_batch.m_vertices[i].color = colours[j];
     }
@@ -116,7 +116,7 @@ void xy::Polygon::setTextureCoord(const sf::Vector2f& coord, std::size_t index)
 void xy::Polygon::setTextureCoords(const std::vector<sf::Vector2f>& coords)
 {
     XY_ASSERT(coords.size() <= m_vertexCount, "too many vertex coordinates");
-    for (auto i = m_vertexOffset, j = 0u; j < coords.size(); ++i, ++j)
+    for (unsigned i = m_vertexOffset, j = 0u; j < coords.size(); ++i, ++j)
     {
         m_batch.m_vertices[i].texCoords = coords[j];
     }
@@ -125,7 +125,7 @@ void xy::Polygon::setTextureCoords(const std::vector<sf::Vector2f>& coords)
 void xy::Polygon::setVertices(const std::vector<sf::Vertex>& verts)
 {
     XY_ASSERT(verts.size() <= m_vertexCount, "too many vertices");
-    for (auto i = m_vertexOffset, j = 0u; j < verts.size(); ++i, ++j)
+    for (unsigned i = m_vertexOffset, j = 0u; j < verts.size(); ++i, ++j)
     {
         m_batch.m_vertices[i] = verts[i];
     }

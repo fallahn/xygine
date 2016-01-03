@@ -322,17 +322,17 @@ void Track::Segment::setTexture(const sf::Texture* t)
 
 namespace
 {
-    float rumbleWidth(float projectedWidth, std::size_t laneCount)
+    float rumbleWidth(float projectedWidth, unsigned int laneCount)
     {
         return projectedWidth / std::max(6u, 2u * laneCount);
     }
 
-    float laneMarkerWidth(float projectedWidth, std::size_t laneCount)
+    float laneMarkerWidth(float projectedWidth, unsigned int laneCount)
     {
         return projectedWidth / std::max(32u, 8u * laneCount);
     }
 
-    const auto laneCount = 3u;
+    const unsigned int laneCount = 3u;
 }
 
 void Track::Segment::updateVerts(float width, float fog)
