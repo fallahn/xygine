@@ -81,7 +81,8 @@ namespace
 Track::Track(xy::MessageBus& mb)
     : xy::Component (mb, this),
     m_distance      (0.f),
-    m_trackLength   (0.f)
+    m_trackLength   (0.f),
+    m_texture       (nullptr)
 {
     auto num = 50.f;
     addTrackSection(num, num, num, 0.f, 0.f);
@@ -110,9 +111,11 @@ void Track::entityUpdate(xy::Entity&, float dt)
         m_distance += m_trackLength;
 }
 
-void Track::setTexture(const sf::Texture& t)
+void Track::setTexture(const sf::Texture* t)
 {
+    m_texture = t;
 
+    for (auto& seg : m_segments) seg->setTexture(t);
 }
 
 //private
@@ -178,6 +181,8 @@ void Track::addTrackSegment(float curve, float y)
         newSeg->setPalette(Palette::Light) 
         :
         newSeg->setPalette(Palette::Dark);
+
+    newSeg->setTexture(m_texture);
 }
 
 void Track::addTrackSection(float enter, float hold, float exit, float curve, float y)
@@ -203,9 +208,25 @@ float Track::prevY()
 
 //-------segment------//
 Track::Segment::Segment()
-    : m_curve(0.f),
-    m_index(0u),
-    m_clip(0.f){}
+    : m_batch   (28u),
+    m_landscape (m_batch, 4u),
+    m_rumbleA   (m_batch, 4u),
+    m_rumbleB   (m_batch, 4u),
+    m_mainLane  (m_batch, 4u),
+    m_laneA     (m_batch, 4u),
+    m_laneB     (m_batch, 4u),
+    m_fog       (m_batch, 4u),
+    m_curve     (0.f),
+    m_index     (0u),
+    m_clip      (0.f)
+{
+    m_landscape.setVertexColour(m_palette.getGrass());
+    m_rumbleA.setVertexColour(m_palette.getRumble());
+    m_rumbleB.setVertexColour(m_palette.getRumble());
+    m_mainLane.setVertexColour(m_palette.getTrack());
+    m_laneA.setVertexColour(m_palette.getLane());
+    m_laneB.setVertexColour(m_palette.getLane());
+}
 
 Track::Point& Track::Segment::pointA()
 {
@@ -230,6 +251,13 @@ const Track::Point& Track::Segment::pointB() const
 void Track::Segment::setPalette(Palette::Category cat)
 {
     m_palette.setCategory(cat);
+
+    m_landscape.setVertexColour(m_palette.getGrass());
+    m_rumbleA.setVertexColour(m_palette.getRumble());
+    m_rumbleB.setVertexColour(m_palette.getRumble());
+    m_mainLane.setVertexColour(m_palette.getTrack());
+    m_laneA.setVertexColour(m_palette.getLane());
+    m_laneB.setVertexColour(m_palette.getLane());
 }
 
 void Track::Segment::setCurve(float curve)
@@ -262,6 +290,11 @@ float Track::Segment::getClip() const
     return m_clip;
 }
 
+void Track::Segment::setTexture(const sf::Texture* t)
+{
+    m_batch.setTexture(t);
+}
+
 namespace
 {
     float rumbleWidth(float projectedWidth, std::size_t laneCount)
@@ -273,53 +306,67 @@ namespace
     {
         return projectedWidth / std::max(32u, 8u * laneCount);
     }
+
+    const auto laneCount = 3u;
 }
 
 void Track::Segment::updateVerts(float width, float fog)
 {
     XY_ASSERT(fog >= 0 && fog <= 1, "fog value must be normalised");
-    static const auto laneCount = 3u;
 
     //landscape
-    m_landscape.setVerts(
-    { 0.f, m_pointB.screen.y },
-    { width, m_pointB.screen.y },
-    { width, m_pointA.screen.y },
-    { 0.f, m_pointA.screen.y }, m_palette.getGrass());
-
+    std::vector<sf::Vector2f> positions = 
+    {
+        { 0.f, m_pointB.screen.y },
+        { width, m_pointB.screen.y },
+        { width, m_pointA.screen.y },
+        { 0.f, m_pointA.screen.y }
+    };
+    m_landscape.setVertexPositions(positions);
+    m_landscape.setTextureCoords(positions);
+    
     //fog
-    m_fog.setVerts(
-    { 0.f, m_pointB.screen.y },
-    { width, m_pointB.screen.y },
-    { width, m_pointA.screen.y },
-    { 0.f, m_pointA.screen.y }, sf::Color(100u, 180u, 100u, 255u - static_cast<sf::Uint8>(fog * 255.f)));
+    m_fog.setVertexPositions(positions);
+    m_fog.setVertexColour(sf::Color(100u, 180u, 100u, 255u - static_cast<sf::Uint8>(fog * 255.f)));
 
     //rumble strip
     auto rumbleWidth1 = rumbleWidth(m_pointA.screen.w, laneCount);
     auto rumbleWidth2 = rumbleWidth(m_pointB.screen.w, laneCount);
 
-    m_rumbleA.setVerts(
-    { m_pointA.screen.x - m_pointA.screen.w - rumbleWidth1, m_pointA.screen.y },
-    { m_pointA.screen.x - m_pointA.screen.w, m_pointA.screen.y },
-    { m_pointB.screen.x - m_pointB.screen.w, m_pointB.screen.y },
-    { m_pointB.screen.x - m_pointB.screen.w - rumbleWidth2, m_pointB.screen.y }, m_palette.getRumble());
+    positions = 
+    {
+        { m_pointA.screen.x - m_pointA.screen.w - rumbleWidth1, m_pointA.screen.y },
+        { m_pointA.screen.x - m_pointA.screen.w, m_pointA.screen.y },
+        { m_pointB.screen.x - m_pointB.screen.w, m_pointB.screen.y },
+        { m_pointB.screen.x - m_pointB.screen.w - rumbleWidth2, m_pointB.screen.y } 
+    };
+    m_rumbleA.setVertexPositions(positions);
+    m_rumbleA.setTextureCoords(positions);
 
-    m_rumbleB.setVerts(
-    { m_pointA.screen.x + m_pointA.screen.w + rumbleWidth1, m_pointA.screen.y },
-    { m_pointA.screen.x + m_pointA.screen.w, m_pointA.screen.y },
-    { m_pointB.screen.x + m_pointB.screen.w, m_pointB.screen.y },
-    { m_pointB.screen.x + m_pointB.screen.w + rumbleWidth2, m_pointB.screen.y }, m_palette.getRumble());
+    positions = 
+    {
+        { m_pointA.screen.x + m_pointA.screen.w + rumbleWidth1, m_pointA.screen.y },
+        { m_pointA.screen.x + m_pointA.screen.w, m_pointA.screen.y },
+        { m_pointB.screen.x + m_pointB.screen.w, m_pointB.screen.y },
+        { m_pointB.screen.x + m_pointB.screen.w + rumbleWidth2, m_pointB.screen.y } 
+    };
+    m_rumbleB.setVertexPositions(positions);
+    m_rumbleB.setTextureCoords(positions);
 
     //main lane
-    m_mainLane.setVerts(
-    { m_pointA.screen.x - m_pointA.screen.w, m_pointA.screen.y },
-    { m_pointA.screen.x + m_pointA.screen.w, m_pointA.screen.y },
-    { m_pointB.screen.x + m_pointB.screen.w, m_pointB.screen.y },
-    { m_pointB.screen.x - m_pointB.screen.w, m_pointB.screen.y }, m_palette.getTrack());
+    positions = 
+    {
+        { m_pointA.screen.x - m_pointA.screen.w, m_pointA.screen.y },
+        { m_pointA.screen.x + m_pointA.screen.w, m_pointA.screen.y },
+        { m_pointB.screen.x + m_pointB.screen.w, m_pointB.screen.y },
+        { m_pointB.screen.x - m_pointB.screen.w, m_pointB.screen.y } 
+    };
+    m_mainLane.setVertexPositions(positions);
+    m_mainLane.setTextureCoords(positions);
 
     //lanes
-    auto laneMarkerWidth1 = laneMarkerWidth(m_pointA.screen.w, laneCount);
-    auto laneMarkerWidth2 = laneMarkerWidth(m_pointB.screen.w, laneCount);
+    auto laneMarkerWidth1 = laneMarkerWidth(m_pointA.screen.w, laneCount) / 2.f;
+    auto laneMarkerWidth2 = laneMarkerWidth(m_pointB.screen.w, laneCount) / 2.f;
     auto lanew1 = m_pointA.screen.w * 2.f / laneCount;
     auto lanew2 = m_pointB.screen.w * 2.f / laneCount;
     auto lanex1 = m_pointA.screen.x - m_pointA.screen.w + lanew1;
@@ -327,28 +374,27 @@ void Track::Segment::updateVerts(float width, float fog)
 
     for (auto lane = 1u; lane < laneCount; lanex1 += lanew1 + 1, lanex2 += lanew2 + 1, lane++)
     {
+        positions = 
+        {
+            { lanex1 - laneMarkerWidth1, m_pointA.screen.y },
+            { lanex1 + laneMarkerWidth1, m_pointA.screen.y },
+            { lanex2 + laneMarkerWidth2, m_pointB.screen.y },
+            { lanex2 - laneMarkerWidth2, m_pointB.screen.y }
+        };
         if (lane == 1)
-            m_laneA.setVerts(
-        { lanex1 - laneMarkerWidth1 / 2.f, m_pointA.screen.y },
-        { lanex1 + laneMarkerWidth1 / 2.f, m_pointA.screen.y },
-        { lanex2 + laneMarkerWidth2 / 2.f, m_pointB.screen.y },
-        { lanex2 - laneMarkerWidth2 / 2.f, m_pointB.screen.y }, m_palette.getLane());
+        {
+            m_laneA.setVertexPositions(positions);
+            m_laneA.setTextureCoords(positions);
+        }
         else
-            m_laneB.setVerts(
-        { lanex1 - laneMarkerWidth1 / 2.f, m_pointA.screen.y },
-        { lanex1 + laneMarkerWidth1 / 2.f, m_pointA.screen.y },
-        { lanex2 + laneMarkerWidth2 / 2.f, m_pointB.screen.y },
-        { lanex2 - laneMarkerWidth2 / 2.f, m_pointB.screen.y }, m_palette.getLane());
+        {
+            m_laneB.setVertexPositions(positions);
+            m_laneB.setTextureCoords(positions);
+        }
     }
 }
 
 void Track::Segment::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    rt.draw(m_landscape, states);
-    rt.draw(m_rumbleA, states);
-    rt.draw(m_rumbleB, states);
-    rt.draw(m_mainLane, states);
-    rt.draw(m_laneA, states);
-    rt.draw(m_laneB, states);
-    rt.draw(m_fog, states);
+    rt.draw(m_batch);
 }

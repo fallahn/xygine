@@ -31,6 +31,7 @@ source distribution.
 #define RACING_DEMO_TRACK_HPP_
 
 #include <xygine/components/Component.hpp>
+#include <xygine/PolyBatch.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -46,7 +47,7 @@ public:
 
     void entityUpdate(xy::Entity&, float) override;
     void setDistance(float distance) { m_distance = distance; }
-    void setTexture(const sf::Texture&);
+    void setTexture(const sf::Texture*);
 
 private:
 
@@ -73,35 +74,6 @@ private:
             screen.y = height / 2u - screen.scale * camera.y  * height / 2u;
             screen.w = screen.scale * trackWidth * width / 2u;
             screen.scale = camDepth / camera.z;
-        }
-    };
-
-    //TODO batch these
-    class Polygon final : public sf::Drawable
-    {
-    public:
-        Polygon() : m_vertices(4) {}
-        ~Polygon() = default;
-        Polygon(const Polygon&) = delete;
-        Polygon& operator = (const Polygon&) = delete;
-
-        //when batching prefer a list of positions for arbitrary sizes
-        void setVerts(const sf::Vector2f& p0, const sf::Vector2f& p1, const sf::Vector2f& p2, const sf::Vector2f& p3, const sf::Color& colour = sf::Color::White)
-        {
-            m_vertices[0].position = p0;
-            m_vertices[1].position = p1;
-            m_vertices[2].position = p2;
-            m_vertices[3].position = p3;
-
-            m_vertices[0].color = m_vertices[1].color = m_vertices[2].color = m_vertices[3].color = colour;
-
-            //TODO set tex coords
-        }
-    private:
-        std::vector<sf::Vertex> m_vertices;
-        void draw(sf::RenderTarget& rt, sf::RenderStates states) const override
-        {
-            rt.draw(m_vertices.data(), m_vertices.size(), sf::PrimitiveType::Quads);
         }
     };
 
@@ -201,18 +173,21 @@ private:
         void setClip(float);
         float getClip() const;
 
+        void setTexture(const sf::Texture*);
+
         void updateVerts(float width, float fog);
 
     private:
         Point m_pointA;
         Point m_pointB;
-        Polygon m_rumbleA;
-        Polygon m_rumbleB;
-        Polygon m_laneA;
-        Polygon m_laneB;
-        Polygon m_mainLane;
-        Polygon m_landscape;
-        Polygon m_fog;
+        xy::PolyBatch m_batch;
+        xy::Polygon m_landscape;
+        xy::Polygon m_rumbleA;
+        xy::Polygon m_rumbleB;
+        xy::Polygon m_mainLane;
+        xy::Polygon m_laneA;
+        xy::Polygon m_laneB;       
+        xy::Polygon m_fog;
         float m_curve;
         std::size_t m_index;
         float m_clip;
@@ -223,6 +198,7 @@ private:
 
     float m_distance;
     float m_trackLength;
+    const sf::Texture* m_texture;
     std::vector<Segment::Ptr> m_segments;
 
     void addTrackSegment(float curve, float y);

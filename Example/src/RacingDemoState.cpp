@@ -73,8 +73,12 @@ RacingDemoState::RacingDemoState(xy::StateStack& stateStack, Context context)
     m_reportText.setPosition(1500.f, 30.f);
 
     auto trackEnt = xy::Entity::create(m_messageBus);
-    trackEnt->addComponent<Track>(std::make_unique<Track>(m_messageBus));
+    auto trackComponent = trackEnt->addComponent<Track>(std::make_unique<Track>(m_messageBus));
     m_scene.addEntity(trackEnt, xy::Scene::Layer::BackMiddle);
+
+    auto trackTex = &m_textureResource.get("assets/images/racing demo/paper_tex.png");
+    trackTex->setRepeated(true);
+    trackComponent->setTexture(trackTex);
 
     quitLoadingScreen();
 }
