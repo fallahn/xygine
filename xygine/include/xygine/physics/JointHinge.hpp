@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//creates a hinged joint allowing up to two bodies to revolve around a single point
+//creates a hinged joint allowing two bodies to revolve around a single point
 
 #ifndef XY_HINGE_JOINT_HPP_
 #define XY_HINGE_JOINT_HPP_
@@ -39,47 +39,107 @@ namespace xy
     namespace Physics
     {
         class RigidBody;
+        /*!
+        \brief Creates a hinged joint allowing two bodies to revolve around a single point
+        */
         class HingeJoint final : public Joint
         {
         public:
+            /*!
+            \brief Constructor
+            \param bodyA First body to which to attach to this joint
+            \param worldAnchorPos Position in world coordinates around which bodies are hinged
+            */
             HingeJoint(const RigidBody& bodyA, const sf::Vector2f& worldAnchorPos);
             ~HingeJoint() = default;
             HingeJoint(const HingeJoint&) = default;
             HingeJoint& operator = (const HingeJoint&) = default;
 
-            //returns the type of this joint
+            /*!
+            \brief Returns the type of this joint
+            */
             Joint::Type type() const override { return Joint::Type::Hinge; }
-            //sets whether or not the joined bodies can collide with each other
-            //cannot be set once both bodies have been joined
+            /*!
+            \brief Sets whether or not the joined bodies can collide with each other
+            
+            Cannot be set once both bodies have been joined
+            */
             void canCollide(bool) override;
-            //returns true if joined bodies can collide with each other
+            /*!
+            \brief Returns true if joined bodies can collide with each other
+            */
             bool canCollide() const override;
 
-            //get the joint angle in degrees
+            /*!
+            \brief Get the joint angle in degrees
+            */
             float getJointAngle() const;
-            //get the joint speed in degrees per second
+            /*!
+            \brief Get the joint speed in degrees per second
+            */
             float getJointSpeed() const;
-            //set whether or not the joint limit is enabled
+            /*!
+            \brief Set whether or not the joint limit is enabled
+
+            When joint limits are enabled the hinge will only rotate as
+            far as the upper and lower limits
+            */
             void limitEnabled(bool);
-            //returns true if the joint's limit is enabled
+            /*!
+            \brief Returns true if the joint's limit is enabled
+            */
             bool limitEnabled() const;
-            //get the joint's lower limit in degrees
+            /*!
+            \brief Get the joint's lower limit in degrees
+            */
             float getLowerLimit() const;
-            //get the joint's upper limit in degrees
+            /*!
+            \brief Get the joint's upper limit in degrees
+            */
             float getUpperLimit() const;
-            //set the joint's upper and lower limits in degrees
+            /*!
+            \brief Set the joint's upper and lower limits in degrees
+
+            When limitEnabled is true the hinge will only rotate as far
+            as the upper and lower limits set
+            */
             void setLimits(float upper, float lower);
-            //set whether or not the motor is enabled
+            /*!
+            \brief Set whether or not the motor is enabled
+
+            When the motor is enabled the motor will attempt to rotate
+            the hinge at the current motor speed, prividing the maximum
+            motor torque allows it (depening on the total mass of the
+            attached bodies)
+            */
             void motorEnabled(bool);
-            //returns true if the motor is enabled
+            /*!
+            \brief Returns true if the motor is enabled
+            */
             bool motorEnabled() const;
-            //sets the motor speed in degrees per second
+            /*!
+            \brief Sets the motor speed in degrees per second
+            \see motorEnabled
+
+            Use a negative speed to rotate the motor in the opposite
+            direction.
+            */
             void setMotorSpeed(float);
-            //gets the current speed of the motor in degrees per second
+            /*!
+            \brief Gets the current speed of the motor in degrees per second
+            */
             float getMotorSpeed() const;
-            //set the max motor torque
+            /*!
+            \brief Set the max motor torque
+
+            The greater the torque the greater the mass the motor
+            will be able to rotate
+            */
             void setMaxMotorTorque(float);
-            //gets the maximum motor torque
+            /*!
+            \brief Gets the maximum motor torque
+            \see setMaxMotorToque
+            */
             float getMaxMotorTorque() const;
 
 

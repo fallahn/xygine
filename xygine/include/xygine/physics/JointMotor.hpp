@@ -39,42 +39,82 @@ namespace xy
     namespace Physics
     {
         class RigidBody;
+        /*!
+        \brief Motor Joint
+
+        Allows positioning or rotating a body to a specified target position
+        or angle.
+        */
         class MotorJoint final : public Joint
         {
         public:
+            /*!
+            \brief Constructor
+            \param rbA First RigidBody to which to attach the motor joint
+            */
             explicit MotorJoint(const RigidBody& rbA);
             ~MotorJoint() = default;
             MotorJoint(const MotorJoint&) = default;
             MotorJoint& operator = (const MotorJoint&) = default;
 
-            //returs the type of this joint
+            /*!
+            \brief Returns the type of this joint
+            */
             Joint::Type type() const override { return Joint::Type::Motor; }
 
-            //set Whether or not the attached bodies can collide with each other
-            //has no effect once two bodies are joint
+            /*!
+            \brief Set Whether or not the attached bodies can collide with each other
+
+            Has no effect once two bodies are joined
+            */
             void canCollide(bool) override;
-            //returns true if attached bodies can collide with each other
+            /*!
+            \brief Returns true if attached bodies can collide with each other
+            */
             bool canCollide() const override;
 
-            //set the target offset between the bodies in pixels
+            /*!
+            \brief Set the target offset between the bodies in pixels
+
+            Relative target point between bodies to which the motor
+            endeavours to place the attached body
+            */
             void setTargetLinearOffset(const sf::Vector2f&);
-            //get the targt offset between the two bodies in pixels
+            /*!
+            \brief Get the target offset between the two bodies in pixels
+            */
             sf::Vector2f getTargetLinearOffset() const;
-            //set the target angular offset of the bodies in degrees
+            /*!
+            \brief Set the target angular offset of the bodies in degrees
+            */
             void setTargetAngularOffset(float);
-            //gets the current target angular offset in degrees
+            /*!
+            \brief Gets the current target angular offset in degrees
+            */
             float getTargetAngularOffset() const;
-            //sets the maximum friction force
+            /*!
+            \brief Sets the maximum friction force
+            */
             void setMaxForce(float);
-            //gets the maximum friction force
+            /*!
+            \brief Gets the maximum friction force
+            */
             float getMaxForce() const;
-            //set the maximum friction torque
+            /*!
+            \brief Set the maximum friction torque
+            */
             void setMaxTorque(float);
-            //get the maximum friction torque value
+            /*!
+            \brief Get the maximum friction torque value
+            */
             float getMaxTorque() const;
-            //set the correction factor in range 0 - 1
+            /*!
+            \brief Set the correction factor in range 0 - 1
+            */
             void setCorrectionFactor(float);
-            //get the current correction factor
+            /*!
+            \brief Get the current correction factor
+            */
             float getCorrectionFactor() const;
 
 

@@ -44,6 +44,11 @@ namespace xy
 {
     namespace Physics
     {
+        /*!
+        \brief Implements the box2D debug draw interface
+
+        This is used when drawing the physics world. You don't need to manually use this.
+        */
         class DebugDraw final : public b2Draw
         {
         public:

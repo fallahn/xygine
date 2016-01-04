@@ -39,34 +39,62 @@ namespace xy
     namespace Physics
     {
         class RigidBody;
+        /*!
+        \brief Distance Joints maintain a fixed distance between two joined bodies
+        */
         class DistanceJoint final : public Joint
         {
         public:
+            /*!
+            \brief Constructor
+            \param bodyA The first body this joint should be attached to
+            \param worldAnchorA position in world coordinates where this joint should attach to body A
+            \param worldAnchorB position in world coordinates where this joint should attach to body B
+            */
             DistanceJoint(const RigidBody& bodyA, const sf::Vector2f& worldAnchorA, const sf::Vector2f& worldAnchorB);
             ~DistanceJoint() = default;
 
             DistanceJoint(const DistanceJoint&) = default;
             DistanceJoint& operator = (const DistanceJoint&) = default;
 
-            //get the type of this joint
+            /*!
+            \brief Get the type of this joint
+            */
             Joint::Type type() const override { return Joint::Type::Distance; }
-            //set whether or not the joined bodies collide with each other
-            //cannot be updated once joint is added to a rigidbody
+            /*!
+            \brief Set whether or not the joined bodies collide with each other
+
+            Cannot be updated once joint is added to a rigidbody
+            */
             void canCollide(bool collide) override;
-            //returns true if joined bodies can collide with each other
+            /*!
+            \brief Returns true if joined bodies can collide with each other
+            */
             bool canCollide() const override;
-            //get the length of the distance between two joined bodies
+            /*!
+            \brief Get the length of the distance between two joined bodies
+            */
             float getLength() const;
-            //set the frequency, in hertz, of the constraint. recommended
-            //to be less than half the physics update rate. Lower values
-            //soften the constraint allowing bodies to move closer
+            /*!
+            \brief Set the frequency, in hertz, of the constraint.
+
+            Recommended to be less than half the physics update rate. Lower values
+            soften the constraint allowing bodies to move closer
+            */
             void setFrequency(float);
-            //get the current frequency, in hertz, of the constraint
+            /*!
+            \brief Get the current frequency, in hertz, of the constraint
+            */
             float getFrequency() const;
-            //set the damping ratio of the constraint. must be positive and
-            //usually not much more than 1
+            /*!
+            \brief Set the damping ratio of the constraint.
+
+            Must be positive and usually not much more than 1
+            */
             void setDampingRatio(float);
-            //get the current damping ratio of the constraint
+            /*!
+            \brief Get the current damping ratio of the constraint
+            */
             float getDampingRatio() const;
 
         private:

@@ -27,7 +27,7 @@ source distribution.
 
 //creates a friction joint between two bodies, providing 2D translational
 //and rotational friction. Useful for top-down scenarios where no gravity
-//is used, such as a hokey puck or billiard ball
+//is used, such as a hockey puck or billiard ball
 
 #ifndef XY_FRICTION_JOINT_HPP_
 #define XY_FRICTION_JOINT_HPP_
@@ -41,28 +41,56 @@ namespace xy
     namespace Physics
     {
         class RigidBody;
+        /*!
+        \brief Creates a friction joint between two bodies, providing 2D translational
+        and rotational friction. 
+        
+        Useful for top-down scenarios where no gravity is used, such as a hockey puck
+        or billiard ball
+        */
         class FrictionJoint final : public Joint
         {
         public:
+            /*!
+            \brief Constructor
+
+            \param bodyA First RigidBody to attach this joint to
+            \param worldAnchorPos Position on boda in world coordinates to which to apply friction
+            */
             FrictionJoint(const RigidBody& bodyA, const sf::Vector2f& worldAnchorPos);
             ~FrictionJoint() = default;
             FrictionJoint(const FrictionJoint&) = default;
             FrictionJoint& operator = (const FrictionJoint&) = default;
 
-            //returns the type of this joint
+            /*!
+            \brief Returns the type of this joint
+            */
             Joint::Type type() const override { return Joint::Type::Friction; }
-            //set whether the joined bodies can collide with each other
-            //cannot be updated once the joint has been added to a rigidbody
+            /*!
+            \brief Set whether the joined bodies can collide with each other
+
+            Cannot be updated once the joint has been added to a rigidbody
+            */
             void canCollide(bool collide) override;
-            //returns true if joined bodies are allowed to collide with each other
+            /*!
+            \brief Returns true if joined bodies are allowed to collide with each other
+            */
             bool canCollide() const override;
-            //set the maximum amount of translational friction applied in newtons
+            /*!
+            \brief Set the maximum amount of translational friction applied in newtons
+            */
             void setMaxFrictionForce(float);
-            //get the current maximum amount of translational friction applied in newtons
+            /*!
+            \brief Get the current maximum amount of translational friction applied in newtons
+            */
             float getMaxFrictionForce() const;
-            //set the maximum amount of rotational friction applied in newtonmetres
+            /*!
+            \brief Set the maximum amount of rotational friction applied in newtonmetres
+            */
             void setMaxFrictionTorque(float);
-            //get the current maximum amount of rotational friction applied
+            /*!
+            \brief Get the current maximum amount of rotational friction applied
+            */
             float getMaxFrictionTorque() const;
 
 

@@ -38,39 +38,72 @@ namespace xy
     namespace Physics
     {
         class CollisionShape;
+        /*!
+        \brief Contacts hold information describing the intersection of collision
+        shapes.
+        
+        Contacts are created when AABBs of shapes intersect, shapes
+        themselves may not be touching, which can be queried with touching()
+        */
         class Contact final
         {
             friend class World;
             friend class ContactCallback;
         public:
 
-            //returns true if the collision shapes are touching
+            /*!
+            \brief Returns true if the collision shapes are touching
+            */
             bool touching() const;
-            //set if this contact should be enabled
+            /*!
+            \brief Set if this contact should be enabled
+            */
             void enabled(bool);
-            //returns true if this contact is enabled
+            /*!
+            \brief Returns true if this contact is enabled
+            */
             bool enabled() const;
-            //returns the first collision shape in the contact
+            /*!
+            \brief Returns the first collision shape in the contact
+            */
             CollisionShape* getCollisionShapeA();
             const CollisionShape* getCollisionShapeA() const;
-            //returns th second collision shape in the contact
+            /*!
+            \brief Returns the second collision shape in the contact
+            */
             CollisionShape* getCollisionShapeB();
             const CollisionShape* getCollisionShapeB() const;
-            //gets the calculated friction between the contact's collision shapes
+            /*!
+            \brief Gets the calculated friction between the contact's collision shapes
+            */
             float getFriction() const;
-            //sets the friction between the contact's collision shapes
+            /*!
+            \brief Sets the friction between the contact's collision shapes
+            */
             void setFriction(float);
-            //resets the friction value to default value
+            /*!
+            \brief Resets the friction value to default value
+            */
             void resetFriction();
-            //get the calculated restitution between the collision shapes of this contact
+            /*!
+            \brief Get the calculated restitution between the collision shapes of this contact
+            */
             float getRestitution() const;
-            //set the restitution between the collision shapes of this contact
+            /*!
+            \brief Set the restitution between the collision shapes of this contact
+            */
             void setRestitution(float);
-            //reset the restitution to the default value
+            /*!
+            \brief Reset the restitution to the default value
+            */
             void resetRestitution();
-            //sets the tangent speed for conveyor like behaviour
+            /*!
+            \brief Sets the tangent speed for conveyor like behaviour
+            */
             void setTangentSpeed(float);
-            //gets the current tangent speed of the contact
+            /*!
+            \brief Gets the current tangent speed of the contact
+            */
             float getTangentSpeed() const;
 
         private:

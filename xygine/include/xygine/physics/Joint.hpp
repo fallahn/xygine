@@ -42,6 +42,12 @@ namespace xy
     namespace Physics
     {
         class RigidBody;
+        /*!
+        \brief Abstract base class for physics joints
+
+        Joints are used to connect or constrain two bodies in some way. See
+        concrete implementations for joint specific information.
+        */
         class Joint
         {
             friend class RigidBody;
@@ -63,13 +69,26 @@ namespace xy
             Joint() : m_joint(nullptr), m_bodyA(nullptr), m_bodyB(nullptr){}
             virtual ~Joint() = default;
 
+            /*!
+            \brief Returns the type of the concrete implementation
+            */
             virtual Type type() const = 0;
+            /*!
+            \brief Enable whether or not the joined bodies can collide
+            with each other
+            */
             virtual void canCollide(bool) = 0;
+            /*!
+            \brief Returns true if joined bodies have inter-collisions enabled
+            */
             virtual bool canCollide() const = 0;
 
-            //allow explicitly destroying this joint. note that although
-            //this raises an event on the message bus callbacks registered
-            //with the physics world will not be invoked
+            /*!
+            \brief Allow explicitly destroying this joint. 
+            
+            note that although this raises an event on the message bus
+            callbacks registered with the physics world will not be invoked
+            */
             void destroy()
             {
                 if (m_joint)
