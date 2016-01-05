@@ -38,33 +38,89 @@ namespace xy
 {
     namespace UI
     {
+        /*!
+        \brief ComboBox control
+
+        A drop down collection of name/value pairs of which one can be selected
+        */
         class ComboBox final : public Control
         {
         public:
             using Ptr = std::shared_ptr<ComboBox>;
 
+            /*!
+            \brief Constructor
+            \param font Font to use with the combobox text
+            \param t Texture containing the background image for the combobox
+            */
             ComboBox(const sf::Font& font, const sf::Texture& t);
             ~ComboBox() = default;
-
+            /*!
+            \see Control
+            */
             bool selectable() const override;
+            /*!
+            \see Control
+            */
             void select() override;
+            /*!
+            \see Control
+            */
             void deselect() override;
-
+            /*!
+            \see Control
+            */
             void activate() override;
+            /*!
+            \see Control
+            */
             void deactivate() override;
-
+            /*!
+            \see Control
+            */
             void handleEvent(const sf::Event&, const sf::Vector2f&) override;
+            /*!
+            \see Control
+            */
             void setAlignment(Alignment) override;
+            /*!
+            \see Control
+            */
             bool contains(const sf::Vector2f& mousePos) const override;
+            /*!
+            \brief Add a name / value pair to the combobox
 
+            The name will appear in the drop down list, and the value
+            is the value returned when the item is currently selected
+            */
             void addItem(const std::string& name, sf::Int32 value);
+            /*!
+            \brief Get the text string of the currently selected item
+            */
             const std::string& getSelectedText() const;
+            /*!
+            \brief Get the value of the currently selected item
+            */
             sf::Int32 getSelectedValue() const;
-
+            /*!
+            \brief Set the background colour of the drop-down
+            */
             void setBackgroundColour(const sf::Color&);
+            /*!
+            \brief Set colour of the highlight item in the drop-down
+            */
             void setHighlightColour(const sf::Color&);
+            /*!
+            \brief Selects the item at the given index
+            */
             void setSelectedIndex(Index index);
+            /*!
+            \brief Returns the number of items in the combobox
+            */
             sf::Uint32 size() const;
+            /*!
+            \brief sets the selected item by name, if it exists
+            */
             void selectItem(const std::string&);
             void selectItem(Index);
 

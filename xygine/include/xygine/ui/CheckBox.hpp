@@ -43,6 +43,9 @@ namespace xy
 {
     namespace UI
     {
+        /*!
+        \brief A togglable checkbox control
+        */
         class CheckBox final : public Control
         {
         public:
@@ -54,28 +57,82 @@ namespace xy
                 CheckChanged
             };
 
+            /*!
+            \brief Constructor
+            \param font Font to use with the checkbox's text
+            \param texture Texture containing an atlas of the
+            the states: Normal Unchecked, Normal Checked,
+            Selected Unchecked, Selected Checked
+            */
             CheckBox(const sf::Font& font, const sf::Texture& t);
             ~CheckBox() = default;
-
+            /*!
+            \see Control
+            */
             bool selectable() const override;
+            /*!
+            \see Control
+            */
             void select() override;
+            /*!
+            \see Control
+            */
             void deselect() override;
+            /*!
+            \brief Activates the control
 
+            Any associated callbacks are called if they exist
+            \see Control
+            */
             void activate() override;
+            /*!
+            \see Control
+            */
             void deactivate() override;
-
+            /*!
+            \see Control
+            */
             void handleEvent(const sf::Event&, const sf::Vector2f&) override;
+            /*!
+            \see Control
+            */
             void setAlignment(Alignment) override;
+            /*!
+            \see Control
+            */
             bool contains(const sf::Vector2f& mousePos) const override;
-
+            /*!
+            \brief Set the text for the checkbox's label
+            */
             void setText(const std::string& text);
+            /*!
+            \brief Set the colour of the text of the checkbox's label
+            */
             void setTextColour(const sf::Color&);
+            /*!
+            \brief Set the font used by the checkbox's label
+            */
             void setFont(const sf::Font&);
+            /*!
+            \brief Set the character size of the text used by the checkbox's label
+            */
             void setFontSize(sf::Uint8);
-
+            /*!
+            \brief Returns true if checkbox is checked
+            */
             bool checked() const;
-            void check(bool checked = true);
+            /*!
+            \brief Check or uncheck the checkbox
 
+            Any callback associated with CheckChanged event will be called
+            \param checked Set to true to check, false to uncheck
+            */
+            void check(bool checked = true);
+            /*!
+            \brief Supply a Callback to be executed on the given event
+            \param Callback Callback to execute
+            \param Event Event on which to execute Callback
+            */
             void setCallback(Callback, Event);
 
         private:

@@ -43,31 +43,77 @@ namespace xy
 {
     namespace UI
     {
+        /*!
+        \brief Clickable and optionally togglable button
+        */
         class Button final : public Control
         {
         public:
             using Ptr = std::shared_ptr<Button>;
             using Callback = std::function<void()>;
 
+            /*!
+            \brief Constructor
+            \param font Font to use for this button's text
+            \param texture Texture containing an atlas of the 3 button states:
+            Normal, Selected, Active.
+            */
             Button(const sf::Font& font, const sf::Texture& texture);
             ~Button() = default;
-
+            /*!
+            \see Control
+            */
             bool selectable() const override;
+            /*!
+            \see Control
+            */
             void select() override;
+            /*!
+            \see Control
+            */
             void deselect() override;
+            /*!
+            \brief Activates the control
 
+            When the button is activated its click callback is performed, if it exists
+            \see Control
+            */
             void activate() override;
+            /*!
+            \brief Deactivates the button if it is set to togglable
+            */
             void deactivate() override;
-
+            /*!
+            \see Control
+            */
             void handleEvent(const sf::Event& e, const sf::Vector2f& mousePos) override;
-
+            /*!
+            \see Control
+            */
             void setAlignment(Alignment a) override;
+            /*!
+            \see Control
+            */
             bool contains(const sf::Vector2f& mousePos)const override;
-
+            /*!
+            \brief Allows providing a Callback to be performed when the button is activated
+            */
             void setCallback(Callback c);
+            /*!
+            \brief Sets the button's text
+            */
             void setText(const std::string& text);
+            /*!
+            \brief Sets the colours of the button's text
+            */
             void setTextColour(const sf::Color& c);
+            /*!
+            \brief Sets the font size of the button's text
+            */
             void setFontSize(sf::Uint16 size);
+            /*!
+            \brief Set whether or not the button is togglable
+            */
             void setTogglable(bool b);
 
 

@@ -57,7 +57,6 @@ namespace
 
     const float joyDeadZone = 25.f;
     const float joyMaxAxis = 100.f;
-
 }
 
 RacingDemoState::RacingDemoState(xy::StateStack& stateStack, Context context)
