@@ -58,6 +58,16 @@ namespace xy
             Kinematic = b2_kinematicBody
         };
 
+        /*!
+        \brief Creates a rigidbody component allowing the entity to be updated
+        by the physics world. 
+        
+        A valid physics world object must exist when these components are added
+        to an entity, and require shape fixtures attached to them to have any 
+        affect. Entities with a RigidBody attached will be unable to have their 
+        position set manually as it will be automatically overriden by the physics
+        simulation.
+        */
         class RigidBody final : public Component
         {
             friend class DistanceJoint;
@@ -91,35 +101,58 @@ namespace xy
             void onStart(Entity&) override;
             void destroy() override;
 
-            //linear velocity of the body in world coordinates
+            /*!
+            \brief Set the linear velocity of the body in world coordinates
+            */
             void setLinearVelocity(const sf::Vector2f&);
-            //set the angular velocity of the body
+            /*!
+            \brief Set the angular velocity of the body
+            */
             void setAngularVelocity(float);
-            //set the linear damping which will be applied to
-            //this body
+            /*!
+            \brief Set the linear damping which will be applied to this body
+            */
             void setLinearDamping(float);
-            //set the angular damping which will be applied to
-            //this body
+            /*!
+            \brief Set the angular damping which will be applied to this body
+            */
             void setAngularDamping(float);
-            //set allowing this body to sleep when inactive
+            /*!
+            \brief Set allowing this body to sleep when inactive
+            */
             void allowSleep(bool);
-            //set whether or not this body is awake initially
+            /*!
+            \brief Set whether or not this body is awake initially
+            */
             void awakeOnSpawn(bool);
-            //set whether or not this body can rotate
+            /*!
+            \brief Set whether or not this body can rotate
+            */
             void fixedRotation(bool);
-            //set this to true if this body is expected to be
-            //a fast moving object to reduce tunneling. can be
-            //process intensive so should be used sparingly
+            /*!
+            Set this to true if this body is expected to be a fast moving object to reduce tunneling.
+            
+            This can be process intensive so should be used sparingly
+            */
             void isBullet(bool);
-            //sets whether or not this body is active on spawn
+            /*!
+            \brief Sets whether or not this body is active on spawn
+            */
             void activeOnSpawn(bool);
-            //sets the scale of the gravity applied to this body
-            //negative numbers can be used
+            /*!
+            \brief Sets the scale of the gravity applied to this body
+            
+            Negative values can be used
+            */
             void setGravityScale(float);
-            //adds a collision shape to this body. The original shape is
-            //unmodified (so it can be attached to multiple bodies) and
-            //a pointer to the newly created shape is returned. be aware
-            //that this pointer will become invalid should the body be destoyed
+            /*!
+            \brief Adds a collision shape to this body. 
+            
+            The original shape is unmodified (so it can be attached to 
+            multiple bodies) and a pointer to the newly created shape is returned.
+            Be aware that this pointer will become invalid should the body be destoyed
+            \returns Pointer to newly created collision shape attached to this body.
+            */
             template <typename T>
             T* addCollisionShape(const T& cs)
             {
@@ -140,9 +173,14 @@ namespace xy
                 return dynamic_cast<T*>(newShape.get());
             }
 
-            //adds a joint to this body. the rigid body with which the joint was constructed
-            //must not be the same as this one. returns a pointer to the created joint. be
-            //aware this pointer will become invalid if either attached bodies are destroyed
+            /*!
+            \brief Adds a joint to this body.
+            
+            The rigid body with which the joint was constructed must not be the same as this one.
+            Returns a pointer to the created joint. Be aware this pointer will become invalid if
+            either attached bodies are destroyed.
+            \returns Pointer to newly created attachment
+            */
             template <typename T>
             T* addJoint(const T& joint)
             {
@@ -166,59 +204,110 @@ namespace xy
                 return dynamic_cast<T*>(newJoint.get());
             }
 
-            //get the world position of this body's centre of mass
+            /*!
+            \brief Get the world position of this body's centre of mass
+            */
             sf::Vector2f getWorldCentre() const;
-            //get the local position of this body's centre of mass
+            /*!
+            \brief Get the local position of this body's centre of mass
+            */
             sf::Vector2f getLocalCentre() const;
-            //get the linear velocity of this body
+            /*!
+            \brief Get the linear velocity of this body
+            */
             sf::Vector2f getLinearVelocity() const;
-            //get the angular velocity of this body
+            /*!
+            \brief Get the angular velocity of this body
+            */
             float getAngularVelocity() const;
-            //get the linear damping of this body
+            /*!
+            \brief Get the linear damping of this body
+            */
             float getLinearDamping() const;
-            //get the angular damping of this body
+            /*!
+            \brief Get the angular damping of this body
+            */
             float getAngularDamping() const;
-            //get the gravity scale of this body
+            /*!
+            \brief Get the gravity scale of this body
+            */
             float getGravityScale() const;
-            //returns true if the isBullet property is set
+            /*!
+            \brIef Returns true if the isBullet property is set
+            */
             bool isBullet() const;
-            //returns true if allowSleep flag is set
+            /*!
+            \brief Returns true if allowSleep flag is set
+            */
             bool allowSleep() const;
-            //returns true if this body has fixed rotation
+            /*!
+            \brief Returns true if this body has fixed rotation
+            */
             bool fixedRotation() const;
-            //get the mass in kilograms of this boy
+            /*!
+            \brief Get the mass, in kilograms, of this body
+            */
             float getMass() const;
-            //get the inertia of this body
+            /*!
+            \brief Get the inertia of this body
+            */
             float getInertia() const;
 
-            //set whether or not this body is awake
+            /*!
+            \brief Set whether or not this body is awake
+            */
             void awake(bool);
-            //returns true if this body is awake
+            /*!
+            \brief Returns true if this body is awake
+            */
             bool awake() const;
-            //set whether or not this body is active
+            /*!
+            \brief Set whether or not this body is active
+            */
             void active(bool);
-            //returns true if this body is active
+            /*!
+            \brief Returns true if this body is active
+            */
             bool active() const;
 
-            //applies a given force to this body at the given point
-            //if wake is true sleeping bodies will first be woken
+            /*!
+            \brief Applies a given force to this body at the given point
+
+            If wake is true sleeping bodies will first be woken
+            */
             void applyForce(const sf::Vector2f& force, const sf::Vector2f& point, bool wake = true);
-            //applies a given force to the centre of mass of this body
-            //if wake is true then sleeping bodies will be woken
+            /*!
+            \brief Applies a given force to the centre of mass of this body
+
+            If wake is true then sleeping bodies will be woken
+            */
             void applyForceToCentre(const sf::Vector2f& force, bool wake = true);
-            //applies a given torque (rotation) to this body
-            //if wake is true then a sleeping body will be woken
+            /*!
+            Applies a given torque (rotation) to this body
+
+            If wake is true then a sleeping body will be woken
+            */
             void applyTorque(float, bool wake = true);
-            //applies a given linear impulse at a given point to the body
-            //if wake is true then this body will be woken when sleeping
+            /*!
+            \brief Applies a given linear impulse at a given point to the body
+
+            If wake is true then this body will be woken when sleeping
+            */
             void applyLinearImpulse(const sf::Vector2f& impulse, const sf::Vector2f& point, bool wake = true);
-            //applies an angular impulse to the body. if wake is true
-            //the body will be woken if it is sleeping
+            /*!
+            \brief Applies an angular impulse to the body.
+            
+            If wake is true the body will be woken if it is sleeping
+            */
             void applyAngularImpulse(float, bool wake = true);
 
-            //returns a vector of CollisionShapes attached to his body
+            /*!
+            \brief Returns a vector of CollisionShapes attached to his body
+            */
             const std::vector<CollisionShape::Ptr>& getCollisionShapes() const;
-            //returns a vector of Joints attached to this body
+            /*!
+            \brief Returns a vector of Joints attached to this body
+            */
             const std::vector<Joint::Ptr>& getJoints() const;
 
         private:

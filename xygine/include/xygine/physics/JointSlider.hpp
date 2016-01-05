@@ -40,47 +40,101 @@ namespace xy
     namespace Physics
     {
         class RigidBody;
+        /*!
+        \brief Creates a joint which allows two bodies to translate along a single axis in opposite directions
+        */
         class SliderJoint final : public Joint
         {
         public:
+            /*!
+            \brief Construtor
+            \param bodyA First bosy to which this joint is attached
+            \param worldAnchorPos Position in world coordinates at which this joint is connected to bodyA
+            \param slideVector direction in which the second body is moved relative to the world anchor point
+            */
             SliderJoint(const RigidBody& bodyA, const sf::Vector2f& worldAnchorPos, const sf::Vector2f& slideVector);
             ~SliderJoint() = default;
             SliderJoint(const SliderJoint&) = default;
             SliderJoint& operator = (const SliderJoint&) = default;
 
-            //returns the type of this joint
+            /*!
+            \brief Returns the type of this joint
+            */
             Joint::Type type() const override { return Joint::Type::Slider; }
-            //sets whether or not the two bodies can collide with each other
-            //has no effect once bodies are joined
+            /*!
+            \brief Sets whether or not the two bodies can collide with each other
+
+            Has no effect once both bodies are joined
+            */
             void canCollide(bool) override;
-            //returns true if joined bodies can collide with each other
+            /*!
+            \brief Returns true if joined bodies can collide with each other
+            */
             bool canCollide() const override;
 
-            //returns the distance which the joint has slid, in pixels
+            /*!
+            \brief Returns the distance which the joint has slid, in pixels
+            */
             float getTranslation() const;
-            //returns the current sliding speed, in pixels per second
+            /*!
+            \brief Returns the current sliding speed, in pixels per second
+            */
             float getSpeed() const;
-            //set whether or not the slide limit is enabled
+            /*!
+            \brief Set whether or not the slide limit is enabled
+
+            If the slide limiti is enable the attached bodies will slide only
+            ass far as the upper and lower limit from the anchor point
+            */
             void limitEnabled(bool);
-            //returns true if the slide limit is enabled
+            /*!
+            \brief Returns true if the slide limit is enabled
+            */
             bool limitEnabled() const;
-            //returns the lower limit distance, in pixels, from the anchor point
+            /*!
+            \brief Returns the lower limit distance, in pixels, from the anchor point
+            */
             float getLowerLimit() const;
-            //returns the upper limit distance, in pixels, from the anchor point
+            /*!
+            \brief Returns the upper limit distance, in pixels, from the anchor point
+            */
             float getUpperLimit() const;
-            //set the upper and lower limits of the slider in pixels
+            /*!
+            \brief Set the upper and lower limits of the slider in pixels
+            \see limitEnabled
+            */
             void setLimits(float upper, float lower);
-            //set whether or not the motor is enabled
+            /*!
+            \brief Set whether or not the motor is enabled
+
+            When the motor is enable the joint will attempt to move at
+            the current set speed up to any limits if they are enabled.
+            The motors actual movement speed is affected by the amount
+            of force it has and the mass of the bodies attached to the joint.
+            A higher forcee is required to move a greater mass.
+            */
             void motorEnabled(bool);
-            //returns true if the motor is enabled
+            /*!
+            \brief Returns true if the motor is enabled
+            */
             bool motorEnabled() const;
-            //set the motor speed, in pixels per second
+            /*!
+            \brief Set the motor speed, in pixels per second
+            \see motorEnabled
+            */
             void setMotorSpeed(float);
-            //gets the current motor speed in pixels per second
+            /*!
+            \brief Gets the current motor speed in pixels per second
+            */
             float getMotorSpeed() const;
-            //set the maximum motor firce
+            /*!
+            \brief Set the maximum motor force
+            \see motorEnabled
+            */
             void setMaxMotorForce(float);
-            //gets the maximum motor force
+            /*!
+            \brief Gets the maximum motor force
+            */
             float getMaxMotorForce() const;
 
         private:

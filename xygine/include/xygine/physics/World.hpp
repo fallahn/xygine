@@ -56,6 +56,13 @@ namespace xy
     {
         class Joint;
         class CollisionShape;
+        /*!
+        \brief Physics World
+
+        The physics world is home to all physics simulation. A single instance
+        of the physics world must exist in the same scope as any scene which
+        has entities which physics components attached to them.
+        */
         class World final : public sf::Drawable
         {
             friend class RigidBody;
@@ -84,37 +91,53 @@ namespace xy
             World(const World&) = delete;
             const World& operator = (const World&) = delete;
 
-            //set the physics world gravity in pixels per second per second
-            //default is (0.f, 980.f) - approximately earth's gravitational pull
-            //when used with the default world scale
+            /*!
+            \brief Set the physics world gravity in pixels per second per second
+
+            Default is (0.f, 980.f) - approximately earth's gravitational pull
+            when used with the default world scale
+            */
             inline void setGravity(const sf::Vector2f& gravity)
             {
                 m_gravity = sfToBoxVec(gravity);
                 if (m_world) m_world->SetGravity(m_gravity);
             }
 
-            //sets the number of pixels drawn per metre in the physics world
-            //recommended values are between 10 and 1000, default is 100 pixels per mtre
+            /*!
+            \brief Sets the number of pixels drawn per metre in the physics world
+
+            Recommended values are between 10 and 1000, default is 100 pixels per metre
+            */
             inline void setPixelScale(float scale)
             {
                 XY_ASSERT((scale > 5 && scale < 5000), "Reasonable scales range from 10 to 1000 pixels per metre");
                 m_worldScale = scale;
             }
 
-            //sets the number of velocity iterations perform per physics step. default is 6
+            /*!
+            \brief Sets the number of velocity iterations perform per physics step. 
+            Default is 6
+            */
             inline void setVelocityIterationCount(sf::Uint32 count)
             {
                 m_velocityIterations = count;
             }
 
-            //sets the number of position iterations performed per physics step. default is 2
+            /*!
+            \brief Sets the number of position iterations performed per physics step.
+            Default is 2
+            */
             inline void setPositionIterationCount(sf::Uint32 count)
             {
                 m_positionIterations = count;
             }
 
-            //performs a single physics step. this is automatically called by xygine and should
-            //not be called elsewhere from within an application.
+            /*!
+            \brief Performs a single physics step.
+            
+            This is automatically called by xygine and should not be called elsewhere
+            from within an application.
+            */
             static std::function<void(float)> update;
 
 
@@ -123,29 +146,49 @@ namespace xy
             using ContactCallback = std::function<void(Contact&)>;
             using CallbackIndex = std::list<ContactCallback>::iterator;
 
-            //adds a callback to be performed each time a joint is destroyed
+            /*!
+            \brief Adds a callback to be performed each time a joint is destroyed
+            */
             void addJointDestroyedCallback(const JointDestroyedCallback&);
-            //adds a callback to be performed each time a collision shape is destroyed
+            /*!
+            \brief Adds a callback to be performed each time a collision shape is destroyed
+            */
             void addCollisionShapeDestroyedCallback(const CollisionShapeDestroyedCallback&);
-            //adds a callback to the pre-solve listener. returns the callback
-            //index so callback my be unregistered again
+            /*!
+            \brief Adds a callback to the pre-solve listener.            
+            \returns Callback index so that callback my be unregistered again
+            */
             CallbackIndex addContactPreSolveCallback(const ContactCallback&);
-            //adds a callback to the post-solve listener. returns the callback
-            //index so callback my be unregistered again
+            /*!
+            \brief Adds a callback to the post-solve listener. 
+            \returns Callback index so callback my be unregistered again
+            */
             CallbackIndex addContactPostSolveCallback(const ContactCallback&);
-            //adds a callback to the contact begin listener. returns the callback
-            //index so callback my be unregistered again
+            /*!
+            \brief Adds a callback to the contact begin listener.
+            \returns Callback index so callback my be unregistered again
+            */
             CallbackIndex addContactBeginCallback(const ContactCallback&);
-            //adds a callback to the contact end listener. returns the callback
-            //index so callback my be unregistered again
+            /*!
+            \brief Adds a callback to the contact end listener.
+            \returns Callback index so callback my be unregistered again
+            */
             CallbackIndex addContactEndCallback(const ContactCallback&);
-            //unregisters the presolve callback at the given index
+            /*!
+            \brief Unregisters the presolve callback at the given index
+            */
             void removeContactPreSolveCallback(CallbackIndex);
-            //unregisters the post solve callback at the given index
+            /*!
+            \brief Unregisters the post solve callback at the given index
+            */
             void removeContactPostSolveCallback(CallbackIndex);
-            //unregisters the contact begin callback at the given index
+            /*!
+            \brief Unregisters the contact begin callback at the given index
+            */
             void removeContactBeginCallback(CallbackIndex);
-            //unregisters the contact end callback at the given index
+            /*!
+            \brief Unregisters the contact end callback at the given index
+            */
             void removeContactEndCallback(CallbackIndex);
         private:
 
@@ -219,11 +262,13 @@ namespace xy
             static sf::Uint32 m_positionIterations;
 
             static Ptr m_world;
-            //ugh I can't believe I restored to this
+            //ugh I can't believe I resorted to this
             static World* m_instance;
 
             mutable std::unique_ptr<DebugDraw> m_debugDraw;
 
+            //unit onversion functions. Made private because we don't
+            //need to expose them to the overall API
             static inline b2Vec2 sfToBoxVec(const sf::Vector2f& vec)
             {
                 return b2Vec2(vec.x / m_worldScale, -vec.y / m_worldScale);

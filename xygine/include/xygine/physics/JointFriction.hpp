@@ -55,7 +55,7 @@ namespace xy
             \brief Constructor
 
             \param bodyA First RigidBody to attach this joint to
-            \param worldAnchorPos Position on boda in world coordinates to which to apply friction
+            \param worldAnchorPos Position on bodyA in world coordinates to which to apply friction
             */
             FrictionJoint(const RigidBody& bodyA, const sf::Vector2f& worldAnchorPos);
             ~FrictionJoint() = default;
@@ -69,7 +69,7 @@ namespace xy
             /*!
             \brief Set whether the joined bodies can collide with each other
 
-            Cannot be updated once the joint has been added to a rigidbody
+            Cannot be updated once the joint has been added to a second RigidBody
             */
             void canCollide(bool collide) override;
             /*!

@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//definies a wheel joint where the second body is attached to the first
-//via sprung suspension, and can be rotated via motor
+//defines a wheel joint where the second body is attached to the first
+//via sprung suspension, and can be rotated via a motor
 
 #ifndef XY_WHEEL_JOINT_HPP_
 #define XY_WHEEL_JOINT_HPP_
@@ -40,47 +40,89 @@ namespace xy
     namespace Physics
     {
         class RigidBody;
+        /*!
+        \brief Defines a wheel joint where the second body is attached to the first
+        via sprung suspension, and can be rotated via a motor.
+        */
         class WheelJoint final : public Joint
         {
         public:
+            /*!
+            \brief Constructor
+            \param bodyA First body to attach to the joint
+            \param worldAnchorPos Position in world coordinates at which the second body is connected
+            \param axis A vector realtive to the anchor at which the second body is placed
+            */
             WheelJoint(const RigidBody& bodyA, const sf::Vector2f& worldAnchorPos, const sf::Vector2f& axis);
             ~WheelJoint() = default;
 
             WheelJoint(const WheelJoint&) = default;
             WheelJoint& operator = (const WheelJoint&) = default;
 
-            //get the type of this joint
+            /*!
+            \brief Get the type of this joint
+            */
             Joint::Type type() const { return Joint::Type::Wheel; }
-            //set whether or not the joined bodies collide with each other
-            //updating this once the joint is added to a rigidbody has n effect
+            /*!
+            \brief Set whether or not the joined bodies collide with each other
+
+            Updating this once the joint is added to a second RigidBody has no effect
+            */
             void canCollide(bool) override;
-            //returns true if the joined bodies are allowed t ocollide
+            /*!
+            \brief Returns true if the joined bodies are allowed t ocollide
+            */
             bool canCollide() const override;
 
-            //get joint translation, in pixels
+            /*!
+            \brief Get joint translation, in pixels
+            */
             float getTranslation() const;
-            //get joint speed in pixels per second
+            /*
+            \brief Get joint speed in pixels per second
+            */
             float getSpeed() const;
-            //set whether or not to enable the motor
+            /*!
+            \brief Set whether or not to enable the motor
+            */
             void motorEnabled(bool);
-            //returns true if motor is enabled
+            /*!
+            \brief Returns true if motor is enabled
+            */
             bool motorEnabled() const;
-            //set the speed of the motor in degrees per second
+            /*!
+            \brief Set the speed of the motor in degrees per second
+            */
             void setMotorSpeed(float);
-            //get the motor speed in degrees per second
+            /*!
+            \brief Get the motor speed in degrees per second
+            */
             float getMotorSpeed() const;
-            //set the max torque of the motor
+            /*!
+            \brief Set the max torque of the motor
+            */
             void setMaxMotorTorque(float);
-            //returns the max motor torque
+            /*!
+            \brief Returns the max motor torque
+            */
             float getMaxMotorTorque() const;
-            //set suspension spring frequency in hertz
-            //a value of zero disables the spring.
+            /*!
+            \brief Set suspension spring frequency in hertz
+
+            A value of zero disables the spring.
+            */
             void setSpringFrequency(float);
-            //get the frequency of the spring in hertz
+            /*!
+            \brief Get the frequency of the spring in hertz
+            */
             float getSpringFrequency() const;
-            //set the damping ratio of the spring
+            /*!
+            \brief Set the damping ratio of the spring
+            */
             void setSpringDampingRatio(float);
-            //get the spring's damping ratio
+            /*!
+            \brief Get the spring's damping ratio
+            */
             float getSpringDampingRatio() const;
 
         private:

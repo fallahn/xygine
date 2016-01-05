@@ -39,31 +39,56 @@ namespace xy
     namespace Physics
     {
         class RigidBody;
+        /*!
+        \brief Attempts to weld and fix two bodies together at a specific point
+        */
         class WeldJoint final : public Joint
         {
         public:
+            /*!
+            \brief Constructor
+            \param bodyA First RigidBody to attach to the joint
+            \param worldWeldPoint Position in world coordinates at which to weld the second body
+            */
             WeldJoint(const RigidBody& bodyA, const sf::Vector2f& worldWeldPoint);
             ~WeldJoint() = default;
             WeldJoint(const WeldJoint&) = default;
             WeldJoint& operator = (const WeldJoint&) = default;
 
-            //returns the type of this joint
+            /*!
+            \brief Returns the type of this joint
+            */
             Joint::Type type() const override { return Joint::Type::Weld; }
-            //sets whether or not the attached bosies can collide
-            //this has no affect once bodies are joined
+            /*!
+            \brief Sets whether or not the attached bodies can collide
+
+            This has no affect once two bodies are joined
+            */
             void canCollide(bool) override;
-            //returns true if the attached bodies can collide with each other
+            /*!
+            \brief Returns true if the attached bodies can collide with each other
+            */
             bool canCollide() const;
 
-            //returns the reference angle between the bodies in degrees
+            /*!
+            \brief Returns the reference angle between the bodies in degrees
+            */
             float getReferenceAngle() const;
-            //sets the frequency of the joint in hertz
+            /*!
+            \brief Sets the frequency of the joint in hertz
+            */
             void setFrequency(float);
-            //gets the current frequency of the joint in hertz
+            /*!
+            \brief Sets the current frequency of the joint in hertz
+            */
             float getFrequency() const;
-            //set the damping ratio of the joint
+            /*!
+            \brief Set the damping ratio of the joint
+            */
             void setDampingRatio(float);
-            //get the current dampin ratio of the joint
+            /*!
+            \brief Get the current damping ratio of the joint
+            */
             float getDampingRatio() const;
 
         private:

@@ -40,27 +40,52 @@ namespace xy
     namespace Physics
     {
         class RigidBody;
+        /*!
+        \brief Constrains two bodies to a maximum distance from each other
+
+        NOTE length of the rope cannot be updated once two bodies are connected
+        */
         class RopeJoint final : public Joint
         {
         public:
+            /*!
+            \brief Constructor
+            \param bodyA First body to attach to this joint
+            \param worldAnchorPosA Position in world coordinates at which to attach the joint on bodyA
+            \param worldAnchorPosB Position in world coordinates at which to attach the joint on bodyB
+
+            The maximum rope length is the distance between the two world anchor points
+            */
             RopeJoint(const RigidBody& bodyA, const sf::Vector2f& worldAnchorPosA, const sf::Vector2f& worldAnchorPosB);
             ~RopeJoint() = default;
             RopeJoint(const RopeJoint&) = default;
             RopeJoint& operator = (const RopeJoint&) = default;
 
-            //returns the type of this joint
+            /*!
+            \brief Returns the type of this joint
+            */
             Joint::Type type() const override { return Joint::Type::Rope; }
-            //sets whether or not the two attached bodies can collide with
-            //each other. changing this once both bodies are attached has
-            //no effect.
+            /*!
+            \brief Sets whether or not the two attached bodies can collide with
+            each other.
+            
+            Changing this once both bodies are attached has no effect.
+            */
             void canCollide(bool) override;
-            //returns true if joined bodies can collide with each other
+            /*!
+            \brief Returns true if joined bodies can collide with each other
+            */
             bool canCollide() const override;
 
-            //sets the maximum length of the rope, in pixels. changing 
-            //this once both bodies are attached has no effect
+            /*!
+            \brief Sets the maximum length of the rope, in pixels.
+            
+            Changing this once both bodies are attached has no effect
+            */
             void setMaximumLength(float);
-            //returns the maximum length of the rope, in pixels
+            /*!
+            \brief Returns the maximum length of the rope, in pixels
+            */
             float getMaximumLength() const;
 
         private:

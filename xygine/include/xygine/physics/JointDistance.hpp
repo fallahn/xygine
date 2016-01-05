@@ -64,7 +64,7 @@ namespace xy
             /*!
             \brief Set whether or not the joined bodies collide with each other
 
-            Cannot be updated once joint is added to a rigidbody
+            Cannot be updated once joint is added to a second rigidbody
             */
             void canCollide(bool collide) override;
             /*!
