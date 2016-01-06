@@ -50,27 +50,56 @@ namespace xy
 {
     namespace UI
     {
+        /*!
+        \brief Creates a window-like control
+
+        Windows are not strictly UI Controls, but have their own Container
+        to which Controls can be added. Unlike containers windows can be moved
+        and resized by the user
+        */
         class Window final : public sf::Drawable, public sf::Transformable
         {
         public:
             using Ptr = std::unique_ptr<Window>;
+            /*!
+            \brief A Collection of colours used to create a window palette
+            */
             struct Palette
             {
                 sf::Color borderNormal;
                 sf::Color borderActive;
                 sf::Color background;
             };
-
+            /*!
+            \brief Constructor
+            \param sf::Font Font to use with window text
+            \param width Width of the window
+            \param height Height of the window
+            \param palette Instance of the Palette struct which defines the window colours
+            */
             Window(const sf::Font&, sf::Uint16 width, sf::Uint16 height, const Palette& = Palette());
             ~Window() = default;
             Window(const Window&) = delete;
             Window& operator = (const Window&) = delete;
-
+            /*!
+            \brief Forwards the frame time to contained controls
+            */
             void update(float);
+            /*!
+            \brief Forwards events for contained controls
+            */
             void handleEvent(const sf::Event&, const sf::Vector2f&);
+            /*!
+            \brief Set the palette of colours to be used by the window
+            */
             void setPalette(const Palette&);
+            /*!
+            \brief Set the title string of the window
+            */
             void setTitle(const std::string&);
-
+            /*!
+            \brief Add a control to the window's control collection
+            */
             void addControl(Control::Ptr);
 
         private:

@@ -43,34 +43,87 @@ namespace xy
 {
     namespace UI
     {
+        /*!
+        \brief A text input box
+        */
         class TextBox final : public Control
         {
         public:
             using Ptr = std::shared_ptr<TextBox>;
 
+            /*!
+            \brief Constructor
+            \param font Font to use with the displayed text
+            \param background Background colour of the input box
+            \param border Colour for the input box border and cursor icon
+            */
             TextBox(const sf::Font& font, const sf::Color& background = sf::Color::Black, const sf::Color& border = sf::Color::White);
             ~TextBox() = default;
-
+            /*!
+            \see Control
+            */
             bool selectable() const override;
+            /*!
+            \see Control
+            */
             void select() override;
+            /*!
+            \see Control
+            */
             void deselect() override;
-
+            /*!
+            \see Control
+            */
             void activate() override;
+            /*!
+            \see Control
+            */
             void deactivate() override;
-
+            /*!
+            \see Control
+            */
             void handleEvent(const sf::Event& e, const sf::Vector2f& mousePos) override;
+            /*!
+            \see Control
+            */
             void update(float dt) override;
-
+            /*!
+            \see Control
+            */
             void setAlignment(Alignment a) override;
+            /*!
+            \see Control
+            */
             bool contains(const sf::Vector2f& mousePos) const override;
-
+            /*!
+            \brief Get the contained text string
+            */
             const std::string& getText() const;
+            /*!
+            \brief Set a texture  to be used in the background
+            */
             void setTexture(const sf::Texture& text);
+            /*!
+            \brief Show or hid the border
+            \param show True to show the border, false to hide it
+            */
             void showBorder(bool show = true);
+            /*!
+            \brief Set the width and height of the textbox
+            */
             void setSize(const sf::Vector2f& size);
+            /*!
+            \brief Set the string of the textbox text.
+            */
             void setText(const std::string& text);
+            /*!
+            \brief Set the string for the textbox label text
+            */
             void setLabelText(const std::string&);
-
+            /*!
+            \brief Set the maximum number of characters allowed
+            in the textbox string
+            */
             void setMaxLength(sf::Uint16);
 
         private:

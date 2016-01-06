@@ -42,6 +42,15 @@ namespace xy
     namespace UI
     {
         //not final, forms inherit from this
+
+        /*!
+        \brief Container for controls
+
+        Using a container allows easy navigation around a set of UI controls, as well as
+        easy placement on screen. A container is like an invisible window, although it
+        can have a colour or texture set as its background. Controls are navigated in
+        the order in which they are added to the container.
+        */
         class Container : public Control
         {
         public:
@@ -53,14 +62,35 @@ namespace xy
 
             ~Container() = default;
 
+            /*!
+            \brief Add a control to this container
+            */
             void addControl(Control::Ptr control);
-
+            /*!
+            \see Control
+            */
             virtual bool selectable() const override;
+            /*!
+            \see Control
+            */
             virtual void handleEvent(const sf::Event& e, const sf::Vector2f& mousePos) override;
+            /*!
+            \see Control
+            */
             virtual void update(float dt) override;
+            /*!
+            \see Control
+            */
             virtual void setAlignment(Alignment a) override{} //TODO flow layout
+            /*!
+            \brief Set the background colour of the container
 
+            This is overriden if a background texture is set.
+            */
             void setBackgroundColour(const sf::Color&);
+            /*!
+            \brief Set he texture to be drawn in the background of the container
+            */
             void setBackgroundTexture(const sf::Texture&);
         private:
             std::vector<Control::Ptr> m_controls;

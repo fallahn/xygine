@@ -39,29 +39,75 @@ namespace xy
 {
     namespace UI
     {
+        /*!
+        \brief An animated scrolling list of items for displaying scores.
+        Designed for specifically displaying xy::Scores::Item - could
+        probably be made to be more flexible
+        */
         class ScoreList final : public Control
         {
         public:
+            /*!
+            \brief Constructor
+            \param sf::Font Font to use for th displayed text
+            */
             explicit ScoreList(const sf::Font&);
             ~ScoreList() = default;
-
+            /*!
+            \see Control
+            */
             bool selectable() const override;
+            /*!
+            \see Control
+            */
             void select() override;
+            /*!
+            \see Control
+            */
             void deselect() override;
-
+            /*!
+            \see Control
+            */
             void activate() override;
+            /*!
+            \see Control
+            */
             void deactivate() override;
-
+            /*!
+            \see Control
+            */
             void handleEvent(const sf::Event&, const sf::Vector2f&) override;
+            /*!
+            \see Control
+            */
             void update(float) override;
-
+            /*!
+            \see Control
+            */
             void setAlignment(Alignment) override;
+            /*!
+            \see Control
+            */
             bool contains(const sf::Vector2f&) const override;
-
+            /*!
+            \brief Scrolls the item list a given distance
+            */
             void scroll(float);
+            /*!
+            \brief Sets the list of Scores::Items to display
+            */
             void setList(const std::vector<Scores::Item>&);
+            /*!
+            \brief Set the currently selected index
+            */
             void setIndex(Index);
+            /*!
+            \brief Get the vertical spacing between items
 
+            As fonts vary in size as does the distance between
+            items in the list. Use this to determine how far to 
+            scroll when switching between items
+            */
             float getVerticalSpacing() const;
         private:
 

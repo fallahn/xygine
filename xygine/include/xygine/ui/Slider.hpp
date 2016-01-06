@@ -43,6 +43,11 @@ namespace xy
 {
     namespace UI
     {
+        /*!
+        \brief A variable slider control
+
+        Slider values range from 0 - maxValue defined on construction
+        */
         class Slider final : public Control
         {
         public:
@@ -54,7 +59,9 @@ namespace xy
                 Horizontal,
                 Vertical
             };
-
+            /*!
+            \brief Slider events
+            */
             enum class Event
             {
                 ValueChanged,
@@ -62,32 +69,91 @@ namespace xy
                 SetInactive
             };
 
+            /*!
+            \brief Constructor
+            \param font Font to use for the slider's text
+            \param texture Texture atlas containing the image used for the pointer in normal and selected states
+            \param length Length in pixel of the slider
+            \param maxValue Maximum value this slider returns
+            */
             Slider(const sf::Font& font, const sf::Texture& texture, float length = 250.f, float maxValue = 100.f);
             ~Slider() = default;
-
+            /*!
+            \see Control
+            */
             bool selectable() const override;
+            /*!
+            \see Control
+            */
             void select() override;
+            /*!
+            \see Control
+            */
             void deselect() override;
-
+            /*!
+            \see Control
+            */
             void activate() override;
+            /*!
+            \see Control
+            */
             void deactivate() override;
-
+            /*!
+            \see Control
+            */
             void handleEvent(const sf::Event& e, const sf::Vector2f& mousePos) override;
-
+            /*!
+            \see Control
+            */
             void setAlignment(Alignment a) override;
+            /*!
+            \see Control
+            */
             bool contains(const sf::Vector2f& mousePos) const override;
-
+            /*!
+            \brief Set the maxium value returned by the slider
+            */
             void setMaxValue(float value);
+            /*!
+            \brief Set the visual direction of the slider
+            \param direction Sliders can be Horizontal or Vertical
+            */
             void setDirection(Direction direction);
+            /*!
+            \brief Sets the length of the slider
+            */
             void setLength(float length);
+            /*!
+            \brief Set the current value of the slider
+            \param value can be anywhere between 0 and maxValue
+            */
             void setValue(float value);
+            /*!
+            \brief Get the current value of the slider
+            */
             float getValue() const;
+            /*!
+            \brief Returns the current length of the slider
+            */
             float getLength() const;
-
+            /*!
+            \brief Set the text string of the slider
+            */
             void setText(const std::string& text);
+            /*!
+            \brief Set the colour of the slider text
+            */
             void setTextColour(const sf::Color& colour);
+            /*!
+            \brief Set the character size of the font used by the slider string
+            */
             void setFontSize(sf::Uint16 size);
-
+            /*!
+            \brief Add an even callback
+            \param c Calbback to be executed on event
+            \param e Event ot be paired with callback
+            \see Slider::Event
+            */
             void setCallback(Callback c, Event e);
 
         private:

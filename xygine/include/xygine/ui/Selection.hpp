@@ -41,35 +41,87 @@ namespace xy
 {
     namespace UI
     {
+        /*!
+        \brief A selection of items which can be paged left or right
+        */
         class Selection final : public Control
         {
         public:
             using Ptr = std::shared_ptr<Selection>;
             using Callback = std::function<void(const Selection*)>;
-
+            /*!
+            \brief Constructor
+            \param sf::Font Font to use for the control's text
+            \param sf::Texture A texture atlas containing the normal and
+            selected state icon placed at either end of the control
+            \param float Length of the text area of the control
+            */
             Selection(const sf::Font&, const sf::Texture&, float = 350.f);
             ~Selection() = default;
-
+            /*!
+            \see Control
+            */
             bool selectable() const override;
+            /*!
+            \see Control
+            */
             void select() override;
+            /*!
+            \see Control
+            */
             void deselect() override;
-
+            /*!
+            \see Control
+            */
             void activate() override;
+            /*!
+            \see Control
+            */
             void deactivate() override;
-
+            /*!
+            \see Control
+            */
             void handleEvent(const sf::Event&, const sf::Vector2f&) override;
+            /*!
+            \see Control
+            */
             void setAlignment(Alignment) override;
+            /*!
+            \see Control
+            */
             bool contains(const sf::Vector2f&) const override;
-
+            /*!
+            \brief Adds a name/value pair to the control
+            \param std::string Text string to display
+            \param sf::Int32 Value of the item
+            */
             void addItem(const std::string&, sf::Int32);
+            /*!
+            \brief Returns the string of the currently selected item
+            */
             const std::string& getSelectedText() const;
+            /*!
+            \brief Returns the value of the currently selected item
+            */
             sf::Int32 getSelectedValue() const;
-
+            /*!
+            \brief Sets the currently selected item
+            \param Index Index of the item to select
+            */
             void setSelectedIndex(Index);
+            /*!
+            \brief Returns the number of items current belonging
+            to this control
+            */
             sf::Uint32 itemCount() const;
+            /*!
+            \brief Selects an item by name, if it exists
+            */
             void selectItem(const std::string&);
             void selectItem(Index);
-
+            /*!
+            \brief Set the callback to be executed when selected item is changed
+            */
             void setCallback(Callback);
 
         private:

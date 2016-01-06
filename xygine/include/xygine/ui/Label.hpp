@@ -36,19 +36,42 @@ namespace xy
 {
     namespace UI
     {
+        /*!
+        \brief Creates a text label control. Labels are not interactive
+        */
         class Label final : public Control
         {
         public:
             using Ptr = std::shared_ptr<Label>;
 
+            /*!
+            \brief Constructor
+            \param font Font to use with this label's text
+            */
             explicit Label(const sf::Font&);
-
+            /*!
+            \see Control
+            */
             bool selectable() const override;
+            /*!
+            \see Control
+            */
             void handleEvent(const sf::Event&, const sf::Vector2f&) override;
+            /*!
+            \see Control
+            */
             void setAlignment(Alignment) override;
-
+            /*!
+            \brief Set the label's text string
+            */
             void setString(const std::string&);
+            /*!
+            \brief Set the label's text colour
+            */
             void setColour(const sf::Color&);
+            /*!
+            \brief Set the label's text size
+            */
             void setCharacterSize(sf::Uint32);
 
         private:

@@ -54,6 +54,9 @@ namespace xy
             BottomRight
         };
 
+        /*!
+        \brief Abstract base class for all UI controls
+        */
         class Control : public sf::Drawable, public sf::Transformable
         {
         public:
@@ -63,24 +66,85 @@ namespace xy
             virtual ~Control() = default;
             Control(const Control&) = delete;
             const Control& operator = (const Control&) = delete;
+            /*!
+            \brief Returns true if this control is selectable
 
+            When implementing a concrete type this should return true
+            if the control is selectable when navigating controls in a
+            container, else it should return false.
+            */
             virtual bool selectable() const = 0;
+            /*!
+            \brief Returns true if the control is currently selected
+            */
             bool selected() const;
-
+            /*!
+            \brief Used to select the control when navigating controls
+            belonging to a Container
+            */
             virtual void select();
+            /*!
+            \brief Used to deselect the control when navigating controls
+            belonging to a Container
+            */
             virtual void deselect();
-
+            /*!
+            \brief Returns true if the control is currently active.
+            */
             virtual bool active() const;
+            /*!
+            \brief Activates the control if it is selected
+
+            Override this if the control requires any special animation
+            or needsd to call custom callbacks.
+            */
             virtual void activate();
+            /*!
+            \brief Deactivates activated controls
+            */
             virtual void deactivate();
+            /*!
+            \brief Handle input events
 
+            Must be implemented by concrete types to handle any mouse, keyboard
+            or controller input
+            \param sf::Event Current event structure
+            \param sf::Vector2f current mouse position, in UI space
+            */
             virtual void handleEvent(const sf::Event&, const sf::Vector2f&) = 0;
+            /*!
+            \brief Updates the control once per frame
+
+            Override this when controls require time dependent updates, such as
+            animated textures.
+            */
             virtual void update(float dt){};
+            /*!
+            \brief Allows setting the alignment of the control about its origin
 
+            This is required for all controls to implement placement for each
+            of the Alignment enum options
+            */
             virtual void setAlignment(Alignment) = 0;
-            virtual bool contains(const sf::Vector2f& mousePos) const;
+            /*!
+            \brief Returns true if the Control bounds contains the given
+            mouse position in UI space coordinates.
 
+            This can be optionallay overriden for controls composed of
+            complex shapes.
+            */
+            virtual bool contains(const sf::Vector2f& mousePos) const;
+            /*!
+            \brief Hide or show the control
+            \param visible If true shows the control, else hides it
+
+            Hidden controls are neither drawn, nor handle any input events
+            effectively disabling them
+            */
             void setVisible(bool visible);
+            /*!
+            \brief Returns true if the control is currently visible, else returns false
+            */
             bool visible() const;
 
         private:
