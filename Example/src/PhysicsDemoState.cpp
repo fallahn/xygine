@@ -31,34 +31,22 @@ source distribution.
 #include <xygine/Entity.hpp>
 #include <xygine/Command.hpp>
 #include <xygine/components/AudioSource.hpp>
+#include <xygine/components/AnimatedDrawable.hpp>
 
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/Util.hpp>
 
 #include <xygine/physics/RigidBody.hpp>
-#include <xygine/physics/CollisionRectangleShape.hpp>
 #include <xygine/physics/CollisionCircleShape.hpp>
 #include <xygine/physics/CollisionEdgeShape.hpp>
 #include <xygine/physics/CollisionPolygonShape.hpp>
-#include <xygine/physics/JointDistance.hpp>
+#include <xygine/physics/CollisionRectangleShape.hpp>
 #include <xygine/physics/JointFriction.hpp>
-#include <xygine/physics/JointHinge.hpp>
-#include <xygine/physics/JointSlider.hpp>
-#include <xygine/physics/JointWheel.hpp>
-#include <xygine/physics/JointRope.hpp>
-#include <xygine/physics/JointWeld.hpp>
-#include <xygine/physics/JointMotor.hpp>
-#include <xygine/physics/AffectorConstantForce.hpp>
-#include <xygine/physics/AffectorAreaForce.hpp>
-#include <xygine/physics/AffectorPointForce.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
 
-#include <TimedDestruction.hpp>
 
 namespace
 {
@@ -85,7 +73,12 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
 
+    //scale a 1200px table image to 2.7 metres
+    m_physWorld.setPixelScale(444.5f);
+    m_physWorld.setGravity({});
     createBodies();
+
+    context.renderWindow.setMouseCursorVisible(true);
 
     quitLoadingScreen();
 }
@@ -98,13 +91,6 @@ bool PhysicsDemoState::update(float dt)
     m_scene.update(dt);
 
     m_reportText.setString(xy::StatsReporter::reporter.getString());
-
-    static sf::Clock clock;
-    if (clock.getElapsedTime().asSeconds() > 6.f)
-    {
-        clock.restart();
-        randomBall();
-    }
 
     return true;
 }
@@ -227,153 +213,202 @@ void PhysicsDemoState::handleMessage(const xy::Message& msg)
 //private
 void PhysicsDemoState::createBodies()
 {
-    auto groundEntity = xy::Entity::create(m_messageBus);
-    groundEntity->setWorldPosition({ 0.f, 0.f });
-    auto groundBody = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Static);
+    auto tableEntity = xy::Entity::create(m_messageBus);
+    tableEntity->setWorldPosition({ 360.f, 211.f });
+    auto tableBody = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Static);
 
-    xy::Physics::CollisionRectangleShape boxShape({ 1920.f, 80.f });
-    groundBody->addCollisionShape(boxShape);
-    boxShape.setRect({ 20.f, 920.f }, { 0.f, 80.f });
-    groundBody->addCollisionShape(boxShape);
-
-    boxShape.setRect({ 20.f, 920.f }, { 1900.f, 80.f });
-    groundBody->addCollisionShape(boxShape);
-
-    boxShape.setRect({ 1920.f, 80.f }, { 0.f, 1000.f });
-    groundBody->addCollisionShape(boxShape);
-
+    //cushions
     std::vector<sf::Vector2f> points = 
     {
-        {800.f, 850.f},
-        {880.f, 830.f},
-        {940.f, 820.f},
-        {1100.f, 805.f}
+        { 90.f, 46.f },
+        { 574.f, 46.f },
+        { 568.f, 61.f },
+        { 103.f, 61.f }
     };
-    xy::Physics::CollisionEdgeShape edgeShape(points, xy::Physics::CollisionEdgeShape::Option::Loop);
-    groundBody->addCollisionShape(edgeShape);
+    xy::Physics::CollisionPolygonShape cushion(points);
+    cushion.setRestitution(0.98f);
+    cushion.setDensity(10.f);
+    cushion.setFriction(0.2f);
+    tableBody->addCollisionShape(cushion);
 
     points =
     {
-        { 400.f, 650.f },
-        { 480.f, 630.f },
-        { 540.f, 620.f },
-        { 700.f, 605.f }
+        { 627.f, 46.f },
+        { 1110.f, 46.f },
+        { 1097.f, 61.f },
+        { 632.f, 61.f }
     };
-    edgeShape.setPoints(points);
-    groundBody->addCollisionShape(edgeShape);
+    cushion.setPoints(points);
+    tableBody->addCollisionShape(cushion);
 
     points =
     {
-        { 1700.f, 950.f },
-        { 1780.f, 930.f },
-        { 1820.f, 920.f },
-        { 1780.f, 815.f },
-        { 1700.f, 900.f }
+        { 627.f, 614.f },
+        { 1110.f, 614.f },
+        { 1097.f, 599.f },
+        { 632.f, 599.f }
     };
-    xy::Physics::CollisionPolygonShape polyShape(points);
-    polyShape.addAffector(xy::Physics::AreaForceAffector({ -190.f, -4000.f }, 80.f));
-    polyShape.setIsSensor(true);
-    groundBody->addCollisionShape(polyShape);
+    cushion.setPoints(points);
+    tableBody->addCollisionShape(cushion);
 
     points =
     {
-        { 300.f, 950.f },
-        { 380.f, 970.f },
-        { 420.f, 980.f },
-        { 380.f, 815.f },
-        { 300.f, 900.f }
+        { 90.f, 614.f },
+        { 574.f, 614.f },
+        { 568.f, 599.f },
+        { 103.f, 599.f }
     };
-    polyShape.setPoints(points);
-    polyShape.setRestitution(1.f);
-    polyShape.clearAffectors();
-    xy::Physics::PointForceAffector pfa(450.f);
-    polyShape.addAffector(pfa);
-    groundBody->addCollisionShape(polyShape);
+    cushion.setPoints(points);
+    tableBody->addCollisionShape(cushion);
 
-    groundEntity->addComponent<xy::Physics::RigidBody>(groundBody);
+    points =
+    {
+        { 45.f, 89.f },
+        { 60.f, 103.f },
+        { 60.f, 558.f },
+        { 45.f, 572.f }
+    };
+    cushion.setPoints(points);
+    tableBody->addCollisionShape(cushion);
 
-    m_scene.addEntity(groundEntity, xy::Scene::Layer::BackMiddle);
+    points =
+    {
+        { 1155.f, 89.f },
+        { 1142.f, 103.f },
+        { 1142.f, 558.f },
+        { 1155.f, 572.f }
+    };
+    cushion.setPoints(points);
+    tableBody->addCollisionShape(cushion);
 
-    //------------//
-    auto ballEntityA = xy::Entity::create(m_messageBus);
-    ballEntityA->setWorldPosition({ 960.f, 540.f });
-    auto ballBodyA = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
+    //pockets - use force affectors on pocket sensors to draw to middle
+    points =
+    {
+        { 45.f, 89.f },
+        { 30.f, 64.f },
+        { 30.f, 50.f },
+        { 50.f, 30.f },
+        { 64.f, 30.f },
+        { 90.f, 46.f }
+    };
+    xy::Physics::CollisionEdgeShape pocket(points);
+    pocket.setDensity(10.f);
+    pocket.setRestitution(0.3f);
+    tableBody->addCollisionShape(pocket);
 
-    xy::Physics::CollisionCircleShape ballShape(25.f);
-    ballShape.setDensity(1.5f);
-    ballShape.setRestitution(0.8f);
-    ballBodyA->addCollisionShape(ballShape);
+    points =
+    {
+        { 574.f, 46.f },
+        { 583.f, 26.f },
+        { 600.f, 20.f },
+        { 617.f, 26.f },
+        { 627.f, 46.f }
+    };
+    pocket.setPoints(points);
+    tableBody->addCollisionShape(pocket);
 
-    auto ba = ballEntityA->addComponent<xy::Physics::RigidBody>(ballBodyA);
+    points =
+    {
+        { 1110.f, 46.f },
+        { 1136.f, 30.f },
+        { 1150.f, 30.f },
+        { 1172.f, 50.f },
+        { 1172.f, 64.f },
+        { 1155.f, 89.f }
+    };
+    pocket.setPoints(points);
+    tableBody->addCollisionShape(pocket);
 
-    auto soundSource = xy::AudioSource::create(m_messageBus, m_soundResource);
-    soundSource->setSound("assets/sound/04.wav");
-    soundSource->setAttenuation(20.f);
-    soundSource->setMinimumDistance(400.f);
-    ballEntityA->addComponent<xy::AudioSource>(soundSource);
+    points =
+    {
+        { 1155.f, 572.f },
+        { 1172.f, 594.f },
+        { 1172.f, 608.f },
+        { 1150.f, 632.f },
+        { 1136.f, 632.f },
+        { 1110.f, 614.f }
+    };
+    pocket.setPoints(points);
+    tableBody->addCollisionShape(pocket);
 
-    m_scene.addEntity(ballEntityA, xy::Scene::Layer::BackMiddle);
+    points =
+    {
+        { 627.f, 614.f },
+        { 617.f, 632.f },
+        { 600.f, 638.f },
+        { 583.f, 632.f },
+        { 574.f, 614.f }
+    };
+    pocket.setPoints(points);
+    tableBody->addCollisionShape(pocket);
 
-    randomBall();
-    /*xy::Physics::DistanceJoint dj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
-    bb->addJoint(dj);
+    points =
+    {
+        { 90.f, 614.f },
+        { 64.f, 632.f },
+        { 50.f, 632.f },
+        { 28.f, 608.f },
+        { 28.f, 594.f },
+        { 45.f, 572.f }
+    };
+    pocket.setPoints(points);
+    tableBody->addCollisionShape(pocket);
 
-    xy::Physics::FrictionJoint fj(*ba, { 960.f, 540.f });
-    bb->addJoint(fj);
+    tableEntity->addComponent<xy::Physics::RigidBody>(tableBody);
 
-    xy::Physics::HingeJoint hj(*ba, { 520.f, 540.f });
-    hj.setLimits(90.f, 270.f);
-    hj.limitEnabled(true);
-    bb->addJoint(hj);
+    //image
+    auto drawable = xy::AnimatedDrawable::create(m_messageBus);
+    drawable->setTexture(m_textureResource.get("assets/images/physics demo/table.png"));
+    tableEntity->addComponent<xy::AnimatedDrawable>(drawable);
 
-    xy::Physics::SliderJoint sj(*ba, { 520.f, 540.f }, { 10.f, 0.f });
-    sj.canCollide(true);
-    sj.setLimits(300.f, -220.f);
-    sj.limitEnabled(true);
-    sj.setMotorSpeed(-400.f);
-    sj.setMaxMotorForce(5000.f);
-    sj.motorEnabled(true);
-    bb->addJoint(sj);
+    m_scene.addEntity(tableEntity, xy::Scene::Layer::BackMiddle);
 
-    xy::Physics::WheelJoint wj(*ba, { 960.f, 540.f }, { 0.f, 10.f });
-    wj.setSpringFrequency(0.f);
-    bb->addJoint(wj);
 
-    xy::Physics::RopeJoint rj(*ba, { 960.f, 540.f }, { 440.f, 500.f });
-    rj.canCollide(true);
-    bb->addJoint(rj);
+    //add balls
+    auto cueball = addBall({ 1260.f, 560.f });
+    cueball->applyLinearImpulse({ -80.f, 0.f }, cueball->getWorldCentre());
 
-    xy::Physics::WeldJoint wj(*ba, { 520.f, 540.f });
-    bb->addJoint(wj);
+    const float spacingY = 27.f;
+    const float halfY = spacingY / 2.f;
+    const float spacingX = std::sqrt((spacingY * spacingY) - (halfY * halfY));
 
-    xy::Physics::MotorJoint mj(*ba);
-    bb->addJoint(mj);*/
+    sf::Vector2f startPos(757.3f, 552.7f);
+    for (auto x = 0; x < 5; ++x)
+    {
+        for (auto y = 0; y < x; ++y)
+        {
+            addBall(startPos);
+            startPos.y += spacingY;
+        }       
+        startPos.x -= spacingX;
+        startPos.y -= ((x * spacingY) + halfY);
+    }
 }
 
-void PhysicsDemoState::randomBall()
-{
-    sf::Vector2i randPos(xy::Util::Random::value(20, 1850), xy::Util::Random::value(125, 350));
-    
-    auto ballEntityB = xy::Entity::create(m_messageBus);
-    ballEntityB->setWorldPosition(sf::Vector2f(randPos));
-    auto ballBodyB = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
+xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
+{   
+    auto ballEntity = xy::Entity::create(m_messageBus);
+    ballEntity->setWorldPosition(position);
+    auto ballBody = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
+    ballBody->setAngularDamping(0.8f);
+    ballBody->setLinearDamping(0.75f);
 
-    xy::Physics::CollisionCircleShape ballShape(static_cast<float>(xy::Util::Random::value(25, 50)));
-    ballShape.setDensity(1.5f);
-    ballShape.setRestitution(xy::Util::Random::value(0.2f, 0.9f));
-    ballBodyB->addCollisionShape(ballShape);
+    xy::Physics::CollisionCircleShape ballShape(12.7f);
+    ballShape.setDensity(20.f);
+    ballShape.setRestitution(0.95f);
+    ballShape.setFriction(0.1f);
+    ballBody->addCollisionShape(ballShape);
 
-    ballEntityB->addComponent<xy::Physics::RigidBody>(ballBodyB);
+    auto b = ballEntity->addComponent<xy::Physics::RigidBody>(ballBody);
 
     auto soundSource = xy::AudioSource::create(m_messageBus, m_soundResource);
     soundSource = xy::AudioSource::create(m_messageBus, m_soundResource);
     soundSource->setSound("assets/sound/04.wav");
-    soundSource->setAttenuation(20.f);
-    soundSource->setPitch(xy::Util::Random::value(0.4f, 5.f));
-    ballEntityB->addComponent<xy::AudioSource>(soundSource);
+    //soundSource->setAttenuation(20.f);
+    //soundSource->setPitch(xy::Util::Random::value(0.4f, 5.f));
+    ballEntity->addComponent<xy::AudioSource>(soundSource);
 
-    auto td = std::make_unique<TimedDestruction>(m_messageBus);
-    ballEntityB->addComponent<TimedDestruction>(td);
+    m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);
 
-    m_scene.addEntity(ballEntityB, xy::Scene::Layer::BackMiddle);
+    return b;
 }

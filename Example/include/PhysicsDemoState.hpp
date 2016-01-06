@@ -45,6 +45,14 @@ namespace sf
     class Color;
 }
 
+namespace xy
+{
+    namespace Physics
+    {
+        class RigidBody;
+    }
+}
+
 class PhysicsDemoState final : public xy::State
 {
 public:
@@ -72,7 +80,7 @@ private:
 
     void createBodies();
 
-    void randomBall();
+    xy::Physics::RigidBody* addBall(const sf::Vector2f& position);
 };
 
 #endif //PHYSICS_DEMO_STATE_HPP_
