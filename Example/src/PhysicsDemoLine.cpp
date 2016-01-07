@@ -27,21 +27,46 @@ source distribution.
 
 #include <PhysicsDemoLine.hpp>
 
+#include <xygine/Entity.hpp>
+
+#include <SFML/Graphics/RenderTarget.hpp>
+
 using namespace PhysDemo;
 
 LineDrawable::LineDrawable(xy::MessageBus& mb)
-    :Component(mb, this) {}
+    :Component(mb, this),
+    m_vertices(2),
+    m_alpha(0u){}
 
 //public
-void LineDrawable::entityUpdate(xy::Entity&, float)
+void LineDrawable::entityUpdate(xy::Entity& entity, float)
 {
-
+    m_transform = entity.getWorldTransform().getInverse();
 }
 
+void LineDrawable::setColour(sf::Color c)
+{
+    c.a = m_alpha;
+    m_vertices[0].color = c;
+    m_vertices[1].color = c;
+}
 
+void LineDrawable::enable(bool enable)
+{
+    m_alpha = (enable) ? 255u : 0u;
+    m_vertices[0].color.a = m_alpha;
+    m_vertices[1].color.a = m_alpha;
+}
+
+void LineDrawable::setPoints(const sf::Vector2f& a, const sf::Vector2f& b)
+{
+    m_vertices[0].position = a;
+    m_vertices[1].position = b;
+}
 
 //private
 void LineDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-
+    states.transform *= m_transform;
+    rt.draw(m_vertices.data(), m_vertices.size(), sf::Lines, states);
 }

@@ -32,6 +32,8 @@ source distribution.
 
 #include <SFML/Graphics/Drawable.hpp>
 
+#include <vector>
+
 namespace PhysDemo
 {
     class LineDrawable final : public xy::Component, public sf::Drawable
@@ -43,9 +45,15 @@ namespace PhysDemo
         xy::Component::Type type() const override { return xy::Component::Type::Drawable; }
         void entityUpdate(xy::Entity&, float) override;
 
+        void setColour(sf::Color);
+        void enable(bool);
+        void setPoints(const sf::Vector2f&, const sf::Vector2f&);
 
     private:
 
+        std::vector<sf::Vertex> m_vertices;
+        sf::Uint8 m_alpha;
+        sf::Transform m_transform;
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }

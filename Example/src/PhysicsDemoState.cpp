@@ -27,6 +27,7 @@ source distribution.
 
 #include <PhysicsDemoState.hpp>
 #include <PhysicsDemoInputController.hpp>
+#include <PhysicsDemoLine.hpp>
 #include <CommandIds.hpp>
 
 #include <xygine/Reports.hpp>
@@ -60,6 +61,8 @@ namespace
 
     const float joyDeadZone = 25.f;
     const float joyMaxAxis = 100.f;
+
+    bool drawOverlay = true;
 }
 
 PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
@@ -83,6 +86,8 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     context.renderWindow.setMouseCursorVisible(true);
 
     quitLoadingScreen();
+
+    REPORT("Q", "Toggle overlay");
 }
 
 bool PhysicsDemoState::update(float dt)
@@ -102,7 +107,7 @@ void PhysicsDemoState::draw()
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
     rw.setView(getContext().defaultView);
-    rw.draw(m_physWorld);
+    if(drawOverlay) rw.draw(m_physWorld);
     rw.draw(m_reportText);
 }
 
@@ -181,6 +186,8 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
         case fireKey:
 
             break;
+        case sf::Keyboard::Q:
+            drawOverlay = !drawOverlay;
         default: break;
         }
         break;
@@ -253,8 +260,8 @@ void PhysicsDemoState::createBodies()
     };
     xy::Physics::CollisionPolygonShape cushion(points);
     cushion.setRestitution(0.98f);
-    cushion.setDensity(10.f);
-    cushion.setFriction(0.2f);
+    cushion.setDensity(30.f);
+    cushion.setFriction(0.1f);
     tableBody->addCollisionShape(cushion);
 
     points =
@@ -396,6 +403,10 @@ void PhysicsDemoState::createBodies()
     cbEntity->addCommandCategories(PhysicsCommandIds::CueBall);
     auto playerController = std::make_unique<PhysDemo::PlayerController>(m_messageBus);
     cbEntity->addComponent(playerController);
+    auto ls = std::make_unique<PhysDemo::LineDrawable>(m_messageBus);
+    cbEntity->addComponent(ls);
+    cbEntity->getComponent<xy::AnimatedDrawable>()->setColour(sf::Color::White);
+
 
     const float spacingY = 27.f;
     const float halfY = spacingY / 2.f;
@@ -419,23 +430,28 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     auto ballEntity = xy::Entity::create(m_messageBus);
     ballEntity->setWorldPosition(position);
     auto ballBody = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
-    ballBody->setAngularDamping(0.8f);
+    ballBody->setAngularDamping(0.6f);
     ballBody->setLinearDamping(0.75f);
 
     xy::Physics::CollisionCircleShape ballShape(12.7f);
-    ballShape.setDensity(20.f);
-    ballShape.setRestitution(0.95f);
-    ballShape.setFriction(0.1f);
+    ballShape.setDensity(10.f);
+    ballShape.setRestitution(0.99f);
+    ballShape.setFriction(0.05f);
     ballBody->addCollisionShape(ballShape);
 
     auto b = ballEntity->addComponent<xy::Physics::RigidBody>(ballBody);
 
     auto soundSource = xy::AudioSource::create(m_messageBus, m_soundResource);
     soundSource = xy::AudioSource::create(m_messageBus, m_soundResource);
-    soundSource->setSound("assets/sound/04.wav");
-    //soundSource->setAttenuation(20.f);
-    //soundSource->setPitch(xy::Util::Random::value(0.4f, 5.f));
+    soundSource->setSound("assets/sound/ball.wav");
     ballEntity->addComponent<xy::AudioSource>(soundSource);
+
+    auto drawable = xy::AnimatedDrawable::create(m_messageBus);
+    drawable->setColour(sf::Color::Blue);
+    drawable->setTexture(m_textureResource.get("assets/images/physics demo/ball.png"));
+    auto size = drawable->getTexture()->getSize();
+    drawable->setOrigin({ size.x / 2.f, size.y / 2.f });
+    ballEntity->addComponent(drawable);
 
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);
 

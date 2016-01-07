@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <PhysicsDemoInputController.hpp>
+#include <PhysicsDemoLine.hpp>
 
 #include <xygine/App.hpp>
 #include <xygine/physics/RigidBody.hpp>
@@ -33,7 +34,7 @@ source distribution.
 
 namespace
 {
-    const float maxImpulse = 100.f;
+    const float maxImpulse = 70.f;
     const float maxImpulseSquared = maxImpulse * maxImpulse;
 }
 
@@ -61,11 +62,22 @@ void PlayerController::startInput()
     //TODO make sure balls are in a valid state, IE not moving
     
     //make line visible
+    auto line = m_entity->getComponent<LineDrawable>();
+    line->enable(true);
     
-    update = [this](xy::Entity&, float)
+    update = [line](xy::Entity& entity, float)
     {
         //update position of line between ball and mouse
+        auto a = entity.getWorldPosition();
+        auto b = xy::App::getMouseWorldPosition();
+        line->setPoints(a, b);
+
         //update line colour based on length
+        const float len = std::min(xy::Util::Vector::lengthSquared(a - b), maxImpulseSquared);
+        const float ratio = len / maxImpulseSquared;
+        sf::Uint8 red = static_cast<sf::Uint8>(255.f * ratio);
+        sf::Uint8 green = static_cast<sf::Uint8>(255.f * (1.f - ratio));
+        line->setColour({ red, green, 0u });
     };
 }
 
@@ -74,10 +86,11 @@ void PlayerController::endInput()
     XY_ASSERT(m_entity, "Entity is nullptr");
     
     //make line invisible
+    m_entity->getComponent<LineDrawable>()->enable(false);
 
     //fire cueball by applying impulse to entity's physcomponent
     sf::Vector2f impulse = (m_entity->getWorldPosition() - xy::App::getMouseWorldPosition()) * 0.2f;
-    if (xy::Util::Vector::lengthSquared(impulse) > (maxImpulseSquared))
+    if (xy::Util::Vector::lengthSquared(impulse) > maxImpulseSquared)
     {
         impulse = xy::Util::Vector::normalise(impulse) * maxImpulse;
     }
