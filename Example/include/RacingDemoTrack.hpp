@@ -37,177 +37,179 @@ source distribution.
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/System/Vector3.hpp>
 
-class Track final : public sf::Drawable, public xy::Component
+namespace RaceDemo
 {
-public:
-    explicit Track(xy::MessageBus&);
-    ~Track() = default;
-
-    xy::Component::Type type() const override { return xy::Component::Type::Drawable; }
-
-    void entityUpdate(xy::Entity&, float) override;
-    void updatePosition(float playerSpeed, float playerOffset);
-    void setTexture(const sf::Texture*);
-
-    float getCameraDepth() const;
-private:
-
-    struct Point final
-    {
-        struct Screen final
-        {
-            float x = 0.f;
-            float y = 0.f;
-            float w = 0.f;
-            float scale = 1.f;
-        }screen;
-
-        sf::Vector3f world;
-        sf::Vector3f camera;
-
-        void project(float camX, float camY, float camZ, float camDepth, float width, float height, float trackWidth)
-        {
-            camera.x = world.x - camX;
-            camera.y = world.y - camY;
-            camera.z = world.z - camZ;
-           
-            screen.x = width / 2u + screen.scale * camera.x  * width / 2u;
-            screen.y = height / 2u - screen.scale * camera.y  * height / 2u;
-            screen.w = screen.scale * trackWidth * width / 2u;
-            screen.scale = camDepth / camera.z;
-        }
-    };
-
-    class Palette final
+    class Track final : public sf::Drawable, public xy::Component
     {
     public:
-        enum Category
-        {
-            Light, Dark,
-            Start, Finish,
-            Count
-        };
+        explicit Track(xy::MessageBus&);
+        ~Track() = default;
 
-        explicit Palette(Category cat = Category::Light)
-            : m_category    (cat),
-            m_data          (Category::Count)
-        {
-            m_data[Palette::Light].track = { 160u, 160u, 160u };
-            m_data[Palette::Light].lane = { 204u, 204u, 204u };
-            m_data[Palette::Light].rumble = sf::Color::White;
-            m_data[Palette::Light].grass = { 200u, 230u, 200u };
-            
-            m_data[Palette::Dark].track = { 160u, 160u, 160u };
-            m_data[Palette::Dark].lane = { 160u, 160u, 160u };
-            m_data[Palette::Dark].rumble = { 227u, 200u, 200u };
-            m_data[Palette::Dark].grass = { 200u, 230u, 200u };
+        xy::Component::Type type() const override { return xy::Component::Type::Drawable; }
 
-            m_data[Palette::Start].track = sf::Color::White;
-            m_data[Palette::Start].lane = sf::Color::White;
-            m_data[Palette::Start].rumble = sf::Color::White;
-            m_data[Palette::Start].grass = { 150u, 170u, 150u };
-
-            m_data[Palette::Finish].track = {};
-            m_data[Palette::Finish].lane = {};
-            m_data[Palette::Finish].rumble = {};
-            m_data[Palette::Finish].grass = { 150u, 170u, 150u };           
-        }
-        void setCategory(Category cat)
-        {
-            m_category = cat;
-        }
-        sf::Color getTrack() const
-        {
-            return m_data[m_category].track;
-        }
-
-        sf::Color getLane() const
-        {
-            return m_data[m_category].lane;
-        }
-
-        sf::Color getRumble() const
-        {
-            return m_data[m_category].rumble;
-        }
-
-        sf::Color getGrass() const
-        {
-            return m_data[m_category].grass;
-        }
-
-    private:
-        struct Data
-        {
-            sf::Color track;
-            sf::Color lane;
-            sf::Color rumble;
-            sf::Color grass;
-        };
-        Category m_category;       
-        std::vector<Data> m_data;
-    };
-
-    class Segment final : public sf::Drawable
-    {
-    public:
-        using Ptr = std::unique_ptr<Segment>;
-
-        Segment();
-        ~Segment() = default;
-        Segment(const Segment&) = delete;
-        Segment& operator = (const Segment&) = delete;
-
-        Point& pointA();
-        Point& pointB();
-        const Point& pointA() const;
-        const Point& pointB() const;
-
-        void setPalette(Palette::Category);
-
-        void setCurve(float);
-        float getCurve() const;
-
-        void setIndex(std::size_t);
-        std::size_t getIndex() const;
-
-        void setClip(float);
-        float getClip() const;
-
+        void entityUpdate(xy::Entity&, float) override;
+        void updatePosition(float playerSpeed, float playerOffset);
         void setTexture(const sf::Texture*);
 
-        void updateVerts(float width, float fog);
-
+        float getCameraDepth() const;
     private:
-        Point m_pointA;
-        Point m_pointB;
-        xy::PolyBatch m_batch;
-        xy::Polygon m_landscape;
-        xy::Polygon m_rumbleA;
-        xy::Polygon m_rumbleB;
-        xy::Polygon m_mainLane;
-        xy::Polygon m_laneA;
-        xy::Polygon m_laneB;       
-        xy::Polygon m_fog;
-        float m_curve;
-        std::size_t m_index;
-        float m_clip;
-        Palette m_palette;
 
+        struct Point final
+        {
+            struct Screen final
+            {
+                float x = 0.f;
+                float y = 0.f;
+                float w = 0.f;
+                float scale = 1.f;
+            }screen;
+
+            sf::Vector3f world;
+            sf::Vector3f camera;
+
+            void project(float camX, float camY, float camZ, float camDepth, float width, float height, float trackWidth)
+            {
+                camera.x = world.x - camX;
+                camera.y = world.y - camY;
+                camera.z = world.z - camZ;
+
+                screen.x = width / 2u + screen.scale * camera.x  * width / 2u;
+                screen.y = height / 2u - screen.scale * camera.y  * height / 2u;
+                screen.w = screen.scale * trackWidth * width / 2u;
+                screen.scale = camDepth / camera.z;
+            }
+        };
+
+        class Palette final
+        {
+        public:
+            enum Category
+            {
+                Light, Dark,
+                Start, Finish,
+                Count
+            };
+
+            explicit Palette(Category cat = Category::Light)
+                : m_category(cat),
+                m_data(Category::Count)
+            {
+                m_data[Palette::Light].track = { 160u, 160u, 160u };
+                m_data[Palette::Light].lane = { 204u, 204u, 204u };
+                m_data[Palette::Light].rumble = sf::Color::White;
+                m_data[Palette::Light].grass = { 200u, 230u, 200u };
+
+                m_data[Palette::Dark].track = { 160u, 160u, 160u };
+                m_data[Palette::Dark].lane = { 160u, 160u, 160u };
+                m_data[Palette::Dark].rumble = { 227u, 200u, 200u };
+                m_data[Palette::Dark].grass = { 200u, 230u, 200u };
+
+                m_data[Palette::Start].track = sf::Color::White;
+                m_data[Palette::Start].lane = sf::Color::White;
+                m_data[Palette::Start].rumble = sf::Color::White;
+                m_data[Palette::Start].grass = { 150u, 170u, 150u };
+
+                m_data[Palette::Finish].track = {};
+                m_data[Palette::Finish].lane = {};
+                m_data[Palette::Finish].rumble = {};
+                m_data[Palette::Finish].grass = { 150u, 170u, 150u };
+            }
+            void setCategory(Category cat)
+            {
+                m_category = cat;
+            }
+            sf::Color getTrack() const
+            {
+                return m_data[m_category].track;
+            }
+
+            sf::Color getLane() const
+            {
+                return m_data[m_category].lane;
+            }
+
+            sf::Color getRumble() const
+            {
+                return m_data[m_category].rumble;
+            }
+
+            sf::Color getGrass() const
+            {
+                return m_data[m_category].grass;
+            }
+
+        private:
+            struct Data
+            {
+                sf::Color track;
+                sf::Color lane;
+                sf::Color rumble;
+                sf::Color grass;
+            };
+            Category m_category;
+            std::vector<Data> m_data;
+        };
+
+        class Segment final : public sf::Drawable
+        {
+        public:
+            using Ptr = std::unique_ptr<Segment>;
+
+            Segment();
+            ~Segment() = default;
+            Segment(const Segment&) = delete;
+            Segment& operator = (const Segment&) = delete;
+
+            Point& pointA();
+            Point& pointB();
+            const Point& pointA() const;
+            const Point& pointB() const;
+
+            void setPalette(Palette::Category);
+
+            void setCurve(float);
+            float getCurve() const;
+
+            void setIndex(std::size_t);
+            std::size_t getIndex() const;
+
+            void setClip(float);
+            float getClip() const;
+
+            void setTexture(const sf::Texture*);
+
+            void updateVerts(float width, float fog);
+
+        private:
+            Point m_pointA;
+            Point m_pointB;
+            xy::PolyBatch m_batch;
+            xy::Polygon m_landscape;
+            xy::Polygon m_rumbleA;
+            xy::Polygon m_rumbleB;
+            xy::Polygon m_mainLane;
+            xy::Polygon m_laneA;
+            xy::Polygon m_laneB;
+            xy::Polygon m_fog;
+            float m_curve;
+            std::size_t m_index;
+            float m_clip;
+            Palette m_palette;
+
+            void draw(sf::RenderTarget&, sf::RenderStates) const override;
+        };
+
+        float m_distance;
+        float m_trackLength;
+        const sf::Texture* m_texture;
+        std::vector<Segment::Ptr> m_segments;
+        std::size_t m_playerSegmentIndex;
+        sf::Vector2f m_cameraPosition;
+
+        void addTrackSegment(float curve, float y);
+        void addTrackSection(float enter, float hold, float exit, float curve, float y);
+        float prevY();
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
-
-    float m_distance;
-    float m_trackLength;
-    const sf::Texture* m_texture;
-    std::vector<Segment::Ptr> m_segments;
-    std::size_t m_playerSegmentIndex;
-    sf::Vector2f m_cameraPosition;
-
-    void addTrackSegment(float curve, float y);
-    void addTrackSection(float enter, float hold, float exit, float curve, float y);
-    float prevY();
-    void draw(sf::RenderTarget&, sf::RenderStates) const override;
-};
-
+}
 #endif //RACING_DEMO_TRACK_HPP_

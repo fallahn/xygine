@@ -117,7 +117,7 @@ void DebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& c
 void DebugDraw::DrawTransform(const b2Transform& xf)
 {
     b2Vec2 p1 = xf.p;
-    const float k_axisScale = 0.4f;
+    const float k_axisScale = 0.4f * (100.f / World::m_worldScale);
 
     b2Vec2 p2 = p1 + k_axisScale * xf.q.GetXAxis();
     DrawSegment(p1, p2, b2Color(1, 0, 0));

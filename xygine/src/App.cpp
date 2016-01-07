@@ -61,6 +61,8 @@ namespace
     int settingsVersion = 1;
 
     sf::Clock frameClock;
+
+    const sf::RenderWindow* renderWindow = nullptr;
 }
 
 App::App()
@@ -73,6 +75,8 @@ App::App()
 {
     loadSettings();
     m_scores.load();
+
+    renderWindow = &m_renderWindow;
 
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
     //m_renderWindow.setIcon(icon_width, icon_height, icon_arr);
@@ -188,16 +192,6 @@ void App::applyVideoSettings(const VideoSettings& settings)
     msg->type = Message::UIEvent::ResizedWindow;
 }
 
-//sf::Font& App::getFont(const std::string& path)
-//{
-//    return m_fontResource.get(path);
-//}
-//
-//sf::Texture& App::getTexture(const std::string& path)
-//{
-//    return m_textureResource.get(path);
-//}
-
 MessageBus& App::getMessageBus()
 {
     return m_messageBus;
@@ -250,6 +244,12 @@ void App::setPlayerInitials(const std::string& initials)
     if (str.size() > 3) str = str.substr(0, 3);
 
     std::strcpy(&m_gameSettings.playerInitials[0], str.c_str());
+}
+
+sf::Vector2f App::getMouseWorldPosition()
+{
+    XY_ASSERT(renderWindow, "no valid window instance");
+    return renderWindow->mapPixelToCoords(sf::Mouse::getPosition(*renderWindow));
 }
 
 //protected

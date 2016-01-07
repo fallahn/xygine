@@ -78,6 +78,7 @@ namespace
     }
 }
 
+using namespace RaceDemo;
 Track::Track(xy::MessageBus& mb)
     : xy::Component         (mb, this),
     m_distance              (0.f),

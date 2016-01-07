@@ -16,6 +16,9 @@
     <Filter Include="Source Files\racing demo">
       <UniqueIdentifier>{597c1647-4a3f-43ca-a9a4-63e326b63490}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\physics demo">
+      <UniqueIdentifier>{c202890a-6f1c-4af2-b767-6dea8de9b0af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -51,6 +54,9 @@
     <ClInclude Include="include\CommandIds.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\PhysicsDemoInputController.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -79,6 +85,9 @@
     </ClCompile>
     <ClCompile Include="src\RacingDemoPlayer.cpp">
       <Filter>Source Files\racing demo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PhysicsDemoInputController.cpp">
+      <Filter>Source Files\physics demo</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -25,43 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//player logic component for RacingDemo
-
-#ifndef PLAYER_RACING_COMPONENT_HPP_
-#define PLAYER_RACING_COMPONENT_HPP_
+#ifndef PHYSICS_DEMO_CONTROLLER_HPP_
+#define PHYSICS_DEMO_CONTROLLER_HPP_
 
 #include <xygine/components/Component.hpp>
 
-namespace RaceDemo
+#include <functional>
+
+namespace PhysDemo
 {
     class PlayerController final : public xy::Component
     {
     public:
-        PlayerController(xy::MessageBus&);
+        explicit PlayerController(xy::MessageBus&);
         ~PlayerController() = default;
 
         xy::Component::Type type() const override { return xy::Component::Type::Script; }
         void entityUpdate(xy::Entity&, float) override;
+        void onStart(xy::Entity&) override;
 
-        void setSpeed(float);
-        float getSpeed() const;
-
-        void setOffset(float);
-        float getOffset() const;
-
-        void setDepth(float);
-        float getDepth() const;
+        void startInput();
+        void endInput();
 
     private:
-        float m_speed;
-        float m_offset;
-        float m_depth;
 
-        sf::Uint16 m_inputMask;
-        void moveLeft(float);
-        void moveRight(float);
-        void adaptMovement(float);
-        void accelerate(float);
+        std::function<void(xy::Entity&, float)> update;
+        xy::Entity* m_entity;
     };
 }
-#endif //PLAYER_RACING_COMPONENT_HPP_
+
+#endif //PHYSICS_DEMO_CONTROLLER_HPP_

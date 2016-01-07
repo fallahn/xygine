@@ -196,8 +196,8 @@ void RacingDemoState::buildScene()
 {
     auto trackEnt = xy::Entity::create(m_messageBus);
     trackEnt->addCommandCategories(RacingCommandIDs::TrackEnt);
-    auto tc = std::make_unique<Track>(m_messageBus);
-    auto trackComponent = trackEnt->addComponent<Track>(tc);
+    auto tc = std::make_unique<RaceDemo::Track>(m_messageBus);
+    auto trackComponent = trackEnt->addComponent<RaceDemo::Track>(tc);
     m_scene.addEntity(trackEnt, xy::Scene::Layer::BackMiddle);
 
     auto trackTex = &m_textureResource.get("assets/images/racing demo/paper_tex.png");
@@ -214,8 +214,8 @@ void RacingDemoState::buildScene()
     xy::Util::Position::centreOrigin(rectangle);
     playerEnt->setWorldPosition({ 960.f, 930.f });
 
-    auto pc = std::make_unique<PlayerController>(m_messageBus);
-    auto playerController = playerEnt->addComponent<PlayerController>(pc);
+    auto pc = std::make_unique<RaceDemo::PlayerController>(m_messageBus);
+    auto playerController = playerEnt->addComponent<RaceDemo::PlayerController>(pc);
     playerController->setDepth(trackComponent->getCameraDepth());
 
     m_scene.addEntity(playerEnt, xy::Scene::Layer::FrontRear);

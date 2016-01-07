@@ -134,8 +134,16 @@ Entity* Scene::addEntity(Entity::Ptr& entity, Layer layer)
 
 Entity* Scene::findEntity(sf::Uint64 id)
 {
-    for (const auto& l : m_layers)
+    for (const auto& e : m_pendingEntities)
     {
+        if (e.second->getUID() == id)
+        {
+            return e.second.get();
+        }
+    }
+       
+    for (const auto& l : m_layers)
+    {      
         auto e = l->findEntity(id);
         if (e) return e;
     }

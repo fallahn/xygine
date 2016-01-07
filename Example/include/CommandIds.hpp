@@ -30,8 +30,7 @@ source distribution.
 
 #include <xygine/MessageBus.hpp>
 
-//#include <RacingDemoTrack.hpp>
-
+//-------------------//
 enum RacingCommandIDs
 {
     TrackEnt = 0x1,
@@ -48,5 +47,9 @@ struct TrackEvent
 {
     //const Track::Segment* playerSegment = nullptr;
 };
-
+//------------------//
+enum PhysicsCommandIds
+{
+    CueBall = 0x1
+};
 #endif //COMMAND_IDS_HPP_

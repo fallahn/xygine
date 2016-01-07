@@ -113,6 +113,8 @@ namespace xy
 
         void setPlayerInitials(const std::string&);
 
+        static sf::Vector2f getMouseWorldPosition();
+
     protected:
         bool connect(const sf::IpAddress&, sf::Uint16);
         void disconnect();

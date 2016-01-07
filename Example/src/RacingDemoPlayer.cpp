@@ -44,6 +44,7 @@ namespace
     const float centrifugal = 0.35f;
 }
 
+using namespace RaceDemo;
 PlayerController::PlayerController(xy::MessageBus& mb)
     : Component(mb, this),
     m_speed(0.f),

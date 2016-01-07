@@ -26,6 +26,8 @@ source distribution.
 *********************************************************************/
 
 #include <PhysicsDemoState.hpp>
+#include <PhysicsDemoInputController.hpp>
+#include <CommandIds.hpp>
 
 #include <xygine/Reports.hpp>
 #include <xygine/Entity.hpp>
@@ -108,6 +110,30 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
 {
     switch (evt.type)
     {
+    case sf::Event::MouseButtonPressed:
+        if (evt.mouseButton.button == sf::Mouse::Left)
+        {
+            xy::Command cmd;
+            cmd.category = PhysicsCommandIds::CueBall;
+            cmd.action = [](xy::Entity& entity, float)
+            {
+                entity.getComponent<PhysDemo::PlayerController>()->startInput();
+            };
+            m_scene.sendCommand(cmd);
+        }
+        break;
+    case sf::Event::MouseButtonReleased:
+        if (evt.mouseButton.button == sf::Mouse::Left)
+        {
+            xy::Command cmd;
+            cmd.category = PhysicsCommandIds::CueBall;
+            cmd.action = [](xy::Entity& entity, float)
+            {
+                entity.getComponent<PhysDemo::PlayerController>()->endInput();
+            };
+            m_scene.sendCommand(cmd);
+        }
+        break;
     case sf::Event::KeyPressed:
         switch (evt.key.code)
         {
@@ -366,7 +392,10 @@ void PhysicsDemoState::createBodies()
 
     //add balls
     auto cueball = addBall({ 1260.f, 560.f });
-    cueball->applyLinearImpulse({ -80.f, 0.f }, cueball->getWorldCentre());
+    auto cbEntity = m_scene.findEntity(cueball->getParentUID());
+    cbEntity->addCommandCategories(PhysicsCommandIds::CueBall);
+    auto playerController = std::make_unique<PhysDemo::PlayerController>(m_messageBus);
+    cbEntity->addComponent(playerController);
 
     const float spacingY = 27.f;
     const float halfY = spacingY / 2.f;
