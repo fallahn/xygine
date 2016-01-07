@@ -77,6 +77,7 @@
     <ClInclude Include="include\MenuOptionState.hpp" />
     <ClInclude Include="include\ParticleDemoState.hpp" />
     <ClInclude Include="include\PhysicsDemoInputController.hpp" />
+    <ClInclude Include="include\PhysicsDemoLine.hpp" />
     <ClInclude Include="include\PhysicsDemoState.hpp" />
     <ClInclude Include="include\RacingDemoPlayer.hpp" />
     <ClInclude Include="include\RacingDemoState.hpp" />
@@ -91,6 +92,7 @@
     <ClCompile Include="src\MenuOptionState.cpp" />
     <ClCompile Include="src\ParticleDemoState.cpp" />
     <ClCompile Include="src\PhysicsDemoInputController.cpp" />
+    <ClCompile Include="src\PhysicsDemoLine.cpp" />
     <ClCompile Include="src\PhysicsDemoState.cpp" />
     <ClCompile Include="src\RacingDemoPlayer.cpp" />
     <ClCompile Include="src\RacingDemoState.cpp" />

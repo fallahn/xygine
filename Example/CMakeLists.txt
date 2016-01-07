@@ -58,6 +58,7 @@ SET(EXAMPLE_SRC
   src/MenuOptionState.cpp
   src/ParticleDemoState.cpp
   src/PhysicsDemoInputController.cpp
+  src/PhysicsDemoLine.cpp
   src/PhysicsDemoState.cpp
   src/RacingDemoPlayer.cpp
   src/RacingDemoState.cpp

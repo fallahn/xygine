@@ -57,6 +57,9 @@
     <ClInclude Include="include\PhysicsDemoInputController.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\PhysicsDemoLine.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -87,6 +90,9 @@
       <Filter>Source Files\racing demo</Filter>
     </ClCompile>
     <ClCompile Include="src\PhysicsDemoInputController.cpp">
+      <Filter>Source Files\physics demo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PhysicsDemoLine.cpp">
       <Filter>Source Files\physics demo</Filter>
     </ClCompile>
   </ItemGroup>
