@@ -143,7 +143,7 @@ void MenuMainState::buildMenu()
 
 void MenuMainState::close()
 {
-    requestStackPop();
+    requestStackClear();
 
     auto msg = m_messageBus.post<xy::Message::UIEvent>(xy::Message::UIMessage);
     msg->type = xy::Message::UIEvent::MenuClosed;

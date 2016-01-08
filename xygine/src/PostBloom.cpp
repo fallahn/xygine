@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/PostBloom.hpp>
+#include <xygine/Shaders.hpp>
 
 #include <memory>
 

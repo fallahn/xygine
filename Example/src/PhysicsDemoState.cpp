@@ -40,6 +40,8 @@ source distribution.
 #include <xygine/Log.hpp>
 #include <xygine/Util.hpp>
 
+#include <xygine/Shaders.hpp>
+
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/physics/CollisionCircleShape.hpp>
 #include <xygine/physics/CollisionEdgeShape.hpp>
@@ -77,6 +79,10 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
+
+    //preload shaders
+    m_shaderResource.preload(PhysicsShaderId::NormalMap, xy::Shader::NormalMapped::vertex, xy::Shader::NormalMapped::fragment);
+    m_shaderResource.preload(PhysicsShaderId::ReflectionMap, xy::Shader::FullPass::vertex, xy::Shader::ReflectionMap::fragment);
 
     //scale a 1200px table image to 2.7 metres
     m_physWorld.setPixelScale(444.5f);
@@ -119,7 +125,7 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
         if (evt.mouseButton.button == sf::Mouse::Left)
         {
             xy::Command cmd;
-            cmd.category = PhysicsCommandIds::CueBall;
+            cmd.category = PhysicsCommandId::CueBall;
             cmd.action = [](xy::Entity& entity, float)
             {
                 entity.getComponent<PhysDemo::PlayerController>()->startInput();
@@ -131,7 +137,7 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
         if (evt.mouseButton.button == sf::Mouse::Left)
         {
             xy::Command cmd;
-            cmd.category = PhysicsCommandIds::CueBall;
+            cmd.category = PhysicsCommandId::CueBall;
             cmd.action = [](xy::Entity& entity, float)
             {
                 entity.getComponent<PhysDemo::PlayerController>()->endInput();
@@ -392,6 +398,8 @@ void PhysicsDemoState::createBodies()
     //image
     auto drawable = xy::AnimatedDrawable::create(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/physics demo/table.png"));
+    drawable->setNormalMap(m_textureResource.get("assets/images/physics demo/table_normal.png"));
+    drawable->setShader(m_shaderResource.get(PhysicsShaderId::NormalMap));
     tableEntity->addComponent<xy::AnimatedDrawable>(drawable);
 
     m_scene.addEntity(tableEntity, xy::Scene::Layer::BackMiddle);
@@ -400,7 +408,7 @@ void PhysicsDemoState::createBodies()
     //add balls
     auto cueball = addBall({ 1260.f, 560.f });
     auto cbEntity = m_scene.findEntity(cueball->getParentUID());
-    cbEntity->addCommandCategories(PhysicsCommandIds::CueBall);
+    cbEntity->addCommandCategories(PhysicsCommandId::CueBall);
     auto playerController = std::make_unique<PhysDemo::PlayerController>(m_messageBus);
     cbEntity->addComponent(playerController);
     auto ls = std::make_unique<PhysDemo::LineDrawable>(m_messageBus);

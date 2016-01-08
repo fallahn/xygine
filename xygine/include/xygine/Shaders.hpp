@@ -259,7 +259,7 @@ namespace xy
                 "}";
         }
 
-        namespace Orb
+        namespace NormalMapped
         {
             /*static const std::string textured =
                 "#version 120\n#define TEXTURED\n";
@@ -268,7 +268,7 @@ namespace xy
 
             static const std::string vertex =
                 "#version 120\n" \
-                "uniform vec3 u_lightPosition = vec3(960.0, -10.0, 10.0);\n" \
+                "uniform vec3 u_lightPosition = vec3(960.0, 540.0, 280.0);\n" \
                 "uniform mat4 u_inverseWorldViewMatrix;\n" \
 
                 "varying vec3 v_eyeDirection;\n" \
@@ -283,12 +283,13 @@ namespace xy
                 "    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n" \
                 "    gl_FrontColor = gl_Color;\n" \
 
+                "    mat3 normalMatrix = mat3(transpose(u_inverseWorldViewMatrix));\n" \
                 "    vec3 n = normalize(gl_NormalMatrix * normal);\n" \
                 "    vec3 t = normalize(gl_NormalMatrix * tangent);\n" \
                 "    vec3 b = cross(n, t);\n" \
 
                 "    vec3 viewVertex = vec3(gl_ModelViewMatrix * gl_Vertex);\n" \
-                "    vec3 viewLightDirection = vec3(gl_ModelViewMatrix * u_inverseWorldViewMatrix * vec4(u_lightPosition, 1.0)) - viewVertex;\n" \
+                "    vec3 viewLightDirection = vec3(gl_ModelViewMatrix * /*u_inverseWorldViewMatrix **/ vec4(u_lightPosition, 1.0)) - viewVertex;\n" \
                 "    v_lightDirection.x = dot(viewLightDirection, t);\n" \
                 "    v_lightDirection.y = dot(viewLightDirection, b);\n" \
                 "    v_lightDirection.z = dot(viewLightDirection, n);\n" \
@@ -313,7 +314,7 @@ namespace xy
                 "varying vec3 v_eyeDirection;\n" \
                 "varying vec3 v_lightDirection;\n" \
 
-                "const vec3 lightColour = vec3(1.0, 0.98, 0.745);\n" \
+                "const vec3 lightColour = vec3(1.0, 0.98, 0.945);\n" \
                 "const float inverseRange = 0.005;\n" \
 
                 "void main()\n" \
@@ -338,6 +339,26 @@ namespace xy
                 "    gl_FragColor *= gl_Color;\n" \
                 "#endif\n" \
                 "}";
+        }
+
+        namespace ReflectionMap
+        {
+            static const std::string fragment =
+                "#version 120\n" \
+                "uniform sampler2D u_diffuseMap;\n" \
+                "uniform sampler2D u_normalMap;\n" \
+                "uniform sampler2D u_reflectionMap;\n" \
+
+                "void main()\n" \
+                "{\n" \
+                "    vec4 diffuseColour = texture2D(u_diffuseMap, gl_TexCoord[0].xy);\n" \
+                "    vec3 normalVector = texture2D(u_normalMap, gl_TexCoord[0].xy).rgb * 2.0 - 1.0;\n" \
+                /*TODO clamp a vec2*/
+                "    vec4 reflectionColour = texture2D(u_refectionMap, clamp(0.0, 1.0, gl_TexCoord[0].xy + normalVector.xy));\n" \
+                /*TODO calc mix amount based on angle*/
+                "    gl_FragColor = mix(diffuseColour, reflectionColour, 0.5);\n" \
+                "}\n" \
+                "";
         }
     }
 }

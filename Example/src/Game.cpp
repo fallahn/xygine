@@ -45,13 +45,13 @@ Game::Game()
 //private
 void Game::handleEvent(const sf::Event& evt)
 {
-    if (evt.type == sf::Event::KeyReleased)
+    /*if (evt.type == sf::Event::KeyReleased)
     {
         switch (evt.key.code)
         {
         default: break;
         }
-    }    
+    }*/    
     
     m_stateStack.handleEvent(evt);
 }

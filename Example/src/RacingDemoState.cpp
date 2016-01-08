@@ -195,7 +195,7 @@ void RacingDemoState::handleMessage(const xy::Message& msg)
 void RacingDemoState::buildScene()
 {
     auto trackEnt = xy::Entity::create(m_messageBus);
-    trackEnt->addCommandCategories(RacingCommandIDs::TrackEnt);
+    trackEnt->addCommandCategories(RacingCommandId::TrackEnt);
     auto tc = std::make_unique<RaceDemo::Track>(m_messageBus);
     auto trackComponent = trackEnt->addComponent<RaceDemo::Track>(tc);
     m_scene.addEntity(trackEnt, xy::Scene::Layer::BackMiddle);
@@ -205,7 +205,7 @@ void RacingDemoState::buildScene()
     trackComponent->setTexture(trackTex);
 
     auto playerEnt = xy::Entity::create(m_messageBus);
-    playerEnt->addCommandCategories(RacingCommandIDs::PlayerEnt);
+    playerEnt->addCommandCategories(RacingCommandId::PlayerEnt);
     auto drawable = std::make_unique<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
     auto playerSprite = playerEnt->addComponent<xy::SfDrawableComponent<sf::RectangleShape>>(drawable);
     auto& rectangle = playerSprite->getDrawable();

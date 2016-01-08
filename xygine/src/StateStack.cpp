@@ -62,7 +62,7 @@ void StateStack::handleEvent(const sf::Event& evt)
     {
         if (!(*i)->handleEvent(evt)) break;
     }
-    applyPendingChanges();
+    //applyPendingChanges();
 }
 
 void StateStack::handleMessage(const Message& msg)

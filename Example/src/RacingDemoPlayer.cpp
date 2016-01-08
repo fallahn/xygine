@@ -104,7 +104,7 @@ void PlayerController::entityUpdate(xy::Entity& entity, float dt)
 
     //command track to update position
     xy::Command cmd;
-    cmd.category = RacingCommandIDs::TrackEnt;
+    cmd.category = RacingCommandId::TrackEnt;
     cmd.action = [this](xy::Entity& e, float delta)
     {
         e.getComponent<Track>()->updatePosition(m_speed * delta, m_offset);

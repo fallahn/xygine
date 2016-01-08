@@ -105,11 +105,11 @@ void State::updateLoadingScreen(float dt, sf::RenderWindow& rw)
 
 void State::loadingScreenThread()
 {
-    sf::Event evt;
+    //sf::Event evt;
     while (m_threadRunning)
     {
         //consume events
-        while (m_context.renderWindow.pollEvent(evt)) {}
+        //while (m_context.renderWindow.pollEvent(evt)) {}
 
         m_context.renderWindow.clear();
         updateLoadingScreen(m_threadClock.restart().asSeconds(), m_context.renderWindow);

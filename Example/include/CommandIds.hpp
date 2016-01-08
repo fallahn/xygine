@@ -31,14 +31,14 @@ source distribution.
 #include <xygine/MessageBus.hpp>
 
 //-------------------//
-enum RacingCommandIDs
+enum RacingCommandId
 {
     TrackEnt = 0x1,
     PlayerEnt = 0x2,
     BackgroundEnt = 0x4
 };
 
-enum RacingMessageIds
+enum RacingMessageId
 {
     TrackMessage = xy::Message::Type::Count
 };
@@ -48,8 +48,14 @@ struct TrackEvent
     //const Track::Segment* playerSegment = nullptr;
 };
 //------------------//
-enum PhysicsCommandIds
+enum PhysicsCommandId
 {
     CueBall = 0x1
+};
+
+enum PhysicsShaderId
+{
+    NormalMap = 1,
+    ReflectionMap
 };
 #endif //COMMAND_IDS_HPP_

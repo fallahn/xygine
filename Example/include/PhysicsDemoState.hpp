@@ -37,6 +37,7 @@ source distribution.
 #include <xygine/Scene.hpp>
 #include <xygine/physics/World.hpp>
 #include <xygine/Resource.hpp>
+#include <xygine/ShaderResource.hpp>
 
 #include <SFML/Graphics/Text.hpp>
 
@@ -75,6 +76,7 @@ private:
 
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
+    xy::ShaderResource m_shaderResource;
 
     sf::Text m_reportText;
 

@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/PostChromeAb.hpp>
+#include <xygine/Shaders.hpp>
 
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>

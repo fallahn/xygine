@@ -30,9 +30,8 @@ source distribution.
 #ifndef XY_SHADER_RESOURCE_HPP_
 #define XY_SHADER_RESOURCE_HPP_
 
-#include <xygine/Shaders.hpp>
-
 #include <SFML/Config.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <map>
 #include <memory>
