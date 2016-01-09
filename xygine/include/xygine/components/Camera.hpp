@@ -123,7 +123,7 @@ namespace xy
         \brief Returns the current view of the camera
 
         Use this to set the view of any render target to which
-        you wish to render the scene as it appear to the camera
+        you wish to render the scene as it appears to the camera
         */
         sf::View getView() const;
         /*!

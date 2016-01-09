@@ -41,6 +41,7 @@ source distribution.
 #include <xygine/Util.hpp>
 
 #include <xygine/Shaders.hpp>
+#include <xygine/PostChromeAb.hpp>
 
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/physics/CollisionCircleShape.hpp>
@@ -64,7 +65,7 @@ namespace
     const float joyDeadZone = 25.f;
     const float joyMaxAxis = 100.f;
 
-    bool drawOverlay = true;
+    bool drawOverlay = false;
 }
 
 PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
@@ -76,6 +77,9 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     launchLoadingScreen();
     m_scene.setView(context.defaultView);
     //m_scene.drawDebug(true);
+    auto pp = xy::PostChromeAb::create();
+    m_scene.addPostProcess(pp);
+    m_scene.setClearColour(sf::Color(0u, 0u, 10u));
 
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
@@ -83,6 +87,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     //preload shaders
     m_shaderResource.preload(PhysicsShaderId::NormalMap, xy::Shader::NormalMapped::vertex, xy::Shader::NormalMapped::fragment);
     m_shaderResource.preload(PhysicsShaderId::ReflectionMap, xy::Shader::FullPass::vertex, xy::Shader::ReflectionMap::fragment);
+    m_shaderResource.get(PhysicsShaderId::ReflectionMap).setParameter("u_reflectionMap", m_textureResource.get("assets/images/physics demo/table_reflection.png"));
 
     //scale a 1200px table image to 2.7 metres
     m_physWorld.setPixelScale(444.5f);
@@ -440,6 +445,7 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     auto ballBody = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
     ballBody->setAngularDamping(0.6f);
     ballBody->setLinearDamping(0.75f);
+    ballBody->isBullet(true);
 
     xy::Physics::CollisionCircleShape ballShape(12.7f);
     ballShape.setDensity(10.f);
@@ -457,8 +463,10 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     auto drawable = xy::AnimatedDrawable::create(m_messageBus);
     drawable->setColour(sf::Color::Blue);
     drawable->setTexture(m_textureResource.get("assets/images/physics demo/ball.png"));
+    drawable->setNormalMap(m_textureResource.get("assets/images/physics demo/ball_normal.png"));
     auto size = drawable->getTexture()->getSize();
     drawable->setOrigin({ size.x / 2.f, size.y / 2.f });
+    drawable->setShader(m_shaderResource.get(PhysicsShaderId::NormalMap));
     ballEntity->addComponent(drawable);
 
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);

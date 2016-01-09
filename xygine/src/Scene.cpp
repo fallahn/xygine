@@ -159,6 +159,12 @@ void Scene::setView(const sf::View& v)
 {
     m_defaultCamera->setView(v);
     m_activeCamera = m_defaultCamera.get();
+
+    //we don't want to letterbox render buffers
+    if (!m_renderPasses.empty())
+    {
+        m_defaultCamera->setViewport({ { 0.f, 0.f },{ 1.f, 1.f } });
+    }
 }
 
 sf::View Scene::getView() const
@@ -229,6 +235,8 @@ void Scene::addPostProcess(PostProcess::Ptr& pp)
         m_renderPasses.back().inBuffer = &m_sceneBufferA;
 
         m_currentRenderPath = std::bind(&Scene::postEffectRenderPath, this, _1, _2);
+
+        m_defaultCamera->setViewport({ {0.f, 0.f},{1.f, 1.f} });
     }
     else
     {

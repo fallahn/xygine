@@ -34,7 +34,7 @@ source distribution.
 namespace
 {
     float accumulatedTime = 0.f;
-    const float scanlineCount = 5500.f;
+    const float scanlineCount = 500.f;
 }
 
 using namespace xy;
