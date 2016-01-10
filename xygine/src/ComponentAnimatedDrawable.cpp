@@ -339,8 +339,8 @@ void AnimatedDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     {
         m_shader->setParameter("u_diffuseMap", *m_sprite.getTexture());
         m_shader->setParameter("u_normalMap", *m_normalMap);
-        m_shader->setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
-    }
+        m_shader->setParameter("u_worldViewMatrix", states.transform);
+    }   
     rt.draw(m_sprite, states);
 }
 

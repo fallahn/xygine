@@ -269,8 +269,9 @@ namespace xy
 
             static const std::string vertex =
                 "#version 120\n" \
-                "uniform vec3 u_lightPosition = vec3(960.0, 540.0, 280.0);\n" \
-                "uniform mat4 u_inverseWorldViewMatrix;\n" \
+                "uniform vec3 u_lightWorldPosition = vec3(960.0, 540.0, 280.0);\n" \
+                "uniform vec3 u_cameraWorldPosition = vec3(960.0, 540.0, 480.0);\n" \
+                "uniform mat4 u_worldViewMatrix;\n" \
 
                 "varying vec3 v_eyeDirection;\n" \
                 "varying vec3 v_lightDirection;\n" \
@@ -284,23 +285,16 @@ namespace xy
                 "    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n" \
                 "    gl_FrontColor = gl_Color;\n" \
 
-                "    vec3 n = normalize(gl_NormalMatrix * normal);\n" \
+                "    vec3 n = normalize(gl_NormalMatrix * gl_Normal);\n" \
                 "    vec3 t = normalize(gl_NormalMatrix * tangent);\n" \
-                "    vec3 b = cross(n, t);\n" \
+                "    vec3 b = cross(n,t);\n" \
                 "    mat3 tangentSpaceTransformMatrix = mat3(t.x, b.x, n.x, t.y, b.y, n.y, t.z, b.z, n.z);\n" \
 
                 "    vec3 viewVertex = vec3(gl_ModelViewMatrix * gl_Vertex);\n" \
-                "    vec3 viewLightDirection = vec3(gl_ModelViewMatrix * vec4(u_lightPosition, 1.0)) - viewVertex;\n" \
-                "    viewLightDirection = (u_inverseWorldViewMatrix * vec4(viewLightDirection, 1.0)).xyz;\n" \
-                /*"    v_lightDirection.x = dot(viewLightDirection, t);\n" \
-                "    v_lightDirection.y = dot(viewLightDirection, b);\n" \
-                "    v_lightDirection.z = dot(viewLightDirection, n);\n" \
-
-                "    v_eyeDirection.x = dot(-viewVertex, t);\n" \
-                "    v_eyeDirection.y = dot(-viewVertex, b);\n" \
-                "    v_eyeDirection.z = dot(-viewVertex, n);\n" \*/
+                "    vec3 viewLightDirection = vec3(gl_ModelViewMatrix * vec4(u_lightWorldPosition, 1.0)) - viewVertex;\n" \
+                /*TODO why the frick doesn't the tangent space matrix transform the light position????*/
                 "    v_lightDirection = tangentSpaceTransformMatrix * viewLightDirection;\n" \
-                "    v_eyeDirection = tangentSpaceTransformMatrix * -viewVertex;\n" \
+                "    v_eyeDirection = tangentSpaceTransformMatrix * ((gl_ModelViewMatrix * vec4(u_cameraWorldPosition, 1.0)).xyz - viewVertex);\n" \
                 "}";
 
             static const std::string fragment =
@@ -310,10 +304,10 @@ namespace xy
                 "uniform sampler2D u_diffuseMap;\n" \
                 "#endif\n" \
                 "uniform sampler2D u_normalMap;\n" \
-                "uniform float u_lightIntensity = 1.0;\n" \
+                "uniform float u_lightIntensity = 0.86;\n" \
 
                 /*TODO make ambient colour match background*/
-                "uniform vec3 u_ambientColour = vec3 (0.1, 0.1, 0.1);\n" \
+                "uniform vec3 u_ambientColour = vec3 (0.4, 0.4, 0.4);\n" \
 
                 "varying vec3 v_eyeDirection;\n" \
                 "varying vec3 v_lightDirection;\n" \
@@ -329,14 +323,19 @@ namespace xy
                 "    vec4 diffuseColour = gl_Color;\n" \
                 "#endif\n" \
                 "    vec3 normalVector = texture2D(u_normalMap, gl_TexCoord[0].xy).rgb * 2.0 - 1.0;\n" \
-
                 "    vec3 blendedColour = diffuseColour.rgb * u_ambientColour;\n" \
                 "    float diffuseAmount = max(dot(normalVector, normalize(v_lightDirection)), 0.0);\n" \
                 /*multiply by falloff*/
                 "    vec3 falloffDirection = v_lightDirection * inverseRange;\n" \
                 "    float falloff = clamp(1.0 - dot(falloffDirection, falloffDirection), 0.0, 1.0);\n" \
                 "    blendedColour += (lightColour * u_lightIntensity) * diffuseColour.rgb * diffuseAmount;// * falloff;\n" \
-
+                /*
+                "    vec3 eyeDirection = normalize(v_lightDirection);\n" \
+                "    vec3 halfVec = normalize(v_lightDirection + eyeDirection);\n" \
+                "    float specularAngle = clamp(dot(normalVector, halfVec), 0.0, 1.0);\n" \
+                "    vec3 specularColour = vec3(pow(specularAngle, 96.0));// * falloff;\n" \
+                "    blendedColour += specularColour;\n" \
+                */
                 "    gl_FragColor.rgb = blendedColour;\n" \
                 "    gl_FragColor.a = diffuseColour.a;\n" \
                 "#if defined(TEXTURED)\n" \

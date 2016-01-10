@@ -446,6 +446,7 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     ballBody->setAngularDamping(0.6f);
     ballBody->setLinearDamping(0.75f);
     ballBody->isBullet(true);
+    //ballBody->fixedRotation(true);
 
     xy::Physics::CollisionCircleShape ballShape(12.7f);
     ballShape.setDensity(10.f);
