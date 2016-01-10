@@ -57,10 +57,6 @@ namespace xy
     {
     public:
         using Ptr = std::unique_ptr<QuadTreeComponent>;
-    private:
-        using FactoryFunc = Ptr(&)(MessageBus&, const sf::FloatRect&);
-    public:
-        static const FactoryFunc create;
 
         QuadTreeComponent(MessageBus&, const sf::FloatRect& bounds);
         ~QuadTreeComponent();

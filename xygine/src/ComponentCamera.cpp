@@ -31,8 +31,6 @@ source distribution.
 
 using namespace xy;
 
-Camera::FactoryFunc Camera::create = std::make_unique<Camera>;
-
 Camera::Camera(MessageBus& mb, const sf::View& initialView)
     :Component      (mb, this),
     m_zoom          (1.f),

@@ -287,16 +287,20 @@ namespace xy
                 "    vec3 n = normalize(gl_NormalMatrix * normal);\n" \
                 "    vec3 t = normalize(gl_NormalMatrix * tangent);\n" \
                 "    vec3 b = cross(n, t);\n" \
+                "    mat3 tangentSpaceTransformMatrix = mat3(t.x, b.x, n.x, t.y, b.y, n.y, t.z, b.z, n.z);\n" \
 
                 "    vec3 viewVertex = vec3(gl_ModelViewMatrix * gl_Vertex);\n" \
-                "    vec3 viewLightDirection = vec3(gl_ModelViewMatrix * (u_inverseWorldViewMatrix * vec4(u_lightPosition, 1.0))) - viewVertex;\n" \
-                "    v_lightDirection.x = dot(viewLightDirection, t);\n" \
+                "    vec3 viewLightDirection = vec3(gl_ModelViewMatrix * vec4(u_lightPosition, 1.0)) - viewVertex;\n" \
+                "    viewLightDirection = (u_inverseWorldViewMatrix * vec4(viewLightDirection, 1.0)).xyz;\n" \
+                /*"    v_lightDirection.x = dot(viewLightDirection, t);\n" \
                 "    v_lightDirection.y = dot(viewLightDirection, b);\n" \
                 "    v_lightDirection.z = dot(viewLightDirection, n);\n" \
-                
+
                 "    v_eyeDirection.x = dot(-viewVertex, t);\n" \
                 "    v_eyeDirection.y = dot(-viewVertex, b);\n" \
-                "    v_eyeDirection.z = dot(-viewVertex, n);\n" \
+                "    v_eyeDirection.z = dot(-viewVertex, n);\n" \*/
+                "    v_lightDirection = tangentSpaceTransformMatrix * viewLightDirection;\n" \
+                "    v_eyeDirection = tangentSpaceTransformMatrix * -viewVertex;\n" \
                 "}";
 
             static const std::string fragment =

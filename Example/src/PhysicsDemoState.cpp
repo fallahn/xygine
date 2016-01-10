@@ -398,14 +398,14 @@ void PhysicsDemoState::createBodies()
     pocket.setPoints(points);
     tableBody->addCollisionShape(pocket);
 
-    tableEntity->addComponent<xy::Physics::RigidBody>(tableBody);
+    tableEntity->addComponent(tableBody);
 
     //image
-    auto drawable = xy::AnimatedDrawable::create(m_messageBus);
+    auto drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/physics demo/table.png"));
     drawable->setNormalMap(m_textureResource.get("assets/images/physics demo/table_normal.png"));
     drawable->setShader(m_shaderResource.get(PhysicsShaderId::NormalMap));
-    tableEntity->addComponent<xy::AnimatedDrawable>(drawable);
+    tableEntity->addComponent(drawable);
 
     m_scene.addEntity(tableEntity, xy::Scene::Layer::BackMiddle);
 
@@ -453,14 +453,14 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     ballShape.setFriction(0.05f);
     ballBody->addCollisionShape(ballShape);
 
-    auto b = ballEntity->addComponent<xy::Physics::RigidBody>(ballBody);
+    auto b = ballEntity->addComponent(ballBody);
 
-    auto soundSource = xy::AudioSource::create(m_messageBus, m_soundResource);
-    soundSource = xy::AudioSource::create(m_messageBus, m_soundResource);
+    auto soundSource = xy::Component::create<xy::AudioSource>(m_messageBus, m_soundResource);
+    soundSource = xy::Component::create<xy::AudioSource>(m_messageBus, m_soundResource);
     soundSource->setSound("assets/sound/ball.wav");
-    ballEntity->addComponent<xy::AudioSource>(soundSource);
+    ballEntity->addComponent(soundSource);
 
-    auto drawable = xy::AnimatedDrawable::create(m_messageBus);
+    auto drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setColour(sf::Color::Blue);
     drawable->setTexture(m_textureResource.get("assets/images/physics demo/ball.png"));
     drawable->setNormalMap(m_textureResource.get("assets/images/physics demo/ball_normal.png"));

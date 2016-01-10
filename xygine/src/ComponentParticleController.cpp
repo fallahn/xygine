@@ -37,8 +37,6 @@ namespace
 
 using namespace xy;
 
-const ParticleController::FactoryFunc ParticleController::create = std::make_unique<ParticleController>;
-
 ParticleController::ParticleController(MessageBus& mb)
     : Component (mb, this),
     m_entity    (nullptr)

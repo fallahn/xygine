@@ -93,29 +93,6 @@ namespace xy
     public:
         using Ptr = std::unique_ptr<AnimatedDrawable>;
 
-        /*!
-        \brief Factory function for creating AnimatedDrawable components
-
-        \param Reference to the active message bus
-        \returns unique_ptr containing the newly created component
-        */
-        static Ptr create(MessageBus& mb)
-        {
-            return std::move(std::make_unique<AnimatedDrawable>(mb));
-        }
-
-        /*!
-        \brief Factory function for creating AnimatedDrawable components
-
-        \param Reference to the active message bus
-        \param Texture to use for the Animated Sprite
-        \returns unique_ptr containing the newly created component
-        */
-        static Ptr create(MessageBus& mb, const sf::Texture& t)
-        {
-            return std::move(std::make_unique<AnimatedDrawable>(mb, t));
-        }
-
         explicit AnimatedDrawable(MessageBus&);
         AnimatedDrawable(MessageBus&, const sf::Texture& t);
         AnimatedDrawable(const AnimatedDrawable&) = delete;

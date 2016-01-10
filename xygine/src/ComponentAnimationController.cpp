@@ -34,8 +34,6 @@ source distribution.
 
 using namespace xy;
 
-const AnimationController::FactoryFunc AnimationController::create = std::make_unique<AnimationController>;
-
 AnimationController::AnimationController(MessageBus& mb)
     : Component (mb, this),
     m_drawable  (nullptr)

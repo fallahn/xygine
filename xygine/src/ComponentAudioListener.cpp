@@ -38,8 +38,6 @@ namespace
     const float listenerDepth = 900.f;
 }
 
-AudioListener::FactoryFunc AudioListener::create = std::make_unique<AudioListener>;
-
 AudioListener::AudioListener(MessageBus& mb)
     : Component(mb, this)
 {

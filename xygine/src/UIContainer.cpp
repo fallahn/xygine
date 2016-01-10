@@ -142,7 +142,7 @@ void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
             }
         }
     }
-    else if (e.type == sf::Event::MouseButtonPressed
+    else if (e.type == sf::Event::MouseButtonReleased
         && e.mouseButton.button == sf::Mouse::Left)
     {
         if (hasSelection())

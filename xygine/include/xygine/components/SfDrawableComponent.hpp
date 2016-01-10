@@ -57,13 +57,6 @@ namespace xy
     {
     public:
         using Ptr = std::unique_ptr<SfDrawableComponent<T>>;
-        /*!
-        \brief Creates a new SfDrawableComponent
-        */
-        static Ptr create(MessageBus& mb)
-        {
-            return std::move(std::make_unique<SfDrawableComponent<T>>(mb));
-        }
 
         explicit SfDrawableComponent(MessageBus& mb)
             : Component(mb, this)

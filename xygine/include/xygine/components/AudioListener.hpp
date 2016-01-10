@@ -57,9 +57,7 @@ namespace xy
     {
     public:
         using Ptr = std::unique_ptr<AudioListener>;
-    private:
-        using FactoryFunc = Ptr(&)(MessageBus&);
-    public:
+
         explicit AudioListener(MessageBus&);
         ~AudioListener();
 
@@ -72,8 +70,6 @@ namespace xy
         of the AudioListener component. This value is fixed.
         */
         static float getListenerDepth();
-
-        static const FactoryFunc create;
 
     private:
 

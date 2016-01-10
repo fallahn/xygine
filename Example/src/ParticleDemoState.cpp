@@ -210,10 +210,10 @@ void ParticleDemoState::handleMessage(const xy::Message& msg)
 //private
 void ParticleDemoState::setupParticles()
 {
-    auto particleController = xy::ParticleController::create(m_messageBus);
+    auto particleController = xy::Component::create<xy::ParticleController>(m_messageBus);
     auto entity = xy::Entity::create(m_messageBus);
 
-    auto pc = entity->addComponent<xy::ParticleController>(particleController);
+    auto pc = entity->addComponent(particleController);
     xy::ParticleSystem::Definition pd;
     pd.loadFromFile("assets/particles/bubbles.xyp", m_textureResource);
     pc->addDefinition(ParticleType::Bubbles, pd);

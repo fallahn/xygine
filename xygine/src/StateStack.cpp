@@ -44,11 +44,11 @@ StateStack::StateStack(State::Context context)
 //public
 void StateStack::update(float dt)
 {
+    applyPendingChanges();
     for (auto i = m_stack.rbegin(); i != m_stack.rend(); ++i)
     {
         if (!(*i)->update(dt)) break;
     }
-    applyPendingChanges();
 }
 
 void StateStack::draw()

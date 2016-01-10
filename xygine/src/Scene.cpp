@@ -45,7 +45,7 @@ using namespace xy;
 using namespace std::placeholders;
 
 Scene::Scene(MessageBus& mb, bool createBuffers)
-    : m_defaultCamera   (Camera::create(mb, { {960.f, 540.f}, {1920.f, 1080.f} })),
+    : m_defaultCamera   (Component::create<Camera>(mb, sf::View( {960.f, 540.f}, {1920.f, 1080.f} ))),
     m_activeCamera      (m_defaultCamera.get()),
     m_messageBus        (mb),
     m_drawDebug         (false) 

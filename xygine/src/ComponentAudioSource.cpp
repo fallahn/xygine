@@ -37,9 +37,6 @@ namespace
 {
 }
 
-AudioSource::FactoryFunc AudioSource::create = std::make_unique<AudioSource>;
-
-
 AudioSource::AudioSource(MessageBus& mb, SoundResource& sr)
     :Component      (mb, this),
     m_maxVolume     (100.f),

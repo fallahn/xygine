@@ -51,15 +51,11 @@ namespace xy
     {
     public:
         using Ptr = std::unique_ptr<Camera>;
-    private:
-        using FactoryFunc = Ptr(&)(MessageBus&, const sf::View&);
-    public:
+
         Camera(MessageBus&, const sf::View& initialView);
         ~Camera() = default;
         Camera(const Camera&) = delete;
         const Camera& operator = (const Camera&) = delete;
-
-        static const FactoryFunc create;
 
         Component::Type type() const override { return Component::Type::Script; }
         void entityUpdate(Entity&, float) override;

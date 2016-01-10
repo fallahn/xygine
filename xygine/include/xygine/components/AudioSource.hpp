@@ -49,10 +49,7 @@ namespace xy
     {
     public:
         using Ptr = std::unique_ptr<AudioSource>;
-    private:
-        using FactoryFunc = Ptr(&)(MessageBus&, SoundResource&);
-    public:
-        const static FactoryFunc create;
+
         /*!
         long files such as music should normally
         be set to stream, whereas shorter files

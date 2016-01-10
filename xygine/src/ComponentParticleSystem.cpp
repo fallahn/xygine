@@ -42,8 +42,6 @@ namespace
 
 using namespace xy;
 
-const ParticleSystem::FactoryFunc ParticleSystem::create = std::make_unique<ParticleSystem>;
-
 ParticleSystem::ParticleSystem(MessageBus& mb)
     : Component         (mb, this),
     m_texture           (nullptr),
@@ -558,7 +556,7 @@ void ParticleSystem::Definition::loadFromFile(const std::string& path, TextureRe
 
 ParticleSystem::Ptr ParticleSystem::Definition::createSystem(MessageBus& mb) const
 {
-    auto ps = ParticleSystem::create(mb);
+    auto ps = Component::create<ParticleSystem>(mb);
 
     if (texture) ps->setTexture(*texture);
     ps->setColour(colour);
