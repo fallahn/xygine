@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//command class for targetting entities within a scene graph
+//command class for targeting entities within a scene graph
 
 #ifndef XY_COMMAND_HPP_
 #define XY_COMMAND_HPP_
@@ -38,18 +38,28 @@ source distribution.
 namespace xy
 {
     class Entity;
+    /*!
+    \brief Command struct
+    */
     struct Command final
     {
-        std::function<void(Entity&, float)> action;
-        sf::Uint64 entityID = 0u;
+        std::function<void(Entity&, float)> action; //< Action to be performed by the command on the targeted entity
+        sf::Uint64 entityID = 0u; //< UID of the target entity. Overrides any target categories
         using Category = sf::Int32;
         enum
         {
             None = 0
         };
-        Category category = None;
+        Category category = None; //< Category of entities to target. Categories are user defined and should be btiwise flag values
     };
 
+    /*!
+    \brief Queue of commands to be executed by Entities in a scene
+
+    Each from the scene owning the CommandQueue will execute the entire
+    queue of commands on the targeted entities, should they exist.
+    \see Scene
+    */
     class CommandQueue final
     {
     public:
@@ -58,9 +68,23 @@ namespace xy
         CommandQueue(const CommandQueue&) = delete;
         CommandQueue& operator = (const CommandQueue&) = delete;
 
+        /*!
+        \brief Pushes a Command on to the queue
+        */
         void push(const Command&);
+        /*!
+        \brief Pops a command from the queue
+        */
         Command pop();
+        /*!
+        \brief Returns true if the queue is empty
+        */
         bool empty() const;
+        /*!
+        \brief Returns the current size of the queue
+
+        Useful for debugging, outputting via Reporter etc
+        */
         std::size_t size() const { return m_queue.size(); }
 
     private:

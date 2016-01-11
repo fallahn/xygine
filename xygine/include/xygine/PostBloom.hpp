@@ -40,14 +40,21 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Bloom post process effect
+
+    Creates a glowing 'bloom' effect on brighter objects
+    within a scene
+    */
     class PostBloom final : public PostProcess
     {
 
     public:
         PostBloom();
-
+        /*!
+        \see PostProcess
+        */
         void apply(const sf::RenderTexture&, sf::RenderTarget&) override;
-        static PostProcess::Ptr create();
 
     private:
         using RenderTextureArray = std::array<sf::RenderTexture, 2>;

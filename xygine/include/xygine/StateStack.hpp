@@ -44,6 +44,21 @@ namespace sf
 
 namespace xy
 {
+    /*!
+    \brief Maintains a stack of active states
+
+    States are used to encapsulate different parts of an application or
+    game, such as menus or the game state. States can be stacked upon each
+    other, for example a pause state may be pushed on top of the game state
+    so that it consumes events and input (in a pause menu) but makes sure the
+    game state is not updated - hence paused - without losing its state altogether.
+
+    A game or app derived from the App class usually has just one state stack
+    to manage any customs states which are created by inheriting the abstract
+    base class State. Custom states should be assigned a unique 32 bit ID
+    and registered with the state stack.
+    \see App::registerStates
+    */
     class StateStack final
     {
     public:
@@ -54,11 +69,21 @@ namespace xy
             Clear
         };
 
+        /*!
+        \brief Constructor
+        \param context State context containing the application state
+        */
         explicit StateStack(State::Context context);
         ~StateStack() = default;
         StateStack(const StateStack&) = delete;
         const StateStack& operator = (const StateStack&) = delete;
 
+        /*!
+        \brief Registers a custom state with its ID
+
+        When creating new states an ID should be assigned so that
+        when a state is requested it can be correctly constructed
+        */
         template <typename T>
         void registerState(StateId id)
         {
@@ -68,19 +93,57 @@ namespace xy
             };
         }
 
+        /*!
+        \brief Updates each currently active state
+
+        This should be called from the App::update function
+        so that the current frame time is passed down to each
+        active state on the stack.
+        */
         void update(float dt);
+        /*!
+        \brief Draws each of the active states on the stack.
+
+        This should happen between the render window clear() and
+        display() calls.
+        */
         void draw();
+        /*!
+        \brief Passes the current window event down to all active
+        states, as long as the state's event handler returns true
+        */
         void handleEvent(const sf::Event& evt);
+        /*!
+        \brief Passes the current system message down to all active states
+        */
         void handleMessage(const Message&);
-
+        /*!
+        \brief Push a new instance of a state with the given ID to the stack
+        */
         void pushState(StateId id);
+        /*!
+        \brief Pops the top most state from the stack
+        */
         void popState();
+        /*!
+        \brief Clears all states from the state stack
+        */
         void clearStates();
-
+        /*!
+        \brief Returns true if there are no active states on the stack
+        */
         bool empty() const;
+        /*!
+        \brief Forces the stack to reevaluate the current view in relation to
+        the resolution of the render window.
 
+        The stack then correctly calculates the letterboxing and aspect ratio
+        before updating the context of existing states  to reflect the change
+        */
         sf::View updateView();
-
+        /*!
+        \brief Applies any changes requested by states active on the stack.
+        */
         void applyPendingChanges();
 
     private:

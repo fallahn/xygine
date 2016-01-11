@@ -347,9 +347,6 @@
     <ClInclude Include="include\xygine\Difficulty.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\Assert.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\xygine\physics\World.hpp">
       <Filter>Header Files\physics</Filter>
     </ClInclude>
@@ -460,6 +457,9 @@
     </ClInclude>
     <ClInclude Include="include\xygine\PolyBatch.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\Assert.hpp">
+      <Filter>Header Files\detail</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

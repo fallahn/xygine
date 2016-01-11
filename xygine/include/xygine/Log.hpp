@@ -47,6 +47,11 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Class to allowing messages to be logged to a combination
+    of one or more destinations such as the console, log file or
+    output window in Visual Studio
+    */
     class Logger final
     {
     public:
@@ -63,11 +68,12 @@ namespace xy
             Warning,
             Error
         };
-
-        //logs a message to a given destination.
-        //message: message to log
-        //type: whether this message gets tagged as information, a warning or an error
-        //output: can be the console via cout, a log file on disk, or both
+        /*!
+        \brief Logs a message to a given destination.
+        \param message Message to log
+        \param type Whether this message gets tagged as information, a warning or an error
+        \param output Destination for the message. Can be the console via cout, a log file on disk, or both
+        */
         static void log(const std::string& message, Type type = Type::Info, Output output = Output::Console)
         {
             std::string outstring;

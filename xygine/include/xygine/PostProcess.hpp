@@ -44,18 +44,56 @@ namespace sf
 
 namespace xy
 {
+    /*!
+    \brief Abstract base class for full screen post processes
+
+    Post processes can be added to a scene so that they are applied
+    after a scene is rendered. Multiple post processes can be chained
+    but be aware that too many will affect performance.
+    */
     class PostProcess
     {
     public:
         using Ptr = std::unique_ptr<PostProcess>;
+
         PostProcess();
         virtual ~PostProcess() = default;
         PostProcess(const PostProcess&) = delete;
         const PostProcess& operator = (const PostProcess&) = delete;
 
+        /*!
+        \brief Applies the effect
+        \param RenderTexture A render Texture containing the scene to which the 
+        effect should be applied.
+        \param RenderTarget The target to which the effected scene is rendered.
+        This may be the current render window, or another RenderTexture when
+        chaining multiple effects together.
+
+        The source and destinations are handled automatically by xygine when
+        a post process effect is added to a scene, but must be specified
+        maunally when using the effect outside the scene rendering.
+        */
         virtual void apply(const sf::RenderTexture&, sf::RenderTarget&) = 0;
-        //override this if you need to update shader parameters for example
+        /*!
+        \brief Updates the effect
+
+        Some effects may require shader parameters to be updated over time.
+        This optionally overridable function passes in the current frame time
+        and allows updating those paramters. This is called automatically
+        when the effect is added to a Scene, but will need to be called manually
+        when using the effect on its own.
+        */
         virtual void update(float) {}
+
+        /*!
+        \brief Utility function for creating post process effects
+        */
+        template <typename T, typename... Args>
+        static Ptr create(Args&&... args)
+        {
+            static_assert(std::is_base_of<PostProcess, T>::value, "Can only create post process types");
+            return std::move(std::make_unique<T>(std::forward<Args>(args)...));
+        }
 
     protected:
         static void applyShader(const sf::Shader&, sf::RenderTarget&);

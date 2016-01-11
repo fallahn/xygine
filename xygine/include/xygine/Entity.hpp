@@ -46,6 +46,20 @@ source distribution.
 namespace xy
 {
     class Scene;
+    /*!
+    \brief Entity class
+
+    Entities represent a transform within a scene, and allow creation of
+    game objects via composition - attaching multiple Components to define
+    the look and behaviour of an in-game entity. Entities are memory managed
+    to help prevent fragmentation of the heap and improve data locality,
+    therefore entities must be created via the create() factory function.
+
+    Returned entities are unique_ptrs and therefore typical ownership
+    semantics should be considered. Once an entity is added to a scene the
+    scene will take ownership, invalidating the original reference.
+    \see Scene
+    */
     class Entity final : public sf::Transformable, public sf::Drawable
     {
     public:
@@ -61,21 +75,74 @@ namespace xy
         ~Entity() = default;
         Entity(const Entity&) = delete;
         Entity& operator = (const Entity&) = delete;
+        /*!
+        \brief Factory function for Entities
 
+        Entities can only be created via this function, to allow
+        xygine to internally managed the memory allocated.
+        \param MessageBus Reference to the system message bus
+        */
         static Ptr create(MessageBus&);
 
-        void addChild(Ptr&);
+        /*!
+        \brief Adds another entity as a child of this one
+
+        Entities can have a child / parent relationship where
+        child entities first take on the transform of their parent
+        before applying their own. Adding a child to an entity
+        means that the parent takes ownership, invalidating the
+        original child pointer. There the function returns a
+        pointer to the hild once it has been added.
+        \param Entity entity to add as a child to this one
+        \returns Pointer to newly added child
+        */
+        Entity* addChild(Ptr&);
+        /*!
+        \brief Removes a child entity
+        \param Entity reference to the child to remove
+        \returns Ptr to the removed child
+        */
         Ptr removeChild(Entity&);
+        /*!
+        \brief Returns a reference to the vector containing
+        all of this entity's children
+        */
         const std::vector<Ptr>& getChildren() const;
+        /*!
+        \brief Searches the Entity's children recursively
+        for and entity with the given ID
+        \param UID of the entity to find
+        \returns Pointer to entity if it is found, else returns nullptr
+        */
         Entity* findEntity(sf::Uint64);
-
+        /*!
+        \brief Returns the entity's position in world coordinates
+        */
         sf::Vector2f getWorldPosition() const;
+        /*!
+        \brief Returns the world transform of this entity including
+        any applied to it by parent entities.
+        */
         sf::Transform getWorldTransform() const;
-
+        /*!
+        \brief Sets the position of this entity in world coordinates
+        */
         void setWorldPosition(sf::Vector2f);
+        /*!
+        \brief Updates the entity
 
+        The current frame time is passed to the entity, which then updates
+        any attached components. This is automatically called on entities
+        belonging to a scene and doesn't require manual usage.
+        */
         void update(float dt);
 
+        /*!
+        \brief Adds a component to the entity.
+
+        Added commponents must be derived from the Component class
+        \see Component
+        */
         template <typename T, enable_if<std::is_base_of<Component, T>>...>
         T* addComponent(std::unique_ptr<T>& component)
         {
@@ -93,6 +160,10 @@ namespace xy
             return ret;
         }
 
+        /*!
+        \brief finds a commponent with a given name
+        \returns Pointer to the component is it is found, else returns nullptr
+        */
         template <typename T, enable_if<std::is_base_of<Component, T>>...>
         T* getComponent(const std::string& name)
         {
@@ -111,7 +182,12 @@ namespace xy
             return dynamic_cast<T*>(result->get());
         }
 
-        //be warned this only returns the first found instance of this type
+        /*!
+        \brief Find a commponent by type
+
+        Entities can only have one component of any particular type attached to them
+        \returns Pointer to component if it is found, else returns nullptr
+        */
         template <typename T>
         T* getComponent()
         {
@@ -127,26 +203,80 @@ namespace xy
             }
             return dynamic_cast<T*>(result->get());
         }
+        /*!
+        \brief Mark this entity to be destroyed
 
+        Entities are not destroyed immediately, rather are marked for
+        destruction on the next frame to ensure the entity is in a 
+        safe state to be destroyed. Destroying an entity also deletes
+        all attached components so care should be taken when keeping any
+        references which will become invalidated. When an entity is
+        destroyed a message containing the entity ID is emitted over
+        the message bus.
+        */
         void destroy();
+        /*!
+        \brief Returns true if this entity is marked for destruction 
+        on the next frame
+        */
         bool destroyed() const;
-
+        /*!
+        \brief Returns the Unique ID (UID) of the entity
+        */
         sf::Uint64 getUID() const;
-        void setUID(sf::Uint64);
+        //void setUID(sf::Uint64);
 
+        /*!
+        \brief Passes system messages on to attach components
+
+        This is called automatically on entities belonging to a scene
+        */
         void handleMessage(const Message&);
+        /*!
+        \brief Sets the entities Scene pointer
 
+        Used internally by xygine
+        */
         void setScene(Scene*);
+        /*!
+        \brief Returns a pointer to the Scene to which this entity belongs
+        else returns nullptr if not yet added to a scene
+        */
         Scene* getScene();
 
-        //returns true if command was consumed and should not be passed on
+        /*!
+        \brief Used by the Scene to execute commands targeted at this entity
+        */
         bool doCommand(const Command&, float);
+        /*!
+        \brief Add a command category to this entity
+
+        Entities can belong to multiple command categories which are
+        OR'd together. Any commands targeting a category to which this
+        entity belongs are executed on this entity
+        */
         void addCommandCategories(sf::Int32);
+        /*!
+        \brief Returns true if this Entity belongs to any of the
+        given categories.
+        */
         bool hasCommandCategories(sf::Int32);
 
-        //returns the number of entities parented to this, including this
+        /*!
+        \brief Returns the total number of entities parented to this
+        one IE the depth of the entity in the scene graph
+
+        The size returned includes this entity, so an entity with no
+        parents will return 1, and an entity belonging to a Scene will
+        always return at least 2.
+        */
         sf::Uint32 size() const;
 
+        /*!
+        \brief Returns the vertices used to draw the entity's AABB
+
+        Used by the Scene class when drawing debug output
+        */
         void getVertices(std::vector<sf::Vertex>&);
 
     private:

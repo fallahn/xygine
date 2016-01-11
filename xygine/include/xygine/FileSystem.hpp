@@ -35,12 +35,25 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Utilities for reading files from the current file system
+    */
     class FileSystem final
     {
     public:
-
+        /*!
+        \brief Lists all the files in the given directory
+        */
         static std::vector<std::string> listFiles(std::string path);
+        /*!
+        \brief Attempts to return a string containing the file extension
+        of a given path
+        */
         static std::string getFileExtension(const std::string& path);
+        /*!
+        \brief Attempts to return the name of a file at the end of
+        a given file path
+        */
         static std::string getFileName(const std::string& path);
 
     private:

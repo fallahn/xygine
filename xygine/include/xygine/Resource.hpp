@@ -42,6 +42,14 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Abstract base class for resource management
+
+    The templated base class provides resource management for
+    types given by derived classes. Resource management makes sure
+    only a single instance of each resource, such as a texture or
+    shader is loaded at a time.
+    */
     template <class T>
     class BaseResource
     {
@@ -53,6 +61,14 @@ namespace xy
         BaseResource(const BaseResource&) = delete;
         const BaseResource& operator = (const BaseResource&) = delete;
 
+        /*!
+        \brief Attempts to load a resource from disk at the given path
+
+        If the resource is not found or fails to load the resource manager
+        supplies a fallback resource, as defined by the concrete implementation
+        of the resource manager.
+        \see errorHandle
+        */
         T& get(const std::string& path = "default")
         {
             //if we have a valid path check current resources and return if found
@@ -78,14 +94,27 @@ namespace xy
             return *m_resources[path];
         }
     protected:
+        /*!
+        \brief Function for handling resource acquisition errors
+
+        Concrete resource manager types must implement this to provide 
+        a fallback nstance of the resource type should loading of the
+        requested resource fail for some reason.
+        */
         virtual std::unique_ptr<T> errorHandle() = 0;
     private:
         std::unordered_map<std::string, std::unique_ptr<T>> m_resources;
     };
 
+    /*!
+    \brief Resource manager for textures
+    */
     class TextureResource final : public BaseResource<sf::Texture>
     {
     private:
+        /*!
+        \see BaseResource
+        */
         std::unique_ptr<sf::Texture> errorHandle() override
         {
             std::unique_ptr<sf::Texture> t = std::make_unique<sf::Texture>();
@@ -95,8 +124,14 @@ namespace xy
             return std::move(t);
         }
     };
+    /*!
+    \brief Resource manager for sf::Image types
+    */
     class ImageResource final : public BaseResource<sf::Image>
     {
+        /*!
+        \see BaseResource
+        */
         std::unique_ptr<sf::Image> errorHandle() override
         {
             std::unique_ptr<sf::Image> i = std::make_unique<sf::Image>();
@@ -105,6 +140,9 @@ namespace xy
         }
     };
 
+    /*!
+    \brief Resource manager for Fonts
+    */
     class FontResource final : public BaseResource<sf::Font>
     {
     public:
@@ -113,7 +151,9 @@ namespace xy
         sf::Font m_font;
         std::unique_ptr<sf::Font> errorHandle() override;
     };
-
+    /*!
+    \brief Resource manager for sound files
+    */
     class SoundResource final : public BaseResource<sf::SoundBuffer>
     {
         std::unique_ptr<sf::SoundBuffer> errorHandle() override

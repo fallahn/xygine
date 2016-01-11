@@ -43,6 +43,9 @@ namespace sf
 
 namespace xy
 {
+    /*!
+    \brief Specialised resource manager for shaders
+    */
     class ShaderResource final
     {
     public:
@@ -54,7 +57,30 @@ namespace xy
         ShaderResource(const ShaderResource&) = delete;
         const ShaderResource& operator = (const ShaderResource&) = delete;
 
+        /*!
+        \brief get a reference to the shader corresponding to the given ID
+
+        Before a shader can be returned it must be preloaded and associated with
+        the given ID. If using custom shaders along side the built in xygine shaders
+        the the Unique ID should start at at least Shader::Type::Count
+        \see preLoad
+        */
         sf::Shader& get(Id);
+        /*!
+        \brief Preloads a shader.
+
+        Shaders need to be loaded and compiled before they can be used which
+        can be a time consuming action. Preloading shaders when other resources
+        are loaded allows shaders to be returned more efficiently at run time.
+
+        \param Id A unique 32 bit integer to identify the loaded shader
+        \param string A string containing the source for the vertex shader.
+        The string can either be a constant stored within a source file, or loaded
+        from an external file at run time.
+        \param string A string containing the source for the fragment shader.
+        The string can either be a constant stored within a source file, or loaded
+        from an external file at run time.
+        */
         void preload(Id, const std::string&, const std::string&);
 
     private:

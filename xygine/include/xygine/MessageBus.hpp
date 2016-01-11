@@ -62,6 +62,16 @@ namespace xy
     class Component;
     class Entity;
     
+    /*!
+    \brief Message class
+
+    The message class contains an ID used to identify
+    the type of data contained in the message, and the
+    message data itself. xygine uses some internal messaging
+    types, so custom messages should have their IDs start at
+    Message::Type::Count
+    \see MessageBus
+    */
     class Message final
     {
         friend class MessageBus;
@@ -77,12 +87,16 @@ namespace xy
             NetworkMessage,
             Count
         };
-
+        /*!
+        \brief Audio event message data
+        */
         struct AudioEvent
         {
             sf::Uint64 entityId = 0;
         };
-
+        /*!
+        \brief Physics event message data
+        */
         struct PhysicsEvent
         {
             enum
@@ -102,7 +116,9 @@ namespace xy
                 const Physics::Contact* contact;
             };
         };
-
+        /*!
+        \brief Entity event message data
+        */
         struct EntityEvent
         {
             enum
@@ -113,7 +129,9 @@ namespace xy
             Entity* entity = nullptr;
             sf::Int32 direction = 0;
         };
-
+        /*!
+        \brief UI event message data
+        */
         struct UIEvent
         {
             enum
@@ -133,7 +151,9 @@ namespace xy
             StateId stateId = -1;
             Difficulty difficulty;
         };
-
+        /*!
+        \brief Compnent event message data
+        */
         struct ComponentEvent
         {
             enum
@@ -161,10 +181,26 @@ namespace xy
 
         Id id = -1;
 
+        /*!
+        \brief Returns the actual data containend in the message
+
+        Using the ID of the message to determine the data type of the
+        message, this function will return a reference to that data.
+        It is important to request the correct type of data from the
+        message else behaviour will be undefined.
+
+        if(msg.id == Type::PhysicsMessage)
+        {
+            const PhysicsEvent& data = msg.getData<PhysicsEvent>();
+            //do stuff with data
+        }
+
+
+        */
         TEMPLATE_GUARD
         const T& getData() const
         {
-            //for some reason this isn't working on MSVC
+            //this isn't working on MSVC
             //static_assert(std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value, "");
             XY_ASSERT(sizeof(T) == m_dataSize, "size of supplied type is not equal to data size");
             return *static_cast<T*>(m_data);
@@ -175,6 +211,22 @@ namespace xy
         std::size_t m_dataSize;
     };
 
+    /*!
+    \brief System wide message bus for custom event messaging
+
+    The app class contains an instance of the MessageBus which allows
+    events and messages to be broadcast system wide, upon which objects
+    entities and components can decide whether or not to act. Custom
+    message type IDs can be added by extending the ID set starting
+    at Message::Type::Count. EG
+
+    enum MyMessageTypes
+    {
+        AlienEvent = Message::Type::Count,
+        GhostEvent,
+        BadgerEvent //etc...
+    };
+    */
     class MessageBus final
     {
     public:
@@ -183,10 +235,24 @@ namespace xy
         MessageBus(const MessageBus&) = delete;
         const MessageBus& operator = (const MessageBus&) = delete;
 
-        //read and despatch all messages on the message stack
+        /*!
+        \brief Read and despatch all messages on the message stack
+
+        Used internally by xygine
+        */
         const Message& poll();
-        //places a message on the message stack, and returns a pointer to the data
-        //of type T, which needs to be filled in
+        /*!
+        \brief Places a message on the message stack, and returns a pointer to the data
+        
+        The message data can then be filled in via the pointer. Custom message types can
+        be defined via structs, which are then created oon the message bus. Structs should
+        contain only trivial data such as PODs and pointers to other objects.
+        ATTEMPING TO PLACE LARGE OBJECTS DIRECTLY ON THE MESSAGE BUS IS ASKING FOR TROUBLE
+        Custom message types should have a unique 32 bit integer ID which can be used
+        to identify the message type when reading messages
+        \param id Unique Id for this message type
+        \returns Pointer to an empty message of given type.
+        */
         TEMPLATE_GUARD
         T* post(Message::Id id)
         {
@@ -208,10 +274,21 @@ namespace xy
             return static_cast<T*>(msg->m_data);
         }
 
+        /*!
+        \brief Returns true if there are no messages left on the message bus
+        */
         bool empty();
+        /*!
+        \brief Returns the number of messages currently sitting on the message bus
 
-        std::size_t pendingMessageCount() const; //used for stats
+        Useful for stat logging and debugging.
+        */
+        std::size_t pendingMessageCount() const;
 
+        /*!
+        \brief Disables the message bus.
+        Used internally by xygine
+        */
         void disable() { m_enabled = false; }
 
     private:

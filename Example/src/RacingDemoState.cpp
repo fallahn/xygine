@@ -68,7 +68,7 @@ RacingDemoState::RacingDemoState(xy::StateStack& stateStack, Context context)
 
     m_scene.setView(context.defaultView);
     //m_scene.drawDebug(true);
-    xy::PostProcess::Ptr pp = xy::PostChromeAb::create();
+    xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostChromeAb>();
     m_scene.addPostProcess(pp);
     //pp = xy::PostBloom::create();
     //m_scene.addPostProcess(pp);

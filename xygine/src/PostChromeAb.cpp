@@ -61,8 +61,3 @@ void PostChromeAb::update(float dt)
 {
     accumulatedTime += dt;
 }
-
-PostProcess::Ptr PostChromeAb::create()
-{
-    return std::move(std::make_unique<PostChromeAb>());
-}

@@ -63,6 +63,8 @@ namespace
     };
 
     sf::Uint64 controllerId = 0;
+
+    bool debugDraw = false;
 }
 
 ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context)
@@ -74,9 +76,9 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
 
     m_scene.setView(context.defaultView);
     //m_scene.drawDebug(true);
-    xy::PostProcess::Ptr pp = xy::PostChromeAb::create();
+    xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostChromeAb>();
     m_scene.addPostProcess(pp);
-    pp = xy::PostBloom::create();
+    pp = xy::PostProcess::create<xy::PostBloom>();
     m_scene.addPostProcess(pp);
     m_scene.setClearColour({ 0u, 0u, 20u });
 
@@ -85,9 +87,6 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
 
     setupParticles();
     context.renderWindow.setMouseCursorVisible(true);
-
-    //simulate a longer loading time
-    sf::sleep(sf::seconds(5.f));
 
     quitLoadingScreen();
 }
@@ -172,6 +171,10 @@ bool ParticleDemoState::handleEvent(const sf::Event& evt)
             break;
         case fireKey:
             
+            break;
+        case sf::Keyboard::Q:
+            debugDraw = !debugDraw;
+            m_scene.drawDebug(debugDraw);
             break;
         default: break;
         }

@@ -37,15 +37,40 @@ namespace sf
 
 namespace xy
 {
+    /*!
+    \brief Allows quickly adding a shader property to a drawable component
+
+    Inheriting from this when creating a new drawable component means a
+    reference to a shader can easily be added.
+    */
     class ShaderProperty
     {
     public:
         ShaderProperty() : m_shader(nullptr), m_activeShader(nullptr){};
         virtual ~ShaderProperty() = default;
 
+        /*!
+        \brief Set which shader should be used
+        */
         void setShader(sf::Shader* shader) { m_shader = m_activeShader = shader; }
+        /*!
+        \brief Returns a pointer to the current shader if it exists, else nullptr
+        */
         sf::Shader* getShader() const { return m_shader; }
+        /*!
+        \brief Returns a pointer to the active shader
+
+        Use this to set the shader property of the RenderStates passed to the
+        drawable component's draw function
+        */
         const sf::Shader* getActiveShader() const { return m_activeShader; }
+        /*!
+        \brief Set whether or not this shader is currently active
+        \param b true to set the shader active
+
+        When the shader is inactive nullptr is returned by getActiveShader()
+        maintaining a valid value in any sf::RenderState with which it is used.
+        */
         void setShaderActive(bool b = true) { m_activeShader = (b) ? m_shader : nullptr; }
 
     private:

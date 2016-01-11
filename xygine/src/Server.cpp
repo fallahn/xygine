@@ -61,7 +61,7 @@ GameServer::GameServer()
     m_connectedPlayers  (0u),
     m_waitingThreadEnd  (false),
     m_messageBus        (),
-    m_scene             (m_messageBus, false)
+    m_scene             (m_messageBus)
 {
     m_listener.setBlocking(false);
     m_connections.emplace_back(std::make_unique<RemoteConnection>());

@@ -43,10 +43,24 @@ source distribution.
 
 namespace xy
 {   
+    /*!
+    \brief Abstract base class for new games or applications
+
+    When creating a new game or application this class provides
+    management for basic proeprties such as video settings and
+    event handling. All events and system messages are despatched
+    from here so that they are available across the entire application.
+    */
     class App
     {
     public:
 
+        /*!
+        \brief VideoSettings struct
+
+        Contains the current video settings for the application
+        which a read and written to configuration file
+        */
         struct VideoSettings final
         {
             sf::Int32 WindowStyle;
@@ -68,13 +82,22 @@ namespace xy
                     && vs.WindowStyle == this->WindowStyle);
             }
         };
+        /*!
+        \brief Audio settings struct
 
+        Contains the audio settings which are read / written to the settings file
+        */
         struct AudioSettings final
         {
             bool muted = false;
             float volume = 1.f;
         };
 
+        /*!
+        \brief Game settings struct
+
+        Contains game settings which are read / written to the settings file
+        */
         struct GameSettings final
         {
             Difficulty difficulty = Difficulty::Easy;
@@ -88,17 +111,54 @@ namespace xy
         App(const App&) = delete;
         const App& operator = (const App&) = delete;
 
+        /*!
+        \brief Starts the application
+
+        This should be called once from within main()
+        This will start the application and enter the game loop
+        */
         void run();
+        /*!
+        \brief Pauses the application
+        */
         void pause();
+        /*!
+        \brief Resumes the application if it is paused
+        */
         void resume();
+        /*!
+        \brief Returns a reference to the struct containing
+        the current audio settings.
 
+        Audio settings properties are updated via the messaging
+        system
+        \see MessageBus
+        */
         const AudioSettings& getAudioSettings() const;
-
+        /*!
+        \brief Returns a reference to a struct containing the current
+        Video settings.
+        */
         const VideoSettings& getVideoSettings() const;
+        /*!
+        \brief Applies a given set of video settings
+
+        Video settings can be updated va the messaging system
+        or by providing this function with a struct containing
+        the desired settings. If requested settings are invalid
+        for any reason the settigns will not be applied and
+        a message will be printed when in debug mode.
+        */
         void applyVideoSettings(const VideoSettings&);
-
+        /*!
+        \brief Returns a reference to the struct containing
+        the current game settings
+        */
         const GameSettings& getGameSettings() const;
-
+        /*!
+        \brief Returns a reference to the message bus
+        \see MessageBus
+        */
         MessageBus& getMessageBus();
         sf::TcpSocket& getSocket();
 
@@ -106,13 +166,41 @@ namespace xy
         sf::Int16 getClientID() const;
         bool hosting() const;
         void setDestinationIP(const std::string&);
+        /*!
+        \brief Add a name / value pair to the score board
 
+        The app contains a list of scores along with player
+        names which are written to an external file on exit.
+        */
         void addScore(const std::string& name, float value);
-        const std::vector<Scores::Item>& getScores() const;
-        int getLastScoreIndex() const;
+        /*!
+        \brief Returns a vector containing the scores loaded
+        from an external file
 
+        The vector can be used to display name / value lists
+        in menus or high score tables
+        \see UI::ScoreList
+        */
+        const std::vector<Scores::Item>& getScores() const;
+        /*!
+        \brief Return the index in the score list of the last
+        score to be added
+        */
+        int getLastScoreIndex() const;
+        /*!
+        \brief Sets the current player's initials
+
+        The initials can be displayed throughout the game, and
+        can be written to the score list
+        */
         void setPlayerInitials(const std::string&);
 
+        /*!
+        \brief Returns the mouse position in world coordinates
+
+        This is only valid while an instance of the app is running
+        and will cause an assertion error otherwise
+        */
         static sf::Vector2f getMouseWorldPosition();
 
     protected:
@@ -120,16 +208,65 @@ namespace xy
         void disconnect();
         bool createLocalServer();
 
+        /*!
+        \brief Returns a reference to the current render window
+        */
         sf::RenderWindow& getRenderWindow();
+        /*!
+        \brief Function for despatching all window events
 
+        This should be implemented in the derived game or application
+        to allow passing down any received SFML events throughout the
+        program. Usually this would be passing the event to a state stack
+        */
         virtual void handleEvent(const sf::Event&) = 0;
-        virtual void handleMessage(const Message&) = 0;
+        /*!
+        \brief Function for despatching messages received by the message bus
 
+        This should be implemented by any derived game or application
+        to allow custom or system messages to be handled by xygine objects
+        */
+        virtual void handleMessage(const Message&) = 0;
+        /*!
+        \brief Registers a custom state with a state stack
+
+        This should be implements by derived games or applications
+        so that custom states can be registered with the xygine
+        state stack instance.
+        \see State
+        */
         virtual void registerStates() = 0;
+        /*!
+        \brief Updates derived applications with the elapsed frame time
+        during the game loop
+
+        Logic updates should be performed here by any game objects such
+        as the state stack. The frame time is fixed at 1/60 second
+        */
         virtual void updateApp(float dt) = 0;
+        /*!
+        \brief Allows updating game logic while the application is paused
+
+        For exmple allows parsing input events for menus while pausing
+        the current game play state
+        */
         virtual void pauseApp(float dt) = 0;
+        /*!
+        \brief Updates the render window
+
+        The render window clear() and display() functions
+        should be called in the implementation, with any custom drawing
+        done in between
+        */
         virtual void draw() = 0;
 
+        /*!
+        \brief Called when the application shuts down
+
+        Optionally overridable this allows derived classes to tidy
+        up any data when the program exits, such as clearing the state
+        stack.
+        */
         virtual void finalise();
 
     private:

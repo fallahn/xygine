@@ -275,25 +275,25 @@ namespace xy
 
                 "varying vec3 v_eyeDirection;\n" \
                 "varying vec3 v_lightDirection;\n" \
-
+                
                 "const vec3 tangent = vec3(1.0, 0.0, 0.0);\n" \
                 "const vec3 normal = vec3(0.0, 0.0, 1.0);\n" \
-
+                
                 "void main()\n" \
                 "{\n" \
                 "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n" \
                 "    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n" \
                 "    gl_FrontColor = gl_Color;\n" \
-
-                "    vec3 n = normalize(gl_NormalMatrix * gl_Normal);\n" \
+                
+                "    vec3 n = normalize(gl_NormalMatrix * normal);\n" \
                 "    vec3 t = normalize(gl_NormalMatrix * tangent);\n" \
                 "    vec3 b = cross(n,t);\n" \
                 "    mat3 tangentSpaceTransformMatrix = mat3(t.x, b.x, n.x, t.y, b.y, n.y, t.z, b.z, n.z);\n" \
-
+                
                 "    vec3 viewVertex = vec3(gl_ModelViewMatrix * gl_Vertex);\n" \
                 "    vec3 viewLightDirection = vec3(gl_ModelViewMatrix * vec4(u_lightWorldPosition, 1.0)) - viewVertex;\n" \
                 /*TODO why the frick doesn't the tangent space matrix transform the light position????*/
-                "    v_lightDirection = tangentSpaceTransformMatrix * viewLightDirection;\n" \
+                "    v_lightDirection = tangentSpaceTransformMatrix * normalize(viewLightDirection);\n" \
                 "    v_eyeDirection = tangentSpaceTransformMatrix * ((gl_ModelViewMatrix * vec4(u_cameraWorldPosition, 1.0)).xyz - viewVertex);\n" \
                 "}";
 
@@ -305,9 +305,7 @@ namespace xy
                 "#endif\n" \
                 "uniform sampler2D u_normalMap;\n" \
                 "uniform float u_lightIntensity = 0.86;\n" \
-
-                /*TODO make ambient colour match background*/
-                "uniform vec3 u_ambientColour = vec3 (0.4, 0.4, 0.4);\n" \
+                "uniform vec3 u_ambientColour = vec3 (0.1, 0.1, 0.1);\n" \
 
                 "varying vec3 v_eyeDirection;\n" \
                 "varying vec3 v_lightDirection;\n" \
@@ -323,6 +321,7 @@ namespace xy
                 "    vec4 diffuseColour = gl_Color;\n" \
                 "#endif\n" \
                 "    vec3 normalVector = texture2D(u_normalMap, gl_TexCoord[0].xy).rgb * 2.0 - 1.0;\n" \
+
                 "    vec3 blendedColour = diffuseColour.rgb * u_ambientColour;\n" \
                 "    float diffuseAmount = max(dot(normalVector, normalize(v_lightDirection)), 0.0);\n" \
                 /*multiply by falloff*/

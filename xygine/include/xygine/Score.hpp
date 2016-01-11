@@ -37,6 +37,11 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Provides ability to load and save scores as an external binary file
+
+    Used internally by xygine
+    */
     class Scores final
     {
     public:

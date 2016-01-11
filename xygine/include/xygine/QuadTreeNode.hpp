@@ -41,6 +41,16 @@ source distribution.
 namespace xy
 {
     class QuadTree;
+    /*!
+    \brief A node in the QuadTree
+
+    Each node represents a single partition, containing up to
+    4 further partitions, and the positions of entities which
+    have a QuadTreeComponent attached to them. Interaction 
+    with the QuadTree in xygine should normally be done via
+    the Scene class
+    \see Scene
+    */
     class QuadTreeNode final
     {
     public:

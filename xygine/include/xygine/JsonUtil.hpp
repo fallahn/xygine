@@ -41,9 +41,16 @@ namespace xy
 {
     namespace Util
     {
+        /*!
+        \brief Utility functions for parsing json files with picojson
+        */
         namespace Json
         {
-
+            /*!
+            \brief Parse a json objects as a sf::FloatRect
+            \param o picojson object to parse
+            \param rect Destination to place parsed paramters into
+            */
             static inline void parseJsonObject(const picojson::object& o, sf::FloatRect& rect)
             {
                 for (const auto& p : o)
@@ -70,7 +77,11 @@ namespace xy
                     }
                 }
             }
-
+            /*!
+            \brief Parse a json object into an sf::Vector2f
+            \param o picojson object to parse
+            \param v Destination vector in to which to place the parsed data
+            */
             static inline void parseJsonObject(const picojson::object& o, sf::Vector2f& v)
             {
                 for (const auto& p : o)
@@ -87,7 +98,9 @@ namespace xy
                     }
                 }
             }
-
+            /*!
+            \brief Convert a 32bit integer into an sf::Color
+            */
             static inline sf::Color colourFromInt(sf::Int32 value)
             {
                 sf::Color c;
@@ -102,6 +115,9 @@ namespace xy
 
         namespace File
         {
+            /*!
+            \brief Validates that an opened file has a length greater than zero
+            */
             static inline bool validLength(std::ifstream& file)
             {
                 file.seekg(0, file.end);

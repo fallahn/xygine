@@ -38,6 +38,15 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Quad Tree spatial partitioning class
+
+    The quad tree is used to partition the world for faster collision
+    querying and culling of renderables. xygines QuadTree instance is
+    a member of the Scene class, and interaction should be done via
+    the scene interface
+    \see Scene
+    */
     class QuadTree final : public sf::Drawable
     {
     public:

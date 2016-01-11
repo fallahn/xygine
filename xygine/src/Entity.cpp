@@ -61,11 +61,12 @@ Entity::Ptr Entity::create(MessageBus& mb)
     return std::move(objectPool.get(mb, Priv()));
 }
 
-void Entity::addChild(Entity::Ptr& child)
+Entity* Entity::addChild(Entity::Ptr& child)
 {
     child->m_parent = this;
     child->setScene(m_scene);
     m_children.push_back(std::move(child));
+    return m_children.back().get();
 }
 
 Entity::Ptr Entity::removeChild(Entity& child)
@@ -206,10 +207,10 @@ sf::Uint64 Entity::getUID() const
     return m_uid;
 }
 
-void Entity::setUID(sf::Uint64 id)
-{
-    m_uid = id;
-}
+//void Entity::setUID(sf::Uint64 id)
+//{
+//    m_uid = id;
+//}
 
 void Entity::handleMessage(const Message& msg)
 {

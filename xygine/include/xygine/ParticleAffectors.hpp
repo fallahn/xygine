@@ -36,10 +36,25 @@ source distribution.
 namespace xy
 {
     struct Particle;
+    /*!
+    \brief Applies a given force to each particle, each frame
+    */
     struct ForceAffector
     {
+        /*!
+        \brief Constructor
+        \param force Force to apply each frame
+        */
         explicit ForceAffector(const sf::Vector2f& force);
         void operator()(Particle& p, float dt);
+        /*!
+        \brief Set the force affector to apply a ramdom force each frame
+        \param rangeStart Minimal force to apply
+        \param rangeEnd Maximum force to apply
+
+        Calling this at least once will disable any value the affector 
+        was constructed with
+        */
         void setRandom(const sf::Vector2f& rangeStart, const sf::Vector2f& rangeEnd);
 
     private:
@@ -50,8 +65,17 @@ namespace xy
         sf::Vector2f m_randomEnd;
     };
 
+    /*!
+    \brief Modifies a particle's colour over time
+    */
     struct ColourAffector
     {
+        /*!
+        \brief Constructor
+        \param start Initial particle colour
+        \param end Final particle colour
+        \param duration Amount of time to take to change from start colour to end colour
+        */
         ColourAffector(const sf::Color& start, const sf::Color& end, float duration);
         void operator() (Particle& p, float dt);
 
@@ -60,9 +84,15 @@ namespace xy
         sf::Color m_start;
         sf::Color m_end;
     };
-
+    /*!
+    \brief Applies a given rotation in degrees per second to a particle
+    */
     struct RotateAffector
     {
+        /*!
+        \brief Constructor
+        \param rotation Rotation amount in degrees per second to apply to each particle
+        */
         explicit RotateAffector(float rotation);
         void operator() (Particle& p, float dt);
 
@@ -70,8 +100,15 @@ namespace xy
         float m_rotation;
     };
 
+    /*!
+    \brief Scales a particle by a given amount each frame
+    */
     struct ScaleAffector
     {
+        /*!
+        \brief Constructor
+        \param scale Scale to apply to the particle each frame.
+        */
         explicit ScaleAffector(const sf::Vector2f& scale);
         void operator() (Particle& p, float dt);
     private:

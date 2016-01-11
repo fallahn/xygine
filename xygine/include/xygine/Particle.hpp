@@ -34,6 +34,11 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Struct containing properties for particles
+    used in the particle system component.
+    \see ParticleSystem
+    */
     struct Particle final : public sf::Transformable
     {
         sf::Vector2f velocity;

@@ -44,9 +44,18 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Scene class
+
+    The Scene class is reponsible for updating and drawing the
+    scene graph constructed of entities.
+    */
     class Scene final : public sf::Drawable
     {
     public:
+        /*!
+        \brief Layer names to which entities may be added
+        */
         enum Layer
         {
             BackRear = 0,
@@ -59,52 +68,115 @@ namespace xy
             Count
         };
 
-        Scene(MessageBus&, bool createBuffers = true);
+        explicit Scene(MessageBus&);
         ~Scene() = default;
         Scene(const Scene&) = delete;
         const Scene& operator = (const Scene&) = delete;
 
+        /*!
+        \brief Updates the entire scene with the current frame time
+
+        This should be called once per frame to make sure all entities
+        and components belonging to the scene are updated
+        */
         void update(float);
+        /*!
+        \brief Scene message handler
+
+        This should be called once a frame with any messages
+        received from the message bus. This forwards all messages to
+        entities and components within the scene
+        */
         void handleMessage(const Message&);
-        //moves an entity into the scene on to the given
-        //layer. returns a pointer to the entity
+        /*!
+        \brief Moves an entity into the scene on to the given
+        layer.
+        \returns Pointer to the entity once it has been added
+
+        Once an entity is added to the scene the scene takes
+        ownership, invalidating the original entity pointer.
+        The returned pointer can be used to continue to modify
+        the entity but care should be taken as deleted entities
+        will lead to dangling pointers which are kept alive for
+        too long.
+        */
         Entity* addEntity(Entity::Ptr&, Layer);
-        //returns a pointer to the entity with given UID
-        //or nullptr if that entity does exist
+        /*!
+        \brief Find an entity with the given unique ID
+        \returns Pointer to the entity if it exists within 
+        the scene, else returns nullptr
+        */
         Entity* findEntity(sf::Uint64);
-        //returns a reference to the root entity
-        //of a given layer
+        /*!
+        \brief Returns a reference to the root entity of a given layer
+        */
         Entity& getLayer(Layer);
 
-        //sets the current scene view and activates
-        //the default scene camera
+        /*!
+        \brief Sets the current scene view and activates the default scene camera
+        */
         void setView(const sf::View& v);
-        //returns the view of the current active camera
+        /*!
+        \brief Returns the view of the current active camera
+        */
         sf::View getView() const;
-        //returns a floatrect representing the visible
-        //area of the active camera. useful for quad tree queries
+        /*!
+        \brief Returns a FloatRect representing the visible area of the active camera.
+        Useful for quad tree queries
+        */
         sf::FloatRect getVisibleArea() const;
-        //sets the scene's currently active camera. uses the 
-        //scene's default if nullptr is passed.
+        /*!
+        \brief Sets the scene's currently active camera.
+        Passing nullptr tells the scene to use the default camera
+        */
         void setActiveCamera(const Camera*);
-        //set the clear colour of the scene's default camera
-        //this only affects buffers used in post process effects
+        /*!
+        \brief Set the clear colour of the scene's default camera
+        
+        This only affects buffers used in post process effects, else
+        it has no effect
+        */
         void setClearColour(const sf::Color&);
         
-        //send a command targetting one or more entities
+        /*!
+        \brief Sends a command to the scene graph
+
+        Commands can be used to update a specific entity or group of 
+        entities.
+        \see Command
+        */
         void sendCommand(const Command&);
 
-        //returns a vector of quad tree components found in the
-        //queried area.
+        /*!
+        \brief Queries the scene's quad tree
+        \param FloatRect and area in world coordinates to query the quad tree
+        \returns vector of pointers to QuadTree components found in the queried area
+
+        The components inthe returned vector can be used to determine entities
+        which fall in a given area that can be used in collision testing or
+        render culling for example. For an entity to be considered it must
+        have a QuadTreeComponent attached and have at least one component which
+        returns a valid AABB in world coordinates.
+        */
         std::vector<QuadTreeComponent*> queryQuadTree(const sf::FloatRect&);
 
-        //resets the scene removing all entities and post effects
+        /*!
+        \brief Resets the scene removing all entities and post effects
+        */
         void reset();
 
-        //add a post effect to the end of the render chain
+        /*!
+        \brief Adds a post effect to the end of the render chain
+        \see PostProcess
+        */
         void addPostProcess(PostProcess::Ptr&);
 
-        //enables output debug information when _DEBUG_ is defined
+        /*!
+        \brief enables output debug information when _DEBUG_ is defined
+
+        Scene debug info includes drawing the AABB of scene entities as
+        well as partition boundries of the QuadTree
+        */
         void drawDebug(bool);
 
     private:

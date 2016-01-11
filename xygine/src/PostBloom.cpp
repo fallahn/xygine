@@ -61,11 +61,6 @@ void PostBloom::apply(const sf::RenderTexture& src, sf::RenderTarget& dest)
     add(src, m_firstPassTextures[1], dest);
 }
 
-PostProcess::Ptr PostBloom::create()
-{
-    return std::move(std::make_unique<PostBloom>());
-}
-
 //private
 void PostBloom::initTextures(const sf::Vector2u& size)
 {

@@ -44,6 +44,12 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Utility class for reporting statistics
+
+    Useful for reporting data such as message bus statistics or
+    frame rate and printing it on screen
+    */
     class StatsReporter final
     {
     public:
@@ -52,11 +58,43 @@ namespace xy
         StatsReporter(const StatsReporter&) = delete;
         StatsReporter& operator = (const StatsReporter&) = delete;
 
+        /*!
+        \brief Reports a name/value pair
+        \param name Name of the value to report
+        \param value Value to report
+
+        Normally used to report information such as frame rate or key bindings
+        report("FPS", std::to_string(framerate));
+        report("Space", "Jump");
+
+        Once a name/value pair has been reported it will remain in the output
+        even if the value is not updated. To update a value simply report
+        the same name with a new value.
+        */
         void report(const std::string& name, const std::string& value);
+        /*!
+        \brief Removes a report
+
+        Should a name/value pair no longer need to be displayed use this
+        passing the name of the report to remove to remove it from the output
+        */
         void remove(const std::string& name);
 
+        /*!
+        \brief Returns a string containing all the reported data
+
+        This returns the output of all the reported data as a string
+        so that it may be displayed via any string supporting output
+        eg sf::Text
+        */
         const std::string& getString();
 
+        /*!
+        \brief static instance of a reporter
+
+        Used as a global access point for the REPORT macro, available
+        when build in debug mode.
+        */
         static StatsReporter reporter;
 
     private:

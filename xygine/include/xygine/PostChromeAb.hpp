@@ -35,15 +35,26 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Creates a Chromatic Abberation effect
+
+    Chromatic abberation is the apparent split in colours often
+    noticed near the edges of powerful lenses. The effect also adds
+    noise and scanlines to try and recreate the overall effect of
+    and old CRT type monitor
+    */
     class PostChromeAb final : public PostProcess
     {
     public:
         PostChromeAb();
-
+        /*!
+        \see PostProcess
+        */
         void apply(const sf::RenderTexture&, sf::RenderTarget&) override;
+        /*!
+        \see PostProcess
+        */
         void update(float) override;
-
-        static PostProcess::Ptr create();
 
     private:
         ShaderResource m_shaderResource;

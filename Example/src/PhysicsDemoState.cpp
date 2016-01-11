@@ -77,7 +77,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     launchLoadingScreen();
     m_scene.setView(context.defaultView);
     //m_scene.drawDebug(true);
-    auto pp = xy::PostChromeAb::create();
+    auto pp = xy::PostProcess::create<xy::PostChromeAb>();
     m_scene.addPostProcess(pp);
     m_scene.setClearColour(sf::Color(0u, 0u, 10u));
 
