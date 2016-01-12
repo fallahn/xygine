@@ -271,28 +271,29 @@ namespace xy
                 "#version 120\n" \
                 "uniform vec3 u_lightWorldPosition = vec3(960.0, 540.0, 280.0);\n" \
                 "uniform vec3 u_cameraWorldPosition = vec3(960.0, 540.0, 480.0);\n" \
-                "uniform mat4 u_worldViewMatrix;\n" \
+                "uniform mat4 u_inverseWorldViewMatrix;\n" \
 
                 "varying vec3 v_eyeDirection;\n" \
                 "varying vec3 v_lightDirection;\n" \
-                
+
                 "const vec3 tangent = vec3(1.0, 0.0, 0.0);\n" \
                 "const vec3 normal = vec3(0.0, 0.0, 1.0);\n" \
-                
+
                 "void main()\n" \
                 "{\n" \
                 "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n" \
                 "    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n" \
                 "    gl_FrontColor = gl_Color;\n" \
-                
-                "    vec3 n = normalize(gl_NormalMatrix * normal);\n" \
-                "    vec3 t = normalize(gl_NormalMatrix * tangent);\n" \
+
+                "    mat3 normalMatrix = transpose(mat3(u_inverseWorldViewMatrix));\n" \
+                "    vec3 n = normalize(normalMatrix * normal);\n" \
+                "    vec3 t = normalize(normalMatrix * tangent);\n" \
                 "    vec3 b = cross(n,t);\n" \
                 "    mat3 tangentSpaceTransformMatrix = mat3(t.x, b.x, n.x, t.y, b.y, n.y, t.z, b.z, n.z);\n" \
                 
                 "    vec3 viewVertex = vec3(gl_ModelViewMatrix * gl_Vertex);\n" \
                 "    vec3 viewLightDirection = vec3(gl_ModelViewMatrix * vec4(u_lightWorldPosition, 1.0)) - viewVertex;\n" \
-                /*TODO why the frick doesn't the tangent space matrix transform the light position????*/
+
                 "    v_lightDirection = tangentSpaceTransformMatrix * normalize(viewLightDirection);\n" \
                 "    v_eyeDirection = tangentSpaceTransformMatrix * ((gl_ModelViewMatrix * vec4(u_cameraWorldPosition, 1.0)).xyz - viewVertex);\n" \
                 "}";
