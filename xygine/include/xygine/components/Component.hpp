@@ -40,6 +40,8 @@ source distribution.
 
 #include <typeinfo>
 #include <typeindex>
+#include <vector>
+#include <functional>
 
 namespace xy
 {
@@ -56,6 +58,23 @@ namespace xy
     class Component
     {
     public:
+        /*!
+        \brief Component Message Handler
+
+        Allows simple callback behaviour for components to handle
+        message events. Set the ID to that of the message type to
+        handle and an action to perform. The action receives a 
+        pointer to the Component receiving the message, and a reference
+        the the message itself. Handlers can be added to a Component
+        via addMessageHandler.
+        */
+        struct MessageHandler
+        {
+            using Action = std::function<void(Component*, const Message&)>;
+            Message::Id id;
+            Action action;
+        };
+
         using Ptr = std::unique_ptr<Component>;
         using UniqueType = std::type_index;
 
@@ -79,7 +98,7 @@ namespace xy
         };
 
         /*!
-        \brief Componenet constructor
+        \brief Component constructor
 
         When calling this from the initialisation list of
         derived classes the derived class shout pass its this
@@ -120,14 +139,24 @@ namespace xy
         /*!
         \brief Message handler
 
-        This can be implemented by any component. It is used to handle
-        any system-wide messages which are broadcast by the message bus.
-        This is automatically called by xygine and doesn't need to be
-        manually called.
+        Called internally by xygine this forwards all messages
+        to registered message handlers.
 
         \param Message Reference to the message to be handled
         */
-        virtual void handleMessage(const Message&) {};
+        void handleMessage(const Message&);
+
+        /*!
+        \brief Add a message handler to the component
+
+        To handle custom messages message handlers can be created
+        and added to a component. Multiple handlers can be added to
+        a single component, and custom message handlers can be
+        added to individual instances of a component.
+
+        \param MessageHandler Reference to MessageHandler struct to add
+        */
+        void addMessageHandler(const MessageHandler&);
 
         /*!
         \brief onStart event
@@ -245,6 +274,7 @@ namespace xy
         std::string m_name;
         UniqueType m_typeIndex;
 
+        std::vector<MessageHandler> m_messageHandlers;
     };
 }
 #endif //XY_COMPONENT_HPP_

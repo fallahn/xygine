@@ -38,6 +38,25 @@ RigidBody::RigidBody(MessageBus& mb, BodyType type)
     m_body      (nullptr)
 {
     m_bodyDef.type = static_cast<b2BodyType>(type);
+
+    MessageHandler mh;
+    mh.id = Message::Type::PhysicsMessage;
+    mh.action = [](Component* c, const Message& msg)
+    {
+        auto& msgData = msg.getData<Message::PhysicsEvent>();
+        auto body = dynamic_cast<RigidBody*>(c);
+        switch (msgData.event)
+        {
+        case Message::PhysicsEvent::CollisionShapeDestroyed:
+            body->removeCollisionShape(msgData.collisionShape, false);
+            break;
+        case Message::PhysicsEvent::JointDestroyed:
+            body->removeJoint(msgData.joint, false);
+            break;
+        default:break;
+        }
+    };
+    addMessageHandler(mh);
 }
 
 //public
@@ -54,26 +73,6 @@ void RigidBody::entityUpdate(Entity& entity, float dt)
         }
 
         s->applyAffectors();
-    }
-}
-
-void RigidBody::handleMessage(const Message& msg)
-{
-    //check for any joint or shape destruction events
-    //and remove them from this body if they are ours
-    if (msg.id == Message::Type::PhysicsMessage)
-    {
-        auto& msgData = msg.getData<Message::PhysicsEvent>();
-        switch (msgData.event)
-        {
-        case Message::PhysicsEvent::CollisionShapeDestroyed:
-            removeCollisionShape(msgData.collisionShape, false);
-            break;
-        case Message::PhysicsEvent::JointDestroyed:
-            removeJoint(msgData.joint, false);
-            break;
-        default:break;
-        }
     }
 }
 

@@ -437,7 +437,7 @@ void PhysicsDemoState::createBodies()
         startPos.y -= ((x * spacingY) + halfY);
     }
 }
-
+#include <TimedDestruction.hpp>
 xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
 {   
     auto ballEntity = xy::Entity::create(m_messageBus);

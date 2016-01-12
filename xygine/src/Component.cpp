@@ -39,6 +39,22 @@ Component::~Component()
 }
 
 //public
+void Component::handleMessage(const Message& msg)
+{
+    for (auto& mh : m_messageHandlers)
+    {
+        if (mh.id == msg.id)
+        {
+            mh.action(this, msg);
+        }
+    }
+}
+
+void Component::addMessageHandler(const MessageHandler& mh)
+{
+    m_messageHandlers.push_back(mh);
+}
+
 void Component::onStart(Entity&)
 {
 

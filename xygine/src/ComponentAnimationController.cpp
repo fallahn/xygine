@@ -47,11 +47,6 @@ Component::Type AnimationController::type() const
 
 void AnimationController::entityUpdate(Entity&, float){}
 
-void AnimationController::handleMessage(const Message& msg)
-{
-
-}
-
 void AnimationController::onStart(Entity& entity)
 {
     m_drawable = entity.getComponent<AnimatedDrawable>();
