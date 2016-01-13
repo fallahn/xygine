@@ -306,18 +306,18 @@ void Slider::setFontSize(sf::Uint16 size)
     m_text.setCharacterSize(size);
 }
 
-void Slider::setCallback(Slider::Callback c, Event e)
+void Slider::addCallback(const Slider::Callback& c, Event e)
 {
     switch (e)
     {
     case Event::SetActive:
-        m_setActive = std::move(c);
+        m_setActive = c;
         break;
     case Event::SetInactive:
-        m_setInactive = std::move(c);
+        m_setInactive = c;
         break;
     case Event::ValueChanged:
-        m_valueChanged.push_back(std::move(c));
+        m_valueChanged.push_back(c);
         break;
     default: break;
     }

@@ -78,7 +78,10 @@ void Button::activate()
     if (m_toggleButton)
         m_sprite.setTextureRect(m_subRects[State::Active]);
 
-    if (m_callback) m_callback();
+    for (auto& cb : m_callbacks)
+    {
+        cb();
+    }
 
     if (!m_toggleButton)
         deactivate();
@@ -133,9 +136,9 @@ bool Button::contains(const sf::Vector2f& mousePos) const
     return getTransform().transformRect(m_sprite.getGlobalBounds()).contains(mousePos);
 }
 
-void Button::setCallback(Callback cb)
+void Button::addCallback(const Callback& cb)
 {
-    m_callback = std::move(cb);
+    m_callbacks.push_back(cb);
 }
 
 void Button::setText(const std::string& text)

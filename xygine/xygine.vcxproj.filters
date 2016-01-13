@@ -299,9 +299,6 @@
     <ClInclude Include="include\xygine\ShaderResource.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\Shaders.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\xygine\SoundPlayer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

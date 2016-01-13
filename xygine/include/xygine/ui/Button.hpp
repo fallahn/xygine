@@ -96,9 +96,9 @@ namespace xy
             */
             bool contains(const sf::Vector2f& mousePos)const override;
             /*!
-            \brief Allows providing a Callback to be performed when the button is activated
+            \brief Allows adding one or more Callbacks to be performed when the button is activated
             */
-            void setCallback(Callback c);
+            void addCallback(const Callback& c);
             /*!
             \brief Sets the button's text
             */
@@ -126,7 +126,7 @@ namespace xy
                 Count
             };
 
-            Callback m_callback;
+            std::vector<Callback> m_callbacks;
             const sf::Texture& m_texture;
             sf::Sprite m_sprite;
             sf::Text m_text;

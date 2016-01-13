@@ -84,7 +84,11 @@ void CheckBox::activate()
     m_checked = !m_checked;
     select(); //updates texture rect
     deactivate();
-    if (m_checkChanged) m_checkChanged(this);
+    
+    for (auto& cb : m_checkChangedCallbacks)
+    {
+        cb(this);
+    }
 }
 
 void CheckBox::deactivate()
@@ -164,16 +168,19 @@ bool CheckBox::checked() const
 void CheckBox::check(bool checked)
 {
     m_checked = checked;
-    if (m_checkChanged) m_checkChanged(this);
+    for (auto& cb : m_checkChangedCallbacks)
+    {
+        cb(this);
+    }
     deselect();
 }
 
-void CheckBox::setCallback(Callback c, Event evt)
+void CheckBox::addCallback(const Callback& c, Event evt)
 {
     switch (evt)
     {
     case Event::CheckChanged:
-        m_checkChanged = std::move(c);
+        m_checkChangedCallbacks.push_back(c);
         break;
     default: break;
     }

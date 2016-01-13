@@ -154,7 +154,7 @@ namespace xy
             \param e Event ot be paired with callback
             \see Slider::Event
             */
-            void setCallback(Callback c, Event e);
+            void addCallback(const Callback& c, Event e);
 
         private:
             enum State

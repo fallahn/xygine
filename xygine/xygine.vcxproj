@@ -202,7 +202,6 @@
     <ClInclude Include="include\xygine\Server.hpp" />
     <ClInclude Include="include\xygine\ShaderProperty.hpp" />
     <ClInclude Include="include\xygine\ShaderResource.hpp" />
-    <ClInclude Include="include\xygine\Shaders.hpp" />
     <ClInclude Include="include\xygine\shaders\Default.hpp" />
     <ClInclude Include="include\xygine\shaders\Misc.hpp" />
     <ClInclude Include="include\xygine\shaders\NormalMapped.hpp" />

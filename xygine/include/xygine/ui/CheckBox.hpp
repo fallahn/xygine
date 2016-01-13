@@ -133,7 +133,7 @@ namespace xy
             \param Callback Callback to execute
             \param Event Event on which to execute Callback
             */
-            void setCallback(Callback, Event);
+            void addCallback(const Callback&, Event);
 
         private:
             enum State
@@ -151,7 +151,7 @@ namespace xy
             bool m_checked;
             Alignment m_alignment;
 
-            Callback m_checkChanged;
+            std::vector<Callback> m_checkChangedCallbacks;
 
             void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
         };

@@ -90,7 +90,7 @@ void MenuMainState::buildMenu()
     button->setText("Particle Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 475.f);
-    button->setCallback([this]()
+    button->addCallback([this]()
     {
         close();
         requestStackPush(States::ID::ParticleDemo);
@@ -101,7 +101,7 @@ void MenuMainState::buildMenu()
     button->setText("Physics Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 575.f);
-    button->setCallback([this]()
+    button->addCallback([this]()
     {
         close();
         requestStackPush(States::ID::PhysicsDemo);
@@ -112,7 +112,7 @@ void MenuMainState::buildMenu()
     button->setText("Racing Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 675.f);
-    button->setCallback([this]()
+    button->addCallback([this]()
     {
         close();
         requestStackPush(States::ID::RacingDemo);
@@ -123,7 +123,7 @@ void MenuMainState::buildMenu()
     button->setText("Options");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 775.f);
-    button->setCallback([this]()
+    button->addCallback([this]()
     {
         close();
         requestStackPush(States::ID::MenuOptions);
@@ -134,7 +134,7 @@ void MenuMainState::buildMenu()
     button->setText("Quit");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 875.f);
-    button->setCallback([this]()
+    button->addCallback([this]()
     {
         getContext().renderWindow.close();
     });
