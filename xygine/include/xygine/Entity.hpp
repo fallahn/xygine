@@ -216,14 +216,14 @@ namespace xy
             std::type_index idx(typeid(T));
             for (const auto& c : m_components)
             {
-                if (c->uniqueType == idx)
+                if (c->uniqueType() == idx)
                 {
                     retval.push_back(dynamic_cast<T*>(c.get()));
                 }
             }
             for (const auto& c : m_pendingComponents)
             {
-                if (c->uniqueType == idx)
+                if (c->uniqueType() == idx)
                 {
                     retval.push_back(dynamic_cast<T*>(c.get()));
                 }
