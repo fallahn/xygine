@@ -25,39 +25,38 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/PostChromeAb.hpp>
-#include <xygine/shaders/PostChromeAb.hpp>
+#ifndef XY_SHADER_DEFAULT_HPP_
+#define XY_SHADER_DEFAULT_HPP_
 
-#include <SFML/Graphics/Shader.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
+#include <string>
 
-namespace
+namespace xy
 {
-    float accumulatedTime = 0.f;
-    const float scanlineCount = 500.f;
-}
+    namespace Shader
+    {
+        enum Type
+        {
+            BrightnessExtract,
+            DownSample,
+            GaussianBlur,
+            AdditiveBlend,
+            ChromeAb,
+            Lightray,
+            Count
+        };
 
-using namespace xy;
+        namespace Default
+        {
+            static const std::string vertex =
+                "#version 120\n" \
+                "void main()\n" \
+                "{\n" \
+                "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n" \
+                "    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n" \
+                "    gl_FrontColor = gl_Color;\n" \
+                "}";
+        }
+    }//namespace Shader
+} //namespace xy
 
-PostChromeAb::PostChromeAb()
-{
-    m_shaderResource.preload(Shader::Type::ChromeAb, Shader::Default::vertex, Shader::PostChromeAb::fragment);
-}
-
-//public
-void PostChromeAb::apply(const sf::RenderTexture& src, sf::RenderTarget& dst)
-{
-    float windowRatio = static_cast<float>(dst.getSize().y) / static_cast<float>(src.getSize().y);
-
-    auto& shader = m_shaderResource.get(Shader::Type::ChromeAb);
-    shader.setParameter("u_sourceTexture", src.getTexture());
-    shader.setParameter("u_time", accumulatedTime * (10.f * windowRatio));
-    shader.setParameter("u_lineCount", windowRatio  * scanlineCount);
-
-    applyShader(shader, dst);
-}
-
-void PostChromeAb::update(float dt)
-{
-    accumulatedTime += dt;
-}
+#endif //XY_SHADER_DEFAULT_HPP_

@@ -26,7 +26,10 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/PostBloom.hpp>
-#include <xygine/Shaders.hpp>
+#include <xygine/shaders/PostAdditiveBlend.hpp>
+#include <xygine/shaders/PostBrightness.hpp>
+#include <xygine/shaders/PostDownSample.hpp>
+#include <xygine/shaders/PostGaussianBlur.hpp>
 
 #include <memory>
 
@@ -34,10 +37,10 @@ using namespace xy;
 
 PostBloom::PostBloom()
 {
-    m_shaderResource.preload(Shader::Type::AdditiveBlend, Shader::FullPass::vertex, Shader::PostAdditiveBlend::fragment);
-    m_shaderResource.preload(Shader::Type::BrightnessExtract, Shader::FullPass::vertex, Shader::PostBrightness::fragment);
-    m_shaderResource.preload(Shader::Type::DownSample, Shader::FullPass::vertex, Shader::PostDownSample::fragment);
-    m_shaderResource.preload(Shader::Type::GaussianBlur, Shader::FullPass::vertex, Shader::PostGaussianBlur::fragment);
+    m_shaderResource.preload(Shader::Type::AdditiveBlend, Shader::Default::vertex, Shader::PostAdditiveBlend::fragment);
+    m_shaderResource.preload(Shader::Type::BrightnessExtract, Shader::Default::vertex, Shader::PostBrightness::fragment);
+    m_shaderResource.preload(Shader::Type::DownSample, Shader::Default::vertex, Shader::PostDownSample::fragment);
+    m_shaderResource.preload(Shader::Type::GaussianBlur, Shader::Default::vertex, Shader::PostGaussianBlur::fragment);
 }
 
 //public

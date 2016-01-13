@@ -40,7 +40,8 @@ source distribution.
 #include <xygine/Log.hpp>
 #include <xygine/Util.hpp>
 
-#include <xygine/Shaders.hpp>
+#include <xygine/shaders/NormalMapped.hpp>
+#include <xygine/shaders/Misc.hpp>
 #include <xygine/PostChromeAb.hpp>
 
 #include <xygine/physics/RigidBody.hpp>
@@ -86,7 +87,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 
     //preload shaders
     m_shaderResource.preload(PhysicsShaderId::NormalMap, xy::Shader::NormalMapped::vertex, xy::Shader::NormalMapped::fragment);
-    m_shaderResource.preload(PhysicsShaderId::ReflectionMap, xy::Shader::FullPass::vertex, xy::Shader::ReflectionMap::fragment);
+    m_shaderResource.preload(PhysicsShaderId::ReflectionMap, xy::Shader::Default::vertex, xy::Shader::ReflectionMap::fragment);
     m_shaderResource.get(PhysicsShaderId::ReflectionMap).setParameter("u_reflectionMap", m_textureResource.get("assets/images/physics demo/table_reflection.png"));
 
     //scale a 1200px table image to 2.7 metres

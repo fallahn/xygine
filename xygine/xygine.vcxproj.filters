@@ -37,6 +37,9 @@
     <Filter Include="Header Files\detail">
       <UniqueIdentifier>{ac58e192-060f-48da-9404-03922fec33cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\shaders">
+      <UniqueIdentifier>{77afb207-f723-46b3-9b2e-9d9c24f1bca6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -460,6 +463,30 @@
     </ClInclude>
     <ClInclude Include="include\xygine\Assert.hpp">
       <Filter>Header Files\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\shaders\Default.hpp">
+      <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\shaders\PostBrightness.hpp">
+      <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\shaders\Misc.hpp">
+      <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\shaders\NormalMapped.hpp">
+      <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\shaders\PostAdditiveBlend.hpp">
+      <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\shaders\PostChromeAb.hpp">
+      <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\shaders\PostDownSample.hpp">
+      <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\shaders\PostGaussianBlur.hpp">
+      <Filter>Header Files\shaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -203,6 +203,14 @@
     <ClInclude Include="include\xygine\ShaderProperty.hpp" />
     <ClInclude Include="include\xygine\ShaderResource.hpp" />
     <ClInclude Include="include\xygine\Shaders.hpp" />
+    <ClInclude Include="include\xygine\shaders\Default.hpp" />
+    <ClInclude Include="include\xygine\shaders\Misc.hpp" />
+    <ClInclude Include="include\xygine\shaders\NormalMapped.hpp" />
+    <ClInclude Include="include\xygine\shaders\PostAdditiveBlend.hpp" />
+    <ClInclude Include="include\xygine\shaders\PostBrightness.hpp" />
+    <ClInclude Include="include\xygine\shaders\PostChromeAb.hpp" />
+    <ClInclude Include="include\xygine\shaders\PostDownSample.hpp" />
+    <ClInclude Include="include\xygine\shaders\PostGaussianBlur.hpp" />
     <ClInclude Include="include\xygine\SoundPlayer.hpp" />
     <ClInclude Include="include\xygine\State.hpp" />
     <ClInclude Include="include\xygine\StateStack.hpp" />

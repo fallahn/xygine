@@ -27,7 +27,7 @@ source distribution.
 
 #include <xygine/ui/Window.hpp>
 #include <xygine/Log.hpp>
-#include <xygine/Shaders.hpp>
+#include <xygine/shaders/Misc.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>

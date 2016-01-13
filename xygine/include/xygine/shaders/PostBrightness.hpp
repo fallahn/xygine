@@ -25,39 +25,32 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/PostChromeAb.hpp>
-#include <xygine/shaders/PostChromeAb.hpp>
+#ifndef XY_SHADER_POSTBRIGHTNESS_HPP_
+#define XY_SHADER_POSTBRIGHTNESS_HPP_
 
-#include <SFML/Graphics/Shader.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
+#include <xygine/shaders/Default.hpp>
 
-namespace
+namespace xy
 {
-    float accumulatedTime = 0.f;
-    const float scanlineCount = 500.f;
-}
+    namespace Shader
+    {
+        namespace PostBrightness
+        {
+            static const std::string fragment =
+                "#version 120\n" \
+                "uniform sampler2D u_sourceTexture;\n" \
+                "const float threshold = 0.35;\n" \
+                "const float factor = 4.0;\n" \
 
-using namespace xy;
+                "void main()\n" \
+                "{\n" \
+                "    vec4 sourceColour = texture2D(u_sourceTexture, gl_TexCoord[0].xy);\n" \
+                "    float luminance = sourceColour.r * 0.2126 + sourceColour.g * 0.7152 + sourceColour.b * 0.0722;\n" \
+                "    sourceColour *= clamp(luminance - threshold, 0.0 , 1.0) * factor;\n" \
+                "    gl_FragColor = sourceColour;"
+                "}\n";
+        }
+    }//namespace Shader
+}//namespace xy
 
-PostChromeAb::PostChromeAb()
-{
-    m_shaderResource.preload(Shader::Type::ChromeAb, Shader::Default::vertex, Shader::PostChromeAb::fragment);
-}
-
-//public
-void PostChromeAb::apply(const sf::RenderTexture& src, sf::RenderTarget& dst)
-{
-    float windowRatio = static_cast<float>(dst.getSize().y) / static_cast<float>(src.getSize().y);
-
-    auto& shader = m_shaderResource.get(Shader::Type::ChromeAb);
-    shader.setParameter("u_sourceTexture", src.getTexture());
-    shader.setParameter("u_time", accumulatedTime * (10.f * windowRatio));
-    shader.setParameter("u_lineCount", windowRatio  * scanlineCount);
-
-    applyShader(shader, dst);
-}
-
-void PostChromeAb::update(float dt)
-{
-    accumulatedTime += dt;
-}
+#endif //XY_SHADER_POSTBRIGHTNESS_HPP_
