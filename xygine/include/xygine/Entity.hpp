@@ -140,7 +140,7 @@ namespace xy
         /*!
         \brief Adds a component to the entity.
 
-        Added commponents must be derived from the Component class
+        Added components must be derived from the Component class
         \see Component
         */
         template <typename T, enable_if<std::is_base_of<Component, T>>...>
@@ -162,10 +162,10 @@ namespace xy
 
         /*!
         \brief finds a commponent with a given name
-        \returns Pointer to the component is it is found, else returns nullptr
+        \returns Pointer to the component if it is found, else returns nullptr
         */
         template <typename T, enable_if<std::is_base_of<Component, T>>...>
-        T* getComponent(const std::string& name)
+        T* getComponent(const std::string& name) const
         {
             if (name.empty()) return nullptr;
             auto result = std::find_if(m_components.begin(), m_components.end(), FindByName(name));
@@ -185,11 +185,12 @@ namespace xy
         /*!
         \brief Find a commponent by type
 
-        Entities can only have one component of any particular type attached to them
+        If multiple components of the same type are attached this function
+        only returns the first instance found.
         \returns Pointer to component if it is found, else returns nullptr
         */
-        template <typename T>
-        T* getComponent()
+        template <typename T, enable_if<std::is_base_of<Component, T>>...>
+        T* getComponent() const
         {
             std::type_index idx(typeid(T));
             auto result = std::find_if(m_components.begin(), m_components.end(), FindByTypeIndex(idx));
@@ -202,6 +203,32 @@ namespace xy
                 }
             }
             return dynamic_cast<T*>(result->get());
+        }
+        /*!
+        \brief Returns a vector of pointers to all components of type T
+
+        If no components are found the vector is empty
+        */
+        template <typename T, enable_if<std::is_base_of<Component, T>>...>
+        std::vector<T*> getComponents() const
+        {
+            std::vector<T*> retval;
+            std::type_index idx(typeid(T));
+            for (const auto& c : m_components)
+            {
+                if (c->uniqueType == idx)
+                {
+                    retval.push_back(dynamic_cast<T*>(c.get()));
+                }
+            }
+            for (const auto& c : m_pendingComponents)
+            {
+                if (c->uniqueType == idx)
+                {
+                    retval.push_back(dynamic_cast<T*>(c.get()));
+                }
+            }
+            return retval;
         }
         /*!
         \brief Mark this entity to be destroyed

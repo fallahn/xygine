@@ -306,7 +306,7 @@ namespace xy
                 "#endif\n" \
                 "uniform sampler2D u_normalMap;\n" \
                 "uniform float u_lightIntensity = 0.86;\n" \
-                "uniform vec3 u_ambientColour = vec3 (0.1, 0.1, 0.1);\n" \
+                "uniform vec3 u_ambientColour = vec3 (0.4, 0.4, 0.4);\n" \
 
                 "varying vec3 v_eyeDirection;\n" \
                 "varying vec3 v_lightDirection;\n" \
@@ -329,13 +329,13 @@ namespace xy
                 "    vec3 falloffDirection = v_lightDirection * inverseRange;\n" \
                 "    float falloff = clamp(1.0 - dot(falloffDirection, falloffDirection), 0.0, 1.0);\n" \
                 "    blendedColour += (lightColour * u_lightIntensity) * diffuseColour.rgb * diffuseAmount;// * falloff;\n" \
-                /*
-                "    vec3 eyeDirection = normalize(v_lightDirection);\n" \
+                
+                /*"    vec3 eyeDirection = normalize(v_lightDirection);\n" \
                 "    vec3 halfVec = normalize(v_lightDirection + eyeDirection);\n" \
                 "    float specularAngle = clamp(dot(normalVector, halfVec), 0.0, 1.0);\n" \
                 "    vec3 specularColour = vec3(pow(specularAngle, 96.0));// * falloff;\n" \
-                "    blendedColour += specularColour;\n" \
-                */
+                "    blendedColour += specularColour;\n" \*/
+                
                 "    gl_FragColor.rgb = blendedColour;\n" \
                 "    gl_FragColor.a = diffuseColour.a;\n" \
                 "#if defined(TEXTURED)\n" \
