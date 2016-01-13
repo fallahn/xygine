@@ -38,12 +38,14 @@ source distribution.
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <memory>
 
 namespace sf
 {
     class Event;
+    class RenderWindow;
 }
 
 namespace xy
@@ -72,12 +74,13 @@ namespace xy
             };
             /*!
             \brief Constructor
+            \param sf::RenderWindow The current render window
             \param sf::Font Font to use with window text
             \param width Width of the window
             \param height Height of the window
             \param palette Instance of the Palette struct which defines the window colours
             */
-            Window(const sf::Font&, sf::Uint16 width, sf::Uint16 height, const Palette& = Palette());
+            Window(sf::RenderWindow&, const sf::Font&, sf::Uint16 width, sf::Uint16 height, const Palette& = Palette());
             ~Window() = default;
             Window(const Window&) = delete;
             Window& operator = (const Window&) = delete;
@@ -140,6 +143,9 @@ namespace xy
                 Corner = 0x8
             };
             sf::Int16 m_dragMask;
+
+            sf::Shader m_cropShader;
+            sf::RenderWindow& m_renderWindow;
 
             void draw(sf::RenderTarget&, sf::RenderStates) const override;
         };

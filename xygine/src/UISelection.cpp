@@ -241,6 +241,7 @@ void Selection::setCallback(Callback callback)
 void Selection::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.transform *= getTransform();
+    states.shader = getActiveShader();
     //rt.draw(m_background, states);
     rt.draw(m_prevArrow, states);
     rt.draw(m_nextArrow, states);

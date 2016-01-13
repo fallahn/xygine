@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_UI_CONTROL_HPP_
 #define XY_UI_CONTROL_HPP_
 
+#include <xygine/ShaderProperty.hpp>
+
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 
@@ -57,7 +59,7 @@ namespace xy
         /*!
         \brief Abstract base class for all UI controls
         */
-        class Control : public sf::Drawable, public sf::Transformable
+        class Control : public sf::Drawable, public sf::Transformable, public ShaderProperty
         {
         public:
             using Ptr = std::shared_ptr<Control>;

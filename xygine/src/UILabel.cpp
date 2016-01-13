@@ -101,5 +101,6 @@ void Label::updateText()
 void Label::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.transform *= getTransform();
+    states.shader = getActiveShader();
     rt.draw(m_text, states);
 }

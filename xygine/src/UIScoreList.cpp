@@ -169,6 +169,7 @@ float ScoreList::getVerticalSpacing() const
 void ScoreList::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.transform *= getTransform();
+    states.shader = getActiveShader();
     for (const auto& text : m_texts)
     {
         if (text.getGlobalBounds().intersects(m_bounds))

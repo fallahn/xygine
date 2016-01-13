@@ -274,6 +274,7 @@ void ComboBox::selectItem(Index val)
 void ComboBox::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.transform *= getTransform();
+    states.shader = getActiveShader();
     rt.draw(m_mainShape, states);
     rt.draw(m_selectedText, states);
 

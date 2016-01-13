@@ -150,6 +150,7 @@ void Slider::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
     else if (e.type == sf::Event::MouseButtonReleased)
     {
         deactivate();
+        LOG("buns", Logger::Type::Info);
     }
     else if (e.type == sf::Event::MouseMoved)
     {
@@ -326,6 +327,7 @@ void Slider::setCallback(Slider::Callback c, Event e)
 void Slider::draw(sf::RenderTarget& rt, sf::RenderStates states)const
 {
     states.transform *= getTransform();
+    states.shader = getActiveShader();
     //states.blendMode = sf::BlendAdd;
     rt.draw(m_slotShape, states);
     states.blendMode = sf::BlendAlpha;

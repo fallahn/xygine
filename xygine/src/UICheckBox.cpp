@@ -183,6 +183,7 @@ void CheckBox::setCallback(Callback c, Event evt)
 void CheckBox::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.transform *= getTransform();
+    states.shader = getActiveShader();
     rt.draw(m_sprite, states);
     rt.draw(m_text, states);
 }

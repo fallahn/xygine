@@ -363,6 +363,36 @@ namespace xy
                 "}\n" \
                 "";
         }
+
+        namespace Cropping
+        {
+
+            static const std::string fragment = //remember frag Y coord inverted
+                "#version 120\n" \
+                "#define TEXTURE\n" \
+                "uniform vec2 u_position = vec2(50.0, 50.0);\n" \
+                "uniform vec2 u_size = vec2(150.0, 300.0);\n" \
+
+                "#if defined(TEXTURE)\n" \
+                "uniform sampler2D u_texture;\n" \
+                "#endif\n" \
+
+                "bool contains(vec2 point)\n" \
+                "{\n" \
+                "return (point.x > u_position.x && point.x < u_size.x + u_position.x && point.y > u_position.y && point.y < u_position.y + u_size.y);\n" \
+                "}\n" \
+
+                "void main()\n" \
+                "{\n" \
+                "if(!contains(gl_FragCoord.xy)) discard;\n" \
+                "#if defined(TEXTURE)\n" \
+                "vec4 colour = texture2D(u_texture, gl_TexCoord[0].xy);\n" \
+                "gl_FragColor = vec4(colour.rgb * gl_Color.rgb, colour.a);\n" \
+                "#else\n" \
+                "gl_FragColor = gl_Color;\n" \
+                "#endif\n" \
+                "}";
+        }
     }
 }
 #endif //XY_SHADERS_HPP_

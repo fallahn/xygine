@@ -174,7 +174,7 @@ void Container::setBackgroundTexture(const sf::Texture& t)
 //private
 bool Container::hasSelection() const
 {
-    return (m_selectedIndex >= 0);
+    return m_controls.empty() ? false : (m_selectedIndex >= 0);
 }
 
 void Container::select(Index index)

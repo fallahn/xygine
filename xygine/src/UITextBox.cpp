@@ -256,6 +256,7 @@ void TextBox::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     if (!visible()) return;
     states.transform *= getTransform();
+    states.shader = getActiveShader();
     rt.draw(m_backShape, states);
     rt.draw(m_text, states);
     rt.draw(m_label, states);
