@@ -71,6 +71,7 @@ namespace xy
                 sf::Color borderNormal;
                 sf::Color borderActive;
                 sf::Color background;
+                sf::Color font;
             };
             /*!
             \brief Constructor
@@ -104,7 +105,15 @@ namespace xy
             \brief Add a control to the window's control collection
             */
             void addControl(Control::Ptr);
-
+            /*!
+            \brief Set if the widow can be resized by dragging the corner.
+            True by default
+            */
+            void canResize(bool);
+            /*!
+            \brief Returns true if the window is resizable
+            */
+            bool canResize() const;
         private:
             class BackgroundShape final : public sf::Shape
             {
@@ -143,6 +152,7 @@ namespace xy
                 Corner = 0x8
             };
             sf::Int16 m_dragMask;
+            bool m_resizable;
 
             sf::Shader m_cropShader;
             sf::RenderWindow& m_renderWindow;

@@ -148,9 +148,9 @@ void MenuOptionState::handleMessage(const xy::Message& msg)
 void MenuOptionState::buildMenu(const sf::Font& font)
 {
     xy::UI::Window::Palette palette;
-    palette.background = { 0u, 20u, 120u, 190u };
-    palette.borderActive = { 0u, 20u, 190u };
-    palette.borderNormal = { 0u, 15u, 120u };
+    palette.background = { 120u, 120u, 120u, 190u };
+    palette.borderActive = { 190u, 190u, 190u };
+    palette.borderNormal = { 120u, 120u, 120u };
 
     m_window.setPalette(palette);
     m_window.setTitle("title");

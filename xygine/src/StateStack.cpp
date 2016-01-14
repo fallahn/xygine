@@ -146,6 +146,7 @@ void StateStack::applyPendingChanges()
         {
         case Action::Push:
             m_stack.emplace_back(createState(change.id));
+            m_stack.emplace_back(std::make_unique<BufferState>(*this, m_context));
             break;
         case Action::Pop:
             m_stack.pop_back();

@@ -149,6 +149,7 @@ namespace xy
             */
             bool visible() const;
 
+
         private:
 
             bool m_selected;

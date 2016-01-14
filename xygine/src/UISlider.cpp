@@ -27,6 +27,7 @@ source distribution.
 
 #include <xygine/ui/Slider.hpp>
 #include <xygine/Util.hpp>
+#include <xygine/App.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Window/Event.hpp>
@@ -87,6 +88,8 @@ void Slider::deselect()
 {
     Control::deselect();
     m_handleSprite.setTextureRect(m_subRects[State::Normal]);
+
+    deactivate();
 }
 
 void Slider::activate()
@@ -150,21 +153,20 @@ void Slider::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
     else if (e.type == sf::Event::MouseButtonReleased)
     {
         deactivate();
-        LOG("buns", Logger::Type::Info);
     }
     else if (e.type == sf::Event::MouseMoved)
     {
+        if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) return;
+
         auto localPos = getInverseTransform().transformPoint(mousePos);
         if (m_direction == Direction::Horizontal)
         {
-            localPos.x = std::min(localPos.x, m_length);
-            localPos.x = std::max(localPos.x, 0.f);
+            localPos.x = Util::Math::clamp(localPos.x, 0.f, m_length);
             m_handleSprite.setPosition(localPos.x, m_handleSprite.getPosition().y);
         }
         else
         {
-            localPos.y = std::min(localPos.y, m_length);
-            localPos.y = std::max(localPos.y, 0.f);
+            localPos.y = Util::Math::clamp(localPos.y, 0.f, m_length);
             m_handleSprite.setPosition(m_handleSprite.getPosition().x, localPos.y);
         }
         for (auto& c : m_valueChanged) c(this);

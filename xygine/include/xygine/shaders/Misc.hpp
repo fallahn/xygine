@@ -120,17 +120,17 @@ namespace xy
 
                 "bool contains(vec2 point)\n" \
                 "{\n" \
-                "return (point.x > u_position.x && point.x < u_size.x + u_position.x && point.y > u_position.y && point.y < u_position.y + u_size.y);\n" \
+                "    return (point.x > u_position.x && point.x < u_size.x + u_position.x && point.y > u_position.y && point.y < u_position.y + u_size.y);\n" \
                 "}\n" \
 
                 "void main()\n" \
                 "{\n" \
-                "if(!contains(gl_FragCoord.xy)) discard;\n" \
+                "    if(!contains(gl_FragCoord.xy)) discard;\n" \
                 "#if defined(TEXTURE)\n" \
-                "vec4 colour = texture2D(u_texture, gl_TexCoord[0].xy);\n" \
-                "gl_FragColor = vec4(colour.rgb * gl_Color.rgb, colour.a);\n" \
+                "    vec4 colour = texture2D(u_texture, gl_TexCoord[0].xy);\n" \
+                "    gl_FragColor = vec4(colour.rgb * gl_Color.rgb, colour.a);\n" \
                 "#else\n" \
-                "gl_FragColor = gl_Color;\n" \
+                "    gl_FragColor = gl_Color;\n" \
                 "#endif\n" \
                 "}";
         }

@@ -41,12 +41,12 @@ namespace
 {
     const float titleBarHeight = 34.f;
     const float cornerRadius = 14.f;
-
 }
 
 Window::Window(sf::RenderWindow& rw, const sf::Font& font, sf::Uint16 width, sf::Uint16 height, const Palette& palette)
     : m_backgroundShape ({ static_cast<float>(width), static_cast<float>(height) }),
     m_dragMask          (0),
+    m_resizable         (true),
     m_renderWindow      (rw)
 {
     setPalette(palette);
@@ -64,15 +64,18 @@ Window::Window(sf::RenderWindow& rw, const sf::Font& font, sf::Uint16 width, sf:
     m_resizeHandle.setPosition(width - cornerRadius, height - cornerRadius);
 
     m_cropShader.loadFromMemory(Shader::Cropping::fragment, sf::Shader::Fragment);
-    auto pos = rw.mapCoordsToPixel(getPosition(), rw.getDefaultView());
-    auto size = rw.mapCoordsToPixel(m_backgroundShape.getSize(), rw.getDefaultView());
-    m_cropShader.setParameter("u_position", sf::Vector2f(pos));
+    auto size = rw.mapCoordsToPixel(m_backgroundShape.getSize());
     m_cropShader.setParameter("u_size", sf::Vector2f(size));
 }
 
 //public
 void Window::update(float dt)
 {
+    //we have to do this here to hook any repositioning
+    //from inheriting sf::Transform
+    auto position = m_renderWindow.mapCoordsToPixel(getPosition());
+    m_cropShader.setParameter("u_position", sf::Vector2f(position));
+
     m_container.update(dt);
 }
 
@@ -85,7 +88,7 @@ void Window::handleEvent(const sf::Event& evt, const sf::Vector2f& mousePos)
         {
             m_dragMask |= All;
         }
-        else if (getTransform().transformRect(m_resizeHandle.getGlobalBounds()).contains(mousePos))
+        else if (m_resizable && getTransform().transformRect(m_resizeHandle.getGlobalBounds()).contains(mousePos))
         {
             m_dragMask |= Corner;
         }
@@ -97,8 +100,6 @@ void Window::handleEvent(const sf::Event& evt, const sf::Vector2f& mousePos)
         if (m_dragMask & All)
         {
             move(mousePos - m_lastMousePos);
-            auto pos = m_renderWindow.mapCoordsToPixel(getPosition(), m_renderWindow.getDefaultView());
-            m_cropShader.setParameter("u_position", sf::Vector2f(pos));
         }
         else if (m_dragMask & Corner)
         {
@@ -106,7 +107,7 @@ void Window::handleEvent(const sf::Event& evt, const sf::Vector2f& mousePos)
             m_resizeHandle.setPosition(m_backgroundShape.getSize() - sf::Vector2f(cornerRadius, cornerRadius));
             m_titleBar.setSize({ m_backgroundShape.getSize().x, titleBarHeight });
 
-            auto size = m_renderWindow.mapCoordsToPixel(m_backgroundShape.getSize(), m_renderWindow.getDefaultView());
+            auto size = m_renderWindow.mapCoordsToPixel(m_backgroundShape.getSize());
             m_cropShader.setParameter("u_size", sf::Vector2f(size));
         }
         break;
@@ -129,6 +130,8 @@ void Window::setPalette(const Palette& p)
 
     m_resizeHandle.setFillColor(m_palette.background);
     m_resizeHandle.setOutlineColor(m_palette.borderNormal);
+
+    m_titleText.setColor(m_palette.font);
 }
 
 void Window::setTitle(const std::string& str)
@@ -141,6 +144,16 @@ void Window::addControl(Control::Ptr c)
     c->move(0.f, titleBarHeight);
     c->setShader(&m_cropShader);
     m_container.addControl(c);
+}
+
+void Window::canResize(bool resize)
+{
+    m_resizable = resize;
+}
+
+bool Window::canResize() const
+{
+    return m_resizable;
 }
 
 //private

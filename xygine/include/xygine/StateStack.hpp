@@ -147,6 +147,21 @@ namespace xy
         void applyPendingChanges();
 
     private:
+        static const StateId bufferID = -100;
+        //gets pushed on top of new states for one frame to consume
+        //spurious window events
+        class BufferState final : public State
+        {
+        public:
+            BufferState(StateStack& s, Context c) : State(s, c) {}
+            ~BufferState() = default;
+
+            bool update(float) override { requestStackPop(); return false; }
+            bool handleEvent(const sf::Event&) override { return false; }
+            void handleMessage(const Message&) override{}
+            void draw() override {}
+            StateId stateID() const override { return bufferID; }
+        };
 
         struct Pendingchange
         {
