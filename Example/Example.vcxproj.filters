@@ -19,6 +19,9 @@
     <Filter Include="Source Files\physics demo">
       <UniqueIdentifier>{c202890a-6f1c-4af2-b767-6dea8de9b0af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\cave demo">
+      <UniqueIdentifier>{57f06f0c-36c1-4bd2-82c5-c6b311c426b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -60,6 +63,9 @@
     <ClInclude Include="include\PhysicsDemoLine.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\CaveDemoDrawable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -94,6 +100,9 @@
     </ClCompile>
     <ClCompile Include="src\PhysicsDemoLine.cpp">
       <Filter>Source Files\physics demo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CaveDemoDrawable.cpp">
+      <Filter>Source Files\cave demo</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -71,6 +71,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\CaveDemoDrawable.hpp" />
     <ClInclude Include="include\CommandIds.hpp" />
     <ClInclude Include="include\Game.hpp" />
     <ClInclude Include="include\MenuMainState.hpp" />
@@ -86,6 +87,7 @@
     <ClInclude Include="include\TimedDestruction.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\CaveDemoDrawable.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MenuMainState.cpp" />

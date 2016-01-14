@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <ParticleDemoState.hpp>
+#include <CaveDemoDrawable.hpp>
 
 #include <xygine/Reports.hpp>
 #include <xygine/Entity.hpp>
@@ -75,7 +76,7 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     launchLoadingScreen();
 
     m_scene.setView(context.defaultView);
-    //m_scene.drawDebug(true);
+
     xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostChromeAb>();
     m_scene.addPostProcess(pp);
     pp = xy::PostProcess::create<xy::PostBloom>();
@@ -87,6 +88,13 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
 
     setupParticles();
     context.renderWindow.setMouseCursorVisible(true);
+
+
+    //for now we'll stick our cavegen here
+    auto ent = xy::Entity::create(m_messageBus);
+    auto cd = std::make_unique<CaveDemo::CaveDrawable>(m_messageBus);
+    ent->addComponent(cd);
+    m_scene.addEntity(ent, xy::Scene::Layer::BackRear);
 
     quitLoadingScreen();
 }

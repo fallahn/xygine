@@ -53,6 +53,7 @@ include(${xygine_DIR}/CMakeLists.txt)
 
 SET(EXAMPLE_SRC
   src/Game.cpp
+  src/CaveDemoDrawable.cpp
   src/main.cpp
   src/MenuMainState.cpp
   src/MenuOptionState.cpp
