@@ -49,10 +49,15 @@ namespace CaveDemo
         void entityUpdate(xy::Entity&, float) override;
 
         sf::Vector2f getSize() const;
+
+        sf::FloatRect globalBounds() const override;
+
     private:
 
         std::vector<sf::Vertex> m_vertices;
         std::vector<sf::Uint8> m_tileData;
+
+        sf::FloatRect m_globalBounds;
 
         void fillRand();
         void smooth();

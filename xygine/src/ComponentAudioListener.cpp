@@ -61,9 +61,18 @@ void AudioListener::entityUpdate(Entity& entity, float)
 {
     auto pos = entity.getWorldPosition();
     sf::Listener::setPosition({ pos.x, -pos.y, listenerDepth });
+
+    m_dyingSounds.remove_if([](const sf::Sound& s) {return (s.getStatus() == sf::Sound::Stopped); });
 }
 
 float AudioListener::getListenerDepth()
 {
     return listenerDepth;
+}
+
+//private
+void AudioListener::addDyingSound(const sf::Sound& sound)
+{
+    XY_ASSERT(instance, "No listenenr instance");
+    instance->m_dyingSounds.push_back(sound);
 }

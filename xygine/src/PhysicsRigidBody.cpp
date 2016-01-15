@@ -32,6 +32,7 @@ source distribution.
 
 using namespace xy;
 using namespace xy::Physics;
+using namespace std::placeholders;
 
 RigidBody::RigidBody(MessageBus& mb, BodyType type)
     : Component (mb, this),
@@ -41,21 +42,7 @@ RigidBody::RigidBody(MessageBus& mb, BodyType type)
 
     MessageHandler mh;
     mh.id = Message::Type::PhysicsMessage;
-    mh.action = [](Component* c, const Message& msg)
-    {
-        auto& msgData = msg.getData<Message::PhysicsEvent>();
-        auto body = dynamic_cast<RigidBody*>(c);
-        switch (msgData.event)
-        {
-        case Message::PhysicsEvent::CollisionShapeDestroyed:
-            body->removeCollisionShape(msgData.collisionShape, false);
-            break;
-        case Message::PhysicsEvent::JointDestroyed:
-            body->removeJoint(msgData.joint, false);
-            break;
-        default:break;
-        }
-    };
+    mh.action = std::bind(&RigidBody::messageHandler, _1, _2);
     addMessageHandler(mh);
 }
 
@@ -339,5 +326,21 @@ void RigidBody::removeCollisionShape(const CollisionShape* shape, bool raiseMess
         auto msg = sendMessage<Message::PhysicsEvent>(Message::Type::PhysicsMessage);
         msg->event = Message::PhysicsEvent::CollisionShapeDestroyed;
         msg->collisionShape = shape;
+    }
+}
+
+void RigidBody::messageHandler(Component* c, const Message& msg)
+{
+    auto& msgData = msg.getData<Message::PhysicsEvent>();
+    auto body = dynamic_cast<RigidBody*>(c);
+    switch (msgData.event)
+    {
+    case Message::PhysicsEvent::CollisionShapeDestroyed:
+        body->removeCollisionShape(msgData.collisionShape, false);
+        break;
+    case Message::PhysicsEvent::JointDestroyed:
+        body->removeJoint(msgData.joint, false);
+        break;
+    default:break;
     }
 }

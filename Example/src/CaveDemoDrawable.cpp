@@ -73,6 +73,9 @@ CaveDrawable::CaveDrawable(xy::MessageBus& mb)
             addQuad(i);
         }
     }
+
+    m_globalBounds.width = static_cast<float>(width) * cellSize;
+    m_globalBounds.height = static_cast<float>(height) * cellSize;
 }
 
 //public
@@ -85,6 +88,11 @@ void CaveDrawable::entityUpdate(xy::Entity&, float)
 sf::Vector2f CaveDrawable::getSize() const
 {
     return sf::Vector2f(width, height) * cellSize;
+}
+
+sf::FloatRect CaveDrawable::globalBounds() const
+{
+    return m_globalBounds;
 }
 
 //private

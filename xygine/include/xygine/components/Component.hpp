@@ -230,11 +230,10 @@ namespace xy
         /*!
         \brief Returns the AABB of the component in local space
 
-        When using the QuadTree with a component the component
-        must override this to provide accurate spatial information
-        which then contributes to the overall bounding box of the
-        parent entity. This is normally only needed when implementing
-        a drawable component.
+        Drawables should always override this to return their
+        local bounds, as should any components which contribute
+        spatially to an entity which has a QuadTree component.
+        \see globalBounds
         */
         virtual sf::FloatRect localBounds() const;
         /*!
@@ -244,7 +243,15 @@ namespace xy
         must override this to provide accurate spatial information
         which then contributes to the overall bounding box of the
         parent entity. This is normally only needed when implementing
-        a drawable component.
+        a drawable component, but applies to any entity which may
+        affect the parent entitiy spatially, such as custom collision
+        components. Normally this returns the localBounds transformed
+        by the component's transform if it has one, else it should
+        return localBounds. NOTE Drawables *MUST* implement this
+        as it is used in culling calculations when rendering. If a
+        custom renderable component is not being drawn this is the
+        first place to check. Global bounds can be visualised by
+        enabling debug output of the Scene.
         */
         virtual sf::FloatRect globalBounds() const;
 

@@ -37,6 +37,10 @@ source distribution.
 
 #include <xygine/components/Component.hpp>
 
+#include <SFML/Audio/Sound.hpp>
+
+#include <list>
+
 namespace xy
 {
     /*!
@@ -46,7 +50,7 @@ namespace xy
     the player's virtual ears are. Audio sources played in the scene
     are automatically panned relative to the listener position. The
     listener position also affects the falloff in volume of audio
-    sourcesthe further away they are from the listener. Usually
+    sources the further away they are from the listener. Usually
     the audio listener would be attached to the same entity as the
     active scene camera, or possibly the entity to which the player
     is attached. There can only ever be one instance of a listener
@@ -55,6 +59,7 @@ namespace xy
     */
     class AudioListener final : public Component
     {
+        friend class AudioSource;
     public:
         using Ptr = std::unique_ptr<AudioListener>;
 
@@ -73,6 +78,8 @@ namespace xy
 
     private:
 
+        std::list<sf::Sound> m_dyingSounds;
+        static void addDyingSound(const sf::Sound&);
     };
 }
 

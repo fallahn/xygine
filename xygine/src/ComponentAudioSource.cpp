@@ -75,7 +75,15 @@ void AudioSource::entityUpdate(Entity& entity, float)
 void AudioSource::destroy()
 {
     Component::destroy();
-    stop();
+    
+    if (m_mode == Mode::Cached && !m_sound.getLoop())
+    {
+        AudioListener::addDyingSound(m_sound);
+    }
+    else
+    {
+        stop();
+    }
 }
 
 void AudioSource::setSound(const std::string& path, Mode mode)

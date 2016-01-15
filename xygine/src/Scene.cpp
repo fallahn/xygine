@@ -45,8 +45,8 @@ using namespace xy;
 using namespace std::placeholders;
 
 Scene::Scene(MessageBus& mb)
-    : m_defaultCamera   (Component::create<Camera>(mb, sf::View( {960.f, 540.f}, {1920.f, 1080.f} ))),
-    m_activeCamera      (m_defaultCamera.get()),
+    : m_defaultCamera   (nullptr),
+    m_activeCamera      (nullptr),
     m_messageBus        (mb),
     m_drawDebug         (false) 
 {
@@ -117,7 +117,7 @@ void Scene::handleMessage(const Message& msg)
         case Message::ComponentEvent::Deleted:
             if (msgData.ptr == m_activeCamera)
             {
-                m_activeCamera = m_defaultCamera.get();
+                m_activeCamera = m_defaultCamera;
             }
             break;
         default: break;
@@ -158,7 +158,7 @@ Entity& Scene::getLayer(Layer l)
 void Scene::setView(const sf::View& v)
 {
     m_defaultCamera->setView(v);
-    m_activeCamera = m_defaultCamera.get();
+    m_activeCamera = m_defaultCamera;
 
     //we don't want to letterbox render buffers
     if (!m_renderPasses.empty())
@@ -186,7 +186,7 @@ void Scene::setActiveCamera(const Camera* camera)
     }
     else
     {
-        m_activeCamera = m_defaultCamera.get();
+        m_activeCamera = m_defaultCamera;
     }
 }
 
@@ -220,8 +220,18 @@ void Scene::reset()
     m_renderPasses.reserve(10);
     m_currentRenderPath = std::bind(&Scene::defaultRenderPath, this, _1, _2);
 
-    m_activeCamera = m_defaultCamera.get();
-    sf::Listener::setPosition({ 960.f, 540.f, AudioListener::getListenerDepth() });
+    //default sound / camera entity
+    auto entity = Entity::create(m_messageBus);
+    auto al = Component::create<AudioListener>(m_messageBus);
+    entity->addComponent(al);
+    entity->setPosition(960.f, 540.f);
+
+    auto camera = Component::create<Camera>(m_messageBus, sf::View({ 960.f, 540.f }, { 1920.f, 1080.f }));
+    m_defaultCamera = entity->addComponent(camera);
+
+    m_layers[Layer::BackRear]->addChild(entity);
+
+    m_activeCamera = m_defaultCamera;
 }
 
 void Scene::addPostProcess(PostProcess::Ptr& pp)

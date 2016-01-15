@@ -322,6 +322,8 @@ namespace xy
 
             void removeJoint(const Joint*, bool);
             void removeCollisionShape(const CollisionShape*, bool);
+
+            static void messageHandler(Component*, const Message&);
         };
     }
 }

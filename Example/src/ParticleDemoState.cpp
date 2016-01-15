@@ -93,7 +93,8 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     //for now we'll stick our cavegen here
     auto ent = xy::Entity::create(m_messageBus);
     auto cd = std::make_unique<CaveDemo::CaveDrawable>(m_messageBus);
-    ent->addComponent(cd);
+    ent->move((sf::Vector2f(1920.f, 1080.f) - cd->getSize()) / 2.f);
+    ent->addComponent(cd);    
     m_scene.addEntity(ent, xy::Scene::Layer::BackRear);
 
     quitLoadingScreen();

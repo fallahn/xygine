@@ -75,7 +75,6 @@ void Window::update(float dt)
     //from inheriting sf::Transform
     auto position = m_renderWindow.mapCoordsToPixel(getPosition());
     m_cropShader.setParameter("u_position", sf::Vector2f(position));
-
     m_container.update(dt);
 }
 

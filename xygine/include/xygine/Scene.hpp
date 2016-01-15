@@ -184,7 +184,7 @@ namespace xy
         std::vector<Entity::Ptr> m_layers;
         std::vector<std::pair<Layer, Entity::Ptr>> m_pendingEntities;
         
-        Camera::Ptr m_defaultCamera;
+        Camera* m_defaultCamera;
         const Camera* m_activeCamera;
         
         MessageBus& m_messageBus;
