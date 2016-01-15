@@ -303,8 +303,6 @@ void Scene::defaultRenderPath(sf::RenderTarget& rt, sf::RenderStates states) con
 
 void Scene::postEffectRenderPath(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    rt.setView(rt.getDefaultView());
-
     //-------render scene to first buffer-----///
     auto firstBuffer = m_renderPasses.front().inBuffer;
     firstBuffer->setView(m_activeCamera->getView());
@@ -342,5 +340,7 @@ void Scene::postEffectRenderPath(sf::RenderTarget& rt, sf::RenderStates states) 
             pass.outBuffer->display();
         }
     }
-    m_renderPasses.back().postEffect->apply(*m_renderPasses.back().inBuffer, rt);
+
+    rt.setView(rt.getDefaultView());
+    m_renderPasses.back().postEffect->apply(*m_renderPasses.back().inBuffer, rt);    
 }

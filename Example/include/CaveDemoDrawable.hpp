@@ -53,6 +53,61 @@ namespace CaveDemo
         sf::FloatRect globalBounds() const override;
 
     private:
+        //structs used in marching square algorithm
+        struct Node
+        {
+            sf::Vector2f position;
+            std::size_t idx = 0;
+            Node() = default;
+            Node(const sf::Vector2f& pos)
+                : position(pos) {}
+        };
+
+        struct ControlNode final : public Node
+        {
+            bool active = false;
+            Node aboveNode;
+            Node rightNode;
+
+            ControlNode(bool a, const sf::Vector2f& pos, float size)
+                : Node      (pos),
+                active      (a),
+                aboveNode   (pos),
+                rightNode   (pos)
+            {
+                aboveNode.position.y -= (size / 2.f);
+                rightNode.position.x += (size / 2.f);
+            }
+        };
+
+        struct Square final
+        {
+            ControlNode topLeft;
+            ControlNode topRight;
+            ControlNode bottomRight;
+            ControlNode bottomLeft;
+
+            Node centreTop;
+            Node centreRight;
+            Node centreBottom;
+            Node centreLeft;
+
+            sf::Uint16 mask = 0u;
+
+            Square(const ControlNode& tl, const ControlNode& tr, const ControlNode& br, const ControlNode& bl)
+                : topLeft(tl), topRight(tr), bottomRight(br), bottomLeft(bl)
+            {
+                centreTop = tl.rightNode;
+                centreRight = br.aboveNode;
+                centreBottom = bl.rightNode;
+                centreLeft = bl.aboveNode;
+
+                if (tl.active) mask |= 0x8;
+                if (tr.active) mask |= 0x4;
+                if (br.active) mask |= 0x2;
+                if (bl.active) mask |= 0x1;
+            }
+        };
 
         std::vector<sf::Vertex> m_vertices;
         std::vector<sf::Uint8> m_tileData;
@@ -63,6 +118,8 @@ namespace CaveDemo
         void smooth();
         sf::Uint8 getNeighbourCount(std::size_t);
         void addQuad(std::size_t);
+
+        void buildVertexArray();
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };

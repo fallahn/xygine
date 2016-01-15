@@ -36,7 +36,7 @@ using namespace CaveDemo;
 
 namespace
 {
-    const float cellSize = 25.f;
+    const float cellSize = 15.f;
     const std::size_t width = static_cast<std::size_t>(std::ceil(1920.f / cellSize));
     const std::size_t height = static_cast<std::size_t>(std::ceil(1080.f / cellSize));
 
@@ -63,6 +63,8 @@ CaveDrawable::CaveDrawable(xy::MessageBus& mb)
         smooth();
     }
 
+    buildVertexArray();
+
 
     //for now add quads to visualise output
     //TODO generate proper mesh
@@ -73,7 +75,7 @@ CaveDrawable::CaveDrawable(xy::MessageBus& mb)
             addQuad(i);
         }
     }
-
+    //TODO check position is offset correctly
     m_globalBounds.width = static_cast<float>(width) * cellSize;
     m_globalBounds.height = static_cast<float>(height) * cellSize;
 }
@@ -87,7 +89,7 @@ void CaveDrawable::entityUpdate(xy::Entity&, float)
 
 sf::Vector2f CaveDrawable::getSize() const
 {
-    return sf::Vector2f(width, height) * cellSize;
+    return sf::Vector2f(static_cast<float>(width), static_cast<float>(height)) * cellSize;
 }
 
 sf::FloatRect CaveDrawable::globalBounds() const
@@ -151,6 +153,34 @@ void CaveDrawable::addQuad(std::size_t idx)
     m_vertices.emplace_back(sf::Vector2f(coord.x + cellSize, coord.y), colour);
     m_vertices.emplace_back(sf::Vector2f(coord.x + cellSize, coord.y + cellSize), colour);
     m_vertices.emplace_back(sf::Vector2f(coord.x, coord.y + cellSize), colour);
+}
+
+void CaveDrawable::buildVertexArray()
+{
+    //TODO we could split the map into smaller sections which would help culling and allow
+    //fast rebuilding of areas for destruction
+
+    std::vector<ControlNode> controlNodes;
+    for (auto i = 0u; i < m_tileData.size(); ++i)
+    {
+        auto coord = coordFromIndex(i);
+        auto size = getSize();
+        sf::Vector2f position(-(size.x / 2.f) + coord.x * cellSize + (cellSize / 2.f), -(size.y / 2.f) + coord.y * cellSize + (cellSize / 2.f));
+        controlNodes.emplace_back((m_tileData[i] == 1), position, cellSize);
+    }
+
+    std::vector<Square> squares;
+    for (auto x = 0u; x < width - 1; ++x)
+    {
+        for (auto y = 0u; y < height - 1; ++y)
+        {
+            squares.emplace_back(controlNodes[indexFromCoord(sf::Vector2i(x, y + 1))],
+                                controlNodes[indexFromCoord(sf::Vector2i(x + 1, y + 1))],
+                                controlNodes[indexFromCoord(sf::Vector2i(x + 1, y))],
+                                controlNodes[indexFromCoord(sf::Vector2i(x, y))]);
+        }
+    }
+    int buns = 0;
 }
 
 void CaveDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
