@@ -31,6 +31,7 @@ source distribution.
 #include <xygine/App.hpp>
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/Util.hpp>
+#include <xygine/components/AudioSource.hpp>
 
 namespace
 {
@@ -98,6 +99,10 @@ void PlayerController::endInput()
     auto body = m_entity->getComponent<xy::Physics::RigidBody>();
     XY_ASSERT(body, "body is nullptr");
     body->applyLinearImpulse(impulse, body->getWorldCentre());
+
+    auto sound = m_entity->getComponent<xy::AudioSource>("tip_sound");
+    XY_ASSERT(sound, "failed to find sound");
+    sound->play();
 
     update = [this](xy::Entity&, float){};
 }

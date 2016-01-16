@@ -154,11 +154,17 @@ float AudioSource::getFadeInTime() const
 void AudioSource::setVolume(float volume)
 {
     XY_ASSERT(volume >= 0 && volume <= 100.f, "volume must be 0-100");
-    m_maxVolume = volume;
-
-    if (m_currentSource->getVolume() > volume)
+    
+    if (m_maxVolume > volume)
     {
         m_currentSource->setVolume(volume);
+        
+    }
+    m_maxVolume = volume;
+
+    if (m_maxVolume < m_currentVolume)
+    {
+        m_currentVolume = volume;
     }
 }
 

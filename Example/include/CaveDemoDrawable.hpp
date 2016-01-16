@@ -57,7 +57,7 @@ namespace CaveDemo
         struct Node
         {
             sf::Vector2f position;
-            std::size_t idx = 0;
+            sf::Int32 idx = -1;
             Node() = default;
             Node(const sf::Vector2f& pos)
                 : position(pos) {}

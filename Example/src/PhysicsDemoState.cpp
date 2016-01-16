@@ -78,8 +78,8 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     launchLoadingScreen();
     m_scene.setView(context.defaultView);
     //m_scene.drawDebug(true);
-    auto pp = xy::PostProcess::create<xy::PostChromeAb>();
-    m_scene.addPostProcess(pp);
+    //auto pp = xy::PostProcess::create<xy::PostChromeAb>();
+    //m_scene.addPostProcess(pp);
     m_scene.setClearColour(sf::Color(0u, 0u, 10u));
 
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
@@ -232,27 +232,6 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
 void PhysicsDemoState::handleMessage(const xy::Message& msg)
 { 
     m_scene.handleMessage(msg);
-
-    if (msg.id == xy::Message::PhysicsMessage)
-    {
-        //play collision sounds
-        auto& msgData = msg.getData<xy::Message::PhysicsEvent>();
-        if (msgData.event == xy::Message::PhysicsEvent::BeginContact)
-        {
-            auto contact = msgData.contact;
-
-            xy::Command cmd;
-            cmd.entityID = contact->getCollisionShapeA()->getRigidBody()->getParentUID();
-            cmd.action = [](xy::Entity& entity, float)
-            {
-                auto sound = entity.getComponent<xy::AudioSource>();
-                if (sound) sound->play();
-            };
-            m_scene.sendCommand(cmd);
-            cmd.entityID = contact->getCollisionShapeB()->getRigidBody()->getParentUID();
-            m_scene.sendCommand(cmd);
-        }
-    }
 }
 
 //private
@@ -420,7 +399,10 @@ void PhysicsDemoState::createBodies()
     auto ls = std::make_unique<PhysDemo::LineDrawable>(m_messageBus);
     cbEntity->addComponent(ls);
     cbEntity->getComponent<xy::AnimatedDrawable>()->setColour(sf::Color::White);
-
+    auto as = xy::Component::create<xy::AudioSource>(m_messageBus, m_soundResource);
+    as->setSound("assets/sound/cuetip.wav");
+    as->setName("tip_sound");
+    cbEntity->addComponent(as);
 
     const float spacingY = 27.f;
     const float halfY = spacingY / 2.f;
@@ -438,7 +420,71 @@ void PhysicsDemoState::createBodies()
         startPos.y -= ((x * spacingY) + halfY);
     }
 }
-#include <TimedDestruction.hpp>
+
+namespace
+{
+    const float maxVelocity = 400000.f;
+    void cushionImpactAction(xy::Component* component, const xy::Message& msg)
+    {
+        auto& msgData = msg.getData<xy::Message::PhysicsEvent>();
+
+        xy::AudioSource* as = dynamic_cast<xy::AudioSource*>(component);
+        
+        if (msgData.event == xy::Message::PhysicsEvent::BeginContact)
+        {
+            //if neither parent ents our ours, ignore
+            if (msgData.contact->getCollisionShapeA()->getRigidBody()->getParentUID() != as->getParentUID()
+                && msgData.contact->getCollisionShapeB()->getRigidBody()->getParentUID() != as->getParentUID())
+            {
+                return;
+            }
+
+            //if one of the shapes is not a ball it must be a cushion
+            if (msgData.contact->getCollisionShapeA()->type() != xy::Physics::CollisionShape::Type::Circle
+                || msgData.contact->getCollisionShapeB()->type() != xy::Physics::CollisionShape::Type::Circle)
+            {
+                //get velocity and set sound volume
+                auto vel = (msgData.contact->getCollisionShapeA()->getRigidBody()->getParentUID() == as->getParentUID()) ?
+                    msgData.contact->getCollisionShapeA()->getRigidBody()->getLinearVelocity()
+                    :
+                    msgData.contact->getCollisionShapeB()->getRigidBody()->getLinearVelocity();
+
+                const float len = xy::Util::Vector::lengthSquared(vel);
+                const float vol = 100.f * xy::Util::Math::clamp(len / maxVelocity, 0.1f, 1.f);
+                as->setVolume(vol);
+                as->play();
+            }
+        }
+    }
+
+    void ballImpactAction(xy::Component* component, const xy::Message& msg)
+    {
+        auto& msgData = msg.getData<xy::Message::PhysicsEvent>();
+
+        xy::AudioSource* as = dynamic_cast<xy::AudioSource*>(component);
+
+        if (msgData.event == xy::Message::PhysicsEvent::BeginContact)
+        {
+            //if entity of first parent isn't ours, skip. We only want to play the sound once in each contact
+            if (msgData.contact->getCollisionShapeA()->getRigidBody()->getParentUID() != as->getParentUID())
+            {
+                return;
+            }
+
+            //if we have ball/ball collision
+            if (msgData.contact->getCollisionShapeA()->type() == xy::Physics::CollisionShape::Type::Circle
+                && msgData.contact->getCollisionShapeB()->type() == xy::Physics::CollisionShape::Type::Circle)
+            {
+                //get velocity and set sound volume
+                const auto vel = xy::Util::Vector::lengthSquared(msgData.contact->getCollisionShapeA()->getRigidBody()->getLinearVelocity());
+                const float vol = 100.f * xy::Util::Math::clamp(vel / maxVelocity, 0.1f, 1.f);
+                as->setVolume(vol);
+                as->play();
+            }
+        }
+    }
+}
+
 xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
 {   
     auto ballEntity = xy::Entity::create(m_messageBus);
@@ -447,7 +493,6 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     ballBody->setAngularDamping(0.6f);
     ballBody->setLinearDamping(0.75f);
     ballBody->isBullet(true);
-    //ballBody->fixedRotation(true);
 
     xy::Physics::CollisionCircleShape ballShape(12.7f);
     ballShape.setDensity(10.f);
@@ -457,9 +502,20 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
 
     auto b = ballEntity->addComponent(ballBody);
 
+    //ball / ball sound
     auto soundSource = xy::Component::create<xy::AudioSource>(m_messageBus, m_soundResource);
-    soundSource = xy::Component::create<xy::AudioSource>(m_messageBus, m_soundResource);
     soundSource->setSound("assets/sound/ball.wav");
+    xy::Component::MessageHandler ballImpactHandler;
+    ballImpactHandler.action = std::bind(ballImpactAction, std::placeholders::_1, std::placeholders::_2);
+    ballImpactHandler.id = xy::Message::PhysicsMessage;
+    soundSource->addMessageHandler(ballImpactHandler);
+    ballEntity->addComponent(soundSource);
+
+    //ball / cushion sound
+    soundSource = xy::Component::create<xy::AudioSource>(m_messageBus, m_soundResource);
+    soundSource->setSound("assets/sound/cushion.wav");
+    ballImpactHandler.action = std::bind(cushionImpactAction, std::placeholders::_1, std::placeholders::_2);
+    soundSource->addMessageHandler(ballImpactHandler);
     ballEntity->addComponent(soundSource);
 
     auto drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
