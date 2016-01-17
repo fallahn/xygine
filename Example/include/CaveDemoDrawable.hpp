@@ -75,7 +75,7 @@ namespace CaveDemo
                 aboveNode   (pos),
                 rightNode   (pos)
             {
-                aboveNode.position.y -= (size / 2.f);
+                aboveNode.position.y += (size / 2.f);
                 rightNode.position.x += (size / 2.f);
             }
         };

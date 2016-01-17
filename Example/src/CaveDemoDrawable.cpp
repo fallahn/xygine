@@ -40,7 +40,7 @@ namespace
     const std::size_t width = static_cast<std::size_t>(std::ceil(1920.f / cellSize));
     const std::size_t height = static_cast<std::size_t>(std::ceil(1080.f / cellSize));
 
-    const int randThreshold = 53; //TODO make this a property
+    const int randThreshold = 52; //TODO make this a property
 
     std::size_t indexFromCoord(const sf::Vector2i& coord)
     {
@@ -67,14 +67,14 @@ CaveDrawable::CaveDrawable(xy::MessageBus& mb)
 
 
     //for now add quads to visualise output
-    //TODO generate proper mesh
-    for (auto i = 0u; i < m_tileData.size(); ++i)
+    /*for (auto i = 0u; i < m_tileData.size(); ++i)
     {
         if (m_tileData[i] > 0)
         {
             addQuad(i);
         }
-    }
+    }*/
+
     //TODO check position is offset correctly
     m_globalBounds.width = static_cast<float>(width) * cellSize;
     m_globalBounds.height = static_cast<float>(height) * cellSize;
@@ -100,10 +100,12 @@ sf::FloatRect CaveDrawable::globalBounds() const
 //private
 void CaveDrawable::fillRand()
 {
+    xy::Util::Random::rndEngine.seed(12345);
     for (auto& t : m_tileData)
     {
         t = (xy::Util::Random::value(0, 100) > randThreshold) ? 1u : 0u;
     }
+    xy::Util::Random::rndEngine.seed(static_cast<unsigned long>(std::time(0)));
 }
 
 void CaveDrawable::smooth()
@@ -128,7 +130,7 @@ sf::Uint8 CaveDrawable::getNeighbourCount(std::size_t idx)
         {
             if (x >= 0 && x < width && y >= 0 && y < height)
             {
-                if (x != coord.x || y != coord.y) //&& or || ?
+                if (x != coord.x || y != coord.y)
                 {
                     retVal += m_tileData[indexFromCoord({ x, y })];
                 }
@@ -145,7 +147,7 @@ sf::Uint8 CaveDrawable::getNeighbourCount(std::size_t idx)
 
 void CaveDrawable::addQuad(std::size_t idx)
 {
-    static const sf::Color colour(20u, 35u, 30u);
+    static const sf::Color colour(120u, 135u, 130u);
     
     auto coord = sf::Vector2f(coordFromIndex(idx));
     coord *= cellSize;
@@ -164,8 +166,7 @@ void CaveDrawable::buildVertexArray()
     for (auto i = 0u; i < m_tileData.size(); ++i)
     {
         auto coord = coordFromIndex(i);
-        auto size = getSize();
-        sf::Vector2f position(-(size.x / 2.f) + coord.x * cellSize + (cellSize / 2.f), -(size.y / 2.f) + coord.y * cellSize + (cellSize / 2.f));
+        sf::Vector2f position(coord.x * cellSize + (cellSize / 2.f), coord.y * cellSize + (cellSize / 2.f));
         controlNodes.emplace_back((m_tileData[i] == 1), position, cellSize);
     }
 
@@ -180,10 +181,122 @@ void CaveDrawable::buildVertexArray()
                                 controlNodes[indexFromCoord(sf::Vector2i(x, y))]);
         }
     }
-    int buns = 0;
+    
+    //functional programming ftw
+    std::vector<sf::Vector2f> vertices;//vertex positions
+    std::vector<std::size_t> indices; //indices into vertex array
+
+    std::function<void(std::vector<Node>& points)> meshFromPoints = [&vertices, &indices](std::vector<Node>& points)
+    {
+        for (auto& p : points)
+        {
+            if (p.idx == -1)
+            {
+                p.idx = vertices.size();
+                vertices.push_back(p.position);
+            }
+        }
+
+        if (points.size() >= 3u)
+        {
+            indices.push_back(points[0].idx);
+            indices.push_back(points[1].idx);
+            indices.push_back(points[2].idx);
+        }
+        if (points.size() >= 4u)
+        {
+            indices.push_back(points[0].idx);
+            indices.push_back(points[2].idx);
+            indices.push_back(points[3].idx);
+        }
+        if (points.size() >= 5u)
+        {
+            indices.push_back(points[0].idx);
+            indices.push_back(points[3].idx);
+            indices.push_back(points[4].idx);
+        }
+        if (points.size() >= 6u)
+        {
+            indices.push_back(points[0].idx);
+            indices.push_back(points[4].idx);
+            indices.push_back(points[5].idx);
+        }
+    };
+
+    std::function<void(const Square&)> triangulate = [&meshFromPoints](const Square& square)
+    {
+        std::vector<Node> points;
+        switch (square.mask)
+        {
+        case 0:
+        default:
+            break;
+            //1 point
+        case 1:
+            points = { square.centreBottom, square.bottomLeft, square.centreLeft };
+            break;
+        case 2:
+            points = { square.centreRight, square.bottomRight, square.centreBottom };
+            break;
+        case 4:
+            points = { square.centreTop, square.topRight, square.centreRight };
+            break;
+        case 8:
+            points = { square.topLeft, square.centreTop, square.centreLeft };
+            break;
+            //2 points
+        case 3:
+            points = { square.centreRight, square.bottomRight, square.bottomLeft, square.centreLeft };
+            break;
+        case 6:
+            points = { square.centreTop, square.topRight, square.bottomRight, square.centreBottom };
+            break;
+        case 9:
+            points = { square.topLeft, square.centreTop, square.centreBottom, square.bottomLeft };
+            break;
+        case 12:
+            points = { square.topLeft, square.topRight, square.centreRight, square.centreLeft };
+            break;
+        case 5:
+            points = { square.centreTop, square.topRight, square.centreRight, square.centreBottom, square.bottomLeft, square.centreLeft };
+            break;
+        case 10:
+            points = { square.topLeft, square.centreTop, square.centreRight, square.bottomRight, square.centreBottom, square.centreLeft };
+            break;
+            //3 points
+        case 7:
+            points = { square.centreTop, square.topRight, square.bottomRight, square.bottomLeft, square.centreLeft };
+            break;
+        case 11:
+            points = { square.topLeft, square.centreTop, square.centreRight, square.bottomRight, square.bottomLeft };
+            break;
+        case 13:
+            points = { square.topLeft, square.topRight, square.centreRight, square.centreBottom, square.bottomLeft };
+            break;
+        case 14:
+            points = { square.topLeft, square.topRight, square.bottomRight, square.centreBottom, square.centreLeft };
+            break;
+            //4 points
+        case 15:
+            points = { square.topLeft, square.topRight, square.bottomRight, square.bottomLeft };
+            break;
+        }
+        meshFromPoints(points);
+    };
+
+    for (const auto& s : squares)
+    {
+        triangulate(s);
+    }
+
+    //build final vertex array - TODO would be nice if SFML supported drawing vertices from index arrays
+    for (const auto& i : indices)
+    {
+        m_vertices.emplace_back(sf::Vertex(vertices[i], sf::Color(60u, 40u, 6u)));
+    }
 }
 
 void CaveDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    rt.draw(m_vertices.data(), m_vertices.size(), sf::Quads, states);
+    rt.draw(m_vertices.data(), m_vertices.size(), sf::Triangles, states);
 }

@@ -82,7 +82,7 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     m_scene.setView(context.defaultView);
 
     xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostChromeAb>();
-    m_scene.addPostProcess(pp);
+    //m_scene.addPostProcess(pp);
     pp = xy::PostProcess::create<xy::PostBloom>();
     m_scene.addPostProcess(pp);
     m_scene.setClearColour({ 0u, 0u, 20u });
@@ -123,13 +123,7 @@ bool ParticleDemoState::handleEvent(const sf::Event& evt)
     {
         const auto& rw = getContext().renderWindow;
         auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
-        //xy::Command cmd;
-        //cmd.entityID = controllerId;
-        //cmd.action = [mousePos](xy::Entity& entity, float)
-        //{
-        //    entity.getComponent<xy::ParticleController>()->fire(xy::Util::Random::value(0, ParticleType::Count - 1), mousePos);
-        //};
-        //m_scene.sendCommand(cmd);
+
         spawnThing(mousePos);
     }
         break;
