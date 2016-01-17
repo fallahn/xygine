@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/QuadTree.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Rectangle.hpp>
 #include <xygine/Log.hpp>
 
 #include <xygine/Assert.hpp>

@@ -27,7 +27,6 @@ source distribution.
 
 #include <MenuOptionState.hpp>
 
-#include <xygine/Util.hpp>
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
 

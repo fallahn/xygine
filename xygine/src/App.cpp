@@ -27,7 +27,7 @@ source distribution.
 
 #include <xygine/App.hpp>
 #include <xygine/Protocol.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Math.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/Reports.hpp>
 #include <xygine/physics/World.hpp>

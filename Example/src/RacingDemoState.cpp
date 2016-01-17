@@ -36,7 +36,7 @@ source distribution.
 
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Position.hpp>
 
 #include <xygine/PostBloom.hpp>
 #include <xygine/PostChromeAb.hpp>

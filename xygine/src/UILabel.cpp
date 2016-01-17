@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/ui/Label.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Position.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>

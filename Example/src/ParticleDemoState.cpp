@@ -34,14 +34,17 @@ source distribution.
 
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
-#include <xygine/Util.hpp>
 
 #include <xygine/components/ParticleController.hpp>
+#include <xygine/physics/RigidBody.hpp>
+#include <xygine/physics/CollisionCircleShape.hpp>
 #include <xygine/PostBloom.hpp>
 #include <xygine/PostChromeAb.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
+
+#include <TimedDestruction.hpp>
 
 namespace
 {
@@ -71,7 +74,8 @@ namespace
 ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context)
     : State         (stateStack, context),
     m_messageBus    (context.appInstance.getMessageBus()),
-    m_scene         (m_messageBus)
+    m_scene         (m_messageBus),
+    m_physWorld     (m_messageBus)
 {
     launchLoadingScreen();
 
@@ -87,15 +91,9 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     m_reportText.setPosition(1500.f, 30.f);
 
     setupParticles();
+    buildTerrain();
+
     context.renderWindow.setMouseCursorVisible(true);
-
-
-    //for now we'll stick our cavegen here
-    auto ent = xy::Entity::create(m_messageBus);
-    auto cd = std::make_unique<CaveDemo::CaveDrawable>(m_messageBus);
-    ent->move((sf::Vector2f(1920.f, 1080.f) - cd->getSize()) / 2.f);
-    ent->addComponent(cd);    
-    m_scene.addEntity(ent, xy::Scene::Layer::BackRear);
 
     quitLoadingScreen();
 }
@@ -125,13 +123,14 @@ bool ParticleDemoState::handleEvent(const sf::Event& evt)
     {
         const auto& rw = getContext().renderWindow;
         auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
-        xy::Command cmd;
-        cmd.entityID = controllerId;
-        cmd.action = [mousePos](xy::Entity& entity, float)
-        {
-            entity.getComponent<xy::ParticleController>()->fire(xy::Util::Random::value(0, ParticleType::Count - 1), mousePos);
-        };
-        m_scene.sendCommand(cmd);
+        //xy::Command cmd;
+        //cmd.entityID = controllerId;
+        //cmd.action = [mousePos](xy::Entity& entity, float)
+        //{
+        //    entity.getComponent<xy::ParticleController>()->fire(xy::Util::Random::value(0, ParticleType::Count - 1), mousePos);
+        //};
+        //m_scene.sendCommand(cmd);
+        spawnThing(mousePos);
     }
         break;
     case sf::Event::KeyPressed:
@@ -226,19 +225,53 @@ void ParticleDemoState::setupParticles()
     auto entity = xy::Entity::create(m_messageBus);
 
     auto pc = entity->addComponent(particleController);
-    xy::ParticleSystem::Definition pd;
-    pd.loadFromFile("assets/particles/bubbles.xyp", m_textureResource);
-    pc->addDefinition(ParticleType::Bubbles, pd);
+    
+    m_particleDef.loadFromFile("assets/particles/bubbles.xyp", m_textureResource);
+    pc->addDefinition(ParticleType::Bubbles, m_particleDef);
 
-    pd.loadFromFile("assets/particles/explosion.xyp", m_textureResource);
-    pc->addDefinition(ParticleType::Explosion, pd);
+    m_particleDef.loadFromFile("assets/particles/explosion.xyp", m_textureResource);
+    pc->addDefinition(ParticleType::Explosion, m_particleDef);
 
-    pd.loadFromFile("assets/particles/fairydust.xyp", m_textureResource);
-    pc->addDefinition(ParticleType::FairyDust, pd);
+    m_particleDef.loadFromFile("assets/particles/fairydust.xyp", m_textureResource);
+    pc->addDefinition(ParticleType::FairyDust, m_particleDef);
 
-    pd.loadFromFile("assets/particles/fire.xyp", m_textureResource);
-    pc->addDefinition(ParticleType::Fire, pd);
+    m_particleDef.loadFromFile("assets/particles/fire.xyp", m_textureResource);
+    pc->addDefinition(ParticleType::Fire, m_particleDef);
 
     controllerId = entity->getUID();
     m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
+}
+
+void ParticleDemoState::buildTerrain()
+{
+    auto ent = xy::Entity::create(m_messageBus);
+    auto cd = std::make_unique<CaveDemo::CaveDrawable>(m_messageBus);
+    ent->move((sf::Vector2f(1920.f, 1080.f) - cd->getSize()) / 2.f);
+    ent->addComponent(cd);
+    m_scene.addEntity(ent, xy::Scene::Layer::BackRear);
+
+    //TODO get edges to add to physworld
+
+}
+
+void ParticleDemoState::spawnThing(const sf::Vector2f& position)
+{
+    auto ps = m_particleDef.createSystem(m_messageBus);
+    ps->start(m_particleDef.releaseCount, m_particleDef.delay, m_particleDef.duration);
+
+    auto physBody = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
+    xy::Physics::CollisionCircleShape cs(10.f);
+    cs.setRestitution(0.99f);
+    cs.setDensity(20.f);
+    physBody->addCollisionShape(cs);
+
+    auto td = xy::Component::create<TimedDestruction>(m_messageBus);
+
+    auto entity = xy::Entity::create(m_messageBus);
+    entity->setWorldPosition(position);
+    entity->addComponent(ps);
+    entity->addComponent(physBody);
+    entity->addComponent(td);
+
+    m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 }

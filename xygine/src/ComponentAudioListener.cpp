@@ -27,6 +27,7 @@ source distribution.
 
 #include <xygine/components/AudioListener.hpp>
 #include <xygine/Entity.hpp>
+#include <xygine/Reports.hpp>
 
 #include <SFML/Audio/Listener.hpp>
 
@@ -63,6 +64,7 @@ void AudioListener::entityUpdate(Entity& entity, float)
     sf::Listener::setPosition({ pos.x, -pos.y, listenerDepth });
 
     m_dyingSounds.remove_if([](const sf::Sound& s) {return (s.getStatus() == sf::Sound::Stopped); });
+    REPORT("Sound Cache Buffer", std::to_string(m_dyingSounds.size()));
 }
 
 float AudioListener::getListenerDepth()
@@ -73,6 +75,6 @@ float AudioListener::getListenerDepth()
 //private
 void AudioListener::addDyingSound(const sf::Sound& sound)
 {
-    XY_ASSERT(instance, "No listenenr instance");
+    XY_ASSERT(instance, "No listener instance");
     instance->m_dyingSounds.push_back(sound);
 }

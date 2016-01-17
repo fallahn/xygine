@@ -27,7 +27,6 @@ source distribution.
 
 #include <xygine/AudioManager.hpp>
 #include <xygine/MessageBus.hpp>
-#include <xygine/Util.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/FileSystem.hpp>
 

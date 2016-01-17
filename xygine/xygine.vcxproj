@@ -160,7 +160,6 @@
     <ClInclude Include="include\xygine\Difficulty.hpp" />
     <ClInclude Include="include\xygine\Entity.hpp" />
     <ClInclude Include="include\xygine\FileSystem.hpp" />
-    <ClInclude Include="include\xygine\JsonUtil.hpp" />
     <ClInclude Include="include\xygine\Log.hpp" />
     <ClInclude Include="include\xygine\MessageBus.hpp" />
     <ClInclude Include="include\xygine\Music.hpp" />
@@ -224,7 +223,15 @@
     <ClInclude Include="include\xygine\ui\Slider.hpp" />
     <ClInclude Include="include\xygine\ui\TextBox.hpp" />
     <ClInclude Include="include\xygine\ui\Window.hpp" />
-    <ClInclude Include="include\xygine\Util.hpp" />
+    <ClInclude Include="include\xygine\util\Json.hpp" />
+    <ClInclude Include="include\xygine\util\Const.hpp" />
+    <ClInclude Include="include\xygine\util\Math.hpp" />
+    <ClInclude Include="include\xygine\util\Position.hpp" />
+    <ClInclude Include="include\xygine\util\Random.hpp" />
+    <ClInclude Include="include\xygine\util\Rectangle.hpp" />
+    <ClInclude Include="include\xygine\util\String.hpp" />
+    <ClInclude Include="include\xygine\util\Vector.hpp" />
+    <ClInclude Include="include\xygine\util\Wavetable.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -26,7 +26,8 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/ui/Slider.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Position.hpp>
+#include <xygine/util/Math.hpp>
 #include <xygine/App.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>

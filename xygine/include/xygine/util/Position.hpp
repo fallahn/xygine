@@ -25,39 +25,29 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/physics/AffectorAreaForce.hpp>
-#include <xygine/physics/RigidBody.hpp>
-#include <xygine/Assert.hpp>
+#ifndef XY_UTIL_POSITION_HPP_
+#define XY_UTIL_POSITION_HPP_
 
-using namespace xy;
-using namespace xy::Physics;
+#include <cmath>
 
-AreaForceAffector::AreaForceAffector(const sf::Vector2f& force, float torque, bool wake)
-    : m_force       (force),
-    m_torque        (torque),
-    m_wake          (wake),
-    m_linearDrag    (0.f),
-    m_angularDrag   (0.f),
-    m_useMask       (false)
+namespace xy
 {
-
+    namespace Util
+    {
+        namespace Position
+        {
+            /*!
+            \brief Centres the origin of sf::Transformable types
+            */
+            template <typename T>
+            static inline void centreOrigin(T& transformable)
+            {
+                static_assert(std::is_base_of<sf::Transformable, T>::value, "only transformable type allowed");
+                sf::FloatRect bounds = transformable.getLocalBounds();
+                transformable.setOrigin(std::floor(bounds.width / 2.f), std::floor(bounds.height / 2.f));
+            }
+        }
+    }
 }
 
-void AreaForceAffector::apply(RigidBody* body)
-{   
-    XY_ASSERT(body, "body is nullptr");
-    body->applyForce(m_force - (body->getLinearVelocity() * m_linearDrag), m_targetPoint, m_wake);
-    body->applyTorque(m_torque - (body->getAngularVelocity() * m_angularDrag), m_wake);
-}
-
-void AreaForceAffector::setLinearDrag(float drag)
-{
-    XY_ASSERT(drag >= 0.f && drag <= 1.f, "drag must be in range 0-1");
-    m_linearDrag = drag;
-}
-
-void AreaForceAffector::setAngularDrag(float drag)
-{
-    XY_ASSERT(drag >= 0.f && drag <= 1.f, "drag must be in range 0-1");
-    m_angularDrag = drag;
-}
+#endif //XY_UTIL_POSITION_HPP_

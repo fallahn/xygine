@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/ui/Selection.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Position.hpp>
 #include <xygine/Log.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>

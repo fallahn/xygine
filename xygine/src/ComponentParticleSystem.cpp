@@ -26,7 +26,8 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/components/ParticleSystem.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Random.hpp>
+#include <xygine/util/Vector.hpp>
 #include <xygine/Entity.hpp>
 #include <xygine/MessageBus.hpp>
 #include <xygine/Assert.hpp>
@@ -337,8 +338,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 }
 
 
-#include <xygine/JsonUtil.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Json.hpp>
 #include <xygine/picojson.h>
 #include <xygine/Resource.hpp>
 //-------particle system definition------//

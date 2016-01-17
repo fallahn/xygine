@@ -35,6 +35,8 @@ source distribution.
 #include <xygine/State.hpp>
 #include <xygine/Resource.hpp>
 #include <xygine/Scene.hpp>
+#include <xygine/components/ParticleSystem.hpp>
+#include <xygine/physics/World.hpp>
 
 #include <SFML/Graphics/Text.hpp>
 
@@ -62,7 +64,12 @@ private:
 
     sf::Text m_reportText;
 
+    xy::Physics::World m_physWorld;
+    xy::ParticleSystem::Definition m_particleDef;
+
     void setupParticles();
+    void buildTerrain();
+    void spawnThing(const sf::Vector2f& pos);
 };
 
 #endif //PARTICLE_DEMO_STATE_HPP_

@@ -25,7 +25,16 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main entry point for the app
+/*!
+\mainpage XYGINE
+
+A 2D Game Engine Framework built around SFML, xygine implements a scene graph along with an Entity Component System.
+The source for xygine is released under the zlib license in the hope that it may be useful for other people - 
+but offers no warranty that it is fit for any particular purpose, even those for which it was specifically written...
+
+Explanations of systems and examples can be found on the <a href="https://github.com/fallahn/xygine/wiki">xygine wiki</a>
+
+*/
 
 #ifndef XY_APP_HPP_
 #define XY_APP_HPP_

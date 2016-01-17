@@ -27,8 +27,8 @@ source distribution.
 
 #include <xygine/components/AnimatedDrawable.hpp>
 #include <xygine/Resource.hpp>
-#include <xygine/Util.hpp>
-#include <xygine/JsonUtil.hpp>
+#include <xygine/util/Vector.hpp>
+#include <xygine/util/Json.hpp>
 #include <xygine/Log.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -339,6 +339,9 @@ void AnimatedDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     {
         m_shader->setParameter("u_diffuseMap", *m_sprite.getTexture());
         m_shader->setParameter("u_normalMap", *m_normalMap);
+        //TODO this is just the inverse world matrix. To get the view we need to include
+        //the inverse of the camera's top left corner transform, and multiply the world
+        //position by it, before inverting it. Shenanigans.
         m_shader->setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
     }   
     rt.draw(m_sprite, states);

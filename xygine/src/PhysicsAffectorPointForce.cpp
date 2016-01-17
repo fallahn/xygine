@@ -29,7 +29,7 @@ source distribution.
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/physics/CollisionShape.hpp>
 #include <xygine/Assert.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Vector.hpp>
 
 using namespace xy;
 using namespace xy::Physics;

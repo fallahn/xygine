@@ -25,39 +25,22 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/physics/AffectorAreaForce.hpp>
-#include <xygine/physics/RigidBody.hpp>
-#include <xygine/Assert.hpp>
+#ifndef XY_UTIL_CONST_HPP_
+#define XY_UTIL_CONST_HPP_
 
-using namespace xy;
-using namespace xy::Physics;
-
-AreaForceAffector::AreaForceAffector(const sf::Vector2f& force, float torque, bool wake)
-    : m_force       (force),
-    m_torque        (torque),
-    m_wake          (wake),
-    m_linearDrag    (0.f),
-    m_angularDrag   (0.f),
-    m_useMask       (false)
+namespace xy
 {
+    namespace Util
+    {
+        namespace Const
+        {
+            static const float PI = 3.1412f;
+            static const float degToRad = PI / 180.f;
+            static const float radToDeg = 180.f / PI;
+            static const float TAU = PI * 2.f;
+            static const float E = 2.71828f;
+        } //Const
+    }//Util
+}//xy
 
-}
-
-void AreaForceAffector::apply(RigidBody* body)
-{   
-    XY_ASSERT(body, "body is nullptr");
-    body->applyForce(m_force - (body->getLinearVelocity() * m_linearDrag), m_targetPoint, m_wake);
-    body->applyTorque(m_torque - (body->getAngularVelocity() * m_angularDrag), m_wake);
-}
-
-void AreaForceAffector::setLinearDrag(float drag)
-{
-    XY_ASSERT(drag >= 0.f && drag <= 1.f, "drag must be in range 0-1");
-    m_linearDrag = drag;
-}
-
-void AreaForceAffector::setAngularDrag(float drag)
-{
-    XY_ASSERT(drag >= 0.f && drag <= 1.f, "drag must be in range 0-1");
-    m_angularDrag = drag;
-}
+#endif //XY_UTIL_CONST_HPP_

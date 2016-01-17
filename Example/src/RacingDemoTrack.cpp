@@ -27,7 +27,7 @@ source distribution.
 
 #include <RacingDemoTrack.hpp>
 
-#include <xygine/Util.hpp>
+#include <xygine/util/Const.hpp>
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -37,7 +37,7 @@ source distribution.
 namespace
 {
     const float SEGMENT_LENGTH = 200.f;
-    const float CAMERA_DEPTH = (1.f / std::tan(50.f * degToRad));
+    const float CAMERA_DEPTH = (1.f / std::tan(50.f * xy::Util::Const::degToRad));
     const float CAMERA_HEIGHT = 2000.f;
     const std::size_t RUMBLE_LENGTH = 3u;
     const std::size_t DRAW_DISTANCE = 500u;
@@ -59,7 +59,7 @@ namespace
 
     float easeInOut(float a, float b, float percent)
     {
-        return a + (b - a) * (static_cast<float>(-std::cos(percent * PI) / 2.f) + 0.5f);
+        return a + (b - a) * (static_cast<float>(-std::cos(percent * xy::Util::Const::PI) / 2.f) + 0.5f);
     }
 
     float percentRemaining(float n, float total)
@@ -74,7 +74,7 @@ namespace
 
     float exponentialFog(float distance, float density)
     {
-        return static_cast<float>(1 / std::pow(E, (distance * distance * density)));
+        return static_cast<float>(1 / std::pow(xy::Util::Const::E, (distance * distance * density)));
     }
 }
 

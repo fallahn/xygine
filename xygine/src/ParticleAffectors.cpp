@@ -27,7 +27,7 @@ source distribution.
 
 #include <xygine/ParticleAffectors.hpp>
 #include <xygine/components/ParticleSystem.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Random.hpp>
 
 namespace
 {

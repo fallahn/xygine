@@ -80,10 +80,6 @@ namespace xy
             friend class MotorJoint;
         public:
             using Ptr = std::unique_ptr<RigidBody>;
-            static Ptr create(MessageBus& mb, BodyType bt)
-            {
-                return std::move(std::make_unique<RigidBody>(mb, bt));
-            }
 
             RigidBody(MessageBus&, BodyType);
             ~RigidBody() = default;

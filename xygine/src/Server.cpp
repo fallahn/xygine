@@ -28,7 +28,6 @@ source distribution.
 #include <xygine/Server.hpp>
 #include <xygine/Protocol.hpp>
 #include <xygine/Log.hpp>
-#include <xygine/Util.hpp>
 #include <xygine/components/QuadTreeComponent.hpp>
 #include <xygine/Reports.hpp>
 

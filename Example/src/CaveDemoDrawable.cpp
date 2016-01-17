@@ -27,7 +27,7 @@ source distribution.
 
 #include <CaveDemoDrawable.hpp>
 
-#include <xygine/Util.hpp>
+#include <xygine/util/Random.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -36,7 +36,7 @@ using namespace CaveDemo;
 
 namespace
 {
-    const float cellSize = 15.f;
+    const float cellSize = 25.f;
     const std::size_t width = static_cast<std::size_t>(std::ceil(1920.f / cellSize));
     const std::size_t height = static_cast<std::size_t>(std::ceil(1080.f / cellSize));
 

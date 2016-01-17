@@ -38,7 +38,8 @@ source distribution.
 
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Math.hpp>
+#include <xygine/util/Vector.hpp>
 
 #include <xygine/shaders/NormalMapped.hpp>
 #include <xygine/shaders/Misc.hpp>
@@ -239,7 +240,7 @@ void PhysicsDemoState::createBodies()
 {
     auto tableEntity = xy::Entity::create(m_messageBus);
     tableEntity->setWorldPosition({ 360.f, 211.f });
-    auto tableBody = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Static);
+    auto tableBody = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Static);
 
     //cushions
     std::vector<sf::Vector2f> points = 
@@ -489,7 +490,7 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
 {   
     auto ballEntity = xy::Entity::create(m_messageBus);
     ballEntity->setWorldPosition(position);
-    auto ballBody = xy::Physics::RigidBody::create(m_messageBus, xy::Physics::BodyType::Dynamic);
+    auto ballBody = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
     ballBody->setAngularDamping(0.6f);
     ballBody->setLinearDamping(0.75f);
     ballBody->isBullet(true);

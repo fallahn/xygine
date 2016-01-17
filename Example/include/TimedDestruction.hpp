@@ -31,7 +31,7 @@ source distribution.
 #define TIMED_DESTRUCTION_HPP_
 
 #include <xygine/components/Component.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Random.hpp>
 #include <xygine/Entity.hpp>
 
 #include <SFML/System/Clock.hpp>

@@ -40,6 +40,9 @@
     <Filter Include="Header Files\shaders">
       <UniqueIdentifier>{77afb207-f723-46b3-9b2e-9d9c24f1bca6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{7c9a36a4-0fb5-4184-b768-baee7fdd470d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -248,9 +251,6 @@
     <ClInclude Include="include\xygine\FileSystem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\JsonUtil.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\xygine\Log.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -306,9 +306,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\StateStack.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\Util.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\ui\Button.hpp">
@@ -484,6 +481,33 @@
     </ClInclude>
     <ClInclude Include="include\xygine\shaders\PostGaussianBlur.hpp">
       <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\util\Json.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\util\Const.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\util\Wavetable.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\util\String.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\util\Vector.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\util\Position.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\util\Random.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\util\Math.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\util\Rectangle.hpp">
+      <Filter>Header Files\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

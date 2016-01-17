@@ -30,7 +30,7 @@ source distribution.
 
 #include <xygine/App.hpp>
 #include <xygine/physics/RigidBody.hpp>
-#include <xygine/Util.hpp>
+#include <xygine/util/Vector.hpp>
 #include <xygine/components/AudioSource.hpp>
 
 namespace
