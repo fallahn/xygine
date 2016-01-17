@@ -112,6 +112,7 @@ void ParticleDemoState::draw()
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
     rw.setView(getContext().defaultView);
+    rw.draw(m_physWorld);
     rw.draw(m_reportText);
 }
 
@@ -241,11 +242,13 @@ void ParticleDemoState::buildTerrain()
     auto ent = xy::Entity::create(m_messageBus);
     auto cd = std::make_unique<CaveDemo::CaveDrawable>(m_messageBus);
     ent->move((sf::Vector2f(1920.f, 1080.f) - cd->getSize()) / 2.f);
-    ent->addComponent(cd);
+    //ent->move(100.f, 100.f);
+    auto cave = ent->addComponent(cd);
     m_scene.addEntity(ent, xy::Scene::Layer::BackRear);
 
-    //TODO get edges to add to physworld
-
+    //get edges to add to physworld
+    const auto& edges = cave->getEdges();
+    int buns = 0;
 }
 
 void ParticleDemoState::spawnThing(const sf::Vector2f& position)

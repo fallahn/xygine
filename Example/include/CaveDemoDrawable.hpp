@@ -36,6 +36,7 @@ source distribution.
 #include <SFML/Graphics/Vertex.hpp>
 
 #include <vector>
+#include <array>
 
 namespace CaveDemo
 {
@@ -51,6 +52,11 @@ namespace CaveDemo
         sf::Vector2f getSize() const;
 
         sf::FloatRect globalBounds() const override;
+
+        const std::vector<std::vector<sf::Vector2f>>& getEdges() const
+        {
+            return m_edges;
+        }
 
     private:
         //structs used in marching square algorithm
@@ -109,8 +115,31 @@ namespace CaveDemo
             }
         };
 
+        struct Triangle final
+        {
+            Triangle(std::size_t a, std::size_t b, std::size_t c)
+            {
+                m_indices[0] = a, m_indices[1] = b; m_indices[2] = c;
+            }
+            std::size_t& operator[](std::size_t i)
+            {
+                return m_indices[i];
+            }
+            std::size_t operator[](std::size_t i) const
+            {
+                return m_indices[i];
+            }
+            bool contains(std::size_t idx) const
+            {
+                return (m_indices[0] == idx || m_indices[1] == idx || m_indices[2] == idx);
+            }
+        private:
+            std::array<std::size_t, 3u> m_indices;
+        };
+
         std::vector<sf::Vertex> m_vertices;
         std::vector<sf::Uint8> m_tileData;
+        std::vector<std::vector<sf::Vector2f>> m_edges;
 
         sf::FloatRect m_globalBounds;
 

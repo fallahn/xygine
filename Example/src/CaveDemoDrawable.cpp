@@ -32,15 +32,17 @@ source distribution.
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
+#include <map>
+
 using namespace CaveDemo;
 
 namespace
 {
     const float cellSize = 25.f;
-    const std::size_t width = static_cast<std::size_t>(std::ceil(1920.f / cellSize));
-    const std::size_t height = static_cast<std::size_t>(std::ceil(1080.f / cellSize));
+    const std::size_t width = static_cast<std::size_t>(std::ceil(1970.f / cellSize));
+    const std::size_t height = static_cast<std::size_t>(std::ceil(1130.f / cellSize));
 
-    const int randThreshold = 52; //TODO make this a property
+    const int randThreshold = 54; //TODO make this a property
 
     std::size_t indexFromCoord(const sf::Vector2i& coord)
     {
@@ -101,9 +103,19 @@ sf::FloatRect CaveDrawable::globalBounds() const
 void CaveDrawable::fillRand()
 {
     xy::Util::Random::rndEngine.seed(12345);
-    for (auto& t : m_tileData)
+    const auto border = 2;
+    for (auto i = 0u; i < m_tileData.size(); ++i)
     {
-        t = (xy::Util::Random::value(0, 100) > randThreshold) ? 1u : 0u;
+        auto coord = coordFromIndex(i);
+        if ((coord.x >= border && coord.x < width - border) &&
+            (coord.y >= border && coord.y < height - border))
+        {
+            m_tileData[i] = (xy::Util::Random::value(0, 100) > randThreshold) ? 1u : 0u;
+        }
+        else
+        {
+            m_tileData[i] = 1u;
+        }
     }
     xy::Util::Random::rndEngine.seed(static_cast<unsigned long>(std::time(0)));
 }
@@ -185,9 +197,37 @@ void CaveDrawable::buildVertexArray()
     //functional programming ftw
     std::vector<sf::Vector2f> vertices;//vertex positions
     std::vector<std::size_t> indices; //indices into vertex array
+    std::map<sf::Int32, std::vector<Triangle>> triangles; //cache triangles to search edges
 
-    std::function<void(std::vector<Node>& points)> meshFromPoints = [&vertices, &indices](std::vector<Node>& points)
+    std::function<void(std::vector<Node>& points)> meshFromPoints = [&vertices, &indices, &triangles](std::vector<Node>& points)
     {
+        std::function<void(sf::Int32, const Triangle&)> cacheTriangle = [&triangles](sf::Int32 idx, const Triangle& t)
+        {
+            auto result = triangles.find(idx);
+            if (result != triangles.end())
+            {
+                result->second.push_back(t);
+            }
+            else
+            {
+                std::vector<Triangle> tris;
+                tris.push_back(t);
+                triangles.insert(std::make_pair(idx, tris));
+            }
+        };
+
+        std::function<void(sf::Int32, sf::Int32, sf::Int32)> indexTriangle = [&](sf::Int32 a, sf::Int32 b, sf::Int32 c)
+        {
+            indices.push_back(a);
+            indices.push_back(b);
+            indices.push_back(c);
+
+            Triangle t(a, b, c);
+            cacheTriangle(a, t);
+            cacheTriangle(b, t);
+            cacheTriangle(c, t);
+        };
+        
         for (auto& p : points)
         {
             if (p.idx == -1)
@@ -199,27 +239,19 @@ void CaveDrawable::buildVertexArray()
 
         if (points.size() >= 3u)
         {
-            indices.push_back(points[0].idx);
-            indices.push_back(points[1].idx);
-            indices.push_back(points[2].idx);
+            indexTriangle(points[0].idx, points[1].idx, points[2].idx);
         }
         if (points.size() >= 4u)
         {
-            indices.push_back(points[0].idx);
-            indices.push_back(points[2].idx);
-            indices.push_back(points[3].idx);
+            indexTriangle(points[0].idx, points[2].idx, points[3].idx);
         }
         if (points.size() >= 5u)
         {
-            indices.push_back(points[0].idx);
-            indices.push_back(points[3].idx);
-            indices.push_back(points[4].idx);
+            indexTriangle(points[0].idx, points[3].idx, points[4].idx);
         }
         if (points.size() >= 6u)
         {
-            indices.push_back(points[0].idx);
-            indices.push_back(points[4].idx);
-            indices.push_back(points[5].idx);
+            indexTriangle(points[0].idx, points[4].idx, points[5].idx);
         }
     };
 
@@ -233,13 +265,13 @@ void CaveDrawable::buildVertexArray()
             break;
             //1 point
         case 1:
-            points = { square.centreBottom, square.bottomLeft, square.centreLeft };
+            points = { square.centreLeft, square.centreBottom, square.bottomLeft };
             break;
         case 2:
-            points = { square.centreRight, square.bottomRight, square.centreBottom };
+            points = { square.bottomRight, square.centreBottom, square.centreRight };
             break;
         case 4:
-            points = { square.centreTop, square.topRight, square.centreRight };
+            points = { square.topRight, square.centreRight, square.centreTop };
             break;
         case 8:
             points = { square.topLeft, square.centreTop, square.centreLeft };
@@ -293,6 +325,79 @@ void CaveDrawable::buildVertexArray()
     for (const auto& i : indices)
     {
         m_vertices.emplace_back(sf::Vertex(vertices[i], sf::Color(60u, 40u, 6u)));
+    }
+
+    //---------search the triangle cache to find the edges---------- TODO make not broken
+    std::function<bool(sf::Int32, sf::Int32)> isEdge = [&](sf::Int32 vertexA, sf::Int32 vertexB)
+    {
+        XY_ASSERT(vertexA < triangles.size(), "");
+        const auto& triList = triangles[vertexA];
+        auto sharedTriangleCount = 0;
+
+        for (const auto& tri : triList)
+        {
+            if (tri.contains(vertexB))
+            {
+                sharedTriangleCount++;
+                if (sharedTriangleCount > 1)
+                {
+                    break;
+                }
+            }
+        }
+        return (sharedTriangleCount == 1);
+    };
+
+    std::function<sf::Int32(sf::Int32)> getConnectedVert = [&](sf::Int32 idx)
+    {
+        XY_ASSERT(idx < triangles.size(), "");
+        const auto& triList = triangles[idx];
+        for (const auto& tri : triList)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                int vertexB = tri[j];
+                if (vertexB != idx /*&& !checkedVertices.contains(vertexB)*/)
+                {
+                    if (isEdge(idx, vertexB))
+                    {
+                        return vertexB;
+                    }
+                }
+            }
+        }
+
+        return -1;
+    };
+
+    std::function<void(sf::Int32, sf::Int32)> followEdge = [&, this](sf::Int32 vertIdx, sf::Int32 edgeIdx)
+    {
+        m_edges[edgeIdx].push_back(vertices[vertIdx]);
+        //checkedVertices.push_back(vertexIndex);
+        auto nextVertIndex = getConnectedVert(vertIdx);
+
+        if (nextVertIndex != -1 && m_edges.back().size() < 100)
+        {
+            followEdge(nextVertIndex, edgeIdx);
+        }
+    };
+
+    for (auto vertIdx = 0u; vertIdx < vertices.size(); ++vertIdx)
+    {
+        //if (!checkedVertices.contains(vertexIndex))
+        {
+            auto newEdgeVert = getConnectedVert(vertIdx);
+            if (newEdgeVert != -1)
+            {
+                //checkedVertices.push_back(vertexIndex);
+
+                std::vector<sf::Vector2f> newEdge;
+                newEdge.push_back(vertices[vertIdx]);
+                m_edges.push_back(newEdge);
+                followEdge(newEdgeVert, m_edges.size() - 1);
+                m_edges.back().push_back(vertices[vertIdx]);
+            }
+        }
     }
 }
 
