@@ -33,6 +33,7 @@ source distribution.
 #include <SFML/Graphics/RenderStates.hpp>
 
 #include <map>
+#include <unordered_set>
 
 using namespace CaveDemo;
 
@@ -102,7 +103,7 @@ sf::FloatRect CaveDrawable::globalBounds() const
 //private
 void CaveDrawable::fillRand()
 {
-    xy::Util::Random::rndEngine.seed(12345);
+    //xy::Util::Random::rndEngine.seed(12345);
     const auto border = 2;
     for (auto i = 0u; i < m_tileData.size(); ++i)
     {
@@ -117,7 +118,7 @@ void CaveDrawable::fillRand()
             m_tileData[i] = 1u;
         }
     }
-    xy::Util::Random::rndEngine.seed(static_cast<unsigned long>(std::time(0)));
+    //xy::Util::Random::rndEngine.seed(static_cast<unsigned long>(std::time(0)));
 }
 
 void CaveDrawable::smooth()
@@ -199,7 +200,7 @@ void CaveDrawable::buildVertexArray()
     std::vector<std::size_t> indices; //indices into vertex array
     std::map<sf::Int32, std::vector<Triangle>> triangles; //cache triangles to search edges
 
-    std::function<void(std::vector<Node>& points)> meshFromPoints = [&vertices, &indices, &triangles](std::vector<Node>& points)
+    std::function<void(std::vector<Node*>& points)> meshFromPoints = [&vertices, &indices, &triangles](std::vector<Node*>& points)
     {
         std::function<void(sf::Int32, const Triangle&)> cacheTriangle = [&triangles](sf::Int32 idx, const Triangle& t)
         {
@@ -230,34 +231,36 @@ void CaveDrawable::buildVertexArray()
         
         for (auto& p : points)
         {
-            if (p.idx == -1)
+            if (p->idx == -1)
             {
-                p.idx = vertices.size();
-                vertices.push_back(p.position);
+                p->idx = vertices.size();
+                vertices.push_back(p->position);
             }
         }
 
         if (points.size() >= 3u)
         {
-            indexTriangle(points[0].idx, points[1].idx, points[2].idx);
+            indexTriangle(points[0]->idx, points[1]->idx, points[2]->idx);
         }
         if (points.size() >= 4u)
         {
-            indexTriangle(points[0].idx, points[2].idx, points[3].idx);
+            indexTriangle(points[0]->idx, points[2]->idx, points[3]->idx);
         }
         if (points.size() >= 5u)
         {
-            indexTriangle(points[0].idx, points[3].idx, points[4].idx);
+            indexTriangle(points[0]->idx, points[3]->idx, points[4]->idx);
         }
         if (points.size() >= 6u)
         {
-            indexTriangle(points[0].idx, points[4].idx, points[5].idx);
+            indexTriangle(points[0]->idx, points[4]->idx, points[5]->idx);
         }
     };
 
-    std::function<void(const Square&)> triangulate = [&meshFromPoints](const Square& square)
+    std::unordered_set<sf::Int32> checkedVerts; //track indices we've already checked for edges
+    std::function<void(Square&)> triangulate = [&meshFromPoints, &checkedVerts](Square& square)
     {
-        std::vector<Node> points;
+        std::vector<Node*> points;
+
         switch (square.mask)
         {
         case 0:
@@ -265,58 +268,65 @@ void CaveDrawable::buildVertexArray()
             break;
             //1 point
         case 1:
-            points = { square.centreLeft, square.centreBottom, square.bottomLeft };
+            points = { &square.centreLeft, &square.centreBottom, &square.bottomLeft };
             break;
         case 2:
-            points = { square.bottomRight, square.centreBottom, square.centreRight };
+            points = { &square.bottomRight, &square.centreBottom, &square.centreRight };
             break;
         case 4:
-            points = { square.topRight, square.centreRight, square.centreTop };
+            points = { &square.topRight, &square.centreRight, &square.centreTop };
             break;
         case 8:
-            points = { square.topLeft, square.centreTop, square.centreLeft };
+            points = { &square.topLeft, &square.centreTop, &square.centreLeft };
             break;
             //2 points
         case 3:
-            points = { square.centreRight, square.bottomRight, square.bottomLeft, square.centreLeft };
+            points = { &square.centreRight, &square.bottomRight, &square.bottomLeft, &square.centreLeft };
             break;
         case 6:
-            points = { square.centreTop, square.topRight, square.bottomRight, square.centreBottom };
+            points = { &square.centreTop, &square.topRight, &square.bottomRight, &square.centreBottom };
             break;
         case 9:
-            points = { square.topLeft, square.centreTop, square.centreBottom, square.bottomLeft };
+            points = { &square.topLeft, &square.centreTop, &square.centreBottom, &square.bottomLeft };
             break;
         case 12:
-            points = { square.topLeft, square.topRight, square.centreRight, square.centreLeft };
+            points = { &square.topLeft, &square.topRight, &square.centreRight, &square.centreLeft };
             break;
         case 5:
-            points = { square.centreTop, square.topRight, square.centreRight, square.centreBottom, square.bottomLeft, square.centreLeft };
+            points = { &square.centreTop, &square.topRight, &square.centreRight, &square.centreBottom, &square.bottomLeft, &square.centreLeft };
             break;
         case 10:
-            points = { square.topLeft, square.centreTop, square.centreRight, square.bottomRight, square.centreBottom, square.centreLeft };
+            points = { &square.topLeft, &square.centreTop, &square.centreRight, &square.bottomRight, &square.centreBottom, &square.centreLeft };
             break;
             //3 points
         case 7:
-            points = { square.centreTop, square.topRight, square.bottomRight, square.bottomLeft, square.centreLeft };
+            points = { &square.centreTop, &square.topRight, &square.bottomRight, &square.bottomLeft, &square.centreLeft };
             break;
         case 11:
-            points = { square.topLeft, square.centreTop, square.centreRight, square.bottomRight, square.bottomLeft };
+            points = { &square.topLeft, &square.centreTop, &square.centreRight, &square.bottomRight, &square.bottomLeft };
             break;
         case 13:
-            points = { square.topLeft, square.topRight, square.centreRight, square.centreBottom, square.bottomLeft };
+            points = { &square.topLeft, &square.topRight, &square.centreRight, &square.centreBottom, &square.bottomLeft };
             break;
         case 14:
-            points = { square.topLeft, square.topRight, square.bottomRight, square.centreBottom, square.centreLeft };
+            points = { &square.topLeft, &square.topRight, &square.bottomRight, &square.centreBottom, &square.centreLeft };
             break;
             //4 points
         case 15:
-            points = { square.topLeft, square.topRight, square.bottomRight, square.bottomLeft };
-            break;
+            points = { &square.topLeft, &square.topRight, &square.bottomRight, &square.bottomLeft };
+            //we can makes sure to always skip these indices as we are guarenteed they are not on an edge
+            //but we have to make sure mesh from points is called *first* so that correct indices are assigned
+            meshFromPoints(points);
+            checkedVerts.insert(points[0]->idx);
+            checkedVerts.insert(points[1]->idx);
+            checkedVerts.insert(points[2]->idx);
+            checkedVerts.insert(points[3]->idx);
+            return;
         }
         meshFromPoints(points);
     };
 
-    for (const auto& s : squares)
+    for (auto& s : squares)
     {
         triangulate(s);
     }
@@ -324,10 +334,10 @@ void CaveDrawable::buildVertexArray()
     //build final vertex array - TODO would be nice if SFML supported drawing vertices from index arrays
     for (const auto& i : indices)
     {
-        m_vertices.emplace_back(sf::Vertex(vertices[i], sf::Color(60u, 40u, 6u)));
+        m_vertices.emplace_back(sf::Vertex(vertices[i], sf::Color(60u, 20u, 6u), vertices[i]));
     }
 
-    //---------search the triangle cache to find the edges---------- TODO make not broken
+    //---------search the triangle cache to find the edges----------
     std::function<bool(sf::Int32, sf::Int32)> isEdge = [&](sf::Int32 vertexA, sf::Int32 vertexB)
     {
         XY_ASSERT(vertexA < triangles.size(), "");
@@ -354,13 +364,14 @@ void CaveDrawable::buildVertexArray()
         const auto& triList = triangles[idx];
         for (const auto& tri : triList)
         {
-            for (int j = 0; j < 3; j++)
+            for (auto i = 0; i < 3; ++i)
             {
-                int vertexB = tri[j];
-                if (vertexB != idx /*&& !checkedVertices.contains(vertexB)*/)
+                sf::Int32 vertexB = tri[i];
+                if (vertexB != idx && (checkedVerts.find(vertexB) == checkedVerts.end()))
                 {
                     if (isEdge(idx, vertexB))
                     {
+                        //LOG("is edge", xy::Logger::Type::Info);
                         return vertexB;
                     }
                 }
@@ -373,10 +384,10 @@ void CaveDrawable::buildVertexArray()
     std::function<void(sf::Int32, sf::Int32)> followEdge = [&, this](sf::Int32 vertIdx, sf::Int32 edgeIdx)
     {
         m_edges[edgeIdx].push_back(vertices[vertIdx]);
-        //checkedVertices.push_back(vertexIndex);
+        checkedVerts.insert(vertIdx);
         auto nextVertIndex = getConnectedVert(vertIdx);
 
-        if (nextVertIndex != -1 && m_edges.back().size() < 100)
+        if (nextVertIndex != -1 /*&& m_edges.back().size() < 100*/)
         {
             followEdge(nextVertIndex, edgeIdx);
         }
@@ -384,12 +395,12 @@ void CaveDrawable::buildVertexArray()
 
     for (auto vertIdx = 0u; vertIdx < vertices.size(); ++vertIdx)
     {
-        //if (!checkedVertices.contains(vertexIndex))
+        if (checkedVerts.find(vertIdx) == checkedVerts.end())
         {
             auto newEdgeVert = getConnectedVert(vertIdx);
             if (newEdgeVert != -1)
             {
-                //checkedVertices.push_back(vertexIndex);
+                checkedVerts.insert(vertIdx);
 
                 std::vector<sf::Vector2f> newEdge;
                 newEdge.push_back(vertices[vertIdx]);

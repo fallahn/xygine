@@ -88,25 +88,26 @@ namespace CaveDemo
 
         struct Square final
         {
-            ControlNode topLeft;
-            ControlNode topRight;
-            ControlNode bottomRight;
-            ControlNode bottomLeft;
+            ControlNode& topLeft;
+            ControlNode& topRight;
+            ControlNode& bottomRight;
+            ControlNode& bottomLeft;
 
-            Node centreTop;
-            Node centreRight;
-            Node centreBottom;
-            Node centreLeft;
+            Node& centreTop;
+            Node& centreRight;
+            Node& centreBottom;
+            Node& centreLeft;
 
             sf::Uint16 mask = 0u;
 
-            Square(const ControlNode& tl, const ControlNode& tr, const ControlNode& br, const ControlNode& bl)
-                : topLeft(tl), topRight(tr), bottomRight(br), bottomLeft(bl)
+            Square(ControlNode& tl, ControlNode& tr, ControlNode& br, ControlNode& bl)
+                : topLeft(tl), topRight(tr), bottomRight(br), bottomLeft(bl),
+                centreTop(tl.rightNode), centreRight(br.aboveNode), centreBottom(bl.rightNode), centreLeft(bl.aboveNode)
             {
-                centreTop = tl.rightNode;
+                /*centreTop = tl.rightNode;
                 centreRight = br.aboveNode;
                 centreBottom = bl.rightNode;
-                centreLeft = bl.aboveNode;
+                centreLeft = bl.aboveNode;*/
 
                 if (tl.active) mask |= 0x8;
                 if (tr.active) mask |= 0x4;

@@ -38,6 +38,7 @@ source distribution.
 #include <xygine/components/ParticleController.hpp>
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/physics/CollisionCircleShape.hpp>
+#include <xygine/physics/CollisionEdgeShape.hpp>
 #include <xygine/PostBloom.hpp>
 #include <xygine/PostChromeAb.hpp>
 
@@ -112,7 +113,7 @@ void ParticleDemoState::draw()
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
     rw.setView(getContext().defaultView);
-    rw.draw(m_physWorld);
+    //rw.draw(m_physWorld);
     rw.draw(m_reportText);
 }
 
@@ -244,11 +245,19 @@ void ParticleDemoState::buildTerrain()
     ent->move((sf::Vector2f(1920.f, 1080.f) - cd->getSize()) / 2.f);
     //ent->move(100.f, 100.f);
     auto cave = ent->addComponent(cd);
-    m_scene.addEntity(ent, xy::Scene::Layer::BackRear);
-
+    
     //get edges to add to physworld
     const auto& edges = cave->getEdges();
-    int buns = 0;
+    REPORT("edge count", std::to_string(edges.size()));
+    auto rb = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Static);
+    for (const auto& e : edges)
+    {
+        xy::Physics::CollisionEdgeShape es(e);
+        rb->addCollisionShape(es);
+    }
+    ent->addComponent(rb);
+
+    m_scene.addEntity(ent, xy::Scene::Layer::BackRear);
 }
 
 void ParticleDemoState::spawnThing(const sf::Vector2f& position)
