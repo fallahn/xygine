@@ -69,7 +69,7 @@ namespace xy
         };
 
         explicit Scene(MessageBus&);
-        ~Scene() = default;
+        ~Scene();
         Scene(const Scene&) = delete;
         const Scene& operator = (const Scene&) = delete;
 
@@ -179,7 +179,14 @@ namespace xy
         */
         void drawDebug(bool);
 
+        /*!
+        \brief Returns the view matrix of the active camera if a scene exists
+        else returns an identity matrix
+        */
+        static sf::Transform getViewMatrix();
+
     private:
+
         QuadTree m_quadTree; //must live longer than any entity
         std::vector<Entity::Ptr> m_layers;
         std::vector<std::pair<Layer, Entity::Ptr>> m_pendingEntities;

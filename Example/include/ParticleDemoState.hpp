@@ -34,6 +34,7 @@ source distribution.
 
 #include <xygine/State.hpp>
 #include <xygine/Resource.hpp>
+#include <xygine/ShaderResource.hpp>
 #include <xygine/Scene.hpp>
 #include <xygine/components/ParticleSystem.hpp>
 #include <xygine/physics/World.hpp>
@@ -61,6 +62,7 @@ private:
 
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
+    xy::ShaderResource m_shaderResource;
 
     sf::Text m_reportText;
 

@@ -56,6 +56,7 @@ ParticleSystem::ParticleSystem(MessageBus& mb)
     m_randPosition      (false),
     m_started           (false),
     m_accumulator       (0.f),
+    m_destroyWhenStopped(false),
     m_needsUpdate       (true),
     m_bounds            (0.f, 0.f, 1.f, 1.f),
     m_duration          (0.f),
@@ -77,6 +78,16 @@ void ParticleSystem::entityUpdate(Entity& entity, float dt)
     update(dt);
     if(!m_followParent)
         m_position = entity.getWorldPosition();
+
+    //if (m_destroyWhenStopped && !active())
+    //{
+    //    destroy();
+    //}
+}
+
+void ParticleSystem::onParentDestroyed(Entity& entity)
+{   
+   
 }
 
 sf::FloatRect ParticleSystem::localBounds() const

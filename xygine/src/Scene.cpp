@@ -39,6 +39,8 @@ namespace
 {
     const sf::Uint32 bufferWidth = 1920u;
     const sf::Uint32 bufferHeight = 1080u;
+
+    xy::Scene* m_instance = nullptr;
 }
 
 using namespace xy;
@@ -51,6 +53,13 @@ Scene::Scene(MessageBus& mb)
     m_drawDebug         (false) 
 {
     reset();
+
+    m_instance = this;
+}
+
+Scene::~Scene()
+{
+    m_instance = nullptr;
 }
 
 //public
@@ -267,6 +276,17 @@ void Scene::addPostProcess(PostProcess::Ptr& pp)
 void Scene::drawDebug(bool draw)
 {
     m_drawDebug = draw;
+}
+
+sf::Transform Scene::getViewMatrix()
+{
+    if (m_instance)
+    {
+        auto camEnt = m_instance->findEntity(m_instance->m_activeCamera->getParentUID());
+        XY_ASSERT(camEnt, "could not find scene camera entity");
+        return camEnt->getWorldTransform().getInverse(); //TODO this needs to be translated by -halfView
+    }
+    return sf::Transform();
 }
 
 //private

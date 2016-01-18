@@ -124,6 +124,7 @@ namespace xy
 
         Component::Type type() const override;
         void entityUpdate(Entity&, float) override;
+        void onParentDestroyed(Entity&) override;
 
         sf::FloatRect localBounds() const override;
         sf::FloatRect globalBounds() const override;
@@ -301,6 +302,7 @@ namespace xy
 
         bool m_started;
         float m_accumulator;
+        bool m_destroyWhenStopped;
 
         std::vector<Affector> m_affectors;
 

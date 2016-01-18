@@ -43,7 +43,7 @@ namespace xy
 
             static const std::string vertex =
                 "#version 120\n" \
-                "uniform vec3 u_lightWorldPosition = vec3(960.0, 540.0, 280.0);\n" \
+                "uniform vec3 u_lightWorldPosition = vec3(960.0, 540.0, 80.0);\n" \
                 "uniform vec3 u_cameraWorldPosition = vec3(960.0, 540.0, 480.0);\n" \
                 "uniform mat4 u_inverseWorldViewMatrix;\n" \
 
@@ -85,7 +85,7 @@ namespace xy
                 "varying vec3 v_eyeDirection;\n" \
                 "varying vec3 v_lightDirection;\n" \
 
-                "const vec3 lightColour = vec3(1.0, 0.98, 0.945);\n" \
+                "const vec3 lightColour = vec3(1.0, 0.98, 0.45);\n" \
                 "const float inverseRange = 0.005;\n" \
 
                 "void main()\n" \

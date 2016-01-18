@@ -116,6 +116,11 @@ namespace xy
         */
         Entity* findEntity(sf::Uint64);
         /*!
+        \brief Returns the root node of this entity's hierachy
+        */
+        Entity* getRoot();
+
+        /*!
         \brief Returns the entity's position in world coordinates
         */
         sf::Vector2f getWorldPosition() const;
@@ -230,6 +235,43 @@ namespace xy
             }
             return retval;
         }
+
+        /*!
+        \brief Removes a component if it exists
+        \returns Original component if it is found or nullptr
+
+        Returning the original component allows ownership to be
+        taken by another entity. If nothing is done with the returned
+        Component then the component is automaticcaly destroyed.
+        */
+        template <typename T>
+        std::unique_ptr<T> removeComponent(const T* component)
+        {
+            static_assert(std::is_base_of<Component, T>::value, "Must be a component");
+            auto it = std::find_if(m_components.begin(), m_components.end(), 
+                [component](const Component::Ptr& ptr)
+            {
+                return ptr.get() == component;
+            });
+
+            if (it != m_components.end())
+            {
+                std::unique_ptr<T> retVal(dynamic_cast<T*>(it->release()));
+                m_components.erase(it);
+                if (component->type() == Component::Type::Drawable)
+                {
+                    std::remove_if(m_drawables.begin(), m_drawables.end(), [component](const sf::Drawable* ptr)
+                    {
+                        return ptr == dynamic_cast<const sf::Drawable*>(component);
+                    });
+                }
+                retVal->setParentUID(0u);
+                return std::move(retVal);
+            }
+
+            return nullptr;
+        }
+
         /*!
         \brief Mark this entity to be destroyed
 
@@ -251,8 +293,6 @@ namespace xy
         \brief Returns the Unique ID (UID) of the entity
         */
         sf::Uint64 getUID() const;
-        //void setUID(sf::Uint64);
-
         /*!
         \brief Passes system messages on to attach components
 
@@ -318,6 +358,7 @@ namespace xy
         std::vector<sf::Drawable*> m_drawables;
 
         std::vector<Ptr> m_children;
+        std::vector<Entity*> m_deadChildren;
         Entity* m_parent;
         Scene* m_scene;
 

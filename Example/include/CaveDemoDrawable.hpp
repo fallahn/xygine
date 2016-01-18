@@ -31,16 +31,18 @@ source distribution.
 #define CAVE_DRAWABLE_HPP_
 
 #include <xygine/components/Component.hpp>
+#include <xygine/ShaderProperty.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 #include <vector>
 #include <array>
 
 namespace CaveDemo
 {
-    class CaveDrawable final : public xy::Component, public sf::Drawable
+    class CaveDrawable final : public xy::Component, public sf::Drawable, public xy::ShaderProperty
     {
     public:
         explicit CaveDrawable(xy::MessageBus&);
@@ -56,6 +58,18 @@ namespace CaveDemo
         const std::vector<std::vector<sf::Vector2f>>& getEdges() const
         {
             return m_edges;
+        }
+
+        void setTexture(sf::Texture& t)
+        {
+            t.setRepeated(true);
+            m_texture = &t;
+        }
+
+        void setNormalMap(sf::Texture& t)
+        {
+            t.setRepeated(true);
+            m_normalMap = &t;
         }
 
     private:
@@ -104,11 +118,6 @@ namespace CaveDemo
                 : topLeft(tl), topRight(tr), bottomRight(br), bottomLeft(bl),
                 centreTop(tl.rightNode), centreRight(br.aboveNode), centreBottom(bl.rightNode), centreLeft(bl.aboveNode)
             {
-                /*centreTop = tl.rightNode;
-                centreRight = br.aboveNode;
-                centreBottom = bl.rightNode;
-                centreLeft = bl.aboveNode;*/
-
                 if (tl.active) mask |= 0x8;
                 if (tr.active) mask |= 0x4;
                 if (br.active) mask |= 0x2;
@@ -143,6 +152,9 @@ namespace CaveDemo
         std::vector<std::vector<sf::Vector2f>> m_edges;
 
         sf::FloatRect m_globalBounds;
+
+        sf::Texture* m_texture;
+        sf::Texture* m_normalMap;
 
         void fillRand();
         void smooth();

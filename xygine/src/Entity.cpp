@@ -105,6 +105,18 @@ Entity* Entity::findEntity(sf::Uint64 uid)
     return nullptr;
 }
 
+Entity* Entity::getRoot()
+{
+    if (m_parent)
+    {
+        return m_parent->getRoot();
+    }
+    else
+    {
+        return this;
+    }
+}
+
 sf::Vector2f Entity::getWorldPosition() const
 {
     return getWorldTransform() * sf::Vector2f();
@@ -126,7 +138,7 @@ void Entity::setWorldPosition(sf::Vector2f position)
 }
 
 void Entity::update(float dt)
-{
+{       
     //remove destroyed components
     m_components.erase(std::remove_if(m_components.begin(), m_components.end(),
         [&](const Component::Ptr& p)
@@ -160,32 +172,26 @@ void Entity::update(float dt)
     m_pendingComponents.clear();
 
 
-    //mark self as deleted if no components remain
-    /*if (m_components.empty())
+    //remove any dead children (there's a line I never thought I'd write...)
+    for (const auto& dc : m_deadChildren)
     {
-        destroy();
-    }*/
+        removeChild(*dc);
+    }
 
     //update all children
-    std::vector<Entity*> deadChildren;
+    m_deadChildren.clear();
     for (auto& c : m_children)
     {
         c->update(dt);
         if (c->destroyed())
-            deadChildren.push_back(&(*c));
-    }
-
-    //remove any dead children (there's a line I never thought I'd write...)
-    for (const auto& dc : deadChildren)
-    {
-        removeChild(*dc);
+            m_deadChildren.push_back(&(*c));
     }
 }
 
 void Entity::destroy()
 {
     for (auto& c : m_components)
-        c->destroy();
+        c->onParentDestroyed(*this);
 
     for (auto& c : m_children)
         c->destroy();
@@ -206,11 +212,6 @@ sf::Uint64 Entity::getUID() const
 {
     return m_uid;
 }
-
-//void Entity::setUID(sf::Uint64 id)
-//{
-//    m_uid = id;
-//}
 
 void Entity::handleMessage(const Message& msg)
 {

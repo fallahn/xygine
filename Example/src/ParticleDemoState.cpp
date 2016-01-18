@@ -36,11 +36,13 @@ source distribution.
 #include <xygine/Log.hpp>
 
 #include <xygine/components/ParticleController.hpp>
+#include <xygine/components/AnimatedDrawable.hpp>
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/physics/CollisionCircleShape.hpp>
 #include <xygine/physics/CollisionEdgeShape.hpp>
 #include <xygine/PostBloom.hpp>
 #include <xygine/PostChromeAb.hpp>
+#include <xygine/shaders/NormalMapped.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -70,6 +72,8 @@ namespace
     sf::Uint64 controllerId = 0;
 
     bool debugDraw = false;
+
+    sf::Shader* shader;
 }
 
 ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context)
@@ -83,13 +87,16 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     m_scene.setView(context.defaultView);
 
     xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostChromeAb>();
-    //m_scene.addPostProcess(pp);
+    m_scene.addPostProcess(pp);
     pp = xy::PostProcess::create<xy::PostBloom>();
     m_scene.addPostProcess(pp);
     m_scene.setClearColour({ 0u, 0u, 20u });
 
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
+
+    m_shaderResource.preload(1, xy::Shader::NormalMapped::vertex, xy::Shader::NormalMapped::fragment);
+    shader = &m_shaderResource.get(1);
 
     setupParticles();
     buildTerrain();
@@ -105,11 +112,15 @@ bool ParticleDemoState::update(float dt)
 
     m_reportText.setString(xy::StatsReporter::reporter.getString());
 
+    
+
     return true;
 }
 
 void ParticleDemoState::draw()
 {
+    //shader->setParameter("u_lightWorldPosition", getContext().appInstance.getMouseWorldPosition());
+    
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
     rw.setView(getContext().defaultView);
@@ -228,11 +239,21 @@ void ParticleDemoState::setupParticles()
     m_particleDef.loadFromFile("assets/particles/explosion.xyp", m_textureResource);
     pc->addDefinition(ParticleType::Explosion, m_particleDef);
 
+    m_particleDef.loadFromFile("assets/particles/fire.xyp", m_textureResource);
+    pc->addDefinition(ParticleType::Fire, m_particleDef);
+
     m_particleDef.loadFromFile("assets/particles/fairydust.xyp", m_textureResource);
     pc->addDefinition(ParticleType::FairyDust, m_particleDef);
 
-    m_particleDef.loadFromFile("assets/particles/fire.xyp", m_textureResource);
-    pc->addDefinition(ParticleType::Fire, m_particleDef);
+    xy::Component::MessageHandler mh;
+    mh.action = [](xy::Component* c, const xy::Message& msg) 
+    {
+        auto& msgData = msg.getData<xy::Message::EntityEvent>();
+        auto controller = dynamic_cast<xy::ParticleController*>(c);
+        controller->fire(ParticleType::Explosion, msgData.entity->getWorldPosition());
+    };
+    mh.id = xy::Message::EntityMessage;
+    pc->addMessageHandler(mh);
 
     controllerId = entity->getUID();
     m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
@@ -245,6 +266,9 @@ void ParticleDemoState::buildTerrain()
     ent->move((sf::Vector2f(1920.f, 1080.f) - cd->getSize()) / 2.f);
     //ent->move(100.f, 100.f);
     auto cave = ent->addComponent(cd);
+    cave->setTexture(m_textureResource.get("assets/images/cave/diffuse.png"));
+    cave->setNormalMap(m_textureResource.get("assets/images/cave/normal.png"));
+    cave->setShader(&m_shaderResource.get(1));
     
     //get edges to add to physworld
     const auto& edges = cave->getEdges();
@@ -273,11 +297,20 @@ void ParticleDemoState::spawnThing(const sf::Vector2f& position)
 
     auto td = xy::Component::create<TimedDestruction>(m_messageBus);
 
+    auto dwbl = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
+    dwbl->setTexture(m_textureResource.get("assets/images/physics demo/ball.png"));
+    dwbl->setNormalMap(m_textureResource.get("assets/images/physics demo/ball_normal.png"));
+    dwbl->setShader(m_shaderResource.get(1));
+    auto size = dwbl->getFrameSize();
+    dwbl->setOrigin({ size.x / 2.f, size.y / 2.f });
+    dwbl->setColour({ 198u, 200u, 250u });
+
     auto entity = xy::Entity::create(m_messageBus);
     entity->setWorldPosition(position);
     entity->addComponent(ps);
     entity->addComponent(physBody);
     entity->addComponent(td);
+    entity->addComponent(dwbl);
 
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 }

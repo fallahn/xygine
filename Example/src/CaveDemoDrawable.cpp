@@ -31,6 +31,7 @@ source distribution.
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <map>
 #include <unordered_set>
@@ -58,7 +59,9 @@ namespace
 
 CaveDrawable::CaveDrawable(xy::MessageBus& mb)
     : xy::Component (mb, this),
-    m_tileData      (width * height)
+    m_tileData      (width * height),
+    m_texture       (nullptr),
+    m_normalMap     (nullptr)
 {
     fillRand();
     for (auto i = 0u; i < 5; ++i)
@@ -334,7 +337,7 @@ void CaveDrawable::buildVertexArray()
     //build final vertex array - TODO would be nice if SFML supported drawing vertices from index arrays
     for (const auto& i : indices)
     {
-        m_vertices.emplace_back(sf::Vertex(vertices[i], sf::Color(60u, 20u, 6u), vertices[i]));
+        m_vertices.emplace_back(sf::Vertex(vertices[i], sf::Color(112u, 80u, 46u), vertices[i]));
     }
 
     //---------search the triangle cache to find the edges----------
@@ -414,5 +417,16 @@ void CaveDrawable::buildVertexArray()
 
 void CaveDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    states.texture = m_texture;
+    auto shader = getShader();
+    
+    if (shader)
+    {
+        shader->setParameter("u_diffuseMap", *m_texture);
+        shader->setParameter("u_normalMap", *m_normalMap);
+        shader->setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
+        states.shader = shader;
+    }
+
     rt.draw(m_vertices.data(), m_vertices.size(), sf::Triangles, states);
 }

@@ -123,11 +123,9 @@ namespace xy
         {
             enum
             {
-                Destroyed,
-                ChangedDirection
+                Destroyed
             }action;
             Entity* entity = nullptr;
-            sf::Int32 direction = 0;
         };
         /*!
         \brief UI event message data

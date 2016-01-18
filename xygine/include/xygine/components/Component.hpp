@@ -186,6 +186,14 @@ namespace xy
         virtual void onDelayedStart(Entity&);
 
         /*!
+        \brief Notification of parent entity's impending destruction
+
+        Use this is you need to tidy up the state of a component befor it is
+        destroyed by its parent entity's destruction
+        */
+        virtual void onParentDestroyed(Entity&) {}
+
+        /*!
         \brief Destroys this component
 
         This marks the component ready to be destroyed, although
