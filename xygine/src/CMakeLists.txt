@@ -10,6 +10,7 @@ set(xygine_SRC
   ${xygine_DIR}/ComponentCamera.cpp
   ${xygine_DIR}/ComponentParticleController.cpp
   ${xygine_DIR}/ComponentParticleSystem.cpp  
+  ${xygine_DIR}/ComponentPointLight.cpp 
   ${xygine_DIR}/Entity.cpp
   ${xygine_DIR}/FileSystem.cpp
   ${xygine_DIR}/FontResource.cpp

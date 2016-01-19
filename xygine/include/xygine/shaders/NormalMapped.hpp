@@ -104,7 +104,7 @@ namespace xy
                 "    float falloff = clamp(1.0 - dot(falloffDirection, falloffDirection), 0.0, 1.0);\n" \
                 "    blendedColour += (lightColour * u_lightIntensity) * diffuseColour.rgb * diffuseAmount;// * falloff;\n" \
 
-                /*"    vec3 eyeDirection = normalize(v_lightDirection);\n" \
+                /*"    vec3 eyeDirection = normalize(v_eyeDirection);\n" \
                 "    vec3 halfVec = normalize(v_lightDirection + eyeDirection);\n" \
                 "    float specularAngle = clamp(dot(normalVector, halfVec), 0.0, 1.0);\n" \
                 "    vec3 specularColour = vec3(pow(specularAngle, 196.0));// * falloff;\n" \

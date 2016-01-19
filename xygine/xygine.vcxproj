@@ -76,6 +76,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ComponentPointLight.cpp" />
     <ClCompile Include="src\ParticleAffectors.cpp" />
     <ClCompile Include="src\ComponentAnimatedDrawable.cpp" />
     <ClCompile Include="src\ComponentAnimationController.cpp" />
@@ -141,6 +142,7 @@
     <ClCompile Include="src\UIWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\xygine\components\PointLight.hpp" />
     <ClInclude Include="include\xygine\ParticleAffectors.hpp" />
     <ClInclude Include="include\xygine\App.hpp" />
     <ClInclude Include="include\xygine\Assert.hpp" />
