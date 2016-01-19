@@ -88,9 +88,9 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
 
     m_scene.setView(context.defaultView);
 
-    xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostChromeAb>();
-    //m_scene.addPostProcess(pp);
-    pp = xy::PostProcess::create<xy::PostBloom>();
+    xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostBloom>();
+    m_scene.addPostProcess(pp);
+    pp = xy::PostProcess::create<xy::PostChromeAb>();
     m_scene.addPostProcess(pp);
     m_scene.setClearColour({ 0u, 0u, 20u });
 
@@ -123,10 +123,14 @@ bool ParticleDemoState::update(float dt)
         auto light = ents[i]->getEntity()->getComponent<xy::PointLight>();
         if (light)
         {
+            const std::string idx = std::to_string(i);
+            
             auto pos = light->getWorldPosition();
             shader->setParameter("u_pointLightPositions[" + std::to_string(i) + "]", pos);
-            shader->setParameter("u_pointLights[" + std::to_string(i) + "].intensity", light->getIntensity());
-            shader->setParameter("u_pointLights[" + std::to_string(i) + "].diffuseColour", light->getDiffuseColour());
+            shader->setParameter("u_pointLights[" + idx + "].intensity", light->getIntensity());
+            shader->setParameter("u_pointLights[" + idx + "].diffuseColour", light->getDiffuseColour());
+            shader->setParameter("u_pointLights[" + idx + "].specularColour", light->getSpecularColour());
+            shader->setParameter("u_pointLights[" + idx + "].inverseRange", light->getInverseRange());
         }
     }
     //switch off inactive lights
@@ -329,7 +333,9 @@ void ParticleDemoState::spawnThing(const sf::Vector2f& position)
 
     auto qtc = xy::Component::create<xy::QuadTreeComponent>(m_messageBus, sf::FloatRect(-size.x / 2.f, -size.y / 2.f, size.x, size.y));
 
-    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 100.f, sf::Color::Yellow);
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 100.f, sf::Color(255u, 255u, 200u), sf::Color(228u, 228u, 255u));
+    light->setDepth(25.f);
+    light->setRange(850.f);
 
     auto entity = xy::Entity::create(m_messageBus);
     entity->setWorldPosition(position);

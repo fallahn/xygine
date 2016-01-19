@@ -53,7 +53,7 @@ namespace xy
                 "    vec3(0.0),\n" \
                 "    vec3(0.0)\n" \
                 ");\n" \
-                "uniform vec3 u_cameraWorldPosition = vec3(960.0, 540.0, 480.0);\n" \
+                "uniform vec3 u_cameraWorldPosition = vec3(960.0, 540.0, 1780.0);\n" \
                 "uniform mat4 u_inverseWorldViewMatrix;\n" \
 
                 "varying vec3 v_eyeDirection;\n" \
@@ -102,7 +102,7 @@ namespace xy
                 "uniform sampler2D u_diffuseMap;\n" \
                 "#endif\n" \
                 "uniform sampler2D u_normalMap;\n" \
-                "uniform vec3 u_ambientColour = vec3 (0.4, 0.4, 0.4);\n" \
+                "uniform vec3 u_ambientColour = vec3 (0.2, 0.2, 0.2);\n" \
 
                 "uniform PointLight u_pointLights[MAX_POINT_LIGHTS] = PointLight[MAX_POINT_LIGHTS]\n" \
                 "(\n" \
@@ -132,9 +132,8 @@ namespace xy
                 "    vec3 halfVec = normalize(lightDirection + eyeDirection);\n" \
                 "    float specularAngle = clamp(dot(normal, halfVec), 0.0, 1.0);\n" \
                 /*TODO switch const exponent for variable*/
-                "    vec3 specularColour = lightSpec * vec3(pow(clamp(specularAngle, 0.0, 1.0), 255.0)) * falloff;\n" \
-                /*TODO multiply by specular colour*/
-                "    return mixedColour + (specularColour/* * SPEC_AMOUNT*/);\n" \
+                "    vec3 specularColour = lightSpec * vec3(pow(clamp(specularAngle, 0.0, 1.0), 25.0)) * falloff;\n" \
+                "    return mixedColour + (specularColour * 0.25/* * SPEC_AMOUNT*/);\n" \
                 "#else\n" \
                 "    return mixedColour;\n" \
                 "#endif\n" \
@@ -153,7 +152,7 @@ namespace xy
                 "    for(int i = 0; i < MAX_POINT_LIGHTS; ++i)\n" \
                 "    {\n" \
                 "        vec3 pointLightDir = v_pointLightDirections[i] * u_pointLights[i].inverseRange;\n" \
-                "        float falloff = clamp(1.0 - (dot(pointLightDir, pointLightDir)), 0.0, 1.0);\n" \
+                "        float falloff = clamp(1.0 - sqrt(dot(pointLightDir, pointLightDir)), 0.0, 1.0);\n" \
                 "        blendedColour += calcLighting(normalVector, normalize(v_pointLightDirections[i]), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
                 "    }\n" \
 
