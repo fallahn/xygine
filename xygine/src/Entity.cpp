@@ -191,7 +191,10 @@ void Entity::update(float dt)
 void Entity::destroy()
 {
     for (auto& c : m_components)
+    {
         c->onParentDestroyed(*this);
+        c->destroy();
+    }
 
     for (auto& c : m_children)
         c->destroy();

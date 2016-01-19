@@ -224,6 +224,7 @@ void Scene::reset()
     }
 
     m_quadTree.reset();
+    m_quadTree.create({ 0.f, 0.f, 1920.f, 1080.f });
 
     m_renderPasses.clear();
     m_renderPasses.reserve(10);

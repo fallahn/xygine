@@ -35,7 +35,7 @@ PointLight::PointLight(MessageBus& mb, float range, const sf::Color& diffuse, co
     : Component     (mb, this),
     m_range         (range),
     m_inverseRange  (1.f / m_range),
-    m_position      (0.f, 0.f, 300.f),
+    m_position      (0.f, 0.f, 1300.f),
     m_intensity     (1.f),
     m_diffuseColour (diffuse),
     m_specularColour(spec)
@@ -84,6 +84,16 @@ void PointLight::setSpecularColour(const sf::Color& c)
 const sf::Vector3f& PointLight::getWorldPosition() const
 {
     return m_position;
+}
+
+float PointLight::getIntensity() const
+{
+    return m_intensity;
+}
+
+float PointLight::getInverseRange() const
+{
+    return m_inverseRange;
 }
 
 const sf::Color& PointLight::getDiffuseColour() const

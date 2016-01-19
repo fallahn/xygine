@@ -107,13 +107,13 @@ namespace xy
                 "uniform PointLight u_pointLights[MAX_POINT_LIGHTS] = PointLight[MAX_POINT_LIGHTS]\n" \
                 "(\n" \
                 "    PointLight(vec4(1.0), vec4(1.0), 0.5, 1.0),\n" \
-                "    PointLight(vec4(1.0), vec4(1.0), 0.005, 0.0),\n" \
-                "    PointLight(vec4(1.0), vec4(1.0), 0.005, 0.0),\n" \
-                "    PointLight(vec4(1.0), vec4(1.0), 0.005, 0.0),\n" \
-                "    PointLight(vec4(1.0), vec4(1.0), 0.005, 0.0),\n" \
-                "    PointLight(vec4(1.0), vec4(1.0), 0.005, 0.0),\n" \
-                "    PointLight(vec4(1.0), vec4(1.0), 0.005, 0.0),\n" \
-                "    PointLight(vec4(1.0), vec4(1.0), 0.005, 0.0)\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0)\n" \
                 ");\n" \
 
                 "varying vec3 v_eyeDirection;\n" \
@@ -153,7 +153,7 @@ namespace xy
                 "    for(int i = 0; i < MAX_POINT_LIGHTS; ++i)\n" \
                 "    {\n" \
                 "        vec3 pointLightDir = v_pointLightDirections[i] * u_pointLights[i].inverseRange;\n" \
-                "        float falloff = clamp(1.0 - sqrt(dot(pointLightDir, pointLightDir)), 0.0, 1.0);\n" \
+                "        float falloff = clamp(1.0 - (dot(pointLightDir, pointLightDir)), 0.0, 1.0);\n" \
                 "        blendedColour += calcLighting(normalVector, normalize(v_pointLightDirections[i]), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
                 "    }\n" \
 

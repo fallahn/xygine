@@ -37,6 +37,8 @@ source distribution.
 
 #include <xygine/components/ParticleController.hpp>
 #include <xygine/components/AnimatedDrawable.hpp>
+#include <xygine/components/QuadTreeComponent.hpp>
+#include <xygine/components/PointLight.hpp>
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/physics/CollisionCircleShape.hpp>
 #include <xygine/physics/CollisionEdgeShape.hpp>
@@ -87,7 +89,7 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     m_scene.setView(context.defaultView);
 
     xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostChromeAb>();
-    m_scene.addPostProcess(pp);
+    //m_scene.addPostProcess(pp);
     pp = xy::PostProcess::create<xy::PostBloom>();
     m_scene.addPostProcess(pp);
     m_scene.setClearColour({ 0u, 0u, 20u });
@@ -101,7 +103,10 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     setupParticles();
     buildTerrain();
 
+    
+
     context.renderWindow.setMouseCursorVisible(true);
+   
 
     quitLoadingScreen();
 }
@@ -110,17 +115,34 @@ bool ParticleDemoState::update(float dt)
 {    
     m_scene.update(dt);
 
-    m_reportText.setString(xy::StatsReporter::reporter.getString());
+    //update lighting
+    auto ents = m_scene.queryQuadTree(m_scene.getVisibleArea());
+    auto i = 0;
+    for (; i < ents.size() && i < xy::Shader::NormalMapped::MaxPointLights; ++i)
+    {
+        auto light = ents[i]->getEntity()->getComponent<xy::PointLight>();
+        if (light)
+        {
+            auto pos = light->getWorldPosition();
+            shader->setParameter("u_pointLightPositions[" + std::to_string(i) + "]", pos);
+            shader->setParameter("u_pointLights[" + std::to_string(i) + "].intensity", light->getIntensity());
+            shader->setParameter("u_pointLights[" + std::to_string(i) + "].diffuseColour", light->getDiffuseColour());
+        }
+    }
+    //switch off inactive lights
+    for (; i < xy::Shader::NormalMapped::MaxPointLights; ++i)
+    {
+        shader->setParameter("u_pointLights[" + std::to_string(i) + "].intensity", 0.f);
+    }
 
-    
+
+    m_reportText.setString(xy::StatsReporter::reporter.getString());
 
     return true;
 }
 
 void ParticleDemoState::draw()
-{
-    //shader->setParameter("u_lightWorldPosition", getContext().appInstance.getMouseWorldPosition());
-    
+{   
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
     rw.setView(getContext().defaultView);
@@ -305,12 +327,18 @@ void ParticleDemoState::spawnThing(const sf::Vector2f& position)
     dwbl->setOrigin({ size.x / 2.f, size.y / 2.f });
     dwbl->setColour({ 198u, 200u, 250u });
 
+    auto qtc = xy::Component::create<xy::QuadTreeComponent>(m_messageBus, sf::FloatRect(-size.x / 2.f, -size.y / 2.f, size.x, size.y));
+
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 100.f, sf::Color::Yellow);
+
     auto entity = xy::Entity::create(m_messageBus);
     entity->setWorldPosition(position);
     entity->addComponent(ps);
     entity->addComponent(physBody);
     entity->addComponent(td);
     entity->addComponent(dwbl);
+    entity->addComponent(qtc);
+    entity->addComponent(light);
 
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 }
