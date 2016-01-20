@@ -84,11 +84,16 @@ namespace xy
                 "    v_eyeDirection = tangentSpaceTransformMatrix * ((gl_ModelViewMatrix * vec4(u_cameraWorldPosition, 1.0)).xyz - viewVertex);\n" \
                 "}";
 
+#define NORMAL_FRAGMENT_COLOURED "#version 120\n" + xy::Shader::NormalMapped::fragment
+#define NORMAL_FRAGMENT_COLOURED_SPECULAR "#version 120\n#define SPECULAR\n" + xy::Shader::NormalMapped::fragment
+#define NORMAL_FRAGMENT_TEXTURED "#version 120\n#define TEXTURED\n" + xy::Shader::NormalMapped::fragment
+#define NORMAL_FRAGMENT_TEXTURED_SPECULAR "#version 120\n#define TEXTURED\n#define SPECULAR\n" + xy::Shader::NormalMapped::fragment
+
             static const std::string fragment =
-                "#version 120\n" \
+                /*"#version 120\n" \*/
                 "#define MAX_POINT_LIGHTS 8\n" \
-                "#define TEXTURED\n" \
-                "#define SPECULAR\n" \
+                /*"#define TEXTURED\n" \
+                "#define SPECULAR\n" \*/
 
                 "struct PointLight\n" \
                 "{\n" \

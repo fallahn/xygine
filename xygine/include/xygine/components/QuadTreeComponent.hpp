@@ -58,6 +58,12 @@ namespace xy
     public:
         using Ptr = std::unique_ptr<QuadTreeComponent>;
 
+        /*!
+        \brief Constructor
+        \param MessageBus
+        \param bounds The area in local coordinates which the parent entity
+        should occupy in the quad tree space
+        */
         QuadTreeComponent(MessageBus&, const sf::FloatRect& bounds);
         ~QuadTreeComponent();
 

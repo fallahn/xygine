@@ -204,6 +204,21 @@ void Scene::setClearColour(const sf::Color& colour)
     m_defaultCamera->setClearColour(colour);
 }
 
+void Scene::setSize(const sf::FloatRect& size)
+{
+    m_quadTree.create(size);
+    Command cmd;
+    cmd.category = Command::All;
+    cmd.action = [this](Entity& entity, float)
+    {
+        if (auto qc = entity.getComponent<QuadTreeComponent>())
+        {
+            m_quadTree.add(qc);
+        }
+    };
+    sendCommand(cmd);
+}
+
 void Scene::sendCommand(const Command& cmd)
 {
     m_commandQueue.push(cmd);

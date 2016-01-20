@@ -48,9 +48,10 @@ namespace xy
         using Category = sf::Int32;
         enum
         {
-            None = 0
+            None = 0,
+            All = (1 << 31)
         };
-        Category category = None; //< Category of entities to target. Categories are user defined and should be btiwise flag values
+        Category category = None; //< Category of entities to target. Categories are user defined and should be bitwise flag values
     };
 
     /*!

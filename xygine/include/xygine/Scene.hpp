@@ -139,6 +139,15 @@ namespace xy
         void setClearColour(const sf::Color&);
         
         /*!
+        \brief Set the area which the scene will cover.
+        This is only necessary when using the QuadTree. By default
+        the queryable quad tree area is the same size as the default
+        view (1920/1080). Passing a FloatRect to this function will
+        resize the total queryable area of the quad tree.
+        */
+        void setSize(const sf::FloatRect&);
+
+        /*!
         \brief Sends a command to the scene graph
 
         Commands can be used to update a specific entity or group of 

@@ -50,7 +50,7 @@ Entity::Entity(MessageBus& mb, const Entity::Priv&)
  : m_destroyed          (false),
  m_uid                  (uid++),
  m_messageBus           (mb),
- m_commandCategories    (0),
+ m_commandCategories    (Command::All),
  m_parent               (nullptr),
  m_scene                (nullptr)
 {}

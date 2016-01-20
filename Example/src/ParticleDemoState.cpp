@@ -71,6 +71,12 @@ namespace
         Count
     };
 
+    enum ParticleShaderId
+    {
+        NormalMapTextured = 1,
+        NormalMapTexturedSpecular
+    };
+
     sf::Uint64 controllerId = 0;
 
     bool debugDraw = false;
@@ -97,16 +103,13 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
 
-    m_shaderResource.preload(1, xy::Shader::NormalMapped::vertex, xy::Shader::NormalMapped::fragment);
-    shader = &m_shaderResource.get(1);
+    m_shaderResource.preload(ParticleShaderId::NormalMapTexturedSpecular, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED_SPECULAR);
+    shader = &m_shaderResource.get(ParticleShaderId::NormalMapTexturedSpecular);
 
     setupParticles();
     buildTerrain();
 
-    
-
     context.renderWindow.setMouseCursorVisible(true);
-   
 
     quitLoadingScreen();
 }
@@ -211,7 +214,7 @@ bool ParticleDemoState::handleEvent(const sf::Event& evt)
             
             break;
         case fireKey:
-            
+
             break;
         case sf::Keyboard::Q:
             debugDraw = !debugDraw;
@@ -294,7 +297,7 @@ void ParticleDemoState::buildTerrain()
     auto cave = ent->addComponent(cd);
     cave->setTexture(m_textureResource.get("assets/images/cave/diffuse.png"));
     cave->setNormalMap(m_textureResource.get("assets/images/cave/normal.png"));
-    cave->setShader(&m_shaderResource.get(1));
+    cave->setShader(&m_shaderResource.get(ParticleShaderId::NormalMapTexturedSpecular));
     
     //get edges to add to physworld
     const auto& edges = cave->getEdges();
@@ -326,7 +329,7 @@ void ParticleDemoState::spawnThing(const sf::Vector2f& position)
     auto dwbl = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     dwbl->setTexture(m_textureResource.get("assets/images/physics demo/ball.png"));
     dwbl->setNormalMap(m_textureResource.get("assets/images/physics demo/ball_normal.png"));
-    dwbl->setShader(m_shaderResource.get(1));
+    dwbl->setShader(m_shaderResource.get(ParticleShaderId::NormalMapTexturedSpecular));
     auto size = dwbl->getFrameSize();
     dwbl->setOrigin({ size.x / 2.f, size.y / 2.f });
     dwbl->setColour({ 198u, 200u, 250u });

@@ -55,7 +55,10 @@ enum PhysicsCommandId
 
 enum PhysicsShaderId
 {
-    NormalMap = 1,
+    NormalMapTextured = 1,
+    NormalMapTexturedSpecular,
     ReflectionMap
 };
+//----------------//
+
 #endif //COMMAND_IDS_HPP_

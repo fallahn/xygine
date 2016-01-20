@@ -87,7 +87,8 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     m_reportText.setPosition(1500.f, 30.f);
 
     //preload shaders
-    m_shaderResource.preload(PhysicsShaderId::NormalMap, xy::Shader::NormalMapped::vertex, xy::Shader::NormalMapped::fragment);
+    m_shaderResource.preload(PhysicsShaderId::NormalMapTextured, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED);
+    m_shaderResource.preload(PhysicsShaderId::NormalMapTexturedSpecular, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED_SPECULAR);
     m_shaderResource.preload(PhysicsShaderId::ReflectionMap, xy::Shader::Default::vertex, xy::Shader::ReflectionMap::fragment);
     m_shaderResource.get(PhysicsShaderId::ReflectionMap).setParameter("u_reflectionMap", m_textureResource.get("assets/images/physics demo/table_reflection.png"));
 
@@ -385,7 +386,7 @@ void PhysicsDemoState::createBodies()
     auto drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/physics demo/table.png"));
     drawable->setNormalMap(m_textureResource.get("assets/images/physics demo/table_normal.png"));
-    drawable->setShader(m_shaderResource.get(PhysicsShaderId::NormalMap));
+    drawable->setShader(m_shaderResource.get(PhysicsShaderId::NormalMapTextured));
     tableEntity->addComponent(drawable);
 
     m_scene.addEntity(tableEntity, xy::Scene::Layer::BackMiddle);
@@ -525,7 +526,7 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     drawable->setNormalMap(m_textureResource.get("assets/images/physics demo/ball_normal.png"));
     auto size = drawable->getTexture()->getSize();
     drawable->setOrigin({ size.x / 2.f, size.y / 2.f });
-    drawable->setShader(m_shaderResource.get(PhysicsShaderId::NormalMap));
+    drawable->setShader(m_shaderResource.get(PhysicsShaderId::NormalMapTexturedSpecular));
     ballEntity->addComponent(drawable);
 
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);
