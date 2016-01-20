@@ -95,15 +95,16 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     m_scene.setView(context.defaultView);
 
     xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostBloom>();
-    m_scene.addPostProcess(pp);
+    //m_scene.addPostProcess(pp);
     pp = xy::PostProcess::create<xy::PostChromeAb>();
-    m_scene.addPostProcess(pp);
+    //m_scene.addPostProcess(pp);
     m_scene.setClearColour({ 0u, 0u, 20u });
 
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
 
     m_shaderResource.preload(ParticleShaderId::NormalMapTexturedSpecular, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED_SPECULAR);
+    //m_shaderResource.preload(ParticleShaderId::NormalMapTextured, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED);
     shader = &m_shaderResource.get(ParticleShaderId::NormalMapTexturedSpecular);
 
     setupParticles();
@@ -291,12 +292,21 @@ void ParticleDemoState::setupParticles()
 void ParticleDemoState::buildTerrain()
 {
     auto ent = xy::Entity::create(m_messageBus);
+
+    /*auto ad = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
+    ad->setTexture(m_textureResource.get("assets/images/cave/background.png"));
+    ad->setNormalMap(m_textureResource.get("assets/images/cave/background_normal.png"));
+    ad->setShader(m_shaderResource.get(ParticleShaderId::NormalMapTexturedSpecular));
+    ad->setScale(1.6f, 1.6f);
+    ent->addComponent(ad);*/
+
     auto cd = std::make_unique<CaveDemo::CaveDrawable>(m_messageBus);
     ent->move((sf::Vector2f(1920.f, 1080.f) - cd->getSize()) / 2.f);
     //ent->move(100.f, 100.f);
     auto cave = ent->addComponent(cd);
     cave->setTexture(m_textureResource.get("assets/images/cave/diffuse.png"));
     cave->setNormalMap(m_textureResource.get("assets/images/cave/normal.png"));
+    cave->setMaskMap(m_textureResource.get("assets/images/cave/mask.png"));
     cave->setShader(&m_shaderResource.get(ParticleShaderId::NormalMapTexturedSpecular));
     
     //get edges to add to physworld
@@ -328,17 +338,18 @@ void ParticleDemoState::spawnThing(const sf::Vector2f& position)
 
     auto dwbl = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     dwbl->setTexture(m_textureResource.get("assets/images/physics demo/ball.png"));
-    dwbl->setNormalMap(m_textureResource.get("assets/images/physics demo/ball_normal.png"));
-    dwbl->setShader(m_shaderResource.get(ParticleShaderId::NormalMapTexturedSpecular));
+    //dwbl->setNormalMap(m_textureResource.get("assets/images/physics demo/ball_normal.png"));
+    //dwbl->setShader(m_shaderResource.get(ParticleShaderId::NormalMapTexturedSpecular));
     auto size = dwbl->getFrameSize();
     dwbl->setOrigin({ size.x / 2.f, size.y / 2.f });
     dwbl->setColour({ 198u, 200u, 250u });
 
     auto qtc = xy::Component::create<xy::QuadTreeComponent>(m_messageBus, sf::FloatRect(-size.x / 2.f, -size.y / 2.f, size.x, size.y));
 
-    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 100.f, sf::Color(255u, 255u, 200u), sf::Color(228u, 228u, 255u));
-    light->setDepth(25.f);
-    light->setRange(850.f);
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 100.f, sf::Color(198u, 200u, 250u), sf::Color(128u, 128u, 255u));
+    light->setDepth(300.f);
+    light->setRange(750.f);
+    //light->setIntensity(0.9f);
 
     auto entity = xy::Entity::create(m_messageBus);
     entity->setWorldPosition(position);

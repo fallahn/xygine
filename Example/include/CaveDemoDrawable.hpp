@@ -72,6 +72,12 @@ namespace CaveDemo
             m_normalMap = &t;
         }
 
+        void setMaskMap(sf::Texture& t)
+        {
+            t.setRepeated(true);
+            m_maskMap = &t;
+        }
+
     private:
         //structs used in marching square algorithm
         struct Node
@@ -155,6 +161,7 @@ namespace CaveDemo
 
         sf::Texture* m_texture;
         sf::Texture* m_normalMap;
+        sf::Texture* m_maskMap;
 
         void fillRand();
         void smooth();
