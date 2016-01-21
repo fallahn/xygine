@@ -43,6 +43,15 @@
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{7c9a36a4-0fb5-4184-b768-baee7fdd470d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\parsers">
+      <UniqueIdentifier>{98d2e353-e3dd-4f84-8cd1-60ed31b33dba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\spriter">
+      <UniqueIdentifier>{f3f3ed94-4ee8-4853-8843-f05f9f42b0a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\parsers">
+      <UniqueIdentifier>{43c96375-3db5-4ad1-9f29-c251827dc62c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -236,6 +245,9 @@
     </ClCompile>
     <ClCompile Include="src\ComponentPointLight.cpp">
       <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\parsers\pugixml.cpp">
+      <Filter>Source Files\parsers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -514,6 +526,24 @@
     </ClInclude>
     <ClInclude Include="include\xygine\components\PointLight.hpp">
       <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\parsers\picojson.h">
+      <Filter>Header Files\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\parsers\pugiconfig.hpp">
+      <Filter>Header Files\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\parsers\pugixml.hpp">
+      <Filter>Header Files\parsers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\spriter\DocumentElement.hpp">
+      <Filter>Header Files\spriter</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\spriter\Document.hpp">
+      <Filter>Header Files\spriter</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\spriter\DocumentAttribute.hpp">
+      <Filter>Header Files\spriter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

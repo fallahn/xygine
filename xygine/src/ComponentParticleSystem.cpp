@@ -350,7 +350,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 
 
 #include <xygine/util/Json.hpp>
-#include <xygine/picojson.h>
+#include <xygine/parsers/picojson.h>
 #include <xygine/Resource.hpp>
 //-------particle system definition------//
 ParticleSystem::Definition::Definition()

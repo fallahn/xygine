@@ -77,6 +77,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ComponentPointLight.cpp" />
+    <ClCompile Include="src\parsers\pugixml.cpp" />
     <ClCompile Include="src\ParticleAffectors.cpp" />
     <ClCompile Include="src\ComponentAnimatedDrawable.cpp" />
     <ClCompile Include="src\ComponentAnimationController.cpp" />
@@ -143,6 +144,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\components\PointLight.hpp" />
+    <ClInclude Include="include\xygine\parsers\picojson.h" />
+    <ClInclude Include="include\xygine\parsers\pugiconfig.hpp" />
+    <ClInclude Include="include\xygine\parsers\pugixml.hpp" />
     <ClInclude Include="include\xygine\ParticleAffectors.hpp" />
     <ClInclude Include="include\xygine\App.hpp" />
     <ClInclude Include="include\xygine\Assert.hpp" />
@@ -212,6 +216,9 @@
     <ClInclude Include="include\xygine\shaders\PostDownSample.hpp" />
     <ClInclude Include="include\xygine\shaders\PostGaussianBlur.hpp" />
     <ClInclude Include="include\xygine\SoundPlayer.hpp" />
+    <ClInclude Include="include\xygine\spriter\Document.hpp" />
+    <ClInclude Include="include\xygine\spriter\DocumentAttribute.hpp" />
+    <ClInclude Include="include\xygine\spriter\DocumentElement.hpp" />
     <ClInclude Include="include\xygine\State.hpp" />
     <ClInclude Include="include\xygine\StateStack.hpp" />
     <ClInclude Include="include\xygine\ui\Button.hpp" />

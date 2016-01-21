@@ -33,7 +33,7 @@ source distribution.
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
-#include <xygine/picojson.h>
+#include <xygine/parsers/picojson.h>
 
 #include <fstream>
 

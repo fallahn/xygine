@@ -36,7 +36,7 @@ source distribution.
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Shader.hpp>
 
-#include <xygine/picojson.h>
+#include <xygine/parsers/picojson.h>
 #include <xygine/Assert.hpp>
 
 #include <fstream>

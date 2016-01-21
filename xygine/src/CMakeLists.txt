@@ -62,4 +62,5 @@ set(xygine_SRC
   ${xygine_DIR}/UISelection.cpp
   ${xygine_DIR}/UISlider.cpp
   ${xygine_DIR}/UITextBox.cpp
-  ${xygine_DIR}/UIWindow.cpp)
+  ${xygine_DIR}/UIWindow.cpp
+  ${xygine_DIR}/parsers/pugixml.cpp)
