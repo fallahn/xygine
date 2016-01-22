@@ -47,6 +47,8 @@ source distribution.
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include <xygine/spriter/Model.hpp>
+
 namespace
 {
     const sf::Keyboard::Key upKey = sf::Keyboard::W;
@@ -78,6 +80,9 @@ RacingDemoState::RacingDemoState(xy::StateStack& stateStack, Context context)
     m_reportText.setPosition(1500.f, 30.f);
 
     buildScene();
+
+    xy::Spriter::Model buns(m_textureResource);
+    buns.loadFromFile("assets/spriter/GreyGuy/player.scml");
 
     quitLoadingScreen();
 }

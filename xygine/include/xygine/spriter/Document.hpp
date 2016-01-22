@@ -49,7 +49,7 @@ namespace xy
                 bool loadFromFile(const std::string&);
 
                 DocumentElement firstElement() const;
-                DocumentElement firstElementWithName(const std::string&) const;
+                DocumentElement firstElement(const std::string&) const;
 
             private:
                 pugi::xml_document m_document;

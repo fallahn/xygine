@@ -56,6 +56,7 @@ set(xygine_SRC
   &{xygine_DIR}/spriter/SpriterDocument.cpp
   &{xygine_DIR}/spriter/SpriterDocumentAttribute.cpp
   &{xygine_DIR}/spriter/SpriterDocumentElement.cpp
+  &{xygine_DIR}/spriter/SpriterModel.cpp
   ${xygine_DIR}/ui/UIButton.cpp
   ${xygine_DIR}/ui/UICheckBox.cpp
   ${xygine_DIR}/ui/UIComboBox.cpp

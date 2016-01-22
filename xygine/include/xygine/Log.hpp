@@ -38,6 +38,7 @@ source distribution.
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <list>
 
 #ifdef _MSC_VER

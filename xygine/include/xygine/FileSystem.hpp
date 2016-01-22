@@ -47,7 +47,7 @@ namespace xy
         static std::vector<std::string> listFiles(std::string path);
         /*!
         \brief Attempts to return a string containing the file extension
-        of a given path
+        of a given path, including the period (.)
         */
         static std::string getFileExtension(const std::string& path);
         /*!

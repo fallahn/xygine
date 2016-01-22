@@ -25,29 +25,49 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#include <xygine/spriter/Model.hpp>
 #include <xygine/spriter/Document.hpp>
+#include <xygine/spriter/DocumentAttribute.hpp>
 #include <xygine/spriter/DocumentElement.hpp>
+
+#include <xygine/Resource.hpp>
+#include <xygine/FileSystem.hpp>
 #include <xygine/Log.hpp>
 
-using namespace xy::Spriter::Detail;
+using namespace xy;
+using namespace xy::Spriter;
 
-bool Document::loadFromFile(const std::string& path)
+Model::Model(TextureResource& tr)
+    : m_textureResource(tr) {}
+
+
+//public
+bool Model::loadFromFile(const std::string& file)
 {
-    pugi::xml_parse_result result = m_document.load_file(path.c_str());
-    if (!result)
+    if (FileSystem::getFileExtension(file) == ".scml")
     {
-        std::string desc = result.description();
-        xy::Logger::log(desc, Logger::Type::Error, Logger::Output::All);
+        Detail::Document document;
+        if (document.loadFromFile(file))
+        {
+            auto firstElement = document.firstElement("spriter_data");
+            if (firstElement)
+            {
+                
+            }
+            else
+            {
+                LOG("Invalid or corrupt xml in: " + file, Logger::Type::Error);
+                return false;
+            }
+        }
+        else
+        {
+            LOG("Failed to open scml file: " + file, Logger::Type::Error);
+            return false;
+        }
     }
-    return result;
+    LOG("Invalid file extension: must be *.scml", Logger::Type::Error);
+    return false;
 }
 
-DocumentElement Document::firstElement() const
-{
-    return std::move(DocumentElement(m_document.first_child()));
-}
-
-DocumentElement Document::firstElement(const std::string& name) const
-{
-    return std::move(DocumentElement(m_document.child(name.c_str())));
-}
+//private
