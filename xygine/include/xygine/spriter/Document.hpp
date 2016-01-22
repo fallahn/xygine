@@ -24,3 +24,34 @@ and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any
 source distribution.
 *********************************************************************/
+
+#ifndef XY_SPRITE_DOCUMENT_HPP_
+#define XY_SPRITE_DOCUMENT_HPP_
+
+#include <xygine/parsers\pugixml.hpp>
+
+namespace xy
+{
+    namespace Spriter
+    {
+        namespace Detail
+        {
+            /*!
+            \brief Used internally for parsing Spriter documents
+            */
+            class Document final
+            {
+            public:
+                Document();
+                ~Document() = default;
+
+                void load(const std::string&);
+
+            private:
+                pugi::xml_document m_document;
+            };
+        }
+    }
+}
+
+#endif //XY_SPRITE_DOCUMENT_HPP_

@@ -38,7 +38,7 @@ namespace xy
         namespace Detail
         {
             /*!
-            \brief Used for parsing Spriter documents
+            \brief Used internally for parsing Spriter documents
             */
             class DocumentElement final
             {

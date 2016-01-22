@@ -52,6 +52,9 @@
     <Filter Include="Source Files\parsers">
       <UniqueIdentifier>{43c96375-3db5-4ad1-9f29-c251827dc62c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\spriter">
+      <UniqueIdentifier>{074fd524-c923-4ac7-a7c1-cf7769c7f1d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -117,137 +120,137 @@
     <ClCompile Include="src\StateStack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\PhysicsRigidBody.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsWorld.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UIWindow.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UIButton.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UICheckBox.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UIComboBox.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UIContainer.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UIControl.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UILabel.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UIScoreList.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UISelection.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UISlider.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UITextBox.cpp">
-      <Filter>Source Files\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsCollisionShape.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsCollisionCircleShape.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsCollisionRectangleShape.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsCollisionPolygonShape.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsCollisionEdgeShape.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsDebugDrawer.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsJointDistance.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsJointFriction.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsJointHinge.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsJointSlider.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsJointWheel.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsJointRope.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsJointWeld.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsJointMotor.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsContact.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsAffectorConstantForce.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsAffectorAreaForce.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysicsAffectorPointForce.cpp">
-      <Filter>Source Files\physics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Component.cpp">
-      <Filter>Source Files\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ComponentCamera.cpp">
-      <Filter>Source Files\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\QuadTreeComponent.cpp">
-      <Filter>Source Files\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ComponentAnimationController.cpp">
-      <Filter>Source Files\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ComponentAnimatedDrawable.cpp">
-      <Filter>Source Files\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ComponentParticleController.cpp">
-      <Filter>Source Files\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ComponentParticleSystem.cpp">
-      <Filter>Source Files\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ComponentAudioListener.cpp">
-      <Filter>Source Files\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ComponentAudioSource.cpp">
-      <Filter>Source Files\components</Filter>
-    </ClCompile>
     <ClCompile Include="src\ParticleAffectors.cpp">
       <Filter>Source Files\particles</Filter>
     </ClCompile>
     <ClCompile Include="src\PolyBatch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ComponentPointLight.cpp">
-      <Filter>Source Files\components</Filter>
-    </ClCompile>
     <ClCompile Include="src\parsers\pugixml.cpp">
       <Filter>Source Files\parsers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsAffectorAreaForce.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsAffectorConstantForce.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsAffectorPointForce.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsCollisionCircleShape.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsCollisionEdgeShape.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsCollisionPolygonShape.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsCollisionRectangleShape.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsCollisionShape.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsContact.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsDebugDrawer.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsJointDistance.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsJointFriction.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsJointHinge.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsJointMotor.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsJointRope.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsJointSlider.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsJointWeld.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsJointWheel.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsRigidBody.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\PhysicsWorld.cpp">
+      <Filter>Source Files\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UIButton.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UICheckBox.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UIComboBox.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UIContainer.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UIControl.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UILabel.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UIScoreList.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UISelection.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UISlider.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UITextBox.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\UIWindow.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ComponentParticleController.cpp">
+      <Filter>Source Files\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ComponentParticleSystem.cpp">
+      <Filter>Source Files\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\Component.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ComponentAnimatedDrawable.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ComponentAnimationController.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ComponentAudioListener.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ComponentAudioSource.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ComponentCamera.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ComponentPointLight.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\QuadTreeComponent.cpp">
+      <Filter>Source Files\components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

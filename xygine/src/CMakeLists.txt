@@ -1,48 +1,18 @@
 set(xygine_SRC
   ${xygine_DIR}/App.cpp
   ${xygine_DIR}/AudioManager.cpp
-  ${xygine_DIR}/CommandQueue.cpp
-  ${xygine_DIR}/Component.cpp
-  ${xygine_DIR}/ComponentAnimatedDrawable.cpp
-  ${xygine_DIR}/ComponentAnimationController.cpp 
-  ${xygine_DIR}/ComponentAudioListener.cpp
-  ${xygine_DIR}/ComponentAudioSource.cpp
-  ${xygine_DIR}/ComponentCamera.cpp
-  ${xygine_DIR}/ComponentParticleController.cpp
-  ${xygine_DIR}/ComponentParticleSystem.cpp  
-  ${xygine_DIR}/ComponentPointLight.cpp 
+  ${xygine_DIR}/CommandQueue.cpp 
   ${xygine_DIR}/Entity.cpp
   ${xygine_DIR}/FileSystem.cpp
   ${xygine_DIR}/FontResource.cpp
   ${xygine_DIR}/MessageBus.cpp
   ${xygine_DIR}/Music.cpp
   ${xygine_DIR}/ParticleAffectors.cpp
-  ${xygine_DIR}/PhysicsAffectorAreaForce.cpp
-  ${xygine_DIR}/PhysicsAffectorConstantForce.cpp
-  ${xygine_DIR}/PhysicsAffectorPointForce.cpp
-  ${xygine_DIR}/PhysicsCollisionShape.cpp
-  ${xygine_DIR}/PhysicsCollisionCircleShape.cpp
-  ${xygine_DIR}/PhysicsCollisionEdgeShape.cpp
-  ${xygine_DIR}/PhysicsCollisionPolygonShape.cpp
-  ${xygine_DIR}/PhysicsCollisionRectangleShape.cpp
-  ${xygine_DIR}/PhysicsContact.cpp
-  ${xygine_DIR}/PhysicsDebugDrawer.cpp
-  ${xygine_DIR}/PhysicsJointDistance.cpp
-  ${xygine_DIR}/PhysicsJointFriction.cpp
-  ${xygine_DIR}/PhysicsJointHinge.cpp
-  ${xygine_DIR}/PhysicsJointMotor.cpp
-  ${xygine_DIR}/PhysicsJointRope.cpp
-  ${xygine_DIR}/PhysicsJointSlider.cpp
-  ${xygine_DIR}/PhysicsJointWeld.cpp
-  ${xygine_DIR}/PhysicsJointWheel.cpp
-  ${xygine_DIR}/PhysicsRigidBody.cpp
-  ${xygine_DIR}/PhysicsWorld.cpp
   ${xygine_DIR}/PolyBatch.cpp
   ${xygine_DIR}/PostBloom.cpp
   ${xygine_DIR}/PostChromeAb.cpp
   ${xygine_DIR}/PostProcess.cpp
   ${xygine_DIR}/QuadTree.cpp
-  ${xygine_DIR}/QuadTreeComponent.cpp
   ${xygine_DIR}/QuadTreeNode.cpp
   ${xygine_DIR}/Reports.cpp
   ${xygine_DIR}/Scene.cpp
@@ -52,15 +22,45 @@ set(xygine_SRC
   ${xygine_DIR}/SoundPlayer.cpp
   ${xygine_DIR}/State.cpp
   ${xygine_DIR}/StateStack.cpp
-  ${xygine_DIR}/UIButton.cpp
-  ${xygine_DIR}/UICheckBox.cpp
-  ${xygine_DIR}/UIComboBox.cpp
-  ${xygine_DIR}/UIContainer.cpp
-  ${xygine_DIR}/UIControl.cpp
-  ${xygine_DIR}/UILabel.cpp
-  ${xygine_DIR}/UIScoreList.cpp
-  ${xygine_DIR}/UISelection.cpp
-  ${xygine_DIR}/UISlider.cpp
-  ${xygine_DIR}/UITextBox.cpp
-  ${xygine_DIR}/UIWindow.cpp
-  ${xygine_DIR}/parsers/pugixml.cpp)
+  ${xygine_DIR}/components/Component.cpp
+  ${xygine_DIR}/components/ComponentAnimatedDrawable.cpp
+  ${xygine_DIR}/ComponentAnimationController.cpp 
+  ${xygine_DIR}/components/ComponentAudioListener.cpp
+  ${xygine_DIR}/components/ComponentAudioSource.cpp
+  ${xygine_DIR}/components/ComponentCamera.cpp
+  ${xygine_DIR}/components/ComponentParticleController.cpp
+  ${xygine_DIR}/components/ComponentParticleSystem.cpp  
+  ${xygine_DIR}/components/ComponentPointLight.cpp  
+  ${xygine_DIR}/components/QuadTreeComponent.cpp  
+  ${xygine_DIR}/parsers/pugixml.cpp  
+  ${xygine_DIR}/physics/PhysicsAffectorAreaForce.cpp
+  ${xygine_DIR}/physics/PhysicsAffectorConstantForce.cpp
+  ${xygine_DIR}/physics/PhysicsAffectorPointForce.cpp
+  ${xygine_DIR}/physics/PhysicsCollisionShape.cpp
+  ${xygine_DIR}/physics/PhysicsCollisionCircleShape.cpp
+  ${xygine_DIR}/physics/PhysicsCollisionEdgeShape.cpp
+  ${xygine_DIR}/physics/PhysicsCollisionPolygonShape.cpp
+  ${xygine_DIR}/physics/PhysicsCollisionRectangleShape.cpp
+  ${xygine_DIR}/physics/PhysicsContact.cpp
+  ${xygine_DIR}/physics/PhysicsDebugDrawer.cpp
+  ${xygine_DIR}/physics/PhysicsJointDistance.cpp
+  ${xygine_DIR}/physics/PhysicsJointFriction.cpp
+  ${xygine_DIR}/physics/PhysicsJointHinge.cpp
+  ${xygine_DIR}/physics/PhysicsJointMotor.cpp
+  ${xygine_DIR}/physics/PhysicsJointRope.cpp
+  ${xygine_DIR}/physics/PhysicsJointSlider.cpp
+  ${xygine_DIR}/physics/PhysicsJointWeld.cpp
+  ${xygine_DIR}/physics/PhysicsJointWheel.cpp
+  ${xygine_DIR}/physics/PhysicsRigidBody.cpp
+  ${xygine_DIR}/physics/PhysicsWorld.cpp
+  ${xygine_DIR}/ui/UIButton.cpp
+  ${xygine_DIR}/ui/UICheckBox.cpp
+  ${xygine_DIR}/ui/UIComboBox.cpp
+  ${xygine_DIR}/ui/UIContainer.cpp
+  ${xygine_DIR}/ui/UIControl.cpp
+  ${xygine_DIR}/ui/UILabel.cpp
+  ${xygine_DIR}/ui/UIScoreList.cpp
+  ${xygine_DIR}/ui/UISelection.cpp
+  ${xygine_DIR}/ui/UISlider.cpp
+  ${xygine_DIR}/ui/UITextBox.cpp
+  ${xygine_DIR}/ui/UIWindow.cpp)

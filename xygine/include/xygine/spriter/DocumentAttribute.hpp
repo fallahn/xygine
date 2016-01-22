@@ -24,3 +24,43 @@ and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any
 source distribution.
 *********************************************************************/
+
+#ifndef XY_SPRITE_DOCUMENT_ATTRIBUTE_HPP_
+#define XY_SPRITE_DOCUMENT_ATTRIBUTE_HPP_
+
+#include <xygine/parsers/pugixml.hpp>
+
+#include <SFML/Config.hpp>
+
+namespace xy
+{
+    namespace Spriter
+    {
+        namespace Detail
+        {
+            /*!
+            \brief Used internally for parsing Spriter documents
+            */
+            class DocumentAttribute final
+            {
+            public:
+                DocumentAttribute(pugi::xml_attribute);
+                ~DocumentAttribute() = default;
+
+                std::string getName() const;
+                bool valid() const;
+
+                float valueAsFloat() const;
+                sf::Int32 valueAsInt() const;
+                std::string valueAsString() const;
+
+                void advanceNext();
+
+            private:
+                pugi::xml_attribute m_attribute;
+            };
+        }
+    }
+}
+
+#endif //XY_SPRITE_DOCUMENT_ATTRIBUTE_HPP_
