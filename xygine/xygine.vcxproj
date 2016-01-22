@@ -128,6 +128,9 @@
     <ClCompile Include="src\Server.cpp" />
     <ClCompile Include="src\ShaderResource.cpp" />
     <ClCompile Include="src\SoundPlayer.cpp" />
+    <ClCompile Include="src\spriter\SpriterDocument.cpp" />
+    <ClCompile Include="src\spriter\SpriterDocumentAttribute.cpp" />
+    <ClCompile Include="src\spriter\SpriterDocumentElement.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
     <ClCompile Include="src\ui\UIButton.cpp" />

@@ -34,28 +34,37 @@ namespace xy
 {
     namespace Spriter
     {
-        class DocumentAttribute;
         namespace Detail
         {
+            class DocumentAttribute;
             /*!
             \brief Used internally for parsing Spriter documents
             */
             class DocumentElement final
             {
             public:
-                DocumentElement(pugi::xml_node);
+                DocumentElement(const pugi::xml_node&);
                 ~DocumentElement() = default;
 
                 std::string getName() const;
-                bool valid() const;
 
                 void advanceNext();
                 void advanceNextSameName();
 
+                explicit operator bool() const { return !m_node.empty(); }
+
             private:
                 pugi::xml_node m_node;
 
-                pugi::xml_attribute findAttribute(const std::string&);
+                DocumentAttribute firstAttribute() const;
+                DocumentAttribute firstAttribute(const std::string&) const;
+
+                DocumentElement firstElement() const;
+                DocumentElement firstElement(const std::string&) const;
+
+                DocumentElement nextSibling() const;
+
+                pugi::xml_attribute findAttribute(const std::string&) const;
 
             };
         }

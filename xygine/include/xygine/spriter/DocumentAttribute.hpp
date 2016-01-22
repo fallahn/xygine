@@ -44,17 +44,18 @@ namespace xy
             class DocumentAttribute final
             {
             public:
-                DocumentAttribute(pugi::xml_attribute);
+                DocumentAttribute(const pugi::xml_attribute&);
                 ~DocumentAttribute() = default;
 
                 std::string getName() const;
-                bool valid() const;
 
                 float valueAsFloat() const;
                 sf::Int32 valueAsInt() const;
                 std::string valueAsString() const;
 
                 void advanceNext();
+
+                explicit operator bool() const { return !m_attribute.empty(); }
 
             private:
                 pugi::xml_attribute m_attribute;

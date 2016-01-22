@@ -25,37 +25,35 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_SPRITE_DOCUMENT_HPP_
-#define XY_SPRITE_DOCUMENT_HPP_
+#include <xygine/spriter/DocumentAttribute.hpp>
 
-#include <xygine/parsers/pugixml.hpp>
+using namespace xy::Spriter::Detail;
 
-namespace xy
+DocumentAttribute::DocumentAttribute(const pugi::xml_attribute& atb)
+    :m_attribute(atb) {}
+
+//public
+std::string DocumentAttribute::getName() const
 {
-    namespace Spriter
-    {
-        namespace Detail
-        {
-            class DocumentElement;
-            /*!
-            \brief Used internally for parsing Spriter documents
-            */
-            class Document final
-            {
-            public:
-                Document() = default;
-                ~Document() = default;
-
-                bool loadFromFile(const std::string&);
-
-                DocumentElement firstElement() const;
-                DocumentElement firstElementWithName(const std::string&) const;
-
-            private:
-                pugi::xml_document m_document;
-            };
-        }
-    }
+    return m_attribute.name();
 }
 
-#endif //XY_SPRITE_DOCUMENT_HPP_
+float DocumentAttribute::valueAsFloat() const
+{
+    return m_attribute.as_float();
+}
+
+sf::Int32 DocumentAttribute::valueAsInt() const
+{
+    return m_attribute.as_int();
+}
+
+std::string DocumentAttribute::valueAsString() const
+{
+    return m_attribute.as_string();
+}
+
+void DocumentAttribute::advanceNext()
+{
+    m_attribute = m_attribute.next_attribute();
+}

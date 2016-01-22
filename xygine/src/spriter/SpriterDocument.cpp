@@ -25,37 +25,29 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_SPRITE_DOCUMENT_HPP_
-#define XY_SPRITE_DOCUMENT_HPP_
+#include <xygine/spriter/Document.hpp>
+#include <xygine/spriter/DocumentElement.hpp>
+#include <xygine/Log.hpp>
 
-#include <xygine/parsers/pugixml.hpp>
+using namespace xy::Spriter::Detail;
 
-namespace xy
+bool Document::loadFromFile(const std::string& path)
 {
-    namespace Spriter
+    pugi::xml_parse_result result = m_document.load_file(path.c_str());
+    if (!result)
     {
-        namespace Detail
-        {
-            class DocumentElement;
-            /*!
-            \brief Used internally for parsing Spriter documents
-            */
-            class Document final
-            {
-            public:
-                Document() = default;
-                ~Document() = default;
-
-                bool loadFromFile(const std::string&);
-
-                DocumentElement firstElement() const;
-                DocumentElement firstElementWithName(const std::string&) const;
-
-            private:
-                pugi::xml_document m_document;
-            };
-        }
+        std::string desc = result.description();
+        xy::Logger::log(desc, Logger::Type::Error, Logger::Output::All);
     }
+    return result;
 }
 
-#endif //XY_SPRITE_DOCUMENT_HPP_
+DocumentElement Document::firstElement() const
+{
+    return std::move(DocumentElement(m_document.first_child()));
+}
+
+DocumentElement Document::firstElementWithName(const std::string& name) const
+{
+    return std::move(DocumentElement(m_document.child(name.c_str())));
+}

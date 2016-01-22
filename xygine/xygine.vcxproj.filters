@@ -252,6 +252,15 @@
     <ClCompile Include="src\components\QuadTreeComponent.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
+    <ClCompile Include="src\spriter\SpriterDocument.cpp">
+      <Filter>Source Files\spriter</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spriter\SpriterDocumentElement.cpp">
+      <Filter>Source Files\spriter</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spriter\SpriterDocumentAttribute.cpp">
+      <Filter>Source Files\spriter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
