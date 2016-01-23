@@ -147,3 +147,28 @@ std::string FileSystem::getFileName(const std::string& path)
 
     return searchFunc('/', path);
 }
+
+std::string FileSystem::getFilePath(const std::string& path)
+{
+    //TODO this doesn't actually check that there is a file at the
+    //end of the path, or that it's even a valid path...
+
+    static auto searchFunc = [](const char seperator, const std::string& path)->std::string
+    {
+        std::size_t i = path.rfind(seperator, path.length());
+        if (i != std::string::npos)
+        {
+            return(path.substr(0, i + 1));
+        }
+
+        return "";
+    };
+
+
+#ifdef _WIN32 //try windows formatted paths first
+    std::string retVal = searchFunc('\\', path);
+    if (!retVal.empty()) return retVal;
+#endif
+
+    return searchFunc('/', path);
+}

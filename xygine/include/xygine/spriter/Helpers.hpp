@@ -25,43 +25,37 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//static functions for cross platform file handling
+#ifndef XY_SPRITER_HELPERS_HPP_
+#define XY_SPRITER_HELPERS_HPP_
 
-#ifndef XY_FILE_SYS_HPP_
-#define XY_FILE_SYS_HPP_
-
-#include <string>
 #include <vector>
 
 namespace xy
 {
-    /*!
-    \brief Utilities for reading files from the current file system
-    */
-    class FileSystem final
+    namespace Spriter
     {
-    public:
-        /*!
-        \brief Lists all the files in the given directory
-        */
-        static std::vector<std::string> listFiles(std::string path);
-        /*!
-        \brief Attempts to return a string containing the file extension
-        of a given path, including the period (.)
-        */
-        static std::string getFileExtension(const std::string& path);
-        /*!
-        \brief Attempts to return the name of a file at the end of
-        a given file path
-        */
-        static std::string getFileName(const std::string& path);
-        /*!
-        \brief Attempts to return the path of a given filepath without
-        the file name.
-        */
-        static std::string getFilePath(const std::string& path);
-    private:
+        namespace Detail
+        {
+            /*!
+            \brief Used internally by Sprite file parser
+            */
+            //lists all files / sub files in a given directory
+            class DirectoryLister final
+            {
+            public:
+                DirectoryLister();
+                ~DirectoryLister() = default;
 
-    };
+                void addDirectory();
+                void addFile();
+                int getIndex(std::size_t dirIdx, std::size_t fileIdx);
+
+            private:
+                std::vector<std::vector<std::size_t>> m_directories;
+                std::size_t m_fileCount;
+            };
+        }
+    }
 }
-#endif //XY_FILE_SYS_HPP_
+
+#endif //XY_SPRITER_HELPERS_HPP_

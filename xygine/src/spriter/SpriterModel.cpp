@@ -29,6 +29,7 @@ source distribution.
 #include <xygine/spriter/Document.hpp>
 #include <xygine/spriter/DocumentAttribute.hpp>
 #include <xygine/spriter/DocumentElement.hpp>
+#include <xygine/spriter/Helpers.hpp>
 
 #include <xygine/Resource.hpp>
 #include <xygine/FileSystem.hpp>
@@ -52,7 +53,12 @@ bool Model::loadFromFile(const std::string& file)
             auto firstElement = document.firstElement("spriter_data");
             if (firstElement)
             {
-                
+                Detail::DirectoryLister dirLister;
+                return 
+                ( 
+                    loadImages(firstElement, file, dirLister)
+                    && loadTags(firstElement)
+                );
             }
             else
             {
@@ -71,3 +77,88 @@ bool Model::loadFromFile(const std::string& file)
 }
 
 //private
+bool Model::loadImages(Detail::DocumentElement& element, const std::string& file, Detail::DirectoryLister& dirLister)
+{
+    auto path = FileSystem::getFilePath(file);
+    auto folderElement = element.firstElement("folder");
+    while (folderElement)
+    {
+        //LOG(folderElement.getName(), Logger::Type::Info);
+
+        dirLister.addDirectory();
+        auto fileElement = folderElement.firstElement("file");
+        while (fileElement)
+        {
+            //LOG(fileElement.getName(), Logger::Type::Info);
+
+            dirLister.addFile();
+
+            auto attrib = fileElement.firstAttribute("name");
+            std::string fileName;
+            if (attrib)
+            {
+                fileName = attrib.valueAsString();
+            }
+            else
+            {
+                LOG("Missing file name attribute", Logger::Type::Error);
+                return false;
+            }
+
+            //check for images and load / map to origin
+            //REMEMBER pivot values are normalised
+            //TODO might have to invert Y coord here for SFML
+            sf::Vector2f origin;
+            attrib = fileElement.firstAttribute("pivot_x");
+            if (attrib) origin.x = attrib.valueAsFloat();
+
+            attrib = fileElement.firstAttribute("pivot_y");
+            if (attrib) origin.y = attrib.valueAsFloat();
+
+            origin.y = 1.f - origin.y;
+
+            sf::Texture* t = &m_textureResource.get(path + fileName);
+            sf::Vector2f size(t->getSize());
+            origin.x *= size.x;
+            origin.y *= size.y;
+
+            m_textures.emplace_back(std::make_pair(t, origin));
+
+            //TODO ideally we want to pack this into an atlas
+            //and draw with a vertex array, not a bunch of sprites
+
+            fileElement.advanceNextSameName();
+        }
+
+        folderElement.advanceNextSameName();
+    }
+    return true;
+}
+
+bool Model::loadTags(Detail::DocumentElement& element)
+{
+    auto taglistElement = element.firstElement("tag_list");
+    if (taglistElement)
+    {
+        auto tagElement = taglistElement.firstElement();
+        while (tagElement)
+        {
+            auto attrib = tagElement.firstAttribute("name");
+            if (attrib)
+            {
+                m_tags.emplace_back(attrib.valueAsString());
+            }
+            else
+            {
+                //TODO do we really want to quit out just because
+                //one or more names are missing? Suppose we don't
+                //want to load corrupted files I guess...
+                return false;
+            }
+            tagElement.advanceNextSameName();
+        }
+        taglistElement.advanceNextSameName();
+    }
+
+    return true;
+}

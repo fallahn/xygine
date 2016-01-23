@@ -131,6 +131,7 @@
     <ClCompile Include="src\spriter\SpriterDocument.cpp" />
     <ClCompile Include="src\spriter\SpriterDocumentAttribute.cpp" />
     <ClCompile Include="src\spriter\SpriterDocumentElement.cpp" />
+    <ClCompile Include="src\spriter\SpriterHelpers.cpp" />
     <ClCompile Include="src\spriter\SpriterModel.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="include\xygine\spriter\Document.hpp" />
     <ClInclude Include="include\xygine\spriter\DocumentAttribute.hpp" />
     <ClInclude Include="include\xygine\spriter\DocumentElement.hpp" />
+    <ClInclude Include="include\xygine\spriter\Helpers.hpp" />
     <ClInclude Include="include\xygine\spriter\Model.hpp" />
     <ClInclude Include="include\xygine\State.hpp" />
     <ClInclude Include="include\xygine\StateStack.hpp" />

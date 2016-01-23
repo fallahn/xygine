@@ -51,11 +51,6 @@ namespace xy
                 void advanceNext();
                 void advanceNextSameName();
 
-                explicit operator bool() const { return !m_node.empty(); }
-
-            private:
-                pugi::xml_node m_node;
-
                 DocumentAttribute firstAttribute() const;
                 DocumentAttribute firstAttribute(const std::string&) const;
 
@@ -63,6 +58,11 @@ namespace xy
                 DocumentElement firstElement(const std::string&) const;
 
                 DocumentElement nextSibling() const;
+
+                explicit operator bool() const { return !m_node.empty(); }
+
+            private:
+                pugi::xml_node m_node;
 
                 pugi::xml_attribute findAttribute(const std::string&) const;
 

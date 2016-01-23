@@ -49,7 +49,6 @@ void DocumentElement::advanceNextSameName()
     m_node = m_node.next_sibling(m_node.name());
 }
 
-//private
 DocumentAttribute DocumentElement::firstAttribute() const
 {
     return std::move(DocumentAttribute(m_node.first_attribute()));
@@ -75,6 +74,7 @@ DocumentElement DocumentElement::nextSibling() const
     return std::move(DocumentElement(m_node.next_sibling()));
 }
 
+//private
 pugi::xml_attribute DocumentElement::findAttribute(const std::string& name) const
 {
     return m_node.attribute(name.c_str());

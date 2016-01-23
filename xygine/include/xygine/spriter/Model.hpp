@@ -28,6 +28,8 @@ source distribution.
 #ifndef XY_SPRITER_MODEL_HPP_
 #define XY_SPRITER_MODEL_HPP_
 
+#include <SFML/System/Vector2.hpp>
+
 #include <string>
 #include <vector>
 
@@ -41,6 +43,12 @@ namespace xy
     class TextureResource;
     namespace Spriter
     {
+        namespace Detail
+        {
+            class DocumentElement;
+            class DirectoryLister;
+        }
+
         /*!
         \brief Spriter Model.
         Spriter Models are used to parse scml files created with
@@ -73,9 +81,12 @@ namespace xy
         private:
             TextureResource& m_textureResource;
 
-            std::vector<sf::Texture> m_textures;
+            std::vector<std::pair<sf::Texture*, sf::Vector2f>> m_textures; //maps texture to rotation origin
             std::vector<std::string> m_tags;
 
+
+            bool loadImages(Spriter::Detail::DocumentElement&, const std::string&, Spriter::Detail::DirectoryLister&);
+            bool loadTags(Spriter::Detail::DocumentElement&);
         };
     }//ns Spriter
 } //ns xy

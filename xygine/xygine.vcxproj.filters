@@ -264,6 +264,9 @@
     <ClCompile Include="src\spriter\SpriterModel.cpp">
       <Filter>Source Files\spriter</Filter>
     </ClCompile>
+    <ClCompile Include="src\spriter\SpriterHelpers.cpp">
+      <Filter>Source Files\spriter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -561,6 +564,9 @@
       <Filter>Header Files\spriter</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\spriter\Model.hpp">
+      <Filter>Header Files\spriter</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\spriter\Helpers.hpp">
       <Filter>Header Files\spriter</Filter>
     </ClInclude>
   </ItemGroup>
