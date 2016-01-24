@@ -39,6 +39,8 @@ source distribution.
 #include <xygine/Resource.hpp>
 #include <xygine/ShaderResource.hpp>
 
+#include <xygine/spriter/Model.hpp>
+
 #include <SFML/Graphics/Text.hpp>
 
 namespace sf
@@ -79,6 +81,8 @@ private:
     xy::ShaderResource m_shaderResource;
 
     sf::Text m_reportText;
+
+    xy::Spriter::Model m_buns;
 
     void createBodies();
 

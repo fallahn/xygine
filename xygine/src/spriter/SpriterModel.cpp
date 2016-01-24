@@ -35,6 +35,8 @@ source distribution.
 #include <xygine/FileSystem.hpp>
 #include <xygine/Log.hpp>
 
+#include <SFML/Graphics/Sprite.hpp>
+
 using namespace xy;
 using namespace xy::Spriter;
 
@@ -81,6 +83,7 @@ bool Model::loadImages(Detail::DocumentElement& element, const std::string& file
 {
     auto path = FileSystem::getFilePath(file);
     auto folderElement = element.firstElement("folder");
+    std::vector<std::pair<sf::Texture*, sf::Vector2f>> textures;
     while (folderElement)
     {
         //LOG(folderElement.getName(), Logger::Type::Info);
@@ -122,17 +125,87 @@ bool Model::loadImages(Detail::DocumentElement& element, const std::string& file
             origin.x *= size.x;
             origin.y *= size.y;
 
-            m_textures.emplace_back(std::make_pair(t, origin));
-
-            //TODO ideally we want to pack this into an atlas
-            //and draw with a vertex array, not a bunch of sprites
+            textures.emplace_back(std::make_pair(t, origin));
 
             fileElement.advanceNextSameName();
         }
 
         folderElement.advanceNextSameName();
     }
+
+    //pack textures into an atlas
+    packTextures(textures);
+
     return true;
+}
+
+namespace
+{
+    const sf::Uint16 textureWidth = 1024u;
+}
+
+void Model::packTextures(const std::vector<std::pair<sf::Texture*, sf::Vector2f>>& textures)
+{
+    for (auto i = 0u; i < textures.size(); ++i)
+    {
+        m_imageData.emplace_back(i, sf::FloatRect(sf::Vector2f(), sf::Vector2f(textures[i].first->getSize())), textures[i].second);
+    }
+
+    //sort by height. rotating would optimise space but cause more work down the line for little gain
+    std::sort(m_imageData.begin(), m_imageData.end(), [](const ImgData& imgDataA, const ImgData& imgDataB)
+    {
+        return imgDataA.textureRect.height > imgDataB.textureRect.height;
+    });
+
+    //do a prepass to find out how tall the texture atlas needs to be
+    float currentRowOffset = 0.f;
+    float nextRowOffset = m_imageData.front().textureRect.height;
+
+    float currentColOffset = 0.f;
+    float nextColOffset = m_imageData.front().textureRect.width;
+
+    sf::Uint16 textureHeight = 0u;
+
+    for (auto& id : m_imageData)
+    {
+        id.textureRect.left = currentColOffset;
+        id.textureRect.top = currentRowOffset;
+        if (id.textureRect.left + id.textureRect.width < textureWidth)
+        {
+            //we fit in this row
+            currentColOffset = nextColOffset;
+            nextColOffset += id.textureRect.width;
+        }
+        else
+        {
+            //start a new row
+            currentColOffset = 0.f;
+            nextColOffset = id.textureRect.width;
+            currentRowOffset = nextRowOffset;
+            nextRowOffset += id.textureRect.height;
+
+            id.textureRect.left = currentColOffset;
+            id.textureRect.top = currentRowOffset;
+            textureHeight = static_cast<sf::Uint16>(nextRowOffset);
+        }
+    }
+
+    //round height to nearest 16 px
+    textureHeight += textureHeight % 16;
+
+    //finally render all images to atlas
+    m_texture.create(textureWidth, textureHeight);
+    m_texture.clear(sf::Color::Transparent);
+    sf::Sprite tempSprite;
+
+    for (const auto& id : m_imageData)
+    {
+        tempSprite.setTexture(*textures[id.directoryIndex].first);
+        tempSprite.setPosition(id.textureRect.left, id.textureRect.top);
+        m_texture.draw(tempSprite);
+    }
+
+    m_texture.display();
 }
 
 bool Model::loadTags(Detail::DocumentElement& element)

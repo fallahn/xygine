@@ -29,6 +29,7 @@ source distribution.
 #define XY_SPRITER_MODEL_HPP_
 
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 
 #include <string>
 #include <vector>
@@ -77,15 +78,25 @@ namespace xy
             bool loadFromFile(const std::string& file);
             //bool loadFromMemory();
 
-
+            const sf::Texture& getTexture()const { return m_texture.getTexture(); }
         private:
             TextureResource& m_textureResource;
 
-            std::vector<std::pair<sf::Texture*, sf::Vector2f>> m_textures; //maps texture to rotation origin
             std::vector<std::string> m_tags;
 
+            struct ImgData final
+            {
+                ImgData(std::size_t idx, sf::FloatRect tr, sf::Vector2f o)
+                    : directoryIndex(idx), textureRect(tr), origin(o) {}
+                std::size_t directoryIndex;
+                sf::FloatRect textureRect;
+                sf::Vector2f origin;
+            };
+            sf::RenderTexture m_texture;
+            std::vector<ImgData> m_imageData;
 
             bool loadImages(Spriter::Detail::DocumentElement&, const std::string&, Spriter::Detail::DirectoryLister&);
+            void packTextures(const std::vector<std::pair<sf::Texture*, sf::Vector2f>>&);
             bool loadTags(Spriter::Detail::DocumentElement&);
         };
     }//ns Spriter

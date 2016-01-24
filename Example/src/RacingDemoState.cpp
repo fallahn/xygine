@@ -47,7 +47,7 @@ source distribution.
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/Event.hpp>
 
-#include <xygine/spriter/Model.hpp>
+
 
 namespace
 {
@@ -77,12 +77,9 @@ RacingDemoState::RacingDemoState(xy::StateStack& stateStack, Context context)
     //m_scene.setClearColour({ 0u, 100u, 220u });
 
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
-    m_reportText.setPosition(1500.f, 30.f);
-
+    m_reportText.setPosition(1500.f, 30.f); 
+    
     buildScene();
-
-    xy::Spriter::Model buns(m_textureResource);
-    buns.loadFromFile("assets/spriter/GreyGuy/player.scml");
 
     quitLoadingScreen();
 }
@@ -224,4 +221,5 @@ void RacingDemoState::buildScene()
     playerController->setDepth(trackComponent->getCameraDepth());
 
     m_scene.addEntity(playerEnt, xy::Scene::Layer::FrontRear);
+
 }

@@ -55,7 +55,6 @@ source distribution.
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 
-
 namespace
 {
     const sf::Keyboard::Key upKey = sf::Keyboard::W;
@@ -74,7 +73,8 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     : State         (stateStack, context),
     m_physWorld     (context.appInstance.getMessageBus()),
     m_messageBus    (context.appInstance.getMessageBus()),
-    m_scene         (m_messageBus)
+    m_scene         (m_messageBus),
+    m_buns          (m_textureResource)
 {
     launchLoadingScreen();
     m_scene.setView(context.defaultView);
@@ -98,6 +98,18 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     createBodies();
 
     context.renderWindow.setMouseCursorVisible(true);
+
+
+
+    //temp stuff
+    /*m_buns.loadFromFile("assets/spriter/GreyGuy/player.scml");
+
+    auto testSprite = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
+    testSprite->setTexture(m_buns.getTexture());
+    auto testEnt = xy::Entity::create(m_messageBus);
+    testEnt->addComponent(testSprite);
+    m_scene.addEntity(testEnt, xy::Scene::Layer::UI);*/
+
 
     quitLoadingScreen();
 
