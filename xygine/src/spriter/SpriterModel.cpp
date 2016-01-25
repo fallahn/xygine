@@ -60,6 +60,7 @@ bool Model::loadFromFile(const std::string& file)
                 ( 
                     loadImages(firstElement, file, dirLister)
                     && loadTags(firstElement)
+                    && loadEntities(firstElement, dirLister)
                 );
             }
             else
@@ -234,4 +235,15 @@ bool Model::loadTags(Detail::DocumentElement& element)
     }
 
     return true;
+}
+
+bool Model::loadEntities(const Detail::DocumentElement& element, Detail::DirectoryLister& lister)
+{
+    auto entityElement = element.firstElement("entity");
+    while (entityElement)
+    {
+        
+
+        entityElement.advanceNextSameName();
+    }
 }

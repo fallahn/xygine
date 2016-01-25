@@ -98,6 +98,7 @@ namespace xy
             bool loadImages(Spriter::Detail::DocumentElement&, const std::string&, Spriter::Detail::DirectoryLister&);
             void packTextures(const std::vector<std::pair<sf::Texture*, sf::Vector2f>>&);
             bool loadTags(Spriter::Detail::DocumentElement&);
+            bool loadEntities(const Spriter::Detail::DocumentElement&, Spriter::Detail::DirectoryLister&);
         };
     }//ns Spriter
 } //ns xy
