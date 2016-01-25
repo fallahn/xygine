@@ -110,6 +110,9 @@ namespace xy
             //custom deleter
             void freeSlot(T* ptr)
             {
+                //remember to destruct the object!
+                ptr->~T();
+                
                 //return the ptr to the pool by marking
                 //it as an available slot
                 for (auto i = 0u; i < m_slots.size(); ++i)
