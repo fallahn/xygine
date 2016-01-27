@@ -104,10 +104,10 @@ namespace xy
             static inline sf::Color colourFromInt(sf::Int32 value)
             {
                 sf::Color c;
-                c.r = (value & 0x00ff0000) >> 16;
-                c.g = (value & 0x0000ff00) >> 8;
-                c.b = (value & 0x000000ff);
-                c.a = (value & 0xff000000) >> 24;
+                c.r = (value & 0xff000000) >> 24;
+                c.g = (value & 0x00ff0000) >> 16;
+                c.b = (value & 0x0000ff00) >> 8;
+                c.a = (value & 0x000000ff);
 
                 return c;
             }
