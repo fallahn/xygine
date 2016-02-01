@@ -108,7 +108,10 @@ void App::run()
 
     m_renderWindow.setMouseCursorVisible(false);
 
+#ifdef _DEBUG_
     sf::Clock fpsClock;
+    sf::Clock fpsUpdateClock;
+#endif //_DEBUG_
 
     frameClock.restart();
     while (m_renderWindow.isOpen())
@@ -127,7 +130,11 @@ void App::run()
         draw();
 #ifdef _DEBUG_
         float fpsTime = 1.f / fpsClock.restart().asSeconds();
-        REPORT("FPS", std::to_string(fpsTime));
+        if (fpsUpdateClock.getElapsedTime().asSeconds() > 0.25f)
+        {
+            REPORT("FPS", std::to_string(fpsTime));
+            fpsUpdateClock.restart();
+        }
 #endif //_DEBUG_
     }
     m_messageBus.disable(); //prevents spamming with loads of entity quit messages
