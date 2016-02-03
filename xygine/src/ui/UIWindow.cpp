@@ -141,7 +141,7 @@ void Window::setTitle(const std::string& str)
 void Window::addControl(Control::Ptr c)
 {
     c->move(0.f, titleBarHeight);
-    c->setShader(&m_cropShader);
+    //c->setShader(&m_cropShader);
     m_container.addControl(c);
 }
 
