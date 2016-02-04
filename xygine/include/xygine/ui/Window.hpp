@@ -68,10 +68,14 @@ namespace xy
             */
             struct Palette
             {
-                sf::Color borderNormal = sf::Color(120u, 120u, 120u);
-                sf::Color borderActive = sf::Color(190u, 190u, 190u);
-                sf::Color background = sf::Color(120u, 120u, 120u, 190u);
+                sf::Color borderNormal;
+                sf::Color borderActive;
+                sf::Color background;
                 sf::Color font;
+                Palette()
+                : borderNormal  (120u, 120u, 120u),
+                borderActive    (190u, 190u, 190u),
+                background      (120u, 120u, 120u, 190u){}
             };
             /*!
             \brief Constructor
