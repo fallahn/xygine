@@ -44,7 +44,7 @@ namespace xy
         /*!
         \brief A selection of items which can be paged left or right
         */
-        class Selection final : public Control
+        class XY_EXPORT_API Selection final : public Control
         {
         public:
             using Ptr = std::shared_ptr<Selection>;

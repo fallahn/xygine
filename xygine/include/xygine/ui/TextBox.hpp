@@ -46,7 +46,7 @@ namespace xy
         /*!
         \brief A text input box
         */
-        class TextBox final : public Control
+        class XY_EXPORT_API TextBox final : public Control
         {
         public:
             using Ptr = std::shared_ptr<TextBox>;

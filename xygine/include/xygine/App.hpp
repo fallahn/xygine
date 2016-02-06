@@ -44,6 +44,7 @@ Explanations of systems and examples can be found on the <a href="https://github
 #include <xygine/Score.hpp>
 #include <xygine/MessageBus.hpp>
 #include <xygine/Server.hpp>
+#include <xygine/Config.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Network/Packet.hpp>
@@ -60,7 +61,7 @@ namespace xy
     event handling. All events and system messages are despatched
     from here so that they are available across the entire application.
     */
-    class App
+    class XY_EXPORT_API App
     {
     public:
 

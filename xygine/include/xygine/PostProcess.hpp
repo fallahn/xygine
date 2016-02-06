@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_POST_PROCESS_HPP_
 #define XY_POST_PROCESS_HPP_
 
+#include <xygine/Config.hpp>
+
 #include <memory>
 
 namespace sf
@@ -51,7 +53,7 @@ namespace xy
     after a scene is rendered. Multiple post processes can be chained
     but be aware that too many will affect performance.
     */
-    class PostProcess
+    class XY_EXPORT_API PostProcess
     {
     public:
         using Ptr = std::unique_ptr<PostProcess>;

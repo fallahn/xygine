@@ -45,7 +45,7 @@ namespace xy
     lights and query the scene's quad tree to find the nearest lights to activate
     and with which to update the shader's light parameters.
     */
-    class PointLight final : public Component
+    class XY_EXPORT_API PointLight final : public Component
     {
     public:
         /*!

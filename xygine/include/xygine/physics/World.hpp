@@ -63,7 +63,7 @@ namespace xy
         of the physics world must exist in the same scope as any scene which
         has entities which physics components attached to them.
         */
-        class World final : public sf::Drawable
+        class XY_EXPORT_API World final : public sf::Drawable
         {
             friend class RigidBody;
             friend class CollisionShape;

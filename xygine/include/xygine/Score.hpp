@@ -31,6 +31,7 @@ source distribution.
 #define XY_SCORES_HPP_
 
 #include <xygine/Difficulty.hpp>
+#include <xygine/Config.hpp>
 
 #include <vector>
 #include <string>
@@ -42,7 +43,7 @@ namespace xy
 
     Used internally by xygine
     */
-    class Scores final
+    class XY_EXPORT_API Scores final
     {
     public:
         struct Chunk

@@ -28,6 +28,8 @@ source distribution.
 #ifndef XY_PARTICLE_HPP_
 #define XY_PARTICLE_HPP_
 
+#include <xygine/Config.hpp>
+
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -39,7 +41,7 @@ namespace xy
     used in the particle system component.
     \see ParticleSystem
     */
-    struct Particle final : public sf::Transformable
+    struct XY_EXPORT_API Particle final : public sf::Transformable
     {
         sf::Vector2f velocity;
         sf::Color colour;

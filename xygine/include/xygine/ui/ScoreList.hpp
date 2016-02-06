@@ -44,7 +44,7 @@ namespace xy
         Designed for specifically displaying xy::Scores::Item - could
         probably be made to be more flexible
         */
-        class ScoreList final : public Control
+        class XY_EXPORT_API ScoreList final : public Control
         {
         public:
             /*!

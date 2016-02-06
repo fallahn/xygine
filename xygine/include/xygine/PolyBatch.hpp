@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_POLYBATCH_HPP_
 #define XY_POLYBATCH_HPP_
 
+#include <xygine/Config.hpp>
+
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
@@ -49,7 +51,7 @@ namespace xy
     long as all the Polygons belonging to it, else modifying a Polygon
     will lead to undefined behaviour.
     */
-    class PolyBatch final : public sf::Drawable
+    class XY_EXPORT_API PolyBatch final : public sf::Drawable
     {
         friend class Polygon;
     public:
@@ -123,7 +125,7 @@ namespace xy
     Note Polygons are movable, but not copyable. When Polygons are destroyed their vertices
     are not returned to the batch, but will no longer appear visible.
     */
-    class Polygon final
+    class XY_EXPORT_API Polygon final
     {
     public:
         /*!

@@ -43,7 +43,7 @@ namespace xy
         /*!
         \brief Creates a joint which allows two bodies to translate along a single axis in opposite directions
         */
-        class SliderJoint final : public Joint
+        class XY_EXPORT_API SliderJoint final : public Joint
         {
         public:
             /*!

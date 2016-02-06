@@ -43,7 +43,7 @@ namespace xy
         /*!
         \brief Circle shape specialisation of CollisionShape
         */
-        class CollisionCircleShape final : public CollisionShape
+        class XY_EXPORT_API CollisionCircleShape final : public CollisionShape
         {
         public:
             explicit CollisionCircleShape(float radius);

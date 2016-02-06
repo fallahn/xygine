@@ -39,7 +39,7 @@ namespace xy
         /*!
         \brief Creates a text label control. Labels are not interactive
         */
-        class Label final : public Control
+        class XY_EXPORT_API Label final : public Control
         {
         public:
             using Ptr = std::shared_ptr<Label>;

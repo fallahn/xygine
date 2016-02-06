@@ -246,4 +246,5 @@ bool Model::loadEntities(const Detail::DocumentElement& element, Detail::Directo
 
         entityElement.advanceNextSameName();
     }
+    return false;
 }

@@ -42,7 +42,7 @@ namespace xy
         /*!
         \brief Attempts to weld and fix two bodies together at a specific point
         */
-        class WeldJoint final : public Joint
+        class XY_EXPORT_API WeldJoint final : public Joint
         {
         public:
             /*!

@@ -29,6 +29,7 @@ source distribution.
 #define XY_SPRITER_DOCUMENT_ELEMENT_HPP_
 
 #include <xygine/parsers/pugixml.hpp>
+#include <xygine/Config.hpp>
 
 namespace xy
 {

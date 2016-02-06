@@ -48,7 +48,7 @@ namespace xy
         Useful for top-down scenarios where no gravity is used, such as a hockey puck
         or billiard ball
         */
-        class FrictionJoint final : public Joint
+        class XY_EXPORT_API FrictionJoint final : public Joint
         {
         public:
             /*!

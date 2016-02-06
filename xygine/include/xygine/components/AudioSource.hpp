@@ -45,7 +45,7 @@ namespace xy
     panned based on the parent entity's position and the position of the
     scene's audio listener
     */
-    class AudioSource final : public Component
+    class XY_EXPORT_API AudioSource final : public Component
     {
     public:
         using Ptr = std::unique_ptr<AudioSource>;

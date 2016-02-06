@@ -569,5 +569,8 @@
     <ClInclude Include="include\xygine\spriter\Helpers.hpp">
       <Filter>Header Files\spriter</Filter>
     </ClInclude>
+    <ClInclude Include="include\xygine\Config.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

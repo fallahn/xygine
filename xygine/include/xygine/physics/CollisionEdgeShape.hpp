@@ -46,7 +46,7 @@ namespace xy
 
         Useful for outlining static geometry or in some cases where concave polygons are needed
         */
-        class CollisionEdgeShape final : public CollisionShape
+        class XY_EXPORT_API CollisionEdgeShape final : public CollisionShape
         {
         public:
             enum class Option

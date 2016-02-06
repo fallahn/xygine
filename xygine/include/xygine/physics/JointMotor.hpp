@@ -45,7 +45,7 @@ namespace xy
         Allows positioning or rotating a body to a specified target position
         or angle.
         */
-        class MotorJoint final : public Joint
+        class XY_EXPORT_API MotorJoint final : public Joint
         {
         public:
             /*!

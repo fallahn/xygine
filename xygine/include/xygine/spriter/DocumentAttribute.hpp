@@ -29,6 +29,7 @@ source distribution.
 #define XY_SPRITE_DOCUMENT_ATTRIBUTE_HPP_
 
 #include <xygine/parsers/pugixml.hpp>
+#include <xygine/Config.hpp>
 
 #include <SFML/Config.hpp>
 
@@ -41,7 +42,7 @@ namespace xy
             /*!
             \brief Used internally for parsing Spriter documents
             */
-            class DocumentAttribute final
+            class XY_EXPORT_API DocumentAttribute final
             {
             public:
                 DocumentAttribute(const pugi::xml_attribute&);

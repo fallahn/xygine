@@ -36,6 +36,8 @@ source distribution.
 #define REPORT(name, value)
 #endif //_DEBUG_
 
+#include <xygine/Config.hpp>
+
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Lock.hpp>
 
@@ -50,7 +52,7 @@ namespace xy
     Useful for reporting data such as message bus statistics or
     frame rate and printing it on screen
     */
-    class StatsReporter final
+    class XY_EXPORT_API StatsReporter final
     {
     public:
         StatsReporter();

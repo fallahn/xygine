@@ -47,7 +47,7 @@ namespace xy
     the scene interface
     \see Scene
     */
-    class QuadTree final : public sf::Drawable
+    class XY_EXPORT_API QuadTree final : public sf::Drawable
     {
     public:
         QuadTree();

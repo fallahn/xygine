@@ -59,7 +59,7 @@ namespace xy
     and registered with the state stack.
     \see App::registerStates
     */
-    class StateStack final
+    class XY_EXPORT_API StateStack final
     {
     public:
         enum class Action

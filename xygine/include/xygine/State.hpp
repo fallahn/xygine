@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_STATE_HPP_
 #define XY_STATE_HPP_
 
+#include <xygine/Config.hpp>
+
 #include <SFML/Graphics/View.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Thread.hpp>
@@ -59,7 +61,7 @@ namespace xy
     data required to display different states such as the main menu, pause
     screen, or game state
     */
-    class State
+    class XY_EXPORT_API State
     {
     public:
         using Ptr = std::unique_ptr<State>;
@@ -74,7 +76,7 @@ namespace xy
         A state's context can be retreived at any time with getContext()
         so that the App properties or RenderWindow can easily be accessed
         */
-        struct Context
+        struct XY_EXPORT_API Context
         {
             Context(sf::RenderWindow& renderWindow, App& app);
             sf::RenderWindow& renderWindow;

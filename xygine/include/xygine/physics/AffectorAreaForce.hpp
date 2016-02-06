@@ -47,7 +47,7 @@ namespace xy
         this affector belongs will have a constant force and torque applied to
         them.
         */
-        class AreaForceAffector final : public Affector
+        class XY_EXPORT_API AreaForceAffector final : public Affector
         {
             friend class CollisionShape;
         public:

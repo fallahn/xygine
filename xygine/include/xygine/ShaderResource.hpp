@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_SHADER_RESOURCE_HPP_
 #define XY_SHADER_RESOURCE_HPP_
 
+#include <xygine/Config.hpp>
+
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Shader.hpp>
 
@@ -46,7 +48,7 @@ namespace xy
     /*!
     \brief Specialised resource manager for shaders
     */
-    class ShaderResource final
+    class XY_EXPORT_API ShaderResource final
     {
     public:
 

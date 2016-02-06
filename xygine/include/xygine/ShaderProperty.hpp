@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_SHADER_PROPERTY_HPP_
 #define XY_SHADER_PROPERTY_HPP_
 
+#include <xygine/Config.hpp>
+
 namespace sf
 {
     class Shader;
@@ -43,7 +45,7 @@ namespace xy
     Inheriting from this when creating a new drawable component means a
     reference to a shader can easily be added.
     */
-    class ShaderProperty
+    class XY_EXPORT_API ShaderProperty
     {
     public:
         ShaderProperty() : m_shader(nullptr), m_activeShader(nullptr){};

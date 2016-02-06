@@ -52,7 +52,7 @@ source distribution.
 
 namespace xy
 {
-    class GameServer final
+    class XY_EXPORT_API GameServer final
     {
     public:
         GameServer();

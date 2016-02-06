@@ -42,7 +42,7 @@ namespace xy
         /*!
         \brief Distance Joints maintain a fixed distance between two joined bodies
         */
-        class DistanceJoint final : public Joint
+        class XY_EXPORT_API DistanceJoint final : public Joint
         {
         public:
             /*!

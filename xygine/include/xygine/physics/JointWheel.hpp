@@ -44,7 +44,7 @@ namespace xy
         \brief Defines a wheel joint where the second body is attached to the first
         via sprung suspension, and can be rotated via a motor.
         */
-        class WheelJoint final : public Joint
+        class XY_EXPORT_API WheelJoint final : public Joint
         {
         public:
             /*!

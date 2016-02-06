@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_AFFECTOR_HPP_
 #define XY_AFFECTOR_HPP_
 
+#include <xygine/Config.hpp>
+
 #include <memory>
 
 namespace xy
@@ -43,7 +45,7 @@ namespace xy
         Affectors can be attachd to collision shapes to influence
         parent rigidbodies or the bodies belonging to colliding shapes
         */
-        class Affector
+        class XY_EXPORT_API Affector
         {
         public:
             /*!

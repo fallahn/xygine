@@ -50,7 +50,7 @@ namespace xy
         multiple convex shapes to a single rigidbody, or you might consider
         using a loop created with CollionEdgeShape instead
         */
-        class CollisionPolygonShape final : public CollisionShape
+        class XY_EXPORT_API CollisionPolygonShape final : public CollisionShape
         {
         public:
             /*!

@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_JOINT_HPP_
 #define XY_JOINT_HPP_
 
+#include <xygine/Config.hpp>
+
 #include <Box2D/Dynamics/Joints/b2Joint.h>
 #include <Box2D/Dynamics/b2Body.h>
 #include <Box2D/Dynamics/b2World.h>
@@ -48,7 +50,7 @@ namespace xy
         Joints are used to connect or constrain two bodies in some way. See
         concrete implementations for joint specific information.
         */
-        class Joint
+        class XY_EXPORT_API Joint
         {
             friend class RigidBody;
         public:

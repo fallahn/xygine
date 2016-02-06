@@ -42,7 +42,7 @@ namespace xy
     component attached the animation controller can be used to listen
     for events and play specific animations accordingly.
     */
-    class AnimationController final : public Component
+    class XY_EXPORT_API AnimationController final : public Component
     {
     public:
         using Ptr = std::unique_ptr<AnimationController>;

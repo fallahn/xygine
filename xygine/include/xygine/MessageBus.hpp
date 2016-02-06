@@ -72,7 +72,7 @@ namespace xy
     Message::Type::Count
     \see MessageBus
     */
-    class Message final
+    class XY_EXPORT_API Message final
     {
         friend class MessageBus;
     public:
@@ -225,7 +225,7 @@ namespace xy
         BadgerEvent //etc...
     };
     */
-    class MessageBus final
+    class XY_EXPORT_API MessageBus final
     {
     public:
         MessageBus();

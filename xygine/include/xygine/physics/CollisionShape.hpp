@@ -35,6 +35,7 @@ source distribution.
 #include <xygine/physics/AffectorAreaForce.hpp>
 #include <xygine/physics/AffectorPointForce.hpp>
 #include <xygine/physics/World.hpp>
+#include <xygine/Config.hpp>
 
 #include <Box2D/Dynamics/b2Fixture.h>
 
@@ -54,7 +55,7 @@ namespace xy
         CollisionShapes define the masse and shape of RigidBodies. Multiple
         shapes can be affixed to a single body.
         */
-        class CollisionShape
+        class XY_EXPORT_API CollisionShape
         {
             friend class RigidBody;
             friend class PointForceAffector;

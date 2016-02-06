@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_RESOURCES_HPP_
 #define XY_RESOURCES_HPP_
 
+#include <xygine/Config.hpp>
+
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Font.hpp>
@@ -51,7 +53,7 @@ namespace xy
     shader is loaded at a time.
     */
     template <class T>
-    class BaseResource
+    class XY_EXPORT_API BaseResource
     {
     public:
         BaseResource()
@@ -109,7 +111,7 @@ namespace xy
     /*!
     \brief Resource manager for textures
     */
-    class TextureResource final : public BaseResource<sf::Texture>
+    class XY_EXPORT_API TextureResource final : public BaseResource<sf::Texture>
     {
     private:
         /*!
@@ -127,7 +129,7 @@ namespace xy
     /*!
     \brief Resource manager for sf::Image types
     */
-    class ImageResource final : public BaseResource<sf::Image>
+    class XY_EXPORT_API ImageResource final : public BaseResource<sf::Image>
     {
         /*!
         \see BaseResource
@@ -143,7 +145,7 @@ namespace xy
     /*!
     \brief Resource manager for Fonts
     */
-    class FontResource final : public BaseResource<sf::Font>
+    class XY_EXPORT_API FontResource final : public BaseResource<sf::Font>
     {
     public:
         FontResource();
@@ -154,7 +156,7 @@ namespace xy
     /*!
     \brief Resource manager for sound files
     */
-    class SoundResource final : public BaseResource<sf::SoundBuffer>
+    class XY_EXPORT_API SoundResource final : public BaseResource<sf::SoundBuffer>
     {
         std::unique_ptr<sf::SoundBuffer> errorHandle() override
         {

@@ -60,7 +60,7 @@ namespace xy
     scene will take ownership, invalidating the original reference.
     \see Scene
     */
-    class Entity final : public sf::Transformable, public sf::Drawable
+    class XY_EXPORT_API Entity final : public sf::Transformable, public sf::Drawable
     {
     public:
         using Ptr = Detail::ObjectPool<Entity>::Ptr;

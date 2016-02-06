@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_COMMAND_HPP_
 #define XY_COMMAND_HPP_
 
+#include <xygine/Config.hpp>
+
 #include <SFML/Config.hpp>
 
 #include <functional>
@@ -41,7 +43,7 @@ namespace xy
     /*!
     \brief Command struct
     */
-    struct Command final
+    struct XY_EXPORT_API Command final
     {
         std::function<void(Entity&, float)> action; //< Action to be performed by the command on the targeted entity
         sf::Uint64 entityID = 0u; //< UID of the target entity. Overrides any target categories
@@ -61,7 +63,7 @@ namespace xy
     queue of commands on the targeted entities, should they exist.
     \see Scene
     */
-    class CommandQueue final
+    class XY_EXPORT_API CommandQueue final
     {
     public:
         CommandQueue() = default;

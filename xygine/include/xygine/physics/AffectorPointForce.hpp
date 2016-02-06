@@ -54,7 +54,7 @@ namespace xy
         either positive or negative, foirceing the bodies apart or
         pulling them toward each other.
         */
-        class PointForceAffector final : public Affector
+        class XY_EXPORT_API PointForceAffector final : public Affector
         {
             friend class CollisionShape;
         public:

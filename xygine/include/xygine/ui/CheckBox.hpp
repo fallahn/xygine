@@ -46,7 +46,7 @@ namespace xy
         /*!
         \brief A togglable checkbox control
         */
-        class CheckBox final : public Control
+        class XY_EXPORT_API CheckBox final : public Control
         {
         public:
             using Ptr = std::shared_ptr<CheckBox>;

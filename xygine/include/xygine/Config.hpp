@@ -25,38 +25,43 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_SPRITE_DOCUMENT_HPP_
-#define XY_SPRITE_DOCUMENT_HPP_
+#ifndef XY_CONFIG_HPP_
+#define XY_CONFIG_HPP_
 
-#include <xygine/parsers/pugixml.hpp>
-#include <xygine/Config.hpp>
+//check which platform we're on and create export macros as necessary
+#if !defined(XY_STATIC)
 
-namespace xy
-{
-    namespace Spriter
-    {
-        namespace Detail
-        {
-            class DocumentElement;
-            /*!
-            \brief Used internally for parsing Spriter documents
-            */
-            class XY_EXPORT_API Document final
-            {
-            public:
-                Document() = default;
-                ~Document() = default;
+#if defined(_WIN32)
 
-                bool loadFromFile(const std::string&);
+//windows compilers need specific (and different) keywords for export
+#define XY_EXPORT_API __declspec(dllexport)
 
-                DocumentElement firstElement() const;
-                DocumentElement firstElement(const std::string&) const;
+//for vc compilers we also need to turn off this annoying C4251 warning
+#ifdef _MSC_VER
+#pragma warning(disable: 4251)
+#endif //_MSC_VER
 
-            private:
-                pugi::xml_document m_document;
-            };
-        }
-    }
-}
+#else //linux, FreeBSD, Mac OS X
 
-#endif //XY_SPRITE_DOCUMENT_HPP_
+#if __GNUC__ >= 4
+
+//gcc 4 has special keywords for showing/hiding symbols,
+//the same keyword is used for both importing and exporting
+#define XY_EXPORT_API __attribute__ ((__visibility__ ("default")))
+
+#else
+
+//gcc < 4 has no mechanism to explicitly hide symbols, everything's exported
+#define XY_EXPORT_API
+#endif //__GNUC__
+
+#endif //_WIN32
+
+#else
+
+//static build doesn't need import/export macros
+#define XY_EXPORT_API
+
+#endif //XY_STATIC
+
+#endif //XY_CONFIG_HPP_

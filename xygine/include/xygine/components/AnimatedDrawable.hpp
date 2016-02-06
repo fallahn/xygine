@@ -40,7 +40,7 @@ namespace xy
     /*!
     \brief Represents a single animation which can be played by an AnimatedSprite
     */
-    struct Animation
+    struct XY_EXPORT_API Animation
     {
         friend class AnimatedDrawable;
         Animation(const std::string& name, sf::Int16 begin, sf::Int16 end, bool loop = true)
@@ -88,7 +88,7 @@ namespace xy
     animation data file saved as a json string. These files can be created with programs such as the
     Sprite Animation editor included in the xygine repository.
     */
-    class AnimatedDrawable final : public sf::Drawable, public sf::Transformable, public Component
+    class XY_EXPORT_API AnimatedDrawable final : public sf::Drawable, public sf::Transformable, public Component
     {
     public:
         using Ptr = std::unique_ptr<AnimatedDrawable>;

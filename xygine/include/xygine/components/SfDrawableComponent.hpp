@@ -53,7 +53,7 @@ namespace xy
     xygine's UI system.
     */
     template <class T>
-    class SfDrawableComponent final : public Component, public sf::Transformable, public sf::Drawable, public ShaderProperty
+    class XY_EXPORT_API SfDrawableComponent final : public Component, public sf::Transformable, public sf::Drawable, public ShaderProperty
     {
     public:
         using Ptr = std::unique_ptr<SfDrawableComponent<T>>;

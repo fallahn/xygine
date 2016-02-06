@@ -57,7 +57,7 @@ namespace xy
     in any scene, creating a new listener component automatically
     destroys any existing ones.
     */
-    class AudioListener final : public Component
+    class XY_EXPORT_API AudioListener final : public Component
     {
         friend class AudioSource;
     public:

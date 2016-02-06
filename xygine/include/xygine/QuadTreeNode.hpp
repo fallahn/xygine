@@ -51,7 +51,7 @@ namespace xy
     the Scene class
     \see Scene
     */
-    class QuadTreeNode final
+    class XY_EXPORT_API QuadTreeNode final
     {
     public:
         using Ptr = std::unique_ptr<QuadTreeNode>;

@@ -28,6 +28,8 @@ source distribution.
 #ifndef XY_SPRITER_MODEL_HPP_
 #define XY_SPRITER_MODEL_HPP_
 
+#include <xygine/Config.hpp>
+
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 
@@ -63,7 +65,7 @@ namespace xy
         are used to interact with the scene. Multiple Actors can 
         reference a single Model.
         */
-        class Model final
+        class XY_EXPORT_API Model final
         {
         public:
             explicit Model(TextureResource&);

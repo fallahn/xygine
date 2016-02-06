@@ -57,7 +57,7 @@ namespace xy
     rather than particle systems attached to specific entities
     such as trails.
     */
-    class ParticleController final : public Component
+    class XY_EXPORT_API ParticleController final : public Component
     {
     public:          
         using SystemId = sf::Int32;

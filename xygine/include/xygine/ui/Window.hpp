@@ -59,7 +59,7 @@ namespace xy
         to which Controls can be added. Unlike containers windows can be moved
         and resized by the user
         */
-        class Window final : public sf::Drawable, public sf::Transformable
+        class XY_EXPORT_API Window final : public sf::Drawable, public sf::Transformable
         {
         public:
             using Ptr = std::unique_ptr<Window>;

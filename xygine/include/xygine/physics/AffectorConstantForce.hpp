@@ -42,7 +42,7 @@ namespace xy
         \brief Applies a constant force to the parent body
         of the owning CollisionShape
         */
-        class ConstantForceAffector final : public Affector
+        class XY_EXPORT_API ConstantForceAffector final : public Affector
         {
             friend class CollisionShape;
         public:

@@ -43,7 +43,7 @@ namespace xy
 
         A drop down collection of name/value pairs of which one can be selected
         */
-        class ComboBox final : public Control
+        class XY_EXPORT_API ComboBox final : public Control
         {
         public:
             using Ptr = std::shared_ptr<ComboBox>;

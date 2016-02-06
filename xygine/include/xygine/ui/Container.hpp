@@ -51,7 +51,7 @@ namespace xy
         can have a colour or texture set as its background. Controls are navigated in
         the order in which they are added to the container.
         */
-        class Container : public Control
+        class XY_EXPORT_API Container : public Control
         {
         public:
             typedef std::shared_ptr<Container> Ptr;

@@ -46,7 +46,7 @@ namespace xy
         /*!
         \brief Clickable and optionally togglable button
         */
-        class Button final : public Control
+        class XY_EXPORT_API Button final : public Control
         {
         public:
             using Ptr = std::shared_ptr<Button>;

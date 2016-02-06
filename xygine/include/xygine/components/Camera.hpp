@@ -47,7 +47,7 @@ namespace xy
     and rotation. This allows a camera to easily follow a player or other
     in game entity.
     */
-    class Camera final : public Component
+    class XY_EXPORT_API Camera final : public Component
     {
     public:
         using Ptr = std::unique_ptr<Camera>;

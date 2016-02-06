@@ -45,7 +45,7 @@ namespace xy
 
         NOTE length of the rope cannot be updated once two bodies are connected
         */
-        class RopeJoint final : public Joint
+        class XY_EXPORT_API RopeJoint final : public Joint
         {
         public:
             /*!

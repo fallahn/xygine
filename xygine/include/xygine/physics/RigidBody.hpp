@@ -68,7 +68,7 @@ namespace xy
         position set manually as it will be automatically overriden by the physics
         simulation.
         */
-        class RigidBody final : public Component
+        class XY_EXPORT_API RigidBody final : public Component
         {
             friend class DistanceJoint;
             friend class FrictionJoint;

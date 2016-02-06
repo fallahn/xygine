@@ -53,7 +53,7 @@ namespace xy
     resulting omponents.
     \see Scene
     */
-    class QuadTreeComponent final : public Component
+    class XY_EXPORT_API QuadTreeComponent final : public Component
     {
     public:
         using Ptr = std::unique_ptr<QuadTreeComponent>;

@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_FILE_SYS_HPP_
 #define XY_FILE_SYS_HPP_
 
+#include <xygine/Config.hpp>
+
 #include <string>
 #include <vector>
 
@@ -38,7 +40,7 @@ namespace xy
     /*!
     \brief Utilities for reading files from the current file system
     */
-    class FileSystem final
+    class XY_EXPORT_API FileSystem final
     {
     public:
         /*!

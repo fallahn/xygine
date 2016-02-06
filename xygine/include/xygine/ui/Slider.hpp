@@ -48,7 +48,7 @@ namespace xy
 
         Slider values range from 0 - maxValue defined on construction
         */
-        class Slider final : public Control
+        class XY_EXPORT_API Slider final : public Control
         {
         public:
             using Ptr = std::shared_ptr<Slider>;

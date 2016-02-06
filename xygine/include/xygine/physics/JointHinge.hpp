@@ -42,7 +42,7 @@ namespace xy
         /*!
         \brief Creates a hinged joint allowing two bodies to revolve around a single point
         */
-        class HingeJoint final : public Joint
+        class XY_EXPORT_API HingeJoint final : public Joint
         {
         public:
             /*!

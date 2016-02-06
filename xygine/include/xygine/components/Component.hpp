@@ -31,6 +31,7 @@ source distribution.
 #define XY_COMPONENT_HPP_
 
 #include <xygine/MessageBus.hpp>
+#include <xygine/Config.hpp>
 
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -55,7 +56,7 @@ namespace xy
     New components can be created by publicly inheriting the Component
     class and implementing the pure virtual functions.
     */
-    class Component
+    class XY_EXPORT_API Component
     {
     public:
         /*!

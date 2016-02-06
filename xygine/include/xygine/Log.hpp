@@ -53,7 +53,7 @@ namespace xy
     of one or more destinations such as the console, log file or
     output window in Visual Studio
     */
-    class Logger final
+    class XY_EXPORT_API Logger final
     {
     public:
         enum class Output

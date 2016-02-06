@@ -50,7 +50,7 @@ namespace xy
     The Scene class is reponsible for updating and drawing the
     scene graph constructed of entities.
     */
-    class Scene final : public sf::Drawable
+    class XY_EXPORT_API Scene final : public sf::Drawable
     {
     public:
         /*!

@@ -32,6 +32,8 @@ source distribution.
 #ifndef XY_PHYS_CONTACT_HPP_
 #define XY_PHYS_CONTACT_HPP_
 
+#include <xygine/Config.hpp>
+
 class b2Contact;
 namespace xy
 {
@@ -45,7 +47,7 @@ namespace xy
         Contacts are created when AABBs of shapes intersect, shapes
         themselves may not be touching, which can be queried with touching()
         */
-        class Contact final
+        class XY_EXPORT_API Contact final
         {
             friend class World;
             friend class ContactCallback;

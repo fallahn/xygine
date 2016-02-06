@@ -28,6 +28,7 @@ source distribution.
 #ifndef XY_COLLISION_FILTER_HPP_
 #define XY_COLLISION_FILTER_HPP_
 
+#include <xygine/Config.hpp>
 #include <SFML/Config.hpp>
 
 namespace xy
@@ -39,7 +40,7 @@ namespace xy
 
         See the Box2D manual on collision filtering
         */
-        struct CollisionFilter
+        struct XY_EXPORT_API CollisionFilter
         {
             sf::Uint16 categoryFlags = 0x0001;
             sf::Uint16 maskFlags = 0xFFFF;

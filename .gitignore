@@ -3,3 +3,6 @@ Release
 *.user
 bin
 obj
+DebugShared
+DebugStatic
+ReleaseStatic

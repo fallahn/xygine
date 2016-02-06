@@ -54,7 +54,7 @@ namespace xy
     can also be loaded from json files, created with apps such as the
     xygine particle editor found in the xygine repository.
     */
-    class ParticleSystem final : public Component, public sf::Drawable
+    class XY_EXPORT_API ParticleSystem final : public Component, public sf::Drawable
     {
     public:
         using Affector = std::function<void(Particle& p, float dt)>;
@@ -69,7 +69,7 @@ namespace xy
         file extension *.xyp). Definitions can also be used directly with
         the Particle Controller component.
         */
-        class Definition final
+        class XY_EXPORT_API Definition final
         {
         public:
             Definition();

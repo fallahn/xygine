@@ -30,6 +30,8 @@ source distribution.
 #ifndef XY_AFFECTORS_HPP_
 #define XY_AFFECTORS_HPP_
 
+#include <xygine/Config.hpp>
+
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
 
@@ -39,7 +41,7 @@ namespace xy
     /*!
     \brief Applies a given force to each particle, each frame
     */
-    struct ForceAffector
+    struct XY_EXPORT_API ForceAffector
     {
         /*!
         \brief Constructor
@@ -68,7 +70,7 @@ namespace xy
     /*!
     \brief Modifies a particle's colour over time
     */
-    struct ColourAffector
+    struct XY_EXPORT_API ColourAffector
     {
         /*!
         \brief Constructor
@@ -87,7 +89,7 @@ namespace xy
     /*!
     \brief Applies a given rotation in degrees per second to a particle
     */
-    struct RotateAffector
+    struct XY_EXPORT_API RotateAffector
     {
         /*!
         \brief Constructor
@@ -103,7 +105,7 @@ namespace xy
     /*!
     \brief Scales a particle by a given amount each frame
     */
-    struct ScaleAffector
+    struct XY_EXPORT_API ScaleAffector
     {
         /*!
         \brief Constructor
