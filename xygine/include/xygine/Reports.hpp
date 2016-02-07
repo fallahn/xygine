@@ -31,7 +31,7 @@ source distribution.
 #define XY_REPORTS_HPP_
 
 #ifdef _DEBUG_
-#define REPORT(name, value) xy::StatsReporter::reporter.report(name, value)
+#define REPORT(name, value) xy::Stats::report(name, value)
 #else
 #define REPORT(name, value)
 #endif //_DEBUG_
@@ -46,6 +46,18 @@ source distribution.
 
 namespace xy
 {
+    namespace Stats
+    {
+        /*!
+        \brief Global access to stats information string
+        when using REPORT macro
+        */
+        XY_EXPORT_API const std::string& getString();
+        /*!
+        \brief Used for global stat reporting
+        */
+        XY_EXPORT_API void report(const std::string&, const std::string&);
+    }
     /*!
     \brief Utility class for reporting statistics
 
@@ -90,14 +102,6 @@ namespace xy
         eg sf::Text
         */
         const std::string& getString();
-
-        /*!
-        \brief static instance of a reporter
-
-        Used as a global access point for the REPORT macro, available
-        when build in debug mode.
-        */
-        static StatsReporter reporter;
 
     private:
         std::map<std::string, std::string> m_data;

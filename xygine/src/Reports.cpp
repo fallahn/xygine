@@ -30,12 +30,27 @@ source distribution.
 #include <xygine/Assert.hpp>
 #include <algorithm>
 
+using namespace xy;
+
 namespace
 {
     const std::string interweebl(": ");
+    StatsReporter reporter;
 }
 
-using namespace xy;
+//---exported functions---//
+
+const std::string& Stats::getString()
+{
+    return reporter.getString();
+}
+
+void Stats::report(const std::string& name, const std::string& value)
+{
+    reporter.report(name, value);
+}
+
+//-----------------------------//
 
 StatsReporter::StatsReporter()
     : m_rebuildString(true)
@@ -79,4 +94,4 @@ const std::string& StatsReporter::getString()
     return m_string;
 }
 
-StatsReporter StatsReporter::reporter;
+//StatsReporter StatsReporter::reporter;

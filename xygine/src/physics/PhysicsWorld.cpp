@@ -41,12 +41,15 @@ source distribution.
 using namespace xy;
 using namespace xy::Physics;
 
-std::function<void(float)> World::update = [](float) {};
+namespace
+{
+    float worldScale = 100.f;
+    b2Vec2 gravity = { 0.f, -9.8f };
+    sf::Uint32 velocityIterations = 6u;
+    sf::Uint32 positionIterations = 2u;
+}
 
-float World::m_worldScale = 100.f;
-b2Vec2 World::m_gravity = { 0.f, -9.8f };
-sf::Uint32 World::m_velocityIterations = 6u;
-sf::Uint32 World::m_positionIterations = 2u;
+std::function<void(float)> World::update = [](float) {};
 
 World::Ptr World::m_world = nullptr;
 World* World::m_instance = nullptr;
@@ -55,13 +58,13 @@ World::World(MessageBus& mb)
     : m_contactListener(mb), m_destructionListener(mb)
 {
     XY_ASSERT(!m_world, "Physics world already created");
-    m_world = std::make_unique<b2World>(m_gravity);
+    m_world = std::make_unique<b2World>(gravity);
 
     update = [this](float dt)
     {
         XY_ASSERT(m_world, "Physics world has not been created");
         m_contactListener.resetBuffers();
-        m_world->Step(dt, m_velocityIterations, m_positionIterations);
+        m_world->Step(dt, velocityIterations, positionIterations);
     };
 
     m_world->SetContactListener(&m_contactListener);
@@ -78,6 +81,28 @@ World::~World()
     update = [](float) {};
     m_instance = nullptr;
     LOG("CLIENT destroyed physics world", Logger::Type::Info);
+}
+
+void World::setGravity(const sf::Vector2f& g)
+{
+    gravity = sfToBoxVec(g);
+    if (m_world) m_world->SetGravity(gravity);
+}
+
+void World::setPixelScale(float scale)
+{
+    XY_ASSERT((scale > 5 && scale < 5000), "Reasonable scales range from 10 to 1000 pixels per metre");
+    worldScale = scale;
+}
+
+void World::setVelocityIterationCount(sf::Uint32 count)
+{
+    velocityIterations = count;
+}
+
+void World::setPositionIterationCount(sf::Uint32 count)
+{
+    positionIterations = count;
 }
 
 void World::addJointDestroyedCallback(const JointDestroyedCallback& jdc)
@@ -140,7 +165,31 @@ void World::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     m_world->DrawDebugData();
 }
 
+//conversion functions
+b2Vec2 World::sfToBoxVec(const sf::Vector2f& vec)
+{
+    return b2Vec2(vec.x / worldScale, -vec.y / worldScale);
+}
 
+sf::Vector2f World::boxToSfVec(const b2Vec2& vec)
+{
+    return sf::Vector2f(vec.x, -vec.y) * worldScale;
+}
+
+float World::sfToBoxFloat(float val)
+{
+    return val / worldScale;
+}
+
+float World::boxToSfFloat(float val)
+{
+    return val * worldScale;
+}
+
+float World::getWorldScale() const
+{
+    return worldScale;
+}
 
 //contact callbacks
 namespace

@@ -49,8 +49,8 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../xygine/extlibs/box2d-2.3.2;../xygine/extlibs/sfml;../DebugStatic</AdditionalLibraryDirectories>
-      <AdditionalDependencies>xygine-s-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;Box2D-d.lib;sfml-audio-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../xygine/extlibs/box2d-2.3.2;../xygine/extlibs/sfml;../DebugShared</AdditionalLibraryDirectories>
+      <AdditionalDependencies>xygine-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;Box2D-d.lib;sfml-audio-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

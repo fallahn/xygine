@@ -97,40 +97,26 @@ namespace xy
             Default is (0.f, 980.f) - approximately earth's gravitational pull
             when used with the default world scale
             */
-            inline void setGravity(const sf::Vector2f& gravity)
-            {
-                m_gravity = sfToBoxVec(gravity);
-                if (m_world) m_world->SetGravity(m_gravity);
-            }
+            void setGravity(const sf::Vector2f& gravity);
 
             /*!
             \brief Sets the number of pixels drawn per metre in the physics world
 
             Recommended values are between 10 and 1000, default is 100 pixels per metre
             */
-            inline void setPixelScale(float scale)
-            {
-                XY_ASSERT((scale > 5 && scale < 5000), "Reasonable scales range from 10 to 1000 pixels per metre");
-                m_worldScale = scale;
-            }
+            void setPixelScale(float scale);
 
             /*!
             \brief Sets the number of velocity iterations perform per physics step. 
             Default is 6
             */
-            inline void setVelocityIterationCount(sf::Uint32 count)
-            {
-                m_velocityIterations = count;
-            }
+            void setVelocityIterationCount(sf::Uint32 count);
 
             /*!
             \brief Sets the number of position iterations performed per physics step.
             Default is 2
             */
-            inline void setPositionIterationCount(sf::Uint32 count)
-            {
-                m_positionIterations = count;
-            }
+            void setPositionIterationCount(sf::Uint32 count);
 
             /*!
             \brief Performs a single physics step.
@@ -254,40 +240,21 @@ namespace xy
                 std::vector<CollisionShapeDestroyedCallback> m_collisionShapeCallbacks;
             }m_destructionListener;
 
-
-
-            static float m_worldScale;
-            static b2Vec2 m_gravity;
-            static sf::Uint32 m_velocityIterations;
-            static sf::Uint32 m_positionIterations;
-
             static Ptr m_world;
             //ugh I can't believe I resorted to this
             static World* m_instance;
 
             mutable std::unique_ptr<DebugDraw> m_debugDraw;
 
-            //unit onversion functions. Made private because we don't
+            //unit conversion functions. Made private because we don't
             //need to expose them to the overall API
-            static inline b2Vec2 sfToBoxVec(const sf::Vector2f& vec)
-            {
-                return b2Vec2(vec.x / m_worldScale, -vec.y / m_worldScale);
-            }
+            static b2Vec2 sfToBoxVec(const sf::Vector2f& vec);
 
-            static inline sf::Vector2f boxToSfVec(const b2Vec2& vec)
-            {
-                return sf::Vector2f(vec.x, -vec.y) * m_worldScale;
-            }
+            static sf::Vector2f boxToSfVec(const b2Vec2& vec);
 
-            static inline float sfToBoxFloat(float val)
-            {
-                return val / m_worldScale;
-            }
+            static float sfToBoxFloat(float val);
 
-            static inline float boxToSfFloat(float val)
-            {
-                return val * m_worldScale;
-            }
+            static float boxToSfFloat(float val);
 
             static inline float sfToBoxAngle(float degrees)
             {
@@ -320,6 +287,8 @@ namespace xy
                     static_cast<sf::Uint8>(colour.a * 255.f)
                 };
             }
+
+            float getWorldScale() const;
 
             void draw(sf::RenderTarget&, sf::RenderStates) const override;
         };

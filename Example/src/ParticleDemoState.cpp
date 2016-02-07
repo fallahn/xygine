@@ -144,7 +144,7 @@ bool ParticleDemoState::update(float dt)
     }
 
 
-    m_reportText.setString(xy::StatsReporter::reporter.getString());
+    m_reportText.setString(xy::Stats::getString());
 
     return true;
 }
