@@ -45,7 +45,7 @@ using namespace xy;
 
 namespace
 {
-    const float timePerFrame = 1.f / 60.f;    
+    const float timePerFrame = 1.f / 60.f;
     float timeSinceLastUpdate = 0.f;
 
 #ifndef _DEBUG_
@@ -66,12 +66,12 @@ namespace
 }
 
 App::App()
-    : m_videoSettings   (),
-    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle),
-    m_pendingDifficulty (Difficulty::Easy),
-    m_connected         (false),
-    m_clientID          (-1),
-    m_destinationIP     ("127.0.01")
+    : m_videoSettings(),
+    m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle),
+    m_pendingDifficulty(Difficulty::Easy),
+    m_connected(false),
+    m_clientID(-1),
+    m_destinationIP("127.0.01")
 {
     loadSettings();
     m_scores.load();
@@ -90,6 +90,11 @@ App::App()
     }), m_videoSettings.AvailableVideoModes.end());
     std::reverse(m_videoSettings.AvailableVideoModes.begin(), m_videoSettings.AvailableVideoModes.end());
 
+    update = [this](float dt)
+    {
+        Physics::World::update(dt);
+        updateApp(dt);
+    };
     eventHandler = std::bind(&App::handleEvent, this, _1);
 }
 
@@ -121,8 +126,8 @@ void App::run()
 
             handleEvents();
             handleMessages();
-            Physics::World::update(timePerFrame);
-            updateApp(timePerFrame);
+            //Physics::World::update(timePerFrame);
+            update(timePerFrame);
         }
         draw();
 #ifdef _DEBUG_
@@ -140,6 +145,22 @@ void App::run()
     m_scores.save();
 
     finalise();
+}
+
+void App::pause()
+{
+    update = [](float) {};
+}
+
+void App::resume()
+{
+    update = [this](float dt)
+    {
+        Physics::World::update(dt);
+        updateApp(dt);
+    };
+    frameClock.restart();
+    timeSinceLastUpdate = 0.f;
 }
 
 const App::AudioSettings& App::getAudioSettings() const

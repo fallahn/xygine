@@ -129,6 +129,14 @@ namespace xy
         */
         void run();
         /*!
+        \brief Pauses the app's logic update function
+        */
+        void pause();
+        /*!
+        \brief Resumes the app's update function, if it is paused
+        */
+        void resume();
+        /*!
         \brief Returns a reference to the struct containing
         the current audio settings.
 
@@ -294,6 +302,7 @@ namespace xy
         sf::Int16 m_clientID;
         std::string m_destinationIP;
 
+        std::function<void(float)> update;
         std::function<void(const sf::Event&)> eventHandler;
 
         void loadSettings();
