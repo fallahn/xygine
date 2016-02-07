@@ -84,7 +84,6 @@ State::Context State::getContext() const
 
 void State::launchLoadingScreen()
 {
-    m_context.appInstance.pause();
     m_context.renderWindow.setActive(false);
     m_threadRunning = true;
     m_loadingThread.launch();
@@ -94,7 +93,6 @@ void State::quitLoadingScreen()
 {
     m_threadRunning = false;
     m_loadingThread.wait();
-    m_context.appInstance.resume();
 }
 
 void State::updateLoadingScreen(float dt, sf::RenderWindow& rw)

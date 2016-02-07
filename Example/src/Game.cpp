@@ -83,11 +83,6 @@ void Game::updateApp(float dt)
     m_stateStack.update(dt);
 }
 
-void Game::pauseApp(float dt)
-{
-    //do nothing, we're paused!
-}
-
 void Game::draw()
 {
     getRenderWindow().clear(sf::Color::Black);

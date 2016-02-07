@@ -129,14 +129,6 @@ namespace xy
         */
         void run();
         /*!
-        \brief Pauses the application
-        */
-        void pause();
-        /*!
-        \brief Resumes the application if it is paused
-        */
-        void resume();
-        /*!
         \brief Returns a reference to the struct containing
         the current audio settings.
 
@@ -255,13 +247,6 @@ namespace xy
         */
         virtual void updateApp(float dt) = 0;
         /*!
-        \brief Allows updating game logic while the application is paused
-
-        For exmple allows parsing input events for menus while pausing
-        the current game play state
-        */
-        virtual void pauseApp(float dt) = 0;
-        /*!
         \brief Updates the render window
 
         The render window clear() and display() functions
@@ -309,7 +294,7 @@ namespace xy
         sf::Int16 m_clientID;
         std::string m_destinationIP;
 
-        std::function<void(float)> update;
+        std::function<void(const sf::Event&)> eventHandler;
 
         void loadSettings();
         void saveSettings();

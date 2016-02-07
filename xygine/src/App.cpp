@@ -90,11 +90,7 @@ App::App()
     }), m_videoSettings.AvailableVideoModes.end());
     std::reverse(m_videoSettings.AvailableVideoModes.begin(), m_videoSettings.AvailableVideoModes.end());
 
-    update = [this](float dt)
-    {
-        Physics::World::update(dt);
-        updateApp(dt);
-    };
+    eventHandler = std::bind(&App::handleEvent, this, _1);
 }
 
 //public
@@ -125,7 +121,8 @@ void App::run()
 
             handleEvents();
             handleMessages();
-            update(timePerFrame);
+            Physics::World::update(timePerFrame);
+            updateApp(timePerFrame);
         }
         draw();
 #ifdef _DEBUG_
@@ -143,26 +140,6 @@ void App::run()
     m_scores.save();
 
     finalise();
-}
-
-void App::pause()
-{
-    if(!connected())
-    update = std::bind(&App::pauseApp, this, _1);
-}
-
-void App::resume()
-{
-    if (!connected())
-    {
-        update = [this](float dt)
-        {
-            Physics::World::update(dt);
-            updateApp(dt);
-        };
-        frameClock.restart();
-        timeSinceLastUpdate = 0.f;
-    }
 }
 
 const App::AudioSettings& App::getAudioSettings() const
@@ -408,10 +385,10 @@ void App::handleEvents()
         switch (evt.type)
         {
         case sf::Event::LostFocus:
-            pause();
+            eventHandler = [](const sf::Event&) {};
             continue;
         case sf::Event::GainedFocus:
-            resume();
+            eventHandler = std::bind(&App::handleEvent, this, _1);
             continue;
         case sf::Event::Closed:
             m_renderWindow.close();
@@ -442,7 +419,7 @@ void App::handleEvents()
             default:break;
             }           
         }
-        handleEvent(evt);
+        eventHandler(evt);
     }   
 }
 
