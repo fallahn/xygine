@@ -58,21 +58,21 @@ if(X11_FOUND)
 endif()
 
 
-SET(xygine_DIR "src")
+SET(XY_DIR "src")
 include("src/CMakeLists.txt")
 
   
 if(WIN32)
   if(XY_STATIC_LIB)
-    add_library(xygine STATIC WIN32 ${xygine_SRC})
+    add_library(xygine STATIC WIN32 ${XY_SRC})
   else()
-    add_library(xygine SHARED WIN32 ${xygine_SRC})
+    add_library(xygine SHARED WIN32 ${XY_SRC})
   endif()   
 else()
   if(XY_STATIC_LIB)
-    add_library(xygine STATIC ${xygine_SRC})
+    add_library(xygine STATIC ${XY_SRC})
   else()
-    add_library(xygine SHARED ${xygine_SRC})
+    add_library(xygine SHARED ${XY_SRC})
   endif()
 endif()
 
@@ -84,4 +84,15 @@ target_link_libraries(xygine
 if(UNIX)
   target_link_libraries(xygine
     ${X11_LIBRARIES})
+endif()
+
+#install xygine
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/xygine DESTINATION include)
+if(XY_STATIC_LIB)
+  install(TARGETS xygine EXPORT xygine-targets DESTINATION lib)
+else()
+  install(TARGETS xygine EXPORT xygine-targets 
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin)
 endif()
