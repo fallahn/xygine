@@ -43,11 +43,9 @@ Explanations of systems and examples can be found on the <a href="https://github
 #include <xygine/Resource.hpp>
 #include <xygine/Score.hpp>
 #include <xygine/MessageBus.hpp>
-#include <xygine/Server.hpp>
 #include <xygine/Config.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Network/Packet.hpp>
 
 #include <functional>
 
@@ -170,12 +168,6 @@ namespace xy
         \see MessageBus
         */
         MessageBus& getMessageBus();
-        sf::TcpSocket& getSocket();
-
-        bool connected() const;
-        sf::Int16 getClientID() const;
-        bool hosting() const;
-        void setDestinationIP(const std::string&);
         /*!
         \brief Add a name / value pair to the score board
 
@@ -214,10 +206,6 @@ namespace xy
         static sf::Vector2f getMouseWorldPosition();
 
     protected:
-        bool connect(const sf::IpAddress&, sf::Uint16);
-        void disconnect();
-        bool createLocalServer();
-
         /*!
         \brief Returns a reference to the current render window
         */
@@ -295,12 +283,6 @@ namespace xy
 
         Scores m_scores;
         Difficulty m_pendingDifficulty;
-
-        std::unique_ptr<GameServer> m_server;
-        sf::TcpSocket m_socket;
-        bool m_connected;
-        sf::Int16 m_clientID;
-        std::string m_destinationIP;
 
         std::function<void(float)> update;
         std::function<void(const sf::Event&)> eventHandler;

@@ -17,7 +17,6 @@ set(XY_SRC
   ${XY_DIR}/Reports.cpp
   ${XY_DIR}/Scene.cpp
   ${XY_DIR}/Score.cpp
-  ${XY_DIR}/Server.cpp
   ${XY_DIR}/ShaderResource.cpp
   ${XY_DIR}/SoundPlayer.cpp
   ${XY_DIR}/State.cpp

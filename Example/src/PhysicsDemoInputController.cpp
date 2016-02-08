@@ -29,6 +29,7 @@ source distribution.
 #include <PhysicsDemoLine.hpp>
 
 #include <xygine/App.hpp>
+#include <xygine/Entity.hpp>
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/util/Vector.hpp>
 #include <xygine/components/AudioSource.hpp>

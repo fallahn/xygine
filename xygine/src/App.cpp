@@ -26,7 +26,6 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/App.hpp>
-#include <xygine/Protocol.hpp>
 #include <xygine/util/Math.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/Reports.hpp>
@@ -34,7 +33,6 @@ source distribution.
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
-#include <SFML/Network/IpAddress.hpp>
 
 #include <algorithm>
 #include <fstream>
@@ -68,10 +66,7 @@ namespace
 App::App()
     : m_videoSettings(),
     m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle),
-    m_pendingDifficulty(Difficulty::Easy),
-    m_connected(false),
-    m_clientID(-1),
-    m_destinationIP("127.0.01")
+    m_pendingDifficulty(Difficulty::Easy)
 {
     loadSettings();
     m_scores.load();
@@ -126,7 +121,6 @@ void App::run()
 
             handleEvents();
             handleMessages();
-            //Physics::World::update(timePerFrame);
             update(timePerFrame);
         }
         draw();
@@ -202,31 +196,6 @@ MessageBus& App::getMessageBus()
     return m_messageBus;
 }
 
-sf::TcpSocket& App::getSocket()
-{
-    return m_socket;
-}
-
-bool App::connected() const
-{
-    return m_connected;
-}
-
-sf::Int16 App::getClientID() const
-{
-    return m_clientID;
-}
-
-bool App::hosting() const
-{
-    return (m_server != nullptr);
-}
-
-void App::setDestinationIP(const std::string& ip)
-{
-    m_destinationIP = ip;
-}
-
 void App::addScore(const std::string& name, float value)
 {
     lastScoreIndex = m_scores.add(name, value, m_gameSettings.difficulty);
@@ -258,52 +227,6 @@ sf::Vector2f App::getMouseWorldPosition()
 }
 
 //protected
-bool App::connect(const sf::IpAddress& address, sf::Uint16 port)
-{    
-    m_socket.connect(address, port, sf::seconds(5.f));// == sf::TcpSocket::Done) return false;
-    m_socket.setBlocking(false);
-
-    sf::Clock timeoutClock;
-    while (timeoutClock.getElapsedTime().asSeconds() < 5.f)
-    {
-        sf::Packet packet;
-        if (m_socket.receive(packet) == sf::Socket::Done)
-        {
-            sf::Int32 packetType;
-            packet >> packetType;
-            if (packetType == Server::ClientID)
-            {
-                packet >> m_clientID;
-                m_connected = true;
-                LOG("CLIENT received client id " + std::to_string(m_clientID), Logger::Type::Info);
-                break;
-            }
-        }
-    }
-    if (m_clientID == -1)
-    {
-        m_socket.disconnect();
-        m_connected = false;
-        LOG("CLIENT failed to receive valid client id", Logger::Type::Error);
-    }
-
-    return m_connected;
-}
-
-void App::disconnect()
-{
-    m_clientID = -1;
-    m_socket.disconnect();
-    m_connected = false;
-    m_server = nullptr;
-}
-
-bool App::createLocalServer()
-{
-    m_server = std::make_unique<GameServer>();
-    return connect({ "127.0.0.1" }, GameServer::getPort());
-}
-
 sf::RenderWindow& App::getRenderWindow()
 {
     return m_renderWindow;
@@ -477,43 +400,6 @@ void App::handleMessages()
             case Message::UIEvent::RequestControllerDisable:
                 m_gameSettings.controllerEnabled = false;
                 break;
-            default: break;
-            }
-            break;
-        }
-        case Message::Type::NetworkMessage:
-        {
-            auto& msgData = msg.getData<Message::NetworkEvent>();
-            switch (msgData.action)
-            {
-            case Message::NetworkEvent::RequestStartServer:
-                /*m_server = std::make_unique<GameServer>();
-                if (connect({ "127.0.0.1" }, GameServer::getPort()))
-                {
-                m_stateStack.pushState(msg.network.stateID);
-                }*/
-                break;
-            case Message::NetworkEvent::RequestDisconnect:
-                disconnect();
-                break;
-            case Message::NetworkEvent::RequestJoinServer:
-                disconnect();
-                if (connect({ m_destinationIP }, GameServer::getPort())) //TODO make port a variable
-                {
-                    auto msg = m_messageBus.post<Message::NetworkEvent>(Message::NetworkMessage);
-                    msg->action = Message::NetworkEvent::ConnectSuccess;
-                }
-                else
-                {
-                    disconnect();
-
-                    auto msg = m_messageBus.post<Message::NetworkEvent>(Message::NetworkMessage);
-                    msg->action = Message::NetworkEvent::ConnectFail;
-
-                    LOG("whoopsie", Logger::Type::Info);
-                }
-                break;
-
             default: break;
             }
             break;

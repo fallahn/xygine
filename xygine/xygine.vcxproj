@@ -192,7 +192,6 @@
     <ClCompile Include="src\Reports.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Score.cpp" />
-    <ClCompile Include="src\Server.cpp" />
     <ClCompile Include="src\ShaderResource.cpp" />
     <ClCompile Include="src\SoundPlayer.cpp" />
     <ClCompile Include="src\spriter\SpriterDocument.cpp" />
@@ -270,14 +269,12 @@
     <ClInclude Include="include\xygine\PostBloom.hpp" />
     <ClInclude Include="include\xygine\PostChromeAb.hpp" />
     <ClInclude Include="include\xygine\PostProcess.hpp" />
-    <ClInclude Include="include\xygine\Protocol.hpp" />
     <ClInclude Include="include\xygine\QuadTree.hpp" />
     <ClInclude Include="include\xygine\QuadTreeNode.hpp" />
     <ClInclude Include="include\xygine\Reports.hpp" />
     <ClInclude Include="include\xygine\Resource.hpp" />
     <ClInclude Include="include\xygine\Scene.hpp" />
     <ClInclude Include="include\xygine\Score.hpp" />
-    <ClInclude Include="include\xygine\Server.hpp" />
     <ClInclude Include="include\xygine\ShaderProperty.hpp" />
     <ClInclude Include="include\xygine\ShaderResource.hpp" />
     <ClInclude Include="include\xygine\shaders\Default.hpp" />
