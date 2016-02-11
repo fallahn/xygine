@@ -153,6 +153,11 @@
     <ClCompile Include="src\components\ComponentParticleSystem.cpp" />
     <ClCompile Include="src\components\ComponentPointLight.cpp" />
     <ClCompile Include="src\components\QuadTreeComponent.cpp" />
+    <ClCompile Include="src\network\AckSystem.cpp" />
+    <ClCompile Include="src\network\ClientConnection.cpp" />
+    <ClCompile Include="src\network\FlowControl.cpp" />
+    <ClCompile Include="src\network\PacketQueue.cpp" />
+    <ClCompile Include="src\network\ServerConnection.cpp" />
     <ClCompile Include="src\parsers\pugixml.cpp" />
     <ClCompile Include="src\ParticleAffectors.cpp" />
     <ClCompile Include="src\App.cpp" />
@@ -216,6 +221,12 @@
   <ItemGroup>
     <ClInclude Include="include\xygine\components\PointLight.hpp" />
     <ClInclude Include="include\xygine\Config.hpp" />
+    <ClInclude Include="include\xygine\network\AckSystem.hpp" />
+    <ClInclude Include="include\xygine\network\ClientConnection.hpp" />
+    <ClInclude Include="include\xygine\network\FlowControl.hpp" />
+    <ClInclude Include="include\xygine\network\NetworkConfig.hpp" />
+    <ClInclude Include="include\xygine\network\PacketQueue.hpp" />
+    <ClInclude Include="include\xygine\network\ServerConnection.hpp" />
     <ClInclude Include="include\xygine\parsers\picojson.h" />
     <ClInclude Include="include\xygine\parsers\pugiconfig.hpp" />
     <ClInclude Include="include\xygine\parsers\pugixml.hpp" />

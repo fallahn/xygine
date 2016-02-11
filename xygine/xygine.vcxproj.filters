@@ -55,6 +55,12 @@
     <Filter Include="Source Files\spriter">
       <UniqueIdentifier>{074fd524-c923-4ac7-a7c1-cf7769c7f1d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\network">
+      <UniqueIdentifier>{675ebe06-6d25-40c4-a851-5eb969f3399f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\network">
+      <UniqueIdentifier>{f5f366dd-cc64-4855-be7c-47c2be5092a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -263,6 +269,21 @@
     </ClCompile>
     <ClCompile Include="src\spriter\SpriterHelpers.cpp">
       <Filter>Source Files\spriter</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\AckSystem.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\ClientConnection.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\FlowControl.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\PacketQueue.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\ServerConnection.cpp">
+      <Filter>Source Files\network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -562,6 +583,24 @@
     </ClInclude>
     <ClInclude Include="include\xygine\Config.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\network\AckSystem.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\network\ClientConnection.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\network\FlowControl.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\network\NetworkConfig.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\network\PacketQueue.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\network\ServerConnection.hpp">
+      <Filter>Header Files\network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

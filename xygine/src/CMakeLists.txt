@@ -31,6 +31,11 @@ set(XY_SRC
   ${XY_DIR}/components/ComponentParticleSystem.cpp  
   ${XY_DIR}/components/ComponentPointLight.cpp  
   ${XY_DIR}/components/QuadTreeComponent.cpp  
+  ${XY_DIR}/network/AckSystem.cpp
+  ${XY_DIR}/network/ClientConnection.cpp
+  ${XY_DIR}/network/FlowControl.cpp
+  ${XY_DIR}/network/PacketQueue.cpp
+  ${XY_DIR}/network/ServerConnection.cpp
   ${XY_DIR}/parsers/pugixml.cpp  
   ${XY_DIR}/physics/PhysicsAffectorAreaForce.cpp
   ${XY_DIR}/physics/PhysicsAffectorConstantForce.cpp
