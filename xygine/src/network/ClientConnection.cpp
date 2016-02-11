@@ -33,6 +33,8 @@ source distribution.
 
 #include <SFML/System/Clock.hpp>
 
+#include <algorithm>
+
 namespace
 {
     const sf::Int32 CLIENT_TIMEOUT = 10000;
@@ -262,7 +264,7 @@ void ClientConnection::attemptResends()
     const auto& acks = m_ackSystem.getAcks();
     for (auto it = m_resendAttempts.begin(); it != m_resendAttempts.end();)
     {
-        if (std::find(acks.begin(), acks.end(), it->id) != acks.end())
+        if (std::find_if(acks.begin(), acks.end(), [it](const auto& ack){return it->id == ack;}) != acks.end())
         {
             //remove pending packet
             it = m_resendAttempts.erase(it);

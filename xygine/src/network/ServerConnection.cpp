@@ -34,6 +34,8 @@ source distribution.
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Clock.hpp>
 
+#include <algorithm>
+
 namespace
 {
     const sf::Int32 HEARTBEAT_RATE = 1000;
@@ -520,7 +522,7 @@ void ServerConnection::ClientInfo::attemptResends(ClientID clid, ServerConnectio
     const auto& acks = ackSystem->getAcks();
     for (auto it = resendAttempts.begin(); it != resendAttempts.end();)
     {
-        if (std::find(acks.begin(), acks.end(), it->id) != acks.end())
+        if (std::find_if(acks.begin(), acks.end(), [it](const auto& ack){return it->id == ack;}) != acks.end())
         {
             //remove pending packet
             it = resendAttempts.erase(it);

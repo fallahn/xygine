@@ -18,8 +18,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   endif()
 endif()
 
-SET (CMAKE_CXX_FLAGS_DEBUG "-g -D_DEBUG_")
-SET (CMAKE_CXX_FLAGS_RELEASE "-O4 -DNDEBUG")
+SET (CMAKE_CXX_FLAGS_DEBUG "-g -D_DEBUG_ -DXY_STATIC")
+SET (CMAKE_CXX_FLAGS_RELEASE "-O4 -DNDEBUG -DXY_STATIC")
 
 if(xygine_example_STATIC_SFML)
   SET(SFML_STATIC_LIBRARIES TRUE)
@@ -48,8 +48,8 @@ if(X11_FOUND)
 endif()
 
 
-SET(xygine_DIR ${CMAKE_SOURCE_DIR}/../xygine/src)
-include(${xygine_DIR}/CMakeLists.txt)
+SET(XY_DIR ${CMAKE_SOURCE_DIR}/../xygine/src)
+include(${XY_DIR}/CMakeLists.txt)
 
 SET(EXAMPLE_SRC
   src/Game.cpp
@@ -66,9 +66,9 @@ SET(EXAMPLE_SRC
   src/RacingDemoTrack.cpp)
 
 if(WIN32)
-  add_executable(xygine_example WIN32 ${EXAMPLE_SRC} ${xygine_SRC})
+  add_executable(xygine_example WIN32 ${EXAMPLE_SRC} ${XY_SRC})
 else()
-  add_executable(xygine_example ${EXAMPLE_SRC} ${xygine_SRC})
+  add_executable(xygine_example ${EXAMPLE_SRC} ${XY_SRC})
 endif()
 
 target_link_libraries(xygine_example
