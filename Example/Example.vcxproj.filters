@@ -22,6 +22,9 @@
     <Filter Include="Source Files\cave demo">
       <UniqueIdentifier>{57f06f0c-36c1-4bd2-82c5-c6b311c426b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\network demo">
+      <UniqueIdentifier>{42cb5927-966f-4a0d-a780-2976b2d3e224}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -66,6 +69,18 @@
     <ClInclude Include="include\CaveDemoDrawable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\NetworkDemoState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkDemoServer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkDemoBallLogic.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkDemoPacketIDs.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -103,6 +118,15 @@
     </ClCompile>
     <ClCompile Include="src\CaveDemoDrawable.cpp">
       <Filter>Source Files\cave demo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NetworkDemoState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NetworkDemoServer.cpp">
+      <Filter>Source Files\network demo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NetworkDemoBallLogic.cpp">
+      <Filter>Source Files\network demo</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

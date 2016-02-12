@@ -61,6 +61,8 @@ bool Container::selectable() const
 
 void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
 {
+    if (!visible()) return;
+    
     //pass event to selected control
     if (hasSelection() && m_controls[m_selectedIndex]->active())
     {
@@ -221,6 +223,8 @@ void Container::selectPrevious()
 
 void Container::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    if (!visible()) return;
+
     states.transform *= getTransform();
     rt.draw(m_background, states);
     for (const auto& c : m_controls)

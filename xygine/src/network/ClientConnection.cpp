@@ -188,11 +188,11 @@ void ClientConnection::update(float dt)
         disconnect();
     }
 
-    attemptResends();
-
+    sf::Lock lock(m_mutex);
+    attemptResends();       
     m_ackSystem.update(dt);
     m_flowControl.update(dt, m_ackSystem.getRoundTripTime() * 1000.f);
-
+    
     REPORT("Client Recieved", std::to_string(m_ackSystem.getReceivedPacketCount()));
     REPORT("Client Sent", std::to_string(m_ackSystem.getSentPacketCount()));
     REPORT("Client Acked", std::to_string(m_ackSystem.getAckedPacketCount()));

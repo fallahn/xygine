@@ -25,21 +25,27 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef STATE_IDS_HPP_
-#define STATE_IDS_HPP_
+#ifndef NET_BALL_LOGIC_HPP_
+#define NET_BALL_LOGIC_HPP_
 
-namespace States
+#include <xygine/components/Component.hpp>
+
+class BallLogic final : public xy::Component
 {
-    enum ID
-    {
-        None = 0,
-        ParticleDemo,
-        PhysicsDemo,
-        RacingDemo,
-        NetworkDemo,
-        MenuMain,
-        MenuOptions
-    };
-}
+public:
+    explicit BallLogic(xy::MessageBus&);
+    ~BallLogic() = default;
 
-#endif //STATE_IDS_HPP_
+    xy::Component::Type type() const override { return xy::Component::Type::Script; }
+    void entityUpdate(xy::Entity&, float) override;
+
+    sf::FloatRect globalBounds() const;
+
+private:
+    sf::FloatRect m_localBounds;
+    sf::FloatRect m_globalBounds;
+
+    sf::Vector2f m_velocity;
+};
+
+#endif //NET_BALL_LOGIC_HPP_

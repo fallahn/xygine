@@ -49,8 +49,8 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../xygine/extlibs/box2d-2.3.2;../xygine/extlibs/sfml;../DebugStatic</AdditionalLibraryDirectories>
-      <AdditionalDependencies>xygine-s-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;Box2D-d.lib;sfml-audio-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../xygine/extlibs/box2d-2.3.2;../xygine/extlibs/sfml;../DebugShared</AdditionalLibraryDirectories>
+      <AdditionalDependencies>xygine-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;Box2D-d.lib;sfml-audio-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -76,6 +76,10 @@
     <ClInclude Include="include\Game.hpp" />
     <ClInclude Include="include\MenuMainState.hpp" />
     <ClInclude Include="include\MenuOptionState.hpp" />
+    <ClInclude Include="include\NetworkDemoBallLogic.hpp" />
+    <ClInclude Include="include\NetworkDemoPacketIDs.hpp" />
+    <ClInclude Include="include\NetworkDemoServer.hpp" />
+    <ClInclude Include="include\NetworkDemoState.hpp" />
     <ClInclude Include="include\ParticleDemoState.hpp" />
     <ClInclude Include="include\PhysicsDemoInputController.hpp" />
     <ClInclude Include="include\PhysicsDemoLine.hpp" />
@@ -92,6 +96,9 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MenuMainState.cpp" />
     <ClCompile Include="src\MenuOptionState.cpp" />
+    <ClCompile Include="src\NetworkDemoBallLogic.cpp" />
+    <ClCompile Include="src\NetworkDemoServer.cpp" />
+    <ClCompile Include="src\NetworkDemoState.cpp" />
     <ClCompile Include="src\ParticleDemoState.cpp" />
     <ClCompile Include="src\PhysicsDemoInputController.cpp" />
     <ClCompile Include="src\PhysicsDemoLine.cpp" />

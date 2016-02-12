@@ -25,21 +25,43 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef STATE_IDS_HPP_
-#define STATE_IDS_HPP_
+#ifndef NETDEMO_STATE_HPP_
+#define NETDEMO_STATE_HPP_
 
-namespace States
+#include <xygine/ui/Container.hpp>
+#include <xygine/Resource.hpp>
+#include <xygine/State.hpp>
+#include <xygine/network/ClientConnection.hpp>
+
+#include <StateIds.hpp>
+#include <NetworkDemoServer.hpp>
+
+class NetworkDemoState final : public xy::State
 {
-    enum ID
-    {
-        None = 0,
-        ParticleDemo,
-        PhysicsDemo,
-        RacingDemo,
-        NetworkDemo,
-        MenuMain,
-        MenuOptions
-    };
-}
+public:
+    NetworkDemoState(xy::StateStack&, Context);
+    ~NetworkDemoState() = default;
 
-#endif //STATE_IDS_HPP_
+
+    bool handleEvent(const sf::Event&) override;
+    void handleMessage(const xy::Message&) override;
+    bool update(float) override;
+    void draw() override;
+
+    xy::StateId stateID() const { return States::NetworkDemo; }
+
+private:
+
+    Server m_server;
+    xy::Network::ClientConnection m_connection;
+    xy::Network::ClientConnection::PacketHandler m_packetHandler;
+
+    xy::TextureResource m_textureResource;
+    xy::FontResource m_fontResource;
+
+    xy::UI::Container m_menu;
+    void buildMenu();
+    void handlePacket(xy::Network::PacketType, sf::Packet&, xy::Network::ClientConnection*);
+};
+
+#endif //NETDEMO_STATE_HPP_

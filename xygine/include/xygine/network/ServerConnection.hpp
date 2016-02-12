@@ -214,7 +214,12 @@ namespace xy
             \brief Returns the current number of client connections allowed to the server
             */
             std::size_t getMaxClients() const;
-
+            /*!
+            \brief Returns the mutex used by the connection's packet handler thread.
+            This should be used in custom packet handlers when modifying data outside
+            of the handler's thread.
+            */
+            sf::Mutex& getMutex() { return m_mutex; }
         private:
 
             using ClientList = std::unordered_map<ClientID, ClientInfo>;

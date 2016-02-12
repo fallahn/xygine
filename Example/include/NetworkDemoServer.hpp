@@ -25,21 +25,49 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef STATE_IDS_HPP_
-#define STATE_IDS_HPP_
+#ifndef NET_DEMO_SERVER_HPP_
+#define NET_DEMO_SERVER_HPP_
 
-namespace States
+#include <xygine/network/ServerConnection.hpp>
+#include <xygine/Scene.hpp>
+#include <xygine/MessageBus.hpp>
+
+#include <vector>
+
+class Server final
 {
-    enum ID
-    {
-        None = 0,
-        ParticleDemo,
-        PhysicsDemo,
-        RacingDemo,
-        NetworkDemo,
-        MenuMain,
-        MenuOptions
-    };
-}
+public:
+    Server();
+    ~Server() = default;
 
-#endif //STATE_IDS_HPP_
+    bool start();
+    void stop();
+
+    void update(float);
+
+private:
+    xy::MessageBus m_messageBus;
+    xy::Scene m_scene;
+
+    xy::Network::ServerConnection m_connection;
+    xy::Network::ServerConnection::PacketHandler m_packetHandler;
+    float m_snapshotAccumulator;
+    sf::Clock m_snapshotClock;
+
+    struct Player final
+    {
+        xy::ClientID id;
+        std::string name;
+        sf::Uint8 number = 0;
+    };
+    std::vector<Player> m_players;
+
+    void handleMessage(const xy::Message&);
+    void sendSnapshot();
+    void handlePacket(const sf::IpAddress&, xy::PortNumber, xy::Network::PacketType, sf::Packet&, xy::Network::ServerConnection*);
+
+    void spawnBall();
+    sf::Uint64 spawnPlayer(Player&);
+};
+
+#endif //NET_DEMO_SERVER_HPP_

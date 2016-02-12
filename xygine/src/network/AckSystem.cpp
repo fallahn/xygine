@@ -254,8 +254,8 @@ void AckSystem::processAck(SeqID ack, sf::Uint32 ackBits)
 void AckSystem::advanceQueueTime(float dt)
 {
     for (auto& pd : m_sentQueue) pd.timeOffset += dt;
-    for (auto& pd : m_receivedQueue)pd.timeOffset += dt;
-    for (auto& pd : m_pendingAckQueue)pd.timeOffset += dt;
+    for (auto& pd : m_receivedQueue) pd.timeOffset += dt;
+    for (auto& pd : m_pendingAckQueue) pd.timeOffset += dt;
     for (auto& pd : m_ackedQueue) pd.timeOffset += dt;
 }
 

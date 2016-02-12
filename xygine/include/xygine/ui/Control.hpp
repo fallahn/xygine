@@ -150,7 +150,6 @@ namespace xy
             */
             bool visible() const;
 
-
         private:
 
             bool m_selected;
@@ -158,6 +157,16 @@ namespace xy
             bool m_visible;
             Index m_index;
         };
+
+        /*!
+        \brief Utility function for creating controls
+        */
+        template <typename T, typename... Args>
+        std::shared_ptr<T> create(Args&&... args)
+        {
+            static_assert(std::is_base_of<Control, T>::value, "Must derive from Control class");
+            return std::move(std::make_shared<T>(std::forward<Args>(args)...));
+        }
     }
 }
 #endif //XY_UI_CONTROL_H_

@@ -57,6 +57,8 @@ SET(EXAMPLE_SRC
   src/main.cpp
   src/MenuMainState.cpp
   src/MenuOptionState.cpp
+  src/NetworkDemoServer.cpp
+  src/NetworkDemoState.cpp
   src/ParticleDemoState.cpp
   src/PhysicsDemoInputController.cpp
   src/PhysicsDemoLine.cpp

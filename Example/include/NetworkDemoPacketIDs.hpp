@@ -25,21 +25,24 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef STATE_IDS_HPP_
-#define STATE_IDS_HPP_
+#ifndef NET_PACKET_IDS_HPP_
+#define NET_PACKET_IDS_HPP_
 
-namespace States
+#include <xygine/network/NetworkConfig.hpp>
+
+enum PacketID
 {
-    enum ID
-    {
-        None = 0,
-        ParticleDemo,
-        PhysicsDemo,
-        RacingDemo,
-        NetworkDemo,
-        MenuMain,
-        MenuOptions
-    };
-}
+    //ent ID, float x, float y
+    PositionUpdate = xy::Network::PacketType::Count,
+    //ent ID, float x, float y
+    BallSpawned,
+    //player id, ent id, position x, position y
+    PlayerSpawned,
+    //player id, player name
+    PlayerDetails,
+    //player id, inputmask, timestamp
+    PlayerInput
+    //
+};
 
-#endif //STATE_IDS_HPP_
+#endif //NET_PACKET_IDS_HPP_

@@ -25,21 +25,39 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef STATE_IDS_HPP_
-#define STATE_IDS_HPP_
+#include <NetworkDemoBallLogic.hpp>
 
-namespace States
+#include <xygine/Entity.hpp>
+#include <xygine/util/Vector.hpp>
+
+namespace
 {
-    enum ID
-    {
-        None = 0,
-        ParticleDemo,
-        PhysicsDemo,
-        RacingDemo,
-        NetworkDemo,
-        MenuMain,
-        MenuOptions
-    };
+    const float speed = 200.f;
+    const sf::Vector2f playArea(1920.f, 1080.f);
 }
 
-#endif //STATE_IDS_HPP_
+BallLogic::BallLogic(xy::MessageBus& mb)
+    : xy::Component (mb, this),
+    m_localBounds   (-10.f, -10.f, 20.f, 20.f),
+    m_velocity      (0.f, 1.f)
+{
+
+}
+
+//public
+void BallLogic::entityUpdate(xy::Entity& entity, float dt)
+{
+    entity.move(m_velocity * speed * dt);
+
+    auto pos = entity.getWorldPosition();
+    if (pos.y < 0 || pos.y > playArea.y)
+    {
+        m_velocity = xy::Util::Vector::reflect(m_velocity, { 0.f, 1.f });
+    }
+    m_globalBounds = entity.getWorldTransform().transformRect(m_localBounds);
+}
+
+sf::FloatRect BallLogic::globalBounds() const
+{
+    return m_globalBounds;
+}
