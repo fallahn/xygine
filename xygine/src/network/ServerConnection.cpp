@@ -116,6 +116,7 @@ bool ServerConnection::send(const sf::IpAddress& ip, PortNumber port, sf::Packet
     auto id = getClientID(ip, port);
     if (id != NullID)
     {
+        sf::Lock lock(m_mutex);
         stampedPacket << m_clients[id].ackSystem->createHeader();
         m_clients[id].ackSystem->packetSent(packet.getDataSize());
     }
@@ -131,6 +132,7 @@ bool ServerConnection::send(const sf::IpAddress& ip, PortNumber port, sf::Packet
         m_clients[id].resendAttempts.emplace_back();
         auto& rty = m_clients[id].resendAttempts.back();
         rty.count = retryCount;
+        sf::Lock lock(m_mutex);
         rty.id = m_clients[id].ackSystem->getLocalSequence();
         rty.packet = packet; //make sure resends don't include a header
     }
@@ -424,6 +426,7 @@ void ServerConnection::listen()
         auto clientID = getClientID(ip, port);
         if (clientID != NullID)
         {
+            sf::Lock lock(m_mutex);
             m_clients[clientID].ackSystem->packetReceived(header, packet.getDataSize());
             //TODO discard this packet if it's older than the newest rx'd?
         }

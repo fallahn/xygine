@@ -62,6 +62,7 @@ bool NetworkDemoState::update(float dt)
 {
     m_menu.update(dt);
     m_server.update(dt);
+    m_connection.update(dt);
     return true;
 }
 

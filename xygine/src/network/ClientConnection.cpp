@@ -204,6 +204,7 @@ bool ClientConnection::send(sf::Packet& packet, bool retry, sf::Uint8 retryCount
 {
     if (!m_connected) return false;
 
+    sf::Lock lock(m_mutex);
     sf::Packet stampedPacket;
     stampedPacket << Network::PROTOCOL_ID;
     stampedPacket << m_ackSystem.createHeader();
@@ -261,6 +262,7 @@ float ClientConnection::getSendRate() const
 //private
 void ClientConnection::attemptResends()
 {
+    sf::Lock lock(m_mutex);
     const auto& acks = m_ackSystem.getAcks();
     for (auto it = m_resendAttempts.begin(); it != m_resendAttempts.end();)
     {
@@ -386,8 +388,10 @@ void ClientConnection::listen()
 
         AckSystem::Header header;
         packet >> header;
-        m_ackSystem.packetReceived(header, packet.getDataSize());
-
+        {
+            sf::Lock lock(m_mutex);
+            m_ackSystem.packetReceived(header, packet.getDataSize());
+        }
         //TODO discard packets older than newest rx'd?
 
         PacketID packetID;
