@@ -105,7 +105,7 @@ bool NetworkDemoState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         case sf::Keyboard::Escape:
-        case sf::Keyboard::BackSpace:
+        //case sf::Keyboard::BackSpace:
             requestStackPop();
             requestStackPush(States::ID::MenuMain);
             break;

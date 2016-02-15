@@ -57,6 +57,7 @@ SET(EXAMPLE_SRC
   src/main.cpp
   src/MenuMainState.cpp
   src/MenuOptionState.cpp
+  src/NetworkDemoBallLogic.cpp
   src/NetworkDemoController.cpp
   src/NetworkDemoServer.cpp
   src/NetworkDemoState.cpp
