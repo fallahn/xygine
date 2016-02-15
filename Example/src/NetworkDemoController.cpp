@@ -25,39 +25,34 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <NetworkDemoBallLogic.hpp>
+#include <NetworkDemoController.hpp>
 
 #include <xygine/Entity.hpp>
 #include <xygine/util/Vector.hpp>
 
-namespace
-{
-    const float speed = 600.f;
-    const sf::Vector2f playArea(1920.f, 1080.f);
-}
-
-BallLogic::BallLogic(xy::MessageBus& mb)
-    : xy::Component (mb, this),
-    m_localBounds   (-10.f, -10.f, 20.f, 20.f),
-    m_velocity      (0.f, 1.f)
+NetworkController::NetworkController(xy::MessageBus& mb)
+    : xy::Component(mb, this)
 {
 
 }
 
 //public
-void BallLogic::entityUpdate(xy::Entity& entity, float dt)
+void NetworkController::entityUpdate(xy::Entity& entity, float dt)
 {
-    entity.move(m_velocity * speed * dt);
-
-    auto pos = entity.getWorldPosition();
-    if (pos.y < 0 || pos.y > playArea.y)
+    auto movement = m_destination - entity.getPosition();
+    if (xy::Util::Vector::lengthSquared(movement) < 1.5f)
     {
-        m_velocity = xy::Util::Vector::reflect(m_velocity, { 0.f, 1.f });
+        entity.setPosition(m_destination);
     }
-    m_globalBounds = entity.getWorldTransform().transformRect(m_localBounds);
+    else
+    {
+        entity.move(movement * 0.5f);
+    }
 }
 
-sf::FloatRect BallLogic::globalBounds() const
+void NetworkController::setDestination(const sf::Vector2f& destination)
 {
-    return m_globalBounds;
+    m_destination = destination;
 }
+
+//private

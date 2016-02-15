@@ -31,10 +31,13 @@ source distribution.
 #include <xygine/ui/Container.hpp>
 #include <xygine/Resource.hpp>
 #include <xygine/State.hpp>
+#include <xygine/Scene.hpp>
 #include <xygine/network/ClientConnection.hpp>
 
 #include <StateIds.hpp>
 #include <NetworkDemoServer.hpp>
+
+#include <SFML/Graphics/Text.hpp>
 
 class NetworkDemoState final : public xy::State
 {
@@ -59,9 +62,16 @@ private:
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
 
+    sf::Text m_reportText;
+    xy::MessageBus& m_messageBus;
+    xy::Scene m_scene;    
+
     xy::UI::Container m_menu;
     void buildMenu();
     void handlePacket(xy::Network::PacketType, sf::Packet&, xy::Network::ClientConnection*);
+
+    void spawnBall(sf::Uint64 id, sf::Vector2f position);
+    void spawnPlayer(sf::Uint64, sf::Vector2f);
 };
 
 #endif //NETDEMO_STATE_HPP_

@@ -32,8 +32,8 @@ source distribution.
 
 enum PacketID
 {
-    //ent ID, float x, float y
-    PositionUpdate = xy::Network::PacketType::Count,
+    //ent count, ent ID, float x, float y
+    PositionUpdate = xy::Network::PacketType::Count + 1,
     //ent ID, float x, float y
     BallSpawned,
     //player id, ent id, position x, position y

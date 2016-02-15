@@ -228,7 +228,7 @@ bool ServerConnection::removeClient(ClientID id)
 
     sf::Packet packet;
     packet << PacketID(PacketType::Disconnect);
-    send(id, packet); //hmm. Can't actually guarentee this will be received though...
+    send(id, packet, true);
     m_clients.erase(result);
     return true;
 }
@@ -242,7 +242,7 @@ bool ServerConnection::removeClient(const sf::IpAddress& ip, PortNumber port)
         {
             sf::Packet packet;
             packet << PacketID(PacketType::Disconnect);
-            send(it->first, packet); //again no guarentee of delivery
+            send(it->first, packet, true); //again no guarentee of delivery
             m_clients.erase(it);
             return true;
         }
@@ -429,7 +429,13 @@ void ServerConnection::listen()
             sf::Lock lock(m_mutex);
             m_clients[clientID].ackSystem->packetReceived(header, packet.getDataSize());
             //TODO discard this packet if it's older than the newest rx'd?
+            /*REPORT("SERVER sent", std::to_string(m_clients[clientID].ackSystem->getSentPacketCount()));
+            REPORT("SERVER acked", std::to_string(m_clients[clientID].ackSystem->getAckedPacketCount()));
+            REPORT("SERVER lost", std::to_string(m_clients[clientID].ackSystem->getLostPacketCount()));*/
         }
+
+        //REPORT("incoming ack", std::to_string(header.ack));
+
 
         PacketID packetID = 0;
         packet >> packetID;
@@ -453,6 +459,7 @@ void ServerConnection::handlePacket(const sf::IpAddress& ip, PortNumber port, Pa
 {
     //TODO do we want to consume packets by returning from the
     //switch block, or allow users to act on these packet types too?
+    sf::Lock lock(m_mutex);
     ClientID clientID = getClientID(ip, port);
     if (clientID >= 0)
     {
@@ -541,12 +548,12 @@ void ServerConnection::ClientInfo::attemptResends(ClientID clid, ServerConnectio
                     it->id = ackSystem->getLocalSequence();
                     it->count--;
                     connection.send(clid, it->packet);
-                    LOG("CLIENT - Resending Packet, " + std::to_string(it->count) + " tries remaining.", xy::Logger::Type::Info);
+                    LOG("SERVER - Resending Packet, " + std::to_string(it->count) + " tries remaining.", xy::Logger::Type::Info);
                 }
                 else
                 {
                     it = resendAttempts.erase(it);
-                    LOG("CLIENT - Failed sending packet after multiple attempts", xy::Logger::Type::Info);
+                    LOG("SERVER - Packet remained un-acked after multiple attempts", xy::Logger::Type::Info);
                     continue;
                 }
             }

@@ -262,11 +262,11 @@ float ClientConnection::getSendRate() const
 //private
 void ClientConnection::attemptResends()
 {
-    sf::Lock lock(m_mutex);
     const auto& acks = m_ackSystem.getAcks();
     for (auto it = m_resendAttempts.begin(); it != m_resendAttempts.end();)
     {
-        if (std::find_if(acks.begin(), acks.end(), [it](const auto& ack){return it->id == ack;}) != acks.end())
+        auto id = it->id;
+        if (std::find_if(acks.begin(), acks.end(), [id](const auto& ack){return id == ack;}) != acks.end())
         {
             //remove pending packet
             it = m_resendAttempts.erase(it);
@@ -274,7 +274,7 @@ void ClientConnection::attemptResends()
         }
         else
         {
-            //check pending acks. if current seq - pending > 32 resend and dec count
+            //check pending acks. if current seq - pending > 32 resend and dec count           
             if (m_ackSystem.getLocalSequence() - it->id > 32)
             {
                 if (it->count > 0)
@@ -287,7 +287,7 @@ void ClientConnection::attemptResends()
                 else
                 {
                     it = m_resendAttempts.erase(it);
-                    LOG("CLIENT - Failed sending packet after multiple attempts", xy::Logger::Type::Info);
+                    LOG("CLIENT - Packet remained un-acked after multiple attempts", xy::Logger::Type::Info);
                     continue;
                 }
             }
@@ -313,6 +313,7 @@ void ClientConnection::setTime(const sf::Time& time)
 
 void ClientConnection::handlePacket(PacketType type, sf::Packet& packet)
 {
+    sf::Lock lock(m_mutex);
     switch (type)
     {
     case PacketType::HeartBeat:
@@ -392,6 +393,7 @@ void ClientConnection::listen()
             sf::Lock lock(m_mutex);
             m_ackSystem.packetReceived(header, packet.getDataSize());
         }
+
         //TODO discard packets older than newest rx'd?
 
         PacketID packetID;

@@ -81,6 +81,9 @@
     <ClInclude Include="include\NetworkDemoPacketIDs.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\NetworkDemoController.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -126,6 +129,9 @@
       <Filter>Source Files\network demo</Filter>
     </ClCompile>
     <ClCompile Include="src\NetworkDemoBallLogic.cpp">
+      <Filter>Source Files\network demo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NetworkDemoController.cpp">
       <Filter>Source Files\network demo</Filter>
     </ClCompile>
   </ItemGroup>

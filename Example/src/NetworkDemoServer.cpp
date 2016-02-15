@@ -164,5 +164,11 @@ sf::Uint64 Server::spawnPlayer(Player& player)
     packet << position.x << position.y;
     m_connection.broadcast(packet, true);
 
+    //spawn ball if both players connected
+    if (m_players.size() == 1/*2*/)
+    {
+        spawnBall();
+    }
+
     return 0;
 }

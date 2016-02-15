@@ -49,7 +49,7 @@ namespace xy
             */
             struct Header final
             {
-                SeqID sequence = 1;
+                SeqID sequence = 0;
                 SeqID ack = 0;
                 sf::Uint32 ackBits = 0;
             };

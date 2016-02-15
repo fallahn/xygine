@@ -123,7 +123,10 @@ namespace xy
             packets per second (default 30).
             */
             float getSendRate() const;
-
+            /*!
+            \brief returns the mutex belonging to this connection
+            */
+            sf::Mutex& getMutex() { return m_mutex; }
         private:
 
             sf::UdpSocket m_socket;

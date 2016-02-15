@@ -290,6 +290,12 @@ namespace xy
         */
         bool destroyed() const;
         /*!
+        \brief Sets the entity's unique identifier.
+        Normally this should not be set manually but may be useful
+        when syncronising scenes across a network
+        */
+        void setUID(sf::Uint64);
+        /*!
         \brief Returns the Unique ID (UID) of the entity
         */
         sf::Uint64 getUID() const;
@@ -300,7 +306,7 @@ namespace xy
         */
         void handleMessage(const Message&);
         /*!
-        \brief Sets the entities Scene pointer
+        \brief Sets the entity's Scene pointer
 
         Used internally by xygine
         */

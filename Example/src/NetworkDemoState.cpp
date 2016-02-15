@@ -27,13 +27,18 @@ source distribution.
 
 #include <NetworkDemoState.hpp>
 #include <NetworkDemoPacketIDs.hpp>
+#include <NetworkDemoController.hpp>
 
 #include <xygine/App.hpp>
+#include <xygine/Reports.hpp>
 #include <xygine/ui/Button.hpp>
 #include <xygine/ui/TextBox.hpp>
+#include <xygine/components/SfDrawableComponent.hpp>
+#include <xygine/PostChromeAb.hpp>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/System/Sleep.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 namespace
 {
@@ -43,7 +48,9 @@ namespace
 using namespace std::placeholders;
 
 NetworkDemoState::NetworkDemoState(xy::StateStack& stack, Context context)
-    : State(stack, context)
+    : State(stack, context),
+    m_messageBus(context.appInstance.getMessageBus()),
+    m_scene(m_messageBus)
 {
     launchLoadingScreen();
     buildMenu();
@@ -51,18 +58,42 @@ NetworkDemoState::NetworkDemoState(xy::StateStack& stack, Context context)
     m_packetHandler = std::bind(&NetworkDemoState::handlePacket, this, _1, _2, _3);
     m_connection.setPacketHandler(m_packetHandler);
 
+    m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
+    m_reportText.setPosition(40.f, 20.f);
 
+    auto pp = xy::PostProcess::create<xy::PostChromeAb>();
+    m_scene.addPostProcess(pp);
+    m_scene.setView(context.defaultView);
 
     quitLoadingScreen();
 }
 
+namespace
+{
+    float broadcastAccumulator = 0.f;
+    sf::Clock broadcastClock;
+}
 
 //public
 bool NetworkDemoState::update(float dt)
 {
+    const float sendRate = 1.f / m_connection.getSendRate();
+    broadcastAccumulator += broadcastClock.restart().asSeconds();
+    while (broadcastAccumulator >= sendRate)
+    {
+        broadcastAccumulator -= sendRate;
+        sf::Packet packet;
+        packet << PacketID::PlayerInput << m_connection.getClientID();
+        m_connection.send(packet);
+    }
+    
     m_menu.update(dt);
     m_server.update(dt);
     m_connection.update(dt);
+    m_scene.update(dt);
+
+    m_reportText.setString(xy::Stats::getString());
+
     return true;
 }
 
@@ -96,7 +127,11 @@ void NetworkDemoState::draw()
 {
     auto& rw = getContext().renderWindow;
 
+    rw.draw(m_scene);
+    rw.setView(getContext().defaultView);
     rw.draw(m_menu);
+
+    rw.draw(m_reportText);
 }
 
 //private
@@ -154,10 +189,72 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
     }
         break;
     case PacketID::BallSpawned:
-
+    {
+        sf::Uint64 id;
+        float x, y;
+        packet >> id >> x >> y;
+        spawnBall(id, { x,y });
+    }
         break;
     case PacketID::PlayerSpawned:
-        LOG("CLIENT - rx player spawn", xy::Logger::Type::Info);
+        
+        break;
+    case PacketID::PositionUpdate:
+    {
+        sf::Uint8 count;
+        packet >> count;
+
+        sf::Uint64 id;
+        float x, y;
+
+        sf::Lock lock(m_connection.getMutex());
+        while(count--)
+        {
+            packet >> id >> x >> y;
+
+            //TODO special case for client
+            xy::Command cmd;
+            cmd.entityID = id;
+
+            cmd.action = [x, y](xy::Entity& entity, float)
+            {
+                entity.getComponent<NetworkController>()->setDestination({ x, y });
+            };
+            m_scene.sendCommand(cmd);
+        }
+    }
         break;
     }
+}
+
+namespace
+{
+    bool ballSpawned = false;
+}
+
+void NetworkDemoState::spawnBall(sf::Uint64 id, sf::Vector2f position)
+{
+    //TODO make this neater
+    if (ballSpawned) return;
+
+    auto shape = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
+    shape->getDrawable().setSize({ 20.f, 20.f });
+    shape->getDrawable().setOrigin({ 10.f, 10.f });
+
+    auto controller = xy::Component::create<NetworkController>(m_messageBus);
+
+    auto ent = xy::Entity::create(m_messageBus);
+    ent->setWorldPosition(position);
+    ent->setUID(id);
+    ent->addComponent(shape);
+    ent->addComponent(controller);
+
+    m_scene.addEntity(ent, xy::Scene::Layer::FrontMiddle);
+
+    ballSpawned = true;
+}
+
+void NetworkDemoState::spawnPlayer(sf::Uint64 id, sf::Vector2f position)
+{
+
 }

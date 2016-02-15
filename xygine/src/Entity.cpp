@@ -211,6 +211,11 @@ bool Entity::destroyed() const
     return m_destroyed;
 }
 
+void Entity::setUID(sf::Uint64 id)
+{
+    m_uid = id;
+}
+
 sf::Uint64 Entity::getUID() const
 {
     return m_uid;
