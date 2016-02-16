@@ -59,6 +59,7 @@ SET(EXAMPLE_SRC
   src/MenuOptionState.cpp
   src/NetworkDemoBallLogic.cpp
   src/NetworkDemoController.cpp
+  src/NetworkDemoPlayerController.cpp
   src/NetworkDemoServer.cpp
   src/NetworkDemoState.cpp
   src/ParticleDemoState.cpp

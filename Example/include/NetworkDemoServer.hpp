@@ -59,6 +59,7 @@ private:
         xy::ClientID id;
         std::string name;
         sf::Uint8 number = 0;
+        sf::Uint64 entID = 0;
     };
     std::vector<Player> m_players;
 

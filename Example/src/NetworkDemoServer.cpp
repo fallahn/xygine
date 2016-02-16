@@ -28,6 +28,9 @@ source distribution.
 #include <NetworkDemoServer.hpp>
 #include <NetworkDemoBallLogic.hpp>
 #include <NetworkDemoPacketIDs.hpp>
+#include <NetworkDemoPlayerController.hpp>
+
+#include <xygine/Reports.hpp>
 
 namespace
 {
@@ -35,6 +38,7 @@ namespace
 }
 
 using namespace std::placeholders;
+using namespace NetDemo;
 
 Server::Server()
     : m_messageBus          (),
@@ -103,19 +107,46 @@ void Server::sendSnapshot()
         packet << e->getUID() << position.x << position.y;
     }
     m_connection.broadcast(packet);
+
+    //TODO broadcast player info such as name, score, position, velocity and last input ID
 }
 
 void Server::handlePacket(const sf::IpAddress& ip, xy::PortNumber port, xy::Network::PacketType type, sf::Packet& packet, xy::Network::ServerConnection* connection)
 {
     switch (type)
     {
-    default: break;
+    default: 
+
+        break;
     case PacketID::PlayerDetails:
+    {
         Player player;
         packet >> player.id;
         packet >> player.name;
         sf::Lock(connection->getMutex());
         spawnPlayer(player);
+    }
+        break;
+    case PacketID::PlayerInput:
+    {
+        Input input;
+        packet >> input;
+
+        auto result = std::find_if(m_players.begin(), m_players.end(), [&input](const Player& p) {return p.id == input.clientID; });
+        if (result != m_players.end())
+        {
+            xy::Command cmd;
+            cmd.entityID = result->entID;
+            cmd.action = [input](xy::Entity& entity, float)
+            {
+                entity.getComponent<PlayerController>()->setInput(input, false);
+                //REPORT("SERVER position", std::to_string(entity.getWorldPosition().y));
+                //TODO update player info with velocity, last inputID, position
+            };
+            sf::Lock lock(m_connection.getMutex());
+            m_scene.sendCommand(cmd);
+        }
+    }
         break;
     }
 }
@@ -148,21 +179,26 @@ sf::Uint64 Server::spawnPlayer(Player& player)
     {
         player.number = (m_players[0].number == 1) ? 2 : 1;
     }
-    m_players.push_back(player);
-
+    
     sf::Vector2f position;
     position.y = 540.f;
-    position.x = (player.number == 1) ? 30.f : 1920 - 30.f;
+    position.x = (player.number == 1) ? 180.f : 1920 - 180.f;
 
     auto playerEntity = xy::Entity::create(m_messageBus);
-    //TODO add logic controller
-    auto ent = m_scene.addEntity(playerEntity, xy::Scene::Layer::BackRear);
+    player.entID = playerEntity->getUID();
+    
+    auto playerController = xy::Component::create<PlayerController>(m_messageBus);
+    playerEntity->addComponent(playerController);
+
+    m_scene.addEntity(playerEntity, xy::Scene::Layer::BackRear);
 
     sf::Packet packet;
     packet << xy::PacketID(PacketID::PlayerSpawned);
-    packet << player.id << ent->getUID();
+    packet << player.id << player.entID;
     packet << position.x << position.y;
     m_connection.broadcast(packet, true);
+
+    m_players.push_back(player);
 
     //spawn ball if both players connected
     if (m_players.size() == 1/*2*/)

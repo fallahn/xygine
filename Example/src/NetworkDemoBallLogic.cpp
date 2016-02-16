@@ -36,6 +36,8 @@ namespace
     const sf::Vector2f playArea(1920.f, 1080.f);
 }
 
+using namespace NetDemo;
+
 BallLogic::BallLogic(xy::MessageBus& mb)
     : xy::Component (mb, this),
     m_localBounds   (-10.f, -10.f, 20.f, 20.f),

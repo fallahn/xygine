@@ -30,6 +30,8 @@ source distribution.
 #include <xygine/Entity.hpp>
 #include <xygine/util/Vector.hpp>
 
+using namespace NetDemo;
+
 NetworkController::NetworkController(xy::MessageBus& mb)
     : xy::Component(mb, this)
 {

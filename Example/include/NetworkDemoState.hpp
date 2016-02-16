@@ -36,6 +36,7 @@ source distribution.
 
 #include <StateIds.hpp>
 #include <NetworkDemoServer.hpp>
+#include <NetworkDemoPlayerInput.hpp>
 
 #include <SFML/Graphics/Text.hpp>
 
@@ -66,12 +67,14 @@ private:
     xy::MessageBus& m_messageBus;
     xy::Scene m_scene;    
 
+    NetDemo::Input m_playerInput;
+
     xy::UI::Container m_menu;
     void buildMenu();
     void handlePacket(xy::Network::PacketType, sf::Packet&, xy::Network::ClientConnection*);
 
     void spawnBall(sf::Uint64 id, sf::Vector2f position);
-    void spawnPlayer(sf::Uint64, sf::Vector2f);
+    void spawnPlayer(xy::ClientID, sf::Uint64, sf::Vector2f);
 };
 
 #endif //NETDEMO_STATE_HPP_

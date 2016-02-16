@@ -113,7 +113,7 @@ namespace xy
             /*!
             \brief Returns the ClientID of this connection as assigned by the server
             upon connection.
-            This should be re-quired if connection is lost and then regained
+            This should be re-aquired if connection is lost and then regained
             */
             ClientID getClientID() const;
             /*!
@@ -124,9 +124,15 @@ namespace xy
             */
             float getSendRate() const;
             /*!
-            \brief returns the mutex belonging to this connection
+            \brief returns the mutex belonging to this connection.
+            This should be used to lock the thread when modifying data
+            from the packet handler for example.
             */
             sf::Mutex& getMutex() { return m_mutex; }
+            /*!
+            \brief Returns the time elapsed accoring to the server
+            */
+            const sf::Time& getTime() const;
         private:
 
             sf::UdpSocket m_socket;
@@ -138,6 +144,7 @@ namespace xy
             std::atomic_bool m_connected;
 
             sf::Time m_serverTime;
+            sf::Time m_interpolatedServerTime;
             sf::Time m_lastHeartbeat;
 
             sf::Thread m_listenThread;
@@ -154,10 +161,9 @@ namespace xy
             };
             std::list<ResendAttempt> m_resendAttempts;
             void attemptResends();
-
-            const sf::Time& getTime() const;
+            
             const sf::Time& getLastHeartbeat() const;
-            void setTime(const sf::Time&);
+            //void setTime(const sf::Time&);
 
             void handlePacket(PacketType, sf::Packet&);
             void listen();

@@ -30,22 +30,24 @@ source distribution.
 
 #include <xygine/components/Component.hpp>
 
-class BallLogic final : public xy::Component
+namespace NetDemo
 {
-public:
-    explicit BallLogic(xy::MessageBus&);
-    ~BallLogic() = default;
+    class BallLogic final : public xy::Component
+    {
+    public:
+        explicit BallLogic(xy::MessageBus&);
+        ~BallLogic() = default;
 
-    xy::Component::Type type() const override { return xy::Component::Type::Script; }
-    void entityUpdate(xy::Entity&, float) override;
+        xy::Component::Type type() const override { return xy::Component::Type::Script; }
+        void entityUpdate(xy::Entity&, float) override;
 
-    sf::FloatRect globalBounds() const;
+        sf::FloatRect globalBounds() const;
 
-private:
-    sf::FloatRect m_localBounds;
-    sf::FloatRect m_globalBounds;
+    private:
+        sf::FloatRect m_localBounds;
+        sf::FloatRect m_globalBounds;
 
-    sf::Vector2f m_velocity;
-};
-
+        sf::Vector2f m_velocity;
+    };
+}
 #endif //NET_BALL_LOGIC_HPP_

@@ -25,28 +25,25 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef NETWORK_CONTROLLER_HPP_
-#define NETWORK_CONTROLLER_HPP_
+#ifndef NET_PLAYER_INPUT_HPP_
+#define NET_PLAYER_INPUT_HPP_
 
-#include <xygine/components/Component.hpp>
+#include <SFML/Config.hpp>
+#include <xygine/network/NetworkConfig.hpp>
 
 namespace NetDemo
 {
-    class NetworkController final : public xy::Component
+    struct Input final
     {
-    public:
-        explicit NetworkController(xy::MessageBus&);
-        ~NetworkController() = default;
-
-        xy::Component::Type type() const override { return xy::Component::Type::Script; }
-        void entityUpdate(xy::Entity&, float) override;
-
-        void setDestination(const sf::Vector2f&);
-
-    private:
-
-        sf::Vector2f m_destination;
-
+        float position = 0; //<position of mouse Y axis
+        sf::Uint64 counter = 0; //<input counter for ordering
+        xy::ClientID clientID = -1;
+        //float dt = 0.f; //<delta time since last input
+        sf::Int32 timestamp = 0; //<server time as client knows it in ms
     };
 }
-#endif // NETWORK_CONTROLLER_HPP_
+sf::Packet& operator <<(sf::Packet& packet, const NetDemo::Input&);
+
+sf::Packet& operator >>(sf::Packet& packet, NetDemo::Input&);
+
+#endif //NET_PLAYER_INPUT_HPP_

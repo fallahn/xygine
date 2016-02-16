@@ -259,6 +259,11 @@ float ClientConnection::getSendRate() const
     return m_flowControl.getSendRate();
 }
 
+const sf::Time& ClientConnection::getTime() const
+{
+    return m_serverTime;
+}
+
 //private
 void ClientConnection::attemptResends()
 {
@@ -296,19 +301,9 @@ void ClientConnection::attemptResends()
     }
 }
 
-const sf::Time& ClientConnection::getTime() const
-{
-    return m_serverTime;
-}
-
 const sf::Time& ClientConnection::getLastHeartbeat() const
 {
     return m_lastHeartbeat;
-}
-
-void ClientConnection::setTime(const sf::Time& time)
-{
-    m_serverTime = time;
 }
 
 void ClientConnection::handlePacket(PacketType type, sf::Packet& packet)
@@ -333,7 +328,7 @@ void ClientConnection::handlePacket(PacketType type, sf::Packet& packet)
 
             sf::Int32 timestamp;
             packet >> timestamp;
-            setTime(sf::milliseconds(timestamp));
+            m_serverTime = sf::milliseconds(timestamp);
             m_lastHeartbeat = m_serverTime;
         }
         return;

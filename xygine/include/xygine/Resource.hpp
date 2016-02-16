@@ -100,7 +100,7 @@ namespace xy
         \brief Function for handling resource acquisition errors
 
         Concrete resource manager types must implement this to provide 
-        a fallback nstance of the resource type should loading of the
+        a fallback instance of the resource type, should loading of the
         requested resource fail for some reason.
         */
         virtual std::unique_ptr<T> errorHandle() = 0;

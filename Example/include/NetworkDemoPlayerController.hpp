@@ -25,28 +25,44 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef NETWORK_CONTROLLER_HPP_
-#define NETWORK_CONTROLLER_HPP_
+#ifndef NET_DEMO_PLAYER_CONTROLLER_HPP_
+#define NET_DEMO_PLAYER_CONTROLLER_HPP_
+
+#include <NetworkDemoPlayerInput.hpp>
 
 #include <xygine/components/Component.hpp>
 
+#include <queue>
+#include <list>
+
 namespace NetDemo
 {
-    class NetworkController final : public xy::Component
+    class PlayerController final : public xy::Component
     {
     public:
-        explicit NetworkController(xy::MessageBus&);
-        ~NetworkController() = default;
+        explicit PlayerController(xy::MessageBus&);
+        ~PlayerController() = default;
 
         xy::Component::Type type() const override { return xy::Component::Type::Script; }
         void entityUpdate(xy::Entity&, float) override;
+        void onStart(xy::Entity&) override;
 
-        void setDestination(const sf::Vector2f&);
+        void setInput(const Input&, bool = true);
+        void reconcile(float position, sf::Uint64);
 
     private:
 
-        sf::Vector2f m_destination;
+        Input m_currentInput;
+        sf::Uint64 m_lastInputId;
+        std::queue<Input> m_inputBuffer;
+        std::list<Input> m_reconcileInputs;
 
+        xy::Entity* m_entity;
+        float m_velocity; //TODO probably don't need this
+        float m_lastPosition; //and therefore not this either
+
+        void parseCurrentInput();
     };
 }
-#endif // NETWORK_CONTROLLER_HPP_
+
+#endif //NET_DEMO_PLAYER_CONTROLLER_HPP_

@@ -412,6 +412,14 @@ void ServerConnection::listen()
                 break;
             }
         }
+
+        //check remote IP is actually one of our clients - TODO this only works after accepting a connection, duh
+        /*if (std::find_if(m_clients.begin(), m_clients.end(), [&ip](const std::unordered_map<ClientID, ClientInfo>::value_type& ci) {return ci.second.ipAddress == ip; }) == m_clients.end())
+        {
+            LOG("SERVER - Received packet from unknown source", xy::Logger::Type::Warning);
+            continue;
+        }*/
+
         m_totalBytesReceived += packet.getDataSize();
 
         sf::Uint32 pID;

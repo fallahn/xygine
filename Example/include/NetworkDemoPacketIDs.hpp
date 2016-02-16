@@ -30,19 +30,21 @@ source distribution.
 
 #include <xygine/network/NetworkConfig.hpp>
 
-enum PacketID
+namespace NetDemo
 {
-    //ent count, ent ID, float x, float y
-    PositionUpdate = xy::Network::PacketType::Count + 1,
-    //ent ID, float x, float y
-    BallSpawned,
-    //player id, ent id, position x, position y
-    PlayerSpawned,
-    //player id, player name
-    PlayerDetails,
-    //player id, inputmask, timestamp
-    PlayerInput
-    //
-};
-
+    enum PacketID
+    {
+        //ent count, ent ID, float x, float y
+        PositionUpdate = xy::Network::PacketType::Count + 1,
+        //ent ID, float x, float y
+        BallSpawned,
+        //player id, ent id, position x, position y
+        PlayerSpawned,
+        //player id, player name
+        PlayerDetails,
+        //input struct
+        PlayerInput
+        //
+    };
+}
 #endif //NET_PACKET_IDS_HPP_

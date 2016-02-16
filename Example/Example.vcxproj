@@ -79,6 +79,8 @@
     <ClInclude Include="include\NetworkDemoBallLogic.hpp" />
     <ClInclude Include="include\NetworkDemoController.hpp" />
     <ClInclude Include="include\NetworkDemoPacketIDs.hpp" />
+    <ClInclude Include="include\NetworkDemoPlayerController.hpp" />
+    <ClInclude Include="include\NetworkDemoPlayerInput.hpp" />
     <ClInclude Include="include\NetworkDemoServer.hpp" />
     <ClInclude Include="include\NetworkDemoState.hpp" />
     <ClInclude Include="include\ParticleDemoState.hpp" />
@@ -99,6 +101,7 @@
     <ClCompile Include="src\MenuOptionState.cpp" />
     <ClCompile Include="src\NetworkDemoBallLogic.cpp" />
     <ClCompile Include="src\NetworkDemoController.cpp" />
+    <ClCompile Include="src\NetworkDemoPlayerController.cpp" />
     <ClCompile Include="src\NetworkDemoServer.cpp" />
     <ClCompile Include="src\NetworkDemoState.cpp" />
     <ClCompile Include="src\ParticleDemoState.cpp" />

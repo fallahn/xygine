@@ -28,6 +28,7 @@ source distribution.
 #include <NetworkDemoState.hpp>
 #include <NetworkDemoPacketIDs.hpp>
 #include <NetworkDemoController.hpp>
+#include <NetworkDemoPlayerController.hpp>
 
 #include <xygine/App.hpp>
 #include <xygine/Reports.hpp>
@@ -43,9 +44,11 @@ source distribution.
 namespace
 {
     //const xy::PortNumber port = 5000;
+    sf::Uint64 playerEntID = 0;
 }
 
 using namespace std::placeholders;
+using namespace NetDemo;
 
 NetworkDemoState::NetworkDemoState(xy::StateStack& stack, Context context)
     : State(stack, context),
@@ -77,20 +80,41 @@ namespace
 //public
 bool NetworkDemoState::update(float dt)
 {
-    const float sendRate = 1.f / m_connection.getSendRate();
-    broadcastAccumulator += broadcastClock.restart().asSeconds();
-    while (broadcastAccumulator >= sendRate)
+    //m_playerInput.dt += dt;
+        
+    m_playerInput.position = getContext().appInstance.getMouseWorldPosition().y;
+
+    xy::Command cmd;
+    cmd.entityID = playerEntID;
+    cmd.action = [this](xy::Entity& entity, float dt)
     {
-        broadcastAccumulator -= sendRate;
-        sf::Packet packet;
-        packet << PacketID::PlayerInput << m_connection.getClientID();
-        m_connection.send(packet);
-    }
-    
+        sf::Lock lock(m_connection.getMutex());
+        entity.getComponent<PlayerController>()->setInput(m_playerInput);
+    };
+    m_scene.sendCommand(cmd);
+    //REPORT("Player Pos", std::to_string(m_playerInput.position));
+  
     m_menu.update(dt);
     m_server.update(dt);
     m_connection.update(dt);
     m_scene.update(dt);
+
+
+    const float sendRate = 1.f / m_connection.getSendRate();
+    broadcastAccumulator += broadcastClock.restart().asSeconds();
+    while (broadcastAccumulator >= sendRate)
+    {
+        m_playerInput.clientID = m_connection.getClientID();
+        m_playerInput.timestamp = m_connection.getTime().asMilliseconds();
+
+        broadcastAccumulator -= sendRate;
+        sf::Packet packet;
+        packet << xy::PacketID(PacketID::PlayerInput) << m_playerInput;
+        m_connection.send(packet);
+
+        //m_playerInput.dt = 0.f;
+        m_playerInput.counter++;
+    }
 
     m_reportText.setString(xy::Stats::getString());
 
@@ -168,6 +192,7 @@ void NetworkDemoState::buildMenu()
 
         //close menu
         m_menu.setVisible(false);
+        getContext().renderWindow.setMouseCursorVisible(false);
     });
     m_menu.addControl(button);
 
@@ -196,8 +221,14 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         spawnBall(id, { x,y });
     }
         break;
-    case PacketID::PlayerSpawned:
-        
+    case PacketID::PlayerSpawned:       
+    {
+        xy::ClientID clid;
+        sf::Uint64 entID;
+        sf::Vector2f position;
+        packet >> clid >> entID >> position.x >> position.y;
+        spawnPlayer(clid, entID, position);
+    }
         break;
     case PacketID::PositionUpdate:
     {
@@ -212,7 +243,9 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         {
             packet >> id >> x >> y;
 
-            //TODO special case for client
+            //don't send to local player
+            if (id == playerEntID) continue;
+
             xy::Command cmd;
             cmd.entityID = id;
 
@@ -230,6 +263,9 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
 namespace
 {
     bool ballSpawned = false;
+    bool p1Spawned = false;
+    bool p2Spawned = false;
+    const sf::Vector2f paddleSize(20.f, 100.f);
 }
 
 void NetworkDemoState::spawnBall(sf::Uint64 id, sf::Vector2f position)
@@ -254,7 +290,33 @@ void NetworkDemoState::spawnBall(sf::Uint64 id, sf::Vector2f position)
     ballSpawned = true;
 }
 
-void NetworkDemoState::spawnPlayer(sf::Uint64 id, sf::Vector2f position)
+void NetworkDemoState::spawnPlayer(xy::ClientID clid, sf::Uint64 entid, sf::Vector2f position)
 {
+    if (clid == m_connection.getClientID())
+    {
+        if (p1Spawned) return;
+        //spawn a local player
 
+        auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
+        drawable->getDrawable().setSize(paddleSize);
+        drawable->getDrawable().setOrigin(paddleSize / 2.f);
+
+        auto controller = xy::Component::create<PlayerController>(m_messageBus);
+
+        auto entity = xy::Entity::create(m_messageBus);
+        entity->setUID(entid);
+        entity->setWorldPosition(position);
+        entity->addComponent(drawable);
+        entity->addComponent(controller);
+
+        m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
+
+        playerEntID = entid;
+        p1Spawned = true;
+    }
+    else
+    {
+        if (p2Spawned) return;
+        //spawn remote player
+    }
 }
