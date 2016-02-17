@@ -56,10 +56,12 @@ private:
 
     struct Player final
     {
-        xy::ClientID id;
+        xy::ClientID id = -1;
         std::string name;
         sf::Uint8 number = 0;
         sf::Uint64 entID = 0;
+        float position = 0.f;
+        sf::Uint64 lastInputId = 0;
     };
     std::vector<Player> m_players;
 

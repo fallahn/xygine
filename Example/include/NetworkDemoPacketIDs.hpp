@@ -43,8 +43,9 @@ namespace NetDemo
         //player id, player name
         PlayerDetails,
         //input struct
-        PlayerInput
-        //
+        PlayerInput,
+        //player count, ent ID, name, position, last input id
+        PlayerUpdate
     };
 }
 #endif //NET_PACKET_IDS_HPP_

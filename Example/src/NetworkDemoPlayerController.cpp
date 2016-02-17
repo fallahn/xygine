@@ -71,7 +71,24 @@ void PlayerController::setInput(const Input& ip, bool keep)
 
 void PlayerController::reconcile(float position, sf::Uint64 inputId)
 {
+    while (!m_reconcileInputs.empty() &&
+        m_reconcileInputs.front().counter <= inputId)
+    {
+        m_reconcileInputs.pop_front();
+    }
 
+    auto pos = m_entity->getWorldPosition();
+    pos.y = position;
+    m_entity->setWorldPosition(pos);
+
+    std::queue<Input> newQueue;
+    std::swap(m_inputBuffer, newQueue);
+
+    for (const auto& input : m_reconcileInputs)
+    {
+        m_currentInput = input;
+        entityUpdate(*m_entity, 0.f);
+    }
 }
 
 //private

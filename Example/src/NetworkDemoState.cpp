@@ -257,6 +257,35 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         }
     }
         break;
+    case PacketID::PlayerUpdate:
+    {
+        sf::Uint8 count;
+        packet >> count;
+
+        sf::Uint64 entID;
+        std::string name;
+        float position;
+        sf::Uint64 lastInput;
+
+        while (count--)
+        {
+            packet >> entID >> name >> position >> lastInput;
+            if (entID == playerEntID)
+            {
+                xy::Command cmd;
+                cmd.entityID = entID;
+                cmd.action = [position, lastInput](xy::Entity& entity, float)
+                {
+                    entity.getComponent<PlayerController>()->reconcile(position, lastInput);
+                };
+
+                sf::Lock lock(m_connection.getMutex());
+                m_scene.sendCommand(cmd);
+                break;
+            }
+        }
+    }
+    break;
     }
 }
 

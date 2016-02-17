@@ -50,6 +50,9 @@ namespace NetDemo
         void setInput(const Input&, bool = true);
         void reconcile(float position, sf::Uint64);
 
+        sf::Uint64 getLastInputID() const { return m_lastInputId; }
+        float getLastPosition() const { return m_lastPosition; }
+
     private:
 
         Input m_currentInput;
@@ -59,7 +62,7 @@ namespace NetDemo
 
         xy::Entity* m_entity;
         float m_velocity; //TODO probably don't need this
-        float m_lastPosition; //and therefore not this either
+        float m_lastPosition;
 
         void parseCurrentInput();
     };

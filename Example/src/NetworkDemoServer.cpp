@@ -108,7 +108,14 @@ void Server::sendSnapshot()
     }
     m_connection.broadcast(packet);
 
-    //TODO broadcast player info such as name, score, position, velocity and last input ID
+    //broadcast player info such as name, score, position, and last input ID
+    packet.clear();
+    packet << xy::PacketID(PacketID::PlayerUpdate) << sf::Uint8(m_players.size());
+    for (const auto& p : m_players)
+    {
+        packet << p.entID << p.name << p.position << p.lastInputId;
+    }
+    m_connection.broadcast(packet);
 }
 
 void Server::handlePacket(const sf::IpAddress& ip, xy::PortNumber port, xy::Network::PacketType type, sf::Packet& packet, xy::Network::ServerConnection* connection)
@@ -137,11 +144,14 @@ void Server::handlePacket(const sf::IpAddress& ip, xy::PortNumber port, xy::Netw
         {
             xy::Command cmd;
             cmd.entityID = result->entID;
-            cmd.action = [input](xy::Entity& entity, float)
+            cmd.action = [result, input](xy::Entity& entity, float)
             {
-                entity.getComponent<PlayerController>()->setInput(input, false);
+                auto controller = entity.getComponent<PlayerController>();
+                controller->setInput(input, false);
                 //REPORT("SERVER position", std::to_string(entity.getWorldPosition().y));
-                //TODO update player info with velocity, last inputID, position
+                //update player info with velocity, last inputID, position
+                result->lastInputId = controller->getLastInputID();
+                result->position = controller->getLastPosition();
             };
             sf::Lock lock(m_connection.getMutex());
             m_scene.sendCommand(cmd);
