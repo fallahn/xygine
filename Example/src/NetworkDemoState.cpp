@@ -58,6 +58,7 @@ NetworkDemoState::NetworkDemoState(xy::StateStack& stack, Context context)
     m_collisionWorld    (m_scene, m_messageBus)
 {
     launchLoadingScreen();
+    xy::Stats::clear();
     buildMenu();
 
     m_packetHandler = std::bind(&NetworkDemoState::handlePacket, this, _1, _2, _3);

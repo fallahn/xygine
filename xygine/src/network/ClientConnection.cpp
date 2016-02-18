@@ -71,7 +71,6 @@ bool ClientConnection::connect()
         packet << Network::PROTOCOL_ID;
         packet << m_ackSystem.createHeader();
         packet << PacketID(PacketType::Connect);
-        //TODO attach other client info such as player name
 
         if (m_socket.send(packet, m_serverIp, m_serverPort) != sf::Socket::Done)
         {

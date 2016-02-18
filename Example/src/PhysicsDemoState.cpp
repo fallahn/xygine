@@ -77,6 +77,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     m_buns          (m_textureResource)
 {
     launchLoadingScreen();
+    xy::Stats::clear();
     m_scene.setView(context.defaultView);
     //m_scene.drawDebug(true);
     //auto pp = xy::PostProcess::create<xy::PostChromeAb>();

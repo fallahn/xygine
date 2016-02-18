@@ -91,6 +91,9 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     m_physWorld     (m_messageBus)
 {
     launchLoadingScreen();
+    xy::Stats::clear();
+    m_physWorld.setGravity({ 0.f, 900.f });
+    m_physWorld.setPixelScale(100.f);
 
     m_scene.setView(context.defaultView);
 

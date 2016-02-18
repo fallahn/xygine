@@ -50,6 +50,11 @@ void Stats::report(const std::string& name, const std::string& value)
     reporter.report(name, value);
 }
 
+void Stats::clear()
+{
+    reporter.clear();
+}
+
 //-----------------------------//
 
 StatsReporter::StatsReporter()
@@ -94,4 +99,8 @@ const std::string& StatsReporter::getString()
     return m_string;
 }
 
-//StatsReporter StatsReporter::reporter;
+void StatsReporter::clear()
+{
+    m_string.clear();
+    m_data.clear();
+}

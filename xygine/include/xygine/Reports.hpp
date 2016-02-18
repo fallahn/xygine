@@ -57,6 +57,10 @@ namespace xy
         \brief Used for global stat reporting
         */
         XY_EXPORT_API void report(const std::string&, const std::string&);
+        /*!
+        \brief Clears the global stats report string
+        */
+        XY_EXPORT_API void clear();
     }
     /*!
     \brief Utility class for reporting statistics
@@ -103,6 +107,10 @@ namespace xy
         */
         const std::string& getString();
 
+        /*!
+        \brief Clears the current report string
+        */
+        void clear();
     private:
         std::map<std::string, std::string> m_data;
         std::string m_string;
