@@ -68,7 +68,7 @@ namespace xy
         Component::Type type() const override { return Component::Type::Drawable; }
         void entityUpdate(Entity& entity, float) override
         {
-            m_globalBounds = entity.getWorldTransform().transformRect(m_drawable.getGlobalBounds());
+            //m_globalBounds = entity.getWorldTransform().transformRect(m_drawable.getGlobalBounds());
         }
         
         /*!
@@ -81,12 +81,11 @@ namespace xy
 
         sf::FloatRect globalBounds() const override
         {
-            return m_globalBounds;
+            return m_drawable.getGlobalBounds();
         }
 
     private:
         T m_drawable;
-        sf::FloatRect m_globalBounds;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override
         {

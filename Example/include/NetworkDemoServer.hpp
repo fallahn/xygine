@@ -28,6 +28,8 @@ source distribution.
 #ifndef NET_DEMO_SERVER_HPP_
 #define NET_DEMO_SERVER_HPP_
 
+#include <NetworkDemoCollisions.hpp>
+
 #include <xygine/network/ServerConnection.hpp>
 #include <xygine/Scene.hpp>
 #include <xygine/MessageBus.hpp>
@@ -44,6 +46,9 @@ public:
     void stop();
 
     void update(float);
+
+    void drawDebug(sf::RenderTarget&);
+    void setDebugView(sf::View);
 
 private:
     xy::MessageBus m_messageBus;
@@ -64,6 +69,9 @@ private:
         sf::Uint64 lastInputId = 0;
     };
     std::vector<Player> m_players;
+    sf::Uint64 m_ballID;
+
+    CollisionWorld m_collisionWorld;
 
     void handleMessage(const xy::Message&);
     void sendSnapshot();

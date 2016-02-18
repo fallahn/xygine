@@ -40,14 +40,26 @@ namespace NetDemo
 
         xy::Component::Type type() const override { return xy::Component::Type::Script; }
         void entityUpdate(xy::Entity&, float) override;
+        void onStart(xy::Entity&) override;
 
-        sf::FloatRect globalBounds() const;
+        void setCollisionObjects(const std::vector<xy::Entity*>&);
+
+        void setVelocity(const sf::Vector2f& vel) { m_velocity = vel; }
+        const sf::Vector2f& getVelocity() const { return m_velocity; }
+        sf::Vector2f getPosition() const;
+        sf::Uint32 getCurrentStep() const { return m_stepCount; }
+
+        void reconcile(const sf::Vector2f& position, const sf::Vector2f& velocity, sf::Uint32 step);
 
     private:
-        sf::FloatRect m_localBounds;
-        sf::FloatRect m_globalBounds;
 
         sf::Vector2f m_velocity;
+        std::vector<xy::Entity*> m_collisionObjects;
+        sf::Uint32 m_stepCount; //TODO handle wrap
+        xy::Entity* m_entity;
+
+        void resolveCollision(const sf::FloatRect&, const sf::Vector2f&, xy::Entity&);
+        void killBall(xy::Entity&);
     };
 }
 #endif //NET_BALL_LOGIC_HPP_

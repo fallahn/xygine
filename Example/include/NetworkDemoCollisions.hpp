@@ -25,53 +25,35 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef COMMAND_IDS_HPP_
-#define COMMAND_IDS_HPP_
+#ifndef NET_COLLISIONS_HPP_
+#define NET_COLLISIONS_HPP_
 
-#include <xygine/MessageBus.hpp>
+#include <SFML/Graphics/Color.hpp>
 
-//-------------------//
-enum RacingCommandId
+#include <vector>
+
+namespace xy
 {
-    TrackEnt = 0x1,
-    PlayerEnt = 0x2,
-    BackgroundEnt = 0x4
+    class Scene;
+    class Entity;
+    class MessageBus;
+}
+
+class CollisionWorld
+{
+public:
+    CollisionWorld(xy::Scene&, xy::MessageBus&, sf::Color = sf::Color::White);
+    ~CollisionWorld() = default;
+
+    CollisionWorld(const CollisionWorld&) = delete;
+    CollisionWorld& operator = (const CollisionWorld&) = delete;
+
+    void addEntity(xy::Entity*);
+    void removeEntity(xy::Entity*);
+    const std::vector<xy::Entity*>& getEntities() const {return m_entities;}
+
+private:
+    std::vector<xy::Entity*> m_entities;
 };
 
-enum RacingMessageId
-{
-    TrackMessage = xy::Message::Type::Count
-};
-
-struct TrackEvent
-{
-    //const Track::Segment* playerSegment = nullptr;
-};
-//------------------//
-enum PhysicsCommandId
-{
-    CueBall = 0x1
-};
-
-enum PhysicsShaderId
-{
-    NormalMapTextured = 1,
-    NormalMapTexturedSpecular,
-    ReflectionMap
-};
-//----------------//
-
-enum NetMessageId
-{
-    PongMessage = xy::Message::Type::Count
-};
-
-struct PongEvent
-{
-    enum
-    {
-        BallDestroyed
-    }type;
-};
-
-#endif //COMMAND_IDS_HPP_
+#endif //NET_COLLISIONS_HPP_

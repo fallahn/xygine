@@ -324,7 +324,6 @@ void Entity::getVertices(std::vector<sf::Vertex>& verts)
     for (const auto& c : m_children) c->getVertices(verts);
 }
 
-//private
 sf::FloatRect Entity::globalBounds() const
 {
     sf::FloatRect bounds({}, {1.f, 1.f});
@@ -342,6 +341,21 @@ sf::FloatRect Entity::globalBounds() const
     {
         if (c->type() != Component::Type::Drawable) continue;
         auto componentBounds = c->globalBounds();
+
+        /*auto right = bounds.left + bounds.width;
+        auto componentRight = componentBounds.left + componentBounds.width;
+        if (componentRight > right)
+        {
+            bounds.width = componentRight - bounds.left;
+        }
+
+        auto bottom = bounds.top + bounds.height;
+        auto componentBottom = componentBounds.top + componentBounds.height;
+        if (componentBottom > bottom)
+        {
+            bounds.height = componentBottom - bounds.top;
+        }*/
+
         auto width = componentBounds.width + componentBounds.left;
         if (width - bounds.left > bounds.width) bounds.width = width - bounds.left;
 
@@ -351,6 +365,7 @@ sf::FloatRect Entity::globalBounds() const
     return getWorldTransform().transformRect(bounds);
 }
 
+//private
 void Entity::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.transform *= getTransform();    

@@ -34,7 +34,7 @@ using namespace NetDemo;
 namespace
 {
     const float maxMovement = 20.f;
-    const sf::Vector2f bounds(100.f, 980.f);
+    const sf::Vector2f bounds(70.f, 1010.f);
 }
 
 PlayerController::PlayerController(xy::MessageBus& mb)

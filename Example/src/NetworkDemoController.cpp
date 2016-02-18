@@ -48,7 +48,7 @@ void NetworkController::entityUpdate(xy::Entity& entity, float dt)
     }
     else
     {
-        entity.move(movement * 0.5f);
+        entity.move(movement * 0.4f);
     }
 }
 

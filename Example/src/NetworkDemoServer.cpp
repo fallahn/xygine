@@ -29,12 +29,16 @@ source distribution.
 #include <NetworkDemoBallLogic.hpp>
 #include <NetworkDemoPacketIDs.hpp>
 #include <NetworkDemoPlayerController.hpp>
+#include <CommandIds.hpp>
 
 #include <xygine/Reports.hpp>
+#include <xygine/components/SfDrawableComponent.hpp>
 
 namespace
 {
     const float snapshotInterval = 1.f / 20.f;
+    const sf::Vector2f paddleSize(20.f, 100.f);
+    const sf::Vector2f ballSize(20.f, 20.f);
 }
 
 using namespace std::placeholders;
@@ -43,12 +47,15 @@ using namespace NetDemo;
 Server::Server()
     : m_messageBus          (),
     m_scene                 (m_messageBus),
-    m_snapshotAccumulator   (0.f)
+    m_snapshotAccumulator   (0.f),
+    m_ballID                (0u),
+    m_collisionWorld        (m_scene, m_messageBus, sf::Color::Cyan)
 {
     m_packetHandler = std::bind(&Server::handlePacket, this, _1, _2, _3, _4, _5);
     m_connection.setPacketHandler(m_packetHandler);
     m_connection.setMaxClients(2);
 
+    //m_scene.drawDebug(true);
 }
 
 //public
@@ -75,7 +82,10 @@ void Server::update(float dt)
             m_scene.handleMessage(msg);
         }
 
-        m_scene.update(dt);
+        {
+            sf::Lock lock(m_connection.getMutex());
+            m_scene.update(dt);
+        }
         m_connection.update(dt);
 
         m_snapshotAccumulator += m_snapshotClock.restart().asSeconds();
@@ -87,10 +97,38 @@ void Server::update(float dt)
     }
 }
 
+void Server::drawDebug(sf::RenderTarget& rt)
+{
+    rt.draw(m_scene);
+}
+
+void Server::setDebugView(sf::View view)
+{
+    m_scene.setView(view);
+}
+
 //private
 void Server::handleMessage(const xy::Message& msg)
 {
-
+    switch (msg.id)
+    {
+    case NetMessageId::PongMessage:
+        auto msgData = msg.getData<PongEvent>();
+        switch (msgData.type)
+        {
+        case PongEvent::BallDestroyed:
+            {
+                sf::Packet packet;
+                packet << xy::PacketID(PacketID::EntityDestroyed) << m_ballID;
+                m_connection.broadcast(packet, true);
+            }
+            spawnBall();
+            break;
+        default: break;
+        }
+        break;
+    default: break;
+    }
 }
 
 void Server::sendSnapshot()
@@ -116,6 +154,22 @@ void Server::sendSnapshot()
         packet << p.entID << p.name << p.position << p.lastInputId;
     }
     m_connection.broadcast(packet);
+
+    //broadcast ball info for client reconciliation
+    xy::Command cmd;
+    cmd.entityID = m_ballID;
+    cmd.action = [this](xy::Entity& ent, float)
+    {
+        auto position = ent.getPosition();
+        auto velocity = ent.getComponent<BallLogic>()->getVelocity();
+        auto step = ent.getComponent<BallLogic>()->getCurrentStep();
+        sf::Packet packet;
+        packet << xy::PacketID(PacketID::BallUpdate);
+        packet << m_ballID << position.x << position.y << velocity.x << velocity.y << step;
+        m_connection.broadcast(packet);
+    };
+    sf::Lock lock(m_connection.getMutex());
+    m_scene.sendCommand(cmd);
 }
 
 void Server::handlePacket(const sf::IpAddress& ip, xy::PortNumber port, xy::Network::PacketType type, sf::Packet& packet, xy::Network::ServerConnection* connection)
@@ -130,7 +184,7 @@ void Server::handlePacket(const sf::IpAddress& ip, xy::PortNumber port, xy::Netw
         Player player;
         packet >> player.id;
         packet >> player.name;
-        sf::Lock(connection->getMutex());
+        sf::Lock(m_connection.getMutex());
         spawnPlayer(player);
     }
         break;
@@ -161,20 +215,31 @@ void Server::handlePacket(const sf::IpAddress& ip, xy::PortNumber port, xy::Netw
     }
 }
 
-//temp
 void Server::spawnBall()
 {
     sf::Vector2f spawnPos(960.f, 540.f);
+    
     auto ballEntity = xy::Entity::create(m_messageBus);
     ballEntity->setPosition(spawnPos);
+    
     auto ballLogic = xy::Component::create<BallLogic>(m_messageBus);
-    ballEntity->addComponent(ballLogic);
+    ballLogic->setCollisionObjects(m_collisionWorld.getEntities());
+    auto logic = ballEntity->addComponent(ballLogic);
+
+    auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
+    drawable->getDrawable().setSize(ballSize);
+    drawable->getDrawable().setOrigin(ballSize / 2.f);
+    drawable->getDrawable().setFillColor(sf::Color::Cyan);
+    ballEntity->addComponent(drawable);
+
     auto ent = m_scene.addEntity(ballEntity, xy::Scene::Layer::BackRear);
+    m_ballID = ent->getUID();
 
     sf::Packet packet;
     packet << xy::PacketID(PacketID::BallSpawned);
-    packet << ent->getUID();
+    packet << m_ballID;
     packet << spawnPos.x << spawnPos.y;
+    packet << logic->getVelocity().x << logic->getVelocity().y;
     m_connection.broadcast(packet, true);
 }
 
@@ -195,12 +260,19 @@ sf::Uint64 Server::spawnPlayer(Player& player)
     position.x = (player.number == 1) ? 180.f : 1920 - 180.f;
 
     auto playerEntity = xy::Entity::create(m_messageBus);
+    playerEntity->setPosition(position);
     player.entID = playerEntity->getUID();
     
     auto playerController = xy::Component::create<PlayerController>(m_messageBus);
     playerEntity->addComponent(playerController);
 
-    m_scene.addEntity(playerEntity, xy::Scene::Layer::BackRear);
+    auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
+    drawable->getDrawable().setSize(paddleSize);
+    drawable->getDrawable().setOrigin(paddleSize / 2.f);
+    drawable->getDrawable().setFillColor(sf::Color::Cyan);
+    playerEntity->addComponent(drawable);
+
+    m_collisionWorld.addEntity(m_scene.addEntity(playerEntity, xy::Scene::Layer::BackRear));
 
     sf::Packet packet;
     packet << xy::PacketID(PacketID::PlayerSpawned);

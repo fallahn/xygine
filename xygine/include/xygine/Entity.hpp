@@ -351,7 +351,15 @@ namespace xy
         Used by the Scene class when drawing debug output
         */
         void getVertices(std::vector<sf::Vertex>&);
-
+        /*!
+        \brief Returns the sum global bounds of the entity
+        composed of the AABBs of all of its drawables (if any).
+        Can be used in collision detection, and is used by the
+        Scene class to draw debug output. Requires custom
+        drawable components to override the globalBounds function
+        to return the drawable's AABB relative to its parent entity
+        */
+        sf::FloatRect globalBounds() const;
     private:
 
         bool m_destroyed;
@@ -368,7 +376,7 @@ namespace xy
         Entity* m_parent;
         Scene* m_scene;
 
-        sf::FloatRect globalBounds() const;
+        
 
         void draw(sf::RenderTarget& rt, sf::RenderStates state) const override;
         void drawSelf(sf::RenderTarget&, sf::RenderStates) const;

@@ -36,8 +36,10 @@ namespace NetDemo
     {
         //ent count, ent ID, float x, float y
         PositionUpdate = xy::Network::PacketType::Count + 1,
-        //ent ID, float x, float y
+        //ent ID, float x, float y, float velX, float velY
         BallSpawned,
+        //ent ID, float x, floay y, float velX, float velY, step
+        BallUpdate,
         //player id, ent id, position x, position y
         PlayerSpawned,
         //player id, player name
@@ -45,7 +47,9 @@ namespace NetDemo
         //input struct
         PlayerInput,
         //player count, ent ID, name, position, last input id
-        PlayerUpdate
+        PlayerUpdate,
+        //ent id
+        EntityDestroyed
     };
 }
 #endif //NET_PACKET_IDS_HPP_

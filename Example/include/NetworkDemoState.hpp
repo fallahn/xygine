@@ -37,6 +37,7 @@ source distribution.
 #include <StateIds.hpp>
 #include <NetworkDemoServer.hpp>
 #include <NetworkDemoPlayerInput.hpp>
+#include <NetworkDemoCollisions.hpp>
 
 #include <SFML/Graphics/Text.hpp>
 
@@ -66,14 +67,17 @@ private:
     sf::Text m_reportText;
     xy::MessageBus& m_messageBus;
     xy::Scene m_scene;    
+    CollisionWorld m_collisionWorld;
 
     NetDemo::Input m_playerInput;
+
+    std::vector<sf::Uint64> m_spawnedIDs;
 
     xy::UI::Container m_menu;
     void buildMenu();
     void handlePacket(xy::Network::PacketType, sf::Packet&, xy::Network::ClientConnection*);
 
-    void spawnBall(sf::Uint64 id, sf::Vector2f position);
+    void spawnBall(sf::Uint64 id, sf::Vector2f position, sf::Vector2f velocity);
     void spawnPlayer(xy::ClientID, sf::Uint64, sf::Vector2f);
 };
 

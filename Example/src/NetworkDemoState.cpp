@@ -29,6 +29,7 @@ source distribution.
 #include <NetworkDemoPacketIDs.hpp>
 #include <NetworkDemoController.hpp>
 #include <NetworkDemoPlayerController.hpp>
+#include <NetworkDemoBallLogic.hpp>
 
 #include <xygine/App.hpp>
 #include <xygine/Reports.hpp>
@@ -51,9 +52,10 @@ using namespace std::placeholders;
 using namespace NetDemo;
 
 NetworkDemoState::NetworkDemoState(xy::StateStack& stack, Context context)
-    : State(stack, context),
-    m_messageBus(context.appInstance.getMessageBus()),
-    m_scene(m_messageBus)
+    : State             (stack, context),
+    m_messageBus        (context.appInstance.getMessageBus()),
+    m_scene             (m_messageBus),
+    m_collisionWorld    (m_scene, m_messageBus)
 {
     launchLoadingScreen();
     buildMenu();
@@ -67,6 +69,8 @@ NetworkDemoState::NetworkDemoState(xy::StateStack& stack, Context context)
     auto pp = xy::PostProcess::create<xy::PostChromeAb>();
     m_scene.addPostProcess(pp);
     m_scene.setView(context.defaultView);
+
+    m_server.setDebugView(context.defaultView);
 
     quitLoadingScreen();
 }
@@ -152,9 +156,11 @@ void NetworkDemoState::draw()
     auto& rw = getContext().renderWindow;
 
     rw.draw(m_scene);
+
+    //m_server.drawDebug(rw);    
+
     rw.setView(getContext().defaultView);
     rw.draw(m_menu);
-
     rw.draw(m_reportText);
 }
 
@@ -216,11 +222,28 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
     case PacketID::BallSpawned:
     {
         sf::Uint64 id;
-        float x, y;
-        packet >> id >> x >> y;
-        spawnBall(id, { x,y });
+        sf::Vector2f pos, vel;
+        packet >> id >> pos.x >> pos.y >> vel.x >> vel.y;
+        spawnBall(id, pos, vel);
     }
         break;
+    case PacketID::BallUpdate:
+    {
+        sf::Uint64 entid;
+        sf::Vector2f pos, vel;
+        sf::Uint32 step;
+        packet >> entid >> pos.x >> pos.y >> vel.x >> vel.y >> step;
+
+        xy::Command cmd;
+        cmd.entityID = entid;
+        cmd.action = [pos, vel, step](xy::Entity& entity, float)
+        {
+            entity.getComponent<BallLogic>()->reconcile(pos, vel, step);
+        };
+        sf::Lock lock(m_connection.getMutex());
+        m_scene.sendCommand(cmd);
+    }
+    break;
     case PacketID::PlayerSpawned:       
     {
         xy::ClientID clid;
@@ -232,29 +255,29 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         break;
     case PacketID::PositionUpdate:
     {
-        sf::Uint8 count;
-        packet >> count;
+        //sf::Uint8 count;
+        //packet >> count;
 
-        sf::Uint64 id;
-        float x, y;
+        //sf::Uint64 id;
+        //float x, y;
 
-        sf::Lock lock(m_connection.getMutex());
-        while(count--)
-        {
-            packet >> id >> x >> y;
+        //sf::Lock lock(m_connection.getMutex());
+        //while(count--)
+        //{
+        //    packet >> id >> x >> y;
 
-            //don't send to local player
-            if (id == playerEntID) continue;
+        //    //don't send to local player
+        //    if (id == playerEntID) continue;
 
-            xy::Command cmd;
-            cmd.entityID = id;
+        //    xy::Command cmd;
+        //    cmd.entityID = id;
 
-            cmd.action = [x, y](xy::Entity& entity, float)
-            {
-                entity.getComponent<NetworkController>()->setDestination({ x, y });
-            };
-            m_scene.sendCommand(cmd);
-        }
+        //    cmd.action = [x, y](xy::Entity& entity, float)
+        //    {
+        //        entity.getComponent<NetworkController>()->setDestination({ x, y });
+        //    };
+        //    m_scene.sendCommand(cmd);
+        //}
     }
         break;
     case PacketID::PlayerUpdate:
@@ -286,46 +309,66 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         }
     }
     break;
+    case PacketID::EntityDestroyed:
+    {
+        sf::Uint64 entid;
+        packet >> entid;
+
+        sf::Lock lock(m_connection.getMutex());
+        auto result = std::find(m_spawnedIDs.begin(), m_spawnedIDs.end(), entid);
+        if (result != m_spawnedIDs.end())
+        {
+            xy::Command cmd;
+            cmd.entityID = entid;
+            cmd.action = [](xy::Entity& entity, float)
+            {
+                entity.destroy();
+            };
+            m_scene.sendCommand(cmd);
+            m_spawnedIDs.erase(result);
+        }
+    }
+    break;
     }
 }
 
 namespace
 {
-    bool ballSpawned = false;
-    bool p1Spawned = false;
-    bool p2Spawned = false;
     const sf::Vector2f paddleSize(20.f, 100.f);
 }
 
-void NetworkDemoState::spawnBall(sf::Uint64 id, sf::Vector2f position)
+void NetworkDemoState::spawnBall(sf::Uint64 id, sf::Vector2f position, sf::Vector2f velocity)
 {
-    //TODO make this neater
-    if (ballSpawned) return;
+    if (std::find(m_spawnedIDs.begin(), m_spawnedIDs.end(), id) != m_spawnedIDs.end()) return;
 
     auto shape = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
     shape->getDrawable().setSize({ 20.f, 20.f });
     shape->getDrawable().setOrigin({ 10.f, 10.f });
 
-    auto controller = xy::Component::create<NetworkController>(m_messageBus);
+    //auto controller = xy::Component::create<NetworkController>(m_messageBus);
 
     auto ent = xy::Entity::create(m_messageBus);
     ent->setWorldPosition(position);
     ent->setUID(id);
     ent->addComponent(shape);
+    //ent->addComponent(controller);
+
+    auto controller = xy::Component::create<BallLogic>(m_messageBus);
+    controller->setCollisionObjects(m_collisionWorld.getEntities());
+    controller->setVelocity(velocity);
     ent->addComponent(controller);
 
     m_scene.addEntity(ent, xy::Scene::Layer::FrontMiddle);
 
-    ballSpawned = true;
+    m_spawnedIDs.push_back(id);
 }
 
 void NetworkDemoState::spawnPlayer(xy::ClientID clid, sf::Uint64 entid, sf::Vector2f position)
 {
+    if (std::find(m_spawnedIDs.begin(), m_spawnedIDs.end(), entid) != m_spawnedIDs.end()) return;
     if (clid == m_connection.getClientID())
     {
-        if (p1Spawned) return;
         //spawn a local player
-
         auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
         drawable->getDrawable().setSize(paddleSize);
         drawable->getDrawable().setOrigin(paddleSize / 2.f);
@@ -338,14 +381,14 @@ void NetworkDemoState::spawnPlayer(xy::ClientID clid, sf::Uint64 entid, sf::Vect
         entity->addComponent(drawable);
         entity->addComponent(controller);
 
-        m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
+        m_collisionWorld.addEntity(m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle));
 
         playerEntID = entid;
-        p1Spawned = true;
+        
     }
     else
     {
-        if (p2Spawned) return;
         //spawn remote player
     }
+    m_spawnedIDs.push_back(entid);
 }

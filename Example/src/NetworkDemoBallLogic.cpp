@@ -26,13 +26,16 @@ source distribution.
 *********************************************************************/
 
 #include <NetworkDemoBallLogic.hpp>
+#include <CommandIds.hpp>
 
 #include <xygine/Entity.hpp>
 #include <xygine/util/Vector.hpp>
+#include <xygine/util/Random.hpp>
+#include <xygine/Reports.hpp>
 
 namespace
 {
-    const float speed = 600.f;
+    float speed = 800.f;
     const sf::Vector2f playArea(1920.f, 1080.f);
 }
 
@@ -40,26 +43,109 @@ using namespace NetDemo;
 
 BallLogic::BallLogic(xy::MessageBus& mb)
     : xy::Component (mb, this),
-    m_localBounds   (-10.f, -10.f, 20.f, 20.f),
-    m_velocity      (0.f, 1.f)
+    //m_localBounds   (-10.f, -10.f, 20.f, 20.f),
+    m_velocity      (xy::Util::Random::value(-1.f, 1.f), xy::Util::Random::value(-1.f, 1.f)),
+    m_stepCount     (0u),
+    m_entity        (nullptr)
 {
-
+    m_velocity = xy::Util::Vector::normalise(m_velocity);
 }
 
 //public
 void BallLogic::entityUpdate(xy::Entity& entity, float dt)
 {
+    m_stepCount++;
+    
     entity.move(m_velocity * speed * dt);
 
-    auto pos = entity.getWorldPosition();
-    if (pos.y < 0 || pos.y > playArea.y)
+    static const sf::Uint8 steps = 8u;
+    //float moveSpeed = speed * dt;
+    //for (auto i = 0u; i < steps; ++i)
     {
-        m_velocity = xy::Util::Vector::reflect(m_velocity, { 0.f, 1.f });
+        //entity.move(m_velocity * (moveSpeed / steps));
+        auto bounds = entity.globalBounds();
+        for (const auto e : m_collisionObjects)
+        {
+            sf::FloatRect collision;
+            if (bounds.intersects(e->globalBounds(), collision))
+            {
+                auto normal = e->getPosition() - entity.getPosition();
+                resolveCollision(collision, normal, entity);
+                break; //only one collision at a time
+            }
+        }
     }
-    m_globalBounds = entity.getWorldTransform().transformRect(m_localBounds);
+
+    //speed += 10 * dt;
+    //REPORT("Speed", std::to_string(speed));
+
+    //check score area, destroy / message if true
+    auto position = entity.getPosition();
+    if (position.x < 0)
+    {
+        //player 2 score
+        killBall(entity);
+    }
+    else if (position.x > 1920)
+    {
+        //player 1 score
+        killBall(entity);
+    }
 }
 
-sf::FloatRect BallLogic::globalBounds() const
+void BallLogic::onStart(xy::Entity& entity)
 {
-    return m_globalBounds;
+    m_entity = &entity;
+}
+
+void BallLogic::setCollisionObjects(const std::vector<xy::Entity*>& objs)
+{
+    m_collisionObjects = objs;
+}
+
+sf::Vector2f BallLogic::getPosition() const
+{
+    XY_ASSERT(m_entity, "Entity is nullptr");
+    return m_entity->getPosition();
+}
+
+void BallLogic::reconcile(const sf::Vector2f& position, const sf::Vector2f& velocity, sf::Uint32 stepCount)
+{
+    auto destCount = m_stepCount;
+    m_stepCount = stepCount;
+    m_velocity = velocity;
+    m_entity->setPosition(position);
+
+    while (m_stepCount < destCount)
+    {
+        entityUpdate(*m_entity, 1/60.f); //TODO log delta times (we can do this locally)
+    }
+}
+
+//private
+void BallLogic::resolveCollision(const sf::FloatRect& intersection, const sf::Vector2f& collisionNormal, xy::Entity& entity)
+{
+    sf::Vector2f normal;
+    float penetration = 0.f;
+
+    if (intersection.width < intersection.height)
+    {
+        normal.x = (collisionNormal.x < 0) ? -1.f : 1.f;
+        penetration = intersection.width;
+    }
+    else
+    {
+        normal.y = (collisionNormal.y < 0) ? -1.f : 1.f;
+        penetration = intersection.height;
+    }
+
+    //entity.move(normal * penetration);
+    m_velocity = xy::Util::Vector::reflect(m_velocity, normal);
+}
+
+void BallLogic::killBall(xy::Entity& entity)
+{
+    entity.destroy();
+    auto msg = sendMessage<PongEvent>(NetMessageId::PongMessage);
+    msg->type = PongEvent::BallDestroyed;
 }
