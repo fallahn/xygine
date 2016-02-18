@@ -112,7 +112,9 @@ void Server::handleMessage(const xy::Message& msg)
 {
     switch (msg.id)
     {
+    default: break;
     case NetMessageId::PongMessage:
+    {
         auto msgData = msg.getData<PongEvent>();
         switch (msgData.type)
         {
@@ -127,7 +129,7 @@ void Server::handleMessage(const xy::Message& msg)
         default: break;
         }
         break;
-    default: break;
+    }
     }
 }
 
