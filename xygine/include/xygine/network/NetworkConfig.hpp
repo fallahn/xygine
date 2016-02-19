@@ -39,15 +39,14 @@ namespace xy
 {
     namespace Network
     {
-        //make this a class to enforce 1 byte encoding when
-        //putting into a packet
-        //enum class PacketType: sf::Int8
+        //need to enforce sending IDs as a single byte
         enum PacketType
         {
             Disconnect = -1,
             Connect,
             HeartBeat,
             ServerFull,
+            ClientLeft, //<followed by client ID
             Count
         };
 

@@ -50,6 +50,7 @@ namespace NetDemo
         sf::Uint32 getCurrentStep() const { return m_stepCount; }
 
         void reconcile(const sf::Vector2f& position, const sf::Vector2f& velocity, sf::Uint32 step);
+        void clearHistory() { m_deltaHistory.clear(); }
 
     private:
 
@@ -57,6 +58,7 @@ namespace NetDemo
         std::vector<xy::Entity*> m_collisionObjects;
         sf::Uint32 m_stepCount; //TODO handle wrap
         xy::Entity* m_entity;
+        std::vector<float> m_deltaHistory;
 
         void resolveCollision(const sf::FloatRect&, const sf::Vector2f&, xy::Entity&);
         void killBall(xy::Entity&);

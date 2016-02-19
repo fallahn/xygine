@@ -37,6 +37,7 @@ namespace
 {
     float speed = 800.f;
     const sf::Vector2f playArea(1920.f, 1080.f);
+    const std::size_t deltaReservation = 240;
 }
 
 using namespace NetDemo;
@@ -49,32 +50,29 @@ BallLogic::BallLogic(xy::MessageBus& mb)
     m_entity        (nullptr)
 {
     m_velocity = xy::Util::Vector::normalise(m_velocity);
+    m_deltaHistory.reserve(deltaReservation);
 }
 
 //public
 void BallLogic::entityUpdate(xy::Entity& entity, float dt)
 {
     m_stepCount++;
+    m_deltaHistory.push_back(dt);
     
     entity.move(m_velocity * speed * dt);
 
-    static const sf::Uint8 steps = 8u;
-    //float moveSpeed = speed * dt;
-    //for (auto i = 0u; i < steps; ++i)
+    auto bounds = entity.globalBounds();
+    for (const auto e : m_collisionObjects)
     {
-        //entity.move(m_velocity * (moveSpeed / steps));
-        auto bounds = entity.globalBounds();
-        for (const auto e : m_collisionObjects)
+        sf::FloatRect collision;
+        if (bounds.intersects(e->globalBounds(), collision))
         {
-            sf::FloatRect collision;
-            if (bounds.intersects(e->globalBounds(), collision))
-            {
-                auto normal = e->getPosition() - entity.getPosition();
-                resolveCollision(collision, normal, entity);
-                break; //only one collision at a time
-            }
+            auto normal = e->getPosition() - entity.getPosition();
+            resolveCollision(collision, normal, entity);
+            break; //only one collision at a time
         }
     }
+
 
     //speed += 10 * dt;
     //REPORT("Speed", std::to_string(speed));
@@ -118,8 +116,12 @@ void BallLogic::reconcile(const sf::Vector2f& position, const sf::Vector2f& velo
 
     while (m_stepCount < destCount)
     {
-        entityUpdate(*m_entity, 1/60.f); //TODO log delta times (we can do this locally)
+        entityUpdate(*m_entity, m_deltaHistory[m_stepCount - stepCount]);
     }
+
+    std::vector<float> newVec;
+    std::swap(newVec, m_deltaHistory);
+    m_deltaHistory.reserve(deltaReservation);
 }
 
 //private
@@ -130,16 +132,17 @@ void BallLogic::resolveCollision(const sf::FloatRect& intersection, const sf::Ve
 
     if (intersection.width < intersection.height)
     {
-        normal.x = (collisionNormal.x < 0) ? -1.f : 1.f;
+        normal.x = (collisionNormal.x < 0) ? 1.f : -1.f;
         penetration = intersection.width;
     }
     else
     {
-        normal.y = (collisionNormal.y < 0) ? -1.f : 1.f;
+        normal.y = (collisionNormal.y < 0) ? 1.f : -1.f;
         penetration = intersection.height;
     }
 
-    //entity.move(normal * penetration);
+    entity.move(normal * penetration);
+    //REPORT("Normal", std::to_string(normal.x) + ", " + std::to_string(normal.y));
     m_velocity = xy::Util::Vector::reflect(m_velocity, normal);
 }
 

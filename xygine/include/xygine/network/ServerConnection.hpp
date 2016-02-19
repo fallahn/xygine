@@ -185,8 +185,9 @@ namespace xy
             void disconnectAll();
             /*!
             \brief Starts the connection listening for incoming client connections
+            \param PortNumber Port to start listening for incoming connections on.
             */
-            bool start();
+            bool start(PortNumber = sf::Uint16(Network::ServerPort));
             /*!
             \brief Stops the connection listening for incoming client connections
             and disconnects all existing clients
@@ -220,6 +221,7 @@ namespace xy
             of the handler's thread.
             */
             sf::Mutex& getMutex() { return m_mutex; }
+
         private:
 
             using ClientList = std::unordered_map<ClientID, ClientInfo>;

@@ -163,8 +163,11 @@ void Server::sendSnapshot()
     cmd.action = [this](xy::Entity& ent, float)
     {
         auto position = ent.getPosition();
-        auto velocity = ent.getComponent<BallLogic>()->getVelocity();
-        auto step = ent.getComponent<BallLogic>()->getCurrentStep();
+        auto component = ent.getComponent<BallLogic>();
+        auto velocity = component->getVelocity();
+        auto step = component->getCurrentStep();
+        component->clearHistory();
+
         sf::Packet packet;
         packet << xy::PacketID(PacketID::BallUpdate);
         packet << m_ballID << position.x << position.y << velocity.x << velocity.y << step;

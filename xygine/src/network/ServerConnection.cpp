@@ -263,9 +263,9 @@ void ServerConnection::disconnectAll()
     }
 }
 
-bool ServerConnection::start()
+bool ServerConnection::start(PortNumber port)
 {
-    if (m_incomingSocket.bind(sf::Uint16(Network::ServerPort)) != sf::Socket::Done)
+    if (m_incomingSocket.bind(port) != sf::Socket::Done)
     {
         return false;
     }
@@ -329,13 +329,19 @@ void ServerConnection::update(float dt)
             //remove timeouts
             if (elapsedTime > CLIENT_TIMEOUT || it->second.heartbeatRetry > HEARTBEAT_RETRIES)
             {
-                LOG("SERVER - Client " + std::to_string(it->first) + " has timed out", xy::Logger::Type::Info);
+                auto clid = it->first;
+                LOG("SERVER - Client " + std::to_string(clid) + " has timed out", xy::Logger::Type::Info);
                 if (m_timoutHandler)
                 {
                     m_timoutHandler(it->first);
                 }
                 it = m_clients.erase(it);
-                //TODO broadcast client leaving notification
+                
+                //broadcast client leaving notification (could use a reason flag?)
+                sf::Packet packet;
+                packet << PacketID(PacketType::ClientLeft) << clid;
+                broadcast(packet, true);
+
                 continue;
             }
 
@@ -359,8 +365,8 @@ void ServerConnection::update(float dt)
                 m_totalBytesSent += heartbeat.getDataSize();
             }
 
-            it->second.ackSystem->update(dt);
             it->second.attemptResends(it->first, *this);
+            it->second.ackSystem->update(dt);           
         }
         ++it;
     }
@@ -434,12 +440,14 @@ void ServerConnection::listen()
         auto clientID = getClientID(ip, port);
         if (clientID != NullID)
         {
+            //REPORT("SERVER header", std::to_string(header.ack));
+
             sf::Lock lock(m_mutex);
             m_clients[clientID].ackSystem->packetReceived(header, packet.getDataSize());
             //TODO discard this packet if it's older than the newest rx'd?
-            /*REPORT("SERVER sent", std::to_string(m_clients[clientID].ackSystem->getSentPacketCount()));
-            REPORT("SERVER acked", std::to_string(m_clients[clientID].ackSystem->getAckedPacketCount()));
-            REPORT("SERVER lost", std::to_string(m_clients[clientID].ackSystem->getLostPacketCount()));*/
+            //REPORT("SERVER sent", std::to_string(m_clients[clientID].ackSystem->getSentPacketCount()));
+            //REPORT("SERVER acked", std::to_string(m_clients[clientID].ackSystem->getAckedPacketCount()));
+            /*REPORT("SERVER lost", std::to_string(m_clients[clientID].ackSystem->getLostPacketCount()));*/
         }
 
         //REPORT("incoming ack", std::to_string(header.ack));
@@ -476,9 +484,10 @@ void ServerConnection::handlePacket(const sf::IpAddress& ip, PortNumber port, Pa
         case PacketType::Disconnect:
             {
                 removeClient(ip, port);
-                /*broadcast(p, clientID);*/
-                //TODO add generic 'client left' packet so other clients
-                //can choose how to act upon it
+                sf::Packet p;
+                p << PacketID(PacketType::ClientLeft);
+                p << clientID;
+                broadcast(p, true);
                 return;
             }
         case PacketType::HeartBeat:
@@ -538,6 +547,7 @@ void ServerConnection::handlePacket(const sf::IpAddress& ip, PortNumber port, Pa
 void ServerConnection::ClientInfo::attemptResends(ClientID clid, ServerConnection& connection)
 {
     const auto& acks = ackSystem->getAcks();
+    //REPORT("SERVER ack count", std::to_string(acks.size()));
     for (auto it = resendAttempts.begin(); it != resendAttempts.end();)
     {
         if (std::find_if(acks.begin(), acks.end(), [it](const auto& ack){return it->id == ack;}) != acks.end())
