@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_NET_CLIENT_HPP_
 #define XY_NET_CLIENT_HPP_
 
-#include <xygine/network/NetworkConfig.hpp>
+#include <xygine/network/Config.hpp>
 #include <xygine/network/AckSystem.hpp>
 #include <xygine/network/FlowControl.hpp>
 

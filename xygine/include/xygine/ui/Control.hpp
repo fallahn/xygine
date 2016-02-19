@@ -45,6 +45,9 @@ namespace sf
 
 namespace xy
 {
+    /*!
+    \brief Controls from which xygine's UI objects are composed
+    */
     namespace UI
     {
         using Index = std::size_t;

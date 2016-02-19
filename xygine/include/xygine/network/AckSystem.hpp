@@ -36,6 +36,9 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Networking associated classes
+    */
     namespace Network
     {
         /*!

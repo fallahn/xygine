@@ -30,6 +30,7 @@ source distribution.
 #include <xygine/Log.hpp>
 #include <xygine/Reports.hpp>
 #include <xygine/Assert.hpp>
+#include <xygine/MessageBus.hpp>
 
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Clock.hpp>
@@ -47,13 +48,14 @@ namespace
 using namespace xy;
 using namespace xy::Network;
 
-ServerConnection::ServerConnection()
+ServerConnection::ServerConnection(MessageBus& mb)
     : m_lastClientID    (-1),
     m_maxClients        (4u),
     m_running           (false),
     m_listenThread      (&ServerConnection::listen, this),
     m_totalBytesSent    (0u),
-    m_totalBytesReceived(0u)
+    m_totalBytesReceived(0u),
+    m_messageBus        (mb)
 {
 
 }
@@ -171,13 +173,21 @@ ClientID ServerConnection::addClient(const sf::IpAddress& ip, PortNumber port)
         }
     }
 
-    //TODO broadcast a client has joined
-
     //create new client
     ClientID id = m_lastClientID++;
     ClientInfo clientInfo(ip, port, m_serverTime);
     m_clients.emplace(id, std::move(clientInfo));
     LOG("SERVER - Added client with ID: " + std::to_string(id) + " on port: " + std::to_string(port), xy::Logger::Type::Info);
+
+    //broadcast a client has joined
+    sf::Packet packet;
+    packet << PacketID(PacketType::ClientJoined) << id;
+    broadcast(packet, true);
+
+    auto msg = m_messageBus.post<xy::Message::NetworkEvent>(xy::Message::NetworkMessage);
+    msg->action = Message::NetworkEvent::ConnectionAdded;
+    msg->clientID = id;
+
     return id;
 }
 
@@ -230,6 +240,17 @@ bool ServerConnection::removeClient(ClientID id)
     packet << PacketID(PacketType::Disconnect);
     send(id, packet, true);
     m_clients.erase(result);
+
+    //notify everyone else client left
+    packet.clear();
+    packet << PacketID(PacketType::ClientLeft);
+    packet << id;
+    broadcast(packet, true);
+
+    auto msg = m_messageBus.post<xy::Message::NetworkEvent>(xy::Message::NetworkMessage);
+    msg->action = xy::Message::NetworkEvent::ConnectionRemoved;
+    msg->clientID = id;
+
     return true;
 }
 
@@ -240,10 +261,23 @@ bool ServerConnection::removeClient(const sf::IpAddress& ip, PortNumber port)
     {
         if (it->second.ipAddress == ip && it->second.portNumber == port)
         {
+            auto clientID = it->first;
+            
             sf::Packet packet;
             packet << PacketID(PacketType::Disconnect);
-            send(it->first, packet, true); //again no guarentee of delivery
+            send(it->first, packet, true);
             m_clients.erase(it);
+
+            //notify everyone else client left
+            packet.clear();
+            packet << PacketID(PacketType::ClientLeft);
+            packet << clientID;
+            broadcast(packet, true);
+
+            auto msg = m_messageBus.post<xy::Message::NetworkEvent>(xy::Message::NetworkMessage);
+            msg->action = xy::Message::NetworkEvent::ConnectionRemoved;
+            msg->clientID = clientID;
+
             return true;
         }
     }
@@ -341,6 +375,10 @@ void ServerConnection::update(float dt)
                 sf::Packet packet;
                 packet << PacketID(PacketType::ClientLeft) << clid;
                 broadcast(packet, true);
+
+                auto msg = m_messageBus.post<xy::Message::NetworkEvent>(xy::Message::NetworkMessage);
+                msg->action = xy::Message::NetworkEvent::ConnectionRemoved;
+                msg->clientID = clid;
 
                 continue;
             }
@@ -484,10 +522,6 @@ void ServerConnection::handlePacket(const sf::IpAddress& ip, PortNumber port, Pa
         case PacketType::Disconnect:
             {
                 removeClient(ip, port);
-                sf::Packet p;
-                p << PacketID(PacketType::ClientLeft);
-                p << clientID;
-                broadcast(p, true);
                 return;
             }
         case PacketType::HeartBeat:

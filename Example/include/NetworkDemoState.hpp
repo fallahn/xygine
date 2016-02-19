@@ -57,6 +57,15 @@ public:
 
 private:
 
+    struct PlayerInfo final
+    {
+        sf::Uint64 entID = 0;
+        std::string name;
+        sf::Uint32 score = 0;
+        xy::ClientID clid = -1;
+    };
+    std::array<PlayerInfo, 2u> m_players; //local player always first
+
     Server m_server;
     xy::Network::ClientConnection m_connection;
     xy::Network::ClientConnection::PacketHandler m_packetHandler;
@@ -73,6 +82,7 @@ private:
 
     std::vector<sf::Uint64> m_spawnedIDs;
 
+    xy::UI::Container m_waitingSign;
     xy::UI::Container m_menu;
     void buildMenu();
     void handlePacket(xy::Network::PacketType, sf::Packet&, xy::Network::ClientConnection*);

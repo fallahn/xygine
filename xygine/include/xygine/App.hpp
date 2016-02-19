@@ -49,6 +49,9 @@ Explanations of systems and examples can be found on the <a href="https://github
 
 #include <functional>
 
+/*!
+\brief Main xygine namespace
+*/
 namespace xy
 {   
     /*!

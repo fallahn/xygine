@@ -52,6 +52,9 @@ source distribution.
 namespace xy
 {
     class MessageBus;
+    /*!
+    \brief Classes relating to xygine's physics binding
+    */
     namespace Physics
     {
         class Joint;

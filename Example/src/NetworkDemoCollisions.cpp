@@ -55,15 +55,15 @@ CollisionWorld::CollisionWorld(xy::Scene& scene, xy::MessageBus& messageBus, sf:
 
 
     //delete this when multiplayering
-    drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(messageBus);
-    drawable->getDrawable().setSize({ 20.f, 1080.f });
-    drawable->getDrawable().setFillColor(colour);
+    //drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(messageBus);
+    //drawable->getDrawable().setSize({ 20.f, 1080.f });
+    //drawable->getDrawable().setFillColor(colour);
 
-    entity = xy::Entity::create(messageBus);
-    entity->setPosition(1900.f, 0.f);
-    entity->addComponent(drawable);
+    //entity = xy::Entity::create(messageBus);
+    //entity->setPosition(1900.f, 0.f);
+    //entity->addComponent(drawable);
 
-    m_entities.push_back(scene.addEntity(entity, xy::Scene::Layer::BackRear));
+    //m_entities.push_back(scene.addEntity(entity, xy::Scene::Layer::BackRear));
 }
 
 void CollisionWorld::addEntity(xy::Entity* entity)

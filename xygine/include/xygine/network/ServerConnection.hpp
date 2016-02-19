@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_SERVER_HPP_
 #define XY_SERVER_HPP_
 
-#include <xygine/network/NetworkConfig.hpp>
+#include <xygine/network/Config.hpp>
 #include <xygine/network/AckSystem.hpp>
 
 #include <SFML/System/Time.hpp>
@@ -42,6 +42,7 @@ source distribution.
 
 namespace xy
 {
+    class MessageBus;
     namespace Network
     {
         /*!
@@ -101,7 +102,7 @@ namespace xy
             */
             using TimeoutHandler = std::function<void(ClientID)>;
 
-            ServerConnection();
+            explicit ServerConnection(MessageBus&);
             ~ServerConnection();
 
             ServerConnection(const ServerConnection&) = delete;
@@ -245,6 +246,8 @@ namespace xy
 
             std::atomic<size_t> m_totalBytesSent;
             std::atomic<size_t> m_totalBytesReceived;
+
+            xy::MessageBus& m_messageBus;
 
             void listen();
 

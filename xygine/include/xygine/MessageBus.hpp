@@ -41,6 +41,7 @@ source distribution.
 #include <xygine/State.hpp>
 #include <xygine/Difficulty.hpp>
 #include <xygine/Assert.hpp>
+#include <xygine/network/Config.hpp>
 
 #include <SFML/Config.hpp>
 
@@ -150,7 +151,7 @@ namespace xy
             Difficulty difficulty;
         };
         /*!
-        \brief Compnent event message data
+        \brief Component event message data
         */
         struct ComponentEvent
         {
@@ -161,20 +162,17 @@ namespace xy
             sf::Uint64 entityId = 0;
             Component* ptr = nullptr;
         };
-
+        /*!
+        \brief Network connection message data
+        */
         struct NetworkEvent
         {
             enum
             {
-                RequestStartServer,
-                RequestJoinServer,
-                RequestDisconnect,
-                RequestWorldState,
-                ConnectSuccess,
-                ConnectFail,
-                StartReady
+                ConnectionAdded,
+                ConnectionRemoved
             }action;
-            StateId stateID = -1;
+            ClientID clientID = -1;
         };
 
         Id id = -1;

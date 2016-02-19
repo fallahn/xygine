@@ -227,7 +227,7 @@
     <ClInclude Include="include\xygine\network\AckSystem.hpp" />
     <ClInclude Include="include\xygine\network\ClientConnection.hpp" />
     <ClInclude Include="include\xygine\network\FlowControl.hpp" />
-    <ClInclude Include="include\xygine\network\NetworkConfig.hpp" />
+    <ClInclude Include="include\xygine\network\Config.hpp" />
     <ClInclude Include="include\xygine\network\PacketQueue.hpp" />
     <ClInclude Include="include\xygine\network\ServerConnection.hpp" />
     <ClInclude Include="include\xygine\parsers\picojson.h" />

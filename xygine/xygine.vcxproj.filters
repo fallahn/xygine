@@ -593,13 +593,13 @@
     <ClInclude Include="include\xygine\network\FlowControl.hpp">
       <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\network\NetworkConfig.hpp">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
     <ClInclude Include="include\xygine\network\PacketQueue.hpp">
       <Filter>Header Files\network</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\network\ServerConnection.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\network\Config.hpp">
       <Filter>Header Files\network</Filter>
     </ClInclude>
   </ItemGroup>

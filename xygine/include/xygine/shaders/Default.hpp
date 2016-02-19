@@ -32,6 +32,9 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Strings making up built in shader sources
+    */
     namespace Shader
     {
         enum Type

@@ -39,6 +39,9 @@ namespace
     const float snapshotInterval = 1.f / 20.f;
     const sf::Vector2f paddleSize(20.f, 100.f);
     const sf::Vector2f ballSize(20.f, 20.f);
+
+    const sf::Vector2f playerOneSpawn(180.f, 540.f);
+    const sf::Vector2f playerTwoSpawn(1920.f - 180.f, 540.f);
 }
 
 using namespace std::placeholders;
@@ -47,6 +50,7 @@ using namespace NetDemo;
 Server::Server()
     : m_messageBus          (),
     m_scene                 (m_messageBus),
+    m_connection            (m_messageBus),
     m_snapshotAccumulator   (0.f),
     m_ballID                (0u),
     m_collisionWorld        (m_scene, m_messageBus, sf::Color::Cyan)
@@ -130,6 +134,44 @@ void Server::handleMessage(const xy::Message& msg)
         }
         break;
     }
+    break;
+    case xy::Message::NetworkMessage:
+    {
+        auto& msgData = msg.getData<xy::Message::NetworkEvent>();
+        switch (msgData.action)
+        {
+        case xy::Message::NetworkEvent::ConnectionAdded:
+
+            break;
+        case xy::Message::NetworkEvent::ConnectionRemoved:
+        {
+            auto clid = msgData.clientID;
+            auto result = std::find_if(m_players.begin(), m_players.end(), 
+                [clid](const Player& player)
+            {
+                return (player.id == clid);
+            });
+
+            if (result != m_players.end())
+            {
+                xy::Command cmd;
+                cmd.entityID = result->entID;
+                cmd.action = [](xy::Entity& entity, float)
+                {
+                    entity.destroy();
+                };
+                sf::Lock lock(m_connection.getMutex());
+                m_scene.sendCommand(cmd);
+
+                m_players.erase(result);
+            }
+        }
+            break;
+        default: break;
+        }
+
+    }
+    break;
     }
 }
 
@@ -148,12 +190,12 @@ void Server::sendSnapshot()
     }
     m_connection.broadcast(packet);
 
-    //broadcast player info such as name, score, position, and last input ID
+    //broadcast player info such as ID, position, and last input ID
     packet.clear();
     packet << xy::PacketID(PacketID::PlayerUpdate) << sf::Uint8(m_players.size());
     for (const auto& p : m_players)
     {
-        packet << p.entID << p.name << p.position << p.lastInputId;
+        packet << p.entID << p.position << p.lastInputId;
     }
     m_connection.broadcast(packet);
 
@@ -189,6 +231,19 @@ void Server::handlePacket(const sf::IpAddress& ip, xy::PortNumber port, xy::Netw
         Player player;
         packet >> player.id;
         packet >> player.name;
+
+        if (m_players.size() == 1)
+        {
+            //send existing player details
+            auto position = (m_players[0].number == 1) ? playerOneSpawn : playerTwoSpawn;
+            position.y = m_players[0].position;
+            sf::Packet p;
+            p << xy::PacketID(PacketID::PlayerSpawned);
+            p << m_players[0].id << m_players[0].entID;
+            p << position.x << position.y;
+            m_connection.send(player.id, packet, true);
+        }
+              
         sf::Lock(m_connection.getMutex());
         spawnPlayer(player);
     }
@@ -237,7 +292,9 @@ void Server::spawnBall()
     drawable->getDrawable().setFillColor(sf::Color::Cyan);
     ballEntity->addComponent(drawable);
 
-    auto ent = m_scene.addEntity(ballEntity, xy::Scene::Layer::BackRear);
+    //putting the ball on a different layer means
+    //we don't needlessly broadcast its position
+    auto ent = m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle); 
     m_ballID = ent->getUID();
 
     sf::Packet packet;
@@ -260,9 +317,7 @@ sf::Uint64 Server::spawnPlayer(Player& player)
         player.number = (m_players[0].number == 1) ? 2 : 1;
     }
     
-    sf::Vector2f position;
-    position.y = 540.f;
-    position.x = (player.number == 1) ? 180.f : 1920 - 180.f;
+    sf::Vector2f position = (player.number == 1) ? playerOneSpawn : playerTwoSpawn;
 
     auto playerEntity = xy::Entity::create(m_messageBus);
     playerEntity->setPosition(position);
@@ -288,7 +343,7 @@ sf::Uint64 Server::spawnPlayer(Player& player)
     m_players.push_back(player);
 
     //spawn ball if both players connected
-    if (m_players.size() == 1/*2*/)
+    if (m_players.size() == 2)
     {
         spawnBall();
     }

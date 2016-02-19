@@ -47,6 +47,7 @@ namespace xy
             HeartBeat,
             ServerFull,
             ClientLeft, //<followed by client ID
+            ClientJoined, //<followed by client ID
             Count
         };
 

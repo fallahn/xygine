@@ -34,6 +34,9 @@ namespace xy
 {
     namespace Util
     {
+        /*!
+        \brief Math util functions
+        */
         namespace Math
         {
             /*!

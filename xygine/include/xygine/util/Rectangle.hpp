@@ -35,6 +35,9 @@ namespace xy
 {
     namespace Util
     {
+        /*!
+        \brief Functions for manipulating rectangle types
+        */
         namespace Rectangle
         {
             /*!

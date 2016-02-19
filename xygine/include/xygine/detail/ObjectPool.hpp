@@ -38,6 +38,9 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Implementation detail classes
+    */
     namespace Detail
     {
         /*!

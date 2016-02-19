@@ -28,14 +28,14 @@ source distribution.
 #ifndef NET_PACKET_IDS_HPP_
 #define NET_PACKET_IDS_HPP_
 
-#include <xygine/network/NetworkConfig.hpp>
+#include <xygine/network/Config.hpp>
 
 namespace NetDemo
 {
     enum PacketID
     {
         //ent count, ent ID, float x, float y
-        PositionUpdate = xy::Network::PacketType::Count + 1,
+        PositionUpdate = xy::Network::PacketType::Count,
         //ent ID, float x, float y, float velX, float velY
         BallSpawned,
         //ent ID, float x, floay y, float velX, float velY, step
@@ -46,7 +46,7 @@ namespace NetDemo
         PlayerDetails,
         //input struct
         PlayerInput,
-        //player count, ent ID, name, position, last input id
+        //player count, ent ID, position, last input id
         PlayerUpdate,
         //ent id
         EntityDestroyed

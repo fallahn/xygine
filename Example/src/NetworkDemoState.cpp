@@ -35,6 +35,7 @@ source distribution.
 #include <xygine/Reports.hpp>
 #include <xygine/ui/Button.hpp>
 #include <xygine/ui/TextBox.hpp>
+#include <xygine/ui/Label.hpp>
 #include <xygine/components/SfDrawableComponent.hpp>
 #include <xygine/PostChromeAb.hpp>
 
@@ -44,8 +45,7 @@ source distribution.
 
 namespace
 {
-    //const xy::PortNumber port = 5000;
-    sf::Uint64 playerEntID = 0;
+
 }
 
 using namespace std::placeholders;
@@ -84,13 +84,11 @@ namespace
 
 //public
 bool NetworkDemoState::update(float dt)
-{
-    //m_playerInput.dt += dt;
-        
+{       
     m_playerInput.position = getContext().appInstance.getMouseWorldPosition().y;
 
     xy::Command cmd;
-    cmd.entityID = playerEntID;
+    cmd.entityID = m_players[0].entID;
     cmd.action = [this](xy::Entity& entity, float dt)
     {
         sf::Lock lock(m_connection.getMutex());
@@ -117,7 +115,6 @@ bool NetworkDemoState::update(float dt)
         packet << xy::PacketID(PacketID::PlayerInput) << m_playerInput;
         m_connection.send(packet);
 
-        //m_playerInput.dt = 0.f;
         m_playerInput.counter++;
     }
 
@@ -162,6 +159,7 @@ void NetworkDemoState::draw()
 
     rw.setView(getContext().defaultView);
     rw.draw(m_menu);
+    rw.draw(m_waitingSign);
     rw.draw(m_reportText);
 }
 
@@ -199,9 +197,18 @@ void NetworkDemoState::buildMenu()
 
         //close menu
         m_menu.setVisible(false);
+        m_waitingSign.setVisible(true);
         getContext().renderWindow.setMouseCursorVisible(false);
     });
     m_menu.addControl(button);
+
+
+    xy::UI::Label::Ptr label = xy::UI::create<xy::UI::Label>(font);
+    label->setString("Waiting for other player..");
+    label->setAlignment(xy::UI::Alignment::Centre);
+    label->setPosition({ 960.f, 540.f });
+    m_waitingSign.addControl(label);
+    m_waitingSign.setVisible(false);
 
     getContext().renderWindow.setMouseCursorVisible(true);
 }
@@ -216,7 +223,7 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         sf::Packet newPacket;
         newPacket << xy::PacketID(PacketID::PlayerDetails);
         newPacket << m_connection.getClientID();
-        newPacket << "Player One";
+        newPacket << "Player";
         connection->send(newPacket, true);
     }
         break;
@@ -225,6 +232,7 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         sf::Uint64 id;
         sf::Vector2f pos, vel;
         packet >> id >> pos.x >> pos.y >> vel.x >> vel.y;
+        sf::Lock lock(m_connection.getMutex());
         spawnBall(id, pos, vel);
     }
         break;
@@ -251,34 +259,36 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         sf::Uint64 entID;
         sf::Vector2f position;
         packet >> clid >> entID >> position.x >> position.y;
+        sf::Lock lock(m_connection.getMutex());
         spawnPlayer(clid, entID, position);
     }
         break;
     case PacketID::PositionUpdate:
     {
-        //sf::Uint8 count;
-        //packet >> count;
+        sf::Uint8 count;
+        packet >> count;
 
-        //sf::Uint64 id;
-        //float x, y;
+        sf::Uint64 id;
+        float x, y;
 
-        //sf::Lock lock(m_connection.getMutex());
-        //while(count--)
-        //{
-        //    packet >> id >> x >> y;
+        sf::Lock lock(m_connection.getMutex());
+        while(count--)
+        {
+            packet >> id >> x >> y;
 
-        //    //don't send to local player
-        //    if (id == playerEntID) continue;
+            //don't send to local player
+            if (id == m_players[1].entID)
+            {
+                xy::Command cmd;
+                cmd.entityID = id;
 
-        //    xy::Command cmd;
-        //    cmd.entityID = id;
-
-        //    cmd.action = [x, y](xy::Entity& entity, float)
-        //    {
-        //        entity.getComponent<NetworkController>()->setDestination({ x, y });
-        //    };
-        //    m_scene.sendCommand(cmd);
-        //}
+                cmd.action = [x, y](xy::Entity& entity, float)
+                {
+                    entity.getComponent<NetworkController>()->setDestination({ x, y });
+                };
+                m_scene.sendCommand(cmd);
+            }
+        }
     }
         break;
     case PacketID::PlayerUpdate:
@@ -287,14 +297,13 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         packet >> count;
 
         sf::Uint64 entID;
-        std::string name;
         float position;
         sf::Uint64 lastInput;
 
         while (count--)
         {
-            packet >> entID >> name >> position >> lastInput;
-            if (entID == playerEntID)
+            packet >> entID >> position >> lastInput;
+            if (entID == m_players[0].entID)
             {
                 xy::Command cmd;
                 cmd.entityID = entID;
@@ -309,7 +318,7 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
             }
         }
     }
-    break;
+        break;
     case PacketID::EntityDestroyed:
     {
         sf::Uint64 entid;
@@ -329,7 +338,30 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
             m_spawnedIDs.erase(result);
         }
     }
-    break;
+        break;
+    case xy::Network::PacketType::ClientLeft:
+    {
+        sf::Uint64 clid;
+        packet >> clid;
+        if (clid == m_players[1].clid)
+        {
+            //remove the other player's entity
+            xy::Command cmd;
+            cmd.entityID = m_players[1].entID;
+            cmd.action = [](xy::Entity& entity, float)
+            {
+                entity.destroy();
+            };
+            {
+                sf::Lock lock(m_connection.getMutex());
+                m_scene.sendCommand(cmd);
+            }
+
+            //show waiting sign
+            m_waitingSign.setVisible(true);
+        }
+    }
+        break;
     }
 }
 
@@ -346,13 +378,10 @@ void NetworkDemoState::spawnBall(sf::Uint64 id, sf::Vector2f position, sf::Vecto
     shape->getDrawable().setSize({ 20.f, 20.f });
     shape->getDrawable().setOrigin({ 10.f, 10.f });
 
-    //auto controller = xy::Component::create<NetworkController>(m_messageBus);
-
     auto ent = xy::Entity::create(m_messageBus);
     ent->setWorldPosition(position);
     ent->setUID(id);
     ent->addComponent(shape);
-    //ent->addComponent(controller);
 
     auto controller = xy::Component::create<BallLogic>(m_messageBus);
     controller->setCollisionObjects(m_collisionWorld.getEntities());
@@ -384,12 +413,30 @@ void NetworkDemoState::spawnPlayer(xy::ClientID clid, sf::Uint64 entid, sf::Vect
 
         m_collisionWorld.addEntity(m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle));
 
-        playerEntID = entid;
-        
+        m_players[0].entID = entid;
+        m_players[0].clid = clid;
     }
     else
     {
         //spawn remote player
+        auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
+        drawable->getDrawable().setSize(paddleSize);
+        drawable->getDrawable().setOrigin(paddleSize / 2.f);
+
+        auto controller = xy::Component::create<NetworkController>(m_messageBus);
+
+        auto entity = xy::Entity::create(m_messageBus);
+        entity->setUID(entid);
+        entity->setWorldPosition(position);
+        entity->addComponent(drawable);
+        entity->addComponent(controller);
+
+        m_collisionWorld.addEntity(m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle));
+
+        m_players[1].entID = entid;
+        m_players[1].clid = clid;
+
+        m_waitingSign.setVisible(false);
     }
     m_spawnedIDs.push_back(entid);
 }

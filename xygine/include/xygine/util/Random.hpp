@@ -37,6 +37,9 @@ namespace xy
 {
     namespace Util
     {
+        /*!
+        \brief Pseudo random number generation functions
+        */
         namespace Random
         {
             static std::default_random_engine rndEngine(static_cast<unsigned long>(std::time(0)));

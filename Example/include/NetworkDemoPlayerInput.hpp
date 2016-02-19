@@ -29,7 +29,7 @@ source distribution.
 #define NET_PLAYER_INPUT_HPP_
 
 #include <SFML/Config.hpp>
-#include <xygine/network/NetworkConfig.hpp>
+#include <xygine/network/Config.hpp>
 
 namespace NetDemo
 {
@@ -38,7 +38,6 @@ namespace NetDemo
         float position = 0; //<position of mouse Y axis
         sf::Uint64 counter = 0; //<input counter for ordering
         xy::ClientID clientID = -1;
-        //float dt = 0.f; //<delta time since last input
         sf::Int32 timestamp = 0; //<server time as client knows it in ms
     };
 }

@@ -37,6 +37,9 @@ namespace xy
 {
     namespace Util
     {
+        /*!
+        \brief Vector math utility functions
+        */
         namespace Vector
         {
             /*!

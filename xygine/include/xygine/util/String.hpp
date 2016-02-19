@@ -38,6 +38,9 @@ namespace xy
 {
     namespace Util
     {
+        /*!
+        \brief String manipulation functions
+        */
         namespace String
         {
             /*!

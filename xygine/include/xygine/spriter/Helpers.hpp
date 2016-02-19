@@ -32,6 +32,9 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Classes for parsing Spriter animation files
+    */
     namespace Spriter
     {
         namespace Detail
