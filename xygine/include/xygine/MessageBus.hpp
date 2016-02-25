@@ -50,6 +50,9 @@ source distribution.
 
 class b2Joint;
 class b2Fixture;
+
+using UIControlID = sf::Int32;
+
 namespace xy
 {
     namespace Physics
@@ -144,11 +147,13 @@ namespace xy
                 RequestDifficultyChange,
                 RequestControllerEnable,
                 RequestControllerDisable,
-                ResizedWindow
+                ResizedWindow,
+                ButtonPressed
             }type;
             float value = 0.f;
             StateId stateId = -1;
             Difficulty difficulty;
+            UIControlID controlID = -1;
         };
         /*!
         \brief Component event message data
