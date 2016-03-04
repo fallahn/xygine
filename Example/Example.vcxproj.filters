@@ -93,6 +93,9 @@
     <ClInclude Include="include\NetworkDemoCollisions.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\NetworkDemoBot.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -147,6 +150,9 @@
       <Filter>Source Files\network demo</Filter>
     </ClCompile>
     <ClCompile Include="src\NetworkDemoCollisions.cpp">
+      <Filter>Source Files\network demo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NetworkDemoBot.cpp">
       <Filter>Source Files\network demo</Filter>
     </ClCompile>
   </ItemGroup>
