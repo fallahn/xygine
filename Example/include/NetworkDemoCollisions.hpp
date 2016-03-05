@@ -29,6 +29,9 @@ source distribution.
 #define NET_COLLISIONS_HPP_
 
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 
 #include <vector>
 
@@ -54,6 +57,19 @@ public:
 
 private:
     std::vector<xy::Entity*> m_entities;
+
+    class Net final : public sf::Drawable, public sf::Transformable
+    {
+    public:
+        Net();
+        ~Net() = default;
+
+        const sf::FloatRect& getGlobalBounds() const {return m_bounds;} //this is a fudge. stop it.
+    private:
+        sf::FloatRect m_bounds;
+        std::vector<sf::Vertex> m_vertexArray;
+        void draw(sf::RenderTarget&, sf::RenderStates) const override;
+    };
 };
 
 #endif //NET_COLLISIONS_HPP_

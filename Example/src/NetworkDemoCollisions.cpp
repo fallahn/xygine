@@ -53,17 +53,11 @@ CollisionWorld::CollisionWorld(xy::Scene& scene, xy::MessageBus& messageBus, sf:
 
     m_entities.push_back(scene.addEntity(entity, xy::Scene::Layer::BackRear));
 
-
-    //delete this when multiplayering
-    //drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(messageBus);
-    //drawable->getDrawable().setSize({ 20.f, 1080.f });
-    //drawable->getDrawable().setFillColor(colour);
-
-    //entity = xy::Entity::create(messageBus);
-    //entity->setPosition(1900.f, 0.f);
-    //entity->addComponent(drawable);
-
-    //m_entities.push_back(scene.addEntity(entity, xy::Scene::Layer::BackRear));
+    auto netDrawable = xy::Component::create<xy::SfDrawableComponent<Net>>(messageBus);
+    entity = xy::Entity::create(messageBus);
+    entity->setPosition(950.f, 0.f);
+    entity->addComponent(netDrawable);
+    scene.addEntity(entity, xy::Scene::Layer::BackRear);
 }
 
 void CollisionWorld::addEntity(xy::Entity* entity)
@@ -74,4 +68,33 @@ void CollisionWorld::addEntity(xy::Entity* entity)
 void CollisionWorld::removeEntity(xy::Entity* entity)
 {
     std::remove(m_entities.begin(), m_entities.end(), entity);
+}
+
+//drawable for net
+namespace 
+{
+    const float netWidth = 20.f;
+    const float netHeight = 40.f;
+    const sf::Uint8 partCount = static_cast<sf::Uint8>(1080.f / netHeight);
+}
+CollisionWorld::Net::Net()
+{
+    sf::Color colour;
+    for (auto i = 0; i < partCount; ++i)
+    {
+       colour = (colour.r == 0) ? sf::Color::White : sf::Color::Black;
+       sf::Vertex v = { {0.f, netHeight * i}, colour };
+       m_vertexArray.push_back(v);
+       v.position.x += netWidth;
+       m_vertexArray.push_back(v);
+       v.position.y += netHeight;
+       m_vertexArray.push_back(v);
+       v.position.x -= netWidth;
+       m_vertexArray.push_back(v);
+    }
+}
+
+void CollisionWorld::Net::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    rt.draw(m_vertexArray.data(), m_vertexArray.size(), sf::Quads, states);
 }
