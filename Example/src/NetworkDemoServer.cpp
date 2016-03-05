@@ -128,7 +128,7 @@ void Server::handleMessage(const xy::Message& msg)
                 packet << xy::PacketID(PacketID::EntityDestroyed) << m_ballID;
                 m_connection.broadcast(packet, true);
             }
-            spawnBall();
+            if(m_players.size() > 1) spawnBall();
             break;
         default: break;
         }

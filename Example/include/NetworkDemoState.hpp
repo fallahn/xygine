@@ -38,6 +38,7 @@ source distribution.
 #include <NetworkDemoServer.hpp>
 #include <NetworkDemoPlayerInput.hpp>
 #include <NetworkDemoCollisions.hpp>
+#include <NetworkDemoBot.hpp>
 
 #include <SFML/Graphics/Text.hpp>
 
@@ -89,6 +90,8 @@ private:
 
     void spawnBall(sf::Uint64 id, sf::Vector2f position, sf::Vector2f velocity);
     void spawnPlayer(xy::ClientID, sf::Uint64, sf::Vector2f);
+
+    NetBot m_bot;
 };
 
 #endif //NETDEMO_STATE_HPP_

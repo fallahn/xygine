@@ -31,6 +31,8 @@ source distribution.
 #include <xygine/network/Config.hpp>
 #include <xygine/network/ClientConnection.hpp>
 
+#include <SFML/System/Vector2.hpp>
+
 class NetBot final
 {
 public:
@@ -42,9 +44,18 @@ public:
     void connect(sf::IpAddress, xy::PortNumber);
     void disconnect();
 
+    bool connected() const { return m_connection.connected(); }
+
 private:
     xy::Network::ClientConnection m_connection;
     xy::Network::ClientConnection::PacketHandler m_packetHandler;
+
+    struct Ball
+    {
+        sf::Vector2f position;
+        sf::Vector2f velocity;
+    }m_ball;
+    float m_position;
 
     void handlePacket(xy::Network::PacketType, sf::Packet&, xy::Network::ClientConnection*);
 };

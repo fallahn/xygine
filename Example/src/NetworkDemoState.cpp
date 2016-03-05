@@ -102,6 +102,7 @@ bool NetworkDemoState::update(float dt)
     m_connection.update(dt);
     m_scene.update(dt);
 
+    m_bot.update(dt);
 
     const float sendRate = 1.f / m_connection.getSendRate();
     broadcastAccumulator += broadcastClock.restart().asSeconds();
@@ -134,6 +135,12 @@ bool NetworkDemoState::handleEvent(const sf::Event& evt)
         //case sf::Keyboard::BackSpace:
             requestStackPop();
             requestStackPush(States::ID::MenuMain);
+            break;
+        case sf::Keyboard::B:
+            if (m_bot.connected())
+                m_bot.disconnect();
+            else
+                m_bot.connect({ "localhost" }, xy::Network::ServerPort);
             break;
         default:break;
         }
@@ -341,7 +348,7 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         break;
     case xy::Network::PacketType::ClientLeft:
     {
-        sf::Uint64 clid;
+        xy::ClientID clid;
         packet >> clid;
         if (clid == m_players[1].clid)
         {
