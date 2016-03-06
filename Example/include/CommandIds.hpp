@@ -70,7 +70,9 @@ struct PongEvent
 {
     enum
     {
-        BallDestroyed
+        BallDestroyed,
+        PlayerOneScored,
+        PlayerTwoScored
     }type;
 };
 

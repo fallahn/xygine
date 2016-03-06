@@ -82,11 +82,15 @@ void BallLogic::entityUpdate(xy::Entity& entity, float dt)
     if (position.x < 0)
     {
         //player 2 score
+        auto msg = sendMessage<PongEvent>(NetMessageId::PongMessage);
+        msg->type = PongEvent::PlayerTwoScored;
         killBall(entity);
     }
     else if (position.x > 1920)
     {
         //player 1 score
+        auto msg = sendMessage<PongEvent>(NetMessageId::PongMessage);
+        msg->type = PongEvent::PlayerOneScored;
         killBall(entity);
     }
 }

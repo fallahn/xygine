@@ -63,6 +63,7 @@ private:
     {
         xy::ClientID id = -1;
         std::string name;
+        sf::Uint16 score = 0;
         sf::Uint8 number = 0;
         sf::Uint64 entID = 0;
         float position = 0.f;

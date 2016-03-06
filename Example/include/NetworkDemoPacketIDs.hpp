@@ -49,7 +49,9 @@ namespace NetDemo
         //player count, ent ID, position, last input id
         PlayerUpdate,
         //ent id
-        EntityDestroyed
+        EntityDestroyed,
+        //player number, player score
+        ScoreUpdate
     };
 }
 #endif //NET_PACKET_IDS_HPP_

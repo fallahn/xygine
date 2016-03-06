@@ -130,6 +130,32 @@ void Server::handleMessage(const xy::Message& msg)
             }
             if(m_players.size() > 1) spawnBall();
             break;
+        case PongEvent::PlayerOneScored: //both events should be single function..
+        {
+            //increase score - TODO this would be so much easier if players were ordered...
+            auto result = std::find_if(m_players.begin(), m_players.end(), [](const Player& player) {return player.number == 1; });
+            if (result != m_players.end())
+            {
+                result->score++;
+                sf::Packet packet;
+                packet << xy::PacketID(PacketID::ScoreUpdate) << result->number << result->score;
+                m_connection.broadcast(packet, true);
+            }
+        }
+            break;
+        case PongEvent::PlayerTwoScored:
+        {
+            //increase score - TODO this would be so much easier if players were ordered...
+            auto result = std::find_if(m_players.begin(), m_players.end(), [](const Player& player) {return player.number == 2; });
+            if (result != m_players.end())
+            {
+                result->score++;
+                sf::Packet packet;
+                packet << xy::PacketID(PacketID::ScoreUpdate) << result->number << result->score;
+                m_connection.broadcast(packet, true);
+            }
+        }
+            break;
         default: break;
         }
         break;
