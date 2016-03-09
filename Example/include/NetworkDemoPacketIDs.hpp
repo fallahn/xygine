@@ -40,7 +40,7 @@ namespace NetDemo
         BallSpawned,
         //ent ID, float x, floay y, float velX, float velY, step
         BallUpdate,
-        //player id, ent id, position x, position y
+        //player id, ent id, position x, position y, name
         PlayerSpawned,
         //player id, player name
         PlayerDetails,

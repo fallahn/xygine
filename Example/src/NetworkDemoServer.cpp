@@ -144,7 +144,7 @@ void Server::handleMessage(const xy::Message& msg)
             //increase score
             m_players[1].score++;
             sf::Packet packet;
-            packet << xy::PacketID(PacketID::ScoreUpdate) << sf::Uint8(0) << m_players[1].score;
+            packet << xy::PacketID(PacketID::ScoreUpdate) << sf::Uint8(1) << m_players[1].score;
             m_connection.broadcast(packet, true);
         }
             break;
@@ -260,7 +260,7 @@ void Server::handlePacket(const sf::IpAddress& ip, xy::PortNumber port, xy::Netw
                 sf::Packet p;
                 p << xy::PacketID(PacketID::PlayerSpawned);
                 p << pl.id << pl.entID;
-                p << position.x << position.y;
+                p << position.x << position.y << player.name;
                 m_connection.send(player.id, packet, true);
             }
         }
@@ -359,7 +359,7 @@ sf::Uint64 Server::spawnPlayer(Player& player)
     sf::Packet packet;
     packet << xy::PacketID(PacketID::PlayerSpawned);
     packet << player.id << player.entID;
-    packet << position.x << position.y;
+    packet << position.x << position.y << player.name;
     m_connection.broadcast(packet, true);
 
     if (player.number == 1)

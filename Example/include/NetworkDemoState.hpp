@@ -61,9 +61,11 @@ private:
     struct PlayerInfo final
     {
         sf::Uint64 entID = 0;
-        std::string name;
-        sf::Uint16 score = 0;
+        //std::string name;
+        //sf::Uint16 score = 0;
         xy::ClientID clid = -1;
+        sf::Text name;
+        sf::Text score;
     };
     std::array<PlayerInfo, 2u> m_players; //local player always first
 
@@ -89,7 +91,8 @@ private:
     void handlePacket(xy::Network::PacketType, sf::Packet&, xy::Network::ClientConnection*);
 
     void spawnBall(sf::Uint64 id, sf::Vector2f position, sf::Vector2f velocity);
-    void spawnPlayer(xy::ClientID, sf::Uint64, sf::Vector2f);
+    void spawnPlayer(xy::ClientID, sf::Uint64, sf::Vector2f, const std::string&);
+    void createUI();
 
     NetBot m_bot;
 };

@@ -67,6 +67,8 @@ NetworkDemoState::NetworkDemoState(xy::StateStack& stack, Context context)
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(40.f, 20.f);
 
+    createUI();
+
     auto pp = xy::PostProcess::create<xy::PostChromeAb>();
     m_scene.addPostProcess(pp);
     m_scene.setView(context.defaultView);
@@ -168,6 +170,12 @@ void NetworkDemoState::draw()
     rw.draw(m_menu);
     rw.draw(m_waitingSign);
     rw.draw(m_reportText);
+
+    for (const auto& player : m_players)
+    {
+        rw.draw(player.name);
+        rw.draw(player.score);
+    }
 }
 
 //private
@@ -265,9 +273,10 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         xy::ClientID clid;
         sf::Uint64 entID;
         sf::Vector2f position;
-        packet >> clid >> entID >> position.x >> position.y;
+        std::string name;
+        packet >> clid >> entID >> position.x >> position.y >> name;
         sf::Lock lock(m_connection.getMutex());
-        spawnPlayer(clid, entID, position);
+        spawnPlayer(clid, entID, position, name);
     }
         break;
     case PacketID::PositionUpdate:
@@ -377,7 +386,7 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         packet >> playerNumber >> score;
 
         sf::Lock lock(m_connection.getMutex());
-        m_players[playerNumber].score = score;
+        m_players[playerNumber].score.setString(std::to_string(score));
     }
 
         break;
@@ -412,7 +421,7 @@ void NetworkDemoState::spawnBall(sf::Uint64 id, sf::Vector2f position, sf::Vecto
     m_spawnedIDs.push_back(id);
 }
 
-void NetworkDemoState::spawnPlayer(xy::ClientID clid, sf::Uint64 entid, sf::Vector2f position)
+void NetworkDemoState::spawnPlayer(xy::ClientID clid, sf::Uint64 entid, sf::Vector2f position, const std::string& name)
 {
     if (std::find(m_spawnedIDs.begin(), m_spawnedIDs.end(), entid) != m_spawnedIDs.end()) return;
     if (clid == m_connection.getClientID())
@@ -434,6 +443,7 @@ void NetworkDemoState::spawnPlayer(xy::ClientID clid, sf::Uint64 entid, sf::Vect
 
         m_players[0].entID = entid;
         m_players[0].clid = clid;
+        m_players[0].name.setString(name);
     }
     else
     {
@@ -454,8 +464,29 @@ void NetworkDemoState::spawnPlayer(xy::ClientID clid, sf::Uint64 entid, sf::Vect
 
         m_players[1].entID = entid;
         m_players[1].clid = clid;
+        m_players[1].name.setString(name);
 
         m_waitingSign.setVisible(false);
     }
     m_spawnedIDs.push_back(entid);
+}
+
+void NetworkDemoState::createUI()
+{
+    //TODO if you're a remote client these are reversed!
+    auto& font = m_fontResource.get("assets/fonts/ARCADEPI.TTF");
+    m_players[0].name.setFont(font);
+    m_players[0].name.setPosition(20.f, 960.f);
+    m_players[0].name.setString("Player");
+
+    m_players[0].score.setFont(font);
+    m_players[0].score.setString("0");
+    m_players[0].score.setPosition(20.f, 1000.f);
+
+    m_players[1].name.setFont(font);
+    m_players[1].name.setPosition(1800.f, 960.f);
+
+    m_players[1].score.setFont(font);
+    m_players[1].score.setPosition(1890.f, 1000.f);
+    m_players[1].score.setString("0");    
 }
