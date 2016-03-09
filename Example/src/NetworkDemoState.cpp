@@ -278,7 +278,7 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
         sf::Uint64 id;
         float x, y;
 
-        sf::Lock lock(m_connection.getMutex());
+        //sf::Lock lock(m_connection.getMutex());
         while(count--)
         {
             packet >> id >> x >> y;
@@ -293,6 +293,7 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
                 {
                     entity.getComponent<NetworkController>()->setDestination({ x, y });
                 };
+                sf::Lock lock(m_connection.getMutex());
                 m_scene.sendCommand(cmd);
             }
         }
@@ -368,6 +369,17 @@ void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& pa
             m_waitingSign.setVisible(true);
         }
     }
+        break;
+    case PacketID::ScoreUpdate:
+    {
+        sf::Uint8 playerNumber;
+        sf::Uint16 score;
+        packet >> playerNumber >> score;
+
+        sf::Lock lock(m_connection.getMutex());
+        m_players[playerNumber].score = score;
+    }
+
         break;
     }
 }

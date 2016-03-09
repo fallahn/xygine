@@ -45,7 +45,7 @@ using namespace NetDemo;
 BallLogic::BallLogic(xy::MessageBus& mb)
     : xy::Component (mb, this),
     //m_localBounds   (-10.f, -10.f, 20.f, 20.f),
-    m_velocity      (xy::Util::Random::value(-1.f, 1.f), xy::Util::Random::value(-1.f, 1.f)),
+    m_velocity      (xy::Util::Random::value(-1.6f, 1.6f), xy::Util::Random::value(-0.4f, 0.4f)),
     m_stepCount     (0u),
     m_entity        (nullptr)
 {

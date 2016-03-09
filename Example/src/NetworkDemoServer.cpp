@@ -128,32 +128,24 @@ void Server::handleMessage(const xy::Message& msg)
                 packet << xy::PacketID(PacketID::EntityDestroyed) << m_ballID;
                 m_connection.broadcast(packet, true);
             }
-            if(m_players.size() > 1) spawnBall();
+            if(m_players[0].active && m_players[1].active) spawnBall();
             break;
         case PongEvent::PlayerOneScored: //both events should be single function..
         {
-            //increase score - TODO this would be so much easier if players were ordered...
-            auto result = std::find_if(m_players.begin(), m_players.end(), [](const Player& player) {return player.number == 1; });
-            if (result != m_players.end())
-            {
-                result->score++;
-                sf::Packet packet;
-                packet << xy::PacketID(PacketID::ScoreUpdate) << result->number << result->score;
-                m_connection.broadcast(packet, true);
-            }
+            //increase score 
+            m_players[0].score++;
+            sf::Packet packet;
+            packet << xy::PacketID(PacketID::ScoreUpdate) << sf::Uint8(0) << m_players[0].score;
+            m_connection.broadcast(packet, true);
         }
             break;
         case PongEvent::PlayerTwoScored:
         {
-            //increase score - TODO this would be so much easier if players were ordered...
-            auto result = std::find_if(m_players.begin(), m_players.end(), [](const Player& player) {return player.number == 2; });
-            if (result != m_players.end())
-            {
-                result->score++;
-                sf::Packet packet;
-                packet << xy::PacketID(PacketID::ScoreUpdate) << result->number << result->score;
-                m_connection.broadcast(packet, true);
-            }
+            //increase score
+            m_players[1].score++;
+            sf::Packet packet;
+            packet << xy::PacketID(PacketID::ScoreUpdate) << sf::Uint8(0) << m_players[1].score;
+            m_connection.broadcast(packet, true);
         }
             break;
         default: break;
@@ -189,7 +181,7 @@ void Server::handleMessage(const xy::Message& msg)
                 sf::Lock lock(m_connection.getMutex());
                 m_scene.sendCommand(cmd);
 
-                m_players.erase(result);
+                result->active = false;
             }
         }
             break;
@@ -258,16 +250,19 @@ void Server::handlePacket(const sf::IpAddress& ip, xy::PortNumber port, xy::Netw
         packet >> player.id;
         packet >> player.name;
 
-        if (m_players.size() == 1)
+        for(const auto& pl : m_players)
         {
-            //send existing player details
-            auto position = (m_players[0].number == 1) ? playerOneSpawn : playerTwoSpawn;
-            position.y = m_players[0].position;
-            sf::Packet p;
-            p << xy::PacketID(PacketID::PlayerSpawned);
-            p << m_players[0].id << m_players[0].entID;
-            p << position.x << position.y;
-            m_connection.send(player.id, packet, true);
+            if (player.active)
+            {
+                //send existing player details so joining client can spawn them
+                auto position = (pl.number == 1) ? playerOneSpawn : playerTwoSpawn;
+                position.y = pl.position;
+                sf::Packet p;
+                p << xy::PacketID(PacketID::PlayerSpawned);
+                p << pl.id << pl.entID;
+                p << position.x << position.y;
+                m_connection.send(player.id, packet, true);
+            }
         }
               
         sf::Lock(m_connection.getMutex());
@@ -290,6 +285,7 @@ void Server::handlePacket(const sf::IpAddress& ip, xy::PortNumber port, xy::Netw
                 controller->setInput(input, false);
                 //REPORT("SERVER position", std::to_string(entity.getWorldPosition().y));
                 //update player info with velocity, last inputID, position
+
                 result->lastInputId = controller->getLastInputID();
                 result->position = controller->getLastPosition();
             };
@@ -333,15 +329,15 @@ void Server::spawnBall()
 
 sf::Uint64 Server::spawnPlayer(Player& player)
 {
-    XY_ASSERT(m_players.size() < 2, "Too many clients!");
-    if (m_players.empty())
+    if (!m_players[0].active)
     {
         player.number = 1;
     }
     else
     {
-        player.number = (m_players[0].number == 1) ? 2 : 1;
+        player.number = 2;
     }
+    player.active = true;
     
     sf::Vector2f position = (player.number == 1) ? playerOneSpawn : playerTwoSpawn;
 
@@ -366,10 +362,17 @@ sf::Uint64 Server::spawnPlayer(Player& player)
     packet << position.x << position.y;
     m_connection.broadcast(packet, true);
 
-    m_players.push_back(player);
+    if (player.number == 1)
+    {
+        m_players[0] = player;
+    }
+    else
+    {
+        m_players[1] = player;
+    }
 
     //spawn ball if both players connected
-    if (m_players.size() == 2)
+    if (m_players[0].active && m_players[1].active)
     {
         spawnBall();
     }

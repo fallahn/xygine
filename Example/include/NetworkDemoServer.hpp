@@ -34,7 +34,7 @@ source distribution.
 #include <xygine/Scene.hpp>
 #include <xygine/MessageBus.hpp>
 
-#include <vector>
+#include <array>
 
 class Server final
 {
@@ -68,8 +68,9 @@ private:
         sf::Uint64 entID = 0;
         float position = 0.f;
         sf::Uint64 lastInputId = 0;
+        bool active = false;
     };
-    std::vector<Player> m_players;
+    std::array<Player,2u> m_players;
     sf::Uint64 m_ballID;
 
     CollisionWorld m_collisionWorld;

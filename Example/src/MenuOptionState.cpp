@@ -267,7 +267,7 @@ void MenuOptionState::buildMenu(const sf::Font& font)
     backButton->addCallback([this]()
     {
         close();
-        //requestStackPush((getContext().appInstance.connected()) ? States::ID::MenuMain : States::ID::MenuMain);
+        requestStackPush(States::ID::MenuMain);
     });
     m_window.addControl(backButton);
 }

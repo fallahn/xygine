@@ -62,7 +62,7 @@ private:
     {
         sf::Uint64 entID = 0;
         std::string name;
-        sf::Uint32 score = 0;
+        sf::Uint16 score = 0;
         xy::ClientID clid = -1;
     };
     std::array<PlayerInfo, 2u> m_players; //local player always first
