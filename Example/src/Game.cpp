@@ -32,6 +32,7 @@ source distribution.
 #include <ParticleDemoState.hpp>
 #include <PhysicsDemoState.hpp>
 #include <NetworkDemoState.hpp>
+#include <LunarMoonerState.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -103,4 +104,5 @@ void Game::registerStates()
     m_stateStack.registerState<PhysicsDemoState>(States::ID::PhysicsDemo);
     m_stateStack.registerState<ParticleDemoState>(States::ID::ParticleDemo);
     m_stateStack.registerState<NetworkDemoState>(States::ID::NetworkDemo);
+    m_stateStack.registerState<LunarMoonerState>(States::ID::LunarMooner);
 }

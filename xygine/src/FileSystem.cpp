@@ -82,7 +82,7 @@ std::vector<std::string> FileSystem::listFiles(std::string path)
     }while (FindNextFile(hFind, &findData) != 0);
     FindClose(hFind);
 
-    return results;
+    return std::move(results);
 #else
     if (path.back() != '/')
         path.append("/.");
@@ -111,7 +111,7 @@ std::vector<std::string> FileSystem::listFiles(std::string path)
         }
         closedir(dir);
     }
-    return results;
+    return std::move(results);
 #endif //_WIN32
 }
 

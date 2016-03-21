@@ -75,6 +75,9 @@
     <ClInclude Include="include\CaveDemoDrawable.hpp" />
     <ClInclude Include="include\CommandIds.hpp" />
     <ClInclude Include="include\Game.hpp" />
+    <ClInclude Include="include\LMAlienController.hpp" />
+    <ClInclude Include="include\LMMothershipController.hpp" />
+    <ClInclude Include="include\LunarMoonerState.hpp" />
     <ClInclude Include="include\MenuMainState.hpp" />
     <ClInclude Include="include\MenuOptionState.hpp" />
     <ClInclude Include="include\NetworkDemoBallLogic.hpp" />
@@ -99,6 +102,9 @@
   <ItemGroup>
     <ClCompile Include="src\CaveDemoDrawable.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\LMAlienController.cpp" />
+    <ClCompile Include="src\LMMothershipController.cpp" />
+    <ClCompile Include="src\LunarMoonerState.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MenuMainState.cpp" />
     <ClCompile Include="src\MenuOptionState.cpp" />

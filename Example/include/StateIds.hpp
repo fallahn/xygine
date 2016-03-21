@@ -38,7 +38,8 @@ namespace States
         RacingDemo,
         NetworkDemo,
         MenuMain,
-        MenuOptions
+        MenuOptions,
+        LunarMooner
     };
 }
 

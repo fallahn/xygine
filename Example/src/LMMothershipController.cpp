@@ -25,61 +25,29 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef COMMAND_IDS_HPP_
-#define COMMAND_IDS_HPP_
+#include <LMMothershipController.hpp>
 
-#include <xygine/MessageBus.hpp>
+#include <xygine/Entity.hpp>
 
-//-------------------//
-enum RacingCommandId
-{
-    TrackEnt = 0x1,
-    PlayerEnt = 0x2,
-    BackgroundEnt = 0x4
-};
+using namespace lm;
 
-enum RacingMessageId
+MothershipController::MothershipController(xy::MessageBus& mb, sf::Vector2f travelAmount)
+    : xy::Component (mb, this),
+    m_bounds        (travelAmount),
+    m_speed         (140.f)
 {
-    TrackMessage = xy::Message::Type::Count
-};
+    m_velocity.x = 1.f;
+}
 
-struct TrackEvent
+//public
+void MothershipController::entityUpdate(xy::Entity& entity, float dt)
 {
-    //const Track::Segment* playerSegment = nullptr;
-};
-//------------------//
-enum PhysicsCommandId
-{
-    CueBall = 0x1
-};
-
-enum PhysicsShaderId
-{
-    NormalMapTextured = 1,
-    NormalMapTexturedSpecular,
-    ReflectionMap
-};
-//----------------//
-
-enum NetMessageId
-{
-    PongMessage = xy::Message::Type::Count
-};
-
-struct PongEvent
-{
-    enum
+    entity.move(m_velocity * m_speed * dt);
+        
+    auto bounds = entity.globalBounds();
+    if (bounds.left < m_bounds.x ||
+        bounds.left + bounds.width > m_bounds.y)
     {
-        BallDestroyed,
-        PlayerOneScored,
-        PlayerTwoScored
-    }type;
-};
-
-//-----------------//
-enum LMCommandID
-{
-    Mothership = 0x1
-};
-
-#endif //COMMAND_IDS_HPP_
+        m_speed = -m_speed;
+    }
+}

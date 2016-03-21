@@ -89,7 +89,7 @@ void MenuMainState::buildMenu()
     auto button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
     button->setText("Particle Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
-    button->setPosition(960.f, 475.f);
+    button->setPosition(960.f, 375.f);
     button->addCallback([this]()
     {
         close();
@@ -100,7 +100,7 @@ void MenuMainState::buildMenu()
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
     button->setText("Physics Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
-    button->setPosition(960.f, 575.f);
+    button->setPosition(960.f, 475.f);
     button->addCallback([this]()
     {
         close();
@@ -111,11 +111,22 @@ void MenuMainState::buildMenu()
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
     button->setText("Network Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
-    button->setPosition(960.f, 675.f);
+    button->setPosition(960.f, 575.f);
     button->addCallback([this]()
     {
         close();
         requestStackPush(States::ID::NetworkDemo);
+    });
+    m_uiContainer.addControl(button);
+
+    button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
+    button->setText("Lunar Mooner");
+    button->setAlignment(xy::UI::Alignment::Centre);
+    button->setPosition(960.f, 675.f);
+    button->addCallback([this]()
+    {
+        close();
+        requestStackPush(States::ID::LunarMooner);
     });
     m_uiContainer.addControl(button);
 

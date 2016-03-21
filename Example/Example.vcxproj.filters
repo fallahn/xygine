@@ -25,6 +25,9 @@
     <Filter Include="Source Files\network demo">
       <UniqueIdentifier>{42cb5927-966f-4a0d-a780-2976b2d3e224}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\lunar mooner">
+      <UniqueIdentifier>{8c266401-a811-4f40-b31d-bc3c95e5a643}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -96,6 +99,15 @@
     <ClInclude Include="include\NetworkDemoBot.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\LunarMoonerState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LMAlienController.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LMMothershipController.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -154,6 +166,15 @@
     </ClCompile>
     <ClCompile Include="src\NetworkDemoBot.cpp">
       <Filter>Source Files\network demo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LunarMoonerState.cpp">
+      <Filter>Source Files\lunar mooner</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LMAlienController.cpp">
+      <Filter>Source Files\lunar mooner</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LMMothershipController.cpp">
+      <Filter>Source Files\lunar mooner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -25,61 +25,38 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef COMMAND_IDS_HPP_
-#define COMMAND_IDS_HPP_
+#ifndef LUNAR_MOONER_STATE_HPP_
+#define LUNAR_MOONER_STATE_HPP_
 
-#include <xygine/MessageBus.hpp>
+#include <StateIds.hpp>
 
-//-------------------//
-enum RacingCommandId
+#include <xygine/State.hpp>
+#include <xygine/Scene.hpp>
+#include <xygine/Resource.hpp>
+
+class LunarMoonerState final : public xy::State
 {
-    TrackEnt = 0x1,
-    PlayerEnt = 0x2,
-    BackgroundEnt = 0x4
+public:
+    LunarMoonerState(xy::StateStack&, Context);
+    ~LunarMoonerState() = default;
+
+
+    bool handleEvent(const sf::Event&) override;
+    void handleMessage(const xy::Message&) override;
+    bool update(float) override;
+    void draw() override;
+
+    xy::StateId stateID() const { return States::NetworkDemo; }
+private:
+
+    xy::Scene m_scene;
+    xy::MessageBus& m_messageBus;
+
+    xy::TextureResource m_textureResource;
+
+    void createAliens();
+    void createTerrain();
+    void createMothership();
 };
 
-enum RacingMessageId
-{
-    TrackMessage = xy::Message::Type::Count
-};
-
-struct TrackEvent
-{
-    //const Track::Segment* playerSegment = nullptr;
-};
-//------------------//
-enum PhysicsCommandId
-{
-    CueBall = 0x1
-};
-
-enum PhysicsShaderId
-{
-    NormalMapTextured = 1,
-    NormalMapTexturedSpecular,
-    ReflectionMap
-};
-//----------------//
-
-enum NetMessageId
-{
-    PongMessage = xy::Message::Type::Count
-};
-
-struct PongEvent
-{
-    enum
-    {
-        BallDestroyed,
-        PlayerOneScored,
-        PlayerTwoScored
-    }type;
-};
-
-//-----------------//
-enum LMCommandID
-{
-    Mothership = 0x1
-};
-
-#endif //COMMAND_IDS_HPP_
+#endif //LUNAR_MOONER_STATE_HPP_

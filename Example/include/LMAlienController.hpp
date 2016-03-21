@@ -25,61 +25,29 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef COMMAND_IDS_HPP_
-#define COMMAND_IDS_HPP_
+#ifndef LM_ALIEN_CONTROLLER_HPP_
+#define LM_ALIEN_CONTROLLER_HPP_
 
-#include <xygine/MessageBus.hpp>
+#include <xygine/components/Component.hpp>
 
-//-------------------//
-enum RacingCommandId
+namespace lm
 {
-    TrackEnt = 0x1,
-    PlayerEnt = 0x2,
-    BackgroundEnt = 0x4
-};
-
-enum RacingMessageId
-{
-    TrackMessage = xy::Message::Type::Count
-};
-
-struct TrackEvent
-{
-    //const Track::Segment* playerSegment = nullptr;
-};
-//------------------//
-enum PhysicsCommandId
-{
-    CueBall = 0x1
-};
-
-enum PhysicsShaderId
-{
-    NormalMapTextured = 1,
-    NormalMapTexturedSpecular,
-    ReflectionMap
-};
-//----------------//
-
-enum NetMessageId
-{
-    PongMessage = xy::Message::Type::Count
-};
-
-struct PongEvent
-{
-    enum
+    class AlienController final : public xy::Component
     {
-        BallDestroyed,
-        PlayerOneScored,
-        PlayerTwoScored
-    }type;
-};
+    public:
+        AlienController(xy::MessageBus&, const sf::FloatRect&);
+        ~AlienController() = default;
 
-//-----------------//
-enum LMCommandID
-{
-    Mothership = 0x1
-};
+        xy::Component::Type type() const override { return xy::Component::Type::Script; }
 
-#endif //COMMAND_IDS_HPP_
+        void entityUpdate(xy::Entity&, float) override;
+        
+    private:
+
+        sf::FloatRect m_playArea;
+        sf::Vector2f m_velocity;
+        float m_speed;
+    };
+}
+
+#endif// LM_ALIEN_CONTROLLER_HPP_

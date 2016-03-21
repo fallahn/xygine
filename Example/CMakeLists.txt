@@ -54,6 +54,9 @@ include(${XY_DIR}/CMakeLists.txt)
 SET(EXAMPLE_SRC
   src/Game.cpp
   src/CaveDemoDrawable.cpp
+  src/LMAlienController.cpp
+  src/LMMothershipController.cpp
+  src/LunarMoonerState.cpp
   src/main.cpp
   src/MenuMainState.cpp
   src/MenuOptionState.cpp
@@ -67,10 +70,7 @@ SET(EXAMPLE_SRC
   src/ParticleDemoState.cpp
   src/PhysicsDemoInputController.cpp
   src/PhysicsDemoLine.cpp
-  src/PhysicsDemoState.cpp
-  src/RacingDemoPlayer.cpp
-  src/RacingDemoState.cpp
-  src/RacingDemoTrack.cpp)
+  src/PhysicsDemoState.cpp)
 
 if(WIN32)
   add_executable(xygine_example WIN32 ${EXAMPLE_SRC} ${XY_SRC})
