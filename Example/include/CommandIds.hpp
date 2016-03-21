@@ -79,7 +79,30 @@ struct PongEvent
 //-----------------//
 enum LMCommandID
 {
-    Mothership = 0x1
+    Mothership = 0x1,
+    GameController = 0x2
+};
+
+enum LMInputFlags
+{
+    SteerLeft = 0x1,
+    SteerRight = 0x2,
+    Thrust = 0x4,
+    Shoot = 0x8,
+    Start = 0x10
+};
+
+enum LMMessageId
+{
+    LMMessage = xy::Message::Count
+};
+
+struct LMEvent
+{
+    enum
+    {
+        PlayerDied
+    }type;
 };
 
 #endif //COMMAND_IDS_HPP_

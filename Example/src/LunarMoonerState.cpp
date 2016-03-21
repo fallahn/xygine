@@ -27,27 +27,34 @@ source distribution.
 
 #include <LunarMoonerState.hpp>
 #include <LMAlienController.hpp>
-#include <LMMothershipController.hpp>
+#include <LMGameController.hpp>
 #include <CommandIds.hpp>
 
 #include <xygine/App.hpp>
 #include <xygine/util/Random.hpp>
-#include <xygine/util/Position.hpp>
 #include <xygine/components/SfDrawableComponent.hpp>
+#include <xygine/Command.hpp>
+#include <xygine/Assert.hpp>
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Window/Event.hpp>
 
 namespace
 {
-    
+    const sf::Keyboard::Key keyStart = sf::Keyboard::Num1;
+    const sf::Keyboard::Key keyLeft = sf::Keyboard::A;
+    const sf::Keyboard::Key keyRight = sf::Keyboard::D;
+    const sf::Keyboard::Key keyThrust = sf::Keyboard::W;
+    const sf::Keyboard::Key keyFire = sf::Keyboard::Space;
 }
 
 LunarMoonerState::LunarMoonerState(xy::StateStack& stack, Context context)
-    : xy::State (stack, context),
-    m_scene     (context.appInstance.getMessageBus()),
-    m_messageBus(context.appInstance.getMessageBus())
+    : xy::State         (stack, context),
+    m_scene             (context.appInstance.getMessageBus()),
+    m_messageBus        (context.appInstance.getMessageBus()),
+    m_inputFlags        (0),
+    m_prevInputFlags    (0)
 {
     launchLoadingScreen();
     
@@ -56,7 +63,12 @@ LunarMoonerState::LunarMoonerState(xy::StateStack& stack, Context context)
 
     createAliens();
     createTerrain();
-    createMothership();
+
+    auto gameController = xy::Component::create<lm::GameController>(m_messageBus, m_scene);
+    auto entity = xy::Entity::create(m_messageBus);
+    entity->addComponent(gameController);
+    entity->addCommandCategories(LMCommandID::GameController);
+    m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
 
     quitLoadingScreen();
 }
@@ -64,7 +76,52 @@ LunarMoonerState::LunarMoonerState(xy::StateStack& stack, Context context)
 //public
 bool LunarMoonerState::handleEvent(const sf::Event& evt)
 {
-    
+    switch(evt.type)
+    {
+    case sf::Event::KeyReleased:
+        switch (evt.key.code)
+        {
+        case keyStart:
+            m_inputFlags &= ~LMInputFlags::Start;
+            break;
+        case keyLeft:
+            m_inputFlags &= ~LMInputFlags::SteerLeft;
+            break;
+        case keyRight:
+            m_inputFlags &= ~LMInputFlags::SteerRight;
+            break;
+        case keyThrust:
+            m_inputFlags &= ~LMInputFlags::Thrust;
+            break;
+        case keyFire:
+            m_inputFlags &= ~LMInputFlags::Shoot;
+            break;
+        default:break;
+        }
+        break;
+    case sf::Event::KeyPressed:
+        switch (evt.key.code)
+        {
+        case keyStart:
+            m_inputFlags |= LMInputFlags::Start;
+            break;
+        case keyLeft:
+            m_inputFlags |= LMInputFlags::SteerLeft;
+            break;
+        case keyRight:
+            m_inputFlags |= LMInputFlags::SteerRight;
+            break;
+        case keyThrust:
+            m_inputFlags |= LMInputFlags::Thrust;
+            break;
+        case keyFire:
+            m_inputFlags |= LMInputFlags::Shoot;
+            break;
+        default:break;
+        }
+        break;
+    default: break;
+    }
     return true;
 }
 
@@ -75,6 +132,19 @@ void LunarMoonerState::handleMessage(const xy::Message& msg)
 
 bool LunarMoonerState::update(float dt)
 {
+    if (m_inputFlags != m_prevInputFlags)
+    {
+        m_prevInputFlags = m_inputFlags;
+        xy::Command cmd;
+        cmd.category = LMCommandID::GameController;
+        cmd.action = [this](xy::Entity& entity, float)
+        {
+            XY_ASSERT(entity.getComponent<lm::GameController>(), "");
+            entity.getComponent<lm::GameController>()->setInput(m_inputFlags);
+        };
+        m_scene.sendCommand(cmd);
+    }
+    
     m_scene.update(dt);
     return true;
 }
@@ -98,8 +168,6 @@ namespace
         {0.f, 0.f, 14.f, 16.f},
         {0.f, 0.f, 18.f, 26.f}
     };
-
-    const sf::Vector2f playerSize(32.f, 42.f);
 }
 
 void LunarMoonerState::createAliens()
@@ -169,33 +237,4 @@ void LunarMoonerState::createTerrain()
 
         m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
     }
-}
-
-void LunarMoonerState::createMothership()
-{
-    auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::CircleShape>>(m_messageBus);
-    drawable->getDrawable().setRadius(10.f);
-    drawable->getDrawable().setScale(12.f, 4.f);
-    drawable->getDrawable().setFillColor(sf::Color::Yellow);
-
-    auto controller = xy::Component::create<lm::MothershipController>(m_messageBus, sf::Vector2f(alienArea.left, alienArea.left + alienArea.width));
-    
-    auto entity = xy::Entity::create(m_messageBus);
-    entity->addComponent(drawable);
-    entity->addComponent(controller);
-    entity->setPosition(alienArea.left, 26.f);
-    entity->addCommandCategories(LMCommandID::Mothership);
-
-    auto mshipEnt = m_scene.addEntity(entity, xy::Scene::Layer::BackMiddle);
-
-    auto dropshipDrawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
-    dropshipDrawable->getDrawable().setFillColor(sf::Color::Blue);
-    dropshipDrawable->getDrawable().setSize(playerSize);
-    xy::Util::Position::centreOrigin(dropshipDrawable->getDrawable());
-
-    entity = xy::Entity::create(m_messageBus);
-    auto bounds = mshipEnt->getComponent<xy::SfDrawableComponent<sf::CircleShape>>()->getDrawable().getGlobalBounds();
-    entity->setPosition(bounds.width / 2.f, bounds.height / 2.f + 10.f);
-    entity->addComponent(dropshipDrawable);
-    mshipEnt->addChild(entity);
 }

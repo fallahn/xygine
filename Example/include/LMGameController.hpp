@@ -25,40 +25,48 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef LUNAR_MOONER_STATE_HPP_
-#define LUNAR_MOONER_STATE_HPP_
+#ifndef LM_GAME_CONTROLLER_HPP_
+#define LM_GAME_CONTROLLER_HPP_
 
-#include <StateIds.hpp>
-
-#include <xygine/State.hpp>
+#include <xygine/components/Component.hpp>
 #include <xygine/Scene.hpp>
-#include <xygine/Resource.hpp>
 
-class LunarMoonerState final : public xy::State
+#include <list>
+
+namespace lm
 {
-public:
-    LunarMoonerState(xy::StateStack&, Context);
-    ~LunarMoonerState() = default;
+    class PlayerController;
+    class GameController final : public xy::Component
+    {
+    public:
+        GameController(xy::MessageBus&, xy::Scene&);
+        ~GameController() = default;
 
+        xy::Component::Type type() const override { return xy::Component::Type::Script; }
+        void entityUpdate(xy::Entity&, float) override;
 
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+        void setInput(sf::Uint8);
+        
 
-    xy::StateId stateID() const { return States::NetworkDemo; }
-private:
+    private:
+        xy::Scene& m_scene;
 
-    xy::Scene m_scene;
-    xy::MessageBus& m_messageBus;
+        sf::Uint8 m_inputFlags;
 
-    sf::Uint8 m_inputFlags;
-    sf::Uint8 m_prevInputFlags;
+        bool m_spawnReady;
+        PlayerController* m_player;
+        void spawnPlayer();
 
-    xy::TextureResource m_textureResource;
+        xy::Entity* m_mothership;
+        void createMothership();
 
-    void createAliens();
-    void createTerrain();
-};
+        struct DelayedEvent
+        {
+            float time = 0.f;
+            std::function<void()> action;
+        };
+        std::list<DelayedEvent> m_delayedEvents;
+    };
+}
 
-#endif //LUNAR_MOONER_STATE_HPP_
+#endif //LM_GAME_CONTROLLER_HPP_

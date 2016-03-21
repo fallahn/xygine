@@ -79,7 +79,7 @@ namespace xy
         \brief Factory function for Entities
 
         Entities can only be created via this function, to allow
-        xygine to internally managed the memory allocated.
+        xygine to internally manage the memory allocated.
         \param MessageBus Reference to the system message bus
         */
         static Ptr create(MessageBus&);
