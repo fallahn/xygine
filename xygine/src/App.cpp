@@ -317,6 +317,7 @@ void App::saveScreenshot()
 
     fileName.assign(buffer);
 
+    //TODO on next release of SFML update this as capture() is deprecated
     sf::Image screenCap = m_renderWindow.capture();
     if (!screenCap.saveToFile(fileName)) Logger::log("failed to save " + fileName, Logger::Type::Error, Logger::Output::File);
 }
