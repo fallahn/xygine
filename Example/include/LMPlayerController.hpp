@@ -46,6 +46,8 @@ namespace lm
         void onStart(xy::Entity&) override;
         void setInput(sf::Uint8);
 
+        sf::Vector2f getPosition() const;
+
         void destroy() override;
 
         void collisionCallback(CollisionComponent*);
@@ -56,7 +58,6 @@ namespace lm
         xy::Entity* m_entity;
 
         bool m_carrying;
-        float m_pickupTime;
 
         sf::Vector3f getManifold(const sf::FloatRect&);
 

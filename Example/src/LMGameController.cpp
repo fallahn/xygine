@@ -29,10 +29,13 @@ source distribution.
 #include <LMPlayerController.hpp>
 #include <LMMothershipController.hpp>
 #include <LMCollisionWorld.hpp>
+#include <LMHumanController.hpp>
 #include <CommandIds.hpp>
 
 #include <xygine/components/SfDrawableComponent.hpp>
 #include <xygine/util/Position.hpp>
+#include <xygine/util/Random.hpp>
+#include <xygine/util/Vector.hpp>
 
 #include <SFML/Graphics/CircleShape.hpp>
 
@@ -42,6 +45,7 @@ using namespace std::placeholders;
 namespace
 {
     const sf::Vector2f playerSize(32.f, 42.f);
+    const sf::Uint8 humanCount = 8;
 }
 
 GameController::GameController(xy::MessageBus& mb, xy::Scene& scene, CollisionWorld& cw)
@@ -54,6 +58,7 @@ GameController::GameController(xy::MessageBus& mb, xy::Scene& scene, CollisionWo
     m_mothership    (nullptr)
 {
     createMothership();
+    spawnHumans();
 
     xy::Component::MessageHandler handler;
     handler.id = LMMessageId::LMMessage;
@@ -87,6 +92,31 @@ GameController::GameController(xy::MessageBus& mb, xy::Scene& scene, CollisionWo
             m_player = nullptr;
         }
             break;
+        case LMEvent::PlayerLanded:
+        {
+            auto pos = m_player->getPosition();
+
+            //get nearest human
+            auto dist = xy::Util::Vector::lengthSquared(m_humans[0]->getPosition() - pos);
+            std::size_t index = 0;
+            if (m_humans.size() > 1)
+            {
+                for (auto i = 1u; i < m_humans.size(); ++i)
+                {
+                    auto newDist = xy::Util::Vector::lengthSquared(m_humans[i]->getPosition() - pos);
+                    if (newDist < dist)
+                    {
+                        index = i;
+                        dist = newDist;
+                    }
+                }
+            }
+            m_humans[index]->getComponent<HumanController>()->setDestination(pos);
+        }
+            break;
+        case LMEvent::HumanRescued:
+            addRescuedHuman();
+            break;
         }
     };
     addMessageHandler(handler);
@@ -109,6 +139,13 @@ void GameController::entityUpdate(xy::Entity&, float dt)
         return false;
     }),
         m_delayedEvents.end());
+
+    //remove humans which have reached the ship
+    m_humans.erase(std::remove_if(m_humans.begin(), m_humans.end(),
+        [](const xy::Entity* ent)
+    {
+        return ent->destroyed();
+    }), m_humans.end());
 }
 
 void GameController::setInput(sf::Uint8 input)
@@ -195,5 +232,45 @@ void GameController::createMothership()
     entity = xy::Entity::create(getMessageBus());    
     entity->setPosition(bounds.width / 2.f, bounds.height / 2.f + 10.f);
     entity->addComponent(dropshipDrawable);
+    m_mothership->addChild(entity);
+}
+
+namespace
+{
+    std::unique_ptr<xy::SfDrawableComponent<sf::CircleShape>> getHumanDrawable(xy::MessageBus& mb)
+    {
+        auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::CircleShape>>(mb);
+        drawable->getDrawable().setRadius(10.f);
+        drawable->getDrawable().setFillColor(sf::Color::Blue);
+        drawable->getDrawable().setScale(1.f, 1.4f);
+        return std::move(drawable);
+    }
+}
+
+void GameController::spawnHumans()
+{
+    for (auto i = 0; i < humanCount; ++i)
+    {
+        auto drawable = getHumanDrawable(getMessageBus());
+
+        auto controller = xy::Component::create<HumanController>(getMessageBus());
+
+        auto entity = xy::Entity::create(getMessageBus());
+        entity->addComponent(drawable);
+        entity->addComponent(controller);
+        entity->setPosition(xy::Util::Random::value(380.f, 1500.f), xy::Util::Random::value(1045.f, 1060.f));
+
+        m_humans.push_back(m_scene.addEntity(entity, xy::Scene::Layer::FrontRear));
+    }
+}
+
+void GameController::addRescuedHuman()
+{
+    auto drawable = getHumanDrawable(getMessageBus());
+
+    float offset = static_cast<float>(humanCount - (m_humans.size() + 1)) * 26.f;
+    auto entity = xy::Entity::create(getMessageBus());
+    entity->setPosition(offset+4.f, 16.f);
+    entity->addComponent(drawable);
     m_mothership->addChild(entity);
 }

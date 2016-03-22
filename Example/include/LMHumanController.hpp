@@ -25,55 +25,30 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef LM_GAME_CONTROLLER_HPP_
-#define LM_GAME_CONTROLLER_HPP_
+#ifndef LM_HUMAN_CONTROLLER_HPP_
+#define LM_HUMAN_CONTROLLER_HPP_
 
 #include <xygine/components/Component.hpp>
-#include <xygine/Scene.hpp>
-
-#include <list>
 
 namespace lm
 {
-    class PlayerController;
-    class CollisionWorld;
-    class GameController final : public xy::Component
+    class HumanController final : public xy::Component
     {
     public:
-        GameController(xy::MessageBus&, xy::Scene&, CollisionWorld&);
-        ~GameController() = default;
+        explicit HumanController(xy::MessageBus&);
+        ~HumanController() = default;
 
         xy::Component::Type type() const override { return xy::Component::Type::Script; }
         void entityUpdate(xy::Entity&, float) override;
 
-        void setInput(sf::Uint8);
-        
+        void setDestination(const sf::Vector2f&);
 
     private:
-        xy::Scene& m_scene;
-        CollisionWorld& m_collisionWorld;
+        bool m_gotoDestination;
+        sf::Vector2f m_destination;
 
-        sf::Uint8 m_inputFlags;
-
-        bool m_spawnReady;
-        PlayerController* m_player;
-        void spawnPlayer();
-
-        xy::Entity* m_mothership;
-        void createMothership();
-
-        std::vector<xy::Entity*> m_humans;
-        void spawnHumans();
-
-        struct DelayedEvent
-        {
-            float time = 0.f;
-            std::function<void()> action;
-        };
-        std::list<DelayedEvent> m_delayedEvents;
-
-        void addRescuedHuman();
+        std::size_t m_waveTableIndex;
     };
 }
 
-#endif //LM_GAME_CONTROLLER_HPP_
+#endif //LM_HUMAN_CONTROLLER_HPP_

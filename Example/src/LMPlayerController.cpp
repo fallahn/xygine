@@ -48,12 +48,27 @@ PlayerController::PlayerController(xy::MessageBus& mb)
     : xy::Component (mb, this),
     m_inputFlags    (0),
     m_entity        (nullptr),
-    m_carrying      (false),
-    m_pickupTime    (0.f)
+    m_carrying      (false)
 {
     m_velocity.y = 2.f;
 
     updateState = std::bind(&PlayerController::flyingState, this, _1, _2);
+
+    xy::Component::MessageHandler handler;
+    handler.id = LMMessageId::LMMessage;
+    handler.action = [this](xy::Component* c, const xy::Message& msg)
+    {
+        auto& msgData = msg.getData<LMEvent>();
+        switch (msgData.type)
+        {
+        default: break;
+        case LMEvent::HumanPickedUp:
+            m_velocity = { 0.f, -82.5f };
+            updateState = std::bind(&PlayerController::flyingState, this, _1, _2);
+            break;
+        }
+    };
+    addMessageHandler(handler);
 }
 
 //public
@@ -71,6 +86,11 @@ void PlayerController::onStart(xy::Entity& entity)
 void PlayerController::setInput(sf::Uint8 input)
 {
     m_inputFlags = input;
+}
+
+sf::Vector2f PlayerController::getPosition() const
+{
+    return m_entity->getPosition();
 }
 
 void PlayerController::destroy()
@@ -99,7 +119,7 @@ void PlayerController::collisionCallback(CollisionComponent* cc)
         break;
     case CollisionComponent::ID::Mothership:
         //if carrying drop human, raise message
-        if (m_carrying && xy::Util::Vector::lengthSquared(m_velocity) < 25000)
+        if (m_carrying && xy::Util::Vector::lengthSquared(m_velocity) < 15000)
         {
             //we want to be moving slowly enough, and fully contained in mothership area
             if (xy::Util::Rectangle::contains(cc->globalBounds(), m_entity->globalBounds()))
@@ -115,7 +135,15 @@ void PlayerController::collisionCallback(CollisionComponent* cc)
         auto manifold = getManifold(cc->globalBounds());
         if (manifold.y != 0)
         {
-            //we're on top TODO measure velocity an assplode if too fast
+            //we're on top 
+            //measure velocity an assplode if too fast
+            if (xy::Util::Vector::lengthSquared(m_velocity) > 15000)
+            {
+                //oh noes!
+                m_entity->destroy();
+                break;
+            }
+
             auto normal = sf::Vector2f(manifold.x, manifold.y);
             m_entity->move(normal * manifold.z);
             m_velocity = xy::Util::Vector::reflect(m_velocity, normal);
@@ -124,8 +152,11 @@ void PlayerController::collisionCallback(CollisionComponent* cc)
             if (!m_carrying)
             {
                 //stop and pickup
-                m_pickupTime = 5.f;
+                m_carrying = true;
                 updateState = std::bind(&PlayerController::landedState, this, _1, _2);
+
+                auto msg = getMessageBus().post<LMEvent>(LMMessageId::LMMessage);
+                msg->type = LMEvent::PlayerLanded;
             }
         }
         else
@@ -193,11 +224,5 @@ void PlayerController::flyingState(xy::Entity& entity, float dt)
 
 void PlayerController::landedState(xy::Entity& entity, float dt)
 {
-    m_pickupTime -= dt;
-    if (m_pickupTime < 0)
-    {
-        m_velocity = { 0.f, -82.5f };
-        updateState = std::bind(&PlayerController::flyingState, this, _1, _2);
-        m_carrying = true;
-    }
+
 }

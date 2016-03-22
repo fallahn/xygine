@@ -58,6 +58,7 @@ SET(EXAMPLE_SRC
   src/LMCollisionComponent.cpp
   src/LMCollisionWorld.cpp
   src/LMGameController.cpp
+  src/LMHumanController.cpp
   src/LMMothershipController.cpp
   src/LMPlayerController.cpp
   src/LunarMoonerState.cpp

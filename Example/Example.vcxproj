@@ -79,6 +79,7 @@
     <ClInclude Include="include\LMCollisionComponent.hpp" />
     <ClInclude Include="include\LMCollisionWorld.hpp" />
     <ClInclude Include="include\LMGameController.hpp" />
+    <ClInclude Include="include\LMHumanController.hpp" />
     <ClInclude Include="include\LMMothershipController.hpp" />
     <ClInclude Include="include\LMPlayerController.hpp" />
     <ClInclude Include="include\LunarMoonerState.hpp" />
@@ -110,6 +111,7 @@
     <ClCompile Include="src\LMCollisionComponent.cpp" />
     <ClCompile Include="src\LMCollisionWorld.cpp" />
     <ClCompile Include="src\LMGameController.cpp" />
+    <ClCompile Include="src\LMHumanController.cpp" />
     <ClCompile Include="src\LMMothershipController.cpp" />
     <ClCompile Include="src\LMPlayerController.cpp" />
     <ClCompile Include="src\LunarMoonerState.cpp" />

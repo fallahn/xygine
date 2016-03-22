@@ -102,7 +102,9 @@ struct LMEvent
     enum
     {
         PlayerDied,
-        HumanRescued
+        PlayerLanded,
+        HumanRescued,
+        HumanPickedUp
     }type;
 };
 
