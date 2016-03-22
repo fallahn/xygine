@@ -35,6 +35,7 @@ source distribution.
 #include <xygine/components/SfDrawableComponent.hpp>
 #include <xygine/Command.hpp>
 #include <xygine/Assert.hpp>
+#include <xygine/Reports.hpp>
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -64,11 +65,14 @@ LunarMoonerState::LunarMoonerState(xy::StateStack& stack, Context context)
     createAliens();
     createTerrain();
 
-    auto gameController = xy::Component::create<lm::GameController>(m_messageBus, m_scene);
+    auto gameController = xy::Component::create<lm::GameController>(m_messageBus, m_scene, m_collisionWorld);
     auto entity = xy::Entity::create(m_messageBus);
     entity->addComponent(gameController);
     entity->addCommandCategories(LMCommandID::GameController);
     m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
+
+    xy::Stats::clear();
+    m_reportText.setFont(m_fontResource.get("buns"));
 
     quitLoadingScreen();
 }
@@ -146,6 +150,10 @@ bool LunarMoonerState::update(float dt)
     }
     
     m_scene.update(dt);
+    m_collisionWorld.update();
+
+    m_reportText.setString(xy::Stats::getString());
+
     return true;
 }
 
@@ -154,12 +162,15 @@ void LunarMoonerState::draw()
     auto& rw = getContext().renderWindow;
 
     rw.draw(m_scene);
+
+    rw.setView(getContext().defaultView);
+    rw.draw(m_reportText);
 }
 
 //private
 namespace
 {
-    const sf::Uint8 alientCount = 8;
+    const sf::Uint8 alientCount = 12;
     const sf::FloatRect alienArea(386.f, 200.f, 1148.f, 480.f);
     const std::array<sf::FloatRect, 4u> alienSizes = 
     {
@@ -184,9 +195,12 @@ void LunarMoonerState::createAliens()
 
         auto controller = xy::Component::create<lm::AlienController>(m_messageBus, alienArea);
 
+        auto collision = m_collisionWorld.addComponent(m_messageBus, size, lm::CollisionComponent::ID::Alien);
+
         auto entity = xy::Entity::create(m_messageBus);
         entity->addComponent(drawable);
         entity->addComponent(controller);
+        entity->addComponent(collision);
         entity->setPosition(position);
 
         m_scene.addEntity(entity, xy::Scene::Layer::BackMiddle);
@@ -210,11 +224,34 @@ void LunarMoonerState::createTerrain()
     drawable->getDrawable().setFillColor(sf::Color::Red);
     drawable->getDrawable().setSize({ alienArea.width, 40.f });
 
+    auto collision = m_collisionWorld.addComponent(m_messageBus, { {0.f, 0.f}, {alienArea.width, 40.f} }, lm::CollisionComponent::ID::Alien);
+
     entity = xy::Entity::create(m_messageBus);
     entity->addComponent(drawable);
+    entity->addComponent(collision);
     entity->setPosition(alienArea.left, 1040.f);
 
     m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
+
+
+    //walls
+    collision = m_collisionWorld.addComponent(m_messageBus, { { 0.f, 0.f },{ 40.f, 1080.f } }, lm::CollisionComponent::ID::Bounds);
+    entity = xy::Entity::create(m_messageBus);
+    entity->addComponent(collision);
+    entity->setPosition(alienArea.left - 40.f, 0.f);
+    m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
+
+    collision = m_collisionWorld.addComponent(m_messageBus, { { 0.f, 0.f },{ 40.f, 1080.f } }, lm::CollisionComponent::ID::Bounds);
+    entity = xy::Entity::create(m_messageBus);
+    entity->addComponent(collision);
+    entity->setPosition(alienArea.left + alienArea.width, 0.f);
+    m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
+
+    collision = m_collisionWorld.addComponent(m_messageBus, { { 0.f, 0.f },{ alienArea.width, 40.f } }, lm::CollisionComponent::ID::Bounds);
+    entity = xy::Entity::create(m_messageBus);
+    entity->addComponent(collision);
+    entity->setPosition(alienArea.left, -40.f);
+    m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
 
 
     //towers to land on
@@ -231,8 +268,11 @@ void LunarMoonerState::createTerrain()
         drawable->getDrawable().setFillColor(sf::Color::Green);
         drawable->getDrawable().setSize(p.first);
 
+        collision = m_collisionWorld.addComponent(m_messageBus, { { 0.f, 0.f }, p.first }, lm::CollisionComponent::ID::Tower);
+
         entity = xy::Entity::create(m_messageBus);
         entity->addComponent(drawable);
+        entity->addComponent(collision);
         entity->setPosition(alienArea.left + p.second.x, p.second.y);
 
         m_scene.addEntity(entity, xy::Scene::Layer::BackFront);

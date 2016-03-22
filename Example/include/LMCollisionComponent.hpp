@@ -25,47 +25,54 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef LM_PLAYER_CONTROLLER_HPP_
-#define LM_PLAYER_CONTROLLER_HPP_
+#ifndef LM_COLLISION_COMPONENT_HPP_
+#define LM_COLLISION_COMPONENT_HPP_
 
 #include <xygine/components/Component.hpp>
 
-#include <SFML/System/Vector3.hpp>
-
 namespace lm
 {
-    class CollisionComponent;
-    class PlayerController final : public xy::Component
+    class CollisionComponent final : public xy::Component
     {
     public:
-        explicit PlayerController(xy::MessageBus&);
-        ~PlayerController() = default;
+        using Ptr = std::unique_ptr<CollisionComponent>;
 
-        xy::Component::Type type() const override { return xy::Component::Type::Script; }
+        enum class ID
+        {
+            Alien,
+            Bounds,
+            Bullet,            
+            Mothership,
+            Player,
+            Tower
+        };
+
+        CollisionComponent(xy::MessageBus&, sf::FloatRect, ID);
+        ~CollisionComponent() = default;
+
+        xy::Component::Type type() const override { return xy::Component::Type::Physics; }
+
         void entityUpdate(xy::Entity&, float) override;
         void onStart(xy::Entity&) override;
-        void setInput(sf::Uint8);
 
-        void destroy() override;
+        sf::FloatRect localBounds() const override;
+        sf::FloatRect globalBounds() const override;
 
-        void collisionCallback(CollisionComponent*);
+        ID getID() const;
+
+        using Callback = std::function<void(CollisionComponent*)>;
+        void setCallback(const Callback&);
+
+        void addCollider(CollisionComponent*);
 
     private:
-        sf::Uint8 m_inputFlags;
-        sf::Vector2f m_velocity;
         xy::Entity* m_entity;
+        sf::FloatRect m_localBounds;
+        ID m_id;
 
-        bool m_carrying;
-        float m_pickupTime;
-
-        sf::Vector3f getManifold(const sf::FloatRect&);
-
-        using PlayerState = std::function<void(xy::Entity&, float)>;
-        PlayerState updateState;
-
-        void flyingState(xy::Entity&, float);
-        void landedState(xy::Entity&, float);
+        Callback resolve;
+        std::vector<CollisionComponent*> m_collisions;
     };
 }
 
-#endif //LM_PLAYER_CONTROLLER_HPP_
+#endif //LM_COLLISION_COMPONENT_HPP_

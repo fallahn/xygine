@@ -29,10 +29,13 @@ source distribution.
 #define LUNAR_MOONER_STATE_HPP_
 
 #include <StateIds.hpp>
+#include <LMCollisionWorld.hpp>
 
 #include <xygine/State.hpp>
 #include <xygine/Scene.hpp>
 #include <xygine/Resource.hpp>
+
+#include <SFML/Graphics/Text.hpp>
 
 class LunarMoonerState final : public xy::State
 {
@@ -40,13 +43,12 @@ public:
     LunarMoonerState(xy::StateStack&, Context);
     ~LunarMoonerState() = default;
 
-
     bool handleEvent(const sf::Event&) override;
     void handleMessage(const xy::Message&) override;
     bool update(float) override;
     void draw() override;
 
-    xy::StateId stateID() const { return States::NetworkDemo; }
+    xy::StateId stateID() const { return States::LunarMooner; }
 private:
 
     xy::Scene m_scene;
@@ -56,6 +58,11 @@ private:
     sf::Uint8 m_prevInputFlags;
 
     xy::TextureResource m_textureResource;
+    xy::FontResource m_fontResource;
+
+    sf::Text m_reportText;
+
+    lm::CollisionWorld m_collisionWorld;
 
     void createAliens();
     void createTerrain();

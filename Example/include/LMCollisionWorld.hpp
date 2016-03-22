@@ -25,50 +25,29 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef LM_GAME_CONTROLLER_HPP_
-#define LM_GAME_CONTROLLER_HPP_
+#ifndef LM_COLLISION_WORLD_HPP_
+#define LM_COLLISION_WORLD_HPP_
 
-#include <xygine/components/Component.hpp>
-#include <xygine/Scene.hpp>
-
-#include <list>
+#include <LMCollisionComponent.hpp>
 
 namespace lm
 {
-    class PlayerController;
-    class CollisionWorld;
-    class GameController final : public xy::Component
+    class CollisionWorld final
     {
     public:
-        GameController(xy::MessageBus&, xy::Scene&, CollisionWorld&);
-        ~GameController() = default;
+        CollisionWorld();
+        ~CollisionWorld() = default;
+        CollisionWorld(const CollisionWorld&) = delete;
+        CollisionWorld& operator = (const CollisionWorld&) = delete;
 
-        xy::Component::Type type() const override { return xy::Component::Type::Script; }
-        void entityUpdate(xy::Entity&, float) override;
+        CollisionComponent::Ptr addComponent(xy::MessageBus&, sf::FloatRect, CollisionComponent::ID);
 
-        void setInput(sf::Uint8);
-        
+        void update();
 
     private:
-        xy::Scene& m_scene;
-        CollisionWorld& m_collisionWorld;
-
-        sf::Uint8 m_inputFlags;
-
-        bool m_spawnReady;
-        PlayerController* m_player;
-        void spawnPlayer();
-
-        xy::Entity* m_mothership;
-        void createMothership();
-
-        struct DelayedEvent
-        {
-            float time = 0.f;
-            std::function<void()> action;
-        };
-        std::list<DelayedEvent> m_delayedEvents;
+        std::vector<CollisionComponent*> m_colliders;
+        std::vector<CollisionComponent*> m_collidees;
     };
 }
 
-#endif //LM_GAME_CONTROLLER_HPP_
+#endif //LM_COLLISION_WORLD_HPP_

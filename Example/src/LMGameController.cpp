@@ -28,6 +28,7 @@ source distribution.
 #include <LMGameController.hpp>
 #include <LMPlayerController.hpp>
 #include <LMMothershipController.hpp>
+#include <LMCollisionWorld.hpp>
 #include <CommandIds.hpp>
 
 #include <xygine/components/SfDrawableComponent.hpp>
@@ -43,9 +44,10 @@ namespace
     const sf::Vector2f playerSize(32.f, 42.f);
 }
 
-GameController::GameController(xy::MessageBus& mb, xy::Scene& scene)
+GameController::GameController(xy::MessageBus& mb, xy::Scene& scene, CollisionWorld& cw)
     : xy::Component (mb, this),
     m_scene         (scene),
+    m_collisionWorld(cw),
     m_inputFlags    (0),
     m_spawnReady    (true),
     m_player        (nullptr),
@@ -144,14 +146,19 @@ void GameController::spawnPlayer()
         auto dropshipDrawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(getMessageBus());
         dropshipDrawable->getDrawable().setFillColor(sf::Color::Blue);
         dropshipDrawable->getDrawable().setSize(playerSize);
-        xy::Util::Position::centreOrigin(dropshipDrawable->getDrawable());
 
         auto playerController = xy::Component::create<lm::PlayerController>(getMessageBus());
 
+        auto collision = m_collisionWorld.addComponent(getMessageBus(), { {0.f, 0.f}, playerSize }, CollisionComponent::ID::Player);
+        CollisionComponent::Callback cb = std::bind(&PlayerController::collisionCallback, playerController.get(), _1);
+        collision->setCallback(cb);
+
         auto entity = xy::Entity::create(getMessageBus());
         entity->setPosition(spawnPos);
+        entity->setOrigin(playerSize / 2.f);
         entity->addComponent(dropshipDrawable);
         m_player = entity->addComponent(playerController);
+        entity->addComponent(collision);
 
         m_scene.addEntity(entity, xy::Scene::BackFront);
 
@@ -168,9 +175,13 @@ void GameController::createMothership()
 
     auto controller = xy::Component::create<lm::MothershipController>(getMessageBus(), sf::Vector2f(386.f, 1534.f));
 
+    auto bounds = drawable->getDrawable().getGlobalBounds();
+    auto collision = m_collisionWorld.addComponent(getMessageBus(), { {0.f, 0.f}, {bounds.width, bounds.height} }, CollisionComponent::ID::Mothership);
+
     auto entity = xy::Entity::create(getMessageBus());
     entity->addComponent(drawable);
     entity->addComponent(controller);
+    entity->addComponent(collision);
     entity->setPosition(386.f, 26.f);
     entity->addCommandCategories(LMCommandID::Mothership);
 
@@ -181,8 +192,7 @@ void GameController::createMothership()
     dropshipDrawable->getDrawable().setSize(playerSize);
     xy::Util::Position::centreOrigin(dropshipDrawable->getDrawable());
 
-    entity = xy::Entity::create(getMessageBus());
-    auto bounds = m_mothership->getComponent<xy::SfDrawableComponent<sf::CircleShape>>()->getDrawable().getGlobalBounds();
+    entity = xy::Entity::create(getMessageBus());    
     entity->setPosition(bounds.width / 2.f, bounds.height / 2.f + 10.f);
     entity->addComponent(dropshipDrawable);
     m_mothership->addChild(entity);

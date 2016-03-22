@@ -114,6 +114,12 @@
     <ClInclude Include="include\LMPlayerController.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\LMCollisionComponent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LMCollisionWorld.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -186,6 +192,12 @@
       <Filter>Source Files\lunar mooner</Filter>
     </ClCompile>
     <ClCompile Include="src\LMPlayerController.cpp">
+      <Filter>Source Files\lunar mooner</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LMCollisionComponent.cpp">
+      <Filter>Source Files\lunar mooner</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LMCollisionWorld.cpp">
       <Filter>Source Files\lunar mooner</Filter>
     </ClCompile>
   </ItemGroup>

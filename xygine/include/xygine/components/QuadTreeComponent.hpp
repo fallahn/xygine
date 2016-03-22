@@ -89,7 +89,7 @@ namespace xy
         QuadTree components buffer around 600ms of transforms so that bounds
         queries can be performed over the network using lag compensation
 
-        \param latency Number of milliseconds in to hte past when querying
+        \param latency Number of milliseconds in to the past when querying
         transform buffer.
         */
         sf::FloatRect globalBounds(sf::Int32 latency);
@@ -109,7 +109,7 @@ namespace xy
 
         /*!
         \brief Returns a pointer to the component's parent entity
-        or nullptr if not entity exists.
+        or nullptr if no entity exists.
         */
         Entity* getEntity();
 
