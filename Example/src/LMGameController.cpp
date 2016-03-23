@@ -30,6 +30,8 @@ source distribution.
 #include <LMMothershipController.hpp>
 #include <LMCollisionWorld.hpp>
 #include <LMHumanController.hpp>
+#include <LMAlienController.hpp>
+#include <LMBulletController.hpp>
 #include <CommandIds.hpp>
 
 #include <xygine/components/SfDrawableComponent.hpp>
@@ -38,6 +40,7 @@ source distribution.
 #include <xygine/util/Vector.hpp>
 
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 using namespace lm;
 using namespace std::placeholders;
@@ -46,6 +49,7 @@ namespace
 {
     const sf::Vector2f playerSize(32.f, 42.f);
     const sf::Uint8 humanCount = 8;
+    const sf::Vector2f bulletSize(6.f, 10.f);
 }
 
 GameController::GameController(xy::MessageBus& mb, xy::Scene& scene, CollisionWorld& cw)
@@ -57,6 +61,8 @@ GameController::GameController(xy::MessageBus& mb, xy::Scene& scene, CollisionWo
     m_player        (nullptr),
     m_mothership    (nullptr)
 {
+    createTerrain();
+    createAliens();
     createMothership();
     spawnHumans();
 
@@ -117,6 +123,9 @@ GameController::GameController(xy::MessageBus& mb, xy::Scene& scene, CollisionWo
         case LMEvent::HumanRescued:
             addRescuedHuman();
             break;
+        case LMEvent::AlienDied:
+            spawnAlien();
+            break;
         }
     };
     addMessageHandler(handler);
@@ -162,8 +171,13 @@ void GameController::setInput(sf::Uint8 input)
         //set player input
         m_player->setInput(input);
 
-        //TODO hook player shoot even here
+        //hook player shoot event here
         //as bullets are technically entities in their own right
+        if ((input & LMInputFlags::Shoot) == 0
+            && (m_inputFlags & LMInputFlags::Shoot) != 0)
+        {
+            spawnBullet();
+        }
 
         //TODO hook particle effects for thrusts here too
     }
@@ -177,8 +191,8 @@ void GameController::spawnPlayer()
     if (!m_player && m_spawnReady)
     {
         const auto& children = m_mothership->getChildren();
-        auto spawnPos = children[0]->getWorldPosition();
-        children[0]->destroy();
+        auto spawnPos = children.back()->getWorldPosition();
+        children.back()->destroy();
 
         auto dropshipDrawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(getMessageBus());
         dropshipDrawable->getDrawable().setFillColor(sf::Color::Blue);
@@ -245,6 +259,16 @@ namespace
         drawable->getDrawable().setScale(1.f, 1.4f);
         return std::move(drawable);
     }
+
+    const sf::Uint8 alienCount = 12;
+    const sf::FloatRect alienArea(386.f, 200.f, 1148.f, 480.f);
+    const std::array<sf::FloatRect, 4u> alienSizes =
+    {
+        sf::FloatRect(0.f, 0.f, 20.f, 16.f),
+        { 0.f, 0.f, 28.f, 30.f },
+        { 0.f, 0.f, 14.f, 16.f },
+        { 0.f, 0.f, 18.f, 26.f }
+    };
 }
 
 void GameController::spawnHumans()
@@ -264,6 +288,111 @@ void GameController::spawnHumans()
     }
 }
 
+void GameController::spawnAlien()
+{
+    auto size = alienSizes[xy::Util::Random::value(0, alienSizes.size() - 1)];
+    auto position = sf::Vector2f(xy::Util::Random::value(alienArea.left, alienArea.left + alienArea.width),
+        xy::Util::Random::value(alienArea.top, alienArea.top + alienArea.height));
+
+    auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(getMessageBus());
+    drawable->getDrawable().setFillColor(sf::Color::Red);
+    drawable->getDrawable().setSize({ size.width, size.height });
+
+    auto controller = xy::Component::create<AlienController>(getMessageBus(), alienArea);
+
+    auto collision = m_collisionWorld.addComponent(getMessageBus(), size, lm::CollisionComponent::ID::Alien);
+    lm::CollisionComponent::Callback cb = std::bind(&AlienController::collisionCallback, controller.get(), std::placeholders::_1);
+    collision->setCallback(cb);
+
+    auto entity = xy::Entity::create(getMessageBus());
+    entity->addComponent(drawable);
+    entity->addComponent(controller);
+    entity->addComponent(collision);
+    entity->setPosition(position);
+
+    m_scene.addEntity(entity, xy::Scene::Layer::BackMiddle);
+}
+
+void GameController::createAliens()
+{
+    for (auto i = 0; i < alienCount; ++i)
+    {
+        spawnAlien();
+    }
+}
+
+void GameController::createTerrain()
+{
+    auto backgroundDrawable = xy::Component::create<xy::SfDrawableComponent<sf::Sprite>>(getMessageBus());
+    backgroundDrawable->getDrawable().setTexture(m_textureResource.get("assets/images/lunarmooner/background.png"));
+
+    auto entity = xy::Entity::create(getMessageBus());
+    entity->setPosition(alienArea.left, 0.f);
+    entity->addComponent(backgroundDrawable);
+
+    m_scene.addEntity(entity, xy::Scene::BackRear);
+
+
+    //death zone at bottom
+    auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(getMessageBus());
+    drawable->getDrawable().setFillColor(sf::Color::Red);
+    drawable->getDrawable().setSize({ alienArea.width, 40.f });
+
+    auto collision = m_collisionWorld.addComponent(getMessageBus(), { { 0.f, 0.f },{ alienArea.width, 40.f } }, lm::CollisionComponent::ID::Alien);
+
+    entity = xy::Entity::create(getMessageBus());
+    entity->addComponent(drawable);
+    entity->addComponent(collision);
+    entity->setPosition(alienArea.left, 1040.f);
+
+    m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
+
+
+    //walls
+    collision = m_collisionWorld.addComponent(getMessageBus(), { { 0.f, 0.f },{ 40.f, 1080.f } }, lm::CollisionComponent::ID::Bounds);
+    entity = xy::Entity::create(getMessageBus());
+    entity->addComponent(collision);
+    entity->setPosition(alienArea.left - 40.f, 0.f);
+    m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
+
+    collision = m_collisionWorld.addComponent(getMessageBus(), { { 0.f, 0.f },{ 40.f, 1080.f } }, lm::CollisionComponent::ID::Bounds);
+    entity = xy::Entity::create(getMessageBus());
+    entity->addComponent(collision);
+    entity->setPosition(alienArea.left + alienArea.width, 0.f);
+    m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
+
+    collision = m_collisionWorld.addComponent(getMessageBus(), { { 0.f, 0.f },{ alienArea.width, 40.f } }, lm::CollisionComponent::ID::Bounds);
+    entity = xy::Entity::create(getMessageBus());
+    entity->addComponent(collision);
+    entity->setPosition(alienArea.left, -40.f);
+    m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
+
+
+    //towers to land on
+    std::array<std::pair<sf::Vector2f, sf::Vector2f>, 3u> positions =
+    {
+        std::make_pair(sf::Vector2f(180.f, 210.f), sf::Vector2f(20.f, 1080.f - 210.f)),
+        std::make_pair(sf::Vector2f(150.f, 290.f), sf::Vector2f(520.f, 1080.f - 290.f)),
+        std::make_pair(sf::Vector2f(220.f, 60.f), sf::Vector2f(900.f, 1080.f - 60.f))
+    };
+
+    for (const auto& p : positions)
+    {
+        drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(getMessageBus());
+        drawable->getDrawable().setFillColor(sf::Color::Green);
+        drawable->getDrawable().setSize(p.first);
+
+        collision = m_collisionWorld.addComponent(getMessageBus(), { { 0.f, 0.f }, p.first }, lm::CollisionComponent::ID::Tower);
+
+        entity = xy::Entity::create(getMessageBus());
+        entity->addComponent(drawable);
+        entity->addComponent(collision);
+        entity->setPosition(alienArea.left + p.second.x, p.second.y);
+
+        m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
+    }
+}
+
 void GameController::addRescuedHuman()
 {
     auto drawable = getHumanDrawable(getMessageBus());
@@ -273,4 +402,26 @@ void GameController::addRescuedHuman()
     entity->setPosition(offset+4.f, 16.f);
     entity->addComponent(drawable);
     m_mothership->addChild(entity);
+}
+
+void GameController::spawnBullet()
+{
+    auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(getMessageBus());
+    drawable->getDrawable().setSize(bulletSize);
+    drawable->getDrawable().setFillColor(sf::Color::Cyan);
+
+    auto controller = xy::Component::create<BulletController>(getMessageBus());
+
+    auto collision = m_collisionWorld.addComponent(getMessageBus(), { {0.f, 0.f}, bulletSize }, CollisionComponent::ID::Bullet);
+    CollisionComponent::Callback cb = std::bind(&BulletController::collisionCallback, controller.get(), _1);
+    collision->setCallback(cb);
+
+    auto entity = xy::Entity::create(getMessageBus());
+    entity->setPosition(m_player->getPosition());
+    entity->setOrigin(bulletSize / 2.f);
+    entity->addComponent(drawable);
+    entity->addComponent(controller);
+    entity->addComponent(collision);
+
+    m_scene.addEntity(entity, xy::Scene::Layer::BackMiddle);
 }

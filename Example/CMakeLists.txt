@@ -55,6 +55,7 @@ SET(EXAMPLE_SRC
   src/Game.cpp
   src/CaveDemoDrawable.cpp
   src/LMAlienController.cpp
+  src/LMBulletController.cpp
   src/LMCollisionComponent.cpp
   src/LMCollisionWorld.cpp
   src/LMGameController.cpp

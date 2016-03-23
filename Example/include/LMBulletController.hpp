@@ -25,19 +25,19 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef LM_ALIEN_CONTROLLER_HPP_
-#define LM_ALIEN_CONTROLLER_HPP_
+#ifndef LM_BULLET_CONTROLLER_HPP_
+#define LM_BULLET_CONTROLLER_HPP_
 
 #include <xygine/components/Component.hpp>
 
 namespace lm
 {
     class CollisionComponent;
-    class AlienController final : public xy::Component
+    class BulletController final : public xy::Component
     {
     public:
-        AlienController(xy::MessageBus&, const sf::FloatRect&);
-        ~AlienController() = default;
+        explicit BulletController(xy::MessageBus&);
+        ~BulletController() = default;
 
         xy::Component::Type type() const override { return xy::Component::Type::Script; }
         void entityUpdate(xy::Entity&, float) override;
@@ -47,12 +47,8 @@ namespace lm
 
     private:
 
-        sf::FloatRect m_playArea;
-        sf::Vector2f m_velocity;
-        float m_speed;
-
         xy::Entity* m_entity;
     };
 }
 
-#endif// LM_ALIEN_CONTROLLER_HPP_
+#endif //LM_BULLET_CONTROLER_HPP_

@@ -26,6 +26,8 @@ source distribution.
 *********************************************************************/
 
 #include <LMAlienController.hpp>
+#include <LMCollisionComponent.hpp>
+#include <CommandIds.hpp>
 
 #include <xygine/Entity.hpp>
 #include <xygine/util/Random.hpp>
@@ -41,7 +43,8 @@ namespace
 AlienController::AlienController(xy::MessageBus& mb, const sf::FloatRect& playArea)
     : xy::Component (mb, this),
     m_playArea      (playArea),
-    m_speed         (xy::Util::Random::value(0.f, maxVelocity))
+    m_speed         (xy::Util::Random::value(0.f, maxVelocity)),
+    m_entity        (nullptr)
 {
     m_velocity.x = xy::Util::Random::value(-maxVelocity, maxVelocity);
     m_velocity.y = xy::Util::Random::value(-(maxVelocity / 2.f), (maxVelocity / 2.f));
@@ -75,5 +78,25 @@ void AlienController::entityUpdate(xy::Entity& entity, float dt)
     }
 }
 
+void AlienController::onStart(xy::Entity& entity)
+{
+    m_entity = &entity;
+}
+
+void AlienController::collisionCallback(CollisionComponent* cc)
+{
+    switch (cc->getID())
+    {
+    default: break;
+    case CollisionComponent::ID::Bullet:
+    //case CollisionComponent::ID::Player:
+    {
+        auto msg = getMessageBus().post<LMEvent>(LMMessageId::LMMessage);
+        msg->type = LMEvent::AlienDied;
+        m_entity->destroy();
+    }
+        break;
+    }
+}
 
 //private

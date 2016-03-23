@@ -105,7 +105,7 @@ void PlayerController::collisionCallback(CollisionComponent* cc)
     switch (cc->getID())
     {
     case CollisionComponent::ID::Alien:
-        //m_entity->destroy();
+        m_entity->destroy();
         break;
     case CollisionComponent::ID::Bounds:
     {
@@ -136,8 +136,8 @@ void PlayerController::collisionCallback(CollisionComponent* cc)
         if (manifold.y != 0)
         {
             //we're on top 
-            //measure velocity an assplode if too fast
-            if (xy::Util::Vector::lengthSquared(m_velocity) > 15000)
+            //measure velocity and assplode if too fast
+            if (xy::Util::Vector::lengthSquared(m_velocity) > 20000)
             {
                 //oh noes!
                 m_entity->destroy();

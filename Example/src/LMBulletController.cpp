@@ -25,34 +25,50 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef LM_ALIEN_CONTROLLER_HPP_
-#define LM_ALIEN_CONTROLLER_HPP_
+#include <LMBulletController.hpp>
+#include <LMCollisionComponent.hpp>
 
-#include <xygine/components/Component.hpp>
+#include <xygine/Entity.hpp>
 
-namespace lm
+using namespace lm;
+
+namespace
 {
-    class CollisionComponent;
-    class AlienController final : public xy::Component
-    {
-    public:
-        AlienController(xy::MessageBus&, const sf::FloatRect&);
-        ~AlienController() = default;
-
-        xy::Component::Type type() const override { return xy::Component::Type::Script; }
-        void entityUpdate(xy::Entity&, float) override;
-        void onStart(xy::Entity&) override;
-
-        void collisionCallback(CollisionComponent*);
-
-    private:
-
-        sf::FloatRect m_playArea;
-        sf::Vector2f m_velocity;
-        float m_speed;
-
-        xy::Entity* m_entity;
-    };
+    const sf::Vector2f velocity(0.f, -600.f);
 }
 
-#endif// LM_ALIEN_CONTROLLER_HPP_
+BulletController::BulletController(xy::MessageBus& mb)
+    : xy::Component(mb, this),
+    m_entity(nullptr)
+{
+
+}
+
+//public
+void BulletController::entityUpdate(xy::Entity& entity, float dt)
+{
+    entity.move(velocity * dt);
+}
+
+void BulletController::onStart(xy::Entity& entity)
+{
+    m_entity = &entity;
+}
+
+void BulletController::collisionCallback(CollisionComponent* cc)
+{
+    switch (cc->getID())
+    {    
+    case CollisionComponent::ID::Player:
+    case CollisionComponent::ID::Mothership:
+        //do nothing
+        break;
+    default: 
+        //destroy becasue we hit something
+        m_entity->destroy();
+
+        //TODO raise message so we can do some particle effects
+
+        break;
+    }
+}

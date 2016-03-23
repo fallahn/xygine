@@ -57,15 +57,11 @@ private:
     sf::Uint8 m_inputFlags;
     sf::Uint8 m_prevInputFlags;
 
-    xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
 
     sf::Text m_reportText;
 
     lm::CollisionWorld m_collisionWorld;
-
-    void createAliens();
-    void createTerrain();
 };
 
 #endif //LUNAR_MOONER_STATE_HPP_

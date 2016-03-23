@@ -104,7 +104,8 @@ struct LMEvent
         PlayerDied,
         PlayerLanded,
         HumanRescued,
-        HumanPickedUp
+        HumanPickedUp,
+        AlienDied
     }type;
 };
 

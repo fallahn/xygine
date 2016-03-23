@@ -30,6 +30,7 @@ source distribution.
 
 #include <xygine/components/Component.hpp>
 #include <xygine/Scene.hpp>
+#include <xygine/Resource.hpp>
 
 #include <list>
 
@@ -52,6 +53,7 @@ namespace lm
     private:
         xy::Scene& m_scene;
         CollisionWorld& m_collisionWorld;
+        xy::TextureResource m_textureResource;
 
         sf::Uint8 m_inputFlags;
 
@@ -72,7 +74,13 @@ namespace lm
         };
         std::list<DelayedEvent> m_delayedEvents;
 
+        void spawnAlien();
+        void createAliens();
+
+        void createTerrain();
+
         void addRescuedHuman();
+        void spawnBullet();
     };
 }
 

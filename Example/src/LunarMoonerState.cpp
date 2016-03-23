@@ -26,19 +26,13 @@ source distribution.
 *********************************************************************/
 
 #include <LunarMoonerState.hpp>
-#include <LMAlienController.hpp>
 #include <LMGameController.hpp>
 #include <CommandIds.hpp>
 
 #include <xygine/App.hpp>
-#include <xygine/util/Random.hpp>
-#include <xygine/components/SfDrawableComponent.hpp>
-#include <xygine/Command.hpp>
 #include <xygine/Assert.hpp>
 #include <xygine/Reports.hpp>
 
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Window/Event.hpp>
 
 namespace
@@ -61,9 +55,6 @@ LunarMoonerState::LunarMoonerState(xy::StateStack& stack, Context context)
     
     m_scene.setView(context.defaultView);
     m_scene.drawDebug(true);
-
-    createAliens();
-    createTerrain();
 
     auto gameController = xy::Component::create<lm::GameController>(m_messageBus, m_scene, m_collisionWorld);
     auto entity = xy::Entity::create(m_messageBus);
@@ -168,113 +159,3 @@ void LunarMoonerState::draw()
 }
 
 //private
-namespace
-{
-    const sf::Uint8 alientCount = 12;
-    const sf::FloatRect alienArea(386.f, 200.f, 1148.f, 480.f);
-    const std::array<sf::FloatRect, 4u> alienSizes = 
-    {
-        sf::FloatRect(0.f, 0.f, 20.f, 16.f),
-        {0.f, 0.f, 24.f, 22.f},
-        {0.f, 0.f, 14.f, 16.f},
-        {0.f, 0.f, 18.f, 26.f}
-    };
-}
-
-void LunarMoonerState::createAliens()
-{
-    for (auto i = 0; i < alientCount; ++i)
-    {
-        auto size = alienSizes[xy::Util::Random::value(0, alienSizes.size() - 1)];
-        auto position = sf::Vector2f(xy::Util::Random::value(alienArea.left, alienArea.left + alienArea.width),
-                                    xy::Util::Random::value(alienArea.top, alienArea.top + alienArea.height));
-
-        auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
-        drawable->getDrawable().setFillColor(sf::Color::Red);
-        drawable->getDrawable().setSize({ size.width, size.height });
-
-        auto controller = xy::Component::create<lm::AlienController>(m_messageBus, alienArea);
-
-        auto collision = m_collisionWorld.addComponent(m_messageBus, size, lm::CollisionComponent::ID::Alien);
-
-        auto entity = xy::Entity::create(m_messageBus);
-        entity->addComponent(drawable);
-        entity->addComponent(controller);
-        entity->addComponent(collision);
-        entity->setPosition(position);
-
-        m_scene.addEntity(entity, xy::Scene::Layer::BackMiddle);
-    }
-}
-
-void LunarMoonerState::createTerrain()
-{
-    auto backgroundDrawable = xy::Component::create<xy::SfDrawableComponent<sf::Sprite>>(m_messageBus);
-    backgroundDrawable->getDrawable().setTexture(m_textureResource.get("assets/images/lunarmooner/background.png"));
-
-    auto entity = xy::Entity::create(m_messageBus);
-    entity->setPosition(alienArea.left, 0.f);
-    entity->addComponent(backgroundDrawable);
-
-    m_scene.addEntity(entity, xy::Scene::BackRear);
-
-
-    //death zone at bottom
-    auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
-    drawable->getDrawable().setFillColor(sf::Color::Red);
-    drawable->getDrawable().setSize({ alienArea.width, 40.f });
-
-    auto collision = m_collisionWorld.addComponent(m_messageBus, { {0.f, 0.f}, {alienArea.width, 40.f} }, lm::CollisionComponent::ID::Alien);
-
-    entity = xy::Entity::create(m_messageBus);
-    entity->addComponent(drawable);
-    entity->addComponent(collision);
-    entity->setPosition(alienArea.left, 1040.f);
-
-    m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
-
-
-    //walls
-    collision = m_collisionWorld.addComponent(m_messageBus, { { 0.f, 0.f },{ 40.f, 1080.f } }, lm::CollisionComponent::ID::Bounds);
-    entity = xy::Entity::create(m_messageBus);
-    entity->addComponent(collision);
-    entity->setPosition(alienArea.left - 40.f, 0.f);
-    m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
-
-    collision = m_collisionWorld.addComponent(m_messageBus, { { 0.f, 0.f },{ 40.f, 1080.f } }, lm::CollisionComponent::ID::Bounds);
-    entity = xy::Entity::create(m_messageBus);
-    entity->addComponent(collision);
-    entity->setPosition(alienArea.left + alienArea.width, 0.f);
-    m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
-
-    collision = m_collisionWorld.addComponent(m_messageBus, { { 0.f, 0.f },{ alienArea.width, 40.f } }, lm::CollisionComponent::ID::Bounds);
-    entity = xy::Entity::create(m_messageBus);
-    entity->addComponent(collision);
-    entity->setPosition(alienArea.left, -40.f);
-    m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
-
-
-    //towers to land on
-    std::array<std::pair<sf::Vector2f, sf::Vector2f>, 3u> positions = 
-    {
-        std::make_pair(sf::Vector2f(180.f, 210.f), sf::Vector2f(20.f, 1080.f - 210.f)),
-        std::make_pair(sf::Vector2f(150.f, 290.f), sf::Vector2f(520.f, 1080.f - 290.f)),
-        std::make_pair(sf::Vector2f(220.f, 60.f), sf::Vector2f(900.f, 1080.f - 60.f))
-    };
-
-    for (const auto& p : positions)
-    {
-        drawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
-        drawable->getDrawable().setFillColor(sf::Color::Green);
-        drawable->getDrawable().setSize(p.first);
-
-        collision = m_collisionWorld.addComponent(m_messageBus, { { 0.f, 0.f }, p.first }, lm::CollisionComponent::ID::Tower);
-
-        entity = xy::Entity::create(m_messageBus);
-        entity->addComponent(drawable);
-        entity->addComponent(collision);
-        entity->setPosition(alienArea.left + p.second.x, p.second.y);
-
-        m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
-    }
-}

@@ -68,6 +68,10 @@ void CollisionWorld::update()
             if (ca->globalBounds().intersects(cb->globalBounds()))
             {
                 ca->addCollider(cb);
+                if (cb->getID() == CollisionComponent::ID::Alien)
+                {
+                    cb->addCollider(ca);
+                }
                 break;
             }
         }
