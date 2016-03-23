@@ -11,7 +11,7 @@
   "Colour": -25089,
   "BlendMode": "Add",
   "ParticleSize": "4, 4",
-  "ParticlePosition": "16.0, 42.0",
+  "ParticlePosition": "0, 0",
   "FollowParent": false,
   "Lifetime": 1.8,
   "InitialVelocity": "0, 0",
@@ -23,12 +23,17 @@
     "0, 28"
   ],
   "EmitRate": 25.0,
+  "RandomInitialPositions": [
+    "20, 42",
+    "8, 42",
+    "24, 42"
+  ],
   "Affectors": [
     {
       "Type": "Colour",
       "Data": [
         -25089.0,
-        -128372992.0,
+        -128372224.0,
         2.1
       ]
     },
@@ -37,6 +42,19 @@
       "Data": [
         1.5,
         1.5
+      ]
+    },
+    {
+      "Type": "Force",
+      "Data": [
+        0.0,
+        60.2
+      ]
+    },
+    {
+      "Type": "Rotation",
+      "Data": [
+        300.0
       ]
     }
   ]

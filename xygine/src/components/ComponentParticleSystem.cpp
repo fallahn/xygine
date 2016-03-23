@@ -128,7 +128,7 @@ void ParticleSystem::setParticleSize(const sf::Vector2f& size)
 
 void ParticleSystem::setPosition(const sf::Vector2f& position)
 {
-    m_position = position;
+    m_offset = position;
 }
 
 void ParticleSystem::move(const sf::Vector2f& amount)
@@ -156,8 +156,16 @@ void ParticleSystem::setRandomInitialVelocity(const std::vector<sf::Vector2f>& r
 {
     //XY_ASSERT(!randVelocities.empty(), "random velocity vector contains no values");
     if (randVelocities.empty()) return;
-    m_randVelocities = randVelocities;
-    m_randVelocity = true;
+    if (randVelocities.size() > 1)
+    {
+        m_randVelocities = randVelocities;
+        m_randVelocity = true;
+    }
+    else
+    {
+        m_initialVelocity = randVelocities[0];
+        m_randVelocity = false;
+    }
 }
 
 void ParticleSystem::setEmitRate(float rate)
@@ -170,8 +178,16 @@ void ParticleSystem::setRandomInitialPosition(const std::vector<sf::Vector2f>& p
 {
     //XY_ASSERT(!positions.empty(), "position vetor contains no values");
     if (positions.empty()) return;
-    m_randPositions = positions;
-    m_randPosition = true;
+    if (positions.size() > 1)
+    {
+        m_randPositions = positions;
+        m_randPosition = true;
+    }
+    else
+    {
+        m_offset = positions[0];
+        m_randPosition = false;
+    }
 }
 
 void ParticleSystem::addAffector(Affector& a)
@@ -263,7 +279,7 @@ void ParticleSystem::emit(float dt)
         {
             m_randPosition ? 
                 addParticle(m_position + m_randPositions[Util::Random::value(0, m_randPositions.size() - 1)]) :
-                addParticle(m_position);
+                addParticle(m_position + m_offset);
         }
     }
 }

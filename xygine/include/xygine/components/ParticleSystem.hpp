@@ -299,6 +299,7 @@ namespace xy
         float m_emitRate;
         bool m_randPosition;
         std::vector<sf::Vector2f> m_randPositions;
+        sf::Vector2f m_offset;
 
         bool m_started;
         float m_accumulator;

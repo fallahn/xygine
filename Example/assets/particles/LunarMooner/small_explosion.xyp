@@ -4,7 +4,7 @@
     "BackgroundColour": 255,
     "EnableMovement": false
   },
-  "ReleaseCount": 4,
+  "ReleaseCount": 10,
   "Delay": 0.0,
   "Duration": 0.1,
   "Texture": "",
@@ -25,7 +25,15 @@
     "-32, 38",
     "-46, -13"
   ],
-  "EmitRate": 15.0,
+  "EmitRate": 20.0,
   "RandomInitialPositions": [],
-  "Affectors": []
+  "Affectors": [
+    {
+      "Type": "Scale",
+      "Data": [
+        1.9,
+        1.9
+      ]
+    }
+  ]
 }

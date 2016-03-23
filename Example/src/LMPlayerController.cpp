@@ -96,6 +96,13 @@ void PlayerController::onDelayedStart(xy::Entity& entity)
 
 void PlayerController::setInput(sf::Uint8 input)
 {
+    if (input != m_inputFlags)
+    {
+        (input & LMInputFlags::SteerRight) ? m_rcsRight->start() : m_rcsRight->stop();
+        (input & LMInputFlags::SteerLeft) ? m_rcsLeft->start() : m_rcsLeft->stop();
+        (input & LMInputFlags::Thrust) ? m_thrust->start() : m_thrust->stop();
+    }
+    
     m_inputFlags = input;
 }
 
@@ -110,8 +117,8 @@ void PlayerController::destroy()
     auto msg = getMessageBus().post<LMEvent>(LMMessageId::LMMessage);
     msg->type = LMEvent::PlayerDied;
     auto bounds = m_entity->globalBounds();
-    msg->posX = m_entity->getPosition().x + (bounds.width / 2.f);
-    msg->posY = m_entity->getPosition().y + (bounds.height / 2.f);
+    msg->posX = m_entity->getPosition().x;// +(bounds.width / 2.f);
+    msg->posY = m_entity->getPosition().y;// +(bounds.height / 2.f);
 }
 
 void PlayerController::collisionCallback(CollisionComponent* cc)
@@ -136,11 +143,12 @@ void PlayerController::collisionCallback(CollisionComponent* cc)
         if (m_carrying && xy::Util::Vector::lengthSquared(m_velocity) < 15000)
         {
             //we want to be moving slowly enough, and fully contained in mothership area
-            if (xy::Util::Rectangle::contains(cc->globalBounds(), m_entity->globalBounds()))
+            if (xy::Util::Rectangle::contains(cc->globalBounds(), m_entity->getComponent<CollisionComponent>()->globalBounds()))
             {
                 m_carrying = false;
                 auto msg = getMessageBus().post<LMEvent>(LMMessageId::LMMessage);
                 msg->type = LMEvent::HumanRescued;
+                LOG("human saved!", xy::Logger::Type::Info);
             }
         }
         break;
@@ -218,29 +226,16 @@ void PlayerController::flyingState(xy::Entity& entity, float dt)
     if (m_inputFlags & LMInputFlags::SteerRight)
     {
         m_velocity += thrustX;
-        m_rcsRight->start();
     }
-    else
-    {
-        m_rcsRight->stop();
-    }
+
     if (m_inputFlags & LMInputFlags::SteerLeft)
     {
         m_velocity -= thrustX;
-        m_rcsLeft->start();
     }
-    else
-    {
-        m_rcsLeft->stop();
-    }
+
     if (m_inputFlags & LMInputFlags::Thrust)
     {
         m_velocity += thrustUp;
-        m_thrust->start();
-    }
-    else
-    {
-        m_thrust->stop();
     }
 
 

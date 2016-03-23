@@ -203,13 +203,11 @@ void GameController::setInput(sf::Uint8 input)
 
         //hook player shoot event here
         //as bullets are technically entities in their own right
-        if ((input & LMInputFlags::Shoot) == 0
-            && (m_inputFlags & LMInputFlags::Shoot) != 0)
+        if ((input & LMInputFlags::Shoot) != 0
+            && (m_inputFlags & LMInputFlags::Shoot) == 0)
         {
             spawnBullet();
         }
-
-        //TODO hook particle effects for thrusts here too
     }
 
     m_inputFlags = input;

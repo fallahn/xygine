@@ -21,12 +21,28 @@
     "25, -3"
   ],
   "EmitRate": 25.0,
+  "RandomInitialPositions": [
+    "32, 21"
+  ],
   "Affectors": [
     {
       "Type": "Scale",
       "Data": [
-        -0.1,
-        -0.1
+        -0.6,
+        -0.6
+      ]
+    },
+    {
+      "Type": "Force",
+      "Data": [
+        50.0,
+        0.0
+      ]
+    },
+    {
+      "Type": "Rotation",
+      "Data": [
+        200.0
       ]
     }
   ]
