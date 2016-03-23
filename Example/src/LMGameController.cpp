@@ -35,6 +35,7 @@ source distribution.
 #include <CommandIds.hpp>
 
 #include <xygine/components/SfDrawableComponent.hpp>
+#include <xygine/components/ParticleController.hpp>
 #include <xygine/util/Position.hpp>
 #include <xygine/util/Random.hpp>
 #include <xygine/util/Vector.hpp>
@@ -129,6 +130,35 @@ GameController::GameController(xy::MessageBus& mb, xy::Scene& scene, CollisionWo
         }
     };
     addMessageHandler(handler);
+
+    //particle spawner
+    auto particleManager = xy::Component::create<xy::ParticleController>(getMessageBus());
+    handler.action = [](xy::Component* c, const xy::Message& msg)
+    {
+        auto component = dynamic_cast<xy::ParticleController*>(c);
+        auto& msgData = msg.getData<LMEvent>();
+        switch (msgData.type)
+        {
+        default: break;
+        case LMEvent::AlienDied:
+        case LMEvent::PlayerDied:
+            component->fire(LMParticleID::SmallExplosion, { msgData.posX, msgData.posY });
+            break;
+        }
+    };
+    particleManager->addMessageHandler(handler);
+
+    auto entity = xy::Entity::create(getMessageBus());
+    auto pc = entity->addComponent(particleManager);
+    m_scene.addEntity(entity, xy::Scene::Layer::FrontRear);
+
+    xy::ParticleSystem::Definition pd;
+    pd.loadFromFile("assets/particles/LunarMooner/small_explosion.xyp", m_textureResource);
+    pc->addDefinition(LMParticleID::SmallExplosion, pd);
+
+    m_playerParticles[LMParticleID::Thruster].loadFromFile("assets/particles/LunarMooner/thrust.xyp", m_textureResource);
+    m_playerParticles[LMParticleID::RcsLeft].loadFromFile("assets/particles/LunarMooner/rcs_left.xyp", m_textureResource);
+    m_playerParticles[LMParticleID::RcsRight].loadFromFile("assets/particles/LunarMooner/rcs_right.xyp", m_textureResource);
 }
 
 //public
@@ -204,12 +234,24 @@ void GameController::spawnPlayer()
         CollisionComponent::Callback cb = std::bind(&PlayerController::collisionCallback, playerController.get(), _1);
         collision->setCallback(cb);
 
+        auto thrust = m_playerParticles[LMParticleID::Thruster].createSystem(getMessageBus());
+        thrust->setName("thrust");
+
+        auto rcsLeft = m_playerParticles[LMParticleID::RcsLeft].createSystem(getMessageBus());
+        rcsLeft->setName("rcsLeft");
+
+        auto rcsRight = m_playerParticles[LMParticleID::RcsRight].createSystem(getMessageBus());
+        rcsRight->setName("rcsRight");
+
         auto entity = xy::Entity::create(getMessageBus());
         entity->setPosition(spawnPos);
         entity->setOrigin(playerSize / 2.f);
         entity->addComponent(dropshipDrawable);
         m_player = entity->addComponent(playerController);
         entity->addComponent(collision);
+        entity->addComponent(thrust);
+        entity->addComponent(rcsLeft);
+        entity->addComponent(rcsRight);
 
         m_scene.addEntity(entity, xy::Scene::BackFront);
 

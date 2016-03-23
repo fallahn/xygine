@@ -32,6 +32,11 @@ source distribution.
 
 #include <SFML/System/Vector3.hpp>
 
+namespace xy
+{
+    class ParticleSystem;
+}
+
 namespace lm
 {
     class CollisionComponent;
@@ -44,6 +49,7 @@ namespace lm
         xy::Component::Type type() const override { return xy::Component::Type::Script; }
         void entityUpdate(xy::Entity&, float) override;
         void onStart(xy::Entity&) override;
+        void onDelayedStart(xy::Entity&) override;
         void setInput(sf::Uint8);
 
         sf::Vector2f getPosition() const;
@@ -58,6 +64,10 @@ namespace lm
         xy::Entity* m_entity;
 
         bool m_carrying;
+
+        xy::ParticleSystem* m_thrust;
+        xy::ParticleSystem* m_rcsLeft;
+        xy::ParticleSystem* m_rcsRight;
 
         sf::Vector3f getManifold(const sf::FloatRect&);
 

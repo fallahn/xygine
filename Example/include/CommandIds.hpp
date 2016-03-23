@@ -107,6 +107,16 @@ struct LMEvent
         HumanPickedUp,
         AlienDied
     }type;
+    float posX = 0.f;
+    float posY = 0.f;
+};
+
+enum LMParticleID
+{
+    Thruster,
+    RcsLeft,
+    RcsRight,
+    SmallExplosion
 };
 
 #endif //COMMAND_IDS_HPP_

@@ -93,6 +93,8 @@ void AlienController::collisionCallback(CollisionComponent* cc)
     {
         auto msg = getMessageBus().post<LMEvent>(LMMessageId::LMMessage);
         msg->type = LMEvent::AlienDied;
+        msg->posX = m_entity->getPosition().x;
+        msg->posY = m_entity->getPosition().y;
         m_entity->destroy();
     }
         break;

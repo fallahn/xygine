@@ -29,10 +29,12 @@ source distribution.
 #define LM_GAME_CONTROLLER_HPP_
 
 #include <xygine/components/Component.hpp>
+#include <xygine/components/ParticleSystem.hpp>
 #include <xygine/Scene.hpp>
 #include <xygine/Resource.hpp>
 
 #include <list>
+#include <array>
 
 namespace lm
 {
@@ -57,6 +59,7 @@ namespace lm
 
         sf::Uint8 m_inputFlags;
 
+        std::array<xy::ParticleSystem::Definition, 3u> m_playerParticles;
         bool m_spawnReady;
         PlayerController* m_player;
         void spawnPlayer();

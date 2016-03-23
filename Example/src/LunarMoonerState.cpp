@@ -54,7 +54,7 @@ LunarMoonerState::LunarMoonerState(xy::StateStack& stack, Context context)
     launchLoadingScreen();
     
     m_scene.setView(context.defaultView);
-    m_scene.drawDebug(true);
+    //m_scene.drawDebug(true);
 
     auto gameController = xy::Component::create<lm::GameController>(m_messageBus, m_scene, m_collisionWorld);
     auto entity = xy::Entity::create(m_messageBus);

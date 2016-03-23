@@ -384,7 +384,7 @@ namespace xy
         struct FindByName
         {
             FindByName(const std::string& name) : m_name(name){}
-            bool operator()(const Component::Ptr& c){ return (c->getName() == m_name); }
+            bool operator()(const Component::Ptr& c){ return (c && c->getName() == m_name); }
         private:
             std::string m_name;
         };

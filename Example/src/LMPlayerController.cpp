@@ -33,6 +33,7 @@ source distribution.
 #include <xygine/util/Vector.hpp>
 #include <xygine/util/Rectangle.hpp>
 #include <xygine/Reports.hpp>
+#include <xygine/components/ParticleSystem.hpp>
 
 using namespace lm;
 using namespace std::placeholders;
@@ -48,7 +49,10 @@ PlayerController::PlayerController(xy::MessageBus& mb)
     : xy::Component (mb, this),
     m_inputFlags    (0),
     m_entity        (nullptr),
-    m_carrying      (false)
+    m_carrying      (false),
+    m_thrust        (nullptr),
+    m_rcsLeft       (nullptr),
+    m_rcsRight      (nullptr)
 {
     m_velocity.y = 2.f;
 
@@ -83,6 +87,13 @@ void PlayerController::onStart(xy::Entity& entity)
     m_entity = &entity;
 }
 
+void PlayerController::onDelayedStart(xy::Entity& entity)
+{
+    m_thrust = entity.getComponent<xy::ParticleSystem>("thrust");
+    m_rcsLeft = entity.getComponent<xy::ParticleSystem>("rcsLeft");
+    m_rcsRight = entity.getComponent<xy::ParticleSystem>("rcsRight");
+}
+
 void PlayerController::setInput(sf::Uint8 input)
 {
     m_inputFlags = input;
@@ -98,6 +109,9 @@ void PlayerController::destroy()
     Component::destroy();
     auto msg = getMessageBus().post<LMEvent>(LMMessageId::LMMessage);
     msg->type = LMEvent::PlayerDied;
+    auto bounds = m_entity->globalBounds();
+    msg->posX = m_entity->getPosition().x + (bounds.width / 2.f);
+    msg->posY = m_entity->getPosition().y + (bounds.height / 2.f);
 }
 
 void PlayerController::collisionCallback(CollisionComponent* cc)
@@ -204,14 +218,29 @@ void PlayerController::flyingState(xy::Entity& entity, float dt)
     if (m_inputFlags & LMInputFlags::SteerRight)
     {
         m_velocity += thrustX;
+        m_rcsRight->start();
+    }
+    else
+    {
+        m_rcsRight->stop();
     }
     if (m_inputFlags & LMInputFlags::SteerLeft)
     {
         m_velocity -= thrustX;
+        m_rcsLeft->start();
+    }
+    else
+    {
+        m_rcsLeft->stop();
     }
     if (m_inputFlags & LMInputFlags::Thrust)
     {
         m_velocity += thrustUp;
+        m_thrust->start();
+    }
+    else
+    {
+        m_thrust->stop();
     }
 
 
@@ -224,5 +253,5 @@ void PlayerController::flyingState(xy::Entity& entity, float dt)
 
 void PlayerController::landedState(xy::Entity& entity, float dt)
 {
-
+    //wweeee we are empty! do something about this :)
 }

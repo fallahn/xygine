@@ -52,10 +52,10 @@ namespace xy
     only require a single controller attached to an entity in
     the scene. Particle controllers are then able to be triggered
     by sending a Command to its parent entity requesting a system
-    be fired. The controller is useful for creating effects
-    such as explosions which maybe be repeated around the scene
-    rather than particle systems attached to specific entities
-    such as trails.
+    be fired, or by adding custom message handlers. The controller
+    is useful for creating effects such as explosions which maybe
+    be repeated around the scene rather than particle systems 
+    attached to specific entities such as trails.
     */
     class XY_EXPORT_API ParticleController final : public Component
     {
