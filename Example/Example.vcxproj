@@ -83,6 +83,7 @@
     <ClInclude Include="include\LMHumanController.hpp" />
     <ClInclude Include="include\LMMothershipController.hpp" />
     <ClInclude Include="include\LMPlayerController.hpp" />
+    <ClInclude Include="include\LMSpeedMeter.hpp" />
     <ClInclude Include="include\LunarMoonerState.hpp" />
     <ClInclude Include="include\MenuMainState.hpp" />
     <ClInclude Include="include\MenuOptionState.hpp" />
@@ -116,6 +117,7 @@
     <ClCompile Include="src\LMHumanController.cpp" />
     <ClCompile Include="src\LMMothershipController.cpp" />
     <ClCompile Include="src\LMPlayerController.cpp" />
+    <ClCompile Include="src\LMSpeedMeter.cpp" />
     <ClCompile Include="src\LunarMoonerState.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MenuMainState.cpp" />

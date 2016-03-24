@@ -10,7 +10,7 @@
   "Texture": "",
   "Colour": -1,
   "BlendMode": "Add",
-  "ParticleSize": "4, 4",
+  "ParticleSize": "8, 8",
   "ParticlePosition": "0, 0",
   "FollowParent": false,
   "Lifetime": 1.5,
@@ -35,7 +35,7 @@
     {
       "Type": "Force",
       "Data": [
-        -71.0,
+        -10.0,
         0.0
       ]
     },

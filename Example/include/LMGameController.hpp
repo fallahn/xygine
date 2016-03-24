@@ -40,6 +40,7 @@ namespace lm
 {
     class PlayerController;
     class CollisionWorld;
+    class SpeedMeter;
     class GameController final : public xy::Component
     {
     public:
@@ -51,6 +52,8 @@ namespace lm
 
         void setInput(sf::Uint8);
         
+        void addPlayer();
+        void start();
 
     private:
         xy::Scene& m_scene;
@@ -68,6 +71,7 @@ namespace lm
         void createMothership();
 
         std::vector<xy::Entity*> m_humans;
+        void spawnHuman(const sf::Vector2f&);
         void spawnHumans();
 
         struct DelayedEvent
@@ -84,6 +88,20 @@ namespace lm
 
         void addRescuedHuman();
         void spawnBullet();
+
+        SpeedMeter* m_speedMeter;
+        void createUI();
+
+        struct PlayerState final
+        {
+            sf::Uint32 score = 0;
+            sf::Uint8 lives = 3;
+            sf::Uint8 humansSaved = 0;
+            std::vector<sf::Vector2f> humansRemaining;
+        };
+        std::vector<PlayerState> m_playerStates;
+        std::size_t m_currentPlayer;
+        void swapStates();
     };
 }
 

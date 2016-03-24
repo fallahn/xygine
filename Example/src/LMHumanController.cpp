@@ -77,11 +77,18 @@ void HumanController::entityUpdate(xy::Entity& entity, float dt)
             }
         }
     }
+    else if (destroyed())
+    {
+        entity.destroy();
+    }
 
     //do a little bobbing animation. This assumes as shape component
     //is attached - you'll need to change this if replacing the drawable
     m_waveTableIndex = (m_waveTableIndex + 1) % waveTable.size();
     entity.getComponent<xy::SfDrawableComponent<sf::CircleShape>>()->setPosition(0.f, waveTable[m_waveTableIndex]);
+
+    //store position for when switching player states
+    m_position = entity.getPosition();
 }
 
 void HumanController::setDestination(const sf::Vector2f& dest)

@@ -25,33 +25,48 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef LM_HUMAN_CONTROLLER_HPP_
-#define LM_HUMAN_CONTROLLER_HPP_
+#include <LMSpeedMeter.hpp>
 
-#include <xygine/components/Component.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 
-namespace lm
+using namespace lm;
+
+namespace
 {
-    class HumanController final : public xy::Component
-    {
-    public:
-        explicit HumanController(xy::MessageBus&);
-        ~HumanController() = default;
-
-        xy::Component::Type type() const override { return xy::Component::Type::Script; }
-        void entityUpdate(xy::Entity&, float) override;
-
-        void setDestination(const sf::Vector2f&);
-
-        const sf::Vector2f& getPosition() const { return m_position; }
-
-    private:
-        bool m_gotoDestination;
-        sf::Vector2f m_destination;
-        sf::Vector2f m_position;
-
-        std::size_t m_waveTableIndex;
-    };
+    const float barWidth = 40.f;
+    const float barLength = 600.f;
 }
 
-#endif //LM_HUMAN_CONTROLLER_HPP_
+SpeedMeter::SpeedMeter(xy::MessageBus& mb, float maxVal)
+    :xy::Component  (mb, this),
+    m_maxValue      (maxVal)
+{
+
+}
+
+//public
+void SpeedMeter::entityUpdate(xy::Entity&, float) 
+{
+    //drops down to near zero when no player
+    setValue(m_currentValue * 0.9f);
+}
+
+void SpeedMeter::setValue(float val)
+{
+    const float ratio = std::min(val / m_maxValue, 1.f);
+
+    m_shape.setSize({ barWidth, barLength * ratio });
+
+    sf::Uint8 red = static_cast<sf::Uint8>(255.f * ratio);
+    sf::Uint8 green = static_cast<sf::Uint8>(255.f * (1.f - ratio));
+
+    m_shape.setFillColor({ red, green, 0 });
+
+    m_currentValue = val;
+}
+
+//private
+void SpeedMeter::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    rt.draw(m_shape, states);
+}

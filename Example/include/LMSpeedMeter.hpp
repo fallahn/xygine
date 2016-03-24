@@ -25,33 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef LM_HUMAN_CONTROLLER_HPP_
-#define LM_HUMAN_CONTROLLER_HPP_
+#ifndef LM_SPEED_METER_HPP_
+#define LM_SPEED_METER_HPP_
 
 #include <xygine/components/Component.hpp>
 
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+
 namespace lm
 {
-    class HumanController final : public xy::Component
+    class SpeedMeter final :public xy::Component, public sf::Drawable
     {
     public:
-        explicit HumanController(xy::MessageBus&);
-        ~HumanController() = default;
+        SpeedMeter(xy::MessageBus&, float maxVal);
+        ~SpeedMeter() = default;
 
-        xy::Component::Type type() const override { return xy::Component::Type::Script; }
+        xy::Component::Type type() const override { return xy::Component::Type::Drawable; }
         void entityUpdate(xy::Entity&, float) override;
 
-        void setDestination(const sf::Vector2f&);
-
-        const sf::Vector2f& getPosition() const { return m_position; }
+        void setValue(float);
 
     private:
-        bool m_gotoDestination;
-        sf::Vector2f m_destination;
-        sf::Vector2f m_position;
-
-        std::size_t m_waveTableIndex;
+        float m_currentValue;
+        float m_maxValue;
+        sf::RectangleShape m_shape;
+        void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }
 
-#endif //LM_HUMAN_CONTROLLER_HPP_
+#endif //LM_SPEED_METER_HPP_

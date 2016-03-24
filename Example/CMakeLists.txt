@@ -62,6 +62,7 @@ SET(EXAMPLE_SRC
   src/LMHumanController.cpp
   src/LMMothershipController.cpp
   src/LMPlayerController.cpp
+  src/LMSpeedMeter.cpp
   src/LunarMoonerState.cpp
   src/main.cpp
   src/MenuMainState.cpp

@@ -53,9 +53,9 @@ namespace lm
         void setInput(sf::Uint8);
 
         sf::Vector2f getPosition() const;
+        float getSpeed() const;
 
         void destroy() override;
-
         void collisionCallback(CollisionComponent*);
 
     private:

@@ -80,7 +80,8 @@ struct PongEvent
 enum LMCommandID
 {
     Mothership = 0x1,
-    GameController = 0x2
+    GameController = 0x2,
+    Human = 0x4
 };
 
 enum LMInputFlags

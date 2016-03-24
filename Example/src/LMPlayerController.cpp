@@ -43,6 +43,9 @@ namespace
     const sf::Vector2f gravity(0.f, 1.5f);
     const sf::Vector2f thrustX(3.6f, 0.f);
     const sf::Vector2f thrustUp(0.f, -3.8f);
+
+    const float maxDockingVelocity = 15000.f;
+    const float maxLandingVelocity = 20000.f ;
 }
 
 PlayerController::PlayerController(xy::MessageBus& mb)
@@ -84,7 +87,7 @@ void PlayerController::entityUpdate(xy::Entity& entity, float dt)
     m_rcsLeft->setInertia(m_velocity);
     m_rcsRight->setInertia(m_velocity);
 
-    REPORT("Current Speed", std::to_string(xy::Util::Vector::lengthSquared(m_velocity)));
+    //REPORT("Current Speed", std::to_string(xy::Util::Vector::lengthSquared(m_velocity)));
 }
 
 void PlayerController::onStart(xy::Entity& entity)
@@ -116,6 +119,11 @@ sf::Vector2f PlayerController::getPosition() const
     return m_entity->getPosition();
 }
 
+float PlayerController::getSpeed() const
+{
+    return xy::Util::Vector::lengthSquared(m_velocity);
+}
+
 void PlayerController::destroy()
 {
     Component::destroy();
@@ -145,7 +153,7 @@ void PlayerController::collisionCallback(CollisionComponent* cc)
         break;
     case CollisionComponent::ID::Mothership:
         //if carrying drop human, raise message
-        if (m_carrying && xy::Util::Vector::lengthSquared(m_velocity) < 15000)
+        if (m_carrying && xy::Util::Vector::lengthSquared(m_velocity) < maxDockingVelocity)
         {
             //we want to be moving slowly enough, and fully contained in mothership area
             if (xy::Util::Rectangle::contains(cc->globalBounds(), m_entity->getComponent<CollisionComponent>()->globalBounds()))
@@ -164,7 +172,7 @@ void PlayerController::collisionCallback(CollisionComponent* cc)
         {
             //we're on top 
             //measure velocity and assplode if too fast
-            if (xy::Util::Vector::lengthSquared(m_velocity) > 20000)
+            if (xy::Util::Vector::lengthSquared(m_velocity) > maxLandingVelocity)
             {
                 //oh noes!
                 m_entity->destroy();

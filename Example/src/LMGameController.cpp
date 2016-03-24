@@ -32,6 +32,7 @@ source distribution.
 #include <LMHumanController.hpp>
 #include <LMAlienController.hpp>
 #include <LMBulletController.hpp>
+#include <LMSpeedMeter.hpp>
 #include <CommandIds.hpp>
 
 #include <xygine/components/SfDrawableComponent.hpp>
@@ -60,13 +61,10 @@ GameController::GameController(xy::MessageBus& mb, xy::Scene& scene, CollisionWo
     m_inputFlags    (0),
     m_spawnReady    (true),
     m_player        (nullptr),
-    m_mothership    (nullptr)
+    m_mothership    (nullptr),
+    m_speedMeter    (nullptr),
+    m_currentPlayer (0)
 {
-    createTerrain();
-    createAliens();
-    createMothership();
-    spawnHumans();
-
     xy::Component::MessageHandler handler;
     handler.id = LMMessageId::LMMessage;
     handler.action = [this](xy::Component* c, const xy::Message& msg)
@@ -82,6 +80,7 @@ GameController::GameController(xy::MessageBus& mb, xy::Scene& scene, CollisionWo
             de.time = 2.f;
             de.action = [this]()
             {
+                swapStates();
                 m_spawnReady = true;
 
                 auto dropshipDrawable = xy::Component::create<xy::SfDrawableComponent<sf::RectangleShape>>(getMessageBus());
@@ -123,6 +122,8 @@ GameController::GameController(xy::MessageBus& mb, xy::Scene& scene, CollisionWo
             break;
         case LMEvent::HumanRescued:
             addRescuedHuman();
+            m_playerStates[m_currentPlayer].humansSaved++;
+            m_playerStates[m_currentPlayer].score += 50;
             break;
         case LMEvent::AlienDied:
             spawnAlien();
@@ -185,6 +186,12 @@ void GameController::entityUpdate(xy::Entity&, float dt)
     {
         return ent->destroyed();
     }), m_humans.end());
+
+    //update UI
+    if (m_player)
+    {
+        m_speedMeter->setValue(m_player->getSpeed());
+    }
 }
 
 void GameController::setInput(sf::Uint8 input)
@@ -211,6 +218,26 @@ void GameController::setInput(sf::Uint8 input)
     }
 
     m_inputFlags = input;
+}
+
+void GameController::addPlayer()
+{
+    m_playerStates.emplace_back();
+
+    auto& humans = m_playerStates.back().humansRemaining;
+    for (auto i = 0; i < humanCount; ++i)
+    {
+        humans.emplace_back(xy::Util::Random::value(380.f, 1500.f), xy::Util::Random::value(1045.f, 1060.f));
+    }
+}
+
+void GameController::start()
+{
+    createTerrain();
+    createAliens();
+    createMothership();
+    spawnHumans();
+    createUI();
 }
 
 //private
@@ -311,20 +338,26 @@ namespace
     };
 }
 
+void GameController::spawnHuman(const sf::Vector2f& position)
+{
+    auto drawable = getHumanDrawable(getMessageBus());
+
+    auto controller = xy::Component::create<HumanController>(getMessageBus());
+
+    auto entity = xy::Entity::create(getMessageBus());
+    entity->addComponent(drawable);
+    entity->addComponent(controller);
+    entity->setPosition(position);
+    entity->addCommandCategories(LMCommandID::Human);
+
+    m_humans.push_back(m_scene.addEntity(entity, xy::Scene::Layer::FrontRear));
+}
+
 void GameController::spawnHumans()
 {
-    for (auto i = 0; i < humanCount; ++i)
+    for(auto& h : m_playerStates[m_currentPlayer].humansRemaining)
     {
-        auto drawable = getHumanDrawable(getMessageBus());
-
-        auto controller = xy::Component::create<HumanController>(getMessageBus());
-
-        auto entity = xy::Entity::create(getMessageBus());
-        entity->addComponent(drawable);
-        entity->addComponent(controller);
-        entity->setPosition(xy::Util::Random::value(380.f, 1500.f), xy::Util::Random::value(1045.f, 1060.f));
-
-        m_humans.push_back(m_scene.addEntity(entity, xy::Scene::Layer::FrontRear));
+        spawnHuman(h);
     }
 }
 
@@ -464,4 +497,42 @@ void GameController::spawnBullet()
     entity->addComponent(collision);
 
     m_scene.addEntity(entity, xy::Scene::Layer::BackMiddle);
+}
+
+void GameController::createUI()
+{
+    auto speedMeter = xy::Component::create<SpeedMeter>(getMessageBus(), 30000.f);
+    auto entity = xy::Entity::create(getMessageBus());
+    m_speedMeter = entity->addComponent(speedMeter);
+
+    entity->rotate(180.f);
+    entity->setPosition(alienArea.left - 50.f, 1080.f - ((1080.f - 600.f) / 2.f));
+
+    m_scene.addEntity(entity, xy::Scene::Layer::UI);
+}
+
+void GameController::swapStates()
+{
+    //store positions for current player
+    m_playerStates[m_currentPlayer].humansRemaining.clear();
+
+    for (auto& h : m_humans)
+    {
+        m_playerStates[m_currentPlayer].humansRemaining.push_back(h->getPosition());
+        h->destroy();
+    }
+    m_humans.clear();
+
+    //clear rescued humans from ship
+    auto& children = m_mothership->getChildren();
+    for (auto& c : children) c->destroy();
+
+    //restore next players state
+    m_currentPlayer = (m_currentPlayer + 1) % m_playerStates.size();
+
+    spawnHumans();
+    for (auto i = 0; i < m_playerStates[m_currentPlayer].humansSaved; ++i)
+    {
+        addRescuedHuman();
+    }
 }

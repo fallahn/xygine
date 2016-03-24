@@ -57,6 +57,10 @@ LunarMoonerState::LunarMoonerState(xy::StateStack& stack, Context context)
     //m_scene.drawDebug(true);
 
     auto gameController = xy::Component::create<lm::GameController>(m_messageBus, m_scene, m_collisionWorld);
+    gameController->addPlayer();
+    gameController->addPlayer();
+    gameController->start();
+
     auto entity = xy::Entity::create(m_messageBus);
     entity->addComponent(gameController);
     entity->addCommandCategories(LMCommandID::GameController);
@@ -143,7 +147,7 @@ bool LunarMoonerState::update(float dt)
     m_scene.update(dt);
     m_collisionWorld.update();
 
-    m_reportText.setString(xy::Stats::getString());
+    //m_reportText.setString(xy::Stats::getString());
 
     return true;
 }
@@ -155,7 +159,7 @@ void LunarMoonerState::draw()
     rw.draw(m_scene);
 
     rw.setView(getContext().defaultView);
-    rw.draw(m_reportText);
+    //rw.draw(m_reportText);
 }
 
 //private
