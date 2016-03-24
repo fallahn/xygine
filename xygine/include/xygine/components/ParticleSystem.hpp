@@ -196,7 +196,7 @@ namespace xy
         \brief Set the initial velocity of emitted particles
 
         The initial velocity of a particle defines the speed and direction of
-        a particle when it is first emitted. This paramter is overriden by any
+        a particle when it is first emitted. This parameter is overriden by any
         random initial velocities if they are set.
 
         \param vel sf::Vector2f representing the speed and direction of spawned
@@ -214,6 +214,16 @@ namespace xy
         speed and directions for newly emitted particles
         */
         void setRandomInitialVelocity(const std::vector<sf::Vector2f>& randValues);
+        /*!
+        \brief Sets the inertia of the particle system.
+
+        If a particle system is attached to a moving entity it can offer a more realistic
+        appearance to set the inertia of the system to that of the parent entity's velocity.
+        The intertia is then added to the initial velocity of any particles which are spawned
+
+        \param sf::Vector2f inertia value to add to the particle's initial velocity
+        */
+        void setInertia(const sf::Vector2f&);
         /*!
         \brief Set the particle emit rate
 
@@ -296,6 +306,7 @@ namespace xy
         sf::Vector2f m_initialVelocity;
         bool m_randVelocity;
         std::vector<sf::Vector2f> m_randVelocities;
+        sf::Vector2f m_inertia;
         float m_emitRate;
         bool m_randPosition;
         std::vector<sf::Vector2f> m_randPositions;

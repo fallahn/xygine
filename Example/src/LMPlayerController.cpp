@@ -79,6 +79,11 @@ PlayerController::PlayerController(xy::MessageBus& mb)
 void PlayerController::entityUpdate(xy::Entity& entity, float dt)
 {
     updateState(entity, dt);
+
+    m_thrust->setInertia(m_velocity);
+    m_rcsLeft->setInertia(m_velocity);
+    m_rcsRight->setInertia(m_velocity);
+
     REPORT("Current Speed", std::to_string(xy::Util::Vector::lengthSquared(m_velocity)));
 }
 

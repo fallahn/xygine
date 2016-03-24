@@ -168,6 +168,11 @@ void ParticleSystem::setRandomInitialVelocity(const std::vector<sf::Vector2f>& r
     }
 }
 
+void ParticleSystem::setInertia(const sf::Vector2f& inertia)
+{
+    m_inertia = inertia;
+}
+
 void ParticleSystem::setEmitRate(float rate)
 {
     XY_ASSERT(rate > 0.f, "invalid emit rate");
@@ -294,6 +299,7 @@ void ParticleSystem::addParticle(const sf::Vector2f& position)
         m_randVelocities[Util::Random::value(0, m_randVelocities.size() - 1)] :
         m_initialVelocity;
 
+    p.velocity += m_inertia;
     m_particles.push_back(p);
 }
 
