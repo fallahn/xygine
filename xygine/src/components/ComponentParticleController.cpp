@@ -56,7 +56,8 @@ void ParticleController::onStart(Entity& entity)
     m_entity = &entity;
     for (auto i = 0u; i < m_pendingDefinitions.size(); ++i)
     {
-        m_entity->addChild(std::move(m_pendingDefinitions[i]));
+	Entity::Ptr e = std::move(m_pendingDefinitions[i]);      
+	m_entity->addChild(e);
     }
     m_pendingDefinitions.clear();
 }
