@@ -104,7 +104,7 @@ namespace xy
         void registerState(StateId id, Args&&... args)
         {
             static_assert(std::is_base_of<State, T>::value, "Must derive from State class");
-            m_factories[id] = [&, this]()
+            m_factories[id] = [&args..., this]()
             {
                 return std::make_unique<T>(*this, m_context, std::forward<Args>(args)...);
             };
