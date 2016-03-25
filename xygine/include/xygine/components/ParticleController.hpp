@@ -32,6 +32,7 @@ source distribution.
 
 #include <xygine/components/Component.hpp>
 #include <xygine/components/ParticleSystem.hpp>
+#include <xygine/Entity.hpp>
 
 #include <SFML/Graphics/Color.hpp>
 
@@ -100,6 +101,7 @@ namespace xy
     private:
 
         Entity* m_entity;
+        std::vector<Entity::Ptr> m_pendingDefinitions;
         std::map<ParticleController::SystemId, std::pair<Entity*, ParticleSystem::Definition>> m_activeSystems;
     };
 }

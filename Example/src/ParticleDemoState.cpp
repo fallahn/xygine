@@ -263,14 +263,14 @@ void ParticleDemoState::setupParticles()
 {
     auto particleController = xy::Component::create<xy::ParticleController>(m_messageBus);
     auto entity = xy::Entity::create(m_messageBus);
+    
+    m_particleDef.loadFromFile("assets/particles/explosion.xyp", m_textureResource);
+    particleController->addDefinition(ParticleType::Explosion, m_particleDef);
 
     auto pc = entity->addComponent(particleController);
-    
+
     m_particleDef.loadFromFile("assets/particles/bubbles.xyp", m_textureResource);
     pc->addDefinition(ParticleType::Bubbles, m_particleDef);
-
-    m_particleDef.loadFromFile("assets/particles/explosion.xyp", m_textureResource);
-    pc->addDefinition(ParticleType::Explosion, m_particleDef);
 
     m_particleDef.loadFromFile("assets/particles/fire.xyp", m_textureResource);
     pc->addDefinition(ParticleType::Fire, m_particleDef);

@@ -26,7 +26,6 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/components/ParticleController.hpp>
-#include <xygine/Entity.hpp>
 #include <xygine/MessageBus.hpp>
 #include <xygine/Scene.hpp>
 
@@ -55,15 +54,26 @@ void ParticleController::entityUpdate(Entity&, float){}
 void ParticleController::onStart(Entity& entity)
 {
     m_entity = &entity;
+    for (auto i = 0u; i < m_pendingDefinitions.size(); ++i)
+    {
+        m_entity->addChild(std::move(m_pendingDefinitions[i]));
+    }
+    m_pendingDefinitions.clear();
 }
 
 void ParticleController::addDefinition(SystemId id, const ParticleSystem::Definition& d)
 {
-    //TODO we can't currently add definitions until this component has a parent entity
-    XY_ASSERT(m_entity, "this component must be added to an entity first");
     auto ent = Entity::create(getMessageBus());
     m_activeSystems[id] = std::make_pair(ent.get(), d);
-    m_entity->addChild(ent);
+    
+    if (m_entity)
+    {
+        m_entity->addChild(ent);
+    }
+    else
+    {
+        m_pendingDefinitions.push_back(std::move(ent));
+    }
 }
 
 void ParticleController::fire(SystemId id, const sf::Vector2f& position)
