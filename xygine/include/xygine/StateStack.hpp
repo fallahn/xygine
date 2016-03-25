@@ -87,9 +87,26 @@ namespace xy
         template <typename T>
         void registerState(StateId id)
         {
+            static_assert(std::is_base_of<State, T>::value, "Must derive from State class");
             m_factories[id] = [this]()
             {
                 return std::make_unique<T>(*this, m_context);
+            };
+        }
+        /*!
+        \brief Overload for registering states which have custom
+        construction parameters
+
+        \param id Value to register with state
+        \param args List of arguments to be passed to the state constructor
+        */
+        template <typename T, typename... Args>
+        void registerState(StateId id, Args&&... args)
+        {
+            static_assert(std::is_base_of<State, T>::value, "Must derive from State class");
+            m_factories[id] = [&, this]()
+            {
+                return std::make_unique<T>(*this, m_context, std::forward<Args>(args)...);
             };
         }
 

@@ -6,7 +6,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(NOT XY_STATIC_LIB)
-  SET(XY_STATIC_LIB True CACHE BOOL "Should xygine be built as a static or shared lib")
+  SET(XY_STATIC_LIB False CACHE BOOL "Should xygine be built as a static or shared lib")
 endif()
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
