@@ -44,12 +44,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include;../xygine/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;../xygine/include;../xygine/extlibs/include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG_;_MBCS;%(PreprocessorDefinitions);SFML_NO_DEPRECATED_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../xygine/extlibs/box2d-2.3.2;../xygine/extlibs/sfml;../DebugShared</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../xygine/extlibs/lib/box2d-2.3.2;../xygine/extlibs/lib/sfml;../DebugShared</AdditionalLibraryDirectories>
       <AdditionalDependencies>xygine-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;Box2D-d.lib;sfml-audio-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -60,14 +60,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>include;../xygine/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;../xygine/include;../xygine/extlibs/include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);SFML_NO_DEPRECATED_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../xygine/extlibs/box2d-2.3.2;../xygine/extlibs/sfml;../ReleaseStatic</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../xygine/extlibs/lib/box2d-2.3.2;../xygine/extlibs/lib/sfml;../ReleaseStatic</AdditionalLibraryDirectories>
       <AdditionalDependencies>xygine-s.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;sfml-audio.lib;sfml-network.lib;Box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
