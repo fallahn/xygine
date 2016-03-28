@@ -329,6 +329,7 @@ void ParticleDemoState::buildTerrain()
 void ParticleDemoState::spawnThing(const sf::Vector2f& position)
 {
     auto ps = m_particleDef.createSystem(m_messageBus);
+    ps->setLifetimeVariance(m_particleDef.lifetime / 2.f);
     ps->start(m_particleDef.releaseCount, m_particleDef.delay, m_particleDef.duration);
 
     auto physBody = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);

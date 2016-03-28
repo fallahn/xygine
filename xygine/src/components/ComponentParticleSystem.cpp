@@ -50,6 +50,7 @@ ParticleSystem::ParticleSystem(MessageBus& mb)
     m_followParent      (false),
     m_particleSize      (4.f, 4.f),
     m_particleLifetime  (2.f),
+    m_lifetimeVariance  (0.f),
     m_startDelay        (0.f),
     m_randVelocity      (false),
     m_emitRate          (30.f),
@@ -145,6 +146,19 @@ void ParticleSystem::setParticleLifetime(float time)
 {
     XY_ASSERT(time > 0, "invalid time value");
     m_particleLifetime = time;
+
+    if (m_particleLifetime < m_lifetimeVariance)
+    {
+        m_lifetimeVariance = 0.f;
+        LOG("Particle lifetime variance has been reset!", xy::Logger::Type::Warning);
+    }
+}
+
+void ParticleSystem::setLifetimeVariance(float amount)
+{
+    amount = std::abs(amount);
+    XY_ASSERT(amount < m_particleLifetime, "Particle variance must be less than lifetime");
+    m_lifetimeVariance = amount;
 }
 
 void ParticleSystem::setInitialVelocity(const sf::Vector2f& vel)
@@ -181,7 +195,7 @@ void ParticleSystem::setEmitRate(float rate)
 
 void ParticleSystem::setRandomInitialPosition(const std::vector<sf::Vector2f>& positions)
 {
-    //XY_ASSERT(!positions.empty(), "position vetor contains no values");
+    //XY_ASSERT(!positions.empty(), "position vevtor contains no values");
     if (positions.empty()) return;
     if (positions.size() > 1)
     {
@@ -224,7 +238,7 @@ void ParticleSystem::stop()
 
 bool ParticleSystem::active() const
 {
-    return (m_particles.size() > 0);
+    return (!m_particles.empty());
 }
 
 void ParticleSystem::update(float dt)
@@ -295,6 +309,10 @@ void ParticleSystem::addParticle(const sf::Vector2f& position)
     p.setPosition(position);
     p.colour = m_colour;
     p.lifetime = m_particleLifetime;
+    if (m_lifetimeVariance > 0)
+    {
+        p.lifetime += xy::Util::Random::value(-m_lifetimeVariance, m_lifetimeVariance);
+    }
     p.velocity = (m_randVelocity) ? 
         m_randVelocities[Util::Random::value(0, m_randVelocities.size() - 1)] :
         m_initialVelocity;

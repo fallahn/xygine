@@ -193,6 +193,16 @@ namespace xy
         */
         void setParticleLifetime(float time);
         /*!
+        \brief Sets the amount by with particle lifetime should vary
+
+        This should be a number smaller than that of the current particle lifetime.
+        A value between this and negative this amount is then added to each newly
+        emitted particle so that its lifetime is varied from the previous and next
+        particle slightly.
+        \param amount Amount of time to vary the particle's lifetime by
+        */
+        void setLifetimeVariance(float amount);
+        /*!
         \brief Set the initial velocity of emitted particles
 
         The initial velocity of a particle defines the speed and direction of
@@ -301,6 +311,7 @@ namespace xy
         sf::Vector2f m_particleSize;
         sf::Vector2f m_texCoords;
         float m_particleLifetime;
+        float m_lifetimeVariance;
         float m_startDelay;
 
         sf::Vector2f m_initialVelocity;

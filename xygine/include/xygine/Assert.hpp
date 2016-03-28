@@ -51,9 +51,19 @@ do \
     } \
 }while (false)
 
+#define XY_WARNING(condition, message) \
+    if((condition)) \
+    { \
+        std::stringstream ss; \
+        ss << "in " << __FILE__ << ", function `" << __func__ << "`, line " << __LINE__ << ": " << message; \
+        xy::Logger::log(ss.str(), xy::Logger::Type::Warning, xy::Logger::Output::All); \
+    }
+
 #else
 
 #define XY_ASSERT(condition, message)
+#define XY_WARNING(condition, message)
+
 #endif //_DEBUG_
 
 #endif //XY_ASSERT_HPP_

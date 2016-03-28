@@ -32,7 +32,9 @@ using namespace xy;
 
 namespace
 {
-    const std::size_t bufferSize = 2048u;
+    //max msg size is 128 bytes, so 128 messages
+    //maximum per frame is 16384 bytes
+    const std::size_t bufferSize = 16384u;
 }
 
 MessageBus::MessageBus()

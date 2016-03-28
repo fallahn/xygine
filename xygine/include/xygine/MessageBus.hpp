@@ -246,11 +246,12 @@ namespace xy
         \brief Places a message on the message stack, and returns a pointer to the data
         
         The message data can then be filled in via the pointer. Custom message types can
-        be defined via structs, which are then created oon the message bus. Structs should
+        be defined via structs, which are then created on the message bus. Structs should
         contain only trivial data such as PODs and pointers to other objects.
         ATTEMPING TO PLACE LARGE OBJECTS DIRECTLY ON THE MESSAGE BUS IS ASKING FOR TROUBLE
         Custom message types should have a unique 32 bit integer ID which can be used
-        to identify the message type when reading messages
+        to identify the message type when reading messages. Message data has a maximum
+        size of 128 bytes.
         \param id Unique Id for this message type
         \returns Pointer to an empty message of given type.
         */
@@ -263,6 +264,7 @@ namespace xy
             static auto msgSize = sizeof(Message);
             XY_ASSERT(dataSize < 128, "message size exceeds 128 bytes"); //limit custom data to 128 bytes
             XY_ASSERT(m_pendingBuffer.size() - (m_inPointer - m_pendingBuffer.data()) > (dataSize + msgSize), "buffer overflow " + std::to_string(m_pendingCount)); //make sure we have enough room in the buffer
+            XY_WARNING(m_pendingBuffer.size() - (m_inPointer - m_pendingBuffer.data()) < 128, "Messagebus buffer is heavily contended!");
 
             Message* msg = new (m_inPointer)Message();
             m_inPointer += msgSize;
