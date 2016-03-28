@@ -195,11 +195,11 @@ namespace xy
         /*!
         \brief Sets the amount by with particle lifetime should vary
 
-        This should be a number smaller than that of the current particle lifetime.
-        A value between this and negative this amount is then added to each newly
-        emitted particle so that its lifetime is varied from the previous and next
-        particle slightly.
-        \param amount Amount of time to vary the particle's lifetime by
+        A positive ratio of the current lifetime value which is added
+        or subtracted from a new particle's lifetime. For example a value
+        of 0.5 will make a new particle's lifetime a value of +- 50% of
+        that of the ParticleLifetime value.
+        \param amount Ratio to vary the particle's lifetime by
         */
         void setLifetimeVariance(float amount);
         /*!

@@ -146,18 +146,12 @@ void ParticleSystem::setParticleLifetime(float time)
 {
     XY_ASSERT(time > 0, "invalid time value");
     m_particleLifetime = time;
-
-    if (m_particleLifetime < m_lifetimeVariance)
-    {
-        m_lifetimeVariance = 0.f;
-        LOG("Particle lifetime variance has been reset!", xy::Logger::Type::Warning);
-    }
 }
 
 void ParticleSystem::setLifetimeVariance(float amount)
 {
     amount = std::abs(amount);
-    XY_ASSERT(amount < m_particleLifetime, "Particle variance must be less than lifetime");
+    XY_ASSERT(amount < 1, "Particle variance must be less than lifetime");
     m_lifetimeVariance = amount;
 }
 
@@ -311,7 +305,8 @@ void ParticleSystem::addParticle(const sf::Vector2f& position)
     p.lifetime = m_particleLifetime;
     if (m_lifetimeVariance > 0)
     {
-        p.lifetime += xy::Util::Random::value(-m_lifetimeVariance, m_lifetimeVariance);
+        const float var = m_particleLifetime * m_lifetimeVariance;
+        p.lifetime += xy::Util::Random::value(-var, var);
     }
     p.velocity = (m_randVelocity) ? 
         m_randVelocities[Util::Random::value(0, m_randVelocities.size() - 1)] :
