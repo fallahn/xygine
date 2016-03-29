@@ -50,7 +50,24 @@ namespace
     }
 }
 
-PostProcess::PostProcess() {}
+//PostProcess::PostProcess() {}
+
+//public
+void PostProcess::handleMessage(const Message& msg)
+{
+    for (auto& mh : m_messageHandlers)
+    {
+        if (mh.id == msg.id)
+        {
+            mh.action(msg);
+        }
+    }
+}
+
+void PostProcess::addMessageHandler(const MessageHandler& mh)
+{
+    m_messageHandlers.push_back(mh);
+}
 
 //protected
 void PostProcess::applyShader(const sf::Shader& shader, sf::RenderTarget& dest)

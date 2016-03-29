@@ -69,7 +69,7 @@ namespace xy
         the the message itself. Handlers can be added to a Component
         via addMessageHandler.
         */
-        struct MessageHandler
+        struct MessageHandler final
         {
             using Action = std::function<void(Component*, const Message&)>;
             Message::Id id;

@@ -31,8 +31,10 @@ source distribution.
 #define XY_POST_PROCESS_HPP_
 
 #include <xygine/Config.hpp>
+#include <xygine/MessageBus.hpp>
 
 #include <memory>
+#include <functional>
 
 namespace sf
 {
@@ -56,9 +58,23 @@ namespace xy
     class XY_EXPORT_API PostProcess
     {
     public:
+        /*!
+        \brief Post Process Message Handler
+
+        Allows callback behaviour for post process effects when
+        message events are raised on the message bus. Message
+        handlers can be added to a post process via addMessageHandler
+        */
+        struct MessageHandler final
+        {
+            using Action = std::function<void(const Message&)>;
+            Message::Id id; //< Message ID for this handler to respond to
+            Action action; //< Executed when message with ID is received
+        };
+
         using Ptr = std::unique_ptr<PostProcess>;
 
-        PostProcess();
+        PostProcess() = default;
         virtual ~PostProcess() = default;
         PostProcess(const PostProcess&) = delete;
         const PostProcess& operator = (const PostProcess&) = delete;
@@ -81,7 +97,7 @@ namespace xy
 
         Some effects may require shader parameters to be updated over time.
         This optionally overridable function passes in the current frame time
-        and allows updating those paramters. This is called automatically
+        and allows updating those parameters. This is called automatically
         when the effect is added to a Scene, but will need to be called manually
         when using the effect on its own.
         */
@@ -97,8 +113,31 @@ namespace xy
             return std::move(std::make_unique<T>(std::forward<Args>(args)...));
         }
 
+        /*!
+        \brief Used internally by xygine to call any message handler
+        callbacks associated with a post process effect when an effect
+        is added to a Scene. This should be called manually when explicitly
+        applying post process effects and message handling is required.
+
+        \param Message Reference to message passed to callbacks
+        */
+        void handleMessage(const Message&);
+
+        /*!
+        \brief Adds a message handler to the list of message handling
+        callbacks for this effect.
+
+        Custom message handlers can be added to any instance of a post
+        process via the MessageHandler struct.
+        \see MessageHandler
+        */
+        void addMessageHandler(const MessageHandler&);
+
     protected:
         static void applyShader(const sf::Shader&, sf::RenderTarget&);
+
+    private:
+        std::vector<MessageHandler> m_messageHandlers;
 
     };
 }

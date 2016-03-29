@@ -101,8 +101,15 @@ void Scene::update(float dt)
 
 void Scene::handleMessage(const Message& msg)
 {
+    for (auto& pp : m_renderPasses)
+    {
+        pp.postEffect->handleMessage(msg);
+    }
+    
     for (auto& e : m_layers)
+    {
         e->handleMessage(msg);
+    }
 
     if (msg.id == Message::Type::UIMessage)
     {
