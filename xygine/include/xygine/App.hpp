@@ -177,7 +177,7 @@ namespace xy
         The app contains a list of scores along with player
         names which are written to an external file on exit.
         */
-        void addScore(const std::string& name, float value);
+        void addScore(const std::string& name, int value);
         /*!
         \brief Returns a vector containing the scores loaded
         from an external file

@@ -131,7 +131,7 @@ void ScoreList::setList(const std::vector<Scores::Item>& list)
     auto centre = sf::Vector2f(m_bounds.width / 2.f, m_bounds.height / 2.f);
     for (auto i = 0u; i < list.size(); ++i)
     {
-        m_texts.emplace_back(std::to_string(i + 1) + ".    " + std::string(list[i].name) + " - " + std::to_string(list[i].score),m_font, 42u);
+        m_texts.emplace_back(std::to_string(i + 1) + ".    " + std::string(list[i].name) + " - " + std::to_string(list[i].score), m_font, 42u);
         auto& text = m_texts.back();
         Util::Position::centreOrigin(text);
         text.setPosition(centre);

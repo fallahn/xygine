@@ -37,7 +37,7 @@ source distribution.
 namespace
 {
     const int ident = 0x534e5542;
-    const int version = 4;
+    const int version = 5;
     const std::string scoreFile = "scores.dat";
     const std::size_t maxScores = 100;
 }
@@ -117,7 +117,7 @@ void Scores::save()
     file.close();
 }
 
-int Scores::add(const std::string& name, float value, Difficulty difficulty)
+int Scores::add(const std::string& name, int value, Difficulty difficulty)
 {
     std::vector<Item>* scores = nullptr;
     switch (difficulty)

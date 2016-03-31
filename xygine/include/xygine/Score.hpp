@@ -62,7 +62,7 @@ namespace xy
         struct Item
         {
             char name[21];
-            float score;
+            int score;
             std::size_t hash;
         };
 
@@ -73,7 +73,7 @@ namespace xy
 
         void load();
         void save();
-        int add(const std::string&, float, Difficulty);
+        int add(const std::string&, int, Difficulty);
 
         const std::vector<Item>& getScores(Difficulty) const;
 

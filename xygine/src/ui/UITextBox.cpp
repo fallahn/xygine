@@ -122,7 +122,7 @@ void TextBox::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
             && e.text.unicode < 127
             && m_string.size() < m_maxLength)
         {
-            m_string += toupper(static_cast<char>(e.text.unicode));
+            m_string += /*toupper*/(static_cast<char>(e.text.unicode));
         }
     }
     else if (e.type == sf::Event::JoystickButtonReleased)

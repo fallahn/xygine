@@ -196,7 +196,7 @@ MessageBus& App::getMessageBus()
     return m_messageBus;
 }
 
-void App::addScore(const std::string& name, float value)
+void App::addScore(const std::string& name, int value)
 {
     lastScoreIndex = m_scores.add(name, value, m_gameSettings.difficulty);
 }
