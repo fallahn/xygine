@@ -100,17 +100,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 
     context.renderWindow.setMouseCursorVisible(true);
 
-
-
     //temp stuff
-    /*m_buns.loadFromFile("assets/spriter/GreyGuy/player.scml");
-
-    auto testSprite = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
-    testSprite->setTexture(m_buns.getTexture());
-    auto testEnt = xy::Entity::create(m_messageBus);
-    testEnt->addComponent(testSprite);
-    m_scene.addEntity(testEnt, xy::Scene::Layer::UI);*/
-
 
     quitLoadingScreen();
 
@@ -170,7 +160,7 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         case upKey:
-            
+
             break;
         case downKey:
             
@@ -199,7 +189,7 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
             //requestStackPush(States::ID::MenuPaused);
             break;
         case upKey:
-            
+
             break;
         case downKey:
             

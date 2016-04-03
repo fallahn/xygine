@@ -41,13 +41,16 @@ AudioSource::AudioSource(MessageBus& mb, SoundResource& sr)
     :Component      (mb, this),
     m_maxVolume     (100.f),
     m_currentVolume (0.f),
-    m_fadeTime      (0.f),
+    m_fadeInTime    (0.f),
+    m_fadeOutTime   (0.f),
+    m_duration      (0.f),
     m_pitch         (1.f),
     m_attenuation   (1.f),
     m_minDistance2D (900.f),
     m_minDistance3D (std::sqrt(m_minDistance2D * m_minDistance2D + AudioListener::getListenerDepth() * AudioListener::getListenerDepth())),
     m_currentStatus (Status::Stopped),
     m_mode          (Mode::Cached),
+    m_looped        (false),
     m_currentSource (&m_sound),
     m_soundResource (sr)
 {
@@ -64,11 +67,45 @@ void AudioSource::entityUpdate(Entity& entity, float)
     if (m_currentVolume < m_maxVolume)
     {
         //fade in
-        float ratio = m_fadeClock.getElapsedTime().asSeconds() / m_fadeTime;
+        const float ratio = m_fadeClock.getElapsedTime().asSeconds() / m_fadeInTime;
         m_currentVolume = m_maxVolume * ratio;
 
         m_currentVolume = std::min(m_currentVolume, m_maxVolume);
         m_currentSource->setVolume(m_currentVolume);
+    }
+
+    //fade out if not looped
+    if (!m_looped)
+    {
+        const float remain = (m_mode == Mode::Cached) ?
+            m_duration - m_sound.getPlayingOffset().asSeconds()
+            : m_music.getPlayingOffset().asSeconds();
+
+        if (remain < m_fadeOutTime)
+        {
+            const float ratio = std::min(1.f, std::abs(remain) / m_fadeOutTime);
+            m_currentVolume = m_maxVolume * ratio;
+            m_currentSource->setVolume(m_currentVolume);
+        }
+    }
+    else
+    {
+        //fade out once stop has been requested
+        if (m_currentStatus == Status::Stopping)
+        {
+            const float ratio = 1.f - std::min(1.f, m_fadeClock.getElapsedTime().asSeconds() / m_fadeOutTime);
+            m_currentVolume = m_maxVolume * ratio;
+            m_currentSource->setVolume(m_currentVolume);
+
+            if (m_currentVolume == 0)
+            {
+                (m_mode == Mode::Cached) ?
+                    m_sound.stop()
+                    :
+                    m_music.stop();
+                m_currentStatus = Status::Stopped;
+            }
+        }
     }
 }
 
@@ -95,13 +132,22 @@ void AudioSource::setSound(const std::string& path, Mode mode)
         m_currentSource = &m_sound;
 
         m_sound.setBuffer(m_soundResource.get(path));
+        m_duration = m_sound.getBuffer()->getDuration().asSeconds();
     }
     else
     {
         m_currentSource = &m_music;
 
         m_music.openFromFile(path);
+        m_duration = m_music.getDuration().asSeconds();
     }
+}
+
+void AudioSource::setSoundBuffer(sf::SoundBuffer& sb)
+{
+    XY_WARNING(m_mode != Mode::Cached, "setting this sound buffer will have no effect on streaming audio!");
+    m_sound.setBuffer(sb);
+    m_duration = sb.getDuration().asSeconds();
 }
 
 void AudioSource::setAttenuation(float attn)
@@ -143,12 +189,28 @@ float AudioSource::getPitch() const
 void AudioSource::setFadeInTime(float time)
 {
     XY_ASSERT(time >= 0, "fade time must be a positive value");
-    m_fadeTime = time;
+    m_fadeInTime = time;
 }
 
 float AudioSource::getFadeInTime() const
 {
-    return m_fadeTime;
+    return m_fadeInTime;
+}
+
+void AudioSource::setFadeOutTime(float time)
+{
+    XY_ASSERT(time >= 0, "fade time must be non-negative");
+    m_fadeOutTime = time;
+}
+
+float AudioSource::getFadeOutTime() const
+{
+    return m_fadeOutTime;
+}
+
+float AudioSource::getDuration() const
+{
+    return m_duration;
 }
 
 void AudioSource::setVolume(float volume)
@@ -176,6 +238,9 @@ float AudioSource::getVolume() const
 void AudioSource::play(bool looped)
 {   
     m_fadeClock.restart();
+    m_currentVolume = 0.f;
+    m_looped = looped;
+
     m_currentStatus = Status::Playing;
 
     if (m_mode == Mode::Cached)
@@ -210,14 +275,22 @@ void AudioSource::pause()
 
 void AudioSource::stop()
 {
-    m_currentStatus = Status::Stopped;
+    if (!m_looped) //if we're looped we'll fade out
+    {
+        (m_mode == Mode::Cached) ?
+            m_sound.stop()
+            :
+            m_music.stop();
 
-    (m_mode == Mode::Cached) ?
-        m_sound.stop()
-        :
-        m_music.stop();
+        m_currentVolume = 0.f;
+        m_currentStatus = Status::Stopped;
 
-    m_currentVolume = 0.f;
+    }
+    else
+    {
+        m_currentStatus = Status::Stopping;
+        m_fadeClock.restart();
+    }
 }
 
 AudioSource::Status AudioSource::getStatus() const

@@ -77,6 +77,15 @@ namespace xy
         */
         void setSound(const std::string& path, Mode = Mode::Cached);
         /*!
+        \brief Sets the SoundBuffer for Cached mode sounds.
+        Has no effect on streaming sounds. When creating a lot
+        of components on the fly it may be more effecient to cache
+        SoundBuffers elsewhere to save a string lookup for the
+        SoundBuffer audio path each time.
+        \param sf::SoundBuffer New sound buffer for the audio
+        */
+        void setSoundBuffer(sf::SoundBuffer&);
+        /*!
         \brief Sets the attenuation rate
         
         sets the rate at which the volume of this sound is
@@ -115,6 +124,23 @@ namespace xy
         \see setFadeInTime
         */
         float getFadeInTime() const;
+        /*!
+        \brief Sets the amount of time it takes to fade the audio to 0
+
+        Unlooped sounds will attempt to fade out for this duration when
+        reaching the end of playback, and looped sounds will fade out
+        before stopping, when stop is called.
+        \param float Time in seconds to fade out for
+        */
+        void setFadeOutTime(float);
+        /*!
+        \brief Returns the current duration of the audio fade out, in seconds
+        */
+        float getFadeOutTime() const;
+        /*!
+        \brief Returns the duration in seconds of the currently loaded audio
+        */
+        float getDuration() const;
         /*!
         \brief Sets the maximum volume for this sound source
 
@@ -165,6 +191,7 @@ namespace xy
         {
             Playing,
             Paused,
+            Stopping,
             Stopped
         };
         /*!
@@ -175,13 +202,16 @@ namespace xy
     private:
         float m_maxVolume;
         float m_currentVolume;
-        float m_fadeTime;
+        float m_fadeInTime;
+        float m_fadeOutTime;
+        float m_duration;
         float m_pitch;
         float m_attenuation;
         float m_minDistance2D;
         float m_minDistance3D;
         Status m_currentStatus;
         Mode m_mode;
+        bool m_looped;
 
         sf::Sound m_sound;
         sf::Music m_music;

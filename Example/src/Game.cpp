@@ -41,6 +41,8 @@ Game::Game()
 {
     registerStates();
     m_stateStack.pushState(States::ID::MenuMain);
+
+    getRenderWindow().setKeyRepeatEnabled(false);
 }
 
 //private
