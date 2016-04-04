@@ -121,8 +121,9 @@ void AudioSource::destroy()
 {
     Component::destroy();
     
-    if (m_mode == Mode::Cached && !m_sound.getLoop())
+    if (m_mode == Mode::Cached/* && !m_sound.getLoop()*/)
     {
+        m_sound.setLoop(false);
         AudioListener::addDyingSound(m_sound);
     }
     else

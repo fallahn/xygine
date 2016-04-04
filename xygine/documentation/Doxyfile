@@ -860,7 +860,10 @@ RECURSIVE              = YES
 EXCLUDE                = ../include/xygine/picojson.h \
                          ../include/xygine/picojson.LICENSE \
                          ../include/xygine/parsers \
-                         ../src/parsers
+                         ../src/parsers \
+                         ../include/xygine/detail/GLCheck.hpp \
+                         ../src/GLExtensions.hpp \
+                         ../src/GLExtensions.cpp
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

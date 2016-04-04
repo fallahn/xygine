@@ -76,6 +76,10 @@ namespace xy
         */
         static float getListenerDepth();
 
+        /*!
+        \brief Maximum allowed volume for any audio
+        */
+        static const float MaxVolume;
     private:
 
         std::list<sf::Sound> m_dyingSounds;

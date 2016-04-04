@@ -39,6 +39,8 @@ namespace
     const float listenerDepth = 900.f;
 }
 
+const float AudioListener::MaxVolume = 100.f;
+
 AudioListener::AudioListener(MessageBus& mb)
     : Component(mb, this)
 {

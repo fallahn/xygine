@@ -44,7 +44,8 @@ namespace
 
 MultiRenderTexture::MultiRenderTexture()
     : m_textureCount(0u),
-    m_fbo(0)
+    m_fbo           (0u),
+    m_depthbuffer   (0u)
 {
 
 }

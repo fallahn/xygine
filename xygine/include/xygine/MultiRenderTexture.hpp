@@ -45,7 +45,7 @@ namespace xy
     \brief An off-screen render target which can draw on multiple textures at once
 
     An SFML-compatible render target, the MultiRenderTexture class allows a single
-    draw call to draw to multiple textures at once. This is usefult for cases such
+    draw call to draw to multiple textures at once. This is useful for cases such
     as deferred rendering where diffuse/normal/specular data for a scene may be drawn
     to separate textures before blending in a single shader.
     */
