@@ -202,8 +202,10 @@ namespace xy
     private:
         float m_maxVolume;
         float m_currentVolume;
+        float m_stoppingVolume;
         float m_fadeInTime;
         float m_fadeOutTime;
+        float m_fadeElapsed;
         float m_duration;
         float m_pitch;
         float m_attenuation;

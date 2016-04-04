@@ -160,7 +160,7 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         case upKey:
-
+            
             break;
         case downKey:
             
@@ -189,7 +189,7 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
             //requestStackPush(States::ID::MenuPaused);
             break;
         case upKey:
-
+            
             break;
         case downKey:
             

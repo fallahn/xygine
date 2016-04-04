@@ -41,8 +41,10 @@ AudioSource::AudioSource(MessageBus& mb, SoundResource& sr)
     :Component      (mb, this),
     m_maxVolume     (100.f),
     m_currentVolume (0.f),
+    m_stoppingVolume(0.f),
     m_fadeInTime    (0.f),
     m_fadeOutTime   (0.f),
+    m_fadeElapsed   (0.f),
     m_duration      (0.f),
     m_pitch         (1.f),
     m_attenuation   (1.f),
@@ -58,7 +60,7 @@ AudioSource::AudioSource(MessageBus& mb, SoundResource& sr)
 }
 
 //public
-void AudioSource::entityUpdate(Entity& entity, float)
+void AudioSource::entityUpdate(Entity& entity, float dt)
 {
     auto pos = entity.getWorldPosition();
 
@@ -67,7 +69,8 @@ void AudioSource::entityUpdate(Entity& entity, float)
     if (m_currentVolume < m_maxVolume)
     {
         //fade in
-        const float ratio = m_fadeClock.getElapsedTime().asSeconds() / m_fadeInTime;
+        m_fadeElapsed += dt;
+        const float ratio = m_fadeElapsed / m_fadeInTime;
         m_currentVolume = m_maxVolume * ratio;
 
         m_currentVolume = std::min(m_currentVolume, m_maxVolume);
@@ -83,6 +86,11 @@ void AudioSource::entityUpdate(Entity& entity, float)
 
         if (remain < m_fadeOutTime)
         {
+            if (remain <= 0)
+            {
+                m_currentStatus = Status::Stopped;
+            }
+
             const float ratio = std::min(1.f, std::abs(remain) / m_fadeOutTime);
             m_currentVolume = m_maxVolume * ratio;
             m_currentSource->setVolume(m_currentVolume);
@@ -94,7 +102,7 @@ void AudioSource::entityUpdate(Entity& entity, float)
         if (m_currentStatus == Status::Stopping)
         {
             const float ratio = 1.f - std::min(1.f, m_fadeClock.getElapsedTime().asSeconds() / m_fadeOutTime);
-            m_currentVolume = m_maxVolume * ratio;
+            m_currentVolume = m_stoppingVolume * ratio;
             m_currentSource->setVolume(m_currentVolume);
 
             if (m_currentVolume == 0)
@@ -236,30 +244,42 @@ float AudioSource::getVolume() const
 }
 
 void AudioSource::play(bool looped)
-{   
-    m_fadeClock.restart();
-    m_currentVolume = 0.f;
-    m_looped = looped;
-
-    m_currentStatus = Status::Playing;
-
-    if (m_mode == Mode::Cached)
+{
+    if (m_currentStatus != Status::Playing)
     {
-        m_sound.setLoop(looped);
-        m_sound.setAttenuation(m_attenuation);
-        m_sound.setMinDistance(m_minDistance3D);
-        m_sound.setPitch(m_pitch);
-        m_sound.setVolume(m_currentVolume);
-        m_sound.play();
-    }
-    else
-    {
-        m_music.setLoop(looped);
-        m_music.setAttenuation(m_attenuation);
-        m_music.setMinDistance(m_minDistance3D);
-        m_music.setPitch(m_pitch);
-        m_music.setVolume(m_currentVolume);
-        m_music.play();
+        m_fadeElapsed = 0.f;
+        if (m_currentStatus != Status::Stopping)
+        {
+            m_currentVolume = 0.f;
+        }
+        else
+        {
+            //decide how far along the fade in we'd be
+            const float ratio = m_currentVolume / m_maxVolume;
+            m_fadeElapsed = m_fadeInTime * ratio;
+        }
+        m_looped = looped;
+
+        m_currentStatus = Status::Playing;
+
+        if (m_mode == Mode::Cached)
+        {
+            m_sound.setLoop(looped);
+            m_sound.setAttenuation(m_attenuation);
+            m_sound.setMinDistance(m_minDistance3D);
+            m_sound.setPitch(m_pitch);
+            m_sound.setVolume(m_currentVolume);
+            m_sound.play();
+        }
+        else
+        {
+            m_music.setLoop(looped);
+            m_music.setAttenuation(m_attenuation);
+            m_music.setMinDistance(m_minDistance3D);
+            m_music.setPitch(m_pitch);
+            m_music.setVolume(m_currentVolume);
+            m_music.play();
+        }
     }
 }
 
@@ -288,6 +308,9 @@ void AudioSource::stop()
     }
     else
     {
+        //prevent jumping to maxVol if fading out while
+        //still fading in
+        m_stoppingVolume = m_currentVolume;
         m_currentStatus = Status::Stopping;
         m_fadeClock.restart();
     }
