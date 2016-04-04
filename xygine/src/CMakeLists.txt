@@ -5,7 +5,9 @@ set(XY_SRC
   ${XY_DIR}/Entity.cpp
   ${XY_DIR}/FileSystem.cpp
   ${XY_DIR}/FontResource.cpp
+  ${XY_DIR}/GLExtensions.cpp
   ${XY_DIR}/MessageBus.cpp
+  ${XY_DIR}/MultiRenderTexture.cpp
   ${XY_DIR}/Music.cpp
   ${XY_DIR}/ParticleAffectors.cpp
   ${XY_DIR}/PolyBatch.cpp

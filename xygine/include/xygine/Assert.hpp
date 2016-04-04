@@ -52,13 +52,15 @@ do \
 }while (false)
 
 #define XY_WARNING(condition, message) \
+do \
+{ \
     if((condition)) \
     { \
         std::stringstream ss; \
         ss << "in " << __FILE__ << ", function `" << __func__ << "`, line " << __LINE__ << ": " << message; \
         xy::Logger::log(ss.str(), xy::Logger::Type::Warning, xy::Logger::Output::All); \
-    }
-
+    } \
+}while (false)
 #else
 
 #define XY_ASSERT(condition, message)

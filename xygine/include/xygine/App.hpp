@@ -264,6 +264,8 @@ namespace xy
         virtual void finalise();
 
     private:
+        friend class MultiRenderTexture;
+        static bool m_glExtAvailable;
 
         struct SettingsFile final
         {

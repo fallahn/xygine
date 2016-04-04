@@ -25,6 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#include "GLExtensions.hpp"
+
 #include <xygine/App.hpp>
 #include <xygine/util/Math.hpp>
 #include <xygine/Log.hpp>
@@ -63,6 +65,8 @@ namespace
     const sf::RenderWindow* renderWindow = nullptr;
 }
 
+bool App::m_glExtAvailable = true;
+
 App::App()
     : m_videoSettings(),
     m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle),
@@ -91,6 +95,12 @@ App::App()
         updateApp(dt);
     };
     eventHandler = std::bind(&App::handleEvent, this, _1);
+
+    if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
+    {
+        Logger::log("Failed loading OpenGL extensions, MultiRenderTargets will be unavailable", Logger::Type::Error, Logger::Output::All);
+        m_glExtAvailable = false;
+    }
 }
 
 //public

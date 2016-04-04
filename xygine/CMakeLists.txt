@@ -47,10 +47,12 @@ if(UNIX)
 endif()
 
 find_package(BOX2D REQUIRED)
+find_package(OpenGL REQUIRED)
 
 include_directories(
   ${SFML_INCLUDE_DIR}
   ${BOX2D_INCLUDE_DIR}
+  ${OPENGL_INCLUDE_DIRECTORIES}
   ${CMAKE_SOURCE_DIR}/include)
 
 if(X11_FOUND)
@@ -79,7 +81,8 @@ endif()
 target_link_libraries(xygine
   ${SFML_LIBRARIES}
   ${SFML_DEPENDENCIES}
-  ${BOX2D_LIBRARIES})
+  ${BOX2D_LIBRARIES}
+  ${OPENGL_LIBRARIES})
 
 if(UNIX)
   target_link_libraries(xygine

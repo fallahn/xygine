@@ -32,6 +32,19 @@ source distribution.
 
 #include <SFML/Window/Mouse.hpp>
 
+namespace
+{
+    const std::string fragShader =
+        "#version 120\n"
+        "void main()\n"
+        "{\n"
+        "    gl_FragData[0] = gl_Color;\n"
+        "    gl_FragData[1] = vec4(vec3(1.0) - gl_Color.rgb, 1.0);\n"
+        "    gl_FragData[2] = vec4(0.0, 1.0, 1.0, 1.0);\n"
+        "    gl_FragData[3] = vec4(1.0, 1.0, 0.0, 1.0);\n"
+        "}";
+}
+
 MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
     : State     (stack, context),
     m_messageBus(context.appInstance.getMessageBus())
