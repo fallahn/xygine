@@ -65,12 +65,10 @@ namespace
     const sf::RenderWindow* renderWindow = nullptr;
 }
 
-bool App::m_glExtAvailable = true;
-
 App::App()
-    : m_videoSettings(),
-    m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle),
-    m_pendingDifficulty(Difficulty::Easy)
+    : m_videoSettings   (),
+    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle),
+    m_pendingDifficulty (Difficulty::Easy)
 {
     loadSettings();
     m_scores.load();
@@ -99,7 +97,6 @@ App::App()
     if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
     {
         Logger::log("Failed loading OpenGL extensions, MultiRenderTargets will be unavailable", Logger::Type::Error, Logger::Output::All);
-        m_glExtAvailable = false;
     }
 }
 

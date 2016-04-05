@@ -52,13 +52,25 @@ MultiRenderTexture::MultiRenderTexture()
 
 MultiRenderTexture::~MultiRenderTexture()
 {
+    ensureGlContext();
 
+    if (m_depthbuffer)
+    {
+        GLuint depthbuffer = static_cast<GLuint>(m_depthbuffer);
+        glCheck(glDeleteRenderbuffersEXT(1, &depthbuffer));
+    }
+
+    if (m_fbo)
+    {
+        GLuint fbo = static_cast<GLuint>(m_fbo);
+        glCheck(glDeleteFramebuffersEXT(1, &fbo));
+    }
 }
 
 //public
 bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, std::size_t count, bool depthBuffer)
 {    
-    if (!App::m_glExtAvailable)
+    if (ogl_ext_EXT_framebuffer_object == 0)
     {
         Logger::log("OpenGL extensions required for MRT are unavailble", Logger::Type::Error, Logger::Output::All);
         return false;
