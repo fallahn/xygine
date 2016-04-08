@@ -77,7 +77,7 @@ namespace xy
                 "    vec3 viewVertex = vec3(gl_ModelViewMatrix * gl_Vertex);\n" \
                 "    for(int i = 0; i < MAX_POINT_LIGHTS; ++i)\n" \
                 "    {\n" \
-                "        vec3 viewLightDirection = vec3(gl_ModelViewMatrix * vec4(u_pointLightPositions[i], 1.0)) - viewVertex;\n"
+                "        vec3 viewLightDirection = u_pointLightPositions[i] - viewVertex;\n"
                 "        v_pointLightDirections[i] = tangentSpaceTransformMatrix * viewLightDirection;\n"
                 "    }\n" \
 

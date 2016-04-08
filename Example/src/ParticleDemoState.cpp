@@ -92,7 +92,7 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
 {
     launchLoadingScreen();
     xy::Stats::clear();
-    m_physWorld.setGravity({ 0.f, 900.f });
+    m_physWorld.setGravity({ 0.f, 980.f });
     m_physWorld.setPixelScale(100.f);
 
     m_scene.setView(context.defaultView);
@@ -169,7 +169,7 @@ bool ParticleDemoState::handleEvent(const sf::Event& evt)
     {
         const auto& rw = getContext().renderWindow;
         auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
-
+        
         spawnThing(mousePos);
     }
         break;

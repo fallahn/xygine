@@ -260,7 +260,6 @@ void Scene::reset()
 
     auto camera = Component::create<Camera>(m_messageBus, sf::View({ 960.f, 540.f }, { 1920.f, 1080.f }));
     m_defaultCamera = entity->addComponent(camera);
-
     m_layers[Layer::BackRear]->addChild(entity);
 
     m_activeCamera = m_defaultCamera;
