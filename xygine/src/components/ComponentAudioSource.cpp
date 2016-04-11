@@ -82,9 +82,9 @@ void AudioSource::entityUpdate(Entity& entity, float dt)
     {
         const float remain = (m_mode == Mode::Cached) ?
             m_duration - m_sound.getPlayingOffset().asSeconds()
-            : m_music.getPlayingOffset().asSeconds();
+            : m_duration - m_music.getPlayingOffset().asSeconds();
 
-        if (remain < m_fadeOutTime)
+        if (remain <= m_fadeOutTime)
         {
             if (remain <= 0)
             {

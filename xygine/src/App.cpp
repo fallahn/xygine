@@ -109,7 +109,7 @@ void App::run()
         return;
     }
 
-    m_renderWindow.setMouseCursorVisible(false);
+    //m_renderWindow.setMouseCursorVisible(false);
 
 #ifdef _DEBUG_
     sf::Clock fpsClock;
