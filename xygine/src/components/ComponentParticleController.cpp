@@ -95,7 +95,7 @@ void ParticleController::fire(SystemId id, const sf::Vector2f& position)
     {
         (*child)->setWorldPosition(position);
         (*child)->getComponent<ParticleSystem>()->start(definition.releaseCount, definition.delay, definition.duration);
-        LOG("CLIENT fired existing particle system", Logger::Type::Info);
+        //LOG("CLIENT fired existing particle system", Logger::Type::Info);
     }
     else
     {
@@ -106,6 +106,6 @@ void ParticleController::fire(SystemId id, const sf::Vector2f& position)
         entity->setWorldPosition(position);
         entity->getComponent<ParticleSystem>()->start(definition.releaseCount, definition.delay, definition.duration);
         ent->addChild(entity);
-        LOG("CLIENT fired new particle system", Logger::Type::Info);
+        //LOG("CLIENT fired new particle system", Logger::Type::Info);
     }
 }

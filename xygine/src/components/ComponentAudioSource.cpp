@@ -89,6 +89,10 @@ void AudioSource::entityUpdate(Entity& entity, float dt)
             if (remain <= 0)
             {
                 m_currentStatus = Status::Stopped;
+
+                auto msg = getMessageBus().post<xy::Message::AudioEvent>(xy::Message::AudioMessage);
+                msg->entityId = getParentUID();
+                msg->action = xy::Message::AudioEvent::Stop;
             }
 
             const float ratio = std::min(1.f, std::abs(remain) / m_fadeOutTime);
@@ -112,6 +116,10 @@ void AudioSource::entityUpdate(Entity& entity, float dt)
                     :
                     m_music.stop();
                 m_currentStatus = Status::Stopped;
+
+                auto msg = getMessageBus().post<xy::Message::AudioEvent>(xy::Message::AudioMessage);
+                msg->entityId = getParentUID();
+                msg->action = xy::Message::AudioEvent::Stop;
             }
         }
     }
@@ -281,6 +289,10 @@ void AudioSource::play(bool looped)
             m_music.setVolume(m_currentVolume);
             m_music.play();
         }
+
+        auto msg = getMessageBus().post<xy::Message::AudioEvent>(xy::Message::AudioMessage);
+        msg->entityId = getParentUID();
+        msg->action = xy::Message::AudioEvent::Play;
     }
 }
 
@@ -292,6 +304,10 @@ void AudioSource::pause()
         m_sound.pause()
         :
         m_music.pause();
+
+    auto msg = getMessageBus().post<xy::Message::AudioEvent>(xy::Message::AudioMessage);
+    msg->entityId = getParentUID();
+    msg->action = xy::Message::AudioEvent::Pause;
 }
 
 void AudioSource::stop()
@@ -306,6 +322,9 @@ void AudioSource::stop()
         m_currentVolume = 0.f;
         m_currentStatus = Status::Stopped;
 
+        auto msg = getMessageBus().post<xy::Message::AudioEvent>(xy::Message::AudioMessage);
+        msg->entityId = getParentUID();
+        msg->action = xy::Message::AudioEvent::Stop;
     }
     else
     {

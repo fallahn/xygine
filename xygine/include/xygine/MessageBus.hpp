@@ -97,6 +97,12 @@ namespace xy
         struct AudioEvent
         {
             sf::Uint64 entityId = 0;
+            enum
+            {
+                Play,
+                Pause,
+                Stop
+            }action;
         };
         /*!
         \brief Physics event message data
