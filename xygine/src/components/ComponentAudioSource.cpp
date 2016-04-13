@@ -84,11 +84,13 @@ void AudioSource::entityUpdate(Entity& entity, float dt)
             m_duration - m_sound.getPlayingOffset().asSeconds()
             : m_duration - m_music.getPlayingOffset().asSeconds();
 
-        if (remain <= m_fadeOutTime)
+        static const float epsilon = 0.05f;
+        if (remain <= m_fadeOutTime + epsilon)
         {
-            if (remain <= 0)
+            if (remain <= epsilon)
             {
                 m_currentStatus = Status::Stopped;
+                (m_mode == Mode::Cached) ? m_sound.stop() : m_music.stop();
 
                 auto msg = getMessageBus().post<xy::Message::AudioEvent>(xy::Message::AudioMessage);
                 msg->entityId = getParentUID();
@@ -312,7 +314,7 @@ void AudioSource::pause()
 
 void AudioSource::stop()
 {
-    if (!m_looped) //if we're looped we'll fade out
+    if (!m_looped || m_currentStatus == Status::Paused) //if we're looped we'll fade out
     {
         (m_mode == Mode::Cached) ?
             m_sound.stop()

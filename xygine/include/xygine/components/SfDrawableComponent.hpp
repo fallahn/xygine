@@ -59,7 +59,7 @@ namespace xy
         using Ptr = std::unique_ptr<SfDrawableComponent<T>>;
 
         explicit SfDrawableComponent(MessageBus& mb)
-            : Component(mb, this)
+            : Component(mb, this), m_blendMode(sf::BlendAlpha)
         {
             static_assert(std::is_base_of<sf::Drawable, T>::value && std::is_base_of<sf::Transformable, T>::value, "must be sfml drawable and transformable");
         }
@@ -84,13 +84,20 @@ namespace xy
             return m_drawable.getGlobalBounds();
         }
 
+        /*!
+        \brief Sets the blend mode used by this drawable
+        */
+        void setBlendMode(const sf::BlendMode& mode) { m_blendMode = mode; }
+
     private:
         T m_drawable;
+        sf::BlendMode m_blendMode;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override
         {
             states.transform *= getTransform();
             states.shader = getActiveShader();
+            states.blendMode = m_blendMode;
             rt.draw(m_drawable, states);
         }
     };
