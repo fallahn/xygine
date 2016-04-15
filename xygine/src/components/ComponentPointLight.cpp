@@ -53,7 +53,6 @@ void PointLight::entityUpdate(Entity& entity, float dt)
 
 void PointLight::setDepth(float depth)
 {
-    XY_ASSERT(depth >= 0, "Depth must be positive value");
     m_position.z = depth;
 }
 

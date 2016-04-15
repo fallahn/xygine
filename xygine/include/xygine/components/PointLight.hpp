@@ -71,7 +71,7 @@ namespace xy
         The light's intensity or brightness is a multiplier of
         the diffuse colour. Usually in the range 0 - 1 (where 0
         effectively turns the light off) the value may be higher
-        but will probably onl serve to cause saturation.
+        but will probably only serve to cause saturation.
         */
         void setIntensity(float);
 
@@ -95,7 +95,7 @@ namespace xy
         /*!
         \brief Get the light's world position.
         The positions is thre dimensional, including the percieved
-        depth value. This is so that shader position properies can
+        depth value. This is so that shader position properties can
         be set directly.
         */
         const sf::Vector3f& getWorldPosition() const;

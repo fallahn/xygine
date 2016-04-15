@@ -67,8 +67,8 @@ namespace
 
 App::App()
     : m_videoSettings   (),
-    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle),
-    m_pendingDifficulty (Difficulty::Easy)
+    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle)/*,
+    m_pendingDifficulty (Difficulty::Easy)*/
 {
     loadSettings();
     m_scores.load();
@@ -384,14 +384,13 @@ void App::handleMessages()
 
         switch (msg.id)
         {
-            //TODO raise a game started event and apply pending difficulty
         case Message::Type::UIMessage:
         {
             auto& msgData = msg.getData<Message::UIEvent>();
             switch (msgData.type)
             {
             case Message::UIEvent::RequestDifficultyChange:
-                m_pendingDifficulty = msgData.difficulty;
+                m_gameSettings.difficulty = msgData.difficulty;
                 break;
             case Message::UIEvent::RequestAudioMute:
                 m_audioSettings.muted = true;

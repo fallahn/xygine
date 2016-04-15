@@ -285,7 +285,7 @@ namespace xy
         MessageBus m_messageBus;
 
         Scores m_scores;
-        Difficulty m_pendingDifficulty;
+        //Difficulty m_pendingDifficulty;
 
         std::function<void(float)> update;
         std::function<void(const sf::Event&)> eventHandler;

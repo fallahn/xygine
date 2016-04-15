@@ -59,7 +59,7 @@ namespace xy
         static std::string getFileName(const std::string& path);
         /*!
         \brief Attempts to return the path of a given filepath without
-        the file name.
+        the file name, including trailing separator char.
         */
         static std::string getFilePath(const std::string& path);
     private:
