@@ -139,16 +139,15 @@ void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
             {
                 if (m_selectedIndex != i)
                 {
+                    //deselect existing only when selecting new
+                    for (auto& c : m_controls) c->deselect();
+
                     m_controls[i]->select();
                     m_selectedIndex = i;
 
                     auto msg = m_messageBus.post<xy::Message::UIEvent>(xy::Message::UIMessage);
                     msg->type = xy::Message::UIEvent::SelectionChanged;
                 }
-            }
-            else
-            {
-                m_controls[i]->deselect();
             }
         }
     }
