@@ -43,8 +43,9 @@ namespace
     const float cornerRadius = 14.f;
 }
 
-Window::Window(sf::RenderWindow& rw, const sf::Font& font, sf::Uint16 width, sf::Uint16 height, const Palette& palette)
+Window::Window(sf::RenderWindow& rw, xy::MessageBus& mb, const sf::Font& font, sf::Uint16 width, sf::Uint16 height, const Palette& palette)
     : m_backgroundShape ({ static_cast<float>(width), static_cast<float>(height) }),
+    m_container         (mb),
     m_dragMask          (0),
     m_resizable         (true),
     m_renderWindow      (rw)

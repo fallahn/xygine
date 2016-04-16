@@ -31,7 +31,6 @@ source distribution.
 #define XY_UI_CONTAINER_HPP_
 
 #include <xygine/ui/Control.hpp>
-#include <xygine/SoundPlayer.hpp>
 
 #include <SFML/Graphics/RectangleShape.hpp>
 
@@ -39,6 +38,7 @@ source distribution.
 
 namespace xy
 {
+    class MessageBus;
     namespace UI
     {
         //not final, forms inherit from this
@@ -54,10 +54,10 @@ namespace xy
         class XY_EXPORT_API Container : public Control
         {
         public:
-            typedef std::shared_ptr<Container> Ptr;
+            using Ptr = std::shared_ptr<Container>;
 
-            Container();
-            Container(Container&& c) :m_selectedIndex(c.m_selectedIndex), m_background(c.m_background){}
+            explicit Container(xy::MessageBus&);
+            Container(Container&& c) : m_messageBus(c.m_messageBus), m_selectedIndex(c.m_selectedIndex), m_background(c.m_background){}
             Container& operator=(Container&&){ return *this; }
 
             ~Container() = default;
@@ -93,6 +93,8 @@ namespace xy
             */
             void setBackgroundTexture(const sf::Texture&);
         private:
+            xy::MessageBus& m_messageBus;
+
             std::vector<Control::Ptr> m_controls;
             Index m_selectedIndex;
 
