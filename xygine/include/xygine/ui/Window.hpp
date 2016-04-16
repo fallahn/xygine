@@ -80,12 +80,13 @@ namespace xy
             /*!
             \brief Constructor
             \param sf::RenderWindow The current render window
+            \param MessageBus Reference to the active message bus
             \param sf::Font Font to use with window text
             \param width Width of the window
             \param height Height of the window
             \param palette Instance of the Palette struct which defines the window colours
             */
-            Window(sf::RenderWindow&, const sf::Font&, sf::Uint16 width, sf::Uint16 height, const Palette& = Palette());
+            Window(sf::RenderWindow&, xy::MessageBus&, const sf::Font&, sf::Uint16 width, sf::Uint16 height, const Palette& = Palette());
             ~Window() = default;
             Window(const Window&) = delete;
             Window& operator = (const Window&) = delete;

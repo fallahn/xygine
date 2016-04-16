@@ -154,7 +154,8 @@ namespace xy
                 RequestControllerEnable,
                 RequestControllerDisable,
                 ResizedWindow,
-                ButtonPressed
+                ButtonPressed,
+                SelectionChanged
             }type;
             float value = 0.f;
             StateId stateId = -1;

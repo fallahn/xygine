@@ -46,7 +46,7 @@ namespace
 MenuOptionState::MenuOptionState(xy::StateStack& stateStack, Context context)
     : State     (stateStack, context),
     m_messageBus(context.appInstance.getMessageBus()),
-    m_window    (context.renderWindow, m_fontResource.get("assets/fonts/VeraMono.ttf"), 1024u, 768u)
+    m_window    (context.renderWindow, m_messageBus, m_fontResource.get("assets/fonts/VeraMono.ttf"), 1024u, 768u)
 {
     //m_menuSprite.setTexture(context.appInstance.getTexture("assets/images/main_menu.png"));
     //m_menuSprite.setPosition(context.defaultView.getCenter());

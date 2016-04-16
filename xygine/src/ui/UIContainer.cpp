@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/ui/Container.hpp>
+#include <xygine/MessageBus.hpp>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -38,9 +39,10 @@ namespace
     const float deadzone = 40.f;
 }
 
-Container::Container()
-    : m_selectedIndex   (0),
-    m_background        (sf::Vector2f(1920.f, 1080.f))
+Container::Container(xy::MessageBus& mb)
+    : m_messageBus  (mb),
+    m_selectedIndex (0),
+    m_background    (sf::Vector2f(1920.f, 1080.f))
 {
     m_background.setFillColor(sf::Color::Transparent);
 }
@@ -189,7 +191,8 @@ void Container::select(Index index)
         m_controls[index]->select();
         m_selectedIndex = index;
 
-        //m_soundPlayer.play(SoundPlayer::AudioId::UIMove);
+        auto msg = m_messageBus.post<xy::Message::UIEvent>(xy::Message::UIMessage);
+        msg->type = xy::Message::UIEvent::SelectionChanged;
     }
 }
 

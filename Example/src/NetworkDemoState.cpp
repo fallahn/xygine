@@ -55,7 +55,9 @@ NetworkDemoState::NetworkDemoState(xy::StateStack& stack, Context context)
     : State             (stack, context),
     m_messageBus        (context.appInstance.getMessageBus()),
     m_scene             (m_messageBus),
-    m_collisionWorld    (m_scene, m_messageBus)
+    m_collisionWorld    (m_scene, m_messageBus),
+    m_waitingSign       (m_messageBus),
+    m_menu              (m_messageBus)
 {
     launchLoadingScreen();
     xy::Stats::clear();
