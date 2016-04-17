@@ -28,7 +28,6 @@ source distribution.
 #include <xygine/QuadTree.hpp>
 #include <xygine/util/Rectangle.hpp>
 #include <xygine/Log.hpp>
-
 #include <xygine/Assert.hpp>
 
 using namespace xy;
@@ -78,7 +77,7 @@ void QuadTreeNode::add(QuadTreeComponent* qc)
         {
             split();
         
-        if (addToChildren(qc)) return;
+            if (addToChildren(qc)) return;
         }
     }
 
@@ -133,7 +132,8 @@ void QuadTreeNode::update(QuadTreeComponent* qc)
 
 void QuadTreeNode::remove(QuadTreeComponent* qc)
 {
-    XY_ASSERT(!m_components.empty(), "no components to remove");
+    //XY_ASSERT(!m_components.empty(), "No components to remove. Make sure your root area is large enough (Scene::setSize())");
+    XY_WARNING(m_components.empty(), "Components list is empty!");
 
     m_components.erase(qc);
 
