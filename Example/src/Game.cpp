@@ -39,10 +39,7 @@ source distribution.
 Game::Game()
     : m_stateStack({ getRenderWindow(), *this })
 {
-    registerStates();
-    m_stateStack.pushState(States::ID::MenuMain);
 
-    getRenderWindow().setKeyRepeatEnabled(false);
 }
 
 //private
@@ -91,6 +88,14 @@ void Game::draw()
     getRenderWindow().clear(sf::Color::Black);
     m_stateStack.draw();
     getRenderWindow().display();
+}
+
+void Game::initialise()
+{
+    registerStates();
+    m_stateStack.pushState(States::ID::MenuMain);
+
+    getRenderWindow().setKeyRepeatEnabled(false);
 }
 
 void Game::finalise()

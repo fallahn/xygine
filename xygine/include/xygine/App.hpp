@@ -255,6 +255,16 @@ namespace xy
         virtual void draw() = 0;
 
         /*!
+        \brief Called when the application is first run.
+
+        Optionally overridable this should be used when performing
+        operations which may throw exceptions such as loading configuration
+        data, which should not be performed in the constructor of a derived
+        application.
+        */
+        virtual void initialise();
+
+        /*!
         \brief Called when the application shuts down
 
         Optionally overridable this allows derived classes to tidy

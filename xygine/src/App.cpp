@@ -110,6 +110,7 @@ void App::run()
     }
 
     //m_renderWindow.setMouseCursorVisible(false);
+    initialise();
 
 #ifdef _DEBUG_
     sf::Clock fpsClock;
@@ -239,7 +240,9 @@ sf::RenderWindow& App::getRenderWindow()
     return m_renderWindow;
 }
 
-void App::finalise(){}
+void App::initialise() {}
+
+void App::finalise() {}
 
 //private
 void App::loadSettings()
