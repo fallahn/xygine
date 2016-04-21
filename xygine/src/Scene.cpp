@@ -29,6 +29,7 @@ source distribution.
 #include <xygine/MessageBus.hpp>
 #include <xygine/components/QuadTreeComponent.hpp>
 #include <xygine/components/AudioListener.hpp>
+#include <xygine/components/PointLight.hpp>
 #include <xygine/Reports.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -71,6 +72,14 @@ void Scene::update(float dt)
         if (QuadTreeComponent* qc = p.second->getComponent<QuadTreeComponent>())
         {
             m_quadTree.add(qc);
+        }
+
+        //if we find a light add it to its own quad tree
+        if (PointLight* pl = p.second->getComponent<PointLight>())
+        {
+            const float rad = pl->getRadius();
+            auto qtc = xy::Component::create<QuadTreeComponent>(m_messageBus, sf::FloatRect({ -rad, -rad }, { rad, rad }));
+            m_lightTree.add(p.second->addComponent(qtc));
         }
         
         m_layers[p.first]->addChild(p.second);
@@ -233,7 +242,19 @@ void Scene::sendCommand(const Command& cmd)
 
 std::vector<QuadTreeComponent*> Scene::queryQuadTree(const sf::FloatRect& area)
 {
-    return m_quadTree.queryArea(area);
+    return std::move(m_quadTree.queryArea(area));
+}
+
+std::vector<PointLight*> Scene::getVisibleLights(const sf::FloatRect& area)
+{
+    const auto result = m_lightTree.queryArea(area);
+    std::vector<PointLight*> retval(result.size());
+    for (auto i = 0u; i < result.size(); ++i)
+    {
+        XY_ASSERT(result[i]->getEntity()->getComponent<PointLight>(), "Light entity missing light component");
+        retval[i] = result[i]->getEntity()->getComponent<PointLight>();
+    }
+    return std::move(retval);
 }
 
 void Scene::reset()
@@ -247,6 +268,9 @@ void Scene::reset()
 
     m_quadTree.reset();
     m_quadTree.create({ 0.f, 0.f, 1920.f, 1080.f });
+
+    m_lightTree.reset();
+    m_lightTree.create({ 0.f, 0.f, 1920.f, 1080.f });
 
     m_renderPasses.clear();
     m_renderPasses.reserve(10);

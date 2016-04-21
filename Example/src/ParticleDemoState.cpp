@@ -123,11 +123,11 @@ bool ParticleDemoState::update(float dt)
     m_scene.update(dt);
 
     //update lighting
-    auto ents = m_scene.queryQuadTree(m_scene.getVisibleArea());
+    auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
     auto i = 0;
-    for (; i < ents.size() && i < xy::Shader::NormalMapped::MaxPointLights; ++i)
+    for (; i < lights.size() && i < xy::Shader::NormalMapped::MaxPointLights; ++i)
     {
-        auto light = ents[i]->getEntity()->getComponent<xy::PointLight>();
+        auto light = lights[i];
         if (light)
         {
             const std::string idx = std::to_string(i);
@@ -348,9 +348,7 @@ void ParticleDemoState::spawnThing(const sf::Vector2f& position)
     dwbl->setOrigin({ size.x / 2.f, size.y / 2.f });
     dwbl->setColour({ 198u, 200u, 250u });
 
-    auto qtc = xy::Component::create<xy::QuadTreeComponent>(m_messageBus, sf::FloatRect(-size.x / 2.f, -size.y / 2.f, size.x, size.y));
-
-    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 100.f, sf::Color(198u, 200u, 250u), sf::Color(128u, 128u, 255u));
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 100.f, size.x / 2.f, sf::Color(198u, 200u, 250u), sf::Color(128u, 128u, 255u));
     light->setDepth(300.f);
     light->setRange(750.f);
     //light->setIntensity(0.9f);
@@ -361,7 +359,6 @@ void ParticleDemoState::spawnThing(const sf::Vector2f& position)
     entity->addComponent(physBody);
     entity->addComponent(td);
     entity->addComponent(dwbl);
-    entity->addComponent(qtc);
     entity->addComponent(light);
 
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);

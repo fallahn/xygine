@@ -31,16 +31,17 @@ source distribution.
 
 using namespace xy;
 
-PointLight::PointLight(MessageBus& mb, float range, const sf::Color& diffuse, const sf::Color& spec)
+PointLight::PointLight(MessageBus& mb, float range, float radius, const sf::Color& diffuse, const sf::Color& spec)
     : Component     (mb, this),
     m_range         (range),
+    m_radius        (radius),
     m_inverseRange  (1.f / m_range),
     m_position      (0.f, 0.f, 1300.f),
     m_intensity     (1.f),
     m_diffuseColour (diffuse),
     m_specularColour(spec)
 {
-
+    XY_ASSERT(radius > 0, "light radius must be greater than zero");
 }
 
 //public
@@ -70,6 +71,12 @@ void PointLight::setRange(float range)
     m_inverseRange = 1.f / range;
 }
 
+void PointLight::setRadius(float radius)
+{
+    XY_ASSERT(radius > 0, "light radius must be greater than zero");
+    m_radius = radius;
+}
+
 void PointLight::setDiffuseColour(const sf::Color& c)
 {
     m_diffuseColour = c;
@@ -93,6 +100,11 @@ float PointLight::getIntensity() const
 float PointLight::getInverseRange() const
 {
     return m_inverseRange;
+}
+
+float PointLight::getRadius() const
+{
+    return m_radius;
 }
 
 const sf::Color& PointLight::getDiffuseColour() const

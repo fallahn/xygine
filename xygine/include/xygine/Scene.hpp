@@ -44,6 +44,8 @@ source distribution.
 
 namespace xy
 {
+    class PointLight;
+
     /*!
     \brief Scene class
 
@@ -161,13 +163,19 @@ namespace xy
         \param FloatRect and area in world coordinates to query the quad tree
         \returns vector of pointers to QuadTree components found in the queried area
 
-        The components inthe returned vector can be used to determine entities
+        The components in the returned vector can be used to determine entities
         which fall in a given area that can be used in collision testing or
         render culling for example. For an entity to be considered it must
-        have a QuadTreeComponent attached and have at least one component which
-        returns a valid AABB in world coordinates.
+        have a QuadTreeComponent attached.
         */
         std::vector<QuadTreeComponent*> queryQuadTree(const sf::FloatRect&);
+
+        /*!
+        \brief Returns a list of point lights found in the queried area
+        \param FloatRect Area in world coordinates in which to retrieve visible lights
+        \returns vector of pointers to lights contained in the queried area
+        */
+        std::vector<PointLight*> getVisibleLights(const sf::FloatRect&);
 
         /*!
         \brief Resets the scene removing all entities and post effects
@@ -197,6 +205,7 @@ namespace xy
     private:
 
         QuadTree m_quadTree; //must live longer than any entity
+        QuadTree m_lightTree;
         std::vector<Entity::Ptr> m_layers;
         std::vector<std::pair<Layer, Entity::Ptr>> m_pendingEntities;
         

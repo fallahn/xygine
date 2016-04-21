@@ -139,7 +139,7 @@ std::vector<QuadTreeComponent*> QuadTree::queryArea(const sf::FloatRect& area)
         }
     }
 
-    return retVal;
+    return std::move(retVal);
 }
 
 QuadTreeNode::Set& QuadTree::getOutsideRootSet()

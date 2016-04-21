@@ -41,9 +41,8 @@ namespace xy
     colour for a specified distance. Only a limited amount of lights can be active
     at any one time and only affect drawables which use the normal map shader
     (or any shader written specifically to take advantage of point lights).
-    Typically one would also attach a quad tree component to entities with point
-    lights and query the scene's quad tree to find the nearest lights to activate
-    and with which to update the shader's light parameters.
+    Lights added to a scene are spatially partitioned, so that a Scene may be
+    queried for a list of light components in the curently visible area.
     */
     class XY_EXPORT_API PointLight final : public Component
     {
@@ -51,17 +50,19 @@ namespace xy
         /*!
         \brief constructor.
         \param MessageBus
+        \param range The distance in world units at which the light's effects become zero
+        \param radius The physical radius of the light used to position it in the Scene's visible area
         \param diffuseColour The main light colour. Defaults to white.
-        \param specularCOlour The colour with which to affect specular highlights. Defualts to White
+        \param specularColour The colour with which to affect specular highlights. Defualts to White
         */
-        PointLight(MessageBus&, float range, const sf::Color& diffuseColour = sf::Color::White, const sf::Color& specularColour = sf::Color::White);
+        PointLight(MessageBus&, float range, float radius, const sf::Color& diffuseColour = sf::Color::White, const sf::Color& specularColour = sf::Color::White);
 
         Component::Type type() const { return Component::Type::Script; }
         void entityUpdate(Entity&, float) override;
 
         /*!
         \brief Set the virtual z-depth of the light.
-        This should be a positive number, the larger the value the
+        If this is a positive number, the larger the value the
         further the perceived light is from the scene
         */
         void setDepth(float);
@@ -81,6 +82,14 @@ namespace xy
         the light's influence before it falls off to 0
         */
         void setRange(float);
+
+        /*!
+        \brief Set the radius of the light.
+        This should be the equivilant of the physical size of the light
+        point, so that it may have its spatial partition in the world
+        correctly calculated. Therefor this should always be at least 1
+        */
+        void setRadius(float);
 
         /*!
         \brief Set the light's diffuse colour
@@ -115,6 +124,11 @@ namespace xy
         float getInverseRange() const;
 
         /*!
+        \brief Returns the light's radius
+        */
+        float getRadius() const;
+
+        /*!
         \brief Returns the light's current diffuse colour
         */
         const sf::Color& getDiffuseColour() const;
@@ -127,6 +141,7 @@ namespace xy
     private:
 
         float m_range;
+        float m_radius;
         float m_inverseRange;
         sf::Vector3f m_position;
         float m_intensity;
