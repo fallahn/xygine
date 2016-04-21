@@ -248,11 +248,15 @@ std::vector<QuadTreeComponent*> Scene::queryQuadTree(const sf::FloatRect& area) 
 std::vector<PointLight*> Scene::getVisibleLights(const sf::FloatRect& area) const
 {
     const auto result = m_lightTree.queryArea(area);
-    std::vector<PointLight*> retval(result.size());
+    std::vector<PointLight*> retval;
+    retval.reserve(result.size());
+    
     for (auto i = 0u; i < result.size(); ++i)
     {
-        XY_ASSERT(result[i]->getEntity()->getComponent<PointLight>(), "Light entity missing light component");
-        retval[i] = result[i]->getEntity()->getComponent<PointLight>();
+        if (auto lc = result[i]->getEntity()->getComponent<PointLight>())
+        {
+            retval.push_back(result[i]->getEntity()->getComponent<PointLight>());
+        }
     }
     return std::move(retval);
 }
