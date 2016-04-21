@@ -89,7 +89,7 @@ const sf::FloatRect& QuadTree::getRootArea() const
     return m_rootNode->getArea();
 }
 
-std::vector<QuadTreeComponent*> QuadTree::queryArea(const sf::FloatRect& area)
+std::vector<QuadTreeComponent*> QuadTree::queryArea(const sf::FloatRect& area) const
 {
     XY_ASSERT(created(), "quad tree not yet created");
 

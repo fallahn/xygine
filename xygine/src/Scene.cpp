@@ -78,7 +78,7 @@ void Scene::update(float dt)
         if (PointLight* pl = p.second->getComponent<PointLight>())
         {
             const float rad = pl->getRadius();
-            auto qtc = xy::Component::create<QuadTreeComponent>(m_messageBus, sf::FloatRect({ -rad, -rad }, { rad, rad }));
+            auto qtc = xy::Component::create<QuadTreeComponent>(m_messageBus, sf::FloatRect({ -rad, -rad }, { rad * 2.f, rad * 2.f}));
             m_lightTree.add(p.second->addComponent(qtc));
         }
         
@@ -240,12 +240,12 @@ void Scene::sendCommand(const Command& cmd)
     m_commandQueue.push(cmd);
 }
 
-std::vector<QuadTreeComponent*> Scene::queryQuadTree(const sf::FloatRect& area)
+std::vector<QuadTreeComponent*> Scene::queryQuadTree(const sf::FloatRect& area) const
 {
     return std::move(m_quadTree.queryArea(area));
 }
 
-std::vector<PointLight*> Scene::getVisibleLights(const sf::FloatRect& area)
+std::vector<PointLight*> Scene::getVisibleLights(const sf::FloatRect& area) const
 {
     const auto result = m_lightTree.queryArea(area);
     std::vector<PointLight*> retval(result.size());

@@ -62,7 +62,7 @@ namespace xy
         const sf::FloatRect& getRootArea() const;
 
         //std::vector<QuadTreeComponent*> queryPosition(const sf::Vector2f&);
-        std::vector<QuadTreeComponent*> queryArea(const sf::FloatRect&);
+        std::vector<QuadTreeComponent*> queryArea(const sf::FloatRect&) const;
 
         QuadTreeNode::Set& getOutsideRootSet();
 

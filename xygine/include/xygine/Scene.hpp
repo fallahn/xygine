@@ -168,14 +168,14 @@ namespace xy
         render culling for example. For an entity to be considered it must
         have a QuadTreeComponent attached.
         */
-        std::vector<QuadTreeComponent*> queryQuadTree(const sf::FloatRect&);
+        std::vector<QuadTreeComponent*> queryQuadTree(const sf::FloatRect&) const;
 
         /*!
         \brief Returns a list of point lights found in the queried area
         \param FloatRect Area in world coordinates in which to retrieve visible lights
         \returns vector of pointers to lights contained in the queried area
         */
-        std::vector<PointLight*> getVisibleLights(const sf::FloatRect&);
+        std::vector<PointLight*> getVisibleLights(const sf::FloatRect&) const;
 
         /*!
         \brief Resets the scene removing all entities and post effects
