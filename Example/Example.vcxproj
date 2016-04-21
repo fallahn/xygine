@@ -67,8 +67,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../xygine/extlibs/lib/box2d-2.3.2;../xygine/extlibs/lib/sfml;../ReleaseStatic</AdditionalLibraryDirectories>
-      <AdditionalDependencies>xygine-s.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;sfml-audio.lib;sfml-network.lib;Box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../xygine/extlibs/lib/box2d-2.3.2;../xygine/extlibs/lib/sfml;../ReleaseShared</AdditionalLibraryDirectories>
+      <AdditionalDependencies>xygine.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;sfml-audio.lib;sfml-network.lib;Box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

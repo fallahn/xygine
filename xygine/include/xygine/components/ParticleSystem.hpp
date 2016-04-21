@@ -325,11 +325,11 @@ namespace xy
 
         bool m_started;
         float m_accumulator;
-        bool m_destroyWhenStopped;
 
         std::vector<Affector> m_affectors;
 
         mutable std::vector<sf::Vertex> m_vertices;
+        mutable std::size_t m_vertexCount;
         mutable bool m_needsUpdate;
         mutable sf::FloatRect m_bounds;
 

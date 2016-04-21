@@ -57,7 +57,8 @@ ParticleSystem::ParticleSystem(MessageBus& mb)
     m_randPosition      (false),
     m_started           (false),
     m_accumulator       (0.f),
-    m_destroyWhenStopped(false),
+    m_vertices          (200),
+    m_vertexCount       (0u),
     m_needsUpdate       (true),
     m_bounds            (0.f, 0.f, 1.f, 1.f),
     m_duration          (0.f),
@@ -323,7 +324,8 @@ void ParticleSystem::addVertex(const sf::Vector2f& position, float u, float v, c
     vert.texCoords = { u, v };
     vert.color = colour;
 
-    m_vertices.push_back(vert);
+    //m_vertices.push_back(vert);
+    m_vertices[m_vertexCount++] = vert;
 
     auto relPos = position - m_position;
     if (relPos.x < m_bounds.left) m_bounds.left = relPos.x;
@@ -336,7 +338,13 @@ void ParticleSystem::updateVertices() const
 
     m_bounds = sf::FloatRect();
 
-    m_vertices.clear();
+    //m_vertices.clear();
+    m_vertexCount = 0;
+    if (m_vertices.size() < m_particles.size() * 4)
+    {
+        m_vertices.resize(m_vertices.size() * 2);
+    }
+
     for (auto& p : m_particles)
     {
         auto colour = p.colour;
@@ -352,6 +360,7 @@ void ParticleSystem::updateVertices() const
         addVertex(t.transformPoint(-halfSize.x, halfSize.y), 0.f, m_texCoords.y, colour);
     }
 
+    //calc the bounds for visibility culling
     for (const auto& vert : m_vertices)
     {
         auto width = vert.position.x - (m_bounds.left + m_position.x);
@@ -380,7 +389,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     states.shader = m_shader;
     states.blendMode = m_blendMode;
     if (!m_followParent)states.transform = sf::Transform::Identity;
-    rt.draw(m_vertices.data(), m_vertices.size(), sf::PrimitiveType::Quads, states);
+    rt.draw(m_vertices.data(), m_vertexCount, sf::PrimitiveType::Quads, states);
 }
 
 
