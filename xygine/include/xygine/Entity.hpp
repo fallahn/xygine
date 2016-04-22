@@ -233,7 +233,7 @@ namespace xy
                     retval.push_back(dynamic_cast<T*>(c.get()));
                 }
             }
-            return retval;
+            return std::move(retval);
         }
 
         /*!
@@ -242,7 +242,7 @@ namespace xy
 
         Returning the original component allows ownership to be
         taken by another entity. If nothing is done with the returned
-        Component then the component is automaticcaly destroyed.
+        Component then the component is automatically destroyed.
         */
         template <typename T>
         std::unique_ptr<T> removeComponent(const T* component)
