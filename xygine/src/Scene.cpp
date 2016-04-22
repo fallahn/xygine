@@ -255,7 +255,7 @@ std::vector<PointLight*> Scene::getVisibleLights(const sf::FloatRect& area) cons
     {
         if (auto lc = result[i]->getEntity()->getComponent<PointLight>())
         {
-            retval.push_back(result[i]->getEntity()->getComponent<PointLight>());
+            retval.push_back(lc);
         }
     }
     return std::move(retval);
