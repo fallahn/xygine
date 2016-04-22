@@ -70,6 +70,7 @@ namespace xy
         sf::Uint32 maxNodeComponents() const;
         sf::Int32 maxLevels() const;
 
+        std::size_t getComponentCount() const { return m_rootNode->getComponentCount(); }
     private:
         //store components which move outside of the root area here
         QuadTreeNode::Set m_outsideRootSet;

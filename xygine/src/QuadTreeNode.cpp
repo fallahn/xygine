@@ -201,6 +201,19 @@ void QuadTreeNode::getVertices(std::vector<sf::Vertex>& vertices)
     }
 }
 
+std::size_t QuadTreeNode::getComponentCount() const
+{
+    auto retval = m_components.size();
+    if (m_hasChildren)
+    {
+        for (const auto& c : m_children)
+        {
+            retval += c->getComponentCount();
+        }
+    }
+    return retval;
+}
+
 //private
 void QuadTreeNode::getSubComponents()
 {

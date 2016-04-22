@@ -27,6 +27,7 @@ source distribution.
 
 #include <xygine/components/QuadTreeComponent.hpp>
 #include <xygine/QuadTreeNode.hpp>
+#include <xygine/QuadTree.hpp>
 #include <xygine/Entity.hpp>
 
 #include <xygine/Assert.hpp>
@@ -77,6 +78,8 @@ void QuadTreeComponent::onStart(Entity& entity)
 void QuadTreeComponent::destroy()
 {
     removeFromQuadTree();
+    m_entity = nullptr;
+
     Component::destroy();
 }
 
@@ -121,7 +124,15 @@ void QuadTreeComponent::removeFromQuadTree()
     {
         m_quadTreeNode->remove(this);
         m_quadTreeNode = nullptr;
-        //LOG("SERVER Removing myself from quad tree", Logger::Type::Info);
+        m_quadTree = nullptr;
+        
+        //LOG("Removing myself from quad tree", Logger::Type::Info);
+        //return;
+    }
+    else if(m_quadTree)
+    {
+        m_quadTree->getOutsideRootSet().erase(this);
+        m_quadTree = nullptr;
     }
     //LOG("Tried to remove myself from quad tree, but node pointer is null!", Logger::Type::Info);
 }

@@ -85,6 +85,9 @@ void Scene::update(float dt)
         m_layers[p.first]->addChild(p.second);
     }
     m_pendingEntities.clear();
+    //REPORT("In Light Tree Set", std::to_string(m_lightTree.getComponentCount()));
+    //REPORT("Out Light Tree Set", std::to_string(m_lightTree.getOutsideRootSet().size()));
+    //REPORT("Quad Tree Size", std::to_string(m_quadTree.getComponentCount()));
 
     //execute commands
     REPORT("Commands this frame", std::to_string(m_commandQueue.size()));

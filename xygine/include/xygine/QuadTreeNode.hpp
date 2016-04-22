@@ -80,6 +80,8 @@ namespace xy
         //used to draw debug output
         void getVertices(std::vector<sf::Vertex>&);
 
+        std::size_t getComponentCount() const;
+
     private:
         QuadTreeNode* m_parent;
         QuadTree* m_quadTree;
