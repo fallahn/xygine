@@ -1,5 +1,5 @@
 ﻿/*********************************************************************
-Matt Marchant 2015
+Matt Marchant 2015 - 2016
 http://trederia.blogspot.com
 
 xygine Sprite Editor - Zlib license.
@@ -95,6 +95,13 @@ namespace SpriteEditor
         float m_elapsedTime = 0f;
         bool m_loop = false;
         bool m_playing = false;
+
+        public SFML.Graphics.Shader BumpShader { get; set; }
+        public SFML.Graphics.Texture NormalMap
+        {
+            get { return m_normalMap; }
+            set { m_normalMap = value; }
+        }
 
         public AnimatedSprite() { }
 
@@ -250,6 +257,17 @@ namespace SpriteEditor
 
         void Drawable.Draw(RenderTarget target, RenderStates states)
         {
+            if(BumpShader != null)
+            {
+                if (m_normalMap != null)
+                {
+                    BumpShader.SetParameter("u_diffuseMap", m_sprite.Texture);
+                    BumpShader.SetParameter("u_normalMap", m_normalMap);
+                    BumpShader.SetParameter("u_inverseWorldViewMatrix", states.Transform.GetInverse());
+                }
+                states.Shader = BumpShader;
+            }
+
             states.Transform *= this.Transform;
             target.Draw(m_sprite, states);
         }

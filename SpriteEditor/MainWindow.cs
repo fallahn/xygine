@@ -64,6 +64,7 @@ namespace SpriteEditor
         /// </summary>
         public void DispatchDrawingEvents()
         {
+            UpdateShader(); //this doesn't work as a delegate? :S (breaks playing animations)
             m_sfmlControl.HandleEvents();
             m_sfmlControl.Draw();
 
@@ -114,6 +115,12 @@ namespace SpriteEditor
                     numericUpDownFrameRate.Value = (Decimal)data.FrameRate;
 
                     textBoxNormalMap.Text = data.NormalMap;
+                    if(data.NormalMap != string.Empty)
+                    {
+                        m_aniSprite.NormalMap = new SFML.Graphics.Texture(path + data.NormalMap);
+                        m_aniSprite.BumpShader = new SFML.Graphics.Shader(ShaderAsStream(normalVertex), ShaderAsStream(NORMAL_FRAGMENT_TEXTURED + normalFrag));
+                        //m_sfmlControl.UpdateDelegates.Add(this.UpdateShader);
+                    }
 
                     m_listboxData = data.Animations;
                     listBoxAnimations.DataSource = null;
@@ -267,6 +274,16 @@ namespace SpriteEditor
             od.Filter = "PNG Files|*.png|JPG Files|*.jpg|Targa Files|*.tga";
             if(od.ShowDialog() == DialogResult.OK)
             {
+                if(m_aniSprite != null)
+                {
+                    m_aniSprite.NormalMap = new SFML.Graphics.Texture(od.FileName);
+                    if (m_aniSprite.BumpShader == null)
+                    {
+                        m_aniSprite.BumpShader = new SFML.Graphics.Shader(ShaderAsStream(normalVertex), ShaderAsStream(NORMAL_FRAGMENT_TEXTURED + normalFrag));
+                        //m_sfmlControl.UpdateDelegates.Add(this.UpdateShader);
+                    }
+                }
+
                 textBoxNormalMap.Text = Path.GetFileName(od.FileName);
                 m_modified = true;
             }
@@ -364,6 +381,7 @@ namespace SpriteEditor
             listBoxAnimations.DataSource = null;
             listBoxAnimations.DataSource = m_listboxData;
             listBoxAnimations.DisplayMember = "Name";
+            textBoxNormalMap.Text = string.Empty;
 
             m_modified = false;
         }
@@ -469,6 +487,17 @@ namespace SpriteEditor
             if (m_modified && MessageBox.Show("Save Unsaved changes?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 saveAsToolStripMenuItem_Click(this, EventArgs.Empty);
+            }
+        }
+
+        private void UpdateShader()
+        {
+            if(m_aniSprite != null && m_aniSprite.BumpShader != null)
+            {
+                var mousepos = m_sfmlControl.MouseWorldPosition;
+                m_aniSprite.BumpShader.SetParameter("u_pointLightPositions[0]", -mousepos.X, mousepos.Y, 130);
+                m_aniSprite.BumpShader.SetParameter("u_pointLights[0].inverseRange", 1f / 500f);
+                m_aniSprite.BumpShader.SetParameter("u_pointLights[0].intensity", 1.2f);
             }
         }
     }

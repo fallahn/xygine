@@ -1,5 +1,5 @@
 ﻿/*********************************************************************
-Matt Marchant 2015
+Matt Marchant 2015 - 2016
 http://trederia.blogspot.com
 
 xygine Sprite Editor - Zlib license.

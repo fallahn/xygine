@@ -1,5 +1,5 @@
 ﻿/*********************************************************************
-Matt Marchant 2015
+Matt Marchant 2015 - 2016
 http://trederia.blogspot.com
 
 xygine Sprite Editor - Zlib license.
@@ -101,6 +101,14 @@ namespace SpriteEditor
             foreach (DrawDelegate d in m_drawDelegates)
                 d(m_renderWindow);
             m_renderWindow.Display();
+        }
+
+        public Vector2f MouseWorldPosition
+        {
+            get
+            {
+                return m_renderWindow.MapPixelToCoords(Mouse.GetPosition(m_renderWindow));
+            }
         }
 
         //----control overrides-----//
