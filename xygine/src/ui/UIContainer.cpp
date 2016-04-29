@@ -42,7 +42,7 @@ namespace
 Container::Container(xy::MessageBus& mb)
     : m_messageBus  (mb),
     m_selectedIndex (0),
-    m_background    (sf::Vector2f(1920.f, 1080.f))
+    m_background    (xy::DefaultSceneSize)
 {
     m_background.setFillColor(sf::Color::Transparent);
 }
@@ -137,16 +137,26 @@ void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
         {
             if (m_controls[i]->contains(mousePos))
             {
-                if (m_selectedIndex != i)
+                if (m_selectedIndex != i && m_controls[i]->selectable())
                 {
-                    //deselect existing only when selecting new
-                    for (auto& c : m_controls) c->deselect();
+                    //if (m_controls[i]->selectable())
+                    {
+                        //deselect existing only when selecting new
+                        //and there's more than one to deselect
+                        if (m_controls.size() > 1)
+                        {
+                            for (auto& c : m_controls)
+                            {
+                                c->deselect();
+                            }
+                        }
 
-                    m_controls[i]->select();
-                    m_selectedIndex = i;
+                        m_controls[i]->select();
+                        m_selectedIndex = i;
 
-                    auto msg = m_messageBus.post<xy::Message::UIEvent>(xy::Message::UIMessage);
-                    msg->type = xy::Message::UIEvent::SelectionChanged;
+                        auto msg = m_messageBus.post<xy::Message::UIEvent>(xy::Message::UIMessage);
+                        msg->type = xy::Message::UIEvent::SelectionChanged;
+                    }
                 }
             }
         }

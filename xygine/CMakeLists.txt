@@ -36,17 +36,19 @@ if(XY_STATIC_SFML)
   SET(SFML_STATIC_LIBRARIES TRUE)
 endif()
 
+SET(SFML_MIN_VERSION "2.3.2")
 if(WIN32)
-  find_package(SFML 2 REQUIRED graphics window audio system network main)
+  find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system network main)
 else()
-  find_package(SFML 2 REQUIRED graphics window audio system network)
+  find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system network)
 endif()
 
 if(UNIX)
   find_package(X11 REQUIRED)
 endif()
 
-find_package(BOX2D REQUIRED)
+SET(BOX2D_MIN_VERSION "2.3.2")
+find_package(BOX2D ${BOX2D_MIN_VERSION} REQUIRED)
 find_package(OpenGL REQUIRED)
 
 include_directories(

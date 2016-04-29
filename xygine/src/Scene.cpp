@@ -274,10 +274,10 @@ void Scene::reset()
     }
 
     m_quadTree.reset();
-    m_quadTree.create({ 0.f, 0.f, 1920.f, 1080.f });
+    m_quadTree.create({ {0.f, 0.f}, DefaultSceneSize });
 
     m_lightTree.reset();
-    m_lightTree.create({ 0.f, 0.f, 1920.f, 1080.f });
+    m_lightTree.create({ {0.f, 0.f}, DefaultSceneSize });
 
     m_renderPasses.clear();
     m_renderPasses.reserve(10);
@@ -289,7 +289,7 @@ void Scene::reset()
     entity->addComponent(al);
     entity->setPosition(960.f, 540.f);
 
-    auto camera = Component::create<Camera>(m_messageBus, sf::View({ 960.f, 540.f }, { 1920.f, 1080.f }));
+    auto camera = Component::create<Camera>(m_messageBus, sf::View(DefaultSceneSize / 2.f, DefaultSceneSize));
     m_defaultCamera = entity->addComponent(camera);
     m_layers[Layer::BackRear]->addChild(entity);
 

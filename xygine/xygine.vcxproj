@@ -195,6 +195,7 @@
     <ClCompile Include="src\physics\PhysicsWorld.cpp" />
     <ClCompile Include="src\PolyBatch.cpp" />
     <ClCompile Include="src\PostBloom.cpp" />
+    <ClCompile Include="src\PostBlur.cpp" />
     <ClCompile Include="src\PostChromeAb.cpp" />
     <ClCompile Include="src\PostProcess.cpp" />
     <ClCompile Include="src\QuadTree.cpp" />
@@ -285,6 +286,7 @@
     <ClInclude Include="include\xygine\physics\World.hpp" />
     <ClInclude Include="include\xygine\PolyBatch.hpp" />
     <ClInclude Include="include\xygine\PostBloom.hpp" />
+    <ClInclude Include="include\xygine\PostBlur.hpp" />
     <ClInclude Include="include\xygine\PostChromeAb.hpp" />
     <ClInclude Include="include\xygine\PostProcess.hpp" />
     <ClInclude Include="include\xygine\QuadTree.hpp" />

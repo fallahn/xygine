@@ -64,4 +64,11 @@ source distribution.
 
 #endif //XY_STATIC
 
+
+//xygine-wide consts
+#include <SFML/System/Vector2.hpp>
+namespace xy
+{
+    static const sf::Vector2f DefaultSceneSize(1920.f, 1080.f);
+}
 #endif //XY_CONFIG_HPP_
