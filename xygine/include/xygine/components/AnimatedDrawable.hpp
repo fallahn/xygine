@@ -126,6 +126,11 @@ namespace xy
         */
         void setNormalMap(const sf::Texture&);
         /*!
+        \brief Sets an optional mask map texture to be used if the component
+        uses a normal mapping shader
+        */
+        void setMaskMap(const sf::Texture&);
+        /*!
         \brief Sets the size of a single frame in the animation
         */
         void setFrameSize(const sf::Vector2i& size);
@@ -228,6 +233,7 @@ namespace xy
         sf::Sprite m_sprite;
         sf::Shader* m_shader;
         const sf::Texture* m_normalMap;
+        const sf::Texture*m_maskMap;
         sf::IntRect m_subRect;
         sf::Vector2u m_textureSize;
         sf::Vector2i m_frameSize;

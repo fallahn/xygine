@@ -48,6 +48,7 @@ AnimatedDrawable::AnimatedDrawable(MessageBus& mb)
     : Component     (mb, this),
     m_shader        (nullptr),
     m_normalMap     (nullptr),
+    m_maskMap       (nullptr),
     m_frameCount    (0u),
     m_currentFrame  (0u),
     m_firstFrame    (0u),
@@ -62,6 +63,7 @@ AnimatedDrawable::AnimatedDrawable(MessageBus& mb, const sf::Texture& t)
     m_sprite        (t),
     m_shader        (nullptr),
     m_normalMap     (nullptr),
+    m_maskMap       (nullptr),
     m_textureSize   (t.getSize()),
     m_frameSize     (m_textureSize),
     m_frameCount    (0u),
@@ -150,6 +152,11 @@ void AnimatedDrawable::setShader(sf::Shader& shader)
 void AnimatedDrawable::setNormalMap(const sf::Texture& t)
 {
     m_normalMap = &t;
+}
+
+void AnimatedDrawable::setMaskMap(const sf::Texture& t)
+{
+    m_maskMap = &t;
 }
 
 void AnimatedDrawable::setFrameSize(const sf::Vector2i& size)
@@ -340,6 +347,7 @@ void AnimatedDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     {
         m_shader->setParameter("u_diffuseMap", *m_sprite.getTexture());
         m_shader->setParameter("u_normalMap", *m_normalMap);
+        m_shader->setParameter("u_maskMap", *m_maskMap);
         auto worldView = Scene::getViewMatrix() * states.transform;
         m_shader->setParameter("u_inverseWorldViewMatrix", worldView.getInverse());
     }   
