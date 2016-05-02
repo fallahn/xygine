@@ -96,3 +96,13 @@ void ScaleAffector::operator()(Particle& p, float dt)
 {
     p.setScale(p.getScale() + (m_scale *  dt));
 }
+
+//------------------------------------
+VelocityAffector::VelocityAffector(const sf::Vector2f& scale)
+    : m_scale(scale) {}
+
+void VelocityAffector::operator()(Particle& p, float dt)
+{
+    p.velocity.x *= m_scale.x;
+    p.velocity.y *= m_scale.y;
+}

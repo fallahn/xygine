@@ -53,11 +53,15 @@ namespace xy
                 "    vec3(0.0),\n" \
                 "    vec3(0.0)\n" \
                 ");\n" \
+
+                "uniform vec3 u_directionalLightDirection = vec3(1.0, 0.0, -1.0);\n" \
+
                 "uniform vec3 u_cameraWorldPosition = vec3(960.0, 540.0, 1780.0);\n" \
                 "uniform mat4 u_inverseWorldViewMatrix;\n" \
 
                 "varying vec3 v_eyeDirection;\n" \
                 "varying vec3 v_pointLightDirections[MAX_POINT_LIGHTS];\n" \
+                "varying vec3 v_directionalLightDirection;\n" \
 
                 "const vec3 tangent = vec3(1.0, 0.0, 0.0);\n" \
                 "const vec3 normal = vec3(0.0, 0.0, 1.0);\n" \
@@ -77,9 +81,11 @@ namespace xy
                 "    vec3 viewVertex = vec3(gl_ModelViewMatrix * gl_Vertex);\n" \
                 "    for(int i = 0; i < MAX_POINT_LIGHTS; ++i)\n" \
                 "    {\n" \
-                "        vec3 viewLightDirection = u_pointLightPositions[i] - viewVertex;\n"
-                "        v_pointLightDirections[i] = tangentSpaceTransformMatrix * viewLightDirection;\n"
+                "        vec3 viewLightDirection = u_pointLightPositions[i] - viewVertex;\n" \
+                "        v_pointLightDirections[i] = tangentSpaceTransformMatrix * viewLightDirection;\n" \
                 "    }\n" \
+
+                "    v_directionalLightDirection = tangentSpaceTransformMatrix * u_directionalLightDirection;\n" \
 
                 "    v_eyeDirection = tangentSpaceTransformMatrix * ((gl_ModelViewMatrix * vec4(u_cameraWorldPosition, 1.0)).xyz - viewVertex);\n" \
                 "}";
@@ -93,84 +99,97 @@ namespace xy
 #define NORMAL_FRAGMENT_TEXTURED_ILLUM "#version 120\n#define TEXTURED\n#define SELF_ILLUM\n" + xy::Shader::NormalMapped::fragment
 #define NORMAL_FRAGMENT_TEXTURED_SPECULAR_ILLUM "#version 120\n#define TEXTURED\n#define SPECULAR\n#define SELF_ILLUM\n" + xy::Shader::NormalMapped::fragment
 
-                static const std::string fragment =
-                    "#define MAX_POINT_LIGHTS 8\n" \
+            static const std::string fragment =
+                "#define MAX_POINT_LIGHTS 8\n" \
 
-                    "struct PointLight\n" \
-                    "{\n" \
-                    "    vec4 diffuseColour;\n" \
-                    "    vec4 specularColour;\n" \
-                    "    float inverseRange;\n" \
-                    "    float intensity;\n" \
-                    "};\n" \
+                "struct PointLight\n" \
+                "{\n" \
+                "    vec4 diffuseColour;\n" \
+                "    vec4 specularColour;\n" \
+                "    float inverseRange;\n" \
+                "    float intensity;\n" \
+                "};\n" \
 
-                    "#if defined(TEXTURED)\n" \
-                    "uniform sampler2D u_diffuseMap;\n" \
-                    "#endif\n" \
-                    "uniform sampler2D u_normalMap;\n" \
-                    "uniform sampler2D u_maskMap;\n" \
-                    "uniform vec3 u_ambientColour = vec3 (0.2, 0.2, 0.2);\n" \
+                "struct DirectionalLight\n" \
+                "{\n" \
+                "    vec4 diffuseColour;\n" \
+                "    vec4 specularColour;\n" \
+                "    float intensity;\n" \
+                "};\n" \
 
-                    "uniform PointLight u_pointLights[MAX_POINT_LIGHTS] = PointLight[MAX_POINT_LIGHTS]\n" \
-                    "(\n" \
-                    "    PointLight(vec4(1.0), vec4(1.0), 0.001, 1.0),\n" \
-                    "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
-                    "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
-                    "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
-                    "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
-                    "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
-                    "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
-                    "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0)\n" \
-                    ");\n" \
+                "#if defined(TEXTURED)\n" \
+                "uniform sampler2D u_diffuseMap;\n" \
+                "#endif\n" \
+                "uniform sampler2D u_normalMap;\n" \
+                "uniform sampler2D u_maskMap;\n" \
+                "uniform vec3 u_ambientColour = vec3 (0.2, 0.2, 0.2);\n" \
 
-                    "varying vec3 v_eyeDirection;\n" \
-                    "varying vec3 v_pointLightDirections[MAX_POINT_LIGHTS];\n" \
+                "uniform PointLight u_pointLights[MAX_POINT_LIGHTS] = PointLight[MAX_POINT_LIGHTS]\n" \
+                "(\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.001, 1.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0),\n" \
+                "    PointLight(vec4(1.0), vec4(1.0), 0.5, 0.0)\n" \
+                ");\n" \
 
-                    "vec4 diffuseColour;\n" \
-                    "vec4 maskColour;\n" \
-                    "vec3 calcLighting(vec3 normal, vec3 lightDirection, vec3 lightDiffuse, vec3 lightSpec, float falloff)\n" \
-                    "{\n" \
-                    "    float diffuseAmount = max(dot(normal, lightDirection), 0.0);\n" \
-                    "    diffuseAmount = pow((diffuseAmount * 0.5) + 0.5, 2.0);\n" \
-                    "    vec3 mixedColour = lightDiffuse * diffuseColour.rgb * diffuseAmount * falloff;\n" \
+                "uniform DirectionalLight u_directionalLight = DirectionalLight(vec4(1.0), vec4(1.0), 0.0);\n" \
 
-                    /*Blinn-Phong specular calc*/
-                    "#if defined(SPECULAR)\n" \
-                    "    vec3 eyeDirection = normalize(v_eyeDirection);\n" \
-                    "    vec3 halfVec = normalize(lightDirection + eyeDirection);\n" \
-                    "    float specularAngle = clamp(dot(normal, halfVec), 0.0, 1.0);\n" \
+                "varying vec3 v_eyeDirection;\n" \
+                "varying vec3 v_pointLightDirections[MAX_POINT_LIGHTS];\n" \
+                "varying vec3 v_directionalLightDirection;\n" \
 
-                    "    vec3 specularColour = lightSpec * vec3(pow(clamp(specularAngle, 0.0, 1.0), (maskColour.r * 255.0))) * falloff;\n" \
-                    "    return mixedColour + (specularColour * maskColour.g);\n" \
-                    "#else\n" \
-                    "    return mixedColour;\n" \
-                    "#endif\n" \
-                    "}\n" \
+                "vec4 diffuseColour;\n" \
+                "vec4 maskColour;\n" \
+                "vec3 calcLighting(vec3 normal, vec3 lightDirection, vec3 lightDiffuse, vec3 lightSpec, float falloff)\n" \
+                "{\n" \
+                "    float diffuseAmount = max(dot(normal, lightDirection), 0.0);\n" \
+                "    diffuseAmount = pow((diffuseAmount * 0.5) + 0.5, 2.0);\n" \
+                "    vec3 mixedColour = lightDiffuse * diffuseColour.rgb * diffuseAmount * falloff;\n" \
 
-                    "void main()\n" \
-                    "{\n" \
-                    "#if defined(TEXTURED)\n" \
-                    "    diffuseColour = texture2D(u_diffuseMap, gl_TexCoord[0].xy) * gl_Color;\n" \
-                    "#elif defined(COLOURED)\n" \
-                    "    diffuseColour = gl_Color;\n" \
-                    "#endif\n" \
-                    "    vec3 normalVector = texture2D(u_normalMap, gl_TexCoord[0].xy).rgb * 2.0 - 1.0;\n" \
-                    "    maskColour = texture2D(u_maskMap, gl_TexCoord[0].xy);\n" \
+                /*Blinn-Phong specular calc*/
+                "#if defined(SPECULAR)\n" \
+                "    vec3 eyeDirection = normalize(v_eyeDirection);\n" \
+                "    vec3 halfVec = normalize(lightDirection + eyeDirection);\n" \
+                "    float specularAngle = clamp(dot(normal, halfVec), 0.0, 1.0);\n" \
 
-                    "    vec3 blendedColour = diffuseColour.rgb * u_ambientColour;\n" \
-                    "    for(int i = 0; i < MAX_POINT_LIGHTS; ++i)\n" \
-                    "    {\n" \
-                    "        vec3 pointLightDir = v_pointLightDirections[i] * u_pointLights[i].inverseRange;\n" \
-                    "        float falloff = clamp(1.0 - sqrt(dot(pointLightDir, pointLightDir)), 0.0, 1.0);\n" \
-                    "        blendedColour += calcLighting(normalVector, normalize(v_pointLightDirections[i]), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
-                    "    }\n" \
-                    "#if defined(SELF_ILLUM)\n" \
-                    "    gl_FragColor.rgb = mix(blendedColour, diffuseColour.rgb, maskColour.b);\n" \
-                    "#else\n" \
-                    "    gl_FragColor.rgb = blendedColour;\n"
-                    "#endif\n" \
-                    "    gl_FragColor.a = diffuseColour.a;\n" \
-                    "}";
+                "    vec3 specularColour = lightSpec * vec3(pow(clamp(specularAngle, 0.0, 1.0), (maskColour.r * 255.0))) * falloff;\n" \
+                "    return mixedColour + (specularColour * maskColour.g);\n" \
+                "#else\n" \
+                "    return mixedColour;\n" \
+                "#endif\n" \
+                "}\n" \
+
+                "void main()\n" \
+                "{\n" \
+                "#if defined(TEXTURED)\n" \
+                "    diffuseColour = texture2D(u_diffuseMap, gl_TexCoord[0].xy) * gl_Color;\n" \
+                "#elif defined(COLOURED)\n" \
+                "    diffuseColour = gl_Color;\n" \
+                "#endif\n" \
+                "    vec3 normalVector = texture2D(u_normalMap, gl_TexCoord[0].xy).rgb * 2.0 - 1.0;\n" \
+                "    maskColour = texture2D(u_maskMap, gl_TexCoord[0].xy);\n" \
+
+                "    vec3 blendedColour = diffuseColour.rgb * u_ambientColour;\n" \
+                "    for(int i = 0; i < MAX_POINT_LIGHTS; ++i)\n" \
+                "    {\n" \
+                "        vec3 pointLightDir = v_pointLightDirections[i] * u_pointLights[i].inverseRange;\n" \
+                "        float falloff = clamp(1.0 - sqrt(dot(pointLightDir, pointLightDir)), 0.0, 1.0);\n" \
+                "        blendedColour += calcLighting(normalVector, normalize(v_pointLightDirections[i]), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
+                "    }\n" \
+
+                "    blendedColour += calcLighting(normalVector, -normalize(v_directionalLightDirection), u_directionalLight.diffuseColour.rgb, u_directionalLight.specularColour.rgb, 1.0) * u_directionalLight.intensity;\n" \
+
+                "#if defined(SELF_ILLUM)\n" \
+                "    gl_FragColor.rgb = mix(blendedColour, diffuseColour.rgb, maskColour.b);\n" \
+                "#else\n" \
+                "    gl_FragColor.rgb = blendedColour;\n"
+                "#endif\n" \
+                "    gl_FragColor.a = diffuseColour.a;\n" \
+                "}";
         }
     }//namespace Shader
 }//namespace xy

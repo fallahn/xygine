@@ -46,7 +46,7 @@ namespace xy
         /*!
         \brief Allows creating a connection to a server application running 'ServerConnection'.
         The client/server connection is maintained over UDP using challenge/response system to
-        keep it alive. Packets are all IDs and acknowledged by the remote connections so missing
+        keep it alive. Packets are all ID'd and acknowledged by the remote connections so missing
         packets may be identified and resent if necessary. Using the Acknowledge ID it is also
         possible to determine packet order and discard out of date information. Connections
         allow the provision of custom packet handlers with custom IDs so that they are flexible

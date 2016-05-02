@@ -116,5 +116,19 @@ namespace xy
     private:
         sf::Vector2f m_scale;
     };
+
+    /*!
+    \brief Scales a particle's velocity by a given amount each frame.
+    Particle direction is left unchanged, but velocity magnitude is
+    scaled by the given amount allowing particles to move faster or
+    slower over time.
+    */
+    struct XY_EXPORT_API VelocityAffector
+    {
+        explicit VelocityAffector(const sf::Vector2f& scale);
+        void operator() (Particle& p, float dt);
+    private:
+        sf::Vector2f m_scale;
+    };
 }
 #endif //XY_AFFECTORS_HPP_

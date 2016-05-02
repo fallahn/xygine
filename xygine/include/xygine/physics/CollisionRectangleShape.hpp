@@ -40,7 +40,7 @@ namespace xy
     namespace Physics
     {
         /*!
-        \brief Defines a rectanglue CollisionShape wwhich can be attached to a RigidBody
+        \brief Defines a rectangular CollisionShape which can be attached to a RigidBody
         */
         class XY_EXPORT_API CollisionRectangleShape final : public CollisionShape
         {

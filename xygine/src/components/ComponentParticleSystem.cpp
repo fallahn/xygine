@@ -570,6 +570,20 @@ void ParticleSystem::Definition::loadFromFile(const std::string& path, TextureRe
                             }
                         }
                     }
+                    else if (type == "Velocity")
+                    {
+                        if (v.get("Data").is<picojson::array>())
+                        {
+                            const auto& d = v.get("Data").get<picojson::array>();
+                            if (d.size() > 1)
+                            {
+                                sf::Vector2f scale;
+                                if (d[0].is<double>()) scale.x = static_cast<float>(d[0].get<double>());
+                                if (d[1].is<double>()) scale.y = static_cast<float>(d[1].get<double>());
+                                affectors.emplace_back(VelocityAffector(scale));
+                            }
+                        }
+                    }
                     else if (type == "Colour")
                     {
                         if (v.get("Data").is<picojson::array>())

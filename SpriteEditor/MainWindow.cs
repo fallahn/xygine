@@ -500,5 +500,11 @@ namespace SpriteEditor
                 m_aniSprite.BumpShader.SetParameter("u_pointLights[0].intensity", 1.2f);
             }
         }
+
+        private void frameStitcherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Stitcher sw = new Stitcher();
+            sw.ShowDialog();
+        }
     }
 }

@@ -42,7 +42,7 @@ namespace xy
     namespace Network
     {
         /*!
-        \brief Used to acknowledge the receing of packets by either end of a connection
+        \brief Used to acknowledge the receiving of packets by either end of a connection
         */
         class XY_EXPORT_API AckSystem final
         {
