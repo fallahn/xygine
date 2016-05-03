@@ -53,7 +53,7 @@ namespace xy
         \param range The distance in world units at which the light's effects become zero
         \param radius The physical radius of the light used to position it in the Scene's visible area
         \param diffuseColour The main light colour. Defaults to white.
-        \param specularColour The colour with which to affect specular highlights. Defualts to White
+        \param specularColour The colour with which to affect specular highlights. Defaults to White
         */
         PointLight(MessageBus&, float range, float radius, const sf::Color& diffuseColour = sf::Color::White, const sf::Color& specularColour = sf::Color::White);
 

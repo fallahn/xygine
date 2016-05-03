@@ -113,6 +113,8 @@ namespace xy
     */
     class XY_EXPORT_API TextureResource final : public BaseResource<sf::Texture>
     {
+    public:
+        void setFallbackColour(const sf::Color colour) { m_fallbackColour = colour; }
     private:
         /*!
         \see BaseResource
@@ -121,10 +123,12 @@ namespace xy
         {
             std::unique_ptr<sf::Texture> t = std::make_unique<sf::Texture>();
             sf::Image i;
-            i.create(20u, 20u, sf::Color(127u, 127u, 255u));
+            i.create(20u, 20u, m_fallbackColour);
             t->loadFromImage(i);
             return std::move(t);
         }
+
+        sf::Color m_fallbackColour;
     };
     /*!
     \brief Resource manager for sf::Image types

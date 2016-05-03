@@ -108,6 +108,7 @@ namespace xy
         all of this entity's children
         */
         const std::vector<Ptr>& getChildren() const;
+        std::vector<Ptr>& getChildren();
         /*!
         \brief Searches the Entity's children recursively
         for and entity with the given ID

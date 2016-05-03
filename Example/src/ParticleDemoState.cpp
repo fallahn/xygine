@@ -282,8 +282,11 @@ void ParticleDemoState::setupParticles()
     mh.action = [](xy::Component* c, const xy::Message& msg) 
     {
         auto& msgData = msg.getData<xy::Message::EntityEvent>();
-        auto controller = dynamic_cast<xy::ParticleController*>(c);
-        controller->fire(ParticleType::Explosion, msgData.entity->getWorldPosition());
+        if (msgData.action == xy::Message::EntityEvent::Destroyed)
+        {
+            auto controller = dynamic_cast<xy::ParticleController*>(c);
+            controller->fire(ParticleType::Explosion, msgData.entity->getWorldPosition());
+        }
     };
     mh.id = xy::Message::EntityMessage;
     pc->addMessageHandler(mh);

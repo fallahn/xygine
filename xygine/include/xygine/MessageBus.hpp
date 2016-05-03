@@ -133,7 +133,8 @@ namespace xy
         {
             enum
             {
-                Destroyed
+                Destroyed,
+                AddedToScene
             }action;
             Entity* entity = nullptr;
         };

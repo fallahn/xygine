@@ -93,6 +93,11 @@ const std::vector<Entity::Ptr>& Entity::getChildren() const
     return m_children;
 }
 
+std::vector<Entity::Ptr>& Entity::getChildren()
+{
+    return m_children;
+}
+
 Entity* Entity::findEntity(sf::Uint64 uid)
 {
     if (getUID() == uid) return this;
@@ -263,6 +268,12 @@ void Entity::handleMessage(const Message& msg)
 
 void Entity::setScene(Scene* scene)
 {
+    if (scene)
+    {
+        auto msg = m_messageBus.post<Message::EntityEvent>(Message::EntityMessage);
+        msg->action = Message::EntityEvent::AddedToScene;
+        msg->entity = this;
+    }
     m_scene = scene;
     for (auto& c : m_children) c->setScene(scene);
 }

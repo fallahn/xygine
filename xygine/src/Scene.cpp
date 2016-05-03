@@ -66,22 +66,33 @@ Scene::~Scene()
 //public
 void Scene::update(float dt)
 {    
-    //add pending entities
-    for (auto& p : m_pendingEntities)
+    std::function<void(Entity::Ptr&)> setPartitioning = 
+        [this](Entity::Ptr& p)
     {
-        if (QuadTreeComponent* qc = p.second->getComponent<QuadTreeComponent>())
+        if (QuadTreeComponent* qc = p->getComponent<QuadTreeComponent>())
         {
             m_quadTree.add(qc);
         }
 
         //if we find a light add it to its own quad tree
-        if (PointLight* pl = p.second->getComponent<PointLight>())
+        if (PointLight* pl = p->getComponent<PointLight>())
         {
             const float rad = pl->getRadius();
             auto qtc = xy::Component::create<QuadTreeComponent>(m_messageBus, sf::FloatRect({ -rad, -rad }, { rad * 2.f, rad * 2.f}));
-            m_lightTree.add(p.second->addComponent(qtc));
+            m_lightTree.add(p->addComponent(qtc));
         }
-        
+    };
+    
+    //add pending entities
+    for (auto& p : m_pendingEntities)
+    {
+        setPartitioning(p.second);
+        for (auto& c : p.second->getChildren())
+        {
+            setPartitioning(c);
+        }
+
+        p.second->setScene(this);
         m_layers[p.first]->addChild(p.second);
     }
     m_pendingEntities.clear();
@@ -151,6 +162,26 @@ void Scene::handleMessage(const Message& msg)
         default: break;
         }
     }
+    //else if (msg.id == Message::EntityMessage)
+    //{
+    //    auto& msgData = msg.getData<Message::EntityEvent>();
+    //    
+    //    if (msgData.action == Message::EntityEvent::AddedToScene)
+    //    {
+    //        if (QuadTreeComponent* qc = msgData.entity->getComponent<QuadTreeComponent>())
+    //        {
+    //            m_quadTree.add(qc);
+    //        }
+
+    //        //if we find a light add it to its own quad tree
+    //        if (PointLight* pl = msgData.entity->getComponent<PointLight>())
+    //        {
+    //            const float rad = pl->getRadius();
+    //            auto qtc = xy::Component::create<QuadTreeComponent>(m_messageBus, sf::FloatRect({ -rad, -rad }, { rad * 2.f, rad * 2.f }));
+    //            m_lightTree.add(msgData.entity->addComponent(qtc));
+    //        }
+    //    }
+    //}
 }
 
 Entity* Scene::addEntity(Entity::Ptr& entity, Layer layer)
