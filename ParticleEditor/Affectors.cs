@@ -36,7 +36,8 @@ namespace ParticleEditor
         Force,
         Colour,
         Rotation,
-        Scale
+        Scale,
+        Velocity
     }
 
     public interface IAffector
@@ -144,6 +145,27 @@ namespace ParticleEditor
         public void update(Particle p, float dt)
         {
             p.Scale += (m_scale * dt);
+        }
+
+        public Vector2f Scale { get { return m_scale; } set { m_scale = value; } }
+    }
+
+    public class VelocityAffector : IAffector
+    {
+        private Vector2f m_scale;
+        public VelocityAffector(Vector2f scale)
+        {
+            m_scale = scale;
+        }
+
+        public AffectorType type()
+        {
+            return AffectorType.Velocity;
+        }
+
+        public void update(Particle p, float dt)
+        {
+            p.Velocity = new Vector2f(p.Velocity.X * m_scale.X, p.Velocity.Y * m_scale.Y);
         }
 
         public Vector2f Scale { get { return m_scale; } set { m_scale = value; } }

@@ -43,6 +43,7 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableMovementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundColourToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addAssetDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.numericUpDownEmitRate = new System.Windows.Forms.NumericUpDown();
             this.label20 = new System.Windows.Forms.Label();
@@ -117,7 +118,12 @@
             this.trackBarVelScale = new System.Windows.Forms.TrackBar();
             this.trackBarPosScale = new System.Windows.Forms.TrackBar();
             this.toolTipControl = new System.Windows.Forms.ToolTip(this.components);
-            this.addAssetDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panelVelocityAffector = new System.Windows.Forms.Panel();
+            this.label27 = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
+            this.label29 = new System.Windows.Forms.Label();
+            this.numericUpDownVelAffectorX = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownVelAffectorY = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -157,6 +163,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpawnVelX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVelScale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarPosScale)).BeginInit();
+            this.panelVelocityAffector.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelAffectorX)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelAffectorY)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -173,6 +182,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.panelVelocityAffector);
             this.splitContainer1.Panel2.Controls.Add(this.panelScaleAffector);
             this.splitContainer1.Panel2.Controls.Add(this.panelRotateAffector);
             this.splitContainer1.Panel2.Controls.Add(this.panelColourAffector);
@@ -351,6 +361,15 @@
             this.backgroundColourToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.backgroundColourToolStripMenuItem.Text = "Background Colour";
             this.backgroundColourToolStripMenuItem.Click += new System.EventHandler(this.backgroundColourToolStripMenuItem_Click);
+            // 
+            // addAssetDirectoryToolStripMenuItem
+            // 
+            this.addAssetDirectoryToolStripMenuItem.Name = "addAssetDirectoryToolStripMenuItem";
+            this.addAssetDirectoryToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.A)));
+            this.addAssetDirectoryToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.addAssetDirectoryToolStripMenuItem.Text = "Add Asset Folder";
+            this.addAssetDirectoryToolStripMenuItem.Click += new System.EventHandler(this.addAssetDirectoryToolStripMenuItem_Click);
             // 
             // panel1
             // 
@@ -1265,14 +1284,90 @@
             this.toolTipControl.SetToolTip(this.trackBarPosScale, "Random scale. Sets the maximum random value range between -1/1 and -40/40");
             this.trackBarPosScale.Value = 10;
             // 
-            // addAssetDirectoryToolStripMenuItem
+            // panelVelocityAffector
             // 
-            this.addAssetDirectoryToolStripMenuItem.Name = "addAssetDirectoryToolStripMenuItem";
-            this.addAssetDirectoryToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.A)));
-            this.addAssetDirectoryToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
-            this.addAssetDirectoryToolStripMenuItem.Text = "Add Asset Folder";
-            this.addAssetDirectoryToolStripMenuItem.Click += new System.EventHandler(this.addAssetDirectoryToolStripMenuItem_Click);
+            this.panelVelocityAffector.Controls.Add(this.numericUpDownVelAffectorY);
+            this.panelVelocityAffector.Controls.Add(this.numericUpDownVelAffectorX);
+            this.panelVelocityAffector.Controls.Add(this.label29);
+            this.panelVelocityAffector.Controls.Add(this.label28);
+            this.panelVelocityAffector.Controls.Add(this.label27);
+            this.panelVelocityAffector.Location = new System.Drawing.Point(1162, 12);
+            this.panelVelocityAffector.Name = "panelVelocityAffector";
+            this.panelVelocityAffector.Size = new System.Drawing.Size(73, 120);
+            this.panelVelocityAffector.TabIndex = 37;
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(3, 0);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(47, 13);
+            this.label27.TabIndex = 0;
+            this.label27.Text = "Velocity:";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(3, 23);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(17, 13);
+            this.label28.TabIndex = 1;
+            this.label28.Text = "X:";
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(3, 68);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(17, 13);
+            this.label29.TabIndex = 2;
+            this.label29.Text = "Y:";
+            // 
+            // numericUpDownVelAffectorX
+            // 
+            this.numericUpDownVelAffectorX.DecimalPlaces = 2;
+            this.numericUpDownVelAffectorX.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownVelAffectorX.Location = new System.Drawing.Point(3, 40);
+            this.numericUpDownVelAffectorX.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownVelAffectorX.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownVelAffectorX.Name = "numericUpDownVelAffectorX";
+            this.numericUpDownVelAffectorX.Size = new System.Drawing.Size(64, 20);
+            this.numericUpDownVelAffectorX.TabIndex = 3;
+            // 
+            // numericUpDownVelAffectorY
+            // 
+            this.numericUpDownVelAffectorY.DecimalPlaces = 2;
+            this.numericUpDownVelAffectorY.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownVelAffectorY.Location = new System.Drawing.Point(3, 85);
+            this.numericUpDownVelAffectorY.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownVelAffectorY.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownVelAffectorY.Name = "numericUpDownVelAffectorY";
+            this.numericUpDownVelAffectorY.Size = new System.Drawing.Size(64, 20);
+            this.numericUpDownVelAffectorY.TabIndex = 4;
             // 
             // MainWindow
             // 
@@ -1333,6 +1428,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpawnVelX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVelScale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarPosScale)).EndInit();
+            this.panelVelocityAffector.ResumeLayout(false);
+            this.panelVelocityAffector.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelAffectorX)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelAffectorY)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1427,6 +1526,12 @@
         private System.Windows.Forms.TrackBar trackBarPosScale;
         private System.Windows.Forms.ToolTip toolTipControl;
         private System.Windows.Forms.ToolStripMenuItem addAssetDirectoryToolStripMenuItem;
+        private System.Windows.Forms.Panel panelVelocityAffector;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.NumericUpDown numericUpDownVelAffectorY;
+        private System.Windows.Forms.NumericUpDown numericUpDownVelAffectorX;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.Label label28;
     }
 }
 

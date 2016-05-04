@@ -266,6 +266,11 @@ namespace ParticleEditor
                         ad.Data.Add(scale.X);
                         ad.Data.Add(scale.Y);
                         break;
+                    case AffectorType.Velocity:
+                        var vscale = ((VelocityAffector)a).Scale;
+                        ad.Data.Add(vscale.X);
+                        ad.Data.Add(vscale.Y);
+                        break;
                 }
                 pd.Affectors.Add(ad);
             }
@@ -391,10 +396,15 @@ namespace ParticleEditor
                             RotationAffector ra = new RotationAffector(ad.Data[0]);
                             m_particleSystem.Affectors.Add(ra);
                         }
-                        else
+                        else if (ad.Type == AffectorType.Scale.ToString())
                         {
                             ScaleAffector sa = new ScaleAffector(new Vector2f(ad.Data[0], ad.Data[1]));
                             m_particleSystem.Affectors.Add(sa);
+                        }
+                        else if(ad.Type == AffectorType.Velocity.ToString())
+                        {
+                            VelocityAffector va = new VelocityAffector(new Vector2f(ad.Data[0], ad.Data[1]));
+                            m_particleSystem.addAffector(va);
                         }
                         listBoxAffectors.Items.Add(ad.Type);
                     }

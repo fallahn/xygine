@@ -54,6 +54,13 @@
             this.numericUpDownScaleX = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.toolTipText = new System.Windows.Forms.ToolTip(this.components);
+            this.panelVelocity = new System.Windows.Forms.Panel();
+            this.numericUpDownVelY = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownVelX = new System.Windows.Forms.NumericUpDown();
+            this.buttonVelocity = new System.Windows.Forms.Button();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.panelForce.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownForceY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownForceX)).BeginInit();
@@ -64,6 +71,9 @@
             this.panelScale.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleX)).BeginInit();
+            this.panelVelocity.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelX)).BeginInit();
             this.SuspendLayout();
             // 
             // panelForce
@@ -394,11 +404,119 @@
             this.label4.TabIndex = 0;
             this.label4.Text = "Scale";
             // 
+            // panelVelocity
+            // 
+            this.panelVelocity.Controls.Add(this.numericUpDownVelY);
+            this.panelVelocity.Controls.Add(this.numericUpDownVelX);
+            this.panelVelocity.Controls.Add(this.buttonVelocity);
+            this.panelVelocity.Controls.Add(this.label11);
+            this.panelVelocity.Controls.Add(this.label10);
+            this.panelVelocity.Controls.Add(this.label9);
+            this.panelVelocity.Location = new System.Drawing.Point(12, 264);
+            this.panelVelocity.Name = "panelVelocity";
+            this.panelVelocity.Size = new System.Drawing.Size(257, 62);
+            this.panelVelocity.TabIndex = 5;
+            this.panelVelocity.Visible = false;
+            // 
+            // numericUpDownVelY
+            // 
+            this.numericUpDownVelY.DecimalPlaces = 2;
+            this.numericUpDownVelY.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownVelY.Location = new System.Drawing.Point(101, 24);
+            this.numericUpDownVelY.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownVelY.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownVelY.Name = "numericUpDownVelY";
+            this.numericUpDownVelY.Size = new System.Drawing.Size(47, 20);
+            this.numericUpDownVelY.TabIndex = 5;
+            this.numericUpDownVelY.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            // 
+            // numericUpDownVelX
+            // 
+            this.numericUpDownVelX.DecimalPlaces = 2;
+            this.numericUpDownVelX.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownVelX.Location = new System.Drawing.Point(25, 24);
+            this.numericUpDownVelX.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownVelX.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownVelX.Name = "numericUpDownVelX";
+            this.numericUpDownVelX.Size = new System.Drawing.Size(46, 20);
+            this.numericUpDownVelX.TabIndex = 4;
+            this.numericUpDownVelX.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            // 
+            // buttonVelocity
+            // 
+            this.buttonVelocity.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.buttonVelocity.Location = new System.Drawing.Point(179, 21);
+            this.buttonVelocity.Name = "buttonVelocity";
+            this.buttonVelocity.Size = new System.Drawing.Size(75, 23);
+            this.buttonVelocity.TabIndex = 3;
+            this.buttonVelocity.Text = "OK";
+            this.buttonVelocity.UseVisualStyleBackColor = true;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(79, 26);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(17, 13);
+            this.label11.TabIndex = 2;
+            this.label11.Text = "Y:";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(5, 25);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(17, 13);
+            this.label10.TabIndex = 1;
+            this.label10.Text = "X:";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(3, 0);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(44, 13);
+            this.label9.TabIndex = 0;
+            this.label9.Text = "Velocity";
+            // 
             // AffectorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 267);
+            this.ClientSize = new System.Drawing.Size(284, 353);
+            this.Controls.Add(this.panelVelocity);
             this.Controls.Add(this.panelRotation);
             this.Controls.Add(this.panelColour);
             this.Controls.Add(this.panelForce);
@@ -424,6 +542,10 @@
             this.panelScale.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleX)).EndInit();
+            this.panelVelocity.ResumeLayout(false);
+            this.panelVelocity.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelX)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -454,5 +576,12 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.ToolTip toolTipText;
+        private System.Windows.Forms.Panel panelVelocity;
+        private System.Windows.Forms.NumericUpDown numericUpDownVelY;
+        private System.Windows.Forms.NumericUpDown numericUpDownVelX;
+        private System.Windows.Forms.Button buttonVelocity;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
     }
 }

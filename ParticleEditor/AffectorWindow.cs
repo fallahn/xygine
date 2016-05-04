@@ -63,6 +63,11 @@ namespace ParticleEditor
                     panelScale.Visible = true;
                     panelScale.Location = m_panelLocation;
                     break;
+                case AffectorType.Velocity:
+                    this.Text = "Add Velocity Affector";
+                    panelVelocity.Visible = true;
+                    panelVelocity.Location = m_panelLocation;
+                    break;
             }
             m_type = type;
             this.Size = new Size(300, 140);
@@ -95,6 +100,9 @@ namespace ParticleEditor
                     break;
                 case AffectorType.Scale:
                     Affector = new ScaleAffector(new SFML.Window.Vector2f((float)numericUpDownScaleX.Value, (float)numericUpDownScaleY.Value));
+                    break;
+                case AffectorType.Velocity:
+                    Affector = new VelocityAffector(new SFML.Window.Vector2f((float)numericUpDownVelX.Value, (float)numericUpDownVelY.Value));
                     break;
             }
         }

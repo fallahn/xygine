@@ -507,6 +507,12 @@ namespace ParticleEditor
                         numericUpDownRotationAffector.Value = (decimal)((RotationAffector)m_particleSystem.Affectors[listBoxAffectors.SelectedIndex]).Rotation;
                         panelRotateAffector.Location = location;
                         break;
+                    case "Velocity":
+                        var vscale = ((VelocityAffector)m_particleSystem.Affectors[idx]).Scale;
+                        numericUpDownVelAffectorX.Value = (decimal)vscale.X;
+                        numericUpDownVelAffectorY.Value = (decimal)vscale.Y;
+                        panelVelocityAffector.Location = location;
+                        break;
                 }
             }
         }
