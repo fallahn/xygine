@@ -467,6 +467,12 @@ namespace ParticleEditor
             ((ScaleAffector)m_particleSystem.Affectors[listBoxAffectors.SelectedIndex]).Scale = newScale;
         }
 
+        private void NumericUpDownVelAffector_ValueChanged(object sender, EventArgs e)
+        {
+            Vector2f newScale = new Vector2f((float)numericUpDownVelAffectorX.Value, (float)numericUpDownVelAffectorY.Value);
+            ((VelocityAffector)m_particleSystem.Affectors[listBoxAffectors.SelectedIndex]).Scale = newScale;
+        }
+
         private void listBoxAffectors_SelectedIndexChanged(object sender, EventArgs e)
         {
             Point outLoc = new Point(10000, 0);
@@ -474,6 +480,7 @@ namespace ParticleEditor
             panelColourAffector.Location = outLoc;
             panelRotateAffector.Location = outLoc;
             panelScaleAffector.Location = outLoc;
+            panelVelocityAffector.Location = outLoc;
 
             if (listBoxAffectors.SelectedIndex > -1)
             {

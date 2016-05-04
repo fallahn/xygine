@@ -95,8 +95,10 @@ namespace ParticleEditor
             numericUpDownInitVelY.ValueChanged += velocityChanged;
 
             numericUpDownEmitRate.ValueChanged += NumericUpDownEmitRate_ValueChanged;
-
             numericUpDownLifetime.ValueChanged += NumericUpDownLifetime_ValueChanged;
+
+            numericUpDownVelAffectorX.ValueChanged += NumericUpDownVelAffector_ValueChanged;
+            numericUpDownVelAffectorY.ValueChanged += NumericUpDownVelAffector_ValueChanged;
 
             panelColour.Click += colour_Click;
             panelColour.BackColorChanged += PanelColour_BackColorChanged;

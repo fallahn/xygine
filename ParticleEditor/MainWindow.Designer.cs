@@ -77,6 +77,11 @@
             this.label11 = new System.Windows.Forms.Label();
             this.buttonTextureBrowse = new System.Windows.Forms.Button();
             this.textBoxTexturePath = new System.Windows.Forms.TextBox();
+            this.panelVelocityAffector = new System.Windows.Forms.Panel();
+            this.numericUpDownVelAffectorY = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownVelAffectorX = new System.Windows.Forms.NumericUpDown();
+            this.label29 = new System.Windows.Forms.Label();
+            this.label28 = new System.Windows.Forms.Label();
             this.panelScaleAffector = new System.Windows.Forms.Panel();
             this.label25 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
@@ -118,12 +123,6 @@
             this.trackBarVelScale = new System.Windows.Forms.TrackBar();
             this.trackBarPosScale = new System.Windows.Forms.TrackBar();
             this.toolTipControl = new System.Windows.Forms.ToolTip(this.components);
-            this.panelVelocityAffector = new System.Windows.Forms.Panel();
-            this.label27 = new System.Windows.Forms.Label();
-            this.label28 = new System.Windows.Forms.Label();
-            this.label29 = new System.Windows.Forms.Label();
-            this.numericUpDownVelAffectorX = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownVelAffectorY = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -147,6 +146,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInitVelX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSizeY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSizeX)).BeginInit();
+            this.panelVelocityAffector.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelAffectorY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelAffectorX)).BeginInit();
             this.panelScaleAffector.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleAffectorY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleAffectorX)).BeginInit();
@@ -163,9 +165,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpawnVelX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVelScale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarPosScale)).BeginInit();
-            this.panelVelocityAffector.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelAffectorX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelAffectorY)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -210,7 +209,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.buttonStart);
             this.splitContainer1.Panel2.Controls.Add(this.trackBarVelScale);
             this.splitContainer1.Panel2.Controls.Add(this.trackBarPosScale);
-            this.splitContainer1.Size = new System.Drawing.Size(794, 545);
+            this.splitContainer1.Size = new System.Drawing.Size(794, 549);
             this.splitContainer1.SplitterDistance = 543;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -253,8 +252,8 @@
             this.splitContainer2.Panel2.Controls.Add(this.label11);
             this.splitContainer2.Panel2.Controls.Add(this.buttonTextureBrowse);
             this.splitContainer2.Panel2.Controls.Add(this.textBoxTexturePath);
-            this.splitContainer2.Size = new System.Drawing.Size(541, 543);
-            this.splitContainer2.SplitterDistance = 297;
+            this.splitContainer2.Size = new System.Drawing.Size(541, 547);
+            this.splitContainer2.SplitterDistance = 299;
             this.splitContainer2.TabIndex = 0;
             // 
             // splitContainer3
@@ -268,7 +267,7 @@
             // splitContainer3.Panel1
             // 
             this.splitContainer3.Panel1.Controls.Add(this.menuStrip1);
-            this.splitContainer3.Size = new System.Drawing.Size(541, 297);
+            this.splitContainer3.Size = new System.Drawing.Size(541, 299);
             this.splitContainer3.SplitterDistance = 25;
             this.splitContainer3.TabIndex = 0;
             // 
@@ -292,14 +291,14 @@
             this.saveAsToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(36, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -307,7 +306,7 @@
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -315,7 +314,7 @@
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -324,7 +323,7 @@
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.S)));
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.saveAsToolStripMenuItem.Text = "Save As...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
@@ -332,7 +331,7 @@
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -343,7 +342,7 @@
             this.backgroundColourToolStripMenuItem,
             this.addAssetDirectoryToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
             // enableMovementToolStripMenuItem
@@ -351,14 +350,14 @@
             this.enableMovementToolStripMenuItem.CheckOnClick = true;
             this.enableMovementToolStripMenuItem.Name = "enableMovementToolStripMenuItem";
             this.enableMovementToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-            this.enableMovementToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.enableMovementToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.enableMovementToolStripMenuItem.Text = "Enable Movement";
             // 
             // backgroundColourToolStripMenuItem
             // 
             this.backgroundColourToolStripMenuItem.Name = "backgroundColourToolStripMenuItem";
             this.backgroundColourToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
-            this.backgroundColourToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.backgroundColourToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.backgroundColourToolStripMenuItem.Text = "Background Colour";
             this.backgroundColourToolStripMenuItem.Click += new System.EventHandler(this.backgroundColourToolStripMenuItem_Click);
             // 
@@ -367,7 +366,7 @@
             this.addAssetDirectoryToolStripMenuItem.Name = "addAssetDirectoryToolStripMenuItem";
             this.addAssetDirectoryToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.A)));
-            this.addAssetDirectoryToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.addAssetDirectoryToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
             this.addAssetDirectoryToolStripMenuItem.Text = "Add Asset Folder";
             this.addAssetDirectoryToolStripMenuItem.Click += new System.EventHandler(this.addAssetDirectoryToolStripMenuItem_Click);
             // 
@@ -788,6 +787,81 @@
             this.textBoxTexturePath.ReadOnly = true;
             this.textBoxTexturePath.Size = new System.Drawing.Size(145, 20);
             this.textBoxTexturePath.TabIndex = 25;
+            // 
+            // panelVelocityAffector
+            // 
+            this.panelVelocityAffector.Controls.Add(this.numericUpDownVelAffectorY);
+            this.panelVelocityAffector.Controls.Add(this.numericUpDownVelAffectorX);
+            this.panelVelocityAffector.Controls.Add(this.label29);
+            this.panelVelocityAffector.Controls.Add(this.label28);
+            this.panelVelocityAffector.Location = new System.Drawing.Point(1162, 12);
+            this.panelVelocityAffector.Name = "panelVelocityAffector";
+            this.panelVelocityAffector.Size = new System.Drawing.Size(73, 120);
+            this.panelVelocityAffector.TabIndex = 37;
+            // 
+            // numericUpDownVelAffectorY
+            // 
+            this.numericUpDownVelAffectorY.DecimalPlaces = 2;
+            this.numericUpDownVelAffectorY.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownVelAffectorY.Location = new System.Drawing.Point(24, 37);
+            this.numericUpDownVelAffectorY.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownVelAffectorY.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownVelAffectorY.Name = "numericUpDownVelAffectorY";
+            this.numericUpDownVelAffectorY.Size = new System.Drawing.Size(43, 20);
+            this.numericUpDownVelAffectorY.TabIndex = 4;
+            // 
+            // numericUpDownVelAffectorX
+            // 
+            this.numericUpDownVelAffectorX.DecimalPlaces = 2;
+            this.numericUpDownVelAffectorX.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDownVelAffectorX.Location = new System.Drawing.Point(25, 11);
+            this.numericUpDownVelAffectorX.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownVelAffectorX.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            -2147483648});
+            this.numericUpDownVelAffectorX.Name = "numericUpDownVelAffectorX";
+            this.numericUpDownVelAffectorX.Size = new System.Drawing.Size(42, 20);
+            this.numericUpDownVelAffectorX.TabIndex = 3;
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(3, 39);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(17, 13);
+            this.label29.TabIndex = 2;
+            this.label29.Text = "Y:";
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(3, 13);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(17, 13);
+            this.label28.TabIndex = 1;
+            this.label28.Text = "X:";
             // 
             // panelScaleAffector
             // 
@@ -1284,96 +1358,11 @@
             this.toolTipControl.SetToolTip(this.trackBarPosScale, "Random scale. Sets the maximum random value range between -1/1 and -40/40");
             this.trackBarPosScale.Value = 10;
             // 
-            // panelVelocityAffector
-            // 
-            this.panelVelocityAffector.Controls.Add(this.numericUpDownVelAffectorY);
-            this.panelVelocityAffector.Controls.Add(this.numericUpDownVelAffectorX);
-            this.panelVelocityAffector.Controls.Add(this.label29);
-            this.panelVelocityAffector.Controls.Add(this.label28);
-            this.panelVelocityAffector.Controls.Add(this.label27);
-            this.panelVelocityAffector.Location = new System.Drawing.Point(1162, 12);
-            this.panelVelocityAffector.Name = "panelVelocityAffector";
-            this.panelVelocityAffector.Size = new System.Drawing.Size(73, 120);
-            this.panelVelocityAffector.TabIndex = 37;
-            // 
-            // label27
-            // 
-            this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(3, 0);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(47, 13);
-            this.label27.TabIndex = 0;
-            this.label27.Text = "Velocity:";
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(3, 23);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(17, 13);
-            this.label28.TabIndex = 1;
-            this.label28.Text = "X:";
-            // 
-            // label29
-            // 
-            this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(3, 68);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(17, 13);
-            this.label29.TabIndex = 2;
-            this.label29.Text = "Y:";
-            // 
-            // numericUpDownVelAffectorX
-            // 
-            this.numericUpDownVelAffectorX.DecimalPlaces = 2;
-            this.numericUpDownVelAffectorX.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.numericUpDownVelAffectorX.Location = new System.Drawing.Point(3, 40);
-            this.numericUpDownVelAffectorX.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericUpDownVelAffectorX.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            -2147483648});
-            this.numericUpDownVelAffectorX.Name = "numericUpDownVelAffectorX";
-            this.numericUpDownVelAffectorX.Size = new System.Drawing.Size(64, 20);
-            this.numericUpDownVelAffectorX.TabIndex = 3;
-            // 
-            // numericUpDownVelAffectorY
-            // 
-            this.numericUpDownVelAffectorY.DecimalPlaces = 2;
-            this.numericUpDownVelAffectorY.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-            this.numericUpDownVelAffectorY.Location = new System.Drawing.Point(3, 85);
-            this.numericUpDownVelAffectorY.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericUpDownVelAffectorY.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            -2147483648});
-            this.numericUpDownVelAffectorY.Name = "numericUpDownVelAffectorY";
-            this.numericUpDownVelAffectorY.Size = new System.Drawing.Size(64, 20);
-            this.numericUpDownVelAffectorY.TabIndex = 4;
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(794, 545);
+            this.ClientSize = new System.Drawing.Size(794, 549);
             this.Controls.Add(this.splitContainer1);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(810, 584);
@@ -1410,6 +1399,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownInitVelX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSizeY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSizeX)).EndInit();
+            this.panelVelocityAffector.ResumeLayout(false);
+            this.panelVelocityAffector.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelAffectorY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelAffectorX)).EndInit();
             this.panelScaleAffector.ResumeLayout(false);
             this.panelScaleAffector.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownScaleAffectorY)).EndInit();
@@ -1428,10 +1421,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSpawnVelX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVelScale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarPosScale)).EndInit();
-            this.panelVelocityAffector.ResumeLayout(false);
-            this.panelVelocityAffector.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelAffectorX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownVelAffectorY)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1527,7 +1516,6 @@
         private System.Windows.Forms.ToolTip toolTipControl;
         private System.Windows.Forms.ToolStripMenuItem addAssetDirectoryToolStripMenuItem;
         private System.Windows.Forms.Panel panelVelocityAffector;
-        private System.Windows.Forms.Label label27;
         private System.Windows.Forms.NumericUpDown numericUpDownVelAffectorY;
         private System.Windows.Forms.NumericUpDown numericUpDownVelAffectorX;
         private System.Windows.Forms.Label label29;
