@@ -30,6 +30,8 @@ source distribution.
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include <cmath>
+
 using namespace xy;
 using namespace UI;
 

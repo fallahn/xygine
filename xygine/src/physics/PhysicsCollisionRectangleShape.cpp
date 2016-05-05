@@ -29,6 +29,7 @@ source distribution.
 #include <xygine/physics/World.hpp>
 
 #include <cstring>
+#include <cmath>
 
 using namespace xy;
 using namespace xy::Physics;
