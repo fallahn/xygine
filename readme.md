@@ -26,6 +26,11 @@ hence xy, followed by the gine part of engine (although technically
 xygine isn't really an engine).
 
 
+######Contributions
+Contributions should be acknowledged and are gratefully accepted from:  
+Jonny Paton  
+Jean-Sebastien Fauteux (OS X Testing) 
+
 -----------------------------------------------------------------------
 
 Matt Marchant 2014 - 2016  

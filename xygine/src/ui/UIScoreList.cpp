@@ -67,7 +67,7 @@ void ScoreList::handleEvent(const sf::Event&, const sf::Vector2f&){}
 
 void ScoreList::update(float dt)
 {
-    if (m_doScroll && m_texts.size())
+    if (m_doScroll && !m_texts.empty())
     {
         const float centre = m_bounds.height / 2.f;
         const float scrollAmount = (m_scrollSpeed * (m_scrollCurrentDistance / m_scrollTargetDistance)) * dt;
