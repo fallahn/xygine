@@ -39,9 +39,16 @@ namespace
 
 using namespace xy;
 
-PostChromeAb::PostChromeAb()
+PostChromeAb::PostChromeAb(bool distort)
 {
-    m_shaderResource.preload(Shader::Type::ChromeAb, Shader::Default::vertex, Shader::PostChromeAb::fragment);
+    if (distort)
+    {
+        m_shaderResource.preload(Shader::Type::ChromeAb, Shader::Default::vertex, CHRAB_DISTORT);
+    }
+    else
+    {
+        m_shaderResource.preload(Shader::Type::ChromeAb, Shader::Default::vertex, CHRAB_NO_DISTORT);
+    }
 }
 
 //public

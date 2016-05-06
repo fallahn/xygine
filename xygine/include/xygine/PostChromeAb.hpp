@@ -46,7 +46,12 @@ namespace xy
     class XY_EXPORT_API PostChromeAb final : public PostProcess
     {
     public:
-        PostChromeAb();
+        /*!
+        \brief Constructor.
+        \param distort If set to true the post effect will apply a
+        CRT style bowed distortion around the edge of the screen
+        */
+        PostChromeAb(bool distort = false);
         /*!
         \see PostProcess
         */

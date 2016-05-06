@@ -99,8 +99,8 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
 
     xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostBloom>();
     //m_scene.addPostProcess(pp);
-    pp = xy::PostProcess::create<xy::PostChromeAb>();
-    //m_scene.addPostProcess(pp);
+    pp = xy::PostProcess::create<xy::PostChromeAb>(false);
+    m_scene.addPostProcess(pp);
     m_scene.setClearColour({ 0u, 0u, 20u });
 
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
