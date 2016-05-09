@@ -62,13 +62,14 @@ namespace
         "#version 120\n"
         "uniform sampler2D u_diffuseMap;\n"
         "uniform sampler2D u_normalMap;\n"
+        "uniform sampler2D u_maskMap;\n"
         "uniform mat4 u_inverseWorldViewMatrix;\n"
 
         "void main()\n"
         "{\n"
         "    gl_FragData[0] = texture2D(u_diffuseMap, gl_TexCoord[0].xy);\n"
         "    gl_FragData[1] = texture2D(u_normalMap, gl_TexCoord[0].xy);\n"
-        "    gl_FragData[2] = vec4(1.0, 1.0, 0.0, 1.0);\n"
+        "    gl_FragData[2] = texture2D(u_maskMap, gl_TexCoord[0].xy);\n"
         "}";
 }
 
@@ -88,9 +89,10 @@ DeferredDemoState::DeferredDemoState(xy::StateStack& stateStack, Context context
     m_renderTexture.create(960, 1080, 3);
 
     m_deferredShader.loadFromMemory(fragShader, sf::Shader::Fragment);
-    m_normalMapShader.loadFromMemory(xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED);
+    m_normalMapShader.loadFromMemory(xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED_SPECULAR_ILLUM);
     m_normalMapShader.setUniform("u_diffuseMap", m_renderTexture.getTexture(0));
     m_normalMapShader.setUniform("u_normalMap", m_renderTexture.getTexture(1));
+    m_normalMapShader.setUniform("u_maskMap", m_renderTexture.getTexture(2));
     //m_normalMapShader.setUniform("u_directionalLight.intensity", 0.6f);
     //m_normalMapShader.setUniform("u_directionalLightDirection", sf::Glsl::Vec3(0.f, 0.f, -1.f));
 
@@ -286,6 +288,8 @@ void DeferredDemoState::buildScene()
     background->setScale(50.f, 80.f);
     m_textureResource.setFallbackColour({ 127, 127, 255 });
     background->setNormalMap(m_textureResource.get("fallback_normal"));
+    m_textureResource.setFallbackColour(sf::Color::Black);
+    background->setMaskMap(m_textureResource.get("fallback_mask"));
     background->setShader(m_deferredShader);
 
     entity = xy::Entity::create(m_messageBus);
@@ -294,31 +298,29 @@ void DeferredDemoState::buildScene()
 
 
     //add a sprite to draw
-    auto doofer = xy::Component::create<xy::AnimatedDrawable>(m_messageBus, m_textureResource.get("assets/images/deferred/doofer_dead.png"));
-    doofer->loadAnimationData("assets/images/deferred/doofer_dead.xya");
+    auto doofer = xy::Component::create<xy::AnimatedDrawable>(m_messageBus, m_textureResource.get("assets/images/deferred/run_diffuse.png"));
+    doofer->loadAnimationData("assets/images/deferred/run.xya");
     doofer->playAnimation(0);
-    doofer->setScale(4.f, 4.f);
     doofer->setShader(m_deferredShader);
-    doofer->setNormalMap(m_textureResource.get("assets/images/deferred/doofer_dead_normal.png"));
+    doofer->setNormalMap(m_textureResource.get("assets/images/deferred/run_normal.png"));
+    doofer->setMaskMap(m_textureResource.get("assets/images/deferred/run_mask.png"));
 
     entity = xy::Entity::create(m_messageBus);
     entity->addComponent(doofer);
-    entity->setPosition(200.f, 200.f);
+    entity->setPosition(140.f, 140.f);
 
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 
-
-
-    doofer = xy::Component::create<xy::AnimatedDrawable>(m_messageBus, m_textureResource.get("assets/images/deferred/doofer_dead.png"));
-    doofer->loadAnimationData("assets/images/deferred/doofer_dead.xya");
+    doofer = xy::Component::create<xy::AnimatedDrawable>(m_messageBus, m_textureResource.get("assets/images/deferred/run_diffuse.png"));
+    doofer->loadAnimationData("assets/images/deferred/run.xya");
     doofer->playAnimation(0);
-    doofer->setScale(4.f, 4.f);
     doofer->setShader(m_deferredShader);
-    doofer->setNormalMap(m_textureResource.get("assets/images/deferred/doofer_dead_normal.png"));
+    doofer->setNormalMap(m_textureResource.get("assets/images/deferred/run_normal.png"));
+    doofer->setMaskMap(m_textureResource.get("assets/images/deferred/run_mask.png"));
 
     entity = xy::Entity::create(m_messageBus);
     entity->addComponent(doofer);
-    entity->setPosition(600.f, 600.f);
+    entity->setPosition(440.f, 440.f);
 
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 }
