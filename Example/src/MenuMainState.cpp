@@ -134,13 +134,13 @@ void MenuMainState::buildMenu()
     m_uiContainer.addControl(button);
 
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
-    button->setText("Lunar Mooner");
+    button->setText("Deferred Rendering");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 675.f);
     button->addCallback([this]()
     {
         close();
-        requestStackPush(States::ID::LunarMooner);
+        requestStackPush(States::ID::DeferredDemo);
     });
     m_uiContainer.addControl(button);
 

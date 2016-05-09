@@ -54,16 +54,6 @@ include(${XY_DIR}/CMakeLists.txt)
 SET(EXAMPLE_SRC
   src/Game.cpp
   src/CaveDemoDrawable.cpp
-  src/LMAlienController.cpp
-  src/LMBulletController.cpp
-  src/LMCollisionComponent.cpp
-  src/LMCollisionWorld.cpp
-  src/LMGameController.cpp
-  src/LMHumanController.cpp
-  src/LMMothershipController.cpp
-  src/LMPlayerController.cpp
-  src/LMSpeedMeter.cpp
-  src/LunarMoonerState.cpp
   src/main.cpp
   src/MenuMainState.cpp
   src/MenuOptionState.cpp

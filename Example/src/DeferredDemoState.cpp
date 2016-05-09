@@ -25,10 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <RacingDemoState.hpp>
-#include <RacingDemoTrack.hpp>
-#include <RacingDemoPlayer.hpp>
 #include <CommandIds.hpp>
+#include <DeferredDemoState.hpp>
 
 #include <xygine/Reports.hpp>
 #include <xygine/Entity.hpp>
@@ -47,8 +45,6 @@ source distribution.
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/Event.hpp>
 
-
-
 namespace
 {
     const sf::Keyboard::Key upKey = sf::Keyboard::W;
@@ -61,7 +57,7 @@ namespace
     const float joyMaxAxis = 100.f;
 }
 
-RacingDemoState::RacingDemoState(xy::StateStack& stateStack, Context context)
+DeferredDemoState::DeferredDemoState(xy::StateStack& stateStack, Context context)
     : State(stateStack, context),
     m_messageBus(context.appInstance.getMessageBus()),
     m_scene(m_messageBus)
@@ -70,8 +66,8 @@ RacingDemoState::RacingDemoState(xy::StateStack& stateStack, Context context)
 
     m_scene.setView(context.defaultView);
     //m_scene.drawDebug(true);
-    xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostChromeAb>(false);
-    m_scene.addPostProcess(pp);
+    //xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostChromeAb>(false);
+    //m_scene.addPostProcess(pp);
     //pp = xy::PostBloom::create();
     //m_scene.addPostProcess(pp);
     //m_scene.setClearColour({ 0u, 100u, 220u });
@@ -84,7 +80,7 @@ RacingDemoState::RacingDemoState(xy::StateStack& stateStack, Context context)
     quitLoadingScreen();
 }
 
-bool RacingDemoState::update(float dt)
+bool DeferredDemoState::update(float dt)
 {    
     m_scene.update(dt);
 
@@ -93,7 +89,7 @@ bool RacingDemoState::update(float dt)
     return true;
 }
 
-void RacingDemoState::draw()
+void DeferredDemoState::draw()
 {
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
@@ -101,7 +97,7 @@ void RacingDemoState::draw()
     rw.draw(m_reportText);
 }
 
-bool RacingDemoState::handleEvent(const sf::Event& evt)
+bool DeferredDemoState::handleEvent(const sf::Event& evt)
 {   
     switch (evt.type)
     {
@@ -188,38 +184,13 @@ bool RacingDemoState::handleEvent(const sf::Event& evt)
     return true;
 }
 
-void RacingDemoState::handleMessage(const xy::Message& msg)
+void DeferredDemoState::handleMessage(const xy::Message& msg)
 {
     m_scene.handleMessage(msg);
 }
 
 //private
-void RacingDemoState::buildScene()
+void DeferredDemoState::buildScene()
 {
-    auto trackEnt = xy::Entity::create(m_messageBus);
-    trackEnt->addCommandCategories(RacingCommandId::TrackEnt);
-    auto tc = std::make_unique<RaceDemo::Track>(m_messageBus);
-    auto trackComponent = trackEnt->addComponent<RaceDemo::Track>(tc);
-    m_scene.addEntity(trackEnt, xy::Scene::Layer::BackMiddle);
-
-    auto trackTex = &m_textureResource.get("assets/images/racing demo/paper_tex.png");
-    trackTex->setRepeated(true);
-    trackComponent->setTexture(trackTex);
-
-    auto playerEnt = xy::Entity::create(m_messageBus);
-    playerEnt->addCommandCategories(RacingCommandId::PlayerEnt);
-    auto drawable = std::make_unique<xy::SfDrawableComponent<sf::RectangleShape>>(m_messageBus);
-    auto playerSprite = playerEnt->addComponent<xy::SfDrawableComponent<sf::RectangleShape>>(drawable);
-    auto& rectangle = playerSprite->getDrawable();
-    rectangle.setSize({ 640.f, 300.f });
-    rectangle.setFillColor(sf::Color::Red);
-    xy::Util::Position::centreOrigin(rectangle);
-    playerEnt->setWorldPosition({ 960.f, 930.f });
-
-    auto pc = std::make_unique<RaceDemo::PlayerController>(m_messageBus);
-    auto playerController = playerEnt->addComponent<RaceDemo::PlayerController>(pc);
-    playerController->setDepth(trackComponent->getCameraDepth());
-
-    m_scene.addEntity(playerEnt, xy::Scene::Layer::FrontRear);
 
 }

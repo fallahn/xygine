@@ -25,29 +25,42 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <LMMothershipController.hpp>
+#ifndef DEFERRED_DEMO_STATE_HPP_
+#define DEFERRED_DEMO_STATE_HPP_
 
-#include <xygine/Entity.hpp>
+#include <StateIds.hpp>
 
-using namespace lm;
+#include <xygine/State.hpp>
+#include <xygine/Resource.hpp>
+#include <xygine/Scene.hpp>
 
-MothershipController::MothershipController(xy::MessageBus& mb, sf::Vector2f travelAmount)
-    : xy::Component (mb, this),
-    m_bounds        (travelAmount),
-    m_speed         (140.f)
+#include <SFML/Graphics/Text.hpp>
+
+class DeferredDemoState final : public xy::State
 {
-    m_velocity.x = 1.f;
-}
+public:
+    DeferredDemoState(xy::StateStack& stateStack, Context context);
+    ~DeferredDemoState() = default;
 
-//public
-void MothershipController::entityUpdate(xy::Entity& entity, float dt)
-{
-    entity.move(m_velocity * m_speed * dt);
-        
-    auto bounds = entity.globalBounds();
-    if (bounds.left < m_bounds.x ||
-        bounds.left + bounds.width > m_bounds.y)
+    bool update(float dt) override;
+    void draw() override;
+    bool handleEvent(const sf::Event& evt) override;
+    void handleMessage(const xy::Message&) override;
+    xy::StateId stateID() const override
     {
-        m_speed = -m_speed;
+        return States::ID::DeferredDemo;
     }
-}
+private:
+
+    xy::MessageBus& m_messageBus;
+    xy::Scene m_scene;
+
+    xy::TextureResource m_textureResource;
+    xy::FontResource m_fontResource;
+
+    sf::Text m_reportText;
+
+    void buildScene();
+};
+
+#endif //DEFERRED_DEMO_STATE_HPP_
