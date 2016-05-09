@@ -33,8 +33,13 @@ source distribution.
 #include <xygine/State.hpp>
 #include <xygine/Resource.hpp>
 #include <xygine/Scene.hpp>
+#include <xygine/MultiRenderTexture.hpp>
 
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+
+#include <array>
 
 class DeferredDemoState final : public xy::State
 {
@@ -59,6 +64,12 @@ private:
     xy::FontResource m_fontResource;
 
     sf::Text m_reportText;
+
+    xy::MultiRenderTexture m_renderTexture;
+    sf::Shader m_deferredShader;
+    sf::Shader m_normalMapShader;
+
+    std::array<sf::Sprite, 4> m_sprites;
 
     void buildScene();
 };

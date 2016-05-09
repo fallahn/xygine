@@ -34,15 +34,7 @@ source distribution.
 
 namespace
 {
-    const std::string fragShader =
-        "#version 120\n"
-        "void main()\n"
-        "{\n"
-        "    gl_FragData[0] = gl_Color;\n"
-        "    gl_FragData[1] = vec4(vec3(1.0) - gl_Color.rgb, 1.0);\n"
-        "    gl_FragData[2] = vec4(0.0, 1.0, 1.0, 1.0);\n"
-        "    gl_FragData[3] = vec4(1.0, 1.0, 0.0, 1.0);\n"
-        "}";
+
 }
 
 MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
@@ -135,6 +127,7 @@ void MenuMainState::buildMenu()
 
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
     button->setText("Deferred Rendering");
+    button->setFontSize(26u);
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 675.f);
     button->addCallback([this]()

@@ -318,7 +318,7 @@ void Scene::reset()
     auto entity = Entity::create(m_messageBus);
     auto al = Component::create<AudioListener>(m_messageBus);
     entity->addComponent(al);
-    entity->setPosition(960.f, 540.f);
+    entity->setPosition(DefaultSceneSize / 2.f);
 
     auto camera = Component::create<Camera>(m_messageBus, sf::View(DefaultSceneSize / 2.f, DefaultSceneSize));
     m_defaultCamera = entity->addComponent(camera);
