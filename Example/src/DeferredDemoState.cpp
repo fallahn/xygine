@@ -27,6 +27,7 @@ source distribution.
 
 #include <CommandIds.hpp>
 #include <DeferredDemoState.hpp>
+#include <RotationComponent.hpp>
 
 #include <xygine/Reports.hpp>
 #include <xygine/Entity.hpp>
@@ -34,6 +35,7 @@ source distribution.
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/util/Position.hpp>
+#include <xygine/util/Const.hpp>
 
 #include <xygine/PostBloom.hpp>
 #include <xygine/PostChromeAb.hpp>
@@ -65,10 +67,37 @@ namespace
         "uniform sampler2D u_maskMap;\n"
         "uniform mat4 u_inverseWorldViewMatrix;\n"
 
+        "const vec3 tangent = vec3(1.0, 0.0, 0.0); \n"
+        "const vec3 normal = vec3(0.0, 0.0, 1.0); \n"
+
+        "mat3 inverse(mat3 m)\n"
+        "{\n"
+        "    float a00 = m[0][0], a01 = m[0][1], a02 = m[0][2];\n"
+        "    float a10 = m[1][0], a11 = m[1][1], a12 = m[1][2];\n"
+        "    float a20 = m[2][0], a21 = m[2][1], a22 = m[2][2];\n"
+
+        "    float b01 = a22 * a11 - a12 * a21;\n"
+        "    float b11 = -a22 * a10 + a12 * a20;\n"
+        "    float b21 = a21 * a10 - a11 * a20;\n"
+
+        "    float det = a00 * b01 + a01 * b11 + a02 * b21;\n"
+
+        "    return mat3(b01, (-a22 * a01 + a02 * a21), (a12 * a01 - a02 * a11),\n"
+        "        b11, (a22 * a00 - a02 * a20), (-a12 * a00 + a02 * a10),\n"
+        "        b21, (-a21 * a00 + a01 * a20), (a11 * a00 - a01 * a10)) / det;\n"
+        "}\n"
+
         "void main()\n"
         "{\n"
+
+        "    mat3 normalMatrix = transpose(mat3(u_inverseWorldViewMatrix));\n"
+        "    vec3 n = normalize(normalMatrix * normal);\n"
+        "    vec3 t = normalize(normalMatrix * tangent);\n"
+        "    vec3 b = cross(n,t);\n" \
+        "    mat3 tangentSpaceTransformMatrix = inverse(mat3(t.x, b.x, n.x, t.y, b.y, n.y, t.z, b.z, n.z));\n"
+
         "    gl_FragData[0] = texture2D(u_diffuseMap, gl_TexCoord[0].xy);\n"
-        "    gl_FragData[1] = texture2D(u_normalMap, gl_TexCoord[0].xy);\n"
+        "    gl_FragData[1] = texture2D(u_normalMap, gl_TexCoord[0].xy);//vec4(tangentSpaceTransformMatrix * texture2D(u_normalMap, gl_TexCoord[0].xy).rgb, 1.0);\n"
         "    gl_FragData[2] = texture2D(u_maskMap, gl_TexCoord[0].xy);\n"
         "}";
 }
@@ -83,12 +112,18 @@ DeferredDemoState::DeferredDemoState(xy::StateStack& stateStack, Context context
     //m_scene.setView(context.defaultView);
 
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
-    m_reportText.setPosition(1500.f, 630.f); 
+    m_reportText.setPosition(1500.f, 930.f); 
+
+    m_labelText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
+    m_labelText.setPosition(40.f, 20.f);
+    m_labelText.setString("OUTPUT                                               DIFFUSE                    NORMAL\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n                                                     MASK (R = intens, G = amount, B = illum)");
     
     //create g-buffer with 3 textures
     m_renderTexture.create(960, 1080, 3);
 
     m_deferredShader.loadFromMemory(fragShader, sf::Shader::Fragment);
+    //m_deferredShader.setUniform("u_rotationMatrix", rotationMatrix(90.f));
+
     m_normalMapShader.loadFromMemory(xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED_SPECULAR_ILLUM);
     m_normalMapShader.setUniform("u_diffuseMap", m_renderTexture.getTexture(0));
     m_normalMapShader.setUniform("u_normalMap", m_renderTexture.getTexture(1));
@@ -172,6 +207,7 @@ void DeferredDemoState::draw()
     rw.draw(m_sprites[3], &m_normalMapShader);
 
     rw.draw(m_reportText);
+    rw.draw(m_labelText);
 }
 
 bool DeferredDemoState::handleEvent(const sf::Event& evt)
@@ -271,17 +307,30 @@ void DeferredDemoState::buildScene()
 {
     //use a special camera to render to the texture if it's not the default scene size
     auto camera = xy::Component::create<xy::Camera>(m_messageBus, sf::View({}, { 960.f, 1080.f }));
+    auto entity = xy::Entity::create(m_messageBus);
+    entity->setPosition(480.f, 540.f);
+    
+    m_scene.setActiveCamera(entity->addComponent(camera));
+    m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
+    
+    //moving light
     auto light = xy::Component::create<xy::PointLight>(m_messageBus, 500.f, 250.f);
     light->setDepth(110.f);
     light->setDiffuseColour({ 255u, 185u, 135u });
     light->setIntensity(1.1f);
 
-    auto entity = xy::Entity::create(m_messageBus);
-    entity->setPosition(480.f, 540.f);
+    entity = xy::Entity::create(m_messageBus);
     entity->addComponent(light);
-    m_scene.setActiveCamera(entity->addComponent(camera));
-    m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
-    
+    entity->setPosition(120.f, 100.f);
+
+    auto rotatingEntity = xy::Entity::create(m_messageBus);
+    auto rotator = xy::Component::create<RotationComponent>(m_messageBus);
+    rotatingEntity->addComponent(rotator);
+    rotatingEntity->addChild(entity);
+    rotatingEntity->setPosition(480.f, 540.f);
+    m_scene.addEntity(rotatingEntity, xy::Scene::Layer::BackRear);
+
+
     //so we have flat colours behind the scene
     m_textureResource.setFallbackColour({ 100u, 100u, 100u });
     auto background = xy::Component::create<xy::AnimatedDrawable>(m_messageBus, m_textureResource.get("fallback_grey"));
@@ -321,6 +370,7 @@ void DeferredDemoState::buildScene()
     entity = xy::Entity::create(m_messageBus);
     entity->addComponent(doofer);
     entity->setPosition(440.f, 440.f);
+    //entity->setRotation(-90.f);
 
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 }

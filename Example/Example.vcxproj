@@ -91,6 +91,7 @@
     <ClInclude Include="include\PhysicsDemoLine.hpp" />
     <ClInclude Include="include\PhysicsDemoState.hpp" />
     <ClInclude Include="include\DeferredDemoState.hpp" />
+    <ClInclude Include="include\RotationComponent.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
     <ClInclude Include="include\TimedDestruction.hpp" />
   </ItemGroup>

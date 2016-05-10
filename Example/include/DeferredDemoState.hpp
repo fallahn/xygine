@@ -64,6 +64,7 @@ private:
     xy::FontResource m_fontResource;
 
     sf::Text m_reportText;
+    sf::Text m_labelText;
 
     xy::MultiRenderTexture m_renderTexture;
     sf::Shader m_deferredShader;
