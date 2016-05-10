@@ -6,7 +6,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
-SET(xygine_example_STATIC_SFML FALSE CACHE BOOL "Choose whether SFML is linked statically or not.")
+SET(xygine_example_STATIC_SFML FALSE CACHE BOOL "Choose whether SFML is linked statically or not. This must match Box2D linkage")
 SET(xygine_example_STATIC_RUNTIME FALSE CACHE BOOL "Use statically linked standard/runtime libraries? This option must match the one used for SFML.")
 
 
@@ -25,64 +25,45 @@ if(xygine_example_STATIC_SFML)
   SET(SFML_STATIC_LIBRARIES TRUE)
 endif()
 
+SET(SFML_MIN_VERSION "2.3.2")
 if(WIN32)
-  find_package(SFML 2.3.2 REQUIRED graphics window audio system network main)
+  find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system network main)
 else()
-  find_package(SFML 2.3.2 REQUIRED graphics window audio system network)
+  find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system network)
 endif()
 
 if(UNIX)
   find_package(X11 REQUIRED)
 endif()
 
-find_package(BOX2D 2.3.2 REQUIRED)
-find_package(OpenGL REQUIRED)
+SET(BOX2D_MIN_VERSION "2.3.2")
+find_package(BOX2D ${BOX2D_MIN_VERSION} REQUIRED)
+find_package(XYGINE REQUIRED)
 
 include_directories(
+  ${XY_INCLUDE_DIR}
   ${SFML_INCLUDE_DIR}
   ${BOX2D_INCLUDE_DIR}  
-  ${OPENGL_INCLUDE_DIRECTORIES}
-  ${CMAKE_SOURCE_DIR}/include
-  ${CMAKE_SOURCE_DIR}/../xygine/include)
+  ${CMAKE_SOURCE_DIR}/include)
 
 if(X11_FOUND)
   include_directories(${X11_INCLUDE_DIRS})
 endif()
 
 
-SET(XY_DIR ${CMAKE_SOURCE_DIR}/../xygine/src)
-include(${XY_DIR}/CMakeLists.txt)
-
-SET(EXAMPLE_SRC
-  src/Game.cpp
-  src/CaveDemoDrawable.cpp
-  src/DeferredDemoState.cpp
-  src/main.cpp
-  src/MenuMainState.cpp
-  src/MenuOptionState.cpp
-  src/NetworkDemoBallLogic.cpp
-  src/NetworkDemoBot.cpp
-  src/NetworkDemoCollisions.cpp
-  src/NetworkDemoController.cpp
-  src/NetworkDemoPlayerController.cpp
-  src/NetworkDemoServer.cpp
-  src/NetworkDemoState.cpp
-  src/ParticleDemoState.cpp
-  src/PhysicsDemoInputController.cpp
-  src/PhysicsDemoLine.cpp
-  src/PhysicsDemoState.cpp)
+  include(${CMAKE_SOURCE_DIR}/src/CMakeLists.txt)
 
 if(WIN32)
-  add_executable(xygine_example WIN32 ${EXAMPLE_SRC} ${XY_SRC})
+  add_executable(xygine_example WIN32 ${EXAMPLE_SRC})
 else()
-  add_executable(xygine_example ${EXAMPLE_SRC} ${XY_SRC})
+  add_executable(xygine_example ${EXAMPLE_SRC})
 endif()
 
 target_link_libraries(xygine_example
   ${SFML_LIBRARIES}
   ${SFML_DEPENDENCIES}
   ${BOX2D_LIBRARIES}
-  ${OPENGL_LIBRARIES})
+  ${XY_LIBRARIES})
 
 if(UNIX)
   target_link_libraries(xygine_example
