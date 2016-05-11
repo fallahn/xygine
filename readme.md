@@ -3,26 +3,26 @@ xygine
 
 ![Logo by Baard](xygine/xygine.png?raw=true)
 
-2D Game Engine Framework built around SFML. xygine implements a scene  
-graph along with an Entity Component System. I use this as the starting  
-point for new projects, as it evolves slowly over time. The source for  
-xygine is released under the zlib license in the hope that it may be  
-useful for other people - but offers no warranty that it is fit for any  
-particular purpose, even those for which it was specifically written...  
+2D Game Engine Framework built around SFML. xygine implements a scene
+graph along with an Entity Component System. I use this as the starting
+point for new projects, as it evolves slowly over time. The source for
+xygine is released under the zlib license in the hope that it may be
+useful for other people - but offers no warranty that it is fit for any
+particular purpose, even those for which it was specifically written...
 
 
-Details of xygine features are available on the [xygine wiki](https://github.com/fallahn/xygine/wiki) or for a  
-detailed example of xygine take a look at [Pseuthe](https://github.com/fallahn/pseuthe) which was built  
-using an earlier version of xygine. The repository also contains an  
-[example](https://github.com/fallahn/xygine/tree/master/Example) application containing various demos, and is partially  
-documented with doxygen, which can be generated via the included [doxy](https://github.com/fallahn/xygine/tree/master/xygine/documentation)  
-file (PRs for doxy comment updates are welcome).
+Details of xygine features are available on the [xygine wiki](https://github.com/fallahn/xygine/wiki) or for a
+detailed example of xygine take a look at [Pseuthe](https://github.com/fallahn/pseuthe) which was built
+using an earlier version of xygine. The repository also contains an
+[example](https://github.com/fallahn/xygine/tree/master/Example) application containing various demos, and is
+documented with doxygen, which can be generated via the included [doxy](https://github.com/fallahn/xygine/tree/master/xygine/documentation)
+file.
 
 
 ######Why xygine?
 
-The name is simply derived from the fact that this is a 2D framework -   
-hence xy, followed by the gine part of engine (although technically  
+The name is simply derived from the fact that this is a 2D framework -
+hence xy, followed by the gine part of engine (although technically
 xygine isn't really an engine).
 
 
