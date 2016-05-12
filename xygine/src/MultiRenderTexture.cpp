@@ -57,20 +57,20 @@ MultiRenderTexture::~MultiRenderTexture()
     if (m_depthbuffer)
     {
         GLuint depthbuffer = static_cast<GLuint>(m_depthbuffer);
-        glCheck(glDeleteRenderbuffersEXT(1, &depthbuffer));
+        glCheck(glDeleteRenderbuffers(1, &depthbuffer));
     }
 
     if (m_fbo)
     {
         GLuint fbo = static_cast<GLuint>(m_fbo);
-        glCheck(glDeleteFramebuffersEXT(1, &fbo));
+        glCheck(glDeleteFramebuffers(1, &fbo));
     }
 }
 
 //public
 bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, std::size_t count, bool depthBuffer)
 {    
-    if (ogl_ext_EXT_framebuffer_object == 0)
+    if (!glGenFramebuffers)
     {
         Logger::log("OpenGL extensions required for MRT are unavailble", Logger::Type::Error, Logger::Output::All);
         return false;
@@ -95,49 +95,49 @@ bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, std::size_t
     {
         m_context = std::make_unique<sf::Context>();
         GLuint fbo = 0;
-        glCheck(glGenFramebuffersEXT(1, &fbo));
+        glCheck(glGenFramebuffers(1, &fbo));
         m_fbo = static_cast<unsigned int>(fbo);
         if (m_fbo == 0)
         {
             Logger::log("Failed creating FBO for MRT", xy::Logger::Type::Error, xy::Logger::Output::All);
             return false;
         }
-        glCheck(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo));
+        glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
 
         if (depthBuffer)
         {
             GLuint depth = 0;
-            glCheck(glGenRenderbuffersEXT(1, &depth));
+            glCheck(glGenRenderbuffers(1, &depth));
             m_depthbuffer = static_cast<unsigned int>(depth);
             if (m_depthbuffer == 0)
             {
                 Logger::log("Failed creating depth buffer for MRT", Logger::Type::Error, Logger::Output::All);
                 return false;
             }
-            glCheck(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthbuffer));
-            glCheck(glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, width, height));
-            glCheck(glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthbuffer));
+            glCheck(glBindRenderbuffer(GL_RENDERBUFFER, m_depthbuffer));
+            glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height));
+            glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer));
         }
         //attach textures
         for (auto i = 0u; i < count; ++i)
         {
-            glCheck(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, m_textures[i].getNativeHandle(), 0));
+            glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, m_textures[i].getNativeHandle(), 0));
         }
 
         //tell draw buffers which textures to use
         std::vector<GLenum> buffers;
         for (auto i = 0u; i < count; ++i)
         {
-            buffers.push_back(GL_COLOR_ATTACHMENT0_EXT + i);
+            buffers.push_back(GL_COLOR_ATTACHMENT0 + i);
         }
         glCheck(glDrawBuffers(count, buffers.data()));
 
         //check everything went OK
         GLenum result;
-        glCheck(result = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT));
-        if (result != GL_FRAMEBUFFER_COMPLETE_EXT)
+        glCheck(result = glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        if (result != GL_FRAMEBUFFER_COMPLETE)
         {
-            glCheck(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
+            glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
             Logger::log("Failed to attach texture to FBO", xy::Logger::Type::Error, xy::Logger::Output::All);
             return false;
         }

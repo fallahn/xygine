@@ -81,7 +81,7 @@ namespace xy
                     break;
                 }
 
-                case GL_STACK_OVERFLOW:
+                /*case GL_STACK_OVERFLOW:
                 {
                     error = "GL_STACK_OVERFLOW";
                     description = "This command would cause a stack overflow.";
@@ -93,7 +93,7 @@ namespace xy
                     error = "GL_STACK_UNDERFLOW";
                     description = "This command would cause a stack underflow.";
                     break;
-                }
+                }*/
 
                 case GL_OUT_OF_MEMORY:
                 {
