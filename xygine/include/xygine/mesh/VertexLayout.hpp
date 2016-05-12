@@ -84,6 +84,7 @@ namespace xy
         */
         explicit VertexLayout(const std::vector<Element>&);
         ~VertexLayout() = default;
+        VertexLayout(const VertexLayout&) = default;
         VertexLayout(VertexLayout&&) noexcept = default;
         /*!
         \brief Returns a reference to the element at the given index
@@ -98,14 +99,14 @@ namespace xy
         */
         std::size_t getVertexSize() const;
         /*!
-        \brief Returns the index in the element array of the given 
+        \brief Returns the index in the element array of the given
         element type or -1 if that element doesn't exist.
         For example this will return 1 when requesting the second
         element type in the vertex, regardless of the element size.
         */
         sf::Int32 getElementIndex(Element::Type) const;
         /*!
-        \brief Returns the index in the vertex array of the given 
+        \brief Returns the index in the vertex array of the given
         element type if it exists, else returns -1.
         For example requesting the third element will return the
         sum of the sizes of the first two elements.

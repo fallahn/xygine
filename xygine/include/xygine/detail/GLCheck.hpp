@@ -46,7 +46,7 @@ namespace xy
 {
     namespace Detail
     {
-        void glErrorCheck(const char* file, unsigned int line, const char* expression)
+        static inline void glErrorCheck(const char* file, unsigned int line, const char* expression)
         {
             //get the last error
             GLenum errorCode = glGetError();

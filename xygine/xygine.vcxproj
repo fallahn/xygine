@@ -157,6 +157,9 @@
     <ClCompile Include="src\components\ComponentPointLight.cpp" />
     <ClCompile Include="src\components\QuadTreeComponent.cpp" />
     <ClCompile Include="src\GLExtensions.cpp" />
+    <ClCompile Include="src\mesh\Mesh.cpp" />
+    <ClCompile Include="src\mesh\SubMesh.cpp" />
+    <ClCompile Include="src\mesh\VertexLayout.cpp" />
     <ClCompile Include="src\MultiRenderTexture.cpp" />
     <ClCompile Include="src\network\AckSystem.cpp" />
     <ClCompile Include="src\network\ClientConnection.cpp" />
@@ -228,6 +231,10 @@
     <ClInclude Include="include\xygine\components\PointLight.hpp" />
     <ClInclude Include="include\xygine\Config.hpp" />
     <ClInclude Include="include\xygine\detail\GLCheck.hpp" />
+    <ClInclude Include="include\xygine\detail\GLExtensions.hpp" />
+    <ClInclude Include="include\xygine\mesh\Mesh.hpp" />
+    <ClInclude Include="include\xygine\mesh\SubMesh.hpp" />
+    <ClInclude Include="include\xygine\mesh\VertexLayout.hpp" />
     <ClInclude Include="include\xygine\MultiRenderTexture.hpp" />
     <ClInclude Include="include\xygine\network\AckSystem.hpp" />
     <ClInclude Include="include\xygine\network\ClientConnection.hpp" />

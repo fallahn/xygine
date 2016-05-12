@@ -24,6 +24,7 @@ set(XY_SRC
   ${XY_DIR}/SoundPlayer.cpp
   ${XY_DIR}/State.cpp
   ${XY_DIR}/StateStack.cpp
+
   ${XY_DIR}/components/Component.cpp
   ${XY_DIR}/components/ComponentAnimatedDrawable.cpp
   ${XY_DIR}/components/ComponentAnimationController.cpp 
@@ -33,13 +34,20 @@ set(XY_SRC
   ${XY_DIR}/components/ComponentParticleController.cpp
   ${XY_DIR}/components/ComponentParticleSystem.cpp  
   ${XY_DIR}/components/ComponentPointLight.cpp  
-  ${XY_DIR}/components/QuadTreeComponent.cpp  
+  ${XY_DIR}/components/QuadTreeComponent.cpp 
+
+  ${XY_DIR}/mesh/Mesh.cpp
+  ${XY_DIR}/mesh/SubMesh.cpp
+  ${XY_DIR}/mesh/VertexLayout.cpp
+
   ${XY_DIR}/network/AckSystem.cpp
   ${XY_DIR}/network/ClientConnection.cpp
   ${XY_DIR}/network/FlowControl.cpp
   ${XY_DIR}/network/PacketQueue.cpp
   ${XY_DIR}/network/ServerConnection.cpp
+
   ${XY_DIR}/parsers/pugixml.cpp  
+
   ${XY_DIR}/physics/PhysicsAffectorAreaForce.cpp
   ${XY_DIR}/physics/PhysicsAffectorConstantForce.cpp
   ${XY_DIR}/physics/PhysicsAffectorPointForce.cpp
@@ -60,11 +68,13 @@ set(XY_SRC
   ${XY_DIR}/physics/PhysicsJointWheel.cpp
   ${XY_DIR}/physics/PhysicsRigidBody.cpp
   ${XY_DIR}/physics/PhysicsWorld.cpp
+
   ${XY_DIR}/spriter/SpriterDocument.cpp
   ${XY_DIR}/spriter/SpriterDocumentAttribute.cpp
   ${XY_DIR}/spriter/SpriterDocumentElement.cpp
   ${XY_DIR}/spriter/SpriterHelpers.cpp
   ${XY_DIR}/spriter/SpriterModel.cpp
+
   ${XY_DIR}/ui/UIButton.cpp
   ${XY_DIR}/ui/UICheckBox.cpp
   ${XY_DIR}/ui/UIComboBox.cpp

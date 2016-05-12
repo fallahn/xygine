@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "GLExtensions.hpp"
+#include <xygine/detail/GLExtensions.hpp>
 
 #include <xygine/App.hpp>
 #include <xygine/util/Math.hpp>

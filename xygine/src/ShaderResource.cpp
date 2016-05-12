@@ -26,6 +26,8 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/ShaderResource.hpp>
+#include <xygine/detail/GLCheck.hpp>
+#include <xygine/detail/GLExtensions.hpp>
 
 #include <SFML/Graphics/Shader.hpp>
 
@@ -44,6 +46,20 @@ sf::Shader& ShaderResource::get(ShaderResource::Id type)
     return *result->second;
 }
 
+VertexAttribID ShaderResource::getAttribute(ShaderResource::Id type, const std::string& attribute) const
+{
+    auto result = m_attributes.find(type);
+    XY_ASSERT(result != m_attributes.end(), "shader not loaded - did you forget to preload this shader?");
+
+    auto attrib = result->second.find(attribute);
+    if (attrib != result->second.end())
+    {
+        return attrib->second;
+    }
+    XY_WARNING(attrib == result->second.end(), attribute + ": not found in shader");
+    return -1;
+}
+
 void ShaderResource::preload(ShaderResource::Id type, const std::string& vertShader, const std::string& fragShader)
 {
     auto shader = std::make_unique<sf::Shader>();
@@ -52,6 +68,35 @@ void ShaderResource::preload(ShaderResource::Id type, const std::string& vertSha
 #else
     XY_ASSERT(shader->loadFromMemory(vertShader, fragShader), "failed to create shader");
 #endif //_DEBUG_
+
+    //look up the shader attributes and store them
+    m_attributes.insert(std::make_pair(type, std::map<std::string, VertexAttribID>()));
+
+    sf::Shader::bind(shader.get());
+    GLint activeAttribs;
+    glCheck(glGetProgramiv(shader->getNativeHandle(), GL_ACTIVE_ATTRIBUTES, &activeAttribs));
+    if (activeAttribs > 0)
+    {
+        GLint length;
+        glCheck(glGetProgramiv(shader->getNativeHandle(), GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &length));
+        if (length > 0)
+        {
+            std::vector<GLchar> attribName(length + 1);
+            GLint attribSize;
+            GLenum attribType;
+            GLint attribLocation;
+
+            for (auto i = 0u; i < activeAttribs; ++i)
+            {
+                glCheck(glGetActiveAttrib(shader->getNativeHandle(), i, length, nullptr, &attribSize, &attribType, attribName.data()));
+                attribName[length] = '\0';
+
+                glCheck(attribLocation = glGetAttribLocation(shader->getNativeHandle(), attribName.data()));
+                m_attributes[type].insert(std::make_pair(attribName.data(), attribLocation));
+            }
+        }
+    }
+    sf::Shader::bind(nullptr);
 
     m_shaders.insert(std::make_pair(type, std::move(shader)));
 }

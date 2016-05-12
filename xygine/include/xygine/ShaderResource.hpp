@@ -85,7 +85,21 @@ namespace xy
         */
         void preload(Id, const std::string&, const std::string&);
 
+        /*!
+        \brief Returns the Attribute ID of a shader attribute if it is found else
+        returns -1.
+
+        Vertex attributes such as position/colour/texcoord can be retrieved from shader
+        when not using the fixed function pipeline. This is mainly included in xygine
+        for working with shaders applied to 3D models which require VAO bindings. 2D
+        shaders can be used via the SFML API as normal.
+        \param Id ID of shader to query
+        \param std::string Name of attribute to look up
+        */
+        VertexAttribID getAttribute(Id, const std::string&) const;
+
     private:
+        std::map<Id, std::map<std::string, VertexAttribID>> m_attributes;
         std::map<Id, std::unique_ptr<sf::Shader>> m_shaders;
     };
 }
