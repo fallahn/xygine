@@ -73,7 +73,7 @@ namespace xy
             */
             sf::Uint32 size;
             Element();
-            Element(Type, sf::Uint32);
+            Element(Type, std::size_t);
 
             bool operator == (const Element&) const;
             bool operator != (const Element&) const;

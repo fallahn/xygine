@@ -188,7 +188,7 @@ void ScoreList::updateTexts(float scrollAmount)
         text.move(0.f, scrollAmount);
         const float diff = std::abs(centre - text.getPosition().y);
         const float ratio = 1.f - (diff / m_bounds.height);
-        sf::Color colour = text.getColor();
+        sf::Color colour = text.getFillColor();
         colour.a = static_cast<sf::Uint8>(ratio * 255.f);
         text.setFillColor(colour);
         text.setScale(ratio, ratio);

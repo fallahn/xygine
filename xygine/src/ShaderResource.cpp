@@ -86,7 +86,7 @@ void ShaderResource::preload(ShaderResource::Id type, const std::string& vertSha
             GLenum attribType;
             GLint attribLocation;
 
-            for (auto i = 0u; i < activeAttribs; ++i)
+            for (auto i = 0; i < activeAttribs; ++i)
             {
                 glCheck(glGetActiveAttrib(shader->getNativeHandle(), i, length, nullptr, &attribSize, &attribType, attribName.data()));
                 attribName[length] = '\0';
