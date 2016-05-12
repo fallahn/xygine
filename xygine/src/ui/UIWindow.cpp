@@ -68,7 +68,7 @@ Window::Window(sf::RenderWindow& rw, xy::MessageBus& mb, const sf::Font& font, s
 
     m_cropShader.loadFromMemory(Shader::Cropping::fragment, sf::Shader::Fragment);
     auto size = rw.mapCoordsToPixel(m_backgroundShape.getSize());
-    m_cropShader.setParameter("u_size", sf::Vector2f(size));
+    m_cropShader.setUniform("u_size", sf::Vector2f(size));
 }
 
 //public
@@ -77,7 +77,7 @@ void Window::update(float dt)
     //we have to do this here to hook any repositioning
     //from inheriting sf::Transform
     auto position = m_renderWindow.mapCoordsToPixel(getPosition());
-    m_cropShader.setParameter("u_position", sf::Vector2f(position));
+    m_cropShader.setUniform("u_position", sf::Vector2f(position));
     m_container.update(dt);
 }
 
@@ -110,7 +110,7 @@ void Window::handleEvent(const sf::Event& evt, const sf::Vector2f& mousePos)
             m_titleBar.setSize({ m_backgroundShape.getSize().x, titleBarHeight });
 
             auto size = m_renderWindow.mapCoordsToPixel(m_backgroundShape.getSize());
-            m_cropShader.setParameter("u_size", sf::Vector2f(size));
+            m_cropShader.setUniform("u_size", sf::Vector2f(size));
         }
         break;
     default: break;
@@ -133,7 +133,7 @@ void Window::setPalette(const Palette& p)
     m_resizeHandle.setFillColor(m_palette.background);
     m_resizeHandle.setOutlineColor(m_palette.borderNormal);
 
-    m_titleText.setColor(m_palette.font);
+    m_titleText.setFillColor(m_palette.font);
 }
 
 void Window::setTitle(const std::string& str)

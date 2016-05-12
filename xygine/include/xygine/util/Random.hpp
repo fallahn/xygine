@@ -42,7 +42,7 @@ namespace xy
         */
         namespace Random
         {
-            static std::default_random_engine rndEngine(static_cast<unsigned long>(std::time(0)));
+            static std::default_random_engine rndEngine(static_cast<unsigned long>(std::time(nullptr)));
 
             /*!
             \brief Returns a pseudo random floating point value

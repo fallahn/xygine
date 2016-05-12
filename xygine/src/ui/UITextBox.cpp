@@ -62,7 +62,7 @@ TextBox::TextBox(const sf::Font& font, const sf::Color& backColour, const sf::Co
 
     m_cursorShape.setFillColor(m_selectedColour);
 
-    m_text.setColor(borderColour);
+    m_text.setFillColor(borderColour);
     m_text.setPosition(padding, 0.f);
 
     setAlignment(m_currentAlignment);
