@@ -30,6 +30,7 @@ source distribution.
 
 #include <xygine/components/Component.hpp>
 #include <xygine/mesh/MeshRenderer.hpp>
+#include <xygine/mesh/Material.hpp>
 
 #include <SFML/Graphics/Glsl.hpp>
 
@@ -78,6 +79,8 @@ namespace xy
         glm::mat4 m_worldMatrix;
         const Mesh& m_mesh;
         float m_depth;
+
+        
 
         void draw(const glm::mat4&) const;
     };

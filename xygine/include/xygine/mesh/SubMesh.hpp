@@ -35,8 +35,7 @@ namespace xy
     /*!
     \brief SubMeshes represent an Index Array within a mesh.
     Usually SubMeshes are used when switching between multiple
-    materials within a single model. SubMeshes are owned by their
-    parent mesh, and are therefore non-copyable.
+    materials within a single model.
     */
     class XY_EXPORT_API SubMesh final
     {

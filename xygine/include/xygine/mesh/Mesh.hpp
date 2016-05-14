@@ -70,7 +70,6 @@ namespace xy
             Triangles     = GL_TRIANGLES,
             TriangleStrip = GL_TRIANGLE_STRIP
         };
-
         /*!
         \brief Constructor
         \param VertexLayout Description of the vertex layout used by this mesh
@@ -81,7 +80,7 @@ namespace xy
         ~Mesh();
         Mesh(const Mesh&) = delete;
         const Mesh& operator = (const Mesh&) = delete;
-        Mesh(Mesh&&) noexcept = default;
+        /*Mesh(Mesh&&) noexcept = default;*/
         Mesh& operator = (Mesh&&) = default;
 
         /*!

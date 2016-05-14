@@ -25,35 +25,37 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/ShaderResource.hpp>
-#include <xygine/detail/GLCheck.hpp>
-#include <xygine/detail/GLExtensions.hpp>
+#ifndef XY_VERT_ATTRIB_HPP_
+#define XY_VERT_ATTRIB_HPP_
 
-#include <SFML/Graphics/Shader.hpp>
+#include <xygine/Config.hpp>
 
-#include <xygine/Assert.hpp>
+#include <unordered_map>
+#include <string>
 
-using namespace xy;
-
-ShaderResource::ShaderResource(){}
-
-//public
-sf::Shader& ShaderResource::get(ShaderResource::Id type)
+namespace xy
 {
-    auto result = m_shaders.find(type);
-    XY_ASSERT(result != m_shaders.end(), "shader not loaded - did you forget to preload this shader?");
+    using AttribList = std::unordered_map<std::string, VertexAttribID>;
 
-    return *result->second;
+    class Mesh;
+    class Material;
+    class XY_EXPORT_API VertexAttribBinding final
+    {
+    public:
+        VertexAttribBinding(const Mesh&, const Material&);
+        ~VertexAttribBinding();
+        VertexAttribBinding(const VertexAttribBinding&) = delete;
+        VertexAttribBinding& operator = (const VertexAttribBinding&) = delete;
+        VertexAttribBinding(VertexAttribBinding&&) noexcept = default;
+        VertexAttribBinding& operator = (VertexAttribBinding&&) = default;
+
+        void bind();
+        void unbind();
+
+    private:
+
+        GLuint m_id;
+    };
 }
 
-void ShaderResource::preload(ShaderResource::Id type, const std::string& vertShader, const std::string& fragShader)
-{
-    auto shader = std::make_unique<sf::Shader>();
-#ifndef _DEBUG_
-    shader->loadFromMemory(vertShader, fragShader);
-#else
-    XY_ASSERT(shader->loadFromMemory(vertShader, fragShader), "failed to create shader");
-#endif //_DEBUG_
-
-    m_shaders.insert(std::make_pair(type, std::move(shader)));
-}
+#endif //XY_VERT_ATTRIB_HPP_

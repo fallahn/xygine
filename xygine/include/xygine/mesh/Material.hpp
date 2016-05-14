@@ -34,6 +34,7 @@ source distribution.
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 namespace sf
 {
@@ -54,7 +55,7 @@ namespace xy
     values) which are applied to the shader, such as textures or matrices.
     Materials may also have UniformBuffers added to them for convenience.
     */
-    class Material final
+    class XY_EXPORT_API Material final
     {
     public:
         /*!
@@ -130,11 +131,24 @@ namespace xy
         */
         bool addUniformBuffer(const UniformBuffer&);
 
+        /*!
+        \brief Returns the attribute ID of the requested vertex attribute if it
+        exists in the Material's shader, else returns -1
+        */
+        VertexAttribID getVertexAttributeID(const std::string&) const;
+
+        /*!
+        \brief Returns a read-only pointer to the Material shader
+        */
+        const sf::Shader* getShader() const { return &m_shader; }
+
     private:
         sf::Shader& m_shader;
 
         std::vector<Property> m_properties;
         std::vector<std::pair<UniformBlockID, const UniformBuffer*>> m_uniformBuffers;
+
+        std::unordered_map<std::string, VertexAttribID> m_vertexAttributes;
     };
 }
 

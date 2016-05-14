@@ -35,7 +35,30 @@ using namespace xy;
 Material::Material(sf::Shader& shader)
     : m_shader(shader)
 {
-    //TODO look up shader attributes
+    //look up the shader attributes and store them
+    GLint activeAttribs;
+    glCheck(glGetProgramiv(shader.getNativeHandle(), GL_ACTIVE_ATTRIBUTES, &activeAttribs));
+    if (activeAttribs > 0)
+    {
+        GLint length;
+        glCheck(glGetProgramiv(shader.getNativeHandle(), GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &length));
+        if (length > 0)
+        {
+            std::vector<GLchar> attribName(length + 1);
+            GLint attribSize;
+            GLenum attribType;
+            GLint attribLocation;
+
+            for (auto i = 0; i < activeAttribs; ++i)
+            {
+                glCheck(glGetActiveAttrib(shader.getNativeHandle(), i, length, nullptr, &attribSize, &attribType, attribName.data()));
+                attribName[length] = '\0';
+
+                glCheck(attribLocation = glGetAttribLocation(shader.getNativeHandle(), attribName.data()));
+                m_vertexAttributes.insert(std::make_pair(attribName.data(), attribLocation));
+            }
+        }
+    }
 }
 
 //public
@@ -84,4 +107,10 @@ bool Material::addUniformBuffer(const UniformBuffer& ubo)
     }
     LOG("Uniform block " + ubo.getName() + " not found in Material", xy::Logger::Type::Error);
     return false;
+}
+
+VertexAttribID Material::getVertexAttributeID(const std::string& str) const
+{
+    auto result = m_vertexAttributes.find(str);
+    return (result == m_vertexAttributes.end()) ? -1 : result->second;
 }

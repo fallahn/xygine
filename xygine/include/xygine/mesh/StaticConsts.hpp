@@ -25,35 +25,21 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/ShaderResource.hpp>
-#include <xygine/detail/GLCheck.hpp>
-#include <xygine/detail/GLExtensions.hpp>
+#ifndef XY_STATIC_CONSTS_HPP_
+#define XY_STATIC_CONSTS_HPP_
 
-#include <SFML/Graphics/Shader.hpp>
+#include <string>
 
-#include <xygine/Assert.hpp>
-
-using namespace xy;
-
-ShaderResource::ShaderResource(){}
-
-//public
-sf::Shader& ShaderResource::get(ShaderResource::Id type)
+namespace xy
 {
-    auto result = m_shaders.find(type);
-    XY_ASSERT(result != m_shaders.end(), "shader not loaded - did you forget to preload this shader?");
-
-    return *result->second;
+    static const std::string VertexAttribPosition("a_position");
+    static const std::string VertexAttribColour("a_colour");
+    static const std::string VertexAttribNormal("a_normal");
+    static const std::string VertexAttribTangent("a_tangent");
+    static const std::string VertexAttribBitangent("a_bitangent");
+    static const std::string VertexAttribUV0("a_texCoord0");
+    static const std::string VertexAttribUV1("a_texCoord1");
+    static const std::string VertexAttribBlendIndices("a_boneIndices");
+    static const std::string VertexAttribBlendWeights("a_boneWeights");
 }
-
-void ShaderResource::preload(ShaderResource::Id type, const std::string& vertShader, const std::string& fragShader)
-{
-    auto shader = std::make_unique<sf::Shader>();
-#ifndef _DEBUG_
-    shader->loadFromMemory(vertShader, fragShader);
-#else
-    XY_ASSERT(shader->loadFromMemory(vertShader, fragShader), "failed to create shader");
-#endif //_DEBUG_
-
-    m_shaders.insert(std::make_pair(type, std::move(shader)));
-}
+#endif //XY_STATIC_CONSTS_HPP_

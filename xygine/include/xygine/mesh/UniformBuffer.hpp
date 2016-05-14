@@ -58,6 +58,8 @@ namespace xy
         */
         UniformBuffer(const std::string&);
         ~UniformBuffer();
+        UniformBuffer(const UniformBuffer&) = delete;
+        UniformBuffer& operator = (const UniformBuffer&) = delete;
 
         /*!
         \brief Creates (or re-creates) the buffer with the given data.

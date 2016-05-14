@@ -43,6 +43,7 @@ set(XY_SRC
   ${XY_DIR}/mesh/MeshRenderer.cpp
   ${XY_DIR}/mesh/SubMesh.cpp
   ${XY_DIR}/mesh/UniformBuffer.cpp
+  ${XY_DIR}/mesh/VertexAttribBinding.cpp
   ${XY_DIR}/mesh/VertexLayout.cpp
 
   ${XY_DIR}/network/AckSystem.cpp
