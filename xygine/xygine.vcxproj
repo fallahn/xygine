@@ -161,6 +161,7 @@
     <ClCompile Include="src\mesh\Mesh.cpp" />
     <ClCompile Include="src\mesh\MeshRenderer.cpp" />
     <ClCompile Include="src\mesh\SubMesh.cpp" />
+    <ClCompile Include="src\mesh\UniformBuffer.cpp" />
     <ClCompile Include="src\mesh\VertexLayout.cpp" />
     <ClCompile Include="src\MultiRenderTexture.cpp" />
     <ClCompile Include="src\network\AckSystem.cpp" />
@@ -238,6 +239,7 @@
     <ClInclude Include="include\xygine\mesh\Mesh.hpp" />
     <ClInclude Include="include\xygine\mesh\MeshRenderer.hpp" />
     <ClInclude Include="include\xygine\mesh\SubMesh.hpp" />
+    <ClInclude Include="include\xygine\mesh\UniformBuffer.hpp" />
     <ClInclude Include="include\xygine\mesh\VertexLayout.hpp" />
     <ClInclude Include="include\xygine\MultiRenderTexture.hpp" />
     <ClInclude Include="include\xygine\network\AckSystem.hpp" />

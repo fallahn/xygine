@@ -79,6 +79,7 @@ namespace xy
     using VertexBufferID = GLuint;
     using IndexBufferID = GLuint;
     using VertexAttribID = GLint;
+    using UniformBufferID = GLuint;
 }
 
 #endif //XY_CONFIG_HPP_

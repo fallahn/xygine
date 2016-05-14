@@ -315,6 +315,9 @@
     <ClCompile Include="src\components\ComponentModel.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
+    <ClCompile Include="src\mesh\UniformBuffer.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -658,6 +661,9 @@
     </ClInclude>
     <ClInclude Include="include\xygine\components\Model.hpp">
       <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\UniformBuffer.hpp">
+      <Filter>Header Files\mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
