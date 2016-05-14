@@ -158,8 +158,10 @@
     <ClCompile Include="src\components\ComponentPointLight.cpp" />
     <ClCompile Include="src\components\QuadTreeComponent.cpp" />
     <ClCompile Include="src\GLExtensions.cpp" />
+    <ClCompile Include="src\mesh\MaterialProperty.cpp" />
     <ClCompile Include="src\mesh\Mesh.cpp" />
     <ClCompile Include="src\mesh\MeshRenderer.cpp" />
+    <ClCompile Include="src\mesh\Material.cpp" />
     <ClCompile Include="src\mesh\SubMesh.cpp" />
     <ClCompile Include="src\mesh\UniformBuffer.cpp" />
     <ClCompile Include="src\mesh\VertexLayout.cpp" />
@@ -236,6 +238,7 @@
     <ClInclude Include="include\xygine\Config.hpp" />
     <ClInclude Include="include\xygine\detail\GLCheck.hpp" />
     <ClInclude Include="include\xygine\detail\GLExtensions.hpp" />
+    <ClInclude Include="include\xygine\mesh\Material.hpp" />
     <ClInclude Include="include\xygine\mesh\Mesh.hpp" />
     <ClInclude Include="include\xygine\mesh\MeshRenderer.hpp" />
     <ClInclude Include="include\xygine\mesh\SubMesh.hpp" />

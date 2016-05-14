@@ -75,10 +75,8 @@ UniformBuffer::~UniformBuffer()
 }
 
 //public
-void UniformBuffer::bind(const Material& material)
+void UniformBuffer::bind(ShaderID shaderID, UniformBlockID blockID) const
 {
-    auto shaderID = 0; //TODO material.getShaderID();
-    auto blockIndex = 0; //TODO get blockindex from material generated when we added this UBO to it
     glCheck(glBindBufferBase(GL_UNIFORM_BUFFER, m_index, m_id));
-    glCheck(glUniformBlockBinding(shaderID, blockIndex, m_index));
+    glCheck(glUniformBlockBinding(shaderID, blockID, m_index));
 }

@@ -80,6 +80,8 @@ namespace xy
     using IndexBufferID = GLuint;
     using VertexAttribID = GLint;
     using UniformBufferID = GLuint;
+    using UniformBlockID = GLuint;
+    using ShaderID = GLuint;
 }
 
 #endif //XY_CONFIG_HPP_

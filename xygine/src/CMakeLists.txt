@@ -37,6 +37,8 @@ set(XY_SRC
   ${XY_DIR}/components/ComponentPointLight.cpp  
   ${XY_DIR}/components/QuadTreeComponent.cpp 
 
+  ${XY_DIR}/mesh/Material.cpp
+  ${XY_DIR}/mesh/MaterialProperty.cpp
   ${XY_DIR}/mesh/Mesh.cpp
   ${XY_DIR}/mesh/MeshRenderer.cpp
   ${XY_DIR}/mesh/SubMesh.cpp

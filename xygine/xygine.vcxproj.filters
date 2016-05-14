@@ -318,6 +318,12 @@
     <ClCompile Include="src\mesh\UniformBuffer.cpp">
       <Filter>Source Files\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="src\mesh\MaterialProperty.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\Material.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -663,6 +669,9 @@
       <Filter>Header Files\components</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\mesh\UniformBuffer.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\Material.hpp">
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
   </ItemGroup>

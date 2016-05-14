@@ -38,7 +38,6 @@ source distribution.
 
 namespace xy
 {
-    class Material;
     /*!
     \brief Uniform Buffer class.
     Uniform buffers provide a single point of access for updating
@@ -116,7 +115,7 @@ namespace xy
         /*!
         \brief Binds the UniformBuffer to the provided Material for drawing
         */
-        void bind(const Material&);
+        void bind(ShaderID, UniformBlockID) const;
 
         /*!
         \brief Returns the name of the UniformBuffer
