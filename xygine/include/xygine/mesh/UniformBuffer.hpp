@@ -107,9 +107,12 @@ namespace xy
                 XY_ASSERT(m_typeIndex == typeid(T).hash_code, "Cannot update UBO with data of this type");
                 {
                     glCheck(glBindBuffer(GL_UNIFORM_BUFFER, &m_id));
-                    glCheck(GLvoid* ptr = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY));
-                    std::memcpy(ptr, &T, sizeof(T));
-                    glCheck(glUnmapBuffer(GL_UNIFORM_BUFFER));
+                    GLvoid* ptr = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
+                    if(ptr)
+                    {                    
+                        std::memcpy(ptr, &data, sizeof(T));
+                        glCheck(glUnmapBuffer(GL_UNIFORM_BUFFER));
+                    }
                 }
             }
         }

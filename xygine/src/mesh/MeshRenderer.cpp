@@ -70,7 +70,7 @@ void MeshRenderer::update()
     }), m_models.end());
 
     auto camPos = m_scene.getView().getCenter();
-    glm::mat4 viewMatrix = glm::inverse(glm::translate(glm::mat4(), glm::vec3(camPos.x, camPos.y, m_cameraZ)));
+    m_viewMatrix = glm::inverse(glm::translate(glm::mat4(), glm::vec3(camPos.x, camPos.y, m_cameraZ)));
     //TODO update gl viewport
 }
 

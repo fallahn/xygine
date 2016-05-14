@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_MATERIAL_HPP_
 #define XY_MATERIAL_HPP_
 
-#include <xygine/config.hpp>
+#include <xygine/Config.hpp>
 
 #include <SFML/Graphics/Glsl.hpp>
 
