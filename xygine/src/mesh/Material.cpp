@@ -33,8 +33,10 @@ source distribution.
 using namespace xy;
 
 Material::Material(sf::Shader& shader)
-    : m_shader(shader)
+    : m_shader      (shader)
 {
+    XY_ASSERT(shader.getNativeHandle(), "Must compile shader first!");
+    
     //look up the shader attributes and store them
     GLint activeAttribs;
     glCheck(glGetProgramiv(shader.getNativeHandle(), GL_ACTIVE_ATTRIBUTES, &activeAttribs));
@@ -62,7 +64,7 @@ Material::Material(sf::Shader& shader)
 }
 
 //public
-void Material::bind(/*VAO*/)
+void Material::bind() const
 {
     for (const auto& p : m_properties)
     {
@@ -73,6 +75,7 @@ void Material::bind(/*VAO*/)
     {
         ubo.second->bind(m_shader.getNativeHandle(), ubo.first);
     }
+    sf::Shader::bind(&m_shader);
 }
 
 void Material::addProperty(const Material::Property& prop)

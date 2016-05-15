@@ -31,10 +31,14 @@ source distribution.
 #include <xygine/components/Component.hpp>
 #include <xygine/mesh/MeshRenderer.hpp>
 #include <xygine/mesh/Material.hpp>
+#include <xygine/mesh/VertexAttribBinding.hpp>
 
 #include <SFML/Graphics/Glsl.hpp>
 
 #include <glm/mat4x4.hpp>
+
+#include <vector>
+#include <map>
 
 namespace xy
 {
@@ -52,7 +56,7 @@ namespace xy
         /*!
         \brief Constructor.
         Model components should not (and cannot) be created via the
-        conventional xy::Component::creat() function, but rather with
+        conventional xy::Component::create() function, but rather with
         the create() function of a valid MeshRenderer.
         \see MeshRenderer
         */
@@ -74,15 +78,32 @@ namespace xy
         */
         void setDepth(float depth) { m_depth = depth; }
 
+        /*!
+        \brief Sets the base material used but the model.
+        \param material Reference to Material to apply
+        \param applyToAll Set to true if the Material should be
+        applied to all SubMeshes in the model
+        */
+        void setBaseMaterial(const Material& material, bool applyToAll = true);
+
+        /*!
+        \brief Sets the material used by a SubMesh at the given index (if it exists)
+        */
+        void setSubMaterial(const Material&, std::size_t);
+
     private:
 
         glm::mat4 m_worldMatrix;
         const Mesh& m_mesh;
         float m_depth;
 
-        
+        const Material* m_material;
+        std::vector<const Material*> m_subMaterials;
+        std::map<const Material*, VertexAttribBinding> m_vaoBindings;
 
         void draw(const glm::mat4&) const;
+
+        void updateVertexAttribs(const Material* oldMat, const Material* newMat);
     };
 }
 

@@ -48,7 +48,7 @@ Mesh::Mesh(const VertexLayout& vertLayout, std::size_t count, bool dynamic)
     m_primitiveType     (PrimitiveType::Triangles),
     m_dynamic           (dynamic)
 {
-
+    glCheck(glGenBuffers(1, &m_vboID));
 }
 
 Mesh::~Mesh()
@@ -114,6 +114,7 @@ void Mesh::setVertexData(const float* data, std::size_t count, std::size_t offse
         }
         glCheck(glBufferSubData(GL_ARRAY_BUFFER, offset * m_vertexLayout.getVertexSize(), count * m_vertexLayout.getVertexSize(), data));
     }
+    glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 SubMesh& Mesh::addSubMesh(Mesh::PrimitiveType type, Mesh::IndexFormat format, std::size_t count, bool dynamic)

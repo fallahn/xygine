@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/mesh/MeshRenderer.hpp>
+#include <xygine/mesh/StaticConsts.hpp>
 #include <xygine/components/Model.hpp>
 #include <xygine/Scene.hpp>
 #include <xygine/util/Const.hpp>
@@ -46,6 +47,11 @@ namespace
 MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     : m_scene(scene)
 {
+    //set up a default material to assign to newly created models
+    m_defaultShader.loadFromMemory(Shader3D::DefaultVertex, Shader3D::DefaultFragment);
+    m_defaultMaterial = std::make_unique<Material>(m_defaultShader);
+    
+    //creat the render buffer
     m_renderTexture.create(size.x, size.y, true);
     m_sprite.setTexture(m_renderTexture.getTexture());
 
@@ -57,7 +63,10 @@ std::unique_ptr<Model> MeshRenderer::createModel(MessageBus& mb, const Mesh& mes
 {
     auto model = Component::create<Model>(mb, mesh, Lock());
     m_models.push_back(model.get());
-    //TODO set model uniform block
+    //TODO set model uniform block for projection mat and lighting
+    //set default material
+    model->setBaseMaterial(*m_defaultMaterial);
+
     return std::move(model);
 }
 
@@ -81,24 +90,25 @@ void MeshRenderer::handleMessage(const Message& msg)
 
 //private
 void MeshRenderer::drawScene() const
-{
+{    
     //TODO update UBO with scene lighting / cam pos and projection mat
     
 
     m_renderTexture.setActive(true);
     m_renderTexture.clear(sf::Color::Transparent);
 
+    glViewport(0, 0, 1920, 1080);
+    //glClearColor(1.f, 1.f, 1.f, 0.5f);
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (const auto& m : m_models)m->draw(m_viewMatrix);
 
     m_renderTexture.display();
-    m_renderTexture.setActive(false);
+    //m_renderTexture.setActive(false);
 }
 
 void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    rt.popGLStates();
     drawScene();
-    rt.pushGLStates();
     rt.draw(m_sprite, states);
 }
 

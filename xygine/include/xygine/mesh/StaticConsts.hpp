@@ -41,5 +41,25 @@ namespace xy
     static const std::string VertexAttribUV1("a_texCoord1");
     static const std::string VertexAttribBlendIndices("a_boneIndices");
     static const std::string VertexAttribBlendWeights("a_boneWeights");
+
+    namespace Shader3D
+    {
+        static const std::string DefaultVertex =
+            "#version 150\n"
+            "in vec4 a_position;\n"
+            "void main()\n"
+            "{\n"
+            "    gl_Position = a_position;\n"
+            "}";
+
+        static const std::string DefaultFragment =
+            "#version 150\n"
+            "out vec4 colour;\n"
+
+            "void main()\n"
+            "{\n"
+            "    colour = vec4(1.0, 0.0, 0.0, 1.0);\n"
+            "}";
+    }
 }
 #endif //XY_STATIC_CONSTS_HPP_

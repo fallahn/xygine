@@ -28,9 +28,12 @@ source distribution.
 #ifndef XY_MESH_RENDERER_HPP_
 #define XY_MESH_RENDERER_HPP_
 
+#include <xygine/mesh/Material.hpp>
+
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <glm/mat4x4.hpp>
 
@@ -53,7 +56,7 @@ namespace xy
     SFML drawable, so can be drawn on top of a scene like any other
     drawable class.
     */
-    class MeshRenderer final : public sf::Drawable
+    class XY_EXPORT_API MeshRenderer final : public sf::Drawable
     {
         friend class Model;
     public:
@@ -88,8 +91,13 @@ namespace xy
         */
         void handleMessage(const Message&);
 
+        void setActive() { m_renderTexture.setActive(); }
+
     private:
         struct Lock final {};
+
+        sf::Shader m_defaultShader;
+        std::unique_ptr<Material> m_defaultMaterial;
 
         const Scene& m_scene;
         glm::mat4 m_viewMatrix;

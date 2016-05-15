@@ -38,9 +38,10 @@ source distribution.
 #include <xygine/physics/World.hpp>
 #include <xygine/Resource.hpp>
 #include <xygine/ShaderResource.hpp>
-
-#include <xygine/spriter/Model.hpp>
-
+//-------
+#include <xygine/mesh/MeshRenderer.hpp>
+#include <xygine/mesh/Mesh.hpp>
+//-------
 #include <SFML/Graphics/Text.hpp>
 
 namespace sf
@@ -82,11 +83,13 @@ private:
 
     sf::Text m_reportText;
 
-    xy::Spriter::Model m_buns;
-
     void createBodies();
 
     xy::Physics::RigidBody* addBall(const sf::Vector2f& position);
+
+    xy::MeshRenderer m_meshRenderer;
+    std::unique_ptr<xy::Mesh> m_mesh;
+    void createMesh();
 };
 
 #endif //PHYSICS_DEMO_STATE_HPP_

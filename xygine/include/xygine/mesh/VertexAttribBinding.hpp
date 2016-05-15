@@ -49,12 +49,26 @@ namespace xy
         VertexAttribBinding(VertexAttribBinding&&) noexcept = default;
         VertexAttribBinding& operator = (VertexAttribBinding&&) = default;
 
-        void bind();
-        void unbind();
+        void bind() const;
+        void unbind() const;
 
     private:
 
         GLuint m_id;
+
+        VertexBufferID m_meshBuffer;
+        struct VertexAttrib final
+        {
+            VertexAttrib()
+                : enabled(false), size(4), type(GL_FLOAT), normalised(GL_FALSE), stride(0u), ptr(nullptr) {}
+            bool enabled;
+            GLint size;
+            GLenum type;
+            GLboolean normalised;
+            GLuint stride;
+            void* ptr;
+        };
+        std::vector<VertexAttrib> m_vertexAttribs;
     };
 }
 

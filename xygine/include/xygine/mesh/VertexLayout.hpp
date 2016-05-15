@@ -46,7 +46,7 @@ namespace xy
         /*!
         \brief Describes an element in a vertex
         */
-        struct Element final
+        struct XY_EXPORT_API Element final
         {
             /*!
             \brief Element type.

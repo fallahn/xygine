@@ -31,8 +31,6 @@ source distribution.
 #include <xygine/mesh/VertexLayout.hpp>
 #include <xygine/detail/GLExtensions.hpp>
 
-#include <SFML/OpenGL.hpp>
-
 #include <vector>
 #include <memory>
 

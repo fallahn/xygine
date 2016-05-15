@@ -55,6 +55,8 @@ source distribution.
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include <xygine/components/Model.hpp>
+
 namespace
 {
     const sf::Keyboard::Key upKey = sf::Keyboard::W;
@@ -74,7 +76,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     m_physWorld     (context.appInstance.getMessageBus()),
     m_messageBus    (context.appInstance.getMessageBus()),
     m_scene         (m_messageBus),
-    m_buns          (m_textureResource)
+    m_meshRenderer  ({1920, 1080}, m_scene)
 {
     launchLoadingScreen();
     xy::Stats::clear();
@@ -99,12 +101,32 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     createBodies();
 
     context.renderWindow.setMouseCursorVisible(true);
-
-    //temp stuff
-
     quitLoadingScreen();
 
     REPORT("Q", "Toggle overlay");
+
+    //temp stuff
+    createMesh(); //can't create ogl stuff during loading because context is active on another thread
+}
+
+void PhysicsDemoState::createMesh()
+{
+    xy::VertexLayout layout({ xy::VertexLayout::Element(xy::VertexLayout::Element::Type::Position, 3) });
+    m_mesh = std::make_unique<xy::Mesh>(layout, 3);
+    std::array<float, 9> verts = 
+    {
+        -1.f, -1.f, 0.f,
+        1.f, -1.f, 0.f,
+        0.f,  1.f, 0.f
+    };
+    m_mesh->setVertexData(verts.data());
+
+    auto model = m_meshRenderer.createModel(m_messageBus, *m_mesh);
+    //TODO test materials
+    //TODO test submeshes
+    auto ent = xy::Entity::create(m_messageBus);
+    ent->addComponent(model);
+    m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
 }
 
 bool PhysicsDemoState::update(float dt)
@@ -126,6 +148,8 @@ void PhysicsDemoState::draw()
     rw.setView(getContext().defaultView);
     if(drawOverlay) rw.draw(m_physWorld);
     rw.draw(m_reportText);
+
+    rw.draw(m_meshRenderer);
 }
 
 bool PhysicsDemoState::handleEvent(const sf::Event& evt)

@@ -63,7 +63,7 @@ namespace xy
         Wraps material specific settings which are applied to the
         material's shader via uniform values when the material is drawn.
         */
-        class Property final
+        class XY_EXPORT_API Property final
         {
             friend class Material;
         public:
@@ -106,9 +106,9 @@ namespace xy
         ~Material() = default;
 
         /*!
-        \brief Binds this material with the Mesh's VAO for drawing
+        \brief Binds this material for drawing
         */
-        void bind(/*VAO in model paired with this shader*/);
+        void bind() const;
 
         /*!
         \brief Adds a new property to the Material

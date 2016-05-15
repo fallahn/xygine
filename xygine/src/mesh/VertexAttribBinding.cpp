@@ -34,6 +34,7 @@ source distribution.
 #include <xygine/detail/GLExtensions.hpp>
 
 #include <xygine/Log.hpp>
+#include <xygine/Assert.hpp>
 
 using namespace xy;
 
@@ -43,7 +44,9 @@ namespace
 }
 
 VertexAttribBinding::VertexAttribBinding(const Mesh& mesh, const Material& material)
-    : m_id  (0)
+    : m_id          (0),
+    m_meshBuffer    (mesh.getBufferID()),
+    m_vertexAttribs (MaxVertexAttribs)
 {
     if (MaxVertexAttribs == 0)
     {
@@ -56,8 +59,8 @@ VertexAttribBinding::VertexAttribBinding(const Mesh& mesh, const Material& mater
             Logger::log("Current device supports 0 or less vertex attributes, creating VAO failed.", Logger::Type::Error, Logger::Output::All);
         }
         MaxVertexAttribs = count;
+        m_vertexAttribs.resize(count);
     }
-
 
     //TODO shouldn't we check we've not created more than we can handle?
     //not sure if genVertArrays returns 0 if it can't create any more
@@ -66,16 +69,16 @@ VertexAttribBinding::VertexAttribBinding(const Mesh& mesh, const Material& mater
         glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
         glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
-        glCheck(glGenVertexArrays(1, &m_id));
+        //glCheck(glGenVertexArrays(1, &m_id));
 
-        if (m_id != 0)
+        //if (m_id != 0)
         {
-            glCheck(glBindVertexArray(m_id));
-            glCheck(glBindBuffer(GL_ARRAY_BUFFER, mesh.getBufferID()));
+            //glCheck(glBindVertexArray(m_id));
+            //glCheck(glBindBuffer(GL_ARRAY_BUFFER, mesh.getBufferID()));
 
             const auto& layout = mesh.getVertexLayout();
             
-            auto offset = 0;
+            auto offset = 0u;
             auto count = layout.getElementCount();
             for (auto i = 0u; i < count; ++i)
             {
@@ -117,21 +120,33 @@ VertexAttribBinding::VertexAttribBinding(const Mesh& mesh, const Material& mater
 
                 if (attribID != -1)
                 {
-                    //void* pointer = ptr ? static_cast<void*>(static_cast<UInt8*>(ptr) + offset) : (void*)offset;
-                    //setVertAttribPointer(attribID, static_cast<GLint>(e.size), GL_FLOAT, GL_FALSE, static_cast<GLsizei>(layout.getVertexSize()), pointer);
+                    GLint size = static_cast<GLint>(e.size);
+                    GLsizei stride = static_cast<GLsizei>(layout.getVertexSize());
 
-                    glCheck(glVertexAttribPointer(attribID, static_cast<GLint>(e.size), GL_FLOAT, GL_FALSE, static_cast<GLsizei>(layout.getVertexSize()), (void*)offset));
-                    glCheck(glEnableVertexAttribArray(attribID));
+                    //update the VAO
+                    /*glCheck(glVertexAttribPointer(attribID, size, GL_FLOAT, GL_FALSE, stride, (void*)offset));
+                    glCheck(glEnableVertexAttribArray(attribID));*/
+
+                    //store in struct for when VAO doesn't work.
+                    XY_ASSERT(m_vertexAttribs.size() > attribID, "Index out of range");
+                    m_vertexAttribs[attribID].enabled = true;
+                    m_vertexAttribs[attribID].size = size;
+                    m_vertexAttribs[attribID].type = GL_FLOAT;
+                    m_vertexAttribs[attribID].normalised = GL_FALSE;
+                    m_vertexAttribs[attribID].stride = stride;
+                    m_vertexAttribs[attribID].ptr = (void*)offset;
                 }
 
                 offset += e.size * sizeof(float);
             }
+            //glCheck(glBindVertexArray(0));
+            //glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
         }
 
-        else
+        /*else
         {
             Logger::log("Failed creating the VAO", xy::Logger::Type::Error, Logger::Output::All);
-        }
+        }*/
     }
 }
 
@@ -140,16 +155,41 @@ VertexAttribBinding::~VertexAttribBinding()
     if (m_id)
     {
         glCheck(glDeleteVertexArrays(1, &m_id));
+        m_id = 0;
     }
 }
 
 //public
-void VertexAttribBinding::bind()
+void VertexAttribBinding::bind() const
 {
-    glCheck(glBindVertexArray(m_id));
+    //VAOs make SFML (and therefore me) cry.
+    
+    //glCheck(glBindVertexArray(m_id));
+
+    glCheck(glBindBuffer(GL_ARRAY_BUFFER, m_meshBuffer));
+    auto i = 0u;
+    for (const auto& a : m_vertexAttribs)
+    {
+        if (a.enabled)
+        {
+            glCheck(glVertexAttribPointer(i, a.size, a.type, a.normalised, a.stride, a.ptr));
+            glCheck(glEnableVertexAttribArray(i));
+        }
+        ++i;
+    }
 }
 
-void VertexAttribBinding::unbind()
+void VertexAttribBinding::unbind() const
 {
-    glCheck(glBindVertexArray(0));
+    //glCheck(glBindVertexArray(0));
+
+    glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    auto size = m_vertexAttribs.size();
+    for (auto i = 0u; i < size; ++i)
+    {
+        if (m_vertexAttribs[i].enabled)
+        {
+            glCheck(glDisableVertexAttribArray(i));
+        }
+    }
 }
