@@ -85,7 +85,7 @@ namespace xy
 
                 if (glGetError() == GL_NO_ERROR)
                 {
-                    m_typeIndex = typeid(T).hash_code;
+                    m_typeIndex = typeid(T).hash_code();
                     return true;
                 }
                 return false;
@@ -104,11 +104,12 @@ namespace xy
         {
             XY_ASSERT(m_id, "No valid UBO ID found");
             {
-                XY_ASSERT(m_typeIndex == typeid(T).hash_code, "Cannot update UBO with data of this type");
+                XY_ASSERT(m_typeIndex == typeid(T).hash_code(), "Cannot update UBO with data of this type");
                 {
-                    glCheck(glBindBuffer(GL_UNIFORM_BUFFER, &m_id));
-                    glCheck(GLvoid* ptr = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY));
-                    std::memcpy(ptr, &T, sizeof(T));
+                    glCheck(glBindBuffer(GL_UNIFORM_BUFFER, m_id));
+                    GLvoid* ptr;
+                    glCheck(ptr = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY));
+                    std::memcpy(ptr, &data, sizeof(T));
                     glCheck(glUnmapBuffer(GL_UNIFORM_BUFFER));
                 }
             }

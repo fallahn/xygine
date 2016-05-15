@@ -48,6 +48,11 @@ VertexAttribBinding::VertexAttribBinding(const Mesh& mesh, const Material& mater
     m_meshBuffer    (mesh.getBufferID()),
     m_vertexAttribs (MaxVertexAttribs)
 {
+    /*
+    Currently VAOs fail to bind when drawing, probably because of something SFML does with contexts.
+    Organising data in structs and applying attributes the old school way seems to work for now.
+    */
+    
     if (MaxVertexAttribs == 0)
     {
         //query the context for max vertex attribs

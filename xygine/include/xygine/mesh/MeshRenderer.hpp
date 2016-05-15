@@ -29,6 +29,7 @@ source distribution.
 #define XY_MESH_RENDERER_HPP_
 
 #include <xygine/mesh/Material.hpp>
+#include <xygine/mesh/UniformBuffer.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
@@ -103,6 +104,15 @@ namespace xy
         glm::mat4 m_viewMatrix;
         glm::mat4 m_projectionMatrix;
         float m_cameraZ;
+
+        struct MatrixBlock final
+        {
+            //use raw arrays cos GLSL
+            float u_viewMatrix[16];
+            float u_projectionMatrix[16];
+        }m_matrixBlock;
+        UniformBuffer m_matrixBlockBuffer;
+        UniformBuffer m_lightingBlockBuffer;
 
         mutable std::vector<Model*> m_models;
         mutable sf::RenderTexture m_renderTexture;
