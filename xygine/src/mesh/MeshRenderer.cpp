@@ -92,6 +92,7 @@ void MeshRenderer::update()
     }), m_models.end());
 
     auto camPos = m_scene.getView().getCenter();
+
     glm::mat4 m_viewMatrix = glm::inverse(glm::translate(glm::mat4(), glm::vec3(camPos.x, camPos.y, m_cameraZ)));
     std::memcpy(m_matrixBlock.u_viewMatrix, glm::value_ptr(m_viewMatrix), 16);
     m_matrixBlockBuffer.update(m_matrixBlock);
