@@ -67,7 +67,7 @@ namespace
 
 App::App()
     : m_videoSettings   (),
-    m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, sf::ContextSettings(0, 0, 0, 4, 0))/*,
+    m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, sf::ContextSettings(0, 0, 0, 3, 2))/*,
     m_pendingDifficulty (Difficulty::Easy)*/
 {
     loadSettings();
