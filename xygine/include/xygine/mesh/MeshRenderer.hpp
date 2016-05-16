@@ -30,9 +30,10 @@ source distribution.
 
 #include <xygine/mesh/Material.hpp>
 #include <xygine/mesh/UniformBuffer.hpp>
+#include <xygine/MultiRenderTexture.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
+//#include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Shader.hpp>
 
@@ -115,7 +116,7 @@ namespace xy
         UniformBuffer m_lightingBlockBuffer;
 
         mutable std::vector<Model*> m_models;
-        mutable sf::RenderTexture m_renderTexture;
+        mutable xy::MultiRenderTexture m_renderTexture;
         sf::Sprite m_sprite;
         void drawScene() const;
 

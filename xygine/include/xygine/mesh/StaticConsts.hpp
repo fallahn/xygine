@@ -46,10 +46,20 @@ namespace xy
     {
         static const std::string DefaultVertex =
             "#version 150\n"
-            "in vec4 a_position;\n"
+
+            "in vec3 a_position;\n"
+
+            "uniform mat4 u_worldMatrix;\n"
+            "uniform mat4 u_worldViewMatrix;\n"
+            "layout (std140) uniform u_matrixBlock\n"
+            "{\n"
+            "    mat4 u_viewMatrix;\n"
+            "    mat4 u_projectionMatrix;\n"
+            "};\n"
+
             "void main()\n"
             "{\n"
-            "    gl_Position = a_position;\n"
+            "    gl_Position = u_projectionMatrix * u_worldViewMatrix * vec4(a_position, 1.0);\n"
             "}";
 
         static const std::string DefaultFragment =

@@ -138,9 +138,9 @@ namespace xy
         VertexAttribID getVertexAttributeID(const std::string&) const;
 
         /*!
-        \brief Returns a read-only pointer to the Material shader
+        \brief Returns a reference to the Material shader
         */
-        const sf::Shader* getShader() const { return &m_shader; }
+        sf::Shader& getShader() const { return m_shader; }
 
     private:
         sf::Shader& m_shader;

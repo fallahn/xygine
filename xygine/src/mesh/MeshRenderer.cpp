@@ -30,6 +30,7 @@ source distribution.
 #include <xygine/components/Model.hpp>
 #include <xygine/Scene.hpp>
 #include <xygine/util/Const.hpp>
+#include <xygine/Reports.hpp>
 
 #include <SFML/Graphics/RenderStates.hpp>
 
@@ -42,9 +43,9 @@ using namespace xy;
 
 namespace
 {
-    const float fov = 40.f;
-    const float nearPlane = 1.f;
-    const float farPlane = 40.f;
+    const float fov = 42.5f * xy::Util::Const::degToRad;
+    const float nearPlane = 0.1f;
+    const float farPlane = 3500.f;
 }
 
 MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
@@ -58,12 +59,12 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     
     //create the render buffer
     m_renderTexture.create(size.x, size.y, true);
-    m_sprite.setTexture(m_renderTexture.getTexture());
+    m_sprite.setTexture(m_renderTexture.getTexture(0));
 
     updateView();
 
-    std::memcpy(m_matrixBlock.u_viewMatrix, glm::value_ptr(m_viewMatrix), 16);
-    std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16);
+    std::memcpy(m_matrixBlock.u_viewMatrix, glm::value_ptr(m_viewMatrix), 16 * sizeof(float));
+    std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16 * sizeof(float));
     m_matrixBlockBuffer.create(m_matrixBlock);
 
     m_defaultMaterial->addUniformBuffer(m_matrixBlockBuffer);
@@ -93,9 +94,16 @@ void MeshRenderer::update()
 
     auto camPos = m_scene.getView().getCenter();
 
-    glm::mat4 m_viewMatrix = glm::inverse(glm::translate(glm::mat4(), glm::vec3(camPos.x, camPos.y, m_cameraZ)));
-    std::memcpy(m_matrixBlock.u_viewMatrix, glm::value_ptr(m_viewMatrix), 16);
+    m_viewMatrix = glm::translate(glm::mat4(), glm::vec3(camPos.x, camPos.y, m_cameraZ));
+    //TODO rotate/scale
+    //m_viewMatrix = glm::rotate(m_viewMatrix, 0.f, glm::vec3(0.f, 0.f, 1.f));
+    m_viewMatrix = glm::inverse(m_viewMatrix);
+    
+    std::memcpy(m_matrixBlock.u_viewMatrix, glm::value_ptr(m_viewMatrix), 16 * sizeof(float));
     m_matrixBlockBuffer.update(m_matrixBlock);
+
+    //TODO update UBO with scene lighting / cam pos
+    
 }
 
 void MeshRenderer::handleMessage(const Message& msg)
@@ -106,15 +114,19 @@ void MeshRenderer::handleMessage(const Message& msg)
 //private
 void MeshRenderer::drawScene() const
 {    
-    //TODO update UBO with scene lighting / cam pos and projection mat
-    
-
     m_renderTexture.setActive(true);
     m_renderTexture.clear(sf::Color::Transparent);
 
-    glViewport(0, 0, 1920, 1080);
+    auto viewPort = m_renderTexture.getView().getViewport();
+    glViewport(
+        static_cast<GLuint>(viewPort.left * xy::DefaultSceneSize.x), 
+        static_cast<GLuint>((/*1.f - */viewPort.top) * xy::DefaultSceneSize.y),
+        static_cast<GLuint>(viewPort.width * xy::DefaultSceneSize.x),
+        static_cast<GLuint>(viewPort.height * xy::DefaultSceneSize.y));
+
     //glClearColor(1.f, 1.f, 1.f, 0.5f);
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //glDisable(GL_CULL_FACE);
     for (const auto& m : m_models)m->draw(m_viewMatrix);
 
     m_renderTexture.display();
@@ -135,10 +147,8 @@ void MeshRenderer::updateView()
 
     //calc how far away from the scene the camera would be
     //assuming the 2D world is drawn at 0 depth
-    const float angle = std::tan(fov / 2.f * 0.0174532925f);
-    m_cameraZ = (static_cast<float>(viewSize.y) / 2.f) / angle;
+    const float angle = std::tan(fov / 2.f);
+    m_cameraZ = ((viewSize.y / 2.f) / angle);
 
-    XY_WARNING(std::abs(m_cameraZ) > farPlane, "Camera depth greater than far plane");
-
-    //m_cameraZ *= -m_sceneScale; //scales units - would also need to scale X/Y
+    XY_WARNING(std::abs(m_cameraZ) > farPlane, "Camera depth greater than far plane: " + std::to_string(m_cameraZ));
 }

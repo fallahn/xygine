@@ -29,8 +29,10 @@ source distribution.
 #include <xygine/mesh/Mesh.hpp>
 #include <xygine/detail/GLCheck.hpp>
 #include <xygine/Entity.hpp>
+#include <xygine/util/Const.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace xy;
 
@@ -48,6 +50,12 @@ void Model::entityUpdate(Entity& entity, float dt)
 {
     const auto position = entity.getWorldPosition();
     m_worldMatrix = glm::translate(glm::mat4(), glm::vec3(position.x, position.y, m_depth));
+    
+    const float rotation = xy::Util::Const::degToRad * entity.getRotation();
+    m_worldMatrix = glm::rotate(m_worldMatrix, rotation, glm::vec3(0.f, 0.f, 1.f));
+
+    const auto scale = entity.getScale();
+    m_worldMatrix = glm::scale(m_worldMatrix, glm::vec3(scale.x, scale.y, 1.f));
 }
 
 void Model::setBaseMaterial(const Material& material, bool applyToAll)
@@ -84,12 +92,17 @@ void Model::draw(const glm::mat4& viewMatrix) const
             vaos[submeshMat[i]].bind()
             draw elements
     */
+
+    glm::mat4 worldViewMat = viewMatrix * m_worldMatrix;
+
     if (m_mesh.getSubMeshCount() > 0)
     {
 
     }
     else
     {
+        m_material->getShader().setUniform("u_worldMatrix", sf::Glsl::Mat4(glm::value_ptr(m_worldMatrix)));
+        m_material->getShader().setUniform("u_worldViewMatrix", sf::Glsl::Mat4(glm::value_ptr(worldViewMat)));
         m_material->bind();
         auto vao = m_vaoBindings.find(m_material);
         vao->second.bind();

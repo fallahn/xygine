@@ -56,6 +56,7 @@ source distribution.
 #include <SFML/Window/Event.hpp>
 
 #include <xygine/components/Model.hpp>
+#include <RotationComponent.hpp>
 
 namespace
 {
@@ -95,6 +96,9 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     m_shaderResource.preload(PhysicsShaderId::ReflectionMap, xy::Shader::Default::vertex, xy::Shader::ReflectionMap::fragment);
     m_shaderResource.get(PhysicsShaderId::ReflectionMap).setUniform("u_reflectionMap", m_textureResource.get("assets/images/physics demo/table_reflection.png"));
 
+    //test stuff
+    createMesh();
+
     //scale a 1200px table image to 2.7 metres
     m_physWorld.setPixelScale(444.5f);
     m_physWorld.setGravity({});
@@ -104,28 +108,39 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     quitLoadingScreen();
 
     REPORT("Q", "Toggle overlay");
-
-    //temp stuff
-    createMesh(); //can't create ogl stuff during loading because context is active on another thread
 }
 
 void PhysicsDemoState::createMesh()
 {
     xy::VertexLayout layout({ xy::VertexLayout::Element(xy::VertexLayout::Element::Type::Position, 3) });
-    m_mesh = std::make_unique<xy::Mesh>(layout, 3);
-    std::array<float, 9> verts = 
+    m_mesh = std::make_unique<xy::Mesh>(layout, 4);
+    std::array<float, 12> verts = 
     {
-        -1.f, -1.f, 0.f,
-        1.f, -1.f, 0.f,
-        0.f,  1.f, 0.f
+        -10.5f, -10.5f, 0.f,
+        -10.5f, 10.5f, 0.f,
+        10.5f, -10.5f, 0.f,
+        10.5f, 10.5f, 0.f
     };
     m_mesh->setVertexData(verts.data());
+    m_mesh->setPrimitiveType(xy::Mesh::PrimitiveType::TriangleStrip);
 
     auto model = m_meshRenderer.createModel(m_messageBus, *m_mesh);
     //TODO test materials
     //TODO test submeshes
     auto ent = xy::Entity::create(m_messageBus);
     ent->addComponent(model);
+
+    auto rotator = xy::Component::create<RotationComponent>(m_messageBus);
+    //ent->addComponent(rotator);
+    //ent->setScale(100.f, 100.f);
+
+    auto drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
+    drawable->setColour(sf::Color::Green);
+    drawable->setTexture(m_textureResource.get("assets/images/physics demo/ball.png"));
+    auto size = drawable->getTexture()->getSize();
+    drawable->setOrigin({ size.x / 2.f, size.y / 2.f });
+    ent->addComponent(drawable);
+
     m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
 }
 
@@ -135,6 +150,7 @@ bool PhysicsDemoState::update(float dt)
     auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
     
     m_scene.update(dt);
+    m_meshRenderer.update();
 
     m_reportText.setString(xy::Stats::getString());
 
@@ -556,6 +572,9 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     drawable->setShader(m_shaderResource.get(PhysicsShaderId::NormalMapTexturedSpecular));
     ballEntity->addComponent(drawable);
 
+    auto model = m_meshRenderer.createModel(m_messageBus, *m_mesh);
+    ballEntity->addComponent(model);
+    
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);
 
     return b;
