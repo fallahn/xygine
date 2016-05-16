@@ -75,7 +75,7 @@ namespace xy
         /*!
         \brief Updates the index buffer's data.
         \param data Pointer to data to be uploaded
-        \param count Amount of data to upload
+        \param count Amount of data to upload, 0 to upload all
         \param start Index at which to start uploading the data
         */
         void setIndexData(const void* data, std::size_t count, std::size_t start);

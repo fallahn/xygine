@@ -27,6 +27,7 @@ source distribution.
 
 #include <xygine/components/Model.hpp>
 #include <xygine/mesh/Mesh.hpp>
+#include <xygine/mesh/SubMesh.hpp>
 #include <xygine/detail/GLCheck.hpp>
 #include <xygine/Entity.hpp>
 #include <xygine/util/Const.hpp>
@@ -85,19 +86,23 @@ void Model::setSubMaterial(const Material& material, std::size_t idx)
 //private
 void Model::draw(const glm::mat4& viewMatrix) const
 {
-    /*
-    if submesh count > 0
-        foreach submesh
-            submeshMat[i].bind();
-            vaos[submeshMat[i]].bind()
-            draw elements
-    */
-
     glm::mat4 worldViewMat = viewMatrix * m_worldMatrix;
 
     if (m_mesh.getSubMeshCount() > 0)
     {
-
+        auto count = m_mesh.getSubMeshCount();
+        for (auto i = 0u; i < count; ++i)
+        {
+            m_subMaterials[i]->getShader().setUniform("u_worldMatrix", sf::Glsl::Mat4(glm::value_ptr(m_worldMatrix)));
+            m_subMaterials[i]->getShader().setUniform("u_worldViewMatrix", sf::Glsl::Mat4(glm::value_ptr(worldViewMat)));
+            m_subMaterials[i]->bind();
+            auto vao = m_vaoBindings.find(m_subMaterials[i]);
+            vao->second.bind();
+            const auto subMesh = m_mesh.getSubMesh(i);
+            glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, subMesh->getIndexBufferID()));
+            glCheck(glDrawElements(static_cast<GLenum>(subMesh->getPrimitiveType()), subMesh->getIndexCount(), static_cast<GLenum>(subMesh->getIndexFormat()), 0));
+            vao->second.unbind();
+        }
     }
     else
     {
@@ -127,7 +132,7 @@ void Model::updateVertexAttribs(const Material* oldMat, const Material* newMat)
 
     //if we don't yet have a VAO for this material
     //create one
-    if (m_vaoBindings.count(newMat) == 0)
+    if (m_vaoBindings.find(newMat) == m_vaoBindings.end())
     {
         m_vaoBindings.insert(std::make_pair(newMat, VertexAttribBinding(m_mesh, *newMat)));
     }

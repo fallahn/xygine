@@ -57,6 +57,8 @@ source distribution.
 
 #include <xygine/components/Model.hpp>
 #include <RotationComponent.hpp>
+#include <xygine/mesh/StaticConsts.hpp>
+#include <xygine/mesh/SubMesh.hpp>
 
 namespace
 {
@@ -113,16 +115,26 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 void PhysicsDemoState::createMesh()
 {
     xy::VertexLayout layout({ xy::VertexLayout::Element(xy::VertexLayout::Element::Type::Position, 3) });
-    m_mesh = std::make_unique<xy::Mesh>(layout, 4);
-    std::array<float, 12> verts = 
+    m_mesh = std::make_unique<xy::Mesh>(layout, 6);
+    std::array<float, 18> verts = 
     {
         -10.5f, -10.5f, 0.f,
         -10.5f, 10.5f, 0.f,
         10.5f, -10.5f, 0.f,
-        10.5f, 10.5f, 0.f
+        10.5f, 10.5f, 0.f,
+        10.5f, -10.5f, 20.f,
+        10.5f, 10.5f, 20.f
     };
     m_mesh->setVertexData(verts.data());
     m_mesh->setPrimitiveType(xy::Mesh::PrimitiveType::TriangleStrip);
+
+    auto& subMesh = m_mesh->addSubMesh(xy::Mesh::PrimitiveType::TriangleStrip, xy::Mesh::IndexFormat::I8, 4);
+    std::array<sf::Int8, 4> indices = { 2,3,4,5 };
+    subMesh.setIndexData(indices.data(), 0, 0);
+
+    auto& subMesh2 = m_mesh->addSubMesh(xy::Mesh::PrimitiveType::TriangleStrip, xy::Mesh::IndexFormat::I8, 4);
+    indices = { 0,1,2,3 };
+    subMesh2.setIndexData(indices.data(), 0, 0);
 
     auto model = m_meshRenderer.createModel(m_messageBus, *m_mesh);
     //TODO test materials

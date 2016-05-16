@@ -41,6 +41,8 @@ source distribution.
 //-------
 #include <xygine/mesh/MeshRenderer.hpp>
 #include <xygine/mesh/Mesh.hpp>
+#include <xygine/mesh/Material.hpp>
+#include <SFML/Graphics/Shader.hpp>
 //-------
 #include <SFML/Graphics/Text.hpp>
 

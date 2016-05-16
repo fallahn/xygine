@@ -49,7 +49,7 @@ namespace xy
     the camera of the scene is still constrained to the 2D world
     giving the scene a '2.5D' appearance.
     */
-    class Model final : public xy::Component
+    class XY_EXPORT_API Model final : public xy::Component
     {
         friend class MeshRenderer;
     public:
@@ -90,6 +90,7 @@ namespace xy
         \brief Sets the material used by a SubMesh at the given index (if it exists)
         */
         void setSubMaterial(const Material&, std::size_t);
+
 
     private:
 

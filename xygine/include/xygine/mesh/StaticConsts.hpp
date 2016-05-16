@@ -64,11 +64,13 @@ namespace xy
 
         static const std::string DefaultFragment =
             "#version 150\n"
+            "uniform vec4 u_colour = vec4(1.0, 1.0, 0.0, 1.0);\n"
+
             "out vec4 colour;\n"
 
             "void main()\n"
             "{\n"
-            "    colour = vec4(1.0, 0.0, 0.0, 1.0);\n"
+            "    colour = u_colour;\n"
             "}";
     }
 }
