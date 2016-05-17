@@ -692,5 +692,8 @@
     <ClInclude Include="include\xygine\mesh\MaterialResource.hpp">
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
+    <ClInclude Include="include\xygine\mesh\MeshBuilder.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
