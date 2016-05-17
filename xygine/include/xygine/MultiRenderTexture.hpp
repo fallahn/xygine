@@ -70,11 +70,10 @@ namespace xy
         target. This is false by default as it is the most common use case.
         \return True if creation is successful
         */
-        bool create(sf::Uint32 width, sf::Uint32 height, std::size_t count, bool depthbuffer = false);
+        bool create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 count, bool depthbuffer = false);
         /*!\brief Prevents implicitly converting bool to int when inadvertantly missing out the count parameter*/
-        //bah doesn't work on g++
-        //template <typename T>
-        //bool create(sf::Uint32 width, sf::Uint32 height, T count, bool depthbuffer = false) = delete;
+        template <typename T>
+        bool create(sf::Uint32 width, sf::Uint32 height, T count, bool depthbuffer = false) = delete;
 
         /*!
         \brief Enables or disables texture smoothing. This is false by default.
