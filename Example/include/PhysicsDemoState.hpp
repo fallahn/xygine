@@ -42,6 +42,7 @@ source distribution.
 #include <xygine/mesh/MeshRenderer.hpp>
 #include <xygine/mesh/Mesh.hpp>
 #include <xygine/mesh/Material.hpp>
+#include <xygine/mesh/MaterialResource.hpp>
 #include <SFML/Graphics/Shader.hpp>
 //-------
 #include <SFML/Graphics/Text.hpp>
@@ -91,6 +92,12 @@ private:
 
     xy::MeshRenderer m_meshRenderer;
     std::unique_ptr<xy::Mesh> m_mesh;
+    sf::Shader m_meshShader;
+    xy::MaterialResource m_materialResource;
+    enum MatId
+    {
+        Blue = 0
+    };
     void createMesh();
 };
 

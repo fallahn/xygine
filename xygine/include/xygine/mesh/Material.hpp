@@ -53,7 +53,16 @@ namespace xy
     at the very least, an OpenGL 3.2+ compatible shader, as well as
     allowing specifying multiple properties (in the guise of uniform
     values) which are applied to the shader, such as textures or matrices.
-    Materials may also have UniformBuffers added to them for convenience.
+    Materials may also have UniformBuffers added to them for convenience,
+    and are required for the view/projection matrices at the very least
+    when rendering with the MeshRenderer. The UniformBuffer for these
+    (and the optional buffer for lighting properties) can be retrieved
+    with MeshRenderer::getMatrixUniforms(). This should be the first thing
+    to check if a material is apprently not renderering. The 
+    MaterialResource class is provided as a convenience for managing the
+    lifetime of Materials as the are a shared resource. Bear also in mind
+    that, as a shared resource, updating the property of a Material
+    instance will affect ALL models to which thie Material is applied.
     */
     class XY_EXPORT_API Material final
     {
@@ -67,7 +76,12 @@ namespace xy
         {
             friend class Material;
         public:
-            explicit Property(const std::string&);
+            Property(const std::string&, float);
+            Property(const std::string&, const sf::Vector2f&);
+            Property(const std::string&, const sf::Vector3f&);
+            Property(const std::string&, const sf::Color&);
+            Property(const std::string&, const sf::Transform&);
+            Property(const std::string&, const sf::Texture&);
             ~Property() = default;
             void setValue(float);
             void setValue(const sf::Vector2f&);

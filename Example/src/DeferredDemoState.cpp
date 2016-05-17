@@ -119,7 +119,7 @@ DeferredDemoState::DeferredDemoState(xy::StateStack& stateStack, Context context
     m_labelText.setString("OUTPUT                                               DIFFUSE                    NORMAL\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n                                                     MASK (R = intens, G = amount, B = illum)");
     
     //create g-buffer with 3 textures
-    m_renderTexture.create(960, 1080, 3);
+    m_renderTexture.create(960, 1080, 3u);
 
     m_deferredShader.loadFromMemory(fragShader, sf::Shader::Fragment);
     //m_deferredShader.setUniform("u_rotationMatrix", rotationMatrix(90.f));

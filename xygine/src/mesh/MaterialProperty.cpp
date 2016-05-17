@@ -31,12 +31,36 @@ source distribution.
 
 using namespace xy;
 
-Material::Property::Property(const std::string& name)
-    : m_type    (Type::None),
-    m_name      (name)
-{
+Material::Property::Property(const std::string& name, float val)
+    : m_type    (Type::Float),
+    number      (val),
+    m_name      (name){}
 
-}
+Material::Property::Property(const std::string& name, const sf::Vector2f& val)
+    : m_type    (Type::Vec2),
+    vec2        (val),
+    m_name      (name) {}
+
+Material::Property::Property(const std::string& name, const sf::Vector3f& val)
+    : m_type    (Type::Vec3),
+    vec3        (val),
+    m_name      (name) {}
+
+Material::Property::Property(const std::string& name, const sf::Color& val)
+    : m_type    (Type::Vec4),
+    colour      (val),
+    m_name      (name) {}
+
+
+Material::Property::Property(const std::string& name, const sf::Transform& val)
+    : m_type    (Type::Mat4),
+    transform   (&val),
+    m_name      (name) {}
+
+Material::Property::Property(const std::string& name, const sf::Texture& val)
+    : m_type    (Type::Texture),
+    texture     (&val),
+    m_name      (name) {}
 
 //public
 void Material::Property::setValue(float val)

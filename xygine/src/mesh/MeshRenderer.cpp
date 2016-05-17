@@ -43,7 +43,7 @@ using namespace xy;
 
 namespace
 {
-    const float fov = 42.5f * xy::Util::Const::degToRad;
+    const float fov = 90.f * xy::Util::Const::degToRad;
     const float nearPlane = 0.1f;
     const float farPlane = 3500.f;
 }
@@ -58,7 +58,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_defaultMaterial = std::make_unique<Material>(m_defaultShader);
     
     //create the render buffer
-    m_renderTexture.create(size.x, size.y, true);
+    m_renderTexture.create(size.x, size.y, 1u, true);
     m_sprite.setTexture(m_renderTexture.getTexture(0));
 
     updateView();
@@ -68,6 +68,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_matrixBlockBuffer.create(m_matrixBlock);
 
     m_defaultMaterial->addUniformBuffer(m_matrixBlockBuffer);
+    //TODO set lighting buffer
 }
 
 //public
@@ -75,8 +76,6 @@ std::unique_ptr<Model> MeshRenderer::createModel(MessageBus& mb, const Mesh& mes
 {
     auto model = Component::create<Model>(mb, mesh, Lock());
     m_models.push_back(model.get());
-    //set model uniform block for projection mat
-    //TODO and lighting
     
     //set default material
     model->setBaseMaterial(*m_defaultMaterial);
@@ -115,7 +114,7 @@ void MeshRenderer::handleMessage(const Message& msg)
 void MeshRenderer::drawScene() const
 {    
     m_renderTexture.setActive(true);
-    m_renderTexture.clear(sf::Color::Transparent);
+    //m_renderTexture.clear(sf::Color::Transparent);
 
     auto viewPort = m_renderTexture.getView().getViewport();
     glViewport(
@@ -124,11 +123,13 @@ void MeshRenderer::drawScene() const
         static_cast<GLuint>(viewPort.width * xy::DefaultSceneSize.x),
         static_cast<GLuint>(viewPort.height * xy::DefaultSceneSize.y));
 
-    //glClearColor(1.f, 1.f, 1.f, 0.5f);
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //glDisable(GL_CULL_FACE);
+    glClearColor(1.f, 1.f, 1.f, 0.f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    /*glDisable(GL_CULL_FACE);*/
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
     for (const auto& m : m_models)m->draw(m_viewMatrix);
-
+    glDisable(GL_DEPTH_TEST);
     m_renderTexture.display();
     //m_renderTexture.setActive(false);
 }

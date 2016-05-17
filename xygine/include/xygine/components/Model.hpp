@@ -72,7 +72,7 @@ namespace xy
         and only altered if needed. As the rest of the scene is still
         two-dimensional collision may appear incorrect with extreme depth
         settings. This also does not take in to account the mesh's local
-        z values, which can cause the appearance of offsetting hte model.
+        z values, which can cause the appearance of offsetting the model.
         In these cases setting the depth of the model can be used to
         correct this.
         */

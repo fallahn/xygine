@@ -327,6 +327,9 @@
     <ClCompile Include="src\mesh\VertexAttribBinding.cpp">
       <Filter>Source Files\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="src\mesh\MaterialResource.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -681,6 +684,12 @@
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\mesh\StaticConsts.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\MeshResource.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\MaterialResource.hpp">
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
   </ItemGroup>

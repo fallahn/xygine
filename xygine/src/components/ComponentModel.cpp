@@ -132,7 +132,7 @@ void Model::updateVertexAttribs(const Material* oldMat, const Material* newMat)
 
     //if we don't yet have a VAO for this material
     //create one
-    if (m_vaoBindings.find(newMat) == m_vaoBindings.end())
+    if (m_vaoBindings.count(newMat) == 0)
     {
         m_vaoBindings.insert(std::make_pair(newMat, VertexAttribBinding(m_mesh, *newMat)));
     }

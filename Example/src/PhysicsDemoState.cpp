@@ -40,6 +40,7 @@ source distribution.
 #include <xygine/Log.hpp>
 #include <xygine/util/Math.hpp>
 #include <xygine/util/Vector.hpp>
+#include <xygine/util/Random.hpp>
 
 #include <xygine/shaders/NormalMapped.hpp>
 #include <xygine/shaders/Misc.hpp>
@@ -137,21 +138,27 @@ void PhysicsDemoState::createMesh()
     subMesh2.setIndexData(indices.data(), 0, 0);
 
     auto model = m_meshRenderer.createModel(m_messageBus, *m_mesh);
-    //TODO test materials
-    //TODO test submeshes
+
+    m_meshShader.loadFromMemory(xy::Shader3D::DefaultVertex, xy::Shader3D::DefaultFragment);
+    auto& material = m_materialResource.add(MatId::Blue, m_meshShader);
+    material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    material.addProperty({ "u_colour", sf::Color::Blue });
+    model->setSubMaterial(material, 1);
+
     auto ent = xy::Entity::create(m_messageBus);
     ent->addComponent(model);
 
     auto rotator = xy::Component::create<RotationComponent>(m_messageBus);
-    //ent->addComponent(rotator);
-    //ent->setScale(100.f, 100.f);
+    ent->addComponent(rotator);
+    ent->setScale(10.f, 10.f);
+    ent->setPosition(200.f, 200.f);
 
-    auto drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
-    drawable->setColour(sf::Color::Green);
-    drawable->setTexture(m_textureResource.get("assets/images/physics demo/ball.png"));
-    auto size = drawable->getTexture()->getSize();
-    drawable->setOrigin({ size.x / 2.f, size.y / 2.f });
-    ent->addComponent(drawable);
+    //auto drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
+    //drawable->setColour(sf::Color::Green);
+    //drawable->setTexture(m_textureResource.get("assets/images/physics demo/ball.png"));
+    //auto size = drawable->getTexture()->getSize();
+    //drawable->setOrigin({ size.x / 2.f, size.y / 2.f });
+    //ent->addComponent(drawable);
 
     m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
 }
@@ -585,6 +592,7 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     ballEntity->addComponent(drawable);
 
     auto model = m_meshRenderer.createModel(m_messageBus, *m_mesh);
+    model->setSubMaterial(m_materialResource.get(MatId::Blue), 0);
     ballEntity->addComponent(model);
     
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);

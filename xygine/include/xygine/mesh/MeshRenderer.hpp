@@ -33,7 +33,6 @@ source distribution.
 #include <xygine/MultiRenderTexture.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
-//#include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Shader.hpp>
 
@@ -93,7 +92,26 @@ namespace xy
         */
         void handleMessage(const Message&);
 
-        void setActive() { m_renderTexture.setActive(); }
+        /*!
+        \brief Returns the UniformBuffer containing the MeshRenderer's
+        matrix uniforms.
+        In order to render properly a shader's material requires the renderer's
+        projection and view matrix. This UniformBuffer will automatically update
+        the properties of any material which uses a shader with a u_matrixBlock
+        uniform.
+        \see Shader3D::DefaultVertex
+        */
+        const UniformBuffer& getMatrixUniforms() const { return m_matrixBlockBuffer; }
+
+        /*!
+        \brief Returns the UniformBuffer containing the MeshRenderer's lighting
+        properties.
+        The MeshRenderer updates the lighting properties from its associated scene
+        and scene lighting components. This properties are stored in this uniform
+        buffer and updated automatically, and therefore should be used by any material
+        which requires scene lighting information.
+        */
+        const UniformBuffer& getLightingUniforms() const { return m_lightingBlockBuffer; }
 
     private:
         struct Lock final {};
@@ -108,7 +126,7 @@ namespace xy
 
         struct MatrixBlock final
         {
-            //use raw arrays cos GLSL
+            //use raw arrays 'cos GLSL
             float u_viewMatrix[16];
             float u_projectionMatrix[16];
         }m_matrixBlock;
