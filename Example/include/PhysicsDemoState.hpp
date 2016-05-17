@@ -40,7 +40,7 @@ source distribution.
 #include <xygine/ShaderResource.hpp>
 //-------
 #include <xygine/mesh/MeshRenderer.hpp>
-#include <xygine/mesh/Mesh.hpp>
+#include <xygine/mesh/MeshResource.hpp>
 #include <xygine/mesh/Material.hpp>
 #include <xygine/mesh/MaterialResource.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -91,7 +91,7 @@ private:
     xy::Physics::RigidBody* addBall(const sf::Vector2f& position);
 
     xy::MeshRenderer m_meshRenderer;
-    std::unique_ptr<xy::Mesh> m_mesh;
+    xy::MeshResource m_meshResource;
     sf::Shader m_meshShader;
     xy::MaterialResource m_materialResource;
     enum MatId

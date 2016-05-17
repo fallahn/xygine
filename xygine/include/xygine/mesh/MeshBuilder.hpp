@@ -97,6 +97,23 @@ namespace xy
         */
         virtual std::size_t getVertexCount() const = 0;
 
+        /*!
+        \brief Returns whether or not the mesh created should be hinted as dynamic
+        */
+        virtual bool dynamic() const { return false; }
+
+        /*!
+        \brief Returns the Primitive type to be used when drawing this mesh
+        */
+        virtual Mesh::PrimitiveType primitiveType() const { return Mesh::PrimitiveType::TriangleStrip; }
+
+        /*!
+        \brief Returns a vector of SubMeshLayout.
+        If a mesh requires SubMeshes (index arrays) implement this and
+        return a struct for each SubMesh required
+        */
+        virtual std::vector<SubMeshLayout> getSubMeshLayouts() const { return{}; }
+
     private:
 
     };

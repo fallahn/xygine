@@ -42,6 +42,7 @@ set(XY_SRC
   ${XY_DIR}/mesh/MaterialResource.cpp
   ${XY_DIR}/mesh/Mesh.cpp
   ${XY_DIR}/mesh/MeshRenderer.cpp
+  ${XY_DIR}/mesh/MeshResource.cpp
   ${XY_DIR}/mesh/SubMesh.cpp
   ${XY_DIR}/mesh/UniformBuffer.cpp
   ${XY_DIR}/mesh/VertexAttribBinding.cpp

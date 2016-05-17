@@ -163,6 +163,7 @@
     <ClCompile Include="src\mesh\Mesh.cpp" />
     <ClCompile Include="src\mesh\MeshRenderer.cpp" />
     <ClCompile Include="src\mesh\Material.cpp" />
+    <ClCompile Include="src\mesh\MeshResource.cpp" />
     <ClCompile Include="src\mesh\SubMesh.cpp" />
     <ClCompile Include="src\mesh\UniformBuffer.cpp" />
     <ClCompile Include="src\mesh\VertexAttribBinding.cpp" />

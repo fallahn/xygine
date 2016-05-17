@@ -29,8 +29,10 @@ source distribution.
 #define XY_MESH_RESOURCE_HPP_
 
 #include <xygine/mesh/Mesh.hpp>
+#include <xygine/mesh/MeshBuilder.hpp>
 
 #include <map>
+#include <memory>
 
 namespace xy
 {
@@ -39,9 +41,16 @@ namespace xy
     public:
         using ID = std::size_t;
 
+        MeshResource();
+        ~MeshResource() = default;
+
+        Mesh& add(ID, MeshBuilder&);
+        Mesh& get(ID);
 
     private:
-        std::map<ID, Mesh> m_meshes;
+        std::map<ID, std::unique_ptr<Mesh>> m_meshes;
+        VertexLayout m_defaultLayout;
+        Mesh m_defaultMesh;
     };
 }
 

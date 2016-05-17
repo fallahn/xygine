@@ -330,6 +330,9 @@
     <ClCompile Include="src\mesh\MaterialResource.cpp">
       <Filter>Source Files\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="src\mesh\MeshResource.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
