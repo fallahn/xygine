@@ -60,6 +60,7 @@ source distribution.
 #include <RotationComponent.hpp>
 #include <xygine/mesh/StaticConsts.hpp>
 #include <xygine/mesh/SubMesh.hpp>
+#include <xygine/mesh/CubeBuilder.hpp>
 
 namespace
 {
@@ -115,27 +116,9 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 
 void PhysicsDemoState::createMesh()
 {
-    //xy::VertexLayout layout({ xy::VertexLayout::Element(xy::VertexLayout::Element::Type::Position, 3) });
-    //m_mesh = std::make_unique<xy::Mesh>(layout, 6);
-    //std::array<float, 18> verts = 
-    //{
-    //    -10.5f, -10.5f, 0.f,
-    //    -10.5f, 10.5f, 0.f,
-    //    10.5f, -10.5f, 0.f,
-    //    10.5f, 10.5f, 0.f,
-    //    10.5f, -10.5f, 20.f,
-    //    10.5f, 10.5f, 20.f
-    //};
-    //m_mesh->setVertexData(verts.data());
-    //m_mesh->setPrimitiveType(xy::Mesh::PrimitiveType::TriangleStrip);
-
-    //auto& subMesh = m_mesh->addSubMesh(xy::Mesh::PrimitiveType::TriangleStrip, xy::Mesh::IndexFormat::I8, 4);
-    //std::array<sf::Int8, 4> indices = { 2,3,4,5 };
-    //subMesh.setIndexData(indices.data(), 0, 0);
-
-    //auto& subMesh2 = m_mesh->addSubMesh(xy::Mesh::PrimitiveType::TriangleStrip, xy::Mesh::IndexFormat::I8, 4);
-    //indices = { 0,1,2,3 };
-    //subMesh2.setIndexData(indices.data(), 0, 0);
+    //TODO test normals and UVs
+    xy::CubeBuilder cb(32.f, false, true);
+    m_meshResource.add(0, cb);
 
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
 
@@ -143,7 +126,7 @@ void PhysicsDemoState::createMesh()
     auto& material = m_materialResource.add(MatId::Blue, m_meshShader);
     material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     material.addProperty({ "u_colour", sf::Color(0, 0, 255, 127) });
-    //model->setSubMaterial(material, 1);
+    model->setSubMaterial(material, 5);
 
     auto ent = xy::Entity::create(m_messageBus);
     ent->addComponent(model);
@@ -592,7 +575,7 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     ballEntity->addComponent(drawable);
 
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
-    model->setBaseMaterial(m_materialResource.get(MatId::Blue), 0);
+    model->setSubMaterial(m_materialResource.get(MatId::Blue), 0);
     ballEntity->addComponent(model);
     
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);

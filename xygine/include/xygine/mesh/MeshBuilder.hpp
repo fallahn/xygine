@@ -81,7 +81,7 @@ namespace xy
         MeshResource vertex layout information for the loaded mesh.
         \see VertexLayout
         */
-        virtual const xy::VertexLayout& getVertexLayout() const = 0;
+        virtual xy::VertexLayout getVertexLayout() const = 0;
 
         /*!
         \brief Returns a pointer to the vertex data.

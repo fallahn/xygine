@@ -36,15 +36,32 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Manages the lifetimes of 3D meshes used by model components.
+    Multiple model components may reference the same mesh, which can be
+    retrieved from the MeshResource via its ID. A mesh must first be 
+    added to the resource via the add() function which takes a reference
+    to a MeshBuilder instance, used to construct the mesh.
+    */
     class XY_EXPORT_API MeshResource final
     {
     public:
-        using ID = std::size_t;
+        using ID = std::uint32_t;
 
         MeshResource();
         ~MeshResource() = default;
 
+        /*!
+        \brief Adds a mesh to the resource and maps it to the given ID.
+        \param ID a unique ID for the mesh to be added
+        \param MeshBuilder custom mesh builder used to create the mesh mapped to this ID
+        \returns Reference to the newly added mesh
+        */
         Mesh& add(ID, MeshBuilder&);
+        /*!
+        \brief Returns a reference to the mesh with the given ID is it is found
+        else returns a reference to the default mesh.
+        */
         Mesh& get(ID);
 
     private:

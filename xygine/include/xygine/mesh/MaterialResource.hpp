@@ -47,7 +47,7 @@ namespace xy
     class XY_EXPORT_API MaterialResource final
     {
     public:
-        using ID = std::size_t;
+        using ID = std::uint32_t;
 
         MaterialResource();
         ~MaterialResource() = default;

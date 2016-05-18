@@ -158,6 +158,7 @@
     <ClCompile Include="src\components\ComponentPointLight.cpp" />
     <ClCompile Include="src\components\QuadTreeComponent.cpp" />
     <ClCompile Include="src\GLExtensions.cpp" />
+    <ClCompile Include="src\mesh\CubeBuilder.cpp" />
     <ClCompile Include="src\mesh\MaterialProperty.cpp" />
     <ClCompile Include="src\mesh\MaterialResource.cpp" />
     <ClCompile Include="src\mesh\Mesh.cpp" />

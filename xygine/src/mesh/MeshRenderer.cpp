@@ -43,7 +43,7 @@ using namespace xy;
 
 namespace
 {
-    const float fov = 90.f * xy::Util::Const::degToRad;
+    const float fov = 30.f * xy::Util::Const::degToRad;
     const float nearPlane = 0.1f;
     const float farPlane = 3500.f;
 }
@@ -125,7 +125,7 @@ void MeshRenderer::drawScene() const
 
     glClearColor(1.f, 1.f, 1.f, 0.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    /*glDisable(GL_CULL_FACE);*/
+    /*glEnable(GL_CULL_FACE);*/
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     for (const auto& m : m_models)m->draw(m_viewMatrix);
