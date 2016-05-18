@@ -68,7 +68,7 @@ MultiRenderTexture::~MultiRenderTexture()
 }
 
 //public
-bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, std::size_t count, bool depthBuffer)
+bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 count, bool depthBuffer)
 {    
     if (!glGenFramebuffers)
     {
