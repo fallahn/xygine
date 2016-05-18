@@ -247,6 +247,8 @@ void Scene::setActiveCamera(const Camera* camera)
     {
         m_activeCamera = m_defaultCamera;
     }
+    auto msg = m_messageBus.post<xy::Message::SceneEvent>(xy::Message::SceneMessage);
+    msg->action = xy::Message::SceneEvent::CameraChanged;
 }
 
 void Scene::setClearColour(const sf::Color& colour)

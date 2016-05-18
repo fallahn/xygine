@@ -34,12 +34,12 @@ CubeBuilder::CubeBuilder(float size, bool normals, bool uvs)
     m_useNormals(normals),
     m_useUVs    (uvs)
 {
-    m_frontIndices = { 0, 1, 2, 3 };
-    m_backIndices = { 4, 5, 6, 7 };
-    m_leftIndices = { 8, 9, 10, 11 };
-    m_rightIndices = { 12, 13, 14, 15 };
-    m_topIndices = { 16, 17, 18, 19 };
-    m_bottomIndices = { 20, 21, 22, 23 };
+    m_frontIndices = { 1, 0, 3, 2 };
+    m_backIndices = { 5, 4, 7, 6 };
+    m_leftIndices = { 9, 8, 11, 10 };
+    m_rightIndices = { 13, 12, 15, 14 };
+    m_topIndices = { 17, 16, 19, 18 };
+    m_bottomIndices = { 21, 20, 23, 22 };
 }
 
 //public

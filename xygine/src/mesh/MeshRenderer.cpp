@@ -107,7 +107,18 @@ void MeshRenderer::update()
 
 void MeshRenderer::handleMessage(const Message& msg)
 {
-    //TODO handle camera changed event
+    //handle camera changed event
+    if (msg.id == xy::Message::SceneMessage)
+    {
+        const auto& msgData = msg.getData<xy::Message::SceneEvent>();
+        switch (msgData.action)
+        {
+        default:
+        case xy::Message::SceneEvent::CameraChanged:
+            updateView();
+            break;
+        }
+    }
 }
 
 //private
@@ -125,11 +136,12 @@ void MeshRenderer::drawScene() const
 
     glClearColor(1.f, 1.f, 1.f, 0.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    /*glEnable(GL_CULL_FACE);*/
+    glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     for (const auto& m : m_models)m->draw(m_viewMatrix);
     glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
     m_renderTexture.display();
     //m_renderTexture.setActive(false);
 }
