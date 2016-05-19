@@ -117,7 +117,16 @@ namespace xy
             GameSettings() : playerInitials({ { '-', '-', '-' } }){}
         };
 
-        App();
+        /*!
+        \brief Constructor.
+        \param sf::ContextSettings. 
+        Default context settings are supplied when inherting the App class,
+        but provide the option to request a specific context if needed.
+        For example when creating a game which uses the Model component
+        (or other 3D features) a context with OpenGL version 3.2 or 
+        higher is needed.
+        */
+        App(sf::ContextSettings = sf::ContextSettings());
         virtual ~App() = default;
         App(const App&) = delete;
         const App& operator = (const App&) = delete;

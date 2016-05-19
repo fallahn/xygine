@@ -44,8 +44,7 @@ using namespace xy;
 namespace
 {
     const float fov = 30.f * xy::Util::Const::degToRad;
-    const float nearPlane = 0.1f;
-    const float farPlane = 3500.f;
+    const float nearPlane = 0.1f; 
 }
 
 MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
@@ -91,11 +90,13 @@ void MeshRenderer::update()
         return m->destroyed();
     }), m_models.end());
 
-    auto camPos = m_scene.getView().getCenter();
+    auto view = m_scene.getView();
+    auto camPos = view.getCenter();
+    auto rotation = view.getRotation() * xy::Util::Const::degToRad;
 
     m_viewMatrix = glm::translate(glm::mat4(), glm::vec3(camPos.x, camPos.y, m_cameraZ));
-    //TODO rotate/scale
-    //m_viewMatrix = glm::rotate(m_viewMatrix, 0.f, glm::vec3(0.f, 0.f, 1.f));
+    //rotate
+    m_viewMatrix = glm::rotate(m_viewMatrix, rotation, glm::vec3(0.f, 0.f, 1.f));
     m_viewMatrix = glm::inverse(m_viewMatrix);
     
     std::memcpy(m_matrixBlock.u_viewMatrix, glm::value_ptr(m_viewMatrix), 16 * sizeof(float));
@@ -125,8 +126,7 @@ void MeshRenderer::handleMessage(const Message& msg)
 void MeshRenderer::drawScene() const
 {    
     m_renderTexture.setActive(true);
-    //m_renderTexture.clear(sf::Color::Transparent);
-
+    
     auto viewPort = m_renderTexture.getView().getViewport();
     glViewport(
         static_cast<GLuint>(viewPort.left * xy::DefaultSceneSize.x), 
@@ -136,7 +136,7 @@ void MeshRenderer::drawScene() const
 
     glClearColor(1.f, 1.f, 1.f, 0.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE); //TODO apply these in material passes
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     for (const auto& m : m_models)m->draw(m_viewMatrix);
@@ -155,13 +155,14 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 void MeshRenderer::updateView()
 {
     auto viewSize = m_scene.getView().getSize();
-    m_projectionMatrix = glm::perspective(fov, viewSize.x / viewSize.y, nearPlane, farPlane);
-    std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16);
 
     //calc how far away from the scene the camera would be
     //assuming the 2D world is drawn at 0 depth
     const float angle = std::tan(fov / 2.f);
     m_cameraZ = ((viewSize.y / 2.f) / angle);
 
-    XY_WARNING(std::abs(m_cameraZ) > farPlane, "Camera depth greater than far plane: " + std::to_string(m_cameraZ));
+    m_projectionMatrix = glm::perspective(fov, viewSize.x / viewSize.y, nearPlane, m_cameraZ * 2.f);
+    std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16);
+
+    //XY_WARNING(std::abs(m_cameraZ) > farPlane, "Camera depth greater than far plane: " + std::to_string(m_cameraZ));
 }

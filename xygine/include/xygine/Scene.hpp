@@ -198,7 +198,7 @@ namespace xy
 
         /*!
         \brief Returns the view matrix of the active camera if a scene exists
-        else returns an identity matrix
+        else returns an identity matrix. This is useful when performing 2D lighting
         */
         static sf::Transform getViewMatrix();
 

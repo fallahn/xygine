@@ -135,15 +135,20 @@ void PhysicsDemoState::createMesh()
     ent->addComponent(rotator);
     ent->setScale(10.f, 10.f);
     ent->setPosition(200.f, 200.f);
-
-    //auto drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
-    //drawable->setColour(sf::Color::Green);
-    //drawable->setTexture(m_textureResource.get("assets/images/physics demo/ball.png"));
-    //auto size = drawable->getTexture()->getSize();
-    //drawable->setOrigin({ size.x / 2.f, size.y / 2.f });
-    //ent->addComponent(drawable);
-
     m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
+
+
+    //auto cam = xy::Component::create<xy::Camera>(m_messageBus, m_scene.getView());
+    //rotator = xy::Component::create<RotationComponent>(m_messageBus);
+    //ent = xy::Entity::create(m_messageBus);
+    //auto pCam = ent->addComponent(cam);
+    //pCam->setZoom(1.15f);
+    ////ent->addComponent(rotator);
+    //ent->setPosition(xy::DefaultSceneSize / 2.f);
+    //m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
+    //m_scene.setActiveCamera(pCam);
+
+    
 }
 
 bool PhysicsDemoState::update(float dt)
@@ -279,6 +284,7 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
 void PhysicsDemoState::handleMessage(const xy::Message& msg)
 { 
     m_scene.handleMessage(msg);
+    m_meshRenderer.handleMessage(msg);
 }
 
 //private

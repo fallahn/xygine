@@ -37,7 +37,8 @@ source distribution.
 #include <SFML/Window/Event.hpp>
 
 Game::Game()
-    : m_stateStack({ getRenderWindow(), *this })
+    : xy::App   (sf::ContextSettings(0, 0, 0, 3, 2)),
+    m_stateStack({ getRenderWindow(), *this })
 {
 
 }

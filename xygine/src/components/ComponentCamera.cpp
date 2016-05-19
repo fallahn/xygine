@@ -67,6 +67,9 @@ void Camera::setZoom(float zoom)
 {
     XY_ASSERT(zoom > 0, "zoom must be greater than zero");
     m_zoom = 1.f / zoom;
+
+    auto msg = sendMessage<xy::Message::SceneEvent>(xy::Message::SceneMessage);
+    msg->action = xy::Message::SceneEvent::CameraChanged;
 }
 
 float Camera::getZoom() const
@@ -77,6 +80,9 @@ float Camera::getZoom() const
 void Camera::setViewport(const sf::FloatRect& viewPort)
 {
     m_initialView.setViewport(viewPort);
+
+    auto msg = sendMessage<xy::Message::SceneEvent>(xy::Message::SceneMessage);
+    msg->action = xy::Message::SceneEvent::CameraChanged;
 }
 
 sf::View Camera::getView() const
@@ -129,6 +135,9 @@ void Camera::setView(const sf::View& view)
 {
     m_initialView = view;
     m_position = view.getCenter();
+
+    auto msg = sendMessage<xy::Message::SceneEvent>(xy::Message::SceneMessage);
+    msg->action = xy::Message::SceneEvent::CameraChanged;
 }
 
 void Camera::setClearColour(const sf::Color& colour)
