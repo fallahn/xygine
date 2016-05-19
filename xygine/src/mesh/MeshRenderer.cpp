@@ -70,6 +70,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_defaultMaterial->addUniformBuffer(m_matrixBlockBuffer);
     
     //set lighting buffer
+    std::memset(&m_lightingBlock, 0, sizeof(m_lightingBlock));
     m_lightingBlockBuffer.create(m_lightingBlock);
     m_defaultMaterial->addUniformBuffer(m_lightingBlockBuffer);
 }

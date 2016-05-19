@@ -93,7 +93,7 @@ namespace xy
             "        v_pointLightDirections[i] = u_pointLights[i].position - viewVertex;\n"
             "    }\n"
 
-            "    v_eyeDirection = (u_worldViewMatrix * vec4(u_cameraWorldPosition, 1.0)).xyz - viewVertex;\n"
+            "    v_eyeDirection = u_cameraWorldPosition - viewVertex;\n"
             "}";
 
             static const std::string DefaultFragment =
@@ -127,15 +127,14 @@ namespace xy
                 "vec3 diffuseColour;\n"
                 "vec3 calcLighting(vec3 normal, vec3 lightDirection, vec3 lightDiffuse, vec3 lightSpec, float falloff)\n"
                 "{\n"
-                /*"    lightDirection = normalize(vec3(0.0, 0.0, 1.0)); lightDiffuse = vec3(1.0); falloff = 1.0;\n"*/
                 "    float diffuseAmount = max(dot(normal, lightDirection), 0.0);\n"
-                "    diffuseAmount = pow((diffuseAmount * 0.5) + 0.5, 2.0);\n"
+                /*"    diffuseAmount = pow((diffuseAmount * 0.5) + 0.5, 2.0);\n"*/
                 "    vec3 mixedColour = diffuseColour * lightDiffuse * diffuseAmount * falloff;\n"
 
                 "    vec3 eyeDirection = normalize(v_eyeDirection);\n"
                 "    vec3 halfVec = normalize(eyeDirection + lightDirection);\n"
                 "    float specularAngle = clamp(dot(normal, halfVec), 0.0, 1.0);\n"
-                "    vec3 specularColour = lightSpec * vec3(pow(specularAngle, 128.0)) * falloff;\n"
+                "    vec3 specularColour = lightSpec * vec3(pow(specularAngle, 255.0)) * falloff;\n"
 
                 "    return mixedColour + specularColour;\n"
                 "}\n"
@@ -150,11 +149,13 @@ namespace xy
                 "    {\n"
                 "        vec3 pointLightDirection = v_pointLightDirections[i] * u_pointLights[i].inverseRange;\n"
                 "        float falloff = clamp(1.0 - sqrt(dot(pointLightDirection, pointLightDirection)), 0.0, 1.0);\n"
-                "        blendedColour += calcLighting(normal, normalize(v_pointLightDirections[i]), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n"
+                "        if(i==0)blendedColour = vec3(falloff);//calcLighting(normal, normalize(v_pointLightDirections[i]), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n"
                 "    }\n"
 
+                /*"   blendedColour += calcLighting(normal, normalize(vec3(1.0, 1.0, 1.0)), vec3(1.0), vec3 (1.0), 1.0);"*/
+
                 "    colour = vec4(blendedColour, 1.0);\n"
-            "}";
+                "}";
     }
 }
 #endif //XY_STATIC_CONSTS_HPP_
