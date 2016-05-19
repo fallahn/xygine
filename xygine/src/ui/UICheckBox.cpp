@@ -145,7 +145,7 @@ void CheckBox::setText(const std::string& text)
 
 void CheckBox::setTextColour(const sf::Color& c)
 {
-    m_text.setColor(c);
+    m_text.setFillColor(c);
 }
 
 void CheckBox::setFont(const sf::Font& font)

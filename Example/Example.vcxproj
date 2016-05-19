@@ -75,16 +75,6 @@
     <ClInclude Include="include\CaveDemoDrawable.hpp" />
     <ClInclude Include="include\CommandIds.hpp" />
     <ClInclude Include="include\Game.hpp" />
-    <ClInclude Include="include\LMAlienController.hpp" />
-    <ClInclude Include="include\LMBulletController.hpp" />
-    <ClInclude Include="include\LMCollisionComponent.hpp" />
-    <ClInclude Include="include\LMCollisionWorld.hpp" />
-    <ClInclude Include="include\LMGameController.hpp" />
-    <ClInclude Include="include\LMHumanController.hpp" />
-    <ClInclude Include="include\LMMothershipController.hpp" />
-    <ClInclude Include="include\LMPlayerController.hpp" />
-    <ClInclude Include="include\LMSpeedMeter.hpp" />
-    <ClInclude Include="include\LunarMoonerState.hpp" />
     <ClInclude Include="include\MenuMainState.hpp" />
     <ClInclude Include="include\MenuOptionState.hpp" />
     <ClInclude Include="include\NetworkDemoBallLogic.hpp" />
@@ -100,25 +90,14 @@
     <ClInclude Include="include\PhysicsDemoInputController.hpp" />
     <ClInclude Include="include\PhysicsDemoLine.hpp" />
     <ClInclude Include="include\PhysicsDemoState.hpp" />
-    <ClInclude Include="include\RacingDemoPlayer.hpp" />
-    <ClInclude Include="include\RacingDemoState.hpp" />
-    <ClInclude Include="include\RacingDemoTrack.hpp" />
+    <ClInclude Include="include\DeferredDemoState.hpp" />
+    <ClInclude Include="include\RotationComponent.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
     <ClInclude Include="include\TimedDestruction.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CaveDemoDrawable.cpp" />
     <ClCompile Include="src\Game.cpp" />
-    <ClCompile Include="src\LMAlienController.cpp" />
-    <ClCompile Include="src\LMBulletController.cpp" />
-    <ClCompile Include="src\LMCollisionComponent.cpp" />
-    <ClCompile Include="src\LMCollisionWorld.cpp" />
-    <ClCompile Include="src\LMGameController.cpp" />
-    <ClCompile Include="src\LMHumanController.cpp" />
-    <ClCompile Include="src\LMMothershipController.cpp" />
-    <ClCompile Include="src\LMPlayerController.cpp" />
-    <ClCompile Include="src\LMSpeedMeter.cpp" />
-    <ClCompile Include="src\LunarMoonerState.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MenuMainState.cpp" />
     <ClCompile Include="src\MenuOptionState.cpp" />
@@ -133,9 +112,7 @@
     <ClCompile Include="src\PhysicsDemoInputController.cpp" />
     <ClCompile Include="src\PhysicsDemoLine.cpp" />
     <ClCompile Include="src\PhysicsDemoState.cpp" />
-    <ClCompile Include="src\RacingDemoPlayer.cpp" />
-    <ClCompile Include="src\RacingDemoState.cpp" />
-    <ClCompile Include="src\RacingDemoTrack.cpp" />
+    <ClCompile Include="src\DeferredDemoState.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

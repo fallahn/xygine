@@ -152,11 +152,23 @@
     <ClCompile Include="src\components\ComponentAudioListener.cpp" />
     <ClCompile Include="src\components\ComponentAudioSource.cpp" />
     <ClCompile Include="src\components\ComponentCamera.cpp" />
+    <ClCompile Include="src\components\ComponentModel.cpp" />
     <ClCompile Include="src\components\ComponentParticleController.cpp" />
     <ClCompile Include="src\components\ComponentParticleSystem.cpp" />
     <ClCompile Include="src\components\ComponentPointLight.cpp" />
     <ClCompile Include="src\components\QuadTreeComponent.cpp" />
     <ClCompile Include="src\GLExtensions.cpp" />
+    <ClCompile Include="src\mesh\CubeBuilder.cpp" />
+    <ClCompile Include="src\mesh\MaterialProperty.cpp" />
+    <ClCompile Include="src\mesh\MaterialResource.cpp" />
+    <ClCompile Include="src\mesh\Mesh.cpp" />
+    <ClCompile Include="src\mesh\MeshRenderer.cpp" />
+    <ClCompile Include="src\mesh\Material.cpp" />
+    <ClCompile Include="src\mesh\MeshResource.cpp" />
+    <ClCompile Include="src\mesh\SubMesh.cpp" />
+    <ClCompile Include="src\mesh\UniformBuffer.cpp" />
+    <ClCompile Include="src\mesh\VertexAttribBinding.cpp" />
+    <ClCompile Include="src\mesh\VertexLayout.cpp" />
     <ClCompile Include="src\MultiRenderTexture.cpp" />
     <ClCompile Include="src\network\AckSystem.cpp" />
     <ClCompile Include="src\network\ClientConnection.cpp" />
@@ -225,9 +237,23 @@
     <ClCompile Include="src\ui\UIWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\xygine\components\Model.hpp" />
     <ClInclude Include="include\xygine\components\PointLight.hpp" />
     <ClInclude Include="include\xygine\Config.hpp" />
     <ClInclude Include="include\xygine\detail\GLCheck.hpp" />
+    <ClInclude Include="include\xygine\detail\GLExtensions.hpp" />
+    <ClInclude Include="include\xygine\mesh\CubeBuilder.hpp" />
+    <ClInclude Include="include\xygine\mesh\Material.hpp" />
+    <ClInclude Include="include\xygine\mesh\MaterialResource.hpp" />
+    <ClInclude Include="include\xygine\mesh\Mesh.hpp" />
+    <ClInclude Include="include\xygine\mesh\MeshBuilder.hpp" />
+    <ClInclude Include="include\xygine\mesh\MeshRenderer.hpp" />
+    <ClInclude Include="include\xygine\mesh\MeshResource.hpp" />
+    <ClInclude Include="include\xygine\mesh\StaticConsts.hpp" />
+    <ClInclude Include="include\xygine\mesh\SubMesh.hpp" />
+    <ClInclude Include="include\xygine\mesh\UniformBuffer.hpp" />
+    <ClInclude Include="include\xygine\mesh\VertexAttribBinding.hpp" />
+    <ClInclude Include="include\xygine\mesh\VertexLayout.hpp" />
     <ClInclude Include="include\xygine\MultiRenderTexture.hpp" />
     <ClInclude Include="include\xygine\network\AckSystem.hpp" />
     <ClInclude Include="include\xygine\network\ClientConnection.hpp" />

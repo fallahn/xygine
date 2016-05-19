@@ -301,7 +301,7 @@ void Slider::setText(const std::string& text)
 
 void Slider::setTextColour(const sf::Color& colour)
 {
-    m_text.setColor(colour);
+    m_text.setFillColor(colour);
 }
 
 void Slider::setFontSize(sf::Uint16 size)

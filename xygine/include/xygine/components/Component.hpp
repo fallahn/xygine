@@ -95,7 +95,8 @@ namespace xy
         {
             Drawable,
             Physics,
-            Script
+            Script,
+            Mesh
         };
 
         /*!

@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\racing demo">
-      <UniqueIdentifier>{597c1647-4a3f-43ca-a9a4-63e326b63490}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\physics demo">
       <UniqueIdentifier>{c202890a-6f1c-4af2-b767-6dea8de9b0af}</UniqueIdentifier>
     </Filter>
@@ -24,9 +21,6 @@
     </Filter>
     <Filter Include="Source Files\network demo">
       <UniqueIdentifier>{42cb5927-966f-4a0d-a780-2976b2d3e224}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\lunar mooner">
-      <UniqueIdentifier>{8c266401-a811-4f40-b31d-bc3c95e5a643}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -49,15 +43,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\TimedDestruction.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\RacingDemoState.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\RacingDemoTrack.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\RacingDemoPlayer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\CommandIds.hpp">
@@ -99,34 +84,10 @@
     <ClInclude Include="include\NetworkDemoBot.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\LunarMoonerState.hpp">
+    <ClInclude Include="include\DeferredDemoState.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\LMAlienController.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LMMothershipController.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LMGameController.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LMPlayerController.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LMCollisionComponent.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LMCollisionWorld.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LMHumanController.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LMBulletController.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LMSpeedMeter.hpp">
+    <ClInclude Include="include\RotationComponent.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -148,15 +109,6 @@
     </ClCompile>
     <ClCompile Include="src\PhysicsDemoState.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RacingDemoState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RacingDemoTrack.cpp">
-      <Filter>Source Files\racing demo</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RacingDemoPlayer.cpp">
-      <Filter>Source Files\racing demo</Filter>
     </ClCompile>
     <ClCompile Include="src\PhysicsDemoInputController.cpp">
       <Filter>Source Files\physics demo</Filter>
@@ -188,35 +140,8 @@
     <ClCompile Include="src\NetworkDemoBot.cpp">
       <Filter>Source Files\network demo</Filter>
     </ClCompile>
-    <ClCompile Include="src\LunarMoonerState.cpp">
-      <Filter>Source Files\lunar mooner</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LMAlienController.cpp">
-      <Filter>Source Files\lunar mooner</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LMMothershipController.cpp">
-      <Filter>Source Files\lunar mooner</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LMGameController.cpp">
-      <Filter>Source Files\lunar mooner</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LMPlayerController.cpp">
-      <Filter>Source Files\lunar mooner</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LMCollisionComponent.cpp">
-      <Filter>Source Files\lunar mooner</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LMCollisionWorld.cpp">
-      <Filter>Source Files\lunar mooner</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LMHumanController.cpp">
-      <Filter>Source Files\lunar mooner</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LMBulletController.cpp">
-      <Filter>Source Files\lunar mooner</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LMSpeedMeter.cpp">
-      <Filter>Source Files\lunar mooner</Filter>
+    <ClCompile Include="src\DeferredDemoState.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

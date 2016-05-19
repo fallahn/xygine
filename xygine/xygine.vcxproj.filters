@@ -61,6 +61,12 @@
     <Filter Include="Source Files\network">
       <UniqueIdentifier>{f5f366dd-cc64-4855-be7c-47c2be5092a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\mesh">
+      <UniqueIdentifier>{f93fe71d-c14a-454f-9313-aa1494a932f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mesh">
+      <UniqueIdentifier>{b81ba0fe-7d35-4552-9aeb-543f65a3a8e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -293,6 +299,42 @@
     </ClCompile>
     <ClCompile Include="src\PostBlur.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\VertexLayout.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\SubMesh.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\Mesh.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\MeshRenderer.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ComponentModel.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\UniformBuffer.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\MaterialProperty.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\Material.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\VertexAttribBinding.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\MaterialResource.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\MeshResource.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\CubeBuilder.cpp">
+      <Filter>Source Files\mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -619,6 +661,48 @@
     </ClInclude>
     <ClInclude Include="include\xygine\PostBlur.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\VertexLayout.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\Mesh.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\detail\GLExtensions.hpp">
+      <Filter>Header Files\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\SubMesh.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\MeshRenderer.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\Model.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\UniformBuffer.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\Material.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\VertexAttribBinding.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\StaticConsts.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\MeshResource.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\MaterialResource.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\MeshBuilder.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\CubeBuilder.hpp">
+      <Filter>Header Files\mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

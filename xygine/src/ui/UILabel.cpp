@@ -83,7 +83,7 @@ void Label::setString(const std::string& str)
 
 void Label::setColour(const sf::Color& colour)
 {
-    m_text.setColor(colour);
+    m_text.setFillColor(colour);
 }
 
 void Label::setCharacterSize(sf::Uint32 size)

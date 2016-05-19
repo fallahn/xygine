@@ -35,11 +35,13 @@ source distribution.
 #include <xygine/Command.hpp>
 #include <xygine/components/AudioSource.hpp>
 #include <xygine/components/AnimatedDrawable.hpp>
+#include <xygine/components/PointLight.hpp>
 
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/util/Math.hpp>
 #include <xygine/util/Vector.hpp>
+#include <xygine/util/Random.hpp>
 
 #include <xygine/shaders/NormalMapped.hpp>
 #include <xygine/shaders/Misc.hpp>
@@ -55,6 +57,12 @@ source distribution.
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include <xygine/components/Model.hpp>
+#include <RotationComponent.hpp>
+#include <xygine/mesh/StaticConsts.hpp>
+#include <xygine/mesh/SubMesh.hpp>
+#include <xygine/mesh/CubeBuilder.hpp>
+
 namespace
 {
     const sf::Keyboard::Key upKey = sf::Keyboard::W;
@@ -67,6 +75,8 @@ namespace
     const float joyMaxAxis = 100.f;
 
     bool drawOverlay = false;
+
+    sf::Shader* shader = nullptr;
 }
 
 PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
@@ -74,7 +84,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     m_physWorld     (context.appInstance.getMessageBus()),
     m_messageBus    (context.appInstance.getMessageBus()),
     m_scene         (m_messageBus),
-    m_buns          (m_textureResource)
+    m_meshRenderer  ({1920, 1080}, m_scene)
 {
     launchLoadingScreen();
     xy::Stats::clear();
@@ -91,20 +101,60 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     m_shaderResource.preload(PhysicsShaderId::NormalMapTextured, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED);
     m_shaderResource.preload(PhysicsShaderId::NormalMapTexturedSpecular, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED_SPECULAR);
     m_shaderResource.preload(PhysicsShaderId::ReflectionMap, xy::Shader::Default::vertex, xy::Shader::ReflectionMap::fragment);
-    m_shaderResource.get(PhysicsShaderId::ReflectionMap).setParameter("u_reflectionMap", m_textureResource.get("assets/images/physics demo/table_reflection.png"));
+    m_shaderResource.get(PhysicsShaderId::ReflectionMap).setUniform("u_reflectionMap", m_textureResource.get("assets/images/physics demo/table_reflection.png"));
+
+    shader = &m_shaderResource.get(PhysicsShaderId::NormalMapTexturedSpecular);
+
+    //test stuff
+    createMesh();
 
     //scale a 1200px table image to 2.7 metres
     m_physWorld.setPixelScale(444.5f);
     m_physWorld.setGravity({});
     createBodies();
+    addLights();
 
     context.renderWindow.setMouseCursorVisible(true);
-
-    //temp stuff
-
     quitLoadingScreen();
 
     REPORT("Q", "Toggle overlay");
+}
+
+void PhysicsDemoState::createMesh()
+{
+    xy::CubeBuilder cb(32.f, true, false);
+    m_meshResource.add(0, cb);
+
+    auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
+
+    m_meshShader.loadFromMemory(xy::Shader3D::DefaultVertex, xy::Shader3D::DefaultFragment);
+    auto& material = m_materialResource.add(MatId::Blue, m_meshShader);
+    material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    material.addUniformBuffer(m_meshRenderer.getLightingUniforms());
+    material.addProperty({ "u_colour", sf::Color(0, 0, 255, 127) });
+    model->setSubMaterial(material, 5);
+
+    auto ent = xy::Entity::create(m_messageBus);
+    ent->addComponent(model);
+
+    auto rotator = xy::Component::create<RotationComponent>(m_messageBus);
+    ent->addComponent(rotator);
+    ent->setScale(10.f, 10.f);
+    ent->setPosition(200.f, 200.f);
+    m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
+
+
+    //auto cam = xy::Component::create<xy::Camera>(m_messageBus, m_scene.getView());
+    //rotator = xy::Component::create<RotationComponent>(m_messageBus);
+    //ent = xy::Entity::create(m_messageBus);
+    //auto pCam = ent->addComponent(cam);
+    //pCam->setZoom(1.15f);
+    ////ent->addComponent(rotator);
+    //ent->setPosition(xy::DefaultSceneSize / 2.f);
+    //m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
+    //m_scene.setActiveCamera(pCam);
+
+    
 }
 
 bool PhysicsDemoState::update(float dt)
@@ -113,6 +163,30 @@ bool PhysicsDemoState::update(float dt)
     auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
     
     m_scene.update(dt);
+    m_meshRenderer.update();
+
+    auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
+    auto i = 0;
+    for (; i < lights.size() && i < xy::Shader::NormalMapped::MaxPointLights; ++i)
+    {
+        auto light = lights[i];
+        if (light)
+        {
+            const std::string idx = std::to_string(i);
+
+            auto pos = light->getWorldPosition();
+            shader->setUniform("u_pointLightPositions[" + std::to_string(i) + "]", pos);
+            shader->setUniform("u_pointLights[" + idx + "].intensity", light->getIntensity());
+            shader->setUniform("u_pointLights[" + idx + "].diffuseColour", sf::Glsl::Vec4(light->getDiffuseColour()));
+            shader->setUniform("u_pointLights[" + idx + "].specularColour", sf::Glsl::Vec4(light->getSpecularColour()));
+            shader->setUniform("u_pointLights[" + idx + "].inverseRange", light->getInverseRange());
+        }
+    }
+    //switch off inactive lights
+    for (; i < xy::Shader::NormalMapped::MaxPointLights; ++i)
+    {
+        shader->setUniform("u_pointLights[" + std::to_string(i) + "].intensity", 0.f);
+    }
 
     m_reportText.setString(xy::Stats::getString());
 
@@ -126,6 +200,8 @@ void PhysicsDemoState::draw()
     rw.setView(getContext().defaultView);
     if(drawOverlay) rw.draw(m_physWorld);
     rw.draw(m_reportText);
+
+    rw.draw(m_meshRenderer);
 }
 
 bool PhysicsDemoState::handleEvent(const sf::Event& evt)
@@ -237,6 +313,7 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
 void PhysicsDemoState::handleMessage(const xy::Message& msg)
 { 
     m_scene.handleMessage(msg);
+    m_meshRenderer.handleMessage(msg);
 }
 
 //private
@@ -426,6 +503,17 @@ void PhysicsDemoState::createBodies()
     }
 }
 
+void PhysicsDemoState::addLights()
+{
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 1800.f, 2820.f, sf::Color::Green);
+    light->setDepth(200.f);
+
+    auto entity = xy::Entity::create(m_messageBus);
+    entity->setPosition(xy::DefaultSceneSize / 2.f);
+    entity->addComponent(light);
+    m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
+}
+
 namespace
 {
     const float maxVelocity = 400000.f;
@@ -532,6 +620,10 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     drawable->setShader(m_shaderResource.get(PhysicsShaderId::NormalMapTexturedSpecular));
     ballEntity->addComponent(drawable);
 
+    auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
+    model->setSubMaterial(m_materialResource.get(MatId::Blue), 0);
+    ballEntity->addComponent(model);
+    
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);
 
     return b;

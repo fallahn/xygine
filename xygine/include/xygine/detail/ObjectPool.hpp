@@ -80,6 +80,7 @@ namespace xy
             ~ObjectPool() = default;
             explicit ObjectPool(const ObjectPool&) = delete;
             ObjectPool& operator = (const ObjectPool&) = delete;
+            ObjectPool(ObjectPool&&) noexcept = default;
             /*!
             \brief Retrieves a unique_ptr of type T
 

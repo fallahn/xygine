@@ -30,23 +30,6 @@ source distribution.
 
 #include <xygine/MessageBus.hpp>
 
-//-------------------//
-enum RacingCommandId
-{
-    TrackEnt = 0x1,
-    PlayerEnt = 0x2,
-    BackgroundEnt = 0x4
-};
-
-enum RacingMessageId
-{
-    TrackMessage = xy::Message::Type::Count
-};
-
-struct TrackEvent
-{
-    //const Track::Segment* playerSegment = nullptr;
-};
 //------------------//
 enum PhysicsCommandId
 {
@@ -74,50 +57,6 @@ struct PongEvent
         PlayerOneScored,
         PlayerTwoScored
     }type;
-};
-
-//-----------------//
-enum LMCommandID
-{
-    Mothership = 0x1,
-    GameController = 0x2,
-    Human = 0x4
-};
-
-enum LMInputFlags
-{
-    SteerLeft = 0x1,
-    SteerRight = 0x2,
-    Thrust = 0x4,
-    Shoot = 0x8,
-    Start = 0x10
-};
-
-enum LMMessageId
-{
-    LMMessage = xy::Message::Count
-};
-
-struct LMEvent
-{
-    enum
-    {
-        PlayerDied,
-        PlayerLanded,
-        HumanRescued,
-        HumanPickedUp,
-        AlienDied
-    }type;
-    float posX = 0.f;
-    float posY = 0.f;
-};
-
-enum LMParticleID
-{
-    Thruster,
-    RcsLeft,
-    RcsRight,
-    SmallExplosion
 };
 
 #endif //COMMAND_IDS_HPP_

@@ -32,12 +32,13 @@ source distribution.
 #include <ParticleDemoState.hpp>
 #include <PhysicsDemoState.hpp>
 #include <NetworkDemoState.hpp>
-#include <LunarMoonerState.hpp>
+#include <DeferredDemoState.hpp>
 
 #include <SFML/Window/Event.hpp>
 
 Game::Game()
-    : m_stateStack({ getRenderWindow(), *this })
+    : xy::App   (sf::ContextSettings(0, 0, 0, 3, 2)),
+    m_stateStack({ getRenderWindow(), *this })
 {
 
 }
@@ -111,5 +112,5 @@ void Game::registerStates()
     m_stateStack.registerState<PhysicsDemoState>(States::ID::PhysicsDemo);
     m_stateStack.registerState<ParticleDemoState>(States::ID::ParticleDemo);
     m_stateStack.registerState<NetworkDemoState>(States::ID::NetworkDemo);
-    m_stateStack.registerState<LunarMoonerState>(States::ID::LunarMooner);
+    m_stateStack.registerState<DeferredDemoState>(States::ID::DeferredDemo);
 }

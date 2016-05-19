@@ -99,8 +99,8 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
 
     xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostBloom>();
     //m_scene.addPostProcess(pp);
-    pp = xy::PostProcess::create<xy::PostChromeAb>();
-    //m_scene.addPostProcess(pp);
+    pp = xy::PostProcess::create<xy::PostChromeAb>(false);
+    m_scene.addPostProcess(pp);
     m_scene.setClearColour({ 0u, 0u, 20u });
 
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
@@ -133,17 +133,17 @@ bool ParticleDemoState::update(float dt)
             const std::string idx = std::to_string(i);
             
             auto pos = light->getWorldPosition();
-            shader->setParameter("u_pointLightPositions[" + std::to_string(i) + "]", pos);
-            shader->setParameter("u_pointLights[" + idx + "].intensity", light->getIntensity());
-            shader->setParameter("u_pointLights[" + idx + "].diffuseColour", light->getDiffuseColour());
-            shader->setParameter("u_pointLights[" + idx + "].specularColour", light->getSpecularColour());
-            shader->setParameter("u_pointLights[" + idx + "].inverseRange", light->getInverseRange());
+            shader->setUniform("u_pointLightPositions[" + std::to_string(i) + "]", pos);
+            shader->setUniform("u_pointLights[" + idx + "].intensity", light->getIntensity());
+            shader->setUniform("u_pointLights[" + idx + "].diffuseColour", sf::Glsl::Vec4(light->getDiffuseColour()));
+            shader->setUniform("u_pointLights[" + idx + "].specularColour", sf::Glsl::Vec4(light->getSpecularColour()));
+            shader->setUniform("u_pointLights[" + idx + "].inverseRange", light->getInverseRange());
         }
     }
     //switch off inactive lights
     for (; i < xy::Shader::NormalMapped::MaxPointLights; ++i)
     {
-        shader->setParameter("u_pointLights[" + std::to_string(i) + "].intensity", 0.f);
+        shader->setUniform("u_pointLights[" + std::to_string(i) + "].intensity", 0.f);
     }
 
 

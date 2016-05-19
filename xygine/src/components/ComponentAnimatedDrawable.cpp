@@ -345,11 +345,11 @@ void AnimatedDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 
     if (m_shader)
     {
-        m_shader->setParameter("u_diffuseMap", *m_sprite.getTexture());
-        m_shader->setParameter("u_normalMap", *m_normalMap);
-        if(m_maskMap) m_shader->setParameter("u_maskMap", *m_maskMap);
+        m_shader->setUniform("u_diffuseMap", *m_sprite.getTexture());
+        m_shader->setUniform("u_normalMap", *m_normalMap);
+        if(m_maskMap) m_shader->setUniform("u_maskMap", *m_maskMap);
         auto worldView = Scene::getViewMatrix() * states.transform;
-        m_shader->setParameter("u_inverseWorldViewMatrix", worldView.getInverse());
+        m_shader->setUniform("u_inverseWorldViewMatrix", sf::Glsl::Mat4(worldView.getInverse()));
     }   
     rt.draw(m_sprite, states);
 }

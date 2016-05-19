@@ -35,11 +35,10 @@ namespace States
         None = 0,
         ParticleDemo,
         PhysicsDemo,
-        RacingDemo,
+        DeferredDemo,
         NetworkDemo,
         MenuMain,
-        MenuOptions,
-        LunarMooner
+        MenuOptions
     };
 }
 

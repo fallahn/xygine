@@ -101,6 +101,7 @@ endif()
 
 #install xygine
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/xygine DESTINATION include)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/glm DESTINATION include)
 if(XY_STATIC_LIB)
   install(TARGETS xygine EXPORT xygine-targets DESTINATION lib)
 else()

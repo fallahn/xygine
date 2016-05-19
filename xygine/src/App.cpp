@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "GLExtensions.hpp"
+#include <xygine/detail/GLExtensions.hpp>
 
 #include <xygine/App.hpp>
 #include <xygine/util/Math.hpp>
@@ -65,9 +65,9 @@ namespace
     const sf::RenderWindow* renderWindow = nullptr;
 }
 
-App::App()
+App::App(sf::ContextSettings contextSettings)
     : m_videoSettings   (),
-    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle)/*,
+    m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, contextSettings)/*,
     m_pendingDifficulty (Difficulty::Easy)*/
 {
     loadSettings();
@@ -315,20 +315,22 @@ void App::saveSettings()
 
 void App::saveScreenshot()
 {
-    std::time_t time = std::time(NULL);
+    std::time_t time = std::time(nullptr);
     struct tm* timeInfo;
 
     timeInfo = std::localtime(&time);
 
-    char buffer[40];
+    std::array<char, 40u> buffer;
     std::string fileName;
 
-    strftime(buffer, 40, "screenshot%d_%m_%y_%H_%M_%S.png", timeInfo);
+    strftime(buffer.data(), 40, "screenshot%d_%m_%y_%H_%M_%S.png", timeInfo);
 
-    fileName.assign(buffer);
+    fileName.assign(buffer.data());
 
-    //TODO on next release of SFML update this as capture() is deprecated
-    sf::Image screenCap = m_renderWindow.capture();
+    sf::Texture t;
+    t.create(m_renderWindow.getSize().x, m_renderWindow.getSize().y);
+    t.update(m_renderWindow);
+    sf::Image screenCap = t.copyToImage();
     if (!screenCap.saveToFile(fileName)) Logger::log("failed to save " + fileName, Logger::Type::Error, Logger::Output::File);
 }
 

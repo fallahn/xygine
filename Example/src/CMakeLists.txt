@@ -1,0 +1,18 @@
+SET(EXAMPLE_SRC
+  src/Game.cpp
+  src/CaveDemoDrawable.cpp
+  src/DeferredDemoState.cpp
+  src/main.cpp
+  src/MenuMainState.cpp
+  src/MenuOptionState.cpp
+  src/NetworkDemoBallLogic.cpp
+  src/NetworkDemoBot.cpp
+  src/NetworkDemoCollisions.cpp
+  src/NetworkDemoController.cpp
+  src/NetworkDemoPlayerController.cpp
+  src/NetworkDemoServer.cpp
+  src/NetworkDemoState.cpp
+  src/ParticleDemoState.cpp
+  src/PhysicsDemoInputController.cpp
+  src/PhysicsDemoLine.cpp
+  src/PhysicsDemoState.cpp)

@@ -1,0 +1,15 @@
+{
+  "Animations": [
+    {
+      "Start": 0,
+      "End": 11,
+      "Loop": true,
+      "Name": "default"
+    }
+  ],
+  "FrameCount": 12,
+  "FrameSize": "320, 320",
+  "FrameRate": 24.0,
+  "Texture": "run_diffuse.png",
+  "NormalMap": "run_normal.png"
+}

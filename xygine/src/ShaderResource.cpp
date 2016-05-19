@@ -26,6 +26,8 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/ShaderResource.hpp>
+#include <xygine/detail/GLCheck.hpp>
+#include <xygine/detail/GLExtensions.hpp>
 
 #include <SFML/Graphics/Shader.hpp>
 

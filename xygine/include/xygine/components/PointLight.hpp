@@ -103,7 +103,7 @@ namespace xy
 
         /*!
         \brief Get the light's world position.
-        The positions is thre dimensional, including the percieved
+        The positions is three dimensional, including the percieved
         depth value. This is so that shader position properties can
         be set directly.
         */

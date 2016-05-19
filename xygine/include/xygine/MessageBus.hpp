@@ -89,6 +89,7 @@ namespace xy
             UIMessage,
             ComponentSystemMessage,
             NetworkMessage,
+            SceneMessage,
             Count
         };
         /*!
@@ -186,6 +187,17 @@ namespace xy
                 ConnectionRemoved
             }action;
             ClientID clientID = -1;
+        };
+
+        /*!
+        \brief System events which occur in the scene class
+        */
+        struct SceneEvent
+        {
+            enum
+            {
+                CameraChanged
+            }action;
         };
 
         Id id = -1;

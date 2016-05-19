@@ -67,7 +67,7 @@ void ScoreList::handleEvent(const sf::Event&, const sf::Vector2f&){}
 
 void ScoreList::update(float dt)
 {
-    if (m_doScroll)
+    if (m_doScroll && !m_texts.empty())
     {
         const float centre = m_bounds.height / 2.f;
         const float scrollAmount = (m_scrollSpeed * (m_scrollCurrentDistance / m_scrollTargetDistance)) * dt;
@@ -153,7 +153,7 @@ void ScoreList::setIndex(Index index)
             text.setStyle(sf::Text::Regular);
         }
         m_texts[index].setStyle(sf::Text::Bold | sf::Text::Italic);
-        m_texts[index].setColor({ 255u, 240u, 200u });
+        m_texts[index].setFillColor({ 255u, 240u, 200u });
 
         const float dist = centre - m_texts[index].getPosition().y;
         updateTexts(dist);
@@ -188,9 +188,9 @@ void ScoreList::updateTexts(float scrollAmount)
         text.move(0.f, scrollAmount);
         const float diff = std::abs(centre - text.getPosition().y);
         const float ratio = 1.f - (diff / m_bounds.height);
-        sf::Color colour = text.getColor();
+        sf::Color colour = text.getFillColor();
         colour.a = static_cast<sf::Uint8>(ratio * 255.f);
-        text.setColor(colour);
+        text.setFillColor(colour);
         text.setScale(ratio, ratio);
     }
 }

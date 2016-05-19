@@ -1,0 +1,15 @@
+{
+  "Animations": [
+    {
+      "Start": 0,
+      "End": 15,
+      "Loop": true,
+      "Name": "default"
+    }
+  ],
+  "FrameCount": 16,
+  "FrameSize": "56, 56",
+  "FrameRate": 8.0,
+  "Texture": "doofer_dead.png",
+  "NormalMap": "doofer_dead_normal.png"
+}

@@ -30,6 +30,9 @@ source distribution.
 
 #include <xygine/shaders/Default.hpp>
 
+#define CHRAB_NO_DISTORT "#version 120\n" + xy::Shader::PostChromeAb::fragment
+#define CHRAB_DISTORT "#version 120\n#define DISTORTION\n" + xy::Shader::PostChromeAb::fragment
+
 namespace xy
 {
     namespace Shader
@@ -37,7 +40,7 @@ namespace xy
         namespace PostChromeAb
         {
             static const std::string fragment =
-                "#version 120\n" \
+                /*"#version 120\n" \*/
                 /*"#define BLUR\n" \*/
                 "uniform sampler2D u_sourceTexture;\n" \
                 "uniform float u_time;\n" \
@@ -74,8 +77,10 @@ namespace xy
                 "{\n" \
                 "    vec2 distortOffset = vec2(0.01, 0.01);\n" \
                 "    vec2 texCoord = gl_TexCoord[0].xy;\n" \
+                "#if defined(DISTORTION)\n" \
                 "    float distSquared = distanceSquared(0.5 - texCoord);\n" \
                 "    if(distSquared > centreDistanceSquared) texCoord += ((vec2(0.5, 0.5) - texCoord) * (centreDistanceSquared - distSquared)) * 0.12;\n" \
+                "#endif\n" \
                 "    vec2 offset = vec2((maxOffset / 2.0) - (texCoord.x * maxOffset), (maxOffset / 2.0) - (texCoord.y * maxOffset));\n"
                 "    vec3 colour = vec3(0.0);\n" \
                 "#if defined(BLUR)\n" \

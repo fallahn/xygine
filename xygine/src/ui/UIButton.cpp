@@ -149,7 +149,7 @@ void Button::setText(const std::string& text)
 
 void Button::setTextColour(const sf::Color& colour)
 {
-    m_text.setColor(colour);
+    m_text.setFillColor(colour);
 }
 
 void Button::setFontSize(sf::Uint16 size)

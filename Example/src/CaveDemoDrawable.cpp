@@ -423,10 +423,10 @@ void CaveDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     
     if (shader)
     {
-        shader->setParameter("u_diffuseMap", *m_texture);
-        shader->setParameter("u_normalMap", *m_normalMap);
-        shader->setParameter("u_maskMap", *m_maskMap);
-        shader->setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
+        shader->setUniform("u_diffuseMap", *m_texture);
+        shader->setUniform("u_normalMap", *m_normalMap);
+        shader->setUniform("u_maskMap", *m_maskMap);
+        shader->setUniform("u_inverseWorldViewMatrix", sf::Glsl::Mat4(states.transform.getInverse()));
         states.shader = shader;
     }
 

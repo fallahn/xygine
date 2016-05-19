@@ -71,4 +71,17 @@ namespace xy
 {
     static const sf::Vector2f DefaultSceneSize(1920.f, 1080.f);
 }
+
+//defs for opengl types used in 3D renderer
+#include <xygine/detail/GLExtensions.hpp>
+namespace xy
+{
+    using VertexBufferID = GLuint;
+    using IndexBufferID = GLuint;
+    using VertexAttribID = GLint;
+    using UniformBufferID = GLuint;
+    using UniformBlockID = GLuint;
+    using ShaderID = GLuint;
+}
+
 #endif //XY_CONFIG_HPP_
