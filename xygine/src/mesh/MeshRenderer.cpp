@@ -28,6 +28,7 @@ source distribution.
 #include <xygine/mesh/MeshRenderer.hpp>
 #include <xygine/mesh/StaticConsts.hpp>
 #include <xygine/components/Model.hpp>
+#include <xygine/components/PointLight.hpp>
 #include <xygine/Scene.hpp>
 #include <xygine/util/Const.hpp>
 #include <xygine/Reports.hpp>
@@ -50,7 +51,7 @@ namespace
 MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     : m_scene               (scene),
     m_matrixBlockBuffer     ("u_matrixBlock"),
-    m_lightingBlockBuffer   ("u_lightingBlock")
+    m_lightingBlockBuffer   ("u_lightBlock")
 {
     //set up a default material to assign to newly created models
     m_defaultShader.loadFromMemory(Shader3D::DefaultVertex, Shader3D::DefaultFragment);
@@ -67,7 +68,10 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_matrixBlockBuffer.create(m_matrixBlock);
 
     m_defaultMaterial->addUniformBuffer(m_matrixBlockBuffer);
-    //TODO set lighting buffer
+    
+    //set lighting buffer
+    m_lightingBlockBuffer.create(m_lightingBlock);
+    m_defaultMaterial->addUniformBuffer(m_lightingBlockBuffer);
 }
 
 //public
@@ -93,8 +97,9 @@ void MeshRenderer::update()
     auto view = m_scene.getView();
     auto camPos = view.getCenter();
     auto rotation = view.getRotation() * xy::Util::Const::degToRad;
+    glm::vec3 camWorldPosition(camPos.x, camPos.y, m_cameraZ);
 
-    m_viewMatrix = glm::translate(glm::mat4(), glm::vec3(camPos.x, camPos.y, m_cameraZ));
+    m_viewMatrix = glm::translate(glm::mat4(), camWorldPosition);
     //rotate
     m_viewMatrix = glm::rotate(m_viewMatrix, rotation, glm::vec3(0.f, 0.f, 1.f));
     m_viewMatrix = glm::inverse(m_viewMatrix);
@@ -102,8 +107,8 @@ void MeshRenderer::update()
     std::memcpy(m_matrixBlock.u_viewMatrix, glm::value_ptr(m_viewMatrix), 16 * sizeof(float));
     m_matrixBlockBuffer.update(m_matrixBlock);
 
-    //TODO update UBO with scene lighting / cam pos
-    
+    //update UBO with scene lighting / cam pos
+    updateLights(camWorldPosition);
 }
 
 void MeshRenderer::handleMessage(const Message& msg)
@@ -130,7 +135,7 @@ void MeshRenderer::drawScene() const
     auto viewPort = m_renderTexture.getView().getViewport();
     glViewport(
         static_cast<GLuint>(viewPort.left * xy::DefaultSceneSize.x), 
-        static_cast<GLuint>((/*1.f - */viewPort.top) * xy::DefaultSceneSize.y),
+        static_cast<GLuint>(viewPort.top * xy::DefaultSceneSize.y),
         static_cast<GLuint>(viewPort.width * xy::DefaultSceneSize.x),
         static_cast<GLuint>(viewPort.height * xy::DefaultSceneSize.y));
 
@@ -165,4 +170,47 @@ void MeshRenderer::updateView()
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16);
 
     //XY_WARNING(std::abs(m_cameraZ) > farPlane, "Camera depth greater than far plane: " + std::to_string(m_cameraZ));
+}
+
+void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
+{
+    m_lightingBlock.u_cameraWorldPosition[0] = camWorldPosition.x;
+    m_lightingBlock.u_cameraWorldPosition[1] = camWorldPosition.y;
+    m_lightingBlock.u_cameraWorldPosition[2] = camWorldPosition.z;
+
+    //update active lights
+    const auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
+    auto i = 0;
+    for (const auto& light : lights)
+    {
+        auto& colour = light->getDiffuseColour();
+        m_lightingBlock.u_pointLights[i].diffuseColour[0] = static_cast<float>(colour.r) / 255.f;
+        m_lightingBlock.u_pointLights[i].diffuseColour[1] = static_cast<float>(colour.g) / 255.f;
+        m_lightingBlock.u_pointLights[i].diffuseColour[2] = static_cast<float>(colour.b) / 255.f;
+        m_lightingBlock.u_pointLights[i].diffuseColour[3] = static_cast<float>(colour.a) / 255.f;
+
+        auto& spec = light->getSpecularColour();
+        m_lightingBlock.u_pointLights[i].specularColour[0] = static_cast<float>(spec.r) / 255.f;
+        m_lightingBlock.u_pointLights[i].specularColour[1] = static_cast<float>(spec.g) / 255.f;
+        m_lightingBlock.u_pointLights[i].specularColour[2] = static_cast<float>(spec.b) / 255.f;
+        m_lightingBlock.u_pointLights[i].specularColour[3] = static_cast<float>(spec.a) / 255.f;
+
+        m_lightingBlock.u_pointLights[i].intensity = light->getIntensity();
+        m_lightingBlock.u_pointLights[i].inverseRange = light->getInverseRange();
+
+        auto& position = light->getWorldPosition();
+        m_lightingBlock.u_pointLights[i].position[0] = position.x;
+        m_lightingBlock.u_pointLights[i].position[1] = position.y;
+        m_lightingBlock.u_pointLights[i].position[2] = position.z;
+
+        i++;
+    }
+
+    //turn off others by setting intensity to 0
+    while (i++ < Shader3D::MAX_LIGHTS)
+    {
+        m_lightingBlock.u_pointLights[i].intensity = 0.f;
+    }
+
+    m_lightingBlockBuffer.update(m_lightingBlock);
 }

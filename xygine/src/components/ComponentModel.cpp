@@ -33,6 +33,7 @@ source distribution.
 #include <xygine/util/Const.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 using namespace xy;
@@ -95,6 +96,7 @@ void Model::draw(const glm::mat4& viewMatrix) const
         {
             m_subMaterials[i]->getShader().setUniform("u_worldMatrix", sf::Glsl::Mat4(glm::value_ptr(m_worldMatrix)));
             m_subMaterials[i]->getShader().setUniform("u_worldViewMatrix", sf::Glsl::Mat4(glm::value_ptr(worldViewMat)));
+            m_subMaterials[i]->getShader().setUniform("u_normalMatrix", sf::Glsl::Mat3(glm::value_ptr(glm::inverseTranspose(glm::mat3(worldViewMat)))));
             m_subMaterials[i]->bind();
             auto vao = m_vaoBindings.find(m_subMaterials[i]);
             vao->second.bind();
@@ -108,6 +110,7 @@ void Model::draw(const glm::mat4& viewMatrix) const
     {
         m_material->getShader().setUniform("u_worldMatrix", sf::Glsl::Mat4(glm::value_ptr(m_worldMatrix)));
         m_material->getShader().setUniform("u_worldViewMatrix", sf::Glsl::Mat4(glm::value_ptr(worldViewMat)));
+        m_material->getShader().setUniform("u_normalMatrix", sf::Glsl::Mat3(glm::value_ptr(glm::inverseTranspose(glm::mat3(worldViewMat)))));
         m_material->bind();
         auto vao = m_vaoBindings.find(m_material);
         vao->second.bind();

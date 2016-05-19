@@ -87,7 +87,7 @@ private:
     sf::Text m_reportText;
 
     void createBodies();
-
+    void addLights();
     xy::Physics::RigidBody* addBall(const sf::Vector2f& position);
 
     xy::MeshRenderer m_meshRenderer;

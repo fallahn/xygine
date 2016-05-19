@@ -131,6 +131,20 @@ namespace xy
             float u_projectionMatrix[16];
         }m_matrixBlock;
         UniformBuffer m_matrixBlockBuffer;
+
+        struct PointLight final
+        {
+            float diffuseColour[4];
+            float specularColour[4];
+            float inverseRange;
+            float intensity;
+            float position[3];
+        };
+        struct LightBlock final
+        {
+            PointLight u_pointLights[8];
+            float u_cameraWorldPosition[3];
+        }m_lightingBlock;
         UniformBuffer m_lightingBlockBuffer;
 
         mutable std::vector<Model*> m_models;
@@ -141,6 +155,7 @@ namespace xy
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
 
         void updateView();
+        void updateLights(const glm::vec3&);
     };
 
 }
