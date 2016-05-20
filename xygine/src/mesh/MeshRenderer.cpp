@@ -58,7 +58,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_defaultMaterial = std::make_unique<Material>(m_defaultShader);
     
     //create the render buffer
-    m_renderTexture.create(size.x, size.y, 2u, true);
+    m_renderTexture.create(size.x, size.y, 2u, true, true);
     m_sprite.setTexture(m_renderTexture.getTexture(0));
 
     updateView();
