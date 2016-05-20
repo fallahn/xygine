@@ -178,7 +178,7 @@ namespace xy
                     "    {\n" \
                     "        vec3 pointLightDir = v_pointLightDirections[i] * u_pointLights[i].inverseRange;\n" \
                     "        float falloff = clamp(1.0 - sqrt(dot(pointLightDir, pointLightDir)), 0.0, 1.0);\n" \
-                    "        blendedColour += vec3(falloff);//calcLighting(normalVector, normalize(v_pointLightDirections[i]), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
+                    "        blendedColour += calcLighting(normalVector, normalize(v_pointLightDirections[i]), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
                 "    }\n" \
 
                 "    blendedColour += calcLighting(normalVector, -normalize(v_directionalLightDirection), u_directionalLight.diffuseColour.rgb, u_directionalLight.specularColour.rgb, 1.0) * u_directionalLight.intensity;\n" \

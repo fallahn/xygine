@@ -58,11 +58,11 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_defaultMaterial = std::make_unique<Material>(m_defaultShader);
     
     //create the render buffer
-    m_renderTexture.create(size.x, size.y, 1u, true);
+    m_renderTexture.create(size.x, size.y, 2u, true);
     m_sprite.setTexture(m_renderTexture.getTexture(0));
 
     updateView();
-
+    std::memset(&m_matrixBlock, 0, sizeof(m_matrixBlock));
     std::memcpy(m_matrixBlock.u_viewMatrix, glm::value_ptr(m_viewMatrix), 16 * sizeof(float));
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16 * sizeof(float));
     m_matrixBlockBuffer.create(m_matrixBlock);
@@ -95,10 +95,14 @@ void MeshRenderer::update()
         return m->destroyed();
     }), m_models.end());
 
+
     auto view = m_scene.getView();
     auto camPos = view.getCenter();
     auto rotation = view.getRotation() * xy::Util::Const::degToRad;
     glm::vec3 camWorldPosition(camPos.x, camPos.y, m_cameraZ);
+
+    //update UBO with scene lighting / cam pos
+    updateLights(camWorldPosition);
 
     m_viewMatrix = glm::translate(glm::mat4(), camWorldPosition);
     //rotate
@@ -107,9 +111,6 @@ void MeshRenderer::update()
     
     std::memcpy(m_matrixBlock.u_viewMatrix, glm::value_ptr(m_viewMatrix), 16 * sizeof(float));
     m_matrixBlockBuffer.update(m_matrixBlock);
-
-    //update UBO with scene lighting / cam pos
-    updateLights(camWorldPosition);
 }
 
 void MeshRenderer::handleMessage(const Message& msg)
@@ -175,9 +176,9 @@ void MeshRenderer::updateView()
 
 void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
 {
-    m_lightingBlock.u_cameraWorldPosition[0] = camWorldPosition.x;
-    m_lightingBlock.u_cameraWorldPosition[1] = camWorldPosition.y;
-    m_lightingBlock.u_cameraWorldPosition[2] = camWorldPosition.z;
+    m_matrixBlock.u_cameraWorldPosition[0] = camWorldPosition.x;
+    m_matrixBlock.u_cameraWorldPosition[1] = camWorldPosition.y;
+    m_matrixBlock.u_cameraWorldPosition[2] = camWorldPosition.z;
 
     //update active lights
     const auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
@@ -200,15 +201,15 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
         m_lightingBlock.u_pointLights[i].inverseRange = light->getInverseRange();
 
         auto& position = light->getWorldPosition();
-        m_lightingBlock.u_pointLights[i].position[0] = position.x;
-        m_lightingBlock.u_pointLights[i].position[1] = position.y;
-        m_lightingBlock.u_pointLights[i].position[2] = position.z;
+        m_matrixBlock.u_pointLightPositions[i].position[0] = position.x;
+        m_matrixBlock.u_pointLightPositions[i].position[1] = position.y;
+        m_matrixBlock.u_pointLightPositions[i].position[2] = position.z;
 
         i++;
     }
 
     //turn off others by setting intensity to 0
-    while (i++ < Shader3D::MAX_LIGHTS)
+    for (; i < Shader3D::MAX_LIGHTS; ++i)
     {
         m_lightingBlock.u_pointLights[i].intensity = 0.f;
     }

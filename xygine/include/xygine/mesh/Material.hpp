@@ -137,7 +137,7 @@ namespace xy
         \brief Add a UniformBuffer to be bound when drawing
         with the Material.
         UniformBuffers are useful for setting blocks of values
-        used by multplle materials such as projection matrices.
+        used by multiple materials such as projection matrices.
         Care should be taken to make sure the UniformBuffer outlives
         the Material.
         \returns true If the UniformBuffer name was found in the shader

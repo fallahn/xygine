@@ -132,7 +132,7 @@ void PhysicsDemoState::createMesh()
     material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     material.addUniformBuffer(m_meshRenderer.getLightingUniforms());
     material.addProperty({ "u_colour", sf::Color::Blue });
-    model->setSubMaterial(material, 0);
+    //model->setSubMaterial(material, 0);
 
     auto ent = xy::Entity::create(m_messageBus);
     ent->addComponent(model);
@@ -144,7 +144,7 @@ void PhysicsDemoState::createMesh()
     m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
 
     model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
-    model->setSubMaterial(material, 0);
+    //model->setSubMaterial(material, 0);
     ent = xy::Entity::create(m_messageBus);
     ent->addComponent(model);
     ent->setScale(2.f, 2.f);
@@ -492,6 +492,9 @@ void PhysicsDemoState::createBodies()
     as->setSound("assets/sound/cuetip.wav");
     as->setName("tip_sound");
     cbEntity->addComponent(as);
+    //auto light = xy::Component::create<xy::PointLight>(m_messageBus, 200.f, 16.f, sf::Color::Blue);
+    //light->setDepth(70.f);
+    //cbEntity->addComponent(light);
 
     const float spacingY = 27.f;
     const float halfY = spacingY / 2.f;
@@ -513,7 +516,7 @@ void PhysicsDemoState::createBodies()
 void PhysicsDemoState::addLights()
 {
     auto light = xy::Component::create<xy::PointLight>(m_messageBus, 500.f, 220.f/*, sf::Color::Green*/);
-    light->setDepth(100.f);
+    light->setDepth(200.f);
     //light->setIntensity(5.f);
 
     auto entity = xy::Entity::create(m_messageBus);

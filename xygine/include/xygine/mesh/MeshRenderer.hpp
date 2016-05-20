@@ -124,11 +124,20 @@ namespace xy
         glm::mat4 m_projectionMatrix;
         float m_cameraZ;
 
+        struct Point final
+        {
+            float position[3];
+            float padding;
+        };
+
         struct MatrixBlock final
         {
             //use raw arrays 'cos GLSL
             float u_viewMatrix[16];
             float u_projectionMatrix[16];
+            //group these here too as we're all in the vertex shader
+            Point u_pointLightPositions[8];
+            float u_cameraWorldPosition[3];
         }m_matrixBlock;
         UniformBuffer m_matrixBlockBuffer;
 
@@ -138,14 +147,21 @@ namespace xy
             float specularColour[4];
             float inverseRange;
             float intensity;
-            float position[3];
+            float padding[2]; //GLSL must align to multiple of vec4          
         };
         struct LightBlock final
         {
             PointLight u_pointLights[8];
-            float u_cameraWorldPosition[3];
         }m_lightingBlock;
         UniformBuffer m_lightingBlockBuffer;
+
+
+        /*struct PositionBlock final
+        {
+            Point u_pointLightPositions[8];
+            float u_cameraWorldPosition[3];
+        }m_positionBlock;
+        UniformBuffer m_positionBlockBuffer;*/
 
         mutable std::vector<Model*> m_models;
         mutable xy::MultiRenderTexture m_renderTexture;

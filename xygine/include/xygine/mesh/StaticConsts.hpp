@@ -56,11 +56,45 @@ namespace xy
             "uniform mat4 u_worldViewMatrix;\n"
             "uniform mat3 u_normalMatrix;\n"
 
+            "struct Point\n"
+            "{\n"
+            "    vec3 position;\n"
+            "    float padding;\n"
+            "};\n"
+
             "layout (std140) uniform u_matrixBlock\n"
             "{\n"
             "    mat4 u_viewMatrix;\n"
             "    mat4 u_projectionMatrix;\n"
+            "    Point u_pointLightPositions[MAX_POINT_LIGHTS];\n"
+            "    vec3 u_cameraWorldPosition;\n"
             "};\n"
+
+            "out vec3 v_normalVector;\n"
+            "out vec3 v_pointLightDirections[MAX_POINT_LIGHTS];\n"
+            "out vec3 v_eyeDirection;\n"
+            "out vec3 v_viewPosition;\n"
+
+            "void main()\n"
+            "{\n"
+            "    vec4 viewVertex = u_worldViewMatrix * vec4(a_position, 1.0);\n"
+            "    gl_Position = u_projectionMatrix * viewVertex;\n"
+
+            "    v_normalVector = u_normalMatrix * a_normal;\n"
+
+            "    vec3 worldVertex = vec3(u_worldMatrix * vec4(a_position, 1.0));\n"
+            "    for(int i = 0; i < MAX_POINT_LIGHTS; ++i)\n"
+            "    {\n"
+            "        v_pointLightDirections[i] = u_pointLightPositions[i].position - worldVertex;\n"
+            "    }\n"
+
+            "    v_eyeDirection = u_cameraWorldPosition - worldVertex;\n"
+            "    v_viewPosition = viewVertex.xyz;\n"
+            "}";
+
+        static const std::string DefaultFragment =
+            "#version 150\n"
+            "#define MAX_POINT_LIGHTS 8\n"
 
             "struct PointLight\n"
             "{\n"
@@ -68,94 +102,57 @@ namespace xy
             "    vec4 specularColour;\n"
             "    float inverseRange;\n"
             "    float intensity;\n"
-            "    vec3 position;\n"
+            "    vec2 padding;\n"
             "};\n"
 
             "layout (std140) uniform u_lightBlock\n"
             "{\n"
             "    PointLight u_pointLights[MAX_POINT_LIGHTS];\n"
-            "    vec3 u_cameraWorldPosition\n;"
             "};\n"
 
-            "out vec3 v_normalVector;\n"
-            "out vec3 v_pointLightDirections[MAX_POINT_LIGHTS];\n"
-            "out vec3 v_eyeDirection;\n"
+            "uniform vec4 u_colour = vec4(1.0, 1.0, 0.0, 1.0);\n"
+            "uniform vec3 u_ambientColour = vec3(0.2, 0.2, 0.2);\n"
+
+            "in vec3 v_normalVector;\n"
+            "in vec3 v_pointLightDirections[MAX_POINT_LIGHTS];\n"
+            "in vec3 v_eyeDirection;\n"
+            "in vec3 v_viewPosition;\n"
+
+            "out vec4[2] output;\n"
+
+            "vec3 diffuseColour;\n"
+            "vec3 calcLighting(vec3 normal, vec3 lightDirection, vec3 lightDiffuse, vec3 lightSpec, float falloff)\n"
+            "{\n"
+            "    float diffuseAmount = max(dot(normal, lightDirection), 0.0);\n"
+            "    diffuseAmount = pow((diffuseAmount * 0.5) + 0.5, 2.0);\n"
+            "    vec3 mixedColour = diffuseColour * lightDiffuse * diffuseAmount * falloff;\n"
+
+            "    vec3 eyeDirection = normalize(v_eyeDirection);\n"
+            "    vec3 halfVec = normalize(eyeDirection + lightDirection);\n"
+            "    float specularAngle = clamp(dot(normal, halfVec), 0.0, 1.0);\n"
+            "    vec3 specularColour = lightSpec * vec3(pow(specularAngle, 180.0)) * falloff;\n"
+
+            "    return mixedColour + specularColour;\n"
+            "}\n"
 
             "void main()\n"
             "{\n"
-            "    gl_Position = u_projectionMatrix * u_worldViewMatrix * vec4(a_position, 1.0);\n"
+            "    diffuseColour = u_colour.rgb;\n"
+            "    vec3 blendedColour = diffuseColour * u_ambientColour;\n"
 
-            "    v_normalVector = u_normalMatrix * a_normal;\n"
-
-            "    vec3 viewVertex = vec3(u_worldViewMatrix * vec4(a_position, 1.0));\n"
+            "    vec3 normal = normalize(v_normalVector);\n"
             "    for(int i = 0; i < MAX_POINT_LIGHTS; ++i)\n"
             "    {\n"
-            "        v_pointLightDirections[i] = u_pointLights[i].position - viewVertex;\n"
+            "        vec3 pointLightDirection = v_pointLightDirections[i] * u_pointLights[i].inverseRange;\n"
+            "        float falloff = clamp(1.0 - sqrt(dot(pointLightDirection, pointLightDirection)), 0.0, 1.0);\n"
+            "        blendedColour += calcLighting(normal, normalize(v_pointLightDirections[i]), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n"
             "    }\n"
 
-            "    v_eyeDirection = u_cameraWorldPosition - viewVertex;\n"
+            /*"    blendedColour += calcLighting(normal, normalize(vec3(1.0, 1.0, 0.0)), vec3(1.0), vec3 (1.0), 1.0);"*/
+
+            "    output[0] = vec4(blendedColour, 1.0);\n"
+            "    output[1] = vec4(v_viewPosition, 1.0);\n"
             "}";
-
-            static const std::string DefaultFragment =
-                "#version 150\n"
-                "#define MAX_POINT_LIGHTS 8\n"
-
-                "struct PointLight\n"
-                "{\n"
-                "    vec4 diffuseColour;\n"
-                "    vec4 specularColour;\n"
-                "    float inverseRange;\n"
-                "    float intensity;\n"
-                "    vec3 position;\n"
-                "};\n"
-
-                "layout (std140) uniform u_lightBlock\n"
-                "{\n"
-                "    PointLight u_pointLights[MAX_POINT_LIGHTS];\n"
-                "    vec3 u_cameraWorldPosition\n;"
-                "};\n"
-
-                "uniform vec4 u_colour = vec4(1.0, 1.0, 0.0, 1.0);\n"
-                "uniform vec3 u_ambientColour = vec3(0.2, 0.2, 0.2);\n"
-
-                "in vec3 v_normalVector;\n"
-                "in vec3 v_pointLightDirections[MAX_POINT_LIGHTS];\n"
-                "in vec3 v_eyeDirection;\n"
-
-                "out vec4 colour;\n"
-
-                "vec3 diffuseColour;\n"
-                "vec3 calcLighting(vec3 normal, vec3 lightDirection, vec3 lightDiffuse, vec3 lightSpec, float falloff)\n"
-                "{\n"
-                "    float diffuseAmount = max(dot(normal, lightDirection), 0.0);\n"
-                /*"    diffuseAmount = pow((diffuseAmount * 0.5) + 0.5, 2.0);\n"*/
-                "    vec3 mixedColour = diffuseColour * lightDiffuse * diffuseAmount * falloff;\n"
-
-                "    vec3 eyeDirection = normalize(v_eyeDirection);\n"
-                "    vec3 halfVec = normalize(eyeDirection + lightDirection);\n"
-                "    float specularAngle = clamp(dot(normal, halfVec), 0.0, 1.0);\n"
-                "    vec3 specularColour = lightSpec * vec3(pow(specularAngle, 255.0)) * falloff;\n"
-
-                "    return mixedColour + specularColour;\n"
-                "}\n"
-
-                "void main()\n"
-                "{\n"
-                "    diffuseColour = u_colour.rgb;\n"
-                "    vec3 blendedColour = diffuseColour * u_ambientColour;\n"
-
-                "    vec3 normal = normalize(v_normalVector);\n"
-                "    for(int i = 0; i < MAX_POINT_LIGHTS; ++i)\n"
-                "    {\n"
-                "        vec3 pointLightDirection = v_pointLightDirections[i] * u_pointLights[i].inverseRange;\n"
-                "        float falloff = clamp(1.0 - sqrt(dot(pointLightDirection, pointLightDirection)), 0.0, 1.0);\n"
-                "        if(i==0)blendedColour = vec3(falloff);//calcLighting(normal, normalize(v_pointLightDirections[i]), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n"
-                "    }\n"
-
-                /*"   blendedColour += calcLighting(normal, normalize(vec3(1.0, 1.0, 1.0)), vec3(1.0), vec3 (1.0), 1.0);"*/
-
-                "    colour = vec4(blendedColour, 1.0);\n"
-                "}";
     }
 }
 #endif //XY_STATIC_CONSTS_HPP_
