@@ -719,5 +719,8 @@
     <ClInclude Include="include\xygine\mesh\RenderQuad.hpp">
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
+    <ClInclude Include="include\xygine\mesh\shaders\GeomVis.hpp">
+      <Filter>Header Files\mesh\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

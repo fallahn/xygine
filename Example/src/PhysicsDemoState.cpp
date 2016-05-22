@@ -60,6 +60,7 @@ source distribution.
 #include <xygine/components/Model.hpp>
 #include <RotationComponent.hpp>
 #include <xygine/mesh/shaders/Default.hpp>
+#include <xygine/mesh/shaders/GeomVis.hpp>
 #include <xygine/mesh/SubMesh.hpp>
 #include <xygine/mesh/CubeBuilder.hpp>
 
@@ -127,12 +128,15 @@ void PhysicsDemoState::createMesh()
 
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
 
-    m_meshShader.loadFromMemory(xy::Shader3D::DefaultVertex, xy::Shader3D::colouredFragment());
+    //m_meshShader.loadFromMemory(GEOM_VERT, GEOM_GEOM, GEOM_FRAG);
+    m_meshShader.loadFromMemory(TEXTURED_BUMPED_VERTEX, TEXTURED_BUMPED_FRAGMENT);
     auto& material = m_materialResource.add(MatId::Blue, m_meshShader);
     material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     material.addUniformBuffer(m_meshRenderer.getLightingUniforms());
-    material.addProperty({ "u_colour", sf::Color::Blue });
-    //model->setSubMaterial(material, 0);
+    material.addProperty({ "u_colour", sf::Color(110, 150, 180) });
+    material.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/cave/test_d.jpg") });
+    material.addProperty({ "u_normalMap", m_textureResource.get("assets/images/physics demo/ball_normal.png") });
+    model->setSubMaterial(material, 0);
 
     auto ent = xy::Entity::create(m_messageBus);
     ent->addComponent(model);

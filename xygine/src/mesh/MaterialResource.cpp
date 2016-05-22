@@ -40,7 +40,7 @@ namespace
 
 MaterialResource::MaterialResource()
 {
-    if (!m_defaultShader.loadFromMemory(Shader3D::DefaultVertex, Shader3D::DefaultFragment))
+    if (!m_defaultShader.loadFromMemory(COLOURED_VERTEX, COLOURED_FRAGMENT))
     {
         Logger::log("Failed creating default shader for material resource", xy::Logger::Type::Error, xy::Logger::Output::All);
     }

@@ -56,7 +56,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_lightingBlockBuffer   ("u_lightBlock")
 {
     //set up a default material to assign to newly created models
-    m_defaultShader.loadFromMemory(Shader3D::DefaultVertex, Shader3D::DefaultFragment);
+    m_defaultShader.loadFromMemory(COLOURED_VERTEX, COLOURED_FRAGMENT);
     m_defaultMaterial = std::make_unique<Material>(m_defaultShader);
     
     //create the render buffer
@@ -238,7 +238,7 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
     }
 
     //turn off others by setting intensity to 0
-    for (; i < Shader3D::MAX_LIGHTS; ++i)
+    for (; i < Shader::Mesh::MAX_LIGHTS; ++i)
     {
         m_lightingBlock.u_pointLights[i].intensity = 0.f;
     }

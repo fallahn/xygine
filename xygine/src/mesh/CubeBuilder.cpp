@@ -82,6 +82,8 @@ void CubeBuilder::build()
             -side, -side, -side
         };
         std::vector<float> normals;
+        std::vector<float> tangents;
+        std::vector<float> bitangents;
         std::vector<float> UVs;
         
         //set up vert layout
@@ -89,6 +91,8 @@ void CubeBuilder::build()
         if (m_useNormals)
         {
             m_elements.emplace_back(VertexLayout::Element::Type::Normal, 3);
+            m_elements.emplace_back(VertexLayout::Element::Type::Tangent, 3);
+            m_elements.emplace_back(VertexLayout::Element::Type::Bitangent, 3);
             normals = 
             {
                 //front
@@ -121,6 +125,74 @@ void CubeBuilder::build()
                 0.f, -1.f, 0.f,
                 0.f, -1.f, 0.f,
                 0.f, -1.f, 0.f
+            };
+
+            tangents =
+            {
+                //front
+                1.f, 0.f, 0.f,
+                1.f, 0.f, 0.f,
+                1.f, 0.f, 0.f,
+                1.f, 0.f, 0.f,
+                //back
+                -1.f, 0.f, 0.f,
+                -1.f, 0.f, 0.f,
+                -1.f, 0.f, 0.f,
+                -1.f, 0.f, 0.f,
+                //left
+                0.f, 0.f, 1.f,
+                0.f, 0.f, 1.f,
+                0.f, 0.f, 1.f,
+                0.f, 0.f, 1.f,
+                //right
+                0.f, 0.f, -1.f,
+                0.f, 0.f, -1.f,
+                0.f, 0.f, -1.f,
+                0.f, 0.f, -1.f,
+                //top
+                1.f, 0.f, 0.f,
+                1.f, 0.f, 0.f,
+                1.f, 0.f, 0.f,
+                1.f, 0.f, 0.f,
+                //bottom
+                -1.f, 0.f, 0.f,
+                -1.f, 0.f, 0.f,
+                -1.f, 0.f, 0.f,
+                -1.f, 0.f, 0.f
+            };
+
+            bitangents =
+            {
+                //front
+                0.f, 1.f, 0.f,
+                0.f, 1.f, 0.f,
+                0.f, 1.f, 0.f,
+                0.f, 1.f, 0.f,
+                //back
+                0.f, 1.f, 0.f,
+                0.f, 1.f, 0.f,
+                0.f, 1.f, 0.f,
+                0.f, 1.f, 0.f,
+                //left
+                0.f, 1.f, 0.f,
+                0.f, 1.f, 0.f,
+                0.f, 1.f, 0.f,
+                0.f, 1.f, 0.f,
+                //right
+                0.f, 1.f, 0.f,
+                0.f, 1.f, 0.f,
+                0.f, 1.f, 0.f,
+                0.f, 1.f, 0.f,
+                //top
+                0.f, 0.f, -1.f,
+                0.f, 0.f, -1.f,
+                0.f, 0.f, -1.f,
+                0.f, 0.f, -1.f,
+                //bottom
+                0.f, 0.f, -1.f,
+                0.f, 0.f, -1.f,
+                0.f, 0.f, -1.f,
+                0.f, 0.f, -1.f
             };
         }
 
@@ -163,9 +235,9 @@ void CubeBuilder::build()
         }
 
         //create vert data
-        std::size_t i, j, k;
-        i = j = k = 0;
-        for (auto l = 0u; l < getVertexCount(); ++l)
+        std::size_t i, j, k, l, m;
+        i = j = k = l = m = 0;
+        for (auto idx = 0u; idx < getVertexCount(); ++idx)
         {
             m_vertexData.push_back(positions[i++]);
             m_vertexData.push_back(positions[i++]);
@@ -176,12 +248,20 @@ void CubeBuilder::build()
                 m_vertexData.push_back(normals[j++]);
                 m_vertexData.push_back(normals[j++]);
                 m_vertexData.push_back(normals[j++]);
+
+                m_vertexData.push_back(tangents[k++]);
+                m_vertexData.push_back(tangents[k++]);
+                m_vertexData.push_back(tangents[k++]);
+
+                m_vertexData.push_back(bitangents[l++]);
+                m_vertexData.push_back(bitangents[l++]);
+                m_vertexData.push_back(bitangents[l++]);
             }
 
             if (m_useUVs)
             {
-                m_vertexData.push_back(UVs[k++]);
-                m_vertexData.push_back(UVs[k++]);
+                m_vertexData.push_back(UVs[m++]);
+                m_vertexData.push_back(UVs[m++]);
             }
         }
     }
