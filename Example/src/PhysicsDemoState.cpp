@@ -127,7 +127,7 @@ void PhysicsDemoState::createMesh()
 
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
 
-    m_meshShader.loadFromMemory(xy::Shader3D::DefaultVertex, xy::Shader3D::DefaultFragment);
+    m_meshShader.loadFromMemory(xy::Shader3D::DefaultVertex, xy::Shader3D::colouredFragment());
     auto& material = m_materialResource.add(MatId::Blue, m_meshShader);
     material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     material.addUniformBuffer(m_meshRenderer.getLightingUniforms());

@@ -35,11 +35,14 @@ namespace xy
     namespace Shader3D
     {
         const std::string SSAOVertex =
-            "#version 150\n"
+            "#version 120\n"
 
-            /*"in vec3 a_position;\n"*/
+            /*"in vec3 a_position;\n"
+            "in vec2 a_texCoord0;\n"*/
 
-            "out vec2 v_texCoord;\n"
+            "uniform mat4 u_viewMatrix;\n"
+
+            "varying vec2 v_texCoord;\n"
 
             "void main()\n"
             "{"
@@ -48,21 +51,21 @@ namespace xy
             "}\n";
 
         const std::string SSAOFragment =
-            "#version 150\n"
+            "#version 120\n"
             "#define MAX_KERNEL_SIZE 128\n"
 
-            "in vec2 v_texCoord;\n"
-            
+            "varying vec2 v_texCoord;\n"
+
             "uniform sampler2D u_positionMap;\n"
             "uniform float u_sampleRadius = 1.5f;\n"
             "uniform mat4 u_projectionMatrix;\n"
             "uniform vec3 u_kernel[MAX_KERNEL_SIZE];\n"
-            
-            "out vec4 fragColour;\n"
+
+            /*"out vec4 fragColour;\n"*/
 
             "void main()\n"
             "{\n"
-            "    vec3 pos = texture(u_positionMap, v_texCoord).xyz;\n"
+            "    vec3 pos = texture2D(u_positionMap, v_texCoord).xyz;\n"
 
             "    float AO = 0.0;\n"
 
@@ -74,7 +77,7 @@ namespace xy
             "        offset.xy /= offset.w;\n"
             "        offset.xy = offset.xy * 0.5 + vec2(0.5);\n"
 
-            "        float sampleDepth = texture(u_positionMap, offset.xy).b;\n"
+            "        float sampleDepth = texture2D(u_positionMap, offset.xy).b;\n"
 
             "        if (abs(pos.z - sampleDepth) < u_sampleRadius)\n"
             "        {\n"
@@ -84,7 +87,7 @@ namespace xy
 
             "    AO = AO / 128.0;\n"
 
-            "    fragColour = vec4(clamp(AO * 2.0, 0.0, 1.0));\n"
+            "    gl_FragColor = vec4(clamp(AO * 2.0, 0.0, 1.0));\n"
             "}";
     }
 }

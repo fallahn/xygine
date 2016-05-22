@@ -30,6 +30,7 @@ source distribution.
 
 #include <xygine/mesh/Material.hpp>
 #include <xygine/mesh/UniformBuffer.hpp>
+#include <xygine/mesh/RenderQuad.hpp>
 #include <xygine/MultiRenderTexture.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
@@ -156,10 +157,10 @@ namespace xy
         }m_lightingBlock;
         UniformBuffer m_lightingBlockBuffer;
 
-        std::array<sf::Glsl::Vec3, 128> m_ssaoKernel;
+        /*std::array<sf::Glsl::Vec3, 128> m_ssaoKernel;
         mutable sf::Shader m_ssaoShader;
         mutable sf::RenderTexture m_ssaoTexture;
-        sf::Sprite m_ssaoSprite;
+        sf::Sprite m_ssaoSprite;*/
 
         mutable std::vector<Model*> m_models;
         mutable xy::MultiRenderTexture m_renderTexture;

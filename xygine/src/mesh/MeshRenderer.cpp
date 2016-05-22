@@ -56,8 +56,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_lightingBlockBuffer   ("u_lightBlock")
 {
     //set up a default material to assign to newly created models
-    auto shuntyFuntBubble = Shader3D::colouredFragment();
-    m_defaultShader.loadFromMemory(Shader3D::DefaultVertex, shuntyFuntBubble);
+    m_defaultShader.loadFromMemory(Shader3D::DefaultVertex, Shader3D::DefaultFragment);
     m_defaultMaterial = std::make_unique<Material>(m_defaultShader);
     
     //create the render buffer
@@ -78,7 +77,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_defaultMaterial->addUniformBuffer(m_lightingBlockBuffer);
 
     //set up the buffer for ssao
-    for (auto i = 0u; i < m_ssaoKernel.size(); ++i)
+    /*for (auto i = 0u; i < m_ssaoKernel.size(); ++i)
     {
         const float scale = static_cast<float>(i) / m_ssaoKernel.size();
         m_ssaoKernel[i] = 
@@ -92,8 +91,8 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_ssaoShader.loadFromMemory(xy::Shader3D::SSAOVertex, xy::Shader3D::SSAOFragment);
     m_ssaoShader.setUniformArray("u_kernel", m_ssaoKernel.data(), m_ssaoKernel.size());
     m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
-    m_ssaoTexture.create(960, 540);
-    m_ssaoSprite.setTexture(m_renderTexture.getTexture(1));
+    m_ssaoTexture.create(1920, 1080);
+    m_ssaoSprite.setTexture(m_renderTexture.getTexture(1), true);*/
 
     //m_sprite.setTexture(m_ssaoTexture.getTexture(),true);
 }
@@ -180,10 +179,11 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     drawScene();
 
-    //m_ssaoShader.setUniform("u_positionMap", m_renderTexture.getTexture(1));
-    //m_ssaoTexture.clear(sf::Color::Transparent);
-    //m_ssaoTexture.draw(m_ssaoSprite, &m_ssaoShader);
-    //m_ssaoTexture.display();
+    /*m_ssaoShader.setUniform("u_positionMap", m_renderTexture.getTexture(1));
+
+    m_ssaoTexture.clear(sf::Color::Transparent);
+    m_ssaoTexture.draw(m_ssaoSprite, &m_ssaoShader);
+    m_ssaoTexture.display();*/
 
     rt.draw(m_sprite, states);
 }
@@ -200,9 +200,7 @@ void MeshRenderer::updateView()
     m_projectionMatrix = glm::perspective(fov, viewSize.x / viewSize.y, nearPlane, m_cameraZ * 2.f);
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16);
 
-    m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
-
-    //XY_WARNING(std::abs(m_cameraZ) > farPlane, "Camera depth greater than far plane: " + std::to_string(m_cameraZ));
+    //m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
 }
 
 void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)

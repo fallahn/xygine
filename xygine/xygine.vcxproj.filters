@@ -339,6 +339,9 @@
     <ClCompile Include="src\mesh\CubeBuilder.cpp">
       <Filter>Source Files\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="src\mesh\RenderQuad.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -712,6 +715,9 @@
     </ClInclude>
     <ClInclude Include="include\xygine\mesh\shaders\SSAO.hpp">
       <Filter>Header Files\mesh\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\RenderQuad.hpp">
+      <Filter>Header Files\mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

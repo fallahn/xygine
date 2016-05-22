@@ -165,6 +165,7 @@
     <ClCompile Include="src\mesh\MeshRenderer.cpp" />
     <ClCompile Include="src\mesh\Material.cpp" />
     <ClCompile Include="src\mesh\MeshResource.cpp" />
+    <ClCompile Include="src\mesh\RenderQuad.cpp" />
     <ClCompile Include="src\mesh\SubMesh.cpp" />
     <ClCompile Include="src\mesh\UniformBuffer.cpp" />
     <ClCompile Include="src\mesh\VertexAttribBinding.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="include\xygine\mesh\MeshBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\MeshRenderer.hpp" />
     <ClInclude Include="include\xygine\mesh\MeshResource.hpp" />
+    <ClInclude Include="include\xygine\mesh\RenderQuad.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\Default.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\SSAO.hpp" />
     <ClInclude Include="include\xygine\mesh\StaticConsts.hpp" />
