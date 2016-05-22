@@ -249,6 +249,8 @@
     <ClInclude Include="include\xygine\mesh\MeshBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\MeshRenderer.hpp" />
     <ClInclude Include="include\xygine\mesh\MeshResource.hpp" />
+    <ClInclude Include="include\xygine\mesh\shaders\Default.hpp" />
+    <ClInclude Include="include\xygine\mesh\shaders\SSAO.hpp" />
     <ClInclude Include="include\xygine\mesh\StaticConsts.hpp" />
     <ClInclude Include="include\xygine\mesh\SubMesh.hpp" />
     <ClInclude Include="include\xygine\mesh\UniformBuffer.hpp" />

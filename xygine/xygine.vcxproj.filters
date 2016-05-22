@@ -67,6 +67,9 @@
     <Filter Include="Source Files\mesh">
       <UniqueIdentifier>{b81ba0fe-7d35-4552-9aeb-543f65a3a8e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\mesh\shaders">
+      <UniqueIdentifier>{0c663f08-4b4e-4abf-a172-274fb1780768}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -703,6 +706,12 @@
     </ClInclude>
     <ClInclude Include="include\xygine\mesh\CubeBuilder.hpp">
       <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\shaders\Default.hpp">
+      <Filter>Header Files\mesh\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\shaders\SSAO.hpp">
+      <Filter>Header Files\mesh\shaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

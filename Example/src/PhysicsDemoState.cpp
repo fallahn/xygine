@@ -59,7 +59,7 @@ source distribution.
 
 #include <xygine/components/Model.hpp>
 #include <RotationComponent.hpp>
-#include <xygine/mesh/StaticConsts.hpp>
+#include <xygine/mesh/shaders/Default.hpp>
 #include <xygine/mesh/SubMesh.hpp>
 #include <xygine/mesh/CubeBuilder.hpp>
 
@@ -122,7 +122,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 
 void PhysicsDemoState::createMesh()
 {
-    xy::CubeBuilder cb(32.f, true, false);
+    xy::CubeBuilder cb(32.f, true, true);
     m_meshResource.add(0, cb);
 
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));

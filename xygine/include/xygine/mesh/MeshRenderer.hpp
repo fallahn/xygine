@@ -35,6 +35,7 @@ source distribution.
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 
 #include <glm/mat4x4.hpp>
 
@@ -155,13 +156,10 @@ namespace xy
         }m_lightingBlock;
         UniformBuffer m_lightingBlockBuffer;
 
-
-        /*struct PositionBlock final
-        {
-            Point u_pointLightPositions[8];
-            float u_cameraWorldPosition[3];
-        }m_positionBlock;
-        UniformBuffer m_positionBlockBuffer;*/
+        std::array<sf::Glsl::Vec3, 128> m_ssaoKernel;
+        mutable sf::Shader m_ssaoShader;
+        mutable sf::RenderTexture m_ssaoTexture;
+        sf::Sprite m_ssaoSprite;
 
         mutable std::vector<Model*> m_models;
         mutable xy::MultiRenderTexture m_renderTexture;

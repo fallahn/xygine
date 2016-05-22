@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/mesh/MaterialResource.hpp>
-#include <xygine/mesh/StaticConsts.hpp>
+#include <xygine/mesh/shaders/Default.hpp>
 
 #include <xygine/Log.hpp>
 #include <xygine/Assert.hpp>
