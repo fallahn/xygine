@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/mesh/MaterialResource.hpp>
-#include <xygine/mesh/shaders/Default.hpp>
+#include <xygine/mesh/shaders/DeferredRenderer.hpp>
 
 #include <xygine/Log.hpp>
 #include <xygine/Assert.hpp>
@@ -40,7 +40,7 @@ namespace
 
 MaterialResource::MaterialResource()
 {
-    if (!m_defaultShader.loadFromMemory(COLOURED_VERTEX, COLOURED_FRAGMENT))
+    if (!m_defaultShader.loadFromMemory(DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT))
     {
         Logger::log("Failed creating default shader for material resource", xy::Logger::Type::Error, xy::Logger::Output::All);
     }

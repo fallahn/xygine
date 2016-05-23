@@ -59,7 +59,7 @@ source distribution.
 
 #include <xygine/components/Model.hpp>
 #include <RotationComponent.hpp>
-#include <xygine/mesh/shaders/Default.hpp>
+#include <xygine/mesh/shaders/DeferredRenderer.hpp>
 #include <xygine/mesh/shaders/GeomVis.hpp>
 #include <xygine/mesh/SubMesh.hpp>
 #include <xygine/mesh/CubeBuilder.hpp>
@@ -129,7 +129,7 @@ void PhysicsDemoState::createMesh()
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
 
     //m_meshShader.loadFromMemory(GEOM_VERT, GEOM_GEOM, GEOM_FRAG);
-    m_meshShader.loadFromMemory(TEXTURED_BUMPED_VERTEX, TEXTURED_BUMPED_FRAGMENT);
+    m_meshShader.loadFromMemory(DEFERRED_COLOURED_BUMPED_VERTEX, DEFERRED_COLOURED_BUMPED_FRAGMENT);
     auto& material = m_materialResource.add(MatId::Blue, m_meshShader);
     material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     material.addUniformBuffer(m_meshRenderer.getLightingUniforms());
@@ -636,7 +636,7 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     ballEntity->addComponent(drawable);
 
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
-    model->setSubMaterial(m_materialResource.get(MatId::Blue), 0);
+    //model->setSubMaterial(m_materialResource.get(MatId::Blue), 0);
     ballEntity->addComponent(model);
     
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);

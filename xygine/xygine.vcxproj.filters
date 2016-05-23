@@ -722,5 +722,8 @@
     <ClInclude Include="include\xygine\mesh\shaders\GeomVis.hpp">
       <Filter>Header Files\mesh\shaders</Filter>
     </ClInclude>
+    <ClInclude Include="include\xygine\mesh\shaders\DeferredRenderer.hpp">
+      <Filter>Header Files\mesh\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -27,6 +27,7 @@ source distribution.
 
 #include <xygine/mesh/MeshRenderer.hpp>
 #include <xygine/mesh/shaders/Default.hpp>
+#include <xygine/mesh/shaders/DeferredRenderer.hpp>
 #include <xygine/mesh/shaders/SSAO.hpp>
 #include <xygine/components/Model.hpp>
 #include <xygine/components/PointLight.hpp>
@@ -56,12 +57,12 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_lightingBlockBuffer   ("u_lightBlock")
 {
     //set up a default material to assign to newly created models
-    m_defaultShader.loadFromMemory(COLOURED_VERTEX, COLOURED_FRAGMENT);
+    m_defaultShader.loadFromMemory(DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
     m_defaultMaterial = std::make_unique<Material>(m_defaultShader);
     
     //create the render buffer
-    m_renderTexture.create(size.x, size.y, 2u, true, true);
-    m_sprite.setTexture(m_renderTexture.getTexture(0));
+    m_renderTexture.create(size.x, size.y, 3u, true, true);
+    m_sprite.setTexture(m_renderTexture.getTexture(2));
 
     updateView();
     std::memset(&m_matrixBlock, 0, sizeof(m_matrixBlock));
@@ -201,6 +202,7 @@ void MeshRenderer::updateView()
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16);
 
     //m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
+    m_defaultShader.setUniform("u_farPlane", m_cameraZ * 2.f);
 }
 
 void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)

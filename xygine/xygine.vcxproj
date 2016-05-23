@@ -252,6 +252,7 @@
     <ClInclude Include="include\xygine\mesh\MeshResource.hpp" />
     <ClInclude Include="include\xygine\mesh\RenderQuad.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\Default.hpp" />
+    <ClInclude Include="include\xygine\mesh\shaders\DeferredRenderer.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\GeomVis.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\SSAO.hpp" />
     <ClInclude Include="include\xygine\mesh\StaticConsts.hpp" />

@@ -151,7 +151,7 @@ namespace xy
                 "in vec2 v_texCoord;\n" \
                 "#endif\n" \
 
-                "out vec4[2] fragOut;\n" \
+                "out vec4[3] fragOut;\n" \
 
                 "vec3 diffuseColour;\n" \
                 "vec3 calcLighting(vec3 normal, vec3 lightDirection, vec3 lightDiffuse, vec3 lightSpec, float falloff)\n" \
@@ -199,6 +199,7 @@ namespace xy
                 "    fragOut[0] = vec4(blendedColour, 1.0);\n" \
                 "#endif\n"
                 "    fragOut[1] = vec4(v_viewPosition, 1.0);\n" \
+                "    fragOut[2] = vec4(0.5 * (normalize(normal) + 1.0), 1.0);\n" \
                 "}";
         }
     }
