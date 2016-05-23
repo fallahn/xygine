@@ -129,11 +129,11 @@ void PhysicsDemoState::createMesh()
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
 
     //m_meshShader.loadFromMemory(GEOM_VERT, GEOM_GEOM, GEOM_FRAG);
-    m_meshShader.loadFromMemory(DEFERRED_COLOURED_BUMPED_VERTEX, DEFERRED_COLOURED_BUMPED_FRAGMENT);
+    m_meshShader.loadFromMemory(DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
     auto& material = m_materialResource.add(MatId::Blue, m_meshShader);
     material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     material.addUniformBuffer(m_meshRenderer.getLightingUniforms());
-    material.addProperty({ "u_colour", sf::Color(110, 150, 180) });
+    //material.addProperty({ "u_colour", /*sf::Color(110, 150, 180)*/sf::Color::Green });
     material.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/cave/diffuse.png") });
     material.addProperty({ "u_normalMap", m_textureResource.get("assets/images/physics demo/ball_normal.png") });
     model->setSubMaterial(material, 0);
@@ -636,7 +636,7 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     ballEntity->addComponent(drawable);
 
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
-    //model->setSubMaterial(m_materialResource.get(MatId::Blue), 0);
+    model->setSubMaterial(m_materialResource.get(MatId::Blue), 0);
     ballEntity->addComponent(model);
     
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);

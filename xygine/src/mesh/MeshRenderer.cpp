@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/mesh/MeshRenderer.hpp>
-#include <xygine/mesh/shaders/Default.hpp>
+#include <xygine/mesh/shaders/DeferredLighting.hpp>
 #include <xygine/mesh/shaders/DeferredRenderer.hpp>
 #include <xygine/mesh/shaders/SSAO.hpp>
 #include <xygine/components/Model.hpp>
@@ -48,13 +48,15 @@ using namespace xy;
 namespace
 {
     const float fov = 30.f * xy::Util::Const::degToRad;
-    const float nearPlane = 0.1f; 
+    const float nearPlane = 0.1f;
+    const int MAX_LIGHTS = 8;
 }
 
 MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     : m_scene               (scene),
     m_matrixBlockBuffer     ("u_matrixBlock"),
-    m_lightingBlockBuffer   ("u_lightBlock")
+    m_lightingBlockBuffer   ("u_lightBlock"),
+    m_lightingBlockID       (0)
 {
     //set up a default material to assign to newly created models
     m_defaultShader.loadFromMemory(DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
@@ -62,7 +64,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     
     //create the render buffer
     m_renderTexture.create(size.x, size.y, 3u, true, true);
-    m_sprite.setTexture(m_renderTexture.getTexture(2));
+    m_sprite.setTexture(m_renderTexture.getTexture(0));
 
     updateView();
     std::memset(&m_matrixBlock, 0, sizeof(m_matrixBlock));
@@ -96,6 +98,20 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_ssaoSprite.setTexture(m_renderTexture.getTexture(1), true);*/
 
     //m_sprite.setTexture(m_ssaoTexture.getTexture(),true);
+
+    //prepare the lighting shader for the output
+    if (m_lightingShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::LightingFrag))
+    {
+        glCheck(m_lightingBlockID = glGetUniformBlockIndex(m_lightingShader.getNativeHandle(), "u_lightBlock"));
+        if (m_lightingBlockID != GL_INVALID_INDEX)
+        {
+            xy::Logger::log("Failed to find uniform ID for lighting block in deferred output", xy::Logger::Type::Error, xy::Logger::Output::All);
+        }
+    }
+    else
+    {
+        xy::Logger::log("Failed to create output shader for deferred renderer", xy::Logger::Type::Error, xy::Logger::Output::All);
+    }
 }
 
 //public
@@ -186,6 +202,10 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     m_ssaoTexture.draw(m_ssaoSprite, &m_ssaoShader);
     m_ssaoTexture.display();*/
 
+    m_lightingShader.setUniform("u_diffuseMap", m_renderTexture.getTexture(0));
+    m_lightingShader.setUniform("u_normalMap", m_renderTexture.getTexture(2));
+    m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
+    states.shader = &m_lightingShader;
     rt.draw(m_sprite, states);
 }
 
@@ -207,40 +227,38 @@ void MeshRenderer::updateView()
 
 void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
 {
-    m_matrixBlock.u_cameraWorldPosition[0] = camWorldPosition.x;
-    m_matrixBlock.u_cameraWorldPosition[1] = camWorldPosition.y;
-    m_matrixBlock.u_cameraWorldPosition[2] = camWorldPosition.z;
+    m_lightingBlock.u_cameraWorldPosition[0] = camWorldPosition.x;
+    m_lightingBlock.u_cameraWorldPosition[1] = camWorldPosition.y;
+    m_lightingBlock.u_cameraWorldPosition[2] = camWorldPosition.z;
 
     //update active lights
     const auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
     auto i = 0;
-    for (const auto& light : lights)
+    for (; i < MAX_LIGHTS && i < lights.size(); ++i)
     {
-        auto& colour = light->getDiffuseColour();
+        auto& colour = lights[i]->getDiffuseColour();
         m_lightingBlock.u_pointLights[i].diffuseColour[0] = static_cast<float>(colour.r) / 255.f;
         m_lightingBlock.u_pointLights[i].diffuseColour[1] = static_cast<float>(colour.g) / 255.f;
         m_lightingBlock.u_pointLights[i].diffuseColour[2] = static_cast<float>(colour.b) / 255.f;
         m_lightingBlock.u_pointLights[i].diffuseColour[3] = static_cast<float>(colour.a) / 255.f;
 
-        auto& spec = light->getSpecularColour();
+        auto& spec = lights[i]->getSpecularColour();
         m_lightingBlock.u_pointLights[i].specularColour[0] = static_cast<float>(spec.r) / 255.f;
         m_lightingBlock.u_pointLights[i].specularColour[1] = static_cast<float>(spec.g) / 255.f;
         m_lightingBlock.u_pointLights[i].specularColour[2] = static_cast<float>(spec.b) / 255.f;
         m_lightingBlock.u_pointLights[i].specularColour[3] = static_cast<float>(spec.a) / 255.f;
 
-        m_lightingBlock.u_pointLights[i].intensity = light->getIntensity();
-        m_lightingBlock.u_pointLights[i].inverseRange = light->getInverseRange();
+        m_lightingBlock.u_pointLights[i].intensity = lights[i]->getIntensity();
+        m_lightingBlock.u_pointLights[i].inverseRange = lights[i]->getInverseRange();
 
-        auto& position = light->getWorldPosition();
-        m_matrixBlock.u_pointLightPositions[i].position[0] = position.x;
-        m_matrixBlock.u_pointLightPositions[i].position[1] = position.y;
-        m_matrixBlock.u_pointLightPositions[i].position[2] = position.z;
-
-        i++;
+        auto& position = lights[i]->getWorldPosition();
+        m_lightingBlock.u_pointLights[i].position[0] = position.x;
+        m_lightingBlock.u_pointLights[i].position[1] = position.y;
+        m_lightingBlock.u_pointLights[i].position[2] = position.z;
     }
 
     //turn off others by setting intensity to 0
-    for (; i < Shader::Mesh::MAX_LIGHTS; ++i)
+    for (; i < MAX_LIGHTS; ++i)
     {
         m_lightingBlock.u_pointLights[i].intensity = 0.f;
     }

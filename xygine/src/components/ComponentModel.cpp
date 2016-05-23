@@ -96,7 +96,7 @@ void Model::draw(const glm::mat4& viewMatrix) const
         {
             m_subMaterials[i]->getShader().setUniform("u_worldMatrix", sf::Glsl::Mat4(glm::value_ptr(m_worldMatrix)));
             m_subMaterials[i]->getShader().setUniform("u_worldViewMatrix", sf::Glsl::Mat4(glm::value_ptr(worldViewMat)));
-            m_subMaterials[i]->getShader().setUniform("u_normalMatrix", sf::Glsl::Mat3(glm::value_ptr(glm::inverseTranspose(glm::mat3(m_worldMatrix)))));
+            m_subMaterials[i]->getShader().setUniform("u_normalMatrix", sf::Glsl::Mat3(glm::value_ptr(glm::inverseTranspose(glm::mat3(worldViewMat)))));
             m_subMaterials[i]->bind();
             auto vao = m_vaoBindings.find(m_subMaterials[i]);
             vao->second.bind();

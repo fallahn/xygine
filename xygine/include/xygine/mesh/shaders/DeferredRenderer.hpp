@@ -53,18 +53,10 @@ namespace xy
                 "uniform mat4 u_worldViewMatrix;\n" \
                 "uniform mat3 u_normalMatrix;\n" \
 
-                "struct Point\n" \
-                "{\n" \
-                "    vec3 position;\n" \
-                "    float padding;\n" \
-                "};\n" \
-
                 "layout (std140) uniform u_matrixBlock\n" \
                 "{\n" \
                 "    mat4 u_viewMatrix;\n" \
                 "    mat4 u_projectionMatrix;\n" \
-                "    Point u_pointLightPositions[8];\n" \
-                "    vec3 u_cameraWorldPosition;\n" \
                 "};\n" \
 
                 "#if !defined(BUMP)\n"
@@ -90,7 +82,7 @@ namespace xy
                 "#if !defined(BUMP)\n"
                 "    v_normalVector = u_normalMatrix * a_normal;\n" \
                 "#else\n"
-                "    mat3 normalMatrix = inverse(u_normalMatrix);\n" \
+                "    mat3 normalMatrix = inverse(mat3(u_worldViewMatrix));\n" \
                 "    vec3 t = normalize(normalMatrix * a_tangent);\n" \
                 "    vec3 b = normalize(normalMatrix * a_bitangent);\n" \
                 "    vec3 n = normalize(normalMatrix * a_normal);\n" \
@@ -154,5 +146,11 @@ namespace xy
 
 #define DEFERRED_COLOURED_BUMPED_VERTEX "#version 150\n#define BUMP\n" + xy::Shader::Mesh::DeferredVertex
 #define DEFERRED_COLOURED_BUMPED_FRAGMENT "#version 150\n#define BUMP\n" + xy::Shader::Mesh::DeferredFragment
+
+#define DEFERRED_TEXTURED_VERTEX "#version 150\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredVertex
+#define DEFERRED_TEXTURED_FRAGMENT "#version 150\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredFragment
+
+#define DEFERRED_TEXTURED_BUMPED_VERTEX "#version 150\n#define BUMP\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredVertex
+#define DEFERRED_TEXTURED_BUMPED_FRAGMENT "#version 150\n#define BUMP\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredFragment
 
 #endif //XY_MESH_DEFERRED_HPP_
