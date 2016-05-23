@@ -64,7 +64,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     
     //create the render buffer
     m_renderTexture.create(size.x, size.y, 3u, true, true);
-    m_sprite.setTexture(m_renderTexture.getTexture(0));
+    m_outputSprite.setTexture(m_renderTexture.getTexture(0));
 
     updateView();
     std::memset(&m_matrixBlock, 0, sizeof(m_matrixBlock));
@@ -80,7 +80,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_defaultMaterial->addUniformBuffer(m_lightingBlockBuffer);
 
     //set up the buffer for ssao
-    /*for (auto i = 0u; i < m_ssaoKernel.size(); ++i)
+    for (auto i = 0u; i < m_ssaoKernel.size(); ++i)
     {
         const float scale = static_cast<float>(i) / m_ssaoKernel.size();
         m_ssaoKernel[i] = 
@@ -91,13 +91,14 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
         };
         m_ssaoKernel[i] *= (0.1f + 0.9f * scale * scale);
     }
-    m_ssaoShader.loadFromMemory(xy::Shader3D::SSAOVertex, xy::Shader3D::SSAOFragment);
+    m_ssaoShader.loadFromMemory(xy::Shader::Mesh::SSAOVertex, xy::Shader::Mesh::SSAOFragment);
     m_ssaoShader.setUniformArray("u_kernel", m_ssaoKernel.data(), m_ssaoKernel.size());
     m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
-    m_ssaoTexture.create(1920, 1080);
-    m_ssaoSprite.setTexture(m_renderTexture.getTexture(1), true);*/
+    m_ssaoTexture.create(960, 540);
+    m_ssaoTexture.setSmooth(true);
+    m_ssaoSprite.setTexture(m_renderTexture.getTexture(1));
 
-    //m_sprite.setTexture(m_ssaoTexture.getTexture(),true);
+    //m_outputSprite.setTexture(m_ssaoTexture.getTexture(),true);
 
     //prepare the lighting shader for the output
     if (m_lightingShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::LightingFrag))
@@ -196,17 +197,17 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     drawScene();
 
-    /*m_ssaoShader.setUniform("u_positionMap", m_renderTexture.getTexture(1));
-
+    m_ssaoShader.setUniform("u_positionMap", m_renderTexture.getTexture(1));
     m_ssaoTexture.clear(sf::Color::Transparent);
     m_ssaoTexture.draw(m_ssaoSprite, &m_ssaoShader);
-    m_ssaoTexture.display();*/
+    m_ssaoTexture.display();
 
     m_lightingShader.setUniform("u_diffuseMap", m_renderTexture.getTexture(0));
     m_lightingShader.setUniform("u_normalMap", m_renderTexture.getTexture(2));
+    m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
     m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
     states.shader = &m_lightingShader;
-    rt.draw(m_sprite, states);
+    rt.draw(m_outputSprite, states);
 }
 
 void MeshRenderer::updateView()
@@ -221,7 +222,7 @@ void MeshRenderer::updateView()
     m_projectionMatrix = glm::perspective(fov, viewSize.x / viewSize.y, nearPlane, m_cameraZ * 2.f);
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16);
 
-    //m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
+    m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
     m_defaultShader.setUniform("u_farPlane", m_cameraZ * 2.f);
 }
 

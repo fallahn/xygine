@@ -373,7 +373,7 @@ void DeferredDemoState::buildScene()
 
     entity = xy::Entity::create(m_messageBus);
     entity->addComponent(doofer);
-    entity->setPosition(440.f, 440.f);
+    entity->setPosition(590.f, 590.f);
     entity->setOrigin(150.f, 150.f);
     //entity->setRotation(-90.f);
 

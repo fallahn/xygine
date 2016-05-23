@@ -150,17 +150,17 @@ namespace xy
         }m_lightingBlock;
         UniformBuffer m_lightingBlockBuffer;
 
-        /*std::array<sf::Glsl::Vec3, 64> m_ssaoKernel;
+        std::array<sf::Glsl::Vec3, 64> m_ssaoKernel;
         mutable sf::Shader m_ssaoShader;
         mutable sf::RenderTexture m_ssaoTexture;
-        sf::Sprite m_ssaoSprite;*/
+        sf::Sprite m_ssaoSprite;
 
         mutable sf::Shader m_lightingShader;
         UniformBlockID m_lightingBlockID;
 
         mutable std::vector<Model*> m_models;
         mutable xy::MultiRenderTexture m_renderTexture;
-        sf::Sprite m_sprite;
+        sf::Sprite m_outputSprite;
         void drawScene() const;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;

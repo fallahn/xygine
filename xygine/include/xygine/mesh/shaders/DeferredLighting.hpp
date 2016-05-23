@@ -70,6 +70,7 @@ namespace xy
 
                 "uniform sampler2D u_diffuseMap;\n"
                 "uniform sampler2D u_normalMap;\n"
+                "uniform sampler2D u_aoMap;\n"
 
                 "in vec2 v_texCoord;\n"
 
@@ -77,7 +78,7 @@ namespace xy
 
                 "void main()\n"
                 "{\n"
-                "    fragOut = texture(u_normalMap, v_texCoord);\n"
+                "    fragOut = texture(u_aoMap, v_texCoord) * texture(u_diffuseMap, v_texCoord);\n"
                 "}";
         }
     }

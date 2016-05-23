@@ -46,7 +46,7 @@ namespace xy
                 "    gl_Position = gl_Vertex;\n"
                 "    gl_Position.xy = (gl_Vertex.xy * 2.0) - vec2(1.0);\n"
                 "    v_texCoord = gl_Vertex.xy;\n"
-                "    v_texCoord.y = 1.0 - v_texCoord.y;\n"
+                /*"    v_texCoord.y = 1.0 - v_texCoord.y;\n"*/
                 "}";
 
             const std::string SSAOFragment =
@@ -84,7 +84,7 @@ namespace xy
 
                 "    AO = AO / 64.0;\n"
 
-                "    gl_FragColor = vec4(clamp(AO * 2.0, 0.0, 1.0));\n"
+                "    gl_FragColor = vec4(vec3(clamp(AO * 2.0, 0.0, 1.0)), 1.0); //vec4(vec3(AO * AO), 1.0);//\n"
                 "}";
         }
     }
