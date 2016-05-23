@@ -29,17 +29,18 @@ source distribution.
 
 using namespace xy;
 
-CubeBuilder::CubeBuilder(float size, bool normals, bool uvs)
-    : m_size    (size),
-    m_useNormals(normals),
-    m_useUVs    (uvs)
+CubeBuilder::CubeBuilder(float size)
+    : m_size    (size)
 {
-    m_frontIndices = { 1, 0, 3, 2 };
-    m_backIndices = { 5, 4, 7, 6 };
-    m_leftIndices = { 9, 8, 11, 10 };
-    m_rightIndices = { 13, 12, 15, 14 };
-    m_topIndices = { 17, 16, 19, 18 };
-    m_bottomIndices = { 21, 20, 23, 22 };
+    m_indices =
+    {
+        0u, 1u, 2u, 0u, 2u, 3u,
+        4u, 5u, 6u, 4u, 6u, 7u,
+        8u, 9u, 10u, 8u, 10u, 11u,
+        12u, 13u, 14u, 12u, 14u, 15u,
+        16u, 17u, 18u, 16u, 18u, 19u,
+        20u, 21u, 22u, 20u, 22u, 23u
+    };
 }
 
 //public
@@ -47,223 +48,145 @@ void CubeBuilder::build()
 {    
     if (m_vertexData.empty())
     {
-        const float side = m_size / 2.f;
-        std::vector<float> positions =
+        m_elements =
+        {
+            VertexLayout::Element(VertexLayout::Element::Type::Position, 3u),
+            VertexLayout::Element(VertexLayout::Element::Type::Normal, 3u),
+            VertexLayout::Element(VertexLayout::Element::Type::Tangent, 3u),
+            VertexLayout::Element(VertexLayout::Element::Type::Bitangent, 3u),
+            VertexLayout::Element(VertexLayout::Element::Type::UV0, 2u)
+        };
+
+        const float halfWidth = m_size / 2.f;
+        m_vertexData =
         {
             //front
-            -side, -side, side,
-            -side, side, side,
-            side, -side, side,
-            side,side, side,
+            -halfWidth, -halfWidth, halfWidth,
+            0.f, 0.f, 1.f, //normal
+            0.f, 1.f, 0.f, //tan
+            1.f, 0.f, 0.f, //bitan
+            0.f, 0.f,      //uv
+            halfWidth, -halfWidth, halfWidth,
+            0.f, 0.f, 1.f,
+            0.f, 1.f, 0.f,
+            1.f, 0.f, 0.f,
+            1.f, 0.f,
+            halfWidth, halfWidth, halfWidth,
+            0.f, 0.f, 1.f,
+            0.f, 1.f, 0.f,
+            1.f, 0.f, 0.f,
+            1.f, 1.f,
+            -halfWidth, halfWidth, halfWidth,
+            0.f, 0.f, 1.f,
+            0.f, 1.f, 0.f,
+            1.f, 0.f, 0.f,
+            0.f, 1.f,
             //back
-            side, -side, -side,
-            side, side, -side,
-            -side, -side, -side,
-            -side, side, -side,
-            //left
-            -side, -side, -side,
-            -side, side, -side,
-            -side, -side, side,
-            -side, side, side,
-            //right
-            side, -side, side,
-            side, side, side,
-            side, -side, -side,
-            side, side, -side,
+            -halfWidth, -halfWidth, -halfWidth,
+            0.f, 0.f, -1.f,
+            0.f, 1.f, 0.f,
+            -1.f, 0.f, 0.f,
+            1.f, 0.f,
+            -halfWidth, halfWidth, -halfWidth,
+            0.f, 0.f, -1.f,
+            0.f, 1.f, 0.f,
+            -1.f, 0.f, 0.f,
+            1.f, 1.f,
+            halfWidth, halfWidth, -halfWidth,
+            0.f, 0.f, -1.f,
+            0.f, 1.f, 0.f,
+            -1.f, 0.f, 0.f,
+            0.f, 1.f,
+            halfWidth, -halfWidth, -halfWidth,
+            0.f, 0.f, -1.f,
+            0.f, 1.f, 0.f,
+            -1.f, 0.f, 0.f,
+            0.f, 0.f,
             //top
-            -side, side, side,
-            -side, side, -side,
-            side, side, side,
-            side, side, -side,
+            -halfWidth, halfWidth, -halfWidth,
+            0.f, 1.f, 0.f,
+            0.f, 0.f, -1.f,
+            1.f, 0.f, 0.f,
+            0.f, 1.f,
+            -halfWidth, halfWidth, halfWidth,
+            0.f, 1.f, 0.f,
+            0.f, 0.f, -1.f,
+            1.f, 0.f, 0.f,
+            0.f, 0.f,
+            halfWidth, halfWidth, halfWidth,
+            0.f, 1.f, 0.f,
+            0.f, 0.f, -1.f,
+            1.f, 0.f, 0.f,
+            1.f, 0.f,
+            halfWidth, halfWidth, -halfWidth,
+            0.f, 1.f, 0.f,
+            0.f, 0.f, -1.f,
+            1.f, 0.f, 0.f,
+            1.f, 1.f,
             //bottom
-            side, -side, side,
-            side, -side, -side,
-            -side, -side, side,
-            -side, -side, -side
+            -halfWidth, -halfWidth, -halfWidth,
+            0.f, -1.f, 0.f,
+            0.f, 0.f, 1.f,
+            1.f, 0.f, 0.f,
+            1.f, 1.f,
+            halfWidth, -halfWidth, -halfWidth,
+            0.f, -1.f, 0.f,
+            0.f, 0.f, 1.f,
+            1.f, 0.f, 0.f,
+            0.f, 1.f,
+            halfWidth, -halfWidth, halfWidth,
+            0.f, -1.f, 0.f,
+            0.f, 0.f, 1.f,
+            1.f, 0.f, 0.f,
+            0.f, 0.f,
+            -halfWidth, -halfWidth, halfWidth,
+            0.f, -1.f, 0.f,
+            0.f, 0.f, 1.f,
+            1.f, 0.f, 0.f,
+            1.f, 0.f,
+            //right
+            halfWidth, -halfWidth, -halfWidth,
+            1.f, 0.f, 0.f,
+            0.f, 1.f, 0.f,
+            0.f, 0.f, -1.f,
+            1.f, 0.f,
+            halfWidth, halfWidth, -halfWidth,
+            1.f, 0.f, 0.f,
+            0.f, 1.f, 0.f,
+            0.f, 0.f, -1.f,
+            1.f, 1.f,
+            halfWidth, halfWidth, halfWidth,
+            1.f, 0.f, 0.f,
+            0.f, 1.f, 0.f,
+            0.f, 0.f, -1.f,
+            0.f, 1.f,
+            halfWidth, -halfWidth, halfWidth,
+            1.f, 0.f, 0.f,
+            0.f, 1.f, 0.f,
+            0.f, 0.f, -1.f,
+            0.f, 0.f,
+            //left
+            -halfWidth, -halfWidth, -halfWidth,
+            -1.f, 0.f, 0.f,
+            0.f, 1.f, 0.f,
+            0.f, 0.f, 1.f,
+            0.f, 0.f,
+            -halfWidth, -halfWidth, halfWidth,
+            -1.f, 0.f, 0.f,
+            0.f, 1.f, 0.f,
+            0.f, 0.f, 1.f,
+            1.f, 0.f,
+            -halfWidth, halfWidth, halfWidth,
+            -1.f, 0.f, 0.f,
+            0.f, 1.f, 0.f,
+            0.f, 0.f, 1.f,
+            1.f, 1.f,
+            -halfWidth, halfWidth, -halfWidth,
+            -1.f, 0.f, 0.f,
+            0.f, 1.f, 0.f,
+            0.f, 0.f, 1.f,
+            0.f, 1.f
         };
-        std::vector<float> normals;
-        std::vector<float> tangents;
-        std::vector<float> bitangents;
-        std::vector<float> UVs;
-        
-        //set up vert layout
-        m_elements.emplace_back(VertexLayout::Element::Type::Position, 3);
-        if (m_useNormals)
-        {
-            m_elements.emplace_back(VertexLayout::Element::Type::Normal, 3);
-            m_elements.emplace_back(VertexLayout::Element::Type::Tangent, 3);
-            m_elements.emplace_back(VertexLayout::Element::Type::Bitangent, 3);
-            normals = 
-            {
-                //front
-                0.f, 0.f, 1.f,
-                0.f, 0.f, 1.f,
-                0.f, 0.f, 1.f,
-                0.f, 0.f, 1.f,
-                //back
-                0.f, 0.f, -1.f,
-                0.f, 0.f, -1.f,
-                0.f, 0.f, -1.f,
-                0.f, 0.f, -1.f,
-                //left
-                -1.f, 0.f, 0.f,
-                -1.f, 0.f, 0.f,
-                -1.f, 0.f, 0.f,
-                -1.f, 0.f, 0.f,
-                //right
-                1.f, 0.f, 0.f,
-                1.f, 0.f, 0.f,
-                1.f, 0.f, 0.f,
-                1.f, 0.f, 0.f,
-                //top
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                //bottom
-                0.f, -1.f, 0.f,
-                0.f, -1.f, 0.f,
-                0.f, -1.f, 0.f,
-                0.f, -1.f, 0.f
-            };
-
-            tangents =
-            {
-                //front
-                1.f, 0.f, 0.f,
-                1.f, 0.f, 0.f,
-                1.f, 0.f, 0.f,
-                1.f, 0.f, 0.f,
-                //back
-                -1.f, 0.f, 0.f,
-                -1.f, 0.f, 0.f,
-                -1.f, 0.f, 0.f,
-                -1.f, 0.f, 0.f,
-                //left
-                0.f, 0.f, 1.f,
-                0.f, 0.f, 1.f,
-                0.f, 0.f, 1.f,
-                0.f, 0.f, 1.f,
-                //right
-                0.f, 0.f, -1.f,
-                0.f, 0.f, -1.f,
-                0.f, 0.f, -1.f,
-                0.f, 0.f, -1.f,
-                //top
-                1.f, 0.f, 0.f,
-                1.f, 0.f, 0.f,
-                1.f, 0.f, 0.f,
-                1.f, 0.f, 0.f,
-                //bottom
-                -1.f, 0.f, 0.f,
-                -1.f, 0.f, 0.f,
-                -1.f, 0.f, 0.f,
-                -1.f, 0.f, 0.f
-            };
-
-            bitangents =
-            {
-                //front
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                //back
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                //left
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                //right
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                0.f, 1.f, 0.f,
-                //top
-                0.f, 0.f, -1.f,
-                0.f, 0.f, -1.f,
-                0.f, 0.f, -1.f,
-                0.f, 0.f, -1.f,
-                //bottom
-                0.f, 0.f, -1.f,
-                0.f, 0.f, -1.f,
-                0.f, 0.f, -1.f,
-                0.f, 0.f, -1.f
-            };
-        }
-
-        if (m_useUVs)
-        {
-            m_elements.emplace_back(VertexLayout::Element::Type::UV0, 2);
-            UVs = 
-            {
-                //front
-                0.f, 1.f,
-                0.f, 0.f,
-                1.f, 1.f,
-                1.f, 0.f,
-                //back
-                0.f, 1.f,
-                0.f, 0.f,
-                1.f, 1.f,
-                1.f, 0.f,
-                //left
-                0.f, 1.f,
-                0.f, 0.f,
-                1.f, 1.f,
-                1.f, 0.f,
-                //right
-                0.f, 1.f,
-                0.f, 0.f,
-                1.f, 1.f,
-                1.f, 0.f,
-                //top
-                0.f, 1.f,
-                0.f, 0.f,
-                1.f, 1.f,
-                1.f, 0.f,
-                //bottom
-                0.f, 1.f,
-                0.f, 0.f,
-                1.f, 1.f,
-                1.f, 0.f
-            };
-        }
-
-        //create vert data
-        std::size_t i, j, k, l, m;
-        i = j = k = l = m = 0;
-        for (auto idx = 0u; idx < getVertexCount(); ++idx)
-        {
-            m_vertexData.push_back(positions[i++]);
-            m_vertexData.push_back(positions[i++]);
-            m_vertexData.push_back(positions[i++]);
-
-            if (m_useNormals)
-            {
-                m_vertexData.push_back(normals[j++]);
-                m_vertexData.push_back(normals[j++]);
-                m_vertexData.push_back(normals[j++]);
-
-                m_vertexData.push_back(tangents[k++]);
-                m_vertexData.push_back(tangents[k++]);
-                m_vertexData.push_back(tangents[k++]);
-
-                m_vertexData.push_back(bitangents[l++]);
-                m_vertexData.push_back(bitangents[l++]);
-                m_vertexData.push_back(bitangents[l++]);
-            }
-
-            if (m_useUVs)
-            {
-                m_vertexData.push_back(UVs[m++]);
-                m_vertexData.push_back(UVs[m++]);
-            }
-        }
     }
 }
 
@@ -274,30 +197,10 @@ VertexLayout CubeBuilder::getVertexLayout() const
 
 std::vector<MeshBuilder::SubMeshLayout> CubeBuilder::getSubMeshLayouts() const
 {
-    std::vector<MeshBuilder::SubMeshLayout> retval(6);
-    retval[0].data = (void*)m_frontIndices.data();
-    retval[0].size = 4;
-    retval[0].type = Mesh::PrimitiveType::TriangleStrip;
-
-    retval[1].data = (void*)m_backIndices.data();
-    retval[1].size = 4;
-    retval[1].type = Mesh::PrimitiveType::TriangleStrip;
-
-    retval[2].data = (void*)m_leftIndices.data();
-    retval[2].size = 4;
-    retval[2].type = Mesh::PrimitiveType::TriangleStrip;
-
-    retval[3].data = (void*)m_rightIndices.data();
-    retval[3].size = 4;
-    retval[3].type = Mesh::PrimitiveType::TriangleStrip;
-
-    retval[4].data = (void*)m_topIndices.data();
-    retval[4].size = 4;
-    retval[4].type = Mesh::PrimitiveType::TriangleStrip;
-
-    retval[5].data = (void*)m_bottomIndices.data();
-    retval[5].size = 4;
-    retval[5].type = Mesh::PrimitiveType::TriangleStrip;
+    std::vector<MeshBuilder::SubMeshLayout> retval(1);
+    retval[0].data = (void*)m_indices.data();
+    retval[0].size = m_indices.size();
+    retval[0].type = Mesh::PrimitiveType::Triangles;
 
     return std::move(retval);
 }

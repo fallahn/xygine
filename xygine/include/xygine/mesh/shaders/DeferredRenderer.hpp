@@ -90,12 +90,12 @@ namespace xy
                 "#if !defined(BUMP)\n"
                 "    v_normalVector = u_normalMatrix * a_normal;\n" \
                 "#else\n"
-                "    vec3 t = u_normalMatrix * a_tangent;\n" \
-                "    vec3 b = u_normalMatrix * a_bitangent;\n" \
-                "    vec3 n = u_normalMatrix * a_normal;\n" \
-                "    v_tbn = inverse(transpose(mat3(t, b, n)));\n" \
+                "    mat3 normalMatrix = inverse(u_normalMatrix);\n" \
+                "    vec3 t = normalize(normalMatrix * a_tangent);\n" \
+                "    vec3 b = normalize(normalMatrix * a_bitangent);\n" \
+                "    vec3 n = normalize(normalMatrix * a_normal);\n" \
+                "    v_tbn = mat3(t, b, n);\n" \
                 "#endif\n"
-
                 "}";
 
             const static std::string DeferredFragment =
@@ -142,7 +142,7 @@ namespace xy
                 "    fragOut[2] = vec4(normalize(v_normalVector), 1.0);\n" \
                 "#else\n" \
                 "    vec3 normal = texture(u_normalMap, v_texCoord).rgb * 2.0 - 1.0;\n" \
-                "    fragOut[2] = vec4(normalize(normal * v_tbn), 1.0);\n" \
+                "    fragOut[2] = vec4(normalize(v_tbn * normal), 1.0);\n" \
                 "#endif\n"
                 "}";
         }

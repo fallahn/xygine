@@ -123,7 +123,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 
 void PhysicsDemoState::createMesh()
 {
-    xy::CubeBuilder cb(32.f, true, true);
+    xy::CubeBuilder cb(32.f);
     m_meshResource.add(0, cb);
 
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
