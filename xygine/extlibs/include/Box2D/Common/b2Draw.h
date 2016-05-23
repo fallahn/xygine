@@ -25,8 +25,16 @@
 struct b2Color
 {
 	b2Color() {}
-	b2Color(float32 r, float32 g, float32 b, float32 a = 1.0f) : r(r), g(g), b(b), a(a) {}
-	void Set(float32 ri, float32 gi, float32 bi, float32 ai = 1.0f) { r = ri; g = gi; b = bi; a = ai; }
+	b2Color(float32 rIn, float32 gIn, float32 bIn, float32 aIn = 1.0f)
+	{
+		r = rIn; g = gIn; b = bIn; a = aIn;
+	}
+
+	void Set(float32 rIn, float32 gIn, float32 bIn, float32 aIn = 1.0f)
+	{
+		r = rIn; g = gIn; b = bIn; a = aIn;
+	}
+
 	float32 r, g, b, a;
 };
 
@@ -78,6 +86,9 @@ public:
 	/// Draw a transform. Choose your own length scale.
 	/// @param xf a transform.
 	virtual void DrawTransform(const b2Transform& xf) = 0;
+
+	/// Draw a point.
+	virtual void DrawPoint(const b2Vec2& p, float32 size, const b2Color& color) = 0;
 
 protected:
 	uint32 m_drawFlags;

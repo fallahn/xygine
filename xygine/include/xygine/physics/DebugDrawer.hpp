@@ -64,6 +64,7 @@ namespace xy
             void DrawSolidCircle(const b2Vec2& centre, float32 radius, const b2Vec2& axis, const b2Color& colour) override;
             void DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& colour) override;
             void DrawTransform(const b2Transform& xf) override;
+            void DrawPoint(const b2Vec2& p, float32 size, const b2Color& color) override;
 
         private:
 

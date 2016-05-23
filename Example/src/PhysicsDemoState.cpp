@@ -134,7 +134,7 @@ void PhysicsDemoState::createMesh()
     material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     material.addUniformBuffer(m_meshRenderer.getLightingUniforms());
     material.addProperty({ "u_colour", sf::Color(110, 150, 180) });
-    material.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/cave/test_d.jpg") });
+    material.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/cave/diffuse.png") });
     material.addProperty({ "u_normalMap", m_textureResource.get("assets/images/physics demo/ball_normal.png") });
     model->setSubMaterial(material, 0);
 
