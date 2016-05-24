@@ -72,7 +72,7 @@ namespace xy
                 "void main()\n" \
                 "{\n" \
                 "    vec4 viewPosition = u_worldViewMatrix * vec4(a_position, 1.0);\n" \
-                "    v_viewPosition = viewPosition.xyz;\n" \
+                "    v_viewPosition = (u_worldMatrix * vec4(a_position, 1.0)).xyz;//viewPosition.xyz;\n" \
                 "    gl_Position = u_projectionMatrix * viewPosition;\n" \
 
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
@@ -82,7 +82,7 @@ namespace xy
                 "#if !defined(BUMP)\n"
                 "    v_normalVector = u_normalMatrix * a_normal;\n" \
                 "#else\n"
-                "    mat3 normalMatrix = inverse(mat3(u_worldViewMatrix));\n" \
+                "    mat3 normalMatrix = inverse(mat3(u_worldMatrix));\n" \
                 "    vec3 t = normalize(normalMatrix * a_tangent);\n" \
                 "    vec3 b = normalize(normalMatrix * a_bitangent);\n" \
                 "    vec3 n = normalize(normalMatrix * a_normal);\n" \
@@ -127,15 +127,15 @@ namespace xy
                 "    fragOut[0] = u_colour;\n" \
                 "#endif\n" \
 
-                "    fragOut[1].rgb = v_viewPosition;\n" \
-                "    fragOut[1].a = lineariseDepth(gl_FragCoord.z);\n" \
-
                 "#if !defined(BUMP)\n" \
-                "    fragOut[2] = vec4(normalize(v_normalVector), 1.0);\n" \
+                "    fragOut[1] = vec4(normalize(v_normalVector), 1.0);\n" \
                 "#else\n" \
                 "    vec3 normal = texture(u_normalMap, v_texCoord).rgb * 2.0 - 1.0;\n" \
-                "    fragOut[2] = vec4(normalize(v_tbn * normal), 1.0);\n" \
+                "    fragOut[1] = vec4(normalize(v_tbn * normal).grb, 1.0);\n" \
                 "#endif\n"
+
+                "    fragOut[2].rgb = v_viewPosition;\n" \
+                "    fragOut[2].a = lineariseDepth(gl_FragCoord.z);\n" \
                 "}";
         }
     }

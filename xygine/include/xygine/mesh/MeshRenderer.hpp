@@ -126,6 +126,13 @@ namespace xy
         glm::mat4 m_projectionMatrix;
         float m_cameraZ;
 
+        enum MaterialChannel
+        {
+            Diffuse = 0,
+            Normal,
+            Position
+        };
+
         struct MatrixBlock final
         {
             //use raw arrays 'cos GLSL
@@ -154,6 +161,8 @@ namespace xy
         mutable sf::Shader m_ssaoShader;
         mutable sf::RenderTexture m_ssaoTexture;
         sf::Sprite m_ssaoSprite;
+        sf::Texture m_ssaoNoiseTexture;
+        void createNoiseTexture();
 
         mutable sf::Shader m_lightingShader;
         UniformBlockID m_lightingBlockID;

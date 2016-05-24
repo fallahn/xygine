@@ -65,20 +65,53 @@ namespace xy
                 "layout (std140) uniform u_lightBlock\n"
                 "{\n"
                 "    PointLight u_pointLights[MAX_POINT_LIGHTS];\n"
-                "    vec3 u_cameraPosition;\n"
+                "    vec3 u_cameraWorldPosition;\n"
                 "};\n"
 
+                "uniform mat4 u_viewMatrix;\n"
                 "uniform sampler2D u_diffuseMap;\n"
                 "uniform sampler2D u_normalMap;\n"
+                "uniform sampler2D u_positionMap;\n"
                 "uniform sampler2D u_aoMap;\n"
+                "uniform vec4 u_ambientColour = vec4(0.2, 0.2, 0.2, 1.0);\n"
 
                 "in vec2 v_texCoord;\n"
 
                 "out vec4 fragOut;\n"
 
+                "vec3 diffuseColour;\n"
+                "vec3 eyeDirection;\n"
+                "vec3 calcLighting(vec3 normal, vec3 lightDirection, vec3 lightDiffuse, vec3 lightSpec, float falloff)\n"
+                "{\n"
+                "    float diffuseAmount = max(dot(normal, lightDirection), 0.0);\n"
+                "    diffuseAmount = pow((diffuseAmount * 0.5) + 0.5, 2.0);\n"
+                "    vec3 mixedColour = diffuseColour * lightDiffuse * diffuseAmount * falloff;\n"
+
+                "    vec3 halfVec = normalize(eyeDirection + lightDirection);\n"
+                "    float specularAngle = clamp(dot(normal, halfVec), 0.0, 1.0);\n"
+                "    vec3 specularColour = lightSpec * vec3(pow(specularAngle, 180.0)) * falloff;\n"
+
+                "    return mixedColour + specularColour;\n"
+                "}\n" \
+
                 "void main()\n"
                 "{\n"
-                "    fragOut = texture(u_aoMap, v_texCoord) * texture(u_diffuseMap, v_texCoord);\n"
+                "    vec3 fragPosition = texture(u_positionMap, v_texCoord).xyz;\n"
+                "    vec3 normal = texture(u_normalMap, v_texCoord).rgb;\n"
+                "    vec4 diffuse = texture(u_diffuseMap, v_texCoord);\n"
+                "    diffuseColour = diffuse.rgb;\n"
+                "    vec3 blendedColour = diffuse.rgb * u_ambientColour.rgb;\n"
+                "    eyeDirection = normalize(vec3(960.0, 540.0, 2015.0) - fragPosition);\n"
+
+                "    for (int i = 0; i < MAX_POINT_LIGHTS; ++i)\n"
+                "    {\n"
+                "        vec3 pointLightDirection = (vec3(960.0, 540.0, 200.0) - fragPosition) * 0.0008;//u_pointLights[i].inverseRange;\n"
+                "        float falloff = clamp(1.0 - sqrt(dot(pointLightDirection, pointLightDirection)), 0.0, 1.0);\n"
+                "        blendedColour += calcLighting(normal, normalize(pointLightDirection), vec3(0.3, 0.5, 1.0), vec3(1.0), falloff);// * u_pointLights[i].intensity;\n" \
+                "    }\n"
+
+
+                "    fragOut = vec4(blendedColour * texture(u_aoMap, v_texCoord).rgb, diffuse.a);//\n"
                 "}";
         }
     }

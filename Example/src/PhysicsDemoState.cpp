@@ -132,7 +132,7 @@ void PhysicsDemoState::createMesh()
     m_meshShader.loadFromMemory(DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
     auto& material = m_materialResource.add(MatId::Blue, m_meshShader);
     material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    material.addUniformBuffer(m_meshRenderer.getLightingUniforms());
+    //material.addUniformBuffer(m_meshRenderer.getLightingUniforms());
     //material.addProperty({ "u_colour", /*sf::Color(110, 150, 180)*/sf::Color::Green });
     material.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/cave/diffuse.png") });
     material.addProperty({ "u_normalMap", m_textureResource.get("assets/images/physics demo/ball_normal.png") });
@@ -519,7 +519,7 @@ void PhysicsDemoState::createBodies()
 
 void PhysicsDemoState::addLights()
 {
-    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 500.f, 220.f/*, sf::Color::Green*/);
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 500.f, 220.f, sf::Color::Green);
     light->setDepth(200.f);
     //light->setIntensity(5.f);
 

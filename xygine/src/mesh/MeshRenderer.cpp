@@ -56,7 +56,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     : m_scene               (scene),
     m_matrixBlockBuffer     ("u_matrixBlock"),
     m_lightingBlockBuffer   ("u_lightBlock"),
-    m_lightingBlockID       (0)
+    m_lightingBlockID       (-1)
 {
     //set up a default material to assign to newly created models
     m_defaultShader.loadFromMemory(DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
@@ -64,7 +64,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     
     //create the render buffer
     m_renderTexture.create(size.x, size.y, 3u, true, true);
-    m_outputSprite.setTexture(m_renderTexture.getTexture(0));
+    m_outputSprite.setTexture(m_renderTexture.getTexture(MaterialChannel::Diffuse));
 
     updateView();
     std::memset(&m_matrixBlock, 0, sizeof(m_matrixBlock));
@@ -77,7 +77,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     //set lighting buffer
     std::memset(&m_lightingBlock, 0, sizeof(m_lightingBlock));
     m_lightingBlockBuffer.create(m_lightingBlock);
-    m_defaultMaterial->addUniformBuffer(m_lightingBlockBuffer);
+    //m_defaultMaterial->addUniformBuffer(m_lightingBlockBuffer);
 
     //set up the buffer for ssao
     for (auto i = 0u; i < m_ssaoKernel.size(); ++i)
@@ -91,20 +91,22 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
         };
         m_ssaoKernel[i] *= (0.1f + 0.9f * scale * scale);
     }
-    m_ssaoShader.loadFromMemory(xy::Shader::Mesh::SSAOVertex, xy::Shader::Mesh::SSAOFragment);
+    createNoiseTexture();
+    m_ssaoShader.loadFromMemory(xy::Shader::Mesh::SSAOVertex, xy::Shader::Mesh::SSAOFragment2);
     m_ssaoShader.setUniformArray("u_kernel", m_ssaoKernel.data(), m_ssaoKernel.size());
     m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
+    m_ssaoShader.setUniform("u_noiseMap", m_ssaoNoiseTexture);
     m_ssaoTexture.create(960, 540);
     m_ssaoTexture.setSmooth(true);
-    m_ssaoSprite.setTexture(m_renderTexture.getTexture(1));
-
+    m_ssaoSprite.setTexture(m_renderTexture.getTexture(MaterialChannel::Position));
+   
     //m_outputSprite.setTexture(m_ssaoTexture.getTexture(),true);
 
     //prepare the lighting shader for the output
     if (m_lightingShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::LightingFrag))
     {
-        glCheck(m_lightingBlockID = glGetUniformBlockIndex(m_lightingShader.getNativeHandle(), "u_lightBlock"));
-        if (m_lightingBlockID != GL_INVALID_INDEX)
+        glCheck(m_lightingBlockID = glGetUniformBlockIndex(m_lightingShader.getNativeHandle(), m_lightingBlockBuffer.getName().c_str()));
+        if (m_lightingBlockID == GL_INVALID_INDEX)
         {
             xy::Logger::log("Failed to find uniform ID for lighting block in deferred output", xy::Logger::Type::Error, xy::Logger::Output::All);
         }
@@ -170,6 +172,25 @@ void MeshRenderer::handleMessage(const Message& msg)
 }
 
 //private
+void MeshRenderer::createNoiseTexture()
+{
+    std::array<sf::Glsl::Vec3, 16u> data;
+    for (auto& v : data)
+    {
+        v =
+        {
+            xy::Util::Random::value(-1.f, 1.f),
+            xy::Util::Random::value(-1.f, 1.f),
+            0.f
+        };
+    }
+    m_ssaoNoiseTexture.create(4, 4);
+    m_ssaoNoiseTexture.setRepeated(true);
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_ssaoNoiseTexture.getNativeHandle()));
+    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 4, 4, 0, GL_RGB, GL_FLOAT, data.data()));
+    glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+}
+
 void MeshRenderer::drawScene() const
 {    
     m_renderTexture.setActive(true);
@@ -197,15 +218,19 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     drawScene();
 
-    m_ssaoShader.setUniform("u_positionMap", m_renderTexture.getTexture(1));
+    m_ssaoShader.setUniform("u_positionMap", m_renderTexture.getTexture(MaterialChannel::Position));
+    m_ssaoShader.setUniform("u_normalMap", m_renderTexture.getTexture(MaterialChannel::Normal));
     m_ssaoTexture.clear(sf::Color::Transparent);
     m_ssaoTexture.draw(m_ssaoSprite, &m_ssaoShader);
     m_ssaoTexture.display();
 
-    m_lightingShader.setUniform("u_diffuseMap", m_renderTexture.getTexture(0));
-    m_lightingShader.setUniform("u_normalMap", m_renderTexture.getTexture(2));
+    m_lightingShader.setUniform("u_diffuseMap", m_renderTexture.getTexture(MaterialChannel::Diffuse));
+    m_lightingShader.setUniform("u_normalMap", m_renderTexture.getTexture(MaterialChannel::Normal));
+    m_lightingShader.setUniform("u_positionMap", m_renderTexture.getTexture(MaterialChannel::Position));
     m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
+    m_lightingShader.setUniform("u_viewMatrix", sf::Glsl::Mat4(glm::value_ptr(m_viewMatrix)));
     m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
+    
     states.shader = &m_lightingShader;
     rt.draw(m_outputSprite, states);
 }

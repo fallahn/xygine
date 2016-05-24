@@ -36,7 +36,7 @@ namespace xy
     {
         namespace Mesh
         {
-            const std::string SSAOVertex =
+            static const std::string SSAOVertex =
                 "#version 120\n"
 
                 "varying vec2 v_texCoord;\n"
@@ -49,7 +49,7 @@ namespace xy
                 /*"    v_texCoord.y = 1.0 - v_texCoord.y;\n"*/
                 "}";
 
-            const std::string SSAOFragment =
+            static const std::string SSAOFragment =
                 "#version 120\n"
                 "#define MAX_KERNEL_SIZE 64\n"
 
@@ -85,6 +85,53 @@ namespace xy
                 "    AO = AO / 64.0;\n"
 
                 "    gl_FragColor = vec4(vec3(clamp(AO * 2.0, 0.0, 1.0)), 1.0); //vec4(vec3(AO * AO), 1.0);//\n"
+                "}";
+
+            static const std::string SSAOFragment2 =
+                "#version 120\n"
+
+                "varying vec2 v_texCoord;\n"
+
+                "uniform sampler2D u_positionMap;\n"
+                "uniform sampler2D u_normalMap;\n"
+                "uniform sampler2D u_noiseMap;\n"
+                "uniform vec3 u_kernel[64];\n"
+                "uniform mat4 u_projectionMatrix;\n"
+
+                "const int kernelSize = 64;\n"
+                "const float radius = 1.0;\n"
+
+                "vec2 noiseScale = vec2(960.0f / 4.0f, 540.0f / 4.0f);\n"
+
+                "void main()\n"
+                "{\n"
+                "    vec3 fragPos = texture2D(u_positionMap, v_texCoord).xyz;\n"
+                "    vec3 normal = texture2D(u_normalMap, v_texCoord).rgb;\n"
+                "    vec3 randomVec = texture2D(u_noiseMap, v_texCoord * vec2(960.0f / 4.0f, 540.0f / 4.0f)).xyz;\n"
+
+                "    vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal))\n;"
+                "    vec3 bitangent = cross(normal, tangent);\n"
+                "    mat3 TBN = mat3(tangent, bitangent, normal);\n"
+
+                "    float occlusion = 0.0;\n"
+                "    for (int i = 0; i < kernelSize; ++i)\n"
+                "    {\n"
+                "        vec3 sample = TBN * u_kernel[i];\n"
+                "        sample = fragPos + sample * radius;\n"
+
+                "        vec4 offset = vec4(sample, 1.0);\n"
+                "        offset = u_projectionMatrix * offset;\n"
+                "        offset.xyz /= offset.w;\n"
+                "        offset.xyz = offset.xyz * 0.5 + 0.5;\n"
+
+                "        float sampleDepth = -texture2D(u_positionMap, offset.xy).w;\n"
+
+                "        float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));\n"
+                "        occlusion += (sampleDepth >= sample.z ? 1.0 : 0.0) * rangeCheck;\n"
+                "    }"
+                "    occlusion = 1.0 - (occlusion / kernelSize);\n"
+
+                "    gl_FragColor = vec4(vec3(occlusion), 1.0);\n"
                 "}";
         }
     }
