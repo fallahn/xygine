@@ -26,11 +26,14 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/mesh/MeshRenderer.hpp>
-#include <xygine/mesh/StaticConsts.hpp>
+#include <xygine/mesh/shaders/DeferredLighting.hpp>
+#include <xygine/mesh/shaders/DeferredRenderer.hpp>
+#include <xygine/mesh/shaders/SSAO.hpp>
 #include <xygine/components/Model.hpp>
 #include <xygine/components/PointLight.hpp>
 #include <xygine/Scene.hpp>
 #include <xygine/util/Const.hpp>
+#include <xygine/util/Random.hpp>
 #include <xygine/Reports.hpp>
 
 #include <SFML/Graphics/RenderStates.hpp>
@@ -45,24 +48,26 @@ using namespace xy;
 namespace
 {
     const float fov = 30.f * xy::Util::Const::degToRad;
-    const float nearPlane = 0.1f; 
+    const float nearPlane = 0.1f;
+    const int MAX_LIGHTS = 8;
 }
 
 MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     : m_scene               (scene),
     m_matrixBlockBuffer     ("u_matrixBlock"),
-    m_lightingBlockBuffer   ("u_lightBlock")
+    m_lightingBlockBuffer   ("u_lightBlock"),
+    m_lightingBlockID       (0)
 {
     //set up a default material to assign to newly created models
-    m_defaultShader.loadFromMemory(Shader3D::DefaultVertex, Shader3D::DefaultFragment);
+    m_defaultShader.loadFromMemory(DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
     m_defaultMaterial = std::make_unique<Material>(m_defaultShader);
     
     //create the render buffer
-    m_renderTexture.create(size.x, size.y, 1u, true);
-    m_sprite.setTexture(m_renderTexture.getTexture(0));
+    m_renderTexture.create(size.x, size.y, 3u, true, true);
+    m_outputSprite.setTexture(m_renderTexture.getTexture(0));
 
     updateView();
-
+    std::memset(&m_matrixBlock, 0, sizeof(m_matrixBlock));
     std::memcpy(m_matrixBlock.u_viewMatrix, glm::value_ptr(m_viewMatrix), 16 * sizeof(float));
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16 * sizeof(float));
     m_matrixBlockBuffer.create(m_matrixBlock);
@@ -70,8 +75,44 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_defaultMaterial->addUniformBuffer(m_matrixBlockBuffer);
     
     //set lighting buffer
+    std::memset(&m_lightingBlock, 0, sizeof(m_lightingBlock));
     m_lightingBlockBuffer.create(m_lightingBlock);
     m_defaultMaterial->addUniformBuffer(m_lightingBlockBuffer);
+
+    //set up the buffer for ssao
+    for (auto i = 0u; i < m_ssaoKernel.size(); ++i)
+    {
+        const float scale = static_cast<float>(i) / m_ssaoKernel.size();
+        m_ssaoKernel[i] = 
+        {
+            xy::Util::Random::value(-1.f, 1.f),
+            xy::Util::Random::value(-1.f, 1.f),
+            xy::Util::Random::value(-1.f, 1.f)
+        };
+        m_ssaoKernel[i] *= (0.1f + 0.9f * scale * scale);
+    }
+    m_ssaoShader.loadFromMemory(xy::Shader::Mesh::SSAOVertex, xy::Shader::Mesh::SSAOFragment);
+    m_ssaoShader.setUniformArray("u_kernel", m_ssaoKernel.data(), m_ssaoKernel.size());
+    m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
+    m_ssaoTexture.create(960, 540);
+    m_ssaoTexture.setSmooth(true);
+    m_ssaoSprite.setTexture(m_renderTexture.getTexture(1));
+
+    //m_outputSprite.setTexture(m_ssaoTexture.getTexture(),true);
+
+    //prepare the lighting shader for the output
+    if (m_lightingShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::LightingFrag))
+    {
+        glCheck(m_lightingBlockID = glGetUniformBlockIndex(m_lightingShader.getNativeHandle(), "u_lightBlock"));
+        if (m_lightingBlockID != GL_INVALID_INDEX)
+        {
+            xy::Logger::log("Failed to find uniform ID for lighting block in deferred output", xy::Logger::Type::Error, xy::Logger::Output::All);
+        }
+    }
+    else
+    {
+        xy::Logger::log("Failed to create output shader for deferred renderer", xy::Logger::Type::Error, xy::Logger::Output::All);
+    }
 }
 
 //public
@@ -94,10 +135,14 @@ void MeshRenderer::update()
         return m->destroyed();
     }), m_models.end());
 
+
     auto view = m_scene.getView();
     auto camPos = view.getCenter();
     auto rotation = view.getRotation() * xy::Util::Const::degToRad;
     glm::vec3 camWorldPosition(camPos.x, camPos.y, m_cameraZ);
+
+    //update UBO with scene lighting / cam pos
+    updateLights(camWorldPosition);
 
     m_viewMatrix = glm::translate(glm::mat4(), camWorldPosition);
     //rotate
@@ -106,9 +151,6 @@ void MeshRenderer::update()
     
     std::memcpy(m_matrixBlock.u_viewMatrix, glm::value_ptr(m_viewMatrix), 16 * sizeof(float));
     m_matrixBlockBuffer.update(m_matrixBlock);
-
-    //update UBO with scene lighting / cam pos
-    updateLights(camWorldPosition);
 }
 
 void MeshRenderer::handleMessage(const Message& msg)
@@ -154,7 +196,18 @@ void MeshRenderer::drawScene() const
 void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     drawScene();
-    rt.draw(m_sprite, states);
+
+    m_ssaoShader.setUniform("u_positionMap", m_renderTexture.getTexture(1));
+    m_ssaoTexture.clear(sf::Color::Transparent);
+    m_ssaoTexture.draw(m_ssaoSprite, &m_ssaoShader);
+    m_ssaoTexture.display();
+
+    m_lightingShader.setUniform("u_diffuseMap", m_renderTexture.getTexture(0));
+    m_lightingShader.setUniform("u_normalMap", m_renderTexture.getTexture(2));
+    m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
+    m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
+    states.shader = &m_lightingShader;
+    rt.draw(m_outputSprite, states);
 }
 
 void MeshRenderer::updateView()
@@ -169,7 +222,8 @@ void MeshRenderer::updateView()
     m_projectionMatrix = glm::perspective(fov, viewSize.x / viewSize.y, nearPlane, m_cameraZ * 2.f);
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16);
 
-    //XY_WARNING(std::abs(m_cameraZ) > farPlane, "Camera depth greater than far plane: " + std::to_string(m_cameraZ));
+    m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
+    m_defaultShader.setUniform("u_farPlane", m_cameraZ * 2.f);
 }
 
 void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
@@ -181,33 +235,31 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
     //update active lights
     const auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
     auto i = 0;
-    for (const auto& light : lights)
+    for (; i < MAX_LIGHTS && i < lights.size(); ++i)
     {
-        auto& colour = light->getDiffuseColour();
+        auto& colour = lights[i]->getDiffuseColour();
         m_lightingBlock.u_pointLights[i].diffuseColour[0] = static_cast<float>(colour.r) / 255.f;
         m_lightingBlock.u_pointLights[i].diffuseColour[1] = static_cast<float>(colour.g) / 255.f;
         m_lightingBlock.u_pointLights[i].diffuseColour[2] = static_cast<float>(colour.b) / 255.f;
         m_lightingBlock.u_pointLights[i].diffuseColour[3] = static_cast<float>(colour.a) / 255.f;
 
-        auto& spec = light->getSpecularColour();
+        auto& spec = lights[i]->getSpecularColour();
         m_lightingBlock.u_pointLights[i].specularColour[0] = static_cast<float>(spec.r) / 255.f;
         m_lightingBlock.u_pointLights[i].specularColour[1] = static_cast<float>(spec.g) / 255.f;
         m_lightingBlock.u_pointLights[i].specularColour[2] = static_cast<float>(spec.b) / 255.f;
         m_lightingBlock.u_pointLights[i].specularColour[3] = static_cast<float>(spec.a) / 255.f;
 
-        m_lightingBlock.u_pointLights[i].intensity = light->getIntensity();
-        m_lightingBlock.u_pointLights[i].inverseRange = light->getInverseRange();
+        m_lightingBlock.u_pointLights[i].intensity = lights[i]->getIntensity();
+        m_lightingBlock.u_pointLights[i].inverseRange = lights[i]->getInverseRange();
 
-        auto& position = light->getWorldPosition();
+        auto& position = lights[i]->getWorldPosition();
         m_lightingBlock.u_pointLights[i].position[0] = position.x;
         m_lightingBlock.u_pointLights[i].position[1] = position.y;
         m_lightingBlock.u_pointLights[i].position[2] = position.z;
-
-        i++;
     }
 
     //turn off others by setting intensity to 0
-    while (i++ < Shader3D::MAX_LIGHTS)
+    for (; i < MAX_LIGHTS; ++i)
     {
         m_lightingBlock.u_pointLights[i].intensity = 0.f;
     }

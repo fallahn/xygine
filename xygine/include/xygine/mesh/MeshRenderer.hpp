@@ -30,11 +30,13 @@ source distribution.
 
 #include <xygine/mesh/Material.hpp>
 #include <xygine/mesh/UniformBuffer.hpp>
+#include <xygine/mesh/RenderQuad.hpp>
 #include <xygine/MultiRenderTexture.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 
 #include <glm/mat4x4.hpp>
 
@@ -128,7 +130,7 @@ namespace xy
         {
             //use raw arrays 'cos GLSL
             float u_viewMatrix[16];
-            float u_projectionMatrix[16];
+            float u_projectionMatrix[16];            
         }m_matrixBlock;
         UniformBuffer m_matrixBlockBuffer;
 
@@ -139,6 +141,7 @@ namespace xy
             float inverseRange;
             float intensity;
             float position[3];
+            float padding[3]; //GLSL must align to multiple of vec4              
         };
         struct LightBlock final
         {
@@ -147,9 +150,17 @@ namespace xy
         }m_lightingBlock;
         UniformBuffer m_lightingBlockBuffer;
 
+        std::array<sf::Glsl::Vec3, 64> m_ssaoKernel;
+        mutable sf::Shader m_ssaoShader;
+        mutable sf::RenderTexture m_ssaoTexture;
+        sf::Sprite m_ssaoSprite;
+
+        mutable sf::Shader m_lightingShader;
+        UniformBlockID m_lightingBlockID;
+
         mutable std::vector<Model*> m_models;
         mutable xy::MultiRenderTexture m_renderTexture;
-        sf::Sprite m_sprite;
+        sf::Sprite m_outputSprite;
         void drawScene() const;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;

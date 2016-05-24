@@ -59,7 +59,8 @@ source distribution.
 
 #include <xygine/components/Model.hpp>
 #include <RotationComponent.hpp>
-#include <xygine/mesh/StaticConsts.hpp>
+#include <xygine/mesh/shaders/DeferredRenderer.hpp>
+#include <xygine/mesh/shaders/GeomVis.hpp>
 #include <xygine/mesh/SubMesh.hpp>
 #include <xygine/mesh/CubeBuilder.hpp>
 
@@ -103,7 +104,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     m_shaderResource.preload(PhysicsShaderId::ReflectionMap, xy::Shader::Default::vertex, xy::Shader::ReflectionMap::fragment);
     m_shaderResource.get(PhysicsShaderId::ReflectionMap).setUniform("u_reflectionMap", m_textureResource.get("assets/images/physics demo/table_reflection.png"));
 
-    shader = &m_shaderResource.get(PhysicsShaderId::NormalMapTexturedSpecular);
+    shader = &m_shaderResource.get(PhysicsShaderId::NormalMapTextured);
 
     //test stuff
     createMesh();
@@ -122,17 +123,20 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 
 void PhysicsDemoState::createMesh()
 {
-    xy::CubeBuilder cb(32.f, true, false);
+    xy::CubeBuilder cb(32.f);
     m_meshResource.add(0, cb);
 
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
 
-    m_meshShader.loadFromMemory(xy::Shader3D::DefaultVertex, xy::Shader3D::DefaultFragment);
+    //m_meshShader.loadFromMemory(GEOM_VERT, GEOM_GEOM, GEOM_FRAG);
+    m_meshShader.loadFromMemory(DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
     auto& material = m_materialResource.add(MatId::Blue, m_meshShader);
     material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     material.addUniformBuffer(m_meshRenderer.getLightingUniforms());
-    material.addProperty({ "u_colour", sf::Color(0, 0, 255, 127) });
-    model->setSubMaterial(material, 5);
+    //material.addProperty({ "u_colour", /*sf::Color(110, 150, 180)*/sf::Color::Green });
+    material.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/cave/diffuse.png") });
+    material.addProperty({ "u_normalMap", m_textureResource.get("assets/images/physics demo/ball_normal.png") });
+    model->setSubMaterial(material, 0);
 
     auto ent = xy::Entity::create(m_messageBus);
     ent->addComponent(model);
@@ -140,9 +144,16 @@ void PhysicsDemoState::createMesh()
     auto rotator = xy::Component::create<RotationComponent>(m_messageBus);
     ent->addComponent(rotator);
     ent->setScale(10.f, 10.f);
-    ent->setPosition(200.f, 200.f);
+    ent->setPosition(200.f, 540.f);
     m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
 
+    model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
+    //model->setSubMaterial(material, 0);
+    ent = xy::Entity::create(m_messageBus);
+    ent->addComponent(model);
+    ent->setScale(2.f, 2.f);
+    ent->setPosition(1720.f, 540.f);
+    m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
 
     //auto cam = xy::Component::create<xy::Camera>(m_messageBus, m_scene.getView());
     //rotator = xy::Component::create<RotationComponent>(m_messageBus);
@@ -150,7 +161,7 @@ void PhysicsDemoState::createMesh()
     //auto pCam = ent->addComponent(cam);
     //pCam->setZoom(1.15f);
     ////ent->addComponent(rotator);
-    //ent->setPosition(xy::DefaultSceneSize / 2.f);
+    ////ent->setPosition(xy::DefaultSceneSize / 2.f);
     //m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
     //m_scene.setActiveCamera(pCam);
 
@@ -485,6 +496,9 @@ void PhysicsDemoState::createBodies()
     as->setSound("assets/sound/cuetip.wav");
     as->setName("tip_sound");
     cbEntity->addComponent(as);
+    //auto light = xy::Component::create<xy::PointLight>(m_messageBus, 200.f, 16.f, sf::Color::Blue);
+    //light->setDepth(70.f);
+    //cbEntity->addComponent(light);
 
     const float spacingY = 27.f;
     const float halfY = spacingY / 2.f;
@@ -505,8 +519,9 @@ void PhysicsDemoState::createBodies()
 
 void PhysicsDemoState::addLights()
 {
-    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 1800.f, 2820.f, sf::Color::Green);
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 500.f, 220.f/*, sf::Color::Green*/);
     light->setDepth(200.f);
+    //light->setIntensity(5.f);
 
     auto entity = xy::Entity::create(m_messageBus);
     entity->setPosition(xy::DefaultSceneSize / 2.f);

@@ -42,7 +42,7 @@ namespace xy
     class XY_EXPORT_API CubeBuilder final : public MeshBuilder
     {
     public:
-        CubeBuilder(float size, bool normals = true, bool uvCoords = true);
+        CubeBuilder(float size);
         ~CubeBuilder() = default;
 
         void build() override;
@@ -55,15 +55,8 @@ namespace xy
     private:
 
         float m_size;
-        bool m_useNormals;
-        bool m_useUVs;
 
-        std::array<std::uint8_t, 4> m_frontIndices;
-        std::array<std::uint8_t, 4> m_backIndices;
-        std::array<std::uint8_t, 4> m_leftIndices;
-        std::array<std::uint8_t, 4> m_rightIndices;
-        std::array<std::uint8_t, 4> m_topIndices;
-        std::array<std::uint8_t, 4> m_bottomIndices;
+        std::array<std::uint8_t, 36> m_indices;
 
         std::vector<float> m_vertexData;
         std::vector<VertexLayout::Element> m_elements;

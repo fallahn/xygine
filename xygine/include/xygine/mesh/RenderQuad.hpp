@@ -25,21 +25,37 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_STATIC_CONSTS_HPP_
-#define XY_STATIC_CONSTS_HPP_
+#ifndef XY_RENDER_QUAD_HPP_
+#define XY_RENDER_QUAD_HPP_
 
-#include <string>
+#include <xygine/mesh/Mesh.hpp>
+#include <xygine/mesh/Material.hpp>
+#include <xygine/mesh/VertexAttribBinding.hpp>
+
+#include <SFML/Graphics/Drawable.hpp>
+
+namespace sf
+{
+    class Shader;
+}
 
 namespace xy
 {
-    static const std::string VertexAttribPosition("a_position");
-    static const std::string VertexAttribColour("a_colour");
-    static const std::string VertexAttribNormal("a_normal");
-    static const std::string VertexAttribTangent("a_tangent");
-    static const std::string VertexAttribBitangent("a_bitangent");
-    static const std::string VertexAttribUV0("a_texCoord0");
-    static const std::string VertexAttribUV1("a_texCoord1");
-    static const std::string VertexAttribBlendIndices("a_boneIndices");
-    static const std::string VertexAttribBlendWeights("a_boneWeights");
+    class RenderQuad final : public sf::Drawable
+    {
+    public:
+        RenderQuad(const sf::Vector2f&, sf::Shader&);
+        ~RenderQuad() = default;
+
+        sf::Shader& getShader() const;
+
+    private:
+        xy::Mesh m_mesh;
+        xy::Material m_material;
+        xy::VertexAttribBinding m_vao;
+        sf::Shader& m_shader;
+        void draw(sf::RenderTarget&, sf::RenderStates) const override;
+    };
 }
-#endif //XY_STATIC_CONSTS_HPP_
+
+#endif //XY_RENDER_QUAD_HPP_

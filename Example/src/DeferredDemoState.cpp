@@ -67,10 +67,10 @@ namespace
         "uniform sampler2D u_maskMap;\n"
         "uniform mat4 u_inverseWorldViewMatrix;\n"
 
-        "const vec3 tangent = vec3(1.0, 0.0, 0.0); \n"
-        "const vec3 normal = vec3(0.0, 0.0, 1.0); \n"
+        "const vec4 tangent = vec4(1.0, 0.0, 0.0, 1.0); \n"
+        "const vec4 normal = vec4(0.0, 0.0, 1.0, 1.0); \n"
 
-        "mat3 inverse(mat3 m)\n"
+        /*"mat3 inverse(mat3 m)\n"
         "{\n"
         "    float a00 = m[0][0], a01 = m[0][1], a02 = m[0][2];\n"
         "    float a10 = m[1][0], a11 = m[1][1], a12 = m[1][2];\n"
@@ -85,19 +85,23 @@ namespace
         "    return mat3(b01, (-a22 * a01 + a02 * a21), (a12 * a01 - a02 * a11),\n"
         "        b11, (a22 * a00 - a02 * a20), (-a12 * a00 + a02 * a10),\n"
         "        b21, (-a21 * a00 + a01 * a20), (a11 * a00 - a01 * a10)) / det;\n"
-        "}\n"
+        "}\n"*/
 
         "void main()\n"
         "{\n"
 
-        "    mat3 normalMatrix = transpose(mat3(u_inverseWorldViewMatrix));\n"
-        "    vec3 n = normalize(normalMatrix * normal);\n"
-        "    vec3 t = normalize(normalMatrix * tangent);\n"
+        /*"    mat3 normalMatrix = transpose(mat3(u_inverseWorldViewMatrix));\n"*/
+        "    vec3 n = normalize(vec3(u_inverseWorldViewMatrix * normal));\n"
+        "    vec3 t = normalize(vec3(u_inverseWorldViewMatrix * tangent));\n"
+        "    t = normalize(t - (dot(t, n) * n));\n"
         "    vec3 b = cross(n,t);\n" \
-        "    mat3 tangentSpaceTransformMatrix = inverse(mat3(t.x, b.x, n.x, t.y, b.y, n.y, t.z, b.z, n.z));\n"
+        "    mat3 tangentSpaceTransformMatrix = mat3(t, b, n);\n"
+
+        "    vec3 bumpNormal = texture2D(u_normalMap, gl_TexCoord[0].xy).rgb * 2.0 - 1.0;\n"
+        /*"    bumpNormal = tangentSpaceTransformMatrix * bumpNormal;\n"*/
 
         "    gl_FragData[0] = texture2D(u_diffuseMap, gl_TexCoord[0].xy);\n"
-        "    gl_FragData[1] = texture2D(u_normalMap, gl_TexCoord[0].xy);//vec4(tangentSpaceTransformMatrix * texture2D(u_normalMap, gl_TexCoord[0].xy).rgb, 1.0);\n"
+        "    gl_FragData[1] = vec4(0.5 * (bumpNormal + 1.0), 1.0);\n"
         "    gl_FragData[2] = texture2D(u_maskMap, gl_TexCoord[0].xy);\n"
         "}";
 }
@@ -369,7 +373,8 @@ void DeferredDemoState::buildScene()
 
     entity = xy::Entity::create(m_messageBus);
     entity->addComponent(doofer);
-    entity->setPosition(440.f, 440.f);
+    entity->setPosition(590.f, 590.f);
+    entity->setOrigin(150.f, 150.f);
     //entity->setRotation(-90.f);
 
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
