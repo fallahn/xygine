@@ -115,6 +115,10 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     {
         xy::Logger::log("Failed to create output shader for deferred renderer", xy::Logger::Type::Error, xy::Logger::Output::All);
     }
+
+
+    m_quadShader.loadFromMemory(Shader::Mesh::LightingVert, Shader::Mesh::bunsFrag);
+    m_renderquad = std::make_unique<RenderQuad>(sf::Vector2f(200.f, 100.f), m_lightingShader);
 }
 
 //public
@@ -229,10 +233,12 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     m_lightingShader.setUniform("u_positionMap", m_renderTexture.getTexture(MaterialChannel::Position));
     m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
     m_lightingShader.setUniform("u_viewMatrix", sf::Glsl::Mat4(glm::value_ptr(m_viewMatrix)));
-    m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
+    //m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
     
-    states.shader = &m_lightingShader;
+    //states.shader = &m_lightingShader;
     rt.draw(m_outputSprite, states);
+    m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
+    rt.draw(*m_renderquad);
 }
 
 void MeshRenderer::updateView()

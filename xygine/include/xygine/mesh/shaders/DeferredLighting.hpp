@@ -36,6 +36,14 @@ namespace xy
     {
         namespace Mesh
         {
+            static const std::string bunsFrag =
+                "#version 150\n"
+                "out vec4 fragOut;\n"
+                "void main()\n"
+                "{\n"
+                "fragOut = vec4(1.0, 1.0, 0.0, 1.0);\n"
+                "}\n";
+
             static const std::string LightingVert =
                 "#version 130\n"
 
@@ -111,7 +119,7 @@ namespace xy
                 "    }\n"
 
 
-                "    fragOut = vec4(blendedColour * texture(u_aoMap, v_texCoord).rgb, diffuse.a);//\n"
+                "    fragOut = u_pointLights[0].diffuseColour;//vec4(blendedColour * texture(u_aoMap, v_texCoord).rgb, diffuse.a);//\n"
                 "}";
         }
     }

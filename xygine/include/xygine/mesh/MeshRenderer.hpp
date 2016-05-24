@@ -176,6 +176,9 @@ namespace xy
 
         void updateView();
         void updateLights(const glm::vec3&);
+
+        std::unique_ptr<RenderQuad> m_renderquad;
+        sf::Shader m_quadShader;
     };
 
 }
