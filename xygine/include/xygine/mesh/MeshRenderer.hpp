@@ -148,7 +148,7 @@ namespace xy
             float specularColour[4];
             float inverseRange;
             float intensity;
-            float padding[2]; //GLSL must align to multiple of vec4
+            float padding[2]; //GLSL must align to multiple of vec4 (including the start of the next member!)
             float position[3];
             float morePadding;
         };
@@ -166,11 +166,15 @@ namespace xy
         sf::Texture m_ssaoNoiseTexture;
         void createNoiseTexture();
 
+        mutable sf::Shader m_lightBlurShader;
+        mutable sf::RenderTexture m_lightBlurTexture;
+        sf::Sprite m_lightBlurSprite;
+
         mutable sf::Shader m_lightingShader;
         UniformBlockID m_lightingBlockID;
 
         mutable std::vector<Model*> m_models;
-        mutable xy::MultiRenderTexture m_renderTexture;
+        mutable xy::MultiRenderTexture m_gBuffer;
         void drawScene() const;
 
         sf::Texture m_dummyTetxure;

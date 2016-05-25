@@ -77,12 +77,12 @@ namespace xy
                 "    vec3 u_cameraWorldPosition;\n"
                 "};\n"
 
-                "uniform mat4 u_viewMatrix;\n"
                 "uniform sampler2D u_diffuseMap;\n"
                 "uniform sampler2D u_normalMap;\n"
                 "uniform sampler2D u_maskMap;\n"
                 "uniform sampler2D u_positionMap;\n"
                 "uniform sampler2D u_aoMap;\n"
+                "uniform sampler2D u_illuminationMap;\n"
                 "uniform vec4 u_ambientColour = vec4(0.2, 0.2, 0.2, 1.0);\n"
 
                 "in vec2 v_texCoord;\n"
@@ -125,7 +125,8 @@ namespace xy
 
                 "    blendedColour *= texture(u_aoMap, v_texCoord).rgb;\n"
                 "    blendedColour = mix(blendedColour, diffuse.rgb, mask.b);\n"
-                "    fragOut = vec4(blendedColour, diffuse.a);//\n"
+                "    blendedColour += texture(u_illuminationMap, v_texCoord).rgb;\n"
+                "    fragOut = vec4(blendedColour, diffuse.a);\n"
                 "}";
         }
     }

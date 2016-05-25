@@ -728,5 +728,8 @@
     <ClInclude Include="include\xygine\mesh\shaders\DeferredLighting.hpp">
       <Filter>Header Files\mesh\shaders</Filter>
     </ClInclude>
+    <ClInclude Include="include\xygine\mesh\shaders\LightBlur.hpp">
+      <Filter>Header Files\mesh\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

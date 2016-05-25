@@ -29,6 +29,7 @@ source distribution.
 #include <xygine/mesh/shaders/DeferredLighting.hpp>
 #include <xygine/mesh/shaders/DeferredRenderer.hpp>
 #include <xygine/mesh/shaders/SSAO.hpp>
+#include <xygine/mesh/shaders/LightBlur.hpp>
 #include <xygine/components/Model.hpp>
 #include <xygine/components/PointLight.hpp>
 #include <xygine/Scene.hpp>
@@ -63,7 +64,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_defaultMaterial = std::make_unique<Material>(m_defaultShader);
     
     //create the render buffer
-    m_renderTexture.create(size.x, size.y, 4u, true, true);
+    m_gBuffer.create(size.x, size.y, 4u, true, true);
 
     updateView();
     std::memset(&m_matrixBlock, 0, sizeof(m_matrixBlock));
@@ -73,7 +74,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
 
     m_defaultMaterial->addUniformBuffer(m_matrixBlockBuffer);
     
-    //set lighting buffer
+    //set lighting uniform buffer
     std::memset(&m_lightingBlock, 0, sizeof(m_lightingBlock));
     m_lightingBlockBuffer.create(m_lightingBlock);
 
@@ -94,11 +95,19 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_ssaoShader.setUniformArray("u_kernel", m_ssaoKernel.data(), m_ssaoKernel.size());
     m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
     m_ssaoShader.setUniform("u_noiseMap", m_ssaoNoiseTexture);
+    m_ssaoShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
+    m_ssaoShader.setUniform("u_normalMap", m_gBuffer.getTexture(MaterialChannel::Normal));
     m_ssaoTexture.create(960, 540);
     m_ssaoTexture.setSmooth(true);
-    m_ssaoSprite.setTexture(m_renderTexture.getTexture(MaterialChannel::Position));
+    m_ssaoSprite.setTexture(m_gBuffer.getTexture(MaterialChannel::Position));
    
-    //m_outputSprite.setTexture(m_ssaoTexture.getTexture(),true);
+    //performs a light blur pass
+    m_lightBlurTexture.create(480, 270);
+    m_lightBlurTexture.setSmooth(true);
+    m_lightBlurSprite.setTexture(m_gBuffer.getTexture(MaterialChannel::Mask));
+    m_lightBlurShader.loadFromMemory(Shader::Mesh::SSAOVertex, Shader::Mesh::LightBlurFrag);
+    m_lightBlurShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
+    m_lightBlurShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
 
     //prepare the lighting shader for the output
     if (m_lightingShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::LightingFrag))
@@ -108,6 +117,15 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
         {
             xy::Logger::log("Failed to find uniform ID for lighting block in deferred output", xy::Logger::Type::Error, xy::Logger::Output::All);
         }
+        else
+        {
+            m_lightingShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
+            m_lightingShader.setUniform("u_normalMap", m_gBuffer.getTexture(MaterialChannel::Normal));
+            m_lightingShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
+            m_lightingShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
+            m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
+            m_lightingShader.setUniform("u_illuminationMap", m_lightBlurTexture.getTexture());
+        }
     }
     else
     {
@@ -116,6 +134,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
 
     m_outputQuad = std::make_unique<RenderQuad>(sf::Vector2f(200.f, 100.f), m_lightingShader);
 
+    //we need this for the output kludge in draw()
     sf::Image img;
     img.create(2, 2, sf::Color::Transparent);
     m_dummyTetxure.loadFromImage(img);
@@ -198,9 +217,9 @@ void MeshRenderer::createNoiseTexture()
 
 void MeshRenderer::drawScene() const
 {    
-    m_renderTexture.setActive(true);
+    m_gBuffer.setActive(true);
     
-    auto viewPort = m_renderTexture.getView().getViewport();
+    auto viewPort = m_gBuffer.getView().getViewport();
     glViewport(
         static_cast<GLuint>(viewPort.left * xy::DefaultSceneSize.x), 
         static_cast<GLuint>(viewPort.top * xy::DefaultSceneSize.y),
@@ -215,7 +234,7 @@ void MeshRenderer::drawScene() const
     for (const auto& m : m_models)m->draw(m_viewMatrix);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
-    m_renderTexture.display();
+    m_gBuffer.display();
     //m_renderTexture.setActive(false);
 }
 
@@ -223,18 +242,21 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     drawScene();
 
-    m_ssaoShader.setUniform("u_positionMap", m_renderTexture.getTexture(MaterialChannel::Position));
-    m_ssaoShader.setUniform("u_normalMap", m_renderTexture.getTexture(MaterialChannel::Normal));
+    //m_ssaoShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
+    //m_ssaoShader.setUniform("u_normalMap", m_gBuffer.getTexture(MaterialChannel::Normal));
     m_ssaoTexture.clear(sf::Color::Transparent);
     m_ssaoTexture.draw(m_ssaoSprite, &m_ssaoShader);
     m_ssaoTexture.display();
 
-    m_lightingShader.setUniform("u_diffuseMap", m_renderTexture.getTexture(MaterialChannel::Diffuse));
-    m_lightingShader.setUniform("u_normalMap", m_renderTexture.getTexture(MaterialChannel::Normal));
-    m_lightingShader.setUniform("u_maskMap", m_renderTexture.getTexture(MaterialChannel::Mask));
-    m_lightingShader.setUniform("u_positionMap", m_renderTexture.getTexture(MaterialChannel::Position));
-    m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
-    //m_lightingShader.setUniform("u_viewMatrix", sf::Glsl::Mat4(glm::value_ptr(m_viewMatrix)));
+    m_lightBlurTexture.clear();
+    m_lightBlurTexture.draw(m_lightBlurSprite, &m_lightBlurShader);
+    m_lightBlurTexture.display();
+
+    //m_lightingShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
+    //m_lightingShader.setUniform("u_normalMap", m_gBuffer.getTexture(MaterialChannel::Normal));
+    //m_lightingShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
+    //m_lightingShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
+    //m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
 
     //this is a kludge, as it seems the only way to activate
     //a render target is to draw something to it, which we need to
