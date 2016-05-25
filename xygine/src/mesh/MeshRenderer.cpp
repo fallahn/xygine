@@ -79,7 +79,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_lightingBlockBuffer.create(m_lightingBlock);
 
     //set up the buffer for ssao
-    initSSAO();
+    //initSSAO();
    
     //performs a light blur pass
     initSelfIllum();
@@ -195,9 +195,9 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     drawScene();
 
-    m_ssaoTexture.clear(sf::Color::Transparent);
-    m_ssaoTexture.draw(m_ssaoSprite, &m_ssaoShader);
-    m_ssaoTexture.display();
+    //m_ssaoTexture.clear(sf::Color::Transparent);
+    //m_ssaoTexture.draw(m_ssaoSprite/*, &m_ssaoShader*/);
+    //m_ssaoTexture.display();
 
     m_lightDownsampleTexture.clear();
     m_lightDownsampleTexture.draw(sf::Sprite(m_gBuffer.getTexture(MaterialChannel::Diffuse)), &m_lightDownsampleShader);
@@ -300,7 +300,7 @@ void MeshRenderer::initSSAO()
 
 void MeshRenderer::initSelfIllum()
 {
-    m_lightDownsampleTexture.create(480, 270, 2u);
+    m_lightDownsampleTexture.create(480, 270);
     m_lightDownsampleTexture.setSmooth(true);
     m_lightDownsampleShader.loadFromMemory(Shader::Mesh::QuadVertex, Shader::Mesh::LightDownsampleFrag);
     m_lightDownsampleShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
@@ -308,10 +308,9 @@ void MeshRenderer::initSelfIllum()
     
     m_lightBlurTexture.create(480, 270);
     m_lightBlurTexture.setSmooth(true);
-    m_lightBlurSprite.setTexture(m_lightDownsampleTexture.getTexture(1));
+    m_lightBlurSprite.setTexture(m_lightDownsampleTexture.getTexture());
     m_lightBlurShader.loadFromMemory(Shader::Mesh::QuadVertex, Shader::Mesh::LightBlurFrag);
-    m_lightBlurShader.setUniform("u_diffuseMap", m_lightDownsampleTexture.getTexture(0));
-    m_lightBlurShader.setUniform("u_maskMap", m_lightDownsampleTexture.getTexture(1));
+    m_lightBlurShader.setUniform("u_diffuseMap", m_lightDownsampleTexture.getTexture());
 }
 
 void MeshRenderer::initOutput()

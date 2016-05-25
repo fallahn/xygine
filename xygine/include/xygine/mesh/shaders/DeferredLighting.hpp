@@ -123,9 +123,9 @@ namespace xy
                 "        blendedColour += calcLighting(normal, normalize(pointLightDirection), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
                 "    }\n"
 
-                "    blendedColour *= texture(u_aoMap, v_texCoord).rgb;\n"
+                "    //blendedColour *= texture(u_aoMap, v_texCoord).rgb;\n"
                 "    blendedColour = mix(blendedColour, diffuse.rgb, mask.b);\n"
-                "    blendedColour += texture(u_illuminationMap, v_texCoord).rgb * 8.0;\n"
+                "    blendedColour += texture(u_illuminationMap, v_texCoord).rgb;// * 4.0;\n"
                 "    fragOut = vec4(blendedColour, diffuse.a);\n"
                 "}";
         }

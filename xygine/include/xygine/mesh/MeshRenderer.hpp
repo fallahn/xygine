@@ -169,7 +169,7 @@ namespace xy
         sf::Shader m_lightBlurShader;
         sf::Shader m_lightDownsampleShader;
         mutable sf::RenderTexture m_lightBlurTexture;
-        mutable xy::MultiRenderTexture m_lightDownsampleTexture;
+        mutable sf::RenderTexture m_lightDownsampleTexture;
         sf::Sprite m_lightBlurSprite;
 
         sf::Shader m_lightingShader;

@@ -37,10 +37,9 @@ namespace xy
         namespace Mesh
         {
             static const std::string LightBlurFrag =
-                "#version 130\n"
+                "#version 140\n"
 
-                "uniform sampler2D u_diffuseMap;\n"
-                "uniform sampler2D u_maskMap;\n"
+                "uniform sampler2D u_illuminationMap;\n"
 
                 "in vec2 v_texCoord;\n"
                 "out vec4 fragOut;\n"
@@ -48,14 +47,14 @@ namespace xy
                 "const int blurSize = 12;\n"
                 "void main()\n"
                 "{\n"
-                "    vec2 texelSize = 1.0 / vec2(textureSize(u_diffuseMap, 0));\n"
+                "    vec2 texelSize = 1.0 / vec2(textureSize(u_illuminationMap, 0));\n"
                 "    vec4 result = vec4(0.0);\n"
                 "    for (int x = 0; x < blurSize; ++x)\n"
                 "    {"
                 "        for (int y = 0; y < blurSize; ++y)\n"
                 "        {\n"
                 "            vec2 offset = (vec2(-6.0) + vec2(float(x), float(y))) * texelSize;\n"
-                "            result += texture2D(u_diffuseMap, v_texCoord + offset) * texture2D(u_maskMap, v_texCoord + offset).b;\n"
+                "            result += texture2D(u_illuminationMap, v_texCoord + offset);\n"
                 "        }\n"
                 "    }\n"
 
@@ -72,8 +71,9 @@ namespace xy
 
                 "void main()\n"
                 "{\n"
-                "    gl_FragData[0] = texture2D(u_diffuseMap, v_texCoord);\n"
-                "    gl_FragData[1] = texture2D(u_maskMap, v_texCoord);\n"
+                "    vec4 diffuse = texture2D(u_diffuseMap, v_texCoord);\n"
+                "    gl_FragColor.rgb = diffuse.rgb * texture2D(u_maskMap, v_texCoord).b;\n"
+                "    gl_FragColor.a = diffuse.a;\n"
                 "}\n";
         }
     }
