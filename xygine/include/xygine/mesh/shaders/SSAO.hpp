@@ -99,7 +99,7 @@ namespace xy
                 "uniform mat4 u_projectionMatrix;\n"
 
                 "const int kernelSize = 64;\n"
-                "const float radius = 1.0;\n"
+                "const float radius = 5.0;\n"
 
                 "void main()\n"
                 "{\n"

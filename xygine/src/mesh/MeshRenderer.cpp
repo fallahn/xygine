@@ -63,7 +63,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_defaultMaterial = std::make_unique<Material>(m_defaultShader);
     
     //create the render buffer
-    m_renderTexture.create(size.x, size.y, 3u, true, true);
+    m_renderTexture.create(size.x, size.y, 4u, true, true);
 
     updateView();
     std::memset(&m_matrixBlock, 0, sizeof(m_matrixBlock));
@@ -85,7 +85,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
         {
             xy::Util::Random::value(-1.f, 1.f),
             xy::Util::Random::value(-1.f, 1.f),
-            xy::Util::Random::value(-1.f, 1.f)
+            xy::Util::Random::value(0.f, 1.f)
         };
         m_ssaoKernel[i] *= (0.1f + 0.9f * scale * scale);
     }
@@ -231,6 +231,7 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 
     m_lightingShader.setUniform("u_diffuseMap", m_renderTexture.getTexture(MaterialChannel::Diffuse));
     m_lightingShader.setUniform("u_normalMap", m_renderTexture.getTexture(MaterialChannel::Normal));
+    m_lightingShader.setUniform("u_maskMap", m_renderTexture.getTexture(MaterialChannel::Mask));
     m_lightingShader.setUniform("u_positionMap", m_renderTexture.getTexture(MaterialChannel::Position));
     m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
     //m_lightingShader.setUniform("u_viewMatrix", sf::Glsl::Mat4(glm::value_ptr(m_viewMatrix)));

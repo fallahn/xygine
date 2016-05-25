@@ -134,8 +134,9 @@ void PhysicsDemoState::createMesh()
     material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     //material.addUniformBuffer(m_meshRenderer.getLightingUniforms());
     //material.addProperty({ "u_colour", /*sf::Color(110, 150, 180)*/sf::Color::Green });
-    material.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/cave/diffuse.png") });
-    material.addProperty({ "u_normalMap", m_textureResource.get("assets/images/physics demo/ball_normal.png") });
+    material.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/diffuse_test.png") });
+    material.addProperty({ "u_normalMap", m_textureResource.get("assets/images/normal_test.png") });
+    material.addProperty({ "u_maskMap", m_textureResource.get("assets/images/mask_test.png") });
     model->setSubMaterial(material, 0);
 
     auto ent = xy::Entity::create(m_messageBus);
@@ -144,7 +145,7 @@ void PhysicsDemoState::createMesh()
     auto rotator = xy::Component::create<RotationComponent>(m_messageBus);
     ent->addComponent(rotator);
     ent->setScale(10.f, 10.f);
-    ent->setPosition(200.f, 540.f);
+    ent->setPosition(960.f, 370.f);
     m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
 
     model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));

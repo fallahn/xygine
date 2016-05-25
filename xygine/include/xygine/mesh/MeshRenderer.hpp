@@ -130,6 +130,7 @@ namespace xy
         {
             Diffuse = 0,
             Normal,
+            Mask,
             Position
         };
 

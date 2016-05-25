@@ -109,8 +109,11 @@ namespace xy
                 "#if defined(BUMP)\n"
                 "uniform sampler2D u_normalMap;\n" \
                 "#endif\n" \
+                "#if defined(BUMP) || defined(TEXTURED)\n"
+                "uniform sampler2D u_maskMap;\n"
+                "#endif\n"
 
-                "out vec4[3] fragOut;\n" \
+                "out vec4[4] fragOut;\n" \
 
                 "const float nearPlane = 0.1;\n" \
                 "float lineariseDepth(float val)\n" \
@@ -133,9 +136,11 @@ namespace xy
                 "    vec3 normal = texture(u_normalMap, v_texCoord).rgb * 2.0 - 1.0;\n" \
                 "    fragOut[1] = vec4(normalize(v_tbn * normal).grb, 1.0);\n" \
                 "#endif\n"
-
-                "    fragOut[2].rgb = v_worldPosition;\n" \
-                "    fragOut[2].a = lineariseDepth(gl_FragCoord.z);\n" \
+                "#if defined(BUMP) || defined(TEXTURED)\n"
+                "    fragOut[2] = texture(u_maskMap, v_texCoord);\n"
+                "#endif\n"
+                "    fragOut[3].rgb = v_worldPosition;\n" \
+                "    fragOut[3].a = lineariseDepth(gl_FragCoord.z);\n" \
                 "}";
         }
     }

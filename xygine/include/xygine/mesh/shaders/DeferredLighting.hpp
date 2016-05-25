@@ -80,6 +80,7 @@ namespace xy
                 "uniform mat4 u_viewMatrix;\n"
                 "uniform sampler2D u_diffuseMap;\n"
                 "uniform sampler2D u_normalMap;\n"
+                "uniform sampler2D u_maskMap;\n"
                 "uniform sampler2D u_positionMap;\n"
                 "uniform sampler2D u_aoMap;\n"
                 "uniform vec4 u_ambientColour = vec4(0.2, 0.2, 0.2, 1.0);\n"
@@ -89,23 +90,26 @@ namespace xy
                 "out vec4 fragOut;\n"
 
                 "vec3 diffuseColour;\n"
+                "vec4 mask;\n"
                 "vec3 eyeDirection;\n"
                 "vec3 calcLighting(vec3 normal, vec3 lightDirection, vec3 lightDiffuse, vec3 lightSpec, float falloff)\n"
                 "{\n"
+
                 "    float diffuseAmount = max(dot(normal, lightDirection), 0.0);\n"
                 "    diffuseAmount = pow((diffuseAmount * 0.5) + 0.5, 2.0);\n"
                 "    vec3 mixedColour = diffuseColour * lightDiffuse * diffuseAmount * falloff;\n"
 
                 "    vec3 halfVec = normalize(eyeDirection + lightDirection);\n"
                 "    float specularAngle = clamp(dot(normal, halfVec), 0.0, 1.0);\n"
-                "    vec3 specularColour = lightSpec * vec3(pow(specularAngle, 180.0)) * falloff;\n"
+                "    vec3 specularColour = lightSpec * vec3(pow(specularAngle, (254.0 * mask.r) + 1.0)) * falloff;\n"
 
-                "    return mixedColour + specularColour;\n"
+                "    return mixedColour + (specularColour * mask.g);\n"
                 "}\n" \
 
                 "void main()\n"
                 "{\n"
                 "    vec3 fragPosition = texture(u_positionMap, v_texCoord).xyz;\n"
+                "    mask = texture(u_maskMap, v_texCoord);\n"
                 "    vec3 normal = texture(u_normalMap, v_texCoord).rgb;\n"
                 "    vec4 diffuse = texture(u_diffuseMap, v_texCoord);\n"
                 "    diffuseColour = diffuse.rgb;\n"
@@ -119,7 +123,9 @@ namespace xy
                 "        blendedColour += calcLighting(normal, normalize(pointLightDirection), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
                 "    }\n"
 
-                "    fragOut = vec4(blendedColour * texture(u_aoMap, v_texCoord).rgb, diffuse.a);//\n"
+                "    blendedColour *= texture(u_aoMap, v_texCoord).rgb;\n"
+                "    blendedColour = mix(blendedColour, diffuse.rgb, mask.b);\n"
+                "    fragOut = vec4(blendedColour, diffuse.a);//\n"
                 "}";
         }
     }
