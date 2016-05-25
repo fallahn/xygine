@@ -147,8 +147,9 @@ namespace xy
             float specularColour[4];
             float inverseRange;
             float intensity;
+            float padding[2]; //GLSL must align to multiple of vec4
             float position[3];
-            float padding[3]; //GLSL must align to multiple of vec4              
+            float morePadding;
         };
         struct LightBlock final
         {
@@ -169,16 +170,16 @@ namespace xy
 
         mutable std::vector<Model*> m_models;
         mutable xy::MultiRenderTexture m_renderTexture;
-        sf::Sprite m_outputSprite;
         void drawScene() const;
 
+        sf::Texture m_dummyTetxure;
+        sf::Sprite m_dummySprite;
+        std::unique_ptr<RenderQuad> m_outputQuad;
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
 
         void updateView();
-        void updateLights(const glm::vec3&);
+        void updateLights(const glm::vec3&);     
 
-        std::unique_ptr<RenderQuad> m_renderquad;
-        sf::Shader m_quadShader;
     };
 
 }

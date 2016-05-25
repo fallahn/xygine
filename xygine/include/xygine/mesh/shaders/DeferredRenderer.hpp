@@ -64,7 +64,7 @@ namespace xy
                 "#else\n"
                 "out mat3 v_tbn;\n" \
                 "#endif\n"
-                "out vec3 v_viewPosition;\n" \
+                "out vec3 v_worldPosition;\n" \
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
                 "out vec2 v_texCoord;\n" \
                 "#endif\n" \
@@ -72,7 +72,7 @@ namespace xy
                 "void main()\n" \
                 "{\n" \
                 "    vec4 viewPosition = u_worldViewMatrix * vec4(a_position, 1.0);\n" \
-                "    v_viewPosition = (u_worldMatrix * vec4(a_position, 1.0)).xyz;//viewPosition.xyz;\n" \
+                "    v_worldPosition = (u_worldMatrix * vec4(a_position, 1.0)).xyz;\n" \
                 "    gl_Position = u_projectionMatrix * viewPosition;\n" \
 
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
@@ -96,7 +96,7 @@ namespace xy
                 "#else\n" \
                 "in mat3 v_tbn;\n" \
                 "#endif\n" \
-                "in vec3 v_viewPosition;\n" \
+                "in vec3 v_worldPosition;\n" \
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
                 "in vec2 v_texCoord;\n" \
                 "#endif\n" \
@@ -134,7 +134,7 @@ namespace xy
                 "    fragOut[1] = vec4(normalize(v_tbn * normal).grb, 1.0);\n" \
                 "#endif\n"
 
-                "    fragOut[2].rgb = v_viewPosition;\n" \
+                "    fragOut[2].rgb = v_worldPosition;\n" \
                 "    fragOut[2].a = lineariseDepth(gl_FragCoord.z);\n" \
                 "}";
         }

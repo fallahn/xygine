@@ -101,8 +101,6 @@ namespace xy
                 "const int kernelSize = 64;\n"
                 "const float radius = 1.0;\n"
 
-                "vec2 noiseScale = vec2(960.0f / 4.0f, 540.0f / 4.0f);\n"
-
                 "void main()\n"
                 "{\n"
                 "    vec3 fragPos = texture2D(u_positionMap, v_texCoord).xyz;\n"

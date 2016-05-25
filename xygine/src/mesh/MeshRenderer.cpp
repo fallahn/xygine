@@ -64,7 +64,6 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     
     //create the render buffer
     m_renderTexture.create(size.x, size.y, 3u, true, true);
-    m_outputSprite.setTexture(m_renderTexture.getTexture(MaterialChannel::Diffuse));
 
     updateView();
     std::memset(&m_matrixBlock, 0, sizeof(m_matrixBlock));
@@ -77,7 +76,6 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     //set lighting buffer
     std::memset(&m_lightingBlock, 0, sizeof(m_lightingBlock));
     m_lightingBlockBuffer.create(m_lightingBlock);
-    //m_defaultMaterial->addUniformBuffer(m_lightingBlockBuffer);
 
     //set up the buffer for ssao
     for (auto i = 0u; i < m_ssaoKernel.size(); ++i)
@@ -116,9 +114,12 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
         xy::Logger::log("Failed to create output shader for deferred renderer", xy::Logger::Type::Error, xy::Logger::Output::All);
     }
 
+    m_outputQuad = std::make_unique<RenderQuad>(sf::Vector2f(200.f, 100.f), m_lightingShader);
 
-    m_quadShader.loadFromMemory(Shader::Mesh::LightingVert, Shader::Mesh::bunsFrag);
-    m_renderquad = std::make_unique<RenderQuad>(sf::Vector2f(200.f, 100.f), m_lightingShader);
+    sf::Image img;
+    img.create(2, 2, sf::Color::Transparent);
+    m_dummyTetxure.loadFromImage(img);
+    m_dummySprite.setTexture(m_dummyTetxure);
 }
 
 //public
@@ -232,13 +233,15 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     m_lightingShader.setUniform("u_normalMap", m_renderTexture.getTexture(MaterialChannel::Normal));
     m_lightingShader.setUniform("u_positionMap", m_renderTexture.getTexture(MaterialChannel::Position));
     m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
-    m_lightingShader.setUniform("u_viewMatrix", sf::Glsl::Mat4(glm::value_ptr(m_viewMatrix)));
-    //m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
+    //m_lightingShader.setUniform("u_viewMatrix", sf::Glsl::Mat4(glm::value_ptr(m_viewMatrix)));
+
+    //this is a kludge, as it seems the only way to activate
+    //a render target is to draw something to it, which we need to
+    //do in order to bind the lighting UBO to the correct context
+    rt.draw(m_dummySprite);
     
-    //states.shader = &m_lightingShader;
-    rt.draw(m_outputSprite, states);
     m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
-    rt.draw(*m_renderquad);
+    rt.draw(*m_outputQuad);
 }
 
 void MeshRenderer::updateView()
