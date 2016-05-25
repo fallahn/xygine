@@ -36,7 +36,7 @@ namespace xy
     {
         namespace Mesh
         {
-            static const std::string SSAOVertex =
+            static const std::string QuadVertex =
                 "#version 120\n"
 
                 "varying vec2 v_texCoord;\n"
@@ -46,7 +46,6 @@ namespace xy
                 "    gl_Position = gl_Vertex;\n"
                 "    gl_Position.xy = (gl_Vertex.xy * 2.0) - vec2(1.0);\n"
                 "    v_texCoord = gl_Vertex.xy;\n"
-                /*"    v_texCoord.y = 1.0 - v_texCoord.y;\n"*/
                 "}";
 
             static const std::string SSAOFragment =

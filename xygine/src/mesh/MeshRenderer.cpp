@@ -79,65 +79,13 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_lightingBlockBuffer.create(m_lightingBlock);
 
     //set up the buffer for ssao
-    for (auto i = 0u; i < m_ssaoKernel.size(); ++i)
-    {
-        const float scale = static_cast<float>(i) / m_ssaoKernel.size();
-        m_ssaoKernel[i] = 
-        {
-            xy::Util::Random::value(-1.f, 1.f),
-            xy::Util::Random::value(-1.f, 1.f),
-            xy::Util::Random::value(0.f, 1.f)
-        };
-        m_ssaoKernel[i] *= (0.1f + 0.9f * scale * scale);
-    }
-    createNoiseTexture();
-    m_ssaoShader.loadFromMemory(xy::Shader::Mesh::SSAOVertex, xy::Shader::Mesh::SSAOFragment2);
-    m_ssaoShader.setUniformArray("u_kernel", m_ssaoKernel.data(), m_ssaoKernel.size());
-    m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
-    m_ssaoShader.setUniform("u_noiseMap", m_ssaoNoiseTexture);
-    m_ssaoShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
-    m_ssaoShader.setUniform("u_normalMap", m_gBuffer.getTexture(MaterialChannel::Normal));
-    m_ssaoTexture.create(960, 540);
-    m_ssaoTexture.setSmooth(true);
-    m_ssaoSprite.setTexture(m_gBuffer.getTexture(MaterialChannel::Position));
+    initSSAO();
    
     //performs a light blur pass
-    m_lightDownsampleTexture.create(480, 270, 2u);
-    m_lightDownsampleTexture.setSmooth(true);
-    m_lightDownsampleShader.loadFromMemory(Shader::Mesh::SSAOVertex, Shader::Mesh::LightDownsampleFrag);
-    m_lightDownsampleShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
-    m_lightDownsampleShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
-    m_lightBlurTexture.create(480, 270);
-    m_lightBlurTexture.setSmooth(true);
-    m_lightBlurSprite.setTexture(m_lightDownsampleTexture.getTexture(1));
-    m_lightBlurShader.loadFromMemory(Shader::Mesh::SSAOVertex, Shader::Mesh::LightBlurFrag);
-    m_lightBlurShader.setUniform("u_diffuseMap", m_lightDownsampleTexture.getTexture(0));
-    m_lightBlurShader.setUniform("u_maskMap", m_lightDownsampleTexture.getTexture(1));
+    initSelfIllum();
 
     //prepare the lighting shader for the output
-    if (m_lightingShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::LightingFrag))
-    {
-        glCheck(m_lightingBlockID = glGetUniformBlockIndex(m_lightingShader.getNativeHandle(), m_lightingBlockBuffer.getName().c_str()));
-        if (m_lightingBlockID == GL_INVALID_INDEX)
-        {
-            xy::Logger::log("Failed to find uniform ID for lighting block in deferred output", xy::Logger::Type::Error, xy::Logger::Output::All);
-        }
-        else
-        {
-            m_lightingShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
-            m_lightingShader.setUniform("u_normalMap", m_gBuffer.getTexture(MaterialChannel::Normal));
-            m_lightingShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
-            m_lightingShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
-            m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
-            m_lightingShader.setUniform("u_illuminationMap", m_lightBlurTexture.getTexture());
-        }
-    }
-    else
-    {
-        xy::Logger::log("Failed to create output shader for deferred renderer", xy::Logger::Type::Error, xy::Logger::Output::All);
-    }
-
-    m_outputQuad = std::make_unique<RenderQuad>(sf::Vector2f(200.f, 100.f), m_lightingShader);
+    initOutput();
 
     //we need this for the output kludge in draw()
     sf::Image img;
@@ -323,4 +271,72 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
     }
 
     m_lightingBlockBuffer.update(m_lightingBlock);
+}
+
+void MeshRenderer::initSSAO()
+{
+    for (auto i = 0u; i < m_ssaoKernel.size(); ++i)
+    {
+        const float scale = static_cast<float>(i) / m_ssaoKernel.size();
+        m_ssaoKernel[i] =
+        {
+            xy::Util::Random::value(-1.f, 1.f),
+            xy::Util::Random::value(-1.f, 1.f),
+            xy::Util::Random::value(0.f, 1.f)
+        };
+        m_ssaoKernel[i] *= (0.1f + 0.9f * scale * scale);
+    }
+    createNoiseTexture();
+    m_ssaoShader.loadFromMemory(xy::Shader::Mesh::QuadVertex, xy::Shader::Mesh::SSAOFragment2);
+    m_ssaoShader.setUniformArray("u_kernel", m_ssaoKernel.data(), m_ssaoKernel.size());
+    m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
+    m_ssaoShader.setUniform("u_noiseMap", m_ssaoNoiseTexture);
+    m_ssaoShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
+    m_ssaoShader.setUniform("u_normalMap", m_gBuffer.getTexture(MaterialChannel::Normal));
+    m_ssaoTexture.create(960, 540);
+    m_ssaoTexture.setSmooth(true);
+    m_ssaoSprite.setTexture(m_gBuffer.getTexture(MaterialChannel::Position));
+}
+
+void MeshRenderer::initSelfIllum()
+{
+    m_lightDownsampleTexture.create(480, 270, 2u);
+    m_lightDownsampleTexture.setSmooth(true);
+    m_lightDownsampleShader.loadFromMemory(Shader::Mesh::QuadVertex, Shader::Mesh::LightDownsampleFrag);
+    m_lightDownsampleShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
+    m_lightDownsampleShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
+    
+    m_lightBlurTexture.create(480, 270);
+    m_lightBlurTexture.setSmooth(true);
+    m_lightBlurSprite.setTexture(m_lightDownsampleTexture.getTexture(1));
+    m_lightBlurShader.loadFromMemory(Shader::Mesh::QuadVertex, Shader::Mesh::LightBlurFrag);
+    m_lightBlurShader.setUniform("u_diffuseMap", m_lightDownsampleTexture.getTexture(0));
+    m_lightBlurShader.setUniform("u_maskMap", m_lightDownsampleTexture.getTexture(1));
+}
+
+void MeshRenderer::initOutput()
+{
+    if (m_lightingShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::LightingFrag))
+    {
+        glCheck(m_lightingBlockID = glGetUniformBlockIndex(m_lightingShader.getNativeHandle(), m_lightingBlockBuffer.getName().c_str()));
+        if (m_lightingBlockID == GL_INVALID_INDEX)
+        {
+            xy::Logger::log("Failed to find uniform ID for lighting block in deferred output", xy::Logger::Type::Error, xy::Logger::Output::All);
+        }
+        else
+        {
+            m_lightingShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
+            m_lightingShader.setUniform("u_normalMap", m_gBuffer.getTexture(MaterialChannel::Normal));
+            m_lightingShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
+            m_lightingShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
+            m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
+            m_lightingShader.setUniform("u_illuminationMap", m_lightBlurTexture.getTexture());
+        }
+    }
+    else
+    {
+        xy::Logger::log("Failed to create output shader for deferred renderer", xy::Logger::Type::Error, xy::Logger::Output::All);
+    }
+
+    m_outputQuad = std::make_unique<RenderQuad>(sf::Vector2f(200.f, 100.f), m_lightingShader);
 }

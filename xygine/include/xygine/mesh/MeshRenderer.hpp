@@ -187,8 +187,10 @@ namespace xy
         void updateView();
         void updateLights(const glm::vec3&);     
 
+        void initSSAO();
+        void initSelfIllum();
+        void initOutput();
     };
-
 }
 
 #endif //XY_MESH_RENDERER_HPP_
