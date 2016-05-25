@@ -102,12 +102,17 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_ssaoSprite.setTexture(m_gBuffer.getTexture(MaterialChannel::Position));
    
     //performs a light blur pass
+    m_lightDownsampleTexture.create(480, 270, 2u);
+    m_lightDownsampleTexture.setSmooth(true);
+    m_lightDownsampleShader.loadFromMemory(Shader::Mesh::SSAOVertex, Shader::Mesh::LightDownsampleFrag);
+    m_lightDownsampleShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
+    m_lightDownsampleShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
     m_lightBlurTexture.create(480, 270);
     m_lightBlurTexture.setSmooth(true);
-    m_lightBlurSprite.setTexture(m_gBuffer.getTexture(MaterialChannel::Mask));
+    m_lightBlurSprite.setTexture(m_lightDownsampleTexture.getTexture(1));
     m_lightBlurShader.loadFromMemory(Shader::Mesh::SSAOVertex, Shader::Mesh::LightBlurFrag);
-    m_lightBlurShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
-    m_lightBlurShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
+    m_lightBlurShader.setUniform("u_diffuseMap", m_lightDownsampleTexture.getTexture(0));
+    m_lightBlurShader.setUniform("u_maskMap", m_lightDownsampleTexture.getTexture(1));
 
     //prepare the lighting shader for the output
     if (m_lightingShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::LightingFrag))
@@ -242,21 +247,17 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     drawScene();
 
-    //m_ssaoShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
-    //m_ssaoShader.setUniform("u_normalMap", m_gBuffer.getTexture(MaterialChannel::Normal));
     m_ssaoTexture.clear(sf::Color::Transparent);
     m_ssaoTexture.draw(m_ssaoSprite, &m_ssaoShader);
     m_ssaoTexture.display();
 
+    m_lightDownsampleTexture.clear();
+    m_lightDownsampleTexture.draw(sf::Sprite(m_gBuffer.getTexture(MaterialChannel::Diffuse)), &m_lightDownsampleShader);
+    m_lightDownsampleTexture.display();
+
     m_lightBlurTexture.clear();
     m_lightBlurTexture.draw(m_lightBlurSprite, &m_lightBlurShader);
     m_lightBlurTexture.display();
-
-    //m_lightingShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
-    //m_lightingShader.setUniform("u_normalMap", m_gBuffer.getTexture(MaterialChannel::Normal));
-    //m_lightingShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
-    //m_lightingShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
-    //m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
 
     //this is a kludge, as it seems the only way to activate
     //a render target is to draw something to it, which we need to

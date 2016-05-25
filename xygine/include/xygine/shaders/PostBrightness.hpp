@@ -47,7 +47,7 @@ namespace xy
                 "    vec4 sourceColour = texture2D(u_sourceTexture, gl_TexCoord[0].xy);\n" \
                 "    float luminance = sourceColour.r * 0.2126 + sourceColour.g * 0.7152 + sourceColour.b * 0.0722;\n" \
                 "    sourceColour *= clamp(luminance - threshold, 0.0 , 1.0) * factor;\n" \
-                "    gl_FragColor = sourceColour;"
+                "    gl_FragColor = sourceColour;\n" \
                 "}\n";
         }
     }//namespace Shader

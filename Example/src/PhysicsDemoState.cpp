@@ -520,9 +520,9 @@ void PhysicsDemoState::createBodies()
 
 void PhysicsDemoState::addLights()
 {
-    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 200.f, 220.f/*, sf::Color::Blue*/);
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 500.f, 220.f/*, sf::Color::Blue*/);
     light->setDepth(200.f);
-    light->setIntensity(0.5f);
+    //light->setIntensity(1.5f);
 
     auto entity = xy::Entity::create(m_messageBus);
     entity->setPosition(xy::DefaultSceneSize / 2.f);

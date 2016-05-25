@@ -45,7 +45,7 @@ namespace xy
                 "in vec2 v_texCoord;\n"
                 "out vec4 fragOut;\n"
 
-                "const int blurSize = 8;\n"
+                "const int blurSize = 12;\n"
                 "void main()\n"
                 "{\n"
                 "    vec2 texelSize = 1.0 / vec2(textureSize(u_diffuseMap, 0));\n"
@@ -54,13 +54,27 @@ namespace xy
                 "    {"
                 "        for (int y = 0; y < blurSize; ++y)\n"
                 "        {\n"
-                "            vec2 offset = (vec2(-4.0) + vec2(float(x), float(y))) * texelSize;\n"
+                "            vec2 offset = (vec2(-6.0) + vec2(float(x), float(y))) * texelSize;\n"
                 "            result += texture2D(u_diffuseMap, v_texCoord + offset) * texture2D(u_maskMap, v_texCoord + offset).b;\n"
                 "        }\n"
                 "    }\n"
 
                 "    fragOut = result / float(blurSize * blurSize);\n"
                 "}";
+
+            static const std::string LightDownsampleFrag =
+                "#version 120\n"
+
+                "uniform sampler2D u_diffuseMap;\n"
+                "uniform sampler2D u_maskMap;\n"
+
+                "varying vec2 v_texCoord;\n"
+
+                "void main()\n"
+                "{\n"
+                "    gl_FragData[0] = texture2D(u_diffuseMap, v_texCoord);\n"
+                "    gl_FragData[1] = texture2D(u_maskMap, v_texCoord);\n"
+                "}\n";
         }
     }
 }

@@ -160,17 +160,19 @@ namespace xy
         UniformBuffer m_lightingBlockBuffer;
 
         std::array<sf::Glsl::Vec3, 64> m_ssaoKernel;
-        mutable sf::Shader m_ssaoShader;
+        sf::Shader m_ssaoShader;
         mutable sf::RenderTexture m_ssaoTexture;
         sf::Sprite m_ssaoSprite;
         sf::Texture m_ssaoNoiseTexture;
         void createNoiseTexture();
 
-        mutable sf::Shader m_lightBlurShader;
+        sf::Shader m_lightBlurShader;
+        sf::Shader m_lightDownsampleShader;
         mutable sf::RenderTexture m_lightBlurTexture;
+        mutable xy::MultiRenderTexture m_lightDownsampleTexture;
         sf::Sprite m_lightBlurSprite;
 
-        mutable sf::Shader m_lightingShader;
+        sf::Shader m_lightingShader;
         UniformBlockID m_lightingBlockID;
 
         mutable std::vector<Model*> m_models;
