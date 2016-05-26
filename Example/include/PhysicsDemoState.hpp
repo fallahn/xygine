@@ -92,11 +92,12 @@ private:
 
     xy::MeshRenderer m_meshRenderer;
     xy::MeshResource m_meshResource;
-    sf::Shader m_meshShader;
     xy::MaterialResource m_materialResource;
     enum MatId
     {
-        Blue = 0
+        Demo = 0,
+        MrFixitBody,
+        MrFixitHead
     };
     void createMesh();
 };

@@ -202,7 +202,10 @@ void MeshRenderer::drawScene() const
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     m_gBuffer.display();
-    //m_renderTexture.setActive(false);
+    
+
+    //TODO get lights
+    //foreach active light render scene to light depthmap
 }
 
 void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
@@ -216,7 +219,7 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     if (m_doLightBlur)
     {
         m_lightDownsampleTexture.clear();
-        m_lightDownsampleTexture.draw(sf::Sprite(m_gBuffer.getTexture(MaterialChannel::Diffuse)), &m_lightDownsampleShader);
+        m_lightDownsampleTexture.draw(m_downSampleSprite, &m_lightDownsampleShader);
         m_lightDownsampleTexture.display();
 
         m_lightBlurTexture.clear();
@@ -231,6 +234,7 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     
     m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
     rt.draw(*m_outputQuad);
+    rt.resetGLStates();
 }
 
 void MeshRenderer::updateView()
@@ -319,6 +323,7 @@ void MeshRenderer::initSelfIllum()
 {
     m_lightDownsampleTexture.create(480, 270);
     m_lightDownsampleTexture.setSmooth(true);
+    m_downSampleSprite.setTexture(m_gBuffer.getTexture(MaterialChannel::Diffuse));
     m_lightDownsampleShader.loadFromMemory(Shader::Mesh::QuadVertex, Shader::Mesh::LightDownsampleFrag);
     m_lightDownsampleShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
     m_lightDownsampleShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
@@ -336,7 +341,7 @@ void MeshRenderer::initSelfIllum()
 }
 
 void MeshRenderer::initOutput()
-{
+{    
     if (m_lightingShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::LightingFrag))
     {
         glCheck(m_lightingBlockID = glGetUniformBlockIndex(m_lightingShader.getNativeHandle(), m_lightingBlockBuffer.getName().c_str()));

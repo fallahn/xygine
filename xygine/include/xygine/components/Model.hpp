@@ -91,7 +91,6 @@ namespace xy
         */
         void setSubMaterial(const Material&, std::size_t);
 
-
     private:
 
         glm::mat4 m_worldMatrix;

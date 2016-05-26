@@ -42,7 +42,7 @@ namespace xy
     class XY_EXPORT_API CubeBuilder final : public MeshBuilder
     {
     public:
-        CubeBuilder(float size);
+        explicit CubeBuilder(float size);
         ~CubeBuilder() = default;
 
         void build() override;

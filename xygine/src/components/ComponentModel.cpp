@@ -57,7 +57,7 @@ void Model::entityUpdate(Entity& entity, float dt)
     m_worldMatrix = glm::rotate(m_worldMatrix, rotation, glm::vec3(0.f, 0.f, 1.f));
 
     const auto scale = entity.getScale();
-    m_worldMatrix = glm::scale(m_worldMatrix, glm::vec3(scale.x, scale.y, 1.f));
+    m_worldMatrix = glm::scale(m_worldMatrix, glm::vec3(scale.x, scale.y, (scale.x + scale.y) / 2.f));
 }
 
 void Model::setBaseMaterial(const Material& material, bool applyToAll)

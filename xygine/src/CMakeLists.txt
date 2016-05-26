@@ -38,6 +38,7 @@ set(XY_SRC
   ${XY_DIR}/components/QuadTreeComponent.cpp 
 
   ${XY_DIR}/mesh/CubeBuilder.cpp
+  ${XY_DIR}/mesh/IQMBuilder.cpp
   ${XY_DIR}/mesh/Material.cpp
   ${XY_DIR}/mesh/MaterialProperty.cpp
   ${XY_DIR}/mesh/MaterialResource.cpp

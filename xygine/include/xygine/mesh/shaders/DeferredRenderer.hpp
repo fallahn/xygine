@@ -90,54 +90,56 @@ namespace xy
                 "#endif\n"
                 "}";
 
-            const static std::string DeferredFragment =
-                "#if !defined(BUMP)\n" \
-                "in vec3 v_normalVector;\n"
-                "#else\n" \
-                "in mat3 v_tbn;\n" \
-                "#endif\n" \
-                "in vec3 v_worldPosition;\n" \
-                "#if defined(TEXTURED) || defined(BUMP)\n" \
-                "in vec2 v_texCoord;\n" \
-                "#endif\n" \
+                const static std::string DeferredFragment =
+                    "#if !defined(BUMP)\n" \
+                    "in vec3 v_normalVector;\n"
+                    "#else\n" \
+                    "in mat3 v_tbn;\n" \
+                    "#endif\n" \
+                    "in vec3 v_worldPosition;\n" \
+                    "#if defined(TEXTURED) || defined(BUMP)\n" \
+                    "in vec2 v_texCoord;\n" \
+                    "#endif\n" \
 
-                "uniform float u_farPlane = 1500.0;\n" \
-                "uniform vec4 u_colour = vec4(1.0);\n" \
-                "#if defined(TEXTURED)\n"
-                "uniform sampler2D u_diffuseMap;\n" \
-                "#endif\n" \
-                "#if defined(BUMP)\n"
-                "uniform sampler2D u_normalMap;\n" \
-                "#endif\n" \
-                "#if defined(BUMP) || defined(TEXTURED)\n"
-                "uniform sampler2D u_maskMap;\n"
-                "#endif\n"
+                    "uniform float u_farPlane = 1500.0;\n" \
+                    "uniform vec4 u_colour = vec4(1.0);\n" \
+                    "#if defined(TEXTURED)\n"
+                    "uniform sampler2D u_diffuseMap;\n" \
+                    "#endif\n" \
+                    "#if defined(BUMP)\n"
+                    "uniform sampler2D u_normalMap;\n" \
+                    "#endif\n" \
+                    "#if defined(BUMP) || defined(TEXTURED)\n"
+                    "uniform sampler2D u_maskMap;\n"
+                    "#endif\n"
 
-                "out vec4[4] fragOut;\n" \
+                    "out vec4[4] fragOut;\n" \
 
-                "const float nearPlane = 0.1;\n" \
-                "float lineariseDepth(float val)\n" \
-                "{\n" \
-                "    float z = val * 2.0 - 1.0;\n" \
-                "    return (2.0 * nearPlane * u_farPlane) / (u_farPlane + nearPlane - z * (u_farPlane - nearPlane));\n" \
-                "}\n" \
+                    "const float nearPlane = 0.1;\n" \
+                    "float lineariseDepth(float val)\n" \
+                    "{\n" \
+                    "    float z = val * 2.0 - 1.0;\n" \
+                    "    return (2.0 * nearPlane * u_farPlane) / (u_farPlane + nearPlane - z * (u_farPlane - nearPlane));\n" \
+                    "}\n" \
 
-                "void main()\n" \
-                "{\n" \
-                "#if defined(TEXTURED)\n" \
-                "    fragOut[0] = texture(u_diffuseMap, v_texCoord) * u_colour;\n" \
-                "#else\n" \
-                "    fragOut[0] = u_colour;\n" \
-                "#endif\n" \
+                    "void main()\n" \
+                    "{\n" \
+                    "#if defined(TEXTURED)\n" \
+                    "    fragOut[0] = texture(u_diffuseMap, v_texCoord) * u_colour;\n" \
+                    "#else\n" \
+                    "    fragOut[0] = u_colour;\n" \
+                    "#endif\n" \
 
-                "#if !defined(BUMP)\n" \
-                "    fragOut[1] = vec4(normalize(v_normalVector), 1.0);\n" \
-                "#else\n" \
-                "    vec3 normal = texture(u_normalMap, v_texCoord).rgb * 2.0 - 1.0;\n" \
-                "    fragOut[1] = vec4(normalize(v_tbn * normal).grb, 1.0);\n" \
-                "#endif\n"
-                "#if defined(BUMP) || defined(TEXTURED)\n"
-                "    fragOut[2] = texture(u_maskMap, v_texCoord);\n"
+                    "#if !defined(BUMP)\n" \
+                    "    fragOut[1] = vec4(normalize(v_normalVector), 1.0);\n" \
+                    "#else\n" \
+                    "    vec3 normal = texture(u_normalMap, v_texCoord).rgb * 2.0 - 1.0;\n" \
+                    "    fragOut[1] = vec4(normalize(v_tbn * normal).grb, 1.0);\n" \
+                    "#endif\n"
+                    "#if defined(BUMP) || defined(TEXTURED)\n"
+                    "    fragOut[2] = texture(u_maskMap, v_texCoord);\n"
+                    "#else\n"
+                    "    fragOut[2] = vec4(vec3(0.0), 1.0);\n"
                 "#endif\n"
                 "    fragOut[3].rgb = v_worldPosition;\n" \
                 "    fragOut[3].a = lineariseDepth(gl_FragCoord.z);\n" \

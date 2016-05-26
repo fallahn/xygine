@@ -141,6 +141,15 @@ namespace xy
         */
         SubMesh* getSubMesh(std::size_t) const;
 
+        /*!
+        \brief Pre-transforms the mesh.
+        Some modelling packages such as blender use a different coordinate
+        system from OpenGL. Use this function to pre-transform a mesh's
+        rotation to compensate. The transform will be applied to all instances
+        of the mesh, and therefore all model components which use it
+        \param Transform to apply to mesh
+        */
+        //void setPreTransform(const glm::mat4&);
     private:
 
         VertexLayout m_vertexLayout;

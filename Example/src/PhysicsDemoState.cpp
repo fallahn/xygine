@@ -63,6 +63,7 @@ source distribution.
 #include <xygine/mesh/shaders/GeomVis.hpp>
 #include <xygine/mesh/SubMesh.hpp>
 #include <xygine/mesh/CubeBuilder.hpp>
+#include <xygine/mesh/IQMBuilder.hpp>
 
 namespace
 {
@@ -124,36 +125,51 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 void PhysicsDemoState::createMesh()
 {
     xy::CubeBuilder cb(32.f);
-    m_meshResource.add(0, cb);
+    m_meshResource.add(MeshID::Cube, cb);
 
-    auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
+    xy::IQMBuilder ib("assets/models/mrfixit.iqm");
+    m_meshResource.add(MeshID::Fixit, ib);
 
-    //m_meshShader.loadFromMemory(GEOM_VERT, GEOM_GEOM, GEOM_FRAG);
-    m_meshShader.loadFromMemory(DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
-    auto& material = m_materialResource.add(MatId::Blue, m_meshShader);
-    material.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    //material.addUniformBuffer(m_meshRenderer.getLightingUniforms());
-    //material.addProperty({ "u_colour", /*sf::Color(110, 150, 180)*/sf::Color::Green });
-    material.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/diffuse_test.png") });
-    material.addProperty({ "u_normalMap", m_textureResource.get("assets/images/normal_test.png") });
-    material.addProperty({ "u_maskMap", m_textureResource.get("assets/images/mask_test.png") });
-    model->setSubMaterial(material, 0);
+    auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Fixit));
+
+    m_shaderResource.preload(PhysicsShaderId::VertexLit, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
+    auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PhysicsShaderId::VertexLit));
+    demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/diffuse_test.png") });
+    demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/normal_test.png") });
+    demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/mask_test.png") });
+    
+    auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PhysicsShaderId::VertexLit));
+    fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    fixitMaterialBody.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitBody.png") });
+    fixitMaterialBody.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitBody_normal.png") });
+    fixitMaterialBody.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitBody_mask.png") });
+    
+    auto& fixitMaterialHead = m_materialResource.add(MatId::MrFixitHead, m_shaderResource.get(PhysicsShaderId::VertexLit));
+    fixitMaterialHead.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    fixitMaterialHead.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitHead.png") });
+    fixitMaterialHead.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitHead_normal.png") });
+    fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });
+
+    model->setSubMaterial(fixitMaterialBody, 0);
+    model->setSubMaterial(fixitMaterialHead, 1);
 
     auto ent = xy::Entity::create(m_messageBus);
     ent->addComponent(model);
-
-    auto rotator = xy::Component::create<RotationComponent>(m_messageBus);
-    ent->addComponent(rotator);
-    ent->setScale(10.f, 10.f);
+    ent->setScale(50.f, 50.f);
     ent->setPosition(960.f, 370.f);
     m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
 
-    model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
+
+    //tests cube mesh and default material
+    model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Cube));
     //model->setSubMaterial(material, 0);
     ent = xy::Entity::create(m_messageBus);
+    auto rotator = xy::Component::create<RotationComponent>(m_messageBus);
+    ent->addComponent(rotator);
     ent->addComponent(model);
-    ent->setScale(2.f, 2.f);
-    ent->setPosition(1720.f, 540.f);
+    ent->setScale(12.f, 12.f);
+    ent->setPosition(1520.f, 540.f);
     m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
 
     //auto cam = xy::Component::create<xy::Camera>(m_messageBus, m_scene.getView());
@@ -520,8 +536,8 @@ void PhysicsDemoState::createBodies()
 
 void PhysicsDemoState::addLights()
 {
-    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 500.f, 220.f/*, sf::Color::Blue*/);
-    light->setDepth(200.f);
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 1200.f, 220.f/*, sf::Color::Blue*/);
+    light->setDepth(600.f);
     //light->setIntensity(1.5f);
 
     auto entity = xy::Entity::create(m_messageBus);
@@ -637,7 +653,7 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     ballEntity->addComponent(drawable);
 
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
-    model->setSubMaterial(m_materialResource.get(MatId::Blue), 0);
+    model->setSubMaterial(m_materialResource.get(MatId::Demo), 0);
     ballEntity->addComponent(model);
     
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);

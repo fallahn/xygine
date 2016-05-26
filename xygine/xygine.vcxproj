@@ -125,6 +125,9 @@
       <AdditionalDependencies>opengl32.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)Release\$(TargetName).dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">
     <ClCompile>
@@ -159,6 +162,7 @@
     <ClCompile Include="src\components\QuadTreeComponent.cpp" />
     <ClCompile Include="src\GLExtensions.cpp" />
     <ClCompile Include="src\mesh\CubeBuilder.cpp" />
+    <ClCompile Include="src\mesh\IQMBuilder.cpp" />
     <ClCompile Include="src\mesh\MaterialProperty.cpp" />
     <ClCompile Include="src\mesh\MaterialResource.cpp" />
     <ClCompile Include="src\mesh\Mesh.cpp" />
@@ -244,6 +248,7 @@
     <ClInclude Include="include\xygine\detail\GLCheck.hpp" />
     <ClInclude Include="include\xygine\detail\GLExtensions.hpp" />
     <ClInclude Include="include\xygine\mesh\CubeBuilder.hpp" />
+    <ClInclude Include="include\xygine\mesh\IQMBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\Material.hpp" />
     <ClInclude Include="include\xygine\mesh\MaterialResource.hpp" />
     <ClInclude Include="include\xygine\mesh\Mesh.hpp" />

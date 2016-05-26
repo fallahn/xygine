@@ -177,6 +177,7 @@ namespace xy
         mutable sf::RenderTexture m_lightBlurTexture;
         mutable sf::RenderTexture m_lightDownsampleTexture;
         sf::Sprite m_lightBlurSprite;
+        sf::Sprite m_downSampleSprite;
         bool m_doLightBlur;
         sf::Texture m_lightFallback;
 
