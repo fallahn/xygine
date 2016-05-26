@@ -57,8 +57,8 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     : m_scene               (scene),
     m_matrixBlockBuffer     ("u_matrixBlock"),
     m_lightingBlockBuffer   ("u_lightBlock"),
-    m_lightingBlockID       (-1),
-    m_doLightBlur           (true)
+    m_doLightBlur           (true),
+    m_lightingBlockID       (-1)
 {
     //set up a default material to assign to newly created models
     m_defaultShader.loadFromMemory(DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
