@@ -32,6 +32,7 @@ source distribution.
 #include <glm/glm.hpp>
 
 #include <fstream>
+#include <cstring>
 
 using namespace xy;
 
