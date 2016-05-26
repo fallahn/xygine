@@ -115,6 +115,12 @@ namespace xy
         */
         const UniformBuffer& getLightingUniforms() const { return m_lightingBlockBuffer; }
 
+        /*!
+        \brief Enables or disables the glow effect on self illuminating materials.
+        Disabling this effect provides a small performance boost.
+        */
+        void enableGlowPass(bool);
+
     private:
         struct Lock final {};
 
@@ -171,6 +177,8 @@ namespace xy
         mutable sf::RenderTexture m_lightBlurTexture;
         mutable sf::RenderTexture m_lightDownsampleTexture;
         sf::Sprite m_lightBlurSprite;
+        bool m_doLightBlur;
+        sf::Texture m_lightFallback;
 
         sf::Shader m_lightingShader;
         UniformBlockID m_lightingBlockID;

@@ -277,10 +277,10 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
             //requestStackPush(States::ID::MenuPaused);
             break;
         case upKey:
-            
+            m_meshRenderer.enableGlowPass(false);
             break;
         case downKey:
-            
+            m_meshRenderer.enableGlowPass(true);
             break;
         case leftKey:
             

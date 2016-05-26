@@ -109,12 +109,13 @@ void App::run()
         return;
     }
 
-    //m_renderWindow.setMouseCursorVisible(false);
     initialise();
 
 #ifdef _DEBUG_
     sf::Clock fpsClock;
     sf::Clock fpsUpdateClock;
+    sf::Clock frameTimeClock;
+    float framesElapsed = 0.f;
 #endif //_DEBUG_
 
     frameClock.restart();
@@ -138,6 +139,15 @@ void App::run()
         {
             REPORT("FPS", std::to_string(fpsTime));
             fpsUpdateClock.restart();
+        }
+
+        framesElapsed++;
+        if (frameTimeClock.getElapsedTime().asSeconds() > 1.f)
+        {
+            float time = 1000.f / framesElapsed;
+            REPORT("Frame Time", std::to_string(time) + "ms");
+            frameTimeClock.restart();            
+            framesElapsed = 0.f;
         }
 #endif //_DEBUG_
     }

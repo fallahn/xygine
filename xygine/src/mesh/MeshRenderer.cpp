@@ -57,7 +57,8 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     : m_scene               (scene),
     m_matrixBlockBuffer     ("u_matrixBlock"),
     m_lightingBlockBuffer   ("u_lightBlock"),
-    m_lightingBlockID       (-1)
+    m_lightingBlockID       (-1),
+    m_doLightBlur           (true)
 {
     //set up a default material to assign to newly created models
     m_defaultShader.loadFromMemory(DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
@@ -148,6 +149,19 @@ void MeshRenderer::handleMessage(const Message& msg)
     }
 }
 
+void MeshRenderer::enableGlowPass(bool enable)
+{
+    m_doLightBlur = enable;
+    if (enable)
+    {
+        m_lightingShader.setUniform("u_illuminationMap", m_lightBlurTexture.getTexture());
+    }
+    else
+    {
+        m_lightingShader.setUniform("u_illuminationMap", m_lightFallback);
+    }
+}
+
 //private
 void MeshRenderer::createNoiseTexture()
 {
@@ -199,13 +213,16 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     //m_ssaoTexture.draw(m_ssaoSprite/*, &m_ssaoShader*/);
     //m_ssaoTexture.display();
 
-    m_lightDownsampleTexture.clear();
-    m_lightDownsampleTexture.draw(sf::Sprite(m_gBuffer.getTexture(MaterialChannel::Diffuse)), &m_lightDownsampleShader);
-    m_lightDownsampleTexture.display();
+    if (m_doLightBlur)
+    {
+        m_lightDownsampleTexture.clear();
+        m_lightDownsampleTexture.draw(sf::Sprite(m_gBuffer.getTexture(MaterialChannel::Diffuse)), &m_lightDownsampleShader);
+        m_lightDownsampleTexture.display();
 
-    m_lightBlurTexture.clear();
-    m_lightBlurTexture.draw(m_lightBlurSprite, &m_lightBlurShader);
-    m_lightBlurTexture.display();
+        m_lightBlurTexture.clear();
+        m_lightBlurTexture.draw(m_lightBlurSprite, &m_lightBlurShader);
+        m_lightBlurTexture.display();
+    }
 
     //this is a kludge, as it seems the only way to activate
     //a render target is to draw something to it, which we need to
@@ -311,6 +328,11 @@ void MeshRenderer::initSelfIllum()
     m_lightBlurSprite.setTexture(m_lightDownsampleTexture.getTexture());
     m_lightBlurShader.loadFromMemory(Shader::Mesh::QuadVertex, Shader::Mesh::LightBlurFrag);
     m_lightBlurShader.setUniform("u_diffuseMap", m_lightDownsampleTexture.getTexture());
+
+    //use this when disabling the blur output
+    sf::Image img;
+    img.create(2, 2, sf::Color::Black);
+    m_lightFallback.loadFromImage(img);
 }
 
 void MeshRenderer::initOutput()
