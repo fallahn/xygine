@@ -36,6 +36,13 @@ source distribution.
 #include <xygine/Scene.hpp>
 #include <xygine/physics/World.hpp>
 
+//-------
+#include <xygine/mesh/MeshRenderer.hpp>
+#include <xygine/mesh/MeshResource.hpp>
+#include <xygine/mesh/Material.hpp>
+#include <xygine/mesh/MaterialResource.hpp>
+//-------
+
 #include <SFML/Graphics/Text.hpp>
 
 class PlatformDemoState final : public xy::State
@@ -65,6 +72,24 @@ private:
 
     xy::Physics::World m_physWorld;
 
+    xy::MeshRenderer m_meshRenderer;
+
+    enum MeshID
+    {
+        Cube = 0,
+        Fixit
+    };
+    xy::MeshResource m_meshResource;
+    
+    enum MatId
+    {
+        Demo = 0,
+        MrFixitBody,
+        MrFixitHead
+    };    
+    xy::MaterialResource m_materialResource;
+
+    void createMesh();
     void buildTerrain();
     void buildPhysics();
     void addPlayer();

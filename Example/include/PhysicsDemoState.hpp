@@ -38,13 +38,7 @@ source distribution.
 #include <xygine/physics/World.hpp>
 #include <xygine/Resource.hpp>
 #include <xygine/ShaderResource.hpp>
-//-------
-#include <xygine/mesh/MeshRenderer.hpp>
-#include <xygine/mesh/MeshResource.hpp>
-#include <xygine/mesh/Material.hpp>
-#include <xygine/mesh/MaterialResource.hpp>
-#include <SFML/Graphics/Shader.hpp>
-//-------
+
 #include <SFML/Graphics/Text.hpp>
 
 namespace sf
@@ -89,17 +83,6 @@ private:
     void createBodies();
     void addLights();
     xy::Physics::RigidBody* addBall(const sf::Vector2f& position);
-
-    xy::MeshRenderer m_meshRenderer;
-    xy::MeshResource m_meshResource;
-    xy::MaterialResource m_materialResource;
-    enum MatId
-    {
-        Demo = 0,
-        MrFixitBody,
-        MrFixitHead
-    };
-    void createMesh();
 };
 
 #endif //PHYSICS_DEMO_STATE_HPP_

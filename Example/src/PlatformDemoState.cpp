@@ -45,6 +45,14 @@ source distribution.
 #include <xygine/physics/CollisionEdgeShape.hpp>
 #include <xygine/physics/CollisionRectangleShape.hpp>
 
+#include <xygine/components/Model.hpp>
+#include <RotationComponent.hpp>
+#include <xygine/mesh/shaders/DeferredRenderer.hpp>
+#include <xygine/mesh/shaders/GeomVis.hpp>
+#include <xygine/mesh/SubMesh.hpp>
+#include <xygine/mesh/CubeBuilder.hpp>
+#include <xygine/mesh/IQMBuilder.hpp>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 
@@ -72,7 +80,8 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     : State         (stateStack, context),
     m_messageBus    (context.appInstance.getMessageBus()),
     m_scene         (m_messageBus),
-    m_physWorld     (m_messageBus)
+    m_physWorld     (m_messageBus),
+    m_meshRenderer  ({ 1920, 1080 }, m_scene)
 {
     launchLoadingScreen();
     xy::Stats::clear();
@@ -89,6 +98,7 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
 
     //TODO add some crates or so
     addPlayer();
+    createMesh();
 
     context.renderWindow.setMouseCursorVisible(true);
 
@@ -100,6 +110,7 @@ bool PlatformDemoState::update(float dt)
     playerController->applyInput(playerInput);
 
     m_scene.update(dt);
+    m_meshRenderer.update();
 
     ////update lighting
     //auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
@@ -134,9 +145,12 @@ void PlatformDemoState::draw()
 {   
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);    
+    
     rw.setView(m_scene.getView());
     rw.draw(m_physWorld);
-    rw.setView(getContext().defaultView);
+    
+    rw.setView(getContext().defaultView);   
+    rw.draw(m_meshRenderer);
     rw.draw(m_reportText);
 }
 
@@ -233,9 +247,70 @@ bool PlatformDemoState::handleEvent(const sf::Event& evt)
 void PlatformDemoState::handleMessage(const xy::Message& msg)
 { 
     m_scene.handleMessage(msg);
+    m_meshRenderer.handleMessage(msg);
 }
 
 //private
+void PlatformDemoState::createMesh()
+{
+    xy::CubeBuilder cb(32.f);
+    m_meshResource.add(MeshID::Cube, cb);
+
+    xy::IQMBuilder ib("assets/models/mrfixit.iqm");
+    m_meshResource.add(MeshID::Fixit, ib);
+
+    auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Fixit));
+
+    m_shaderResource.preload(PlatformShaderId::VertexLit, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
+    auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::VertexLit));
+    demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/diffuse_test.png") });
+    demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/normal_test.png") });
+    demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/mask_test.png") });
+
+    auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::VertexLit));
+    fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    fixitMaterialBody.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitBody.png") });
+    fixitMaterialBody.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitBody_normal.png") });
+    fixitMaterialBody.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitBody_mask.png") });
+
+    auto& fixitMaterialHead = m_materialResource.add(MatId::MrFixitHead, m_shaderResource.get(PlatformShaderId::VertexLit));
+    fixitMaterialHead.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    fixitMaterialHead.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitHead.png") });
+    fixitMaterialHead.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitHead_normal.png") });
+    fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });
+
+    model->setSubMaterial(fixitMaterialBody, 0);
+    model->setSubMaterial(fixitMaterialHead, 1);
+
+    auto ent = xy::Entity::create(m_messageBus);
+    ent->addComponent(model);
+    ent->setScale(50.f, 50.f);
+    ent->setPosition(960.f, 370.f);
+    m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
+
+
+    //tests cube mesh and default material
+    model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Cube));
+    //model->setSubMaterial(material, 0);
+    ent = xy::Entity::create(m_messageBus);
+    auto rotator = xy::Component::create<RotationComponent>(m_messageBus);
+    ent->addComponent(rotator);
+    ent->addComponent(model);
+    ent->setScale(12.f, 12.f);
+    ent->setPosition(1520.f, 540.f);
+    m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
+
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 1200.f, 220.f/*, sf::Color::Blue*/);
+    light->setDepth(600.f);
+    //light->setIntensity(1.5f);
+
+    auto entity = xy::Entity::create(m_messageBus);
+    entity->setPosition(xy::DefaultSceneSize / 2.f);
+    entity->addComponent(light);
+    m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
+}
+
 void PlatformDemoState::buildTerrain()
 {
     auto drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);

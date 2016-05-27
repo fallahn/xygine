@@ -57,14 +57,6 @@ source distribution.
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 
-#include <xygine/components/Model.hpp>
-#include <RotationComponent.hpp>
-#include <xygine/mesh/shaders/DeferredRenderer.hpp>
-#include <xygine/mesh/shaders/GeomVis.hpp>
-#include <xygine/mesh/SubMesh.hpp>
-#include <xygine/mesh/CubeBuilder.hpp>
-#include <xygine/mesh/IQMBuilder.hpp>
-
 namespace
 {
     const sf::Keyboard::Key upKey = sf::Keyboard::W;
@@ -85,8 +77,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     : State         (stateStack, context),
     m_physWorld     (context.appInstance.getMessageBus()),
     m_messageBus    (context.appInstance.getMessageBus()),
-    m_scene         (m_messageBus),
-    m_meshRenderer  ({1920, 1080}, m_scene)
+    m_scene         (m_messageBus)
 {
     launchLoadingScreen();
     xy::Stats::clear();
@@ -107,9 +98,6 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 
     shader = &m_shaderResource.get(PhysicsShaderId::NormalMapTextured);
 
-    //test stuff
-    createMesh();
-
     //scale a 1200px table image to 2.7 metres
     m_physWorld.setPixelScale(444.5f);
     m_physWorld.setGravity({});
@@ -122,77 +110,13 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     REPORT("Q", "Toggle overlay");
 }
 
-void PhysicsDemoState::createMesh()
-{
-    xy::CubeBuilder cb(32.f);
-    m_meshResource.add(MeshID::Cube, cb);
-
-    xy::IQMBuilder ib("assets/models/mrfixit.iqm");
-    m_meshResource.add(MeshID::Fixit, ib);
-
-    auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Fixit));
-
-    m_shaderResource.preload(PhysicsShaderId::VertexLit, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
-    auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PhysicsShaderId::VertexLit));
-    demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/diffuse_test.png") });
-    demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/normal_test.png") });
-    demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/mask_test.png") });
-    
-    auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PhysicsShaderId::VertexLit));
-    fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    fixitMaterialBody.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitBody.png") });
-    fixitMaterialBody.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitBody_normal.png") });
-    fixitMaterialBody.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitBody_mask.png") });
-    
-    auto& fixitMaterialHead = m_materialResource.add(MatId::MrFixitHead, m_shaderResource.get(PhysicsShaderId::VertexLit));
-    fixitMaterialHead.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    fixitMaterialHead.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitHead.png") });
-    fixitMaterialHead.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitHead_normal.png") });
-    fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });
-
-    model->setSubMaterial(fixitMaterialBody, 0);
-    model->setSubMaterial(fixitMaterialHead, 1);
-
-    auto ent = xy::Entity::create(m_messageBus);
-    ent->addComponent(model);
-    ent->setScale(50.f, 50.f);
-    ent->setPosition(960.f, 370.f);
-    m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
-
-
-    //tests cube mesh and default material
-    model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Cube));
-    //model->setSubMaterial(material, 0);
-    ent = xy::Entity::create(m_messageBus);
-    auto rotator = xy::Component::create<RotationComponent>(m_messageBus);
-    ent->addComponent(rotator);
-    ent->addComponent(model);
-    ent->setScale(12.f, 12.f);
-    ent->setPosition(1520.f, 540.f);
-    m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
-
-    //auto cam = xy::Component::create<xy::Camera>(m_messageBus, m_scene.getView());
-    //rotator = xy::Component::create<RotationComponent>(m_messageBus);
-    //ent = xy::Entity::create(m_messageBus);
-    //auto pCam = ent->addComponent(cam);
-    //pCam->setZoom(1.15f);
-    ////ent->addComponent(rotator);
-    ////ent->setPosition(xy::DefaultSceneSize / 2.f);
-    //m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
-    //m_scene.setActiveCamera(pCam);
-
-    
-}
-
 bool PhysicsDemoState::update(float dt)
 {
     const auto& rw = getContext().renderWindow;
     auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
     
     m_scene.update(dt);
-    m_meshRenderer.update();
-
+    
     auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
     auto i = 0;
     for (; i < lights.size() && i < xy::Shader::NormalMapped::MaxPointLights; ++i)
@@ -228,8 +152,6 @@ void PhysicsDemoState::draw()
     rw.setView(getContext().defaultView);
     if(drawOverlay) rw.draw(m_physWorld);
     rw.draw(m_reportText);
-
-    rw.draw(m_meshRenderer);
 }
 
 bool PhysicsDemoState::handleEvent(const sf::Event& evt)
@@ -293,10 +215,10 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
             //requestStackPush(States::ID::MenuPaused);
             break;
         case upKey:
-            m_meshRenderer.enableGlowPass(false);
+
             break;
         case downKey:
-            m_meshRenderer.enableGlowPass(true);
+
             break;
         case leftKey:
             
@@ -341,7 +263,6 @@ bool PhysicsDemoState::handleEvent(const sf::Event& evt)
 void PhysicsDemoState::handleMessage(const xy::Message& msg)
 { 
     m_scene.handleMessage(msg);
-    m_meshRenderer.handleMessage(msg);
 }
 
 //private
@@ -651,10 +572,6 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     drawable->setOrigin({ size.x / 2.f, size.y / 2.f });
     drawable->setShader(m_shaderResource.get(PhysicsShaderId::NormalMapTexturedSpecular));
     ballEntity->addComponent(drawable);
-
-    auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(0));
-    model->setSubMaterial(m_materialResource.get(MatId::Demo), 0);
-    ballEntity->addComponent(model);
     
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);
 

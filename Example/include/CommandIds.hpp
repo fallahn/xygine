@@ -44,12 +44,6 @@ enum PhysicsShaderId
     VertexLit
 };
 
-enum MeshID
-{
-    Cube = 0,
-    Fixit
-};
-
 //----------------//
 
 enum NetMessageId
