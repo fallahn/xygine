@@ -737,5 +737,8 @@
     <ClInclude Include="include\xygine\mesh\IQMBuilder.hpp">
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
+    <ClInclude Include="include\xygine\mesh\QuadBuilder.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

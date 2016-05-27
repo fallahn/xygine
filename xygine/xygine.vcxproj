@@ -255,6 +255,7 @@
     <ClInclude Include="include\xygine\mesh\MeshBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\MeshRenderer.hpp" />
     <ClInclude Include="include\xygine\mesh\MeshResource.hpp" />
+    <ClInclude Include="include\xygine\mesh\QuadBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\RenderQuad.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\Default.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\DeferredLighting.hpp" />

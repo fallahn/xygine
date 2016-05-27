@@ -15,9 +15,9 @@ SET(XY_STATIC_RUNTIME FALSE CACHE BOOL "Use statically linked standard/runtime l
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   if(XY_STATIC_RUNTIME)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++1y -static")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14 -static")
   else()
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++1y -fPIC")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14 -fPIC")
   endif()
 endif()
 

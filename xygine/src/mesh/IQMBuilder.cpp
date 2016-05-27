@@ -161,261 +161,265 @@ IQMBuilder::IQMBuilder(const std::string& path)
 //public
 void IQMBuilder::build()
 {
-    XY_ASSERT(!m_filePath.empty(), "IQM Model path cannot be empty");
     
-    std::fstream file;
-    file.open(m_filePath, std::ios::in | std::ios::out | std::ios::binary);
-
-    if (file.fail())
+    if (m_vertexData.empty())
     {
-        Logger::log("Failed to open " + m_filePath + " for loading.", Logger::Type::Error);
-        return ;
-    }
+        XY_ASSERT(!m_filePath.empty(), "IQM Model path cannot be empty");
 
-    //get file size and check it's valid
-    file.seekg(0, std::ios::end);
-    std::uint32_t fileSize = static_cast<std::uint32_t>(file.tellg());
-    file.seekg(0, std::ios::beg);
+        std::fstream file;
+        file.open(m_filePath, std::ios::in | std::ios::out | std::ios::binary);
 
-    XY_ASSERT(fileSize, "IQM File size is zero");
-
-    //load file into a vector
-    std::vector<char> fileData(fileSize);
-    file.read(static_cast<char*>(fileData.data()), fileSize);
-
-    //read header data
-    char* headerBytes = fileData.data();
-
-    file.seekg(0);
-
-    Iqm::Header header;
-    readHeader(headerBytes, header);
-
-    char* textIter = headerBytes + header.textOffset;
-
-    std::string strings;
-    strings.resize(header.textCount);
-
-    std::memcpy(&strings[0], textIter, header.textCount);
-
-
-    //validate header data
-    if (std::string(header.magic) != IQM_MAGIC)
-    {
-        Logger::log("Not an IQM file, header returned " + std::string(header.magic) + " instead of " + IQM_MAGIC, Logger::Type::Error);
-        return;
-    }
-
-    if (header.version != IQM_VERSION)
-    {
-        Logger::log("Wrong IQM version, found " + std::to_string(header.version) + " expected " + std::to_string(IQM_VERSION), Logger::Type::Error);
-        return;
-    }
-
-    if (header.filesize > (16 << 20))
-    {
-        Logger::log("IQM file greater than 16mb, file not loaded", Logger::Type::Error);
-        return;
-    }
-
-    //load vertex data (attributes are kept in separate arrays)
-    char* vertArrayIter = headerBytes + header.varrayOffset;
-    std::vector<float> positions(header.vertexCount * positionSize);
-    std::vector<float> normals(header.vertexCount * normalSize);
-    std::vector<float> tangents(header.vertexCount * (normalSize + 1)); //tangent data is 4 component - w is sign of cross product used for bitan
-    std::vector<float> texCoords(header.vertexCount * uvSize);
-    std::vector<std::uint8_t> blendIndices(header.vertexCount * blendIndexSize);
-    std::vector<std::uint8_t> blendWeights(header.vertexCount * blendWeightSize);
-
-    for (auto i = 0u; i < header.varrayCount; ++i)
-    {
-        Iqm::VertexArray vertArray;
-        vertArrayIter = readVertexArray(vertArrayIter, vertArray);
-
-        switch (vertArray.type)
+        if (file.fail())
         {
-        case Iqm::POSITION:
-            std::memcpy(&positions[0], headerBytes + vertArray.offset, sizeof(float) * positions.size());
-            break;
-        case Iqm::NORMAL:
-            std::memcpy(&normals[0], headerBytes + vertArray.offset, sizeof(float) * normals.size());
-            break;
-        case Iqm::TANGENT:
-            std::memcpy(&tangents[0], headerBytes + vertArray.offset, sizeof(float) * tangents.size());
-            break;
-        case Iqm::TEXCOORD:
-            std::memcpy(&texCoords[0], headerBytes + vertArray.offset, sizeof(float) * texCoords.size());
-            break;
-        case Iqm::BLENDINDICES:
-            std::memcpy(&blendIndices[0], headerBytes + vertArray.offset, sizeof(uint8_t) * blendIndices.size());
-            break;
-        case Iqm::BLENDWEIGHTS:
-            std::memcpy(&blendWeights[0], headerBytes + vertArray.offset, sizeof(uint8_t) * blendIndices.size());
-            break;
-        default: break;
-        }
-    }
-
-    //load index arrays for sub meshes
-    //do this first as we need to store triangle data if we create tangent data from UVs/faces
-    std::vector<Iqm::Triangle> triangles;
-    //std::vector<std::vector<std::uint16_t>> subMeshes;
-    std::vector<std::string> materialNames; //TODO store this somewhere so we can retreive them outside of the mesh builder
-
-    char* meshBytesIter = headerBytes + header.meshOffset;
-    for (auto i = 0u; i < header.meshCount; ++i)
-    {
-        Iqm::Mesh mesh;
-        meshBytesIter = readMesh(meshBytesIter, mesh);
-
-        std::string materialName = &strings[mesh.material];
-        //materialName = materialName.substr(0, materialName.find_last_of('.')) + ".cmf";
-        materialNames.push_back(materialName);
-
-        Iqm::Triangle triangle;
-        char* triangleIter = headerBytes + header.triangleOffset + (mesh.firstTriangle * sizeof(triangle.vertex));
-        std::vector<std::uint16_t> indices;
-
-        for (auto j = 0u; j < mesh.triangleCount; ++j)
-        {
-            std::memcpy(triangle.vertex, triangleIter, sizeof(triangle.vertex));
-            triangleIter += sizeof(triangle.vertex);
-            //IQM has triangles wound CW so they need reversing
-            indices.push_back(triangle.vertex[2]);
-            indices.push_back(triangle.vertex[1]);
-            indices.push_back(triangle.vertex[0]);
-
-            //if (createTanNormals) //cache triangles as we'll need them
-            /*{
-                triangles.push_back(triangle);
-            }*/
+            Logger::log("Failed to open " + m_filePath + " for loading.", Logger::Type::Error);
+            return;
         }
 
-        m_indexArrays.push_back(indices);
+        //get file size and check it's valid
+        file.seekg(0, std::ios::end);
+        std::uint32_t fileSize = static_cast<std::uint32_t>(file.tellg());
+        file.seekg(0, std::ios::beg);
+
+        XY_ASSERT(fileSize, "IQM File size is zero");
+
+        //load file into a vector
+        std::vector<char> fileData(fileSize);
+        file.read(static_cast<char*>(fileData.data()), fileSize);
+
+        //read header data
+        char* headerBytes = fileData.data();
+
+        file.seekg(0);
+
+        Iqm::Header header;
+        readHeader(headerBytes, header);
+
+        char* textIter = headerBytes + header.textOffset;
+
+        std::string strings;
+        strings.resize(header.textCount);
+
+        std::memcpy(&strings[0], textIter, header.textCount);
+
+
+        //validate header data
+        if (std::string(header.magic) != IQM_MAGIC)
+        {
+            Logger::log("Not an IQM file, header returned " + std::string(header.magic) + " instead of " + IQM_MAGIC, Logger::Type::Error);
+            return;
+        }
+
+        if (header.version != IQM_VERSION)
+        {
+            Logger::log("Wrong IQM version, found " + std::to_string(header.version) + " expected " + std::to_string(IQM_VERSION), Logger::Type::Error);
+            return;
+        }
+
+        if (header.filesize > (16 << 20))
+        {
+            Logger::log("IQM file greater than 16mb, file not loaded", Logger::Type::Error);
+            return;
+        }
+
+        //load vertex data (attributes are kept in separate arrays)
+        char* vertArrayIter = headerBytes + header.varrayOffset;
+        std::vector<float> positions(header.vertexCount * positionSize);
+        std::vector<float> normals(header.vertexCount * normalSize);
+        std::vector<float> tangents(header.vertexCount * (normalSize + 1)); //tangent data is 4 component - w is sign of cross product used for bitan
+        std::vector<float> texCoords(header.vertexCount * uvSize);
+        std::vector<std::uint8_t> blendIndices(header.vertexCount * blendIndexSize);
+        std::vector<std::uint8_t> blendWeights(header.vertexCount * blendWeightSize);
+
+        for (auto i = 0u; i < header.varrayCount; ++i)
+        {
+            Iqm::VertexArray vertArray;
+            vertArrayIter = readVertexArray(vertArrayIter, vertArray);
+
+            switch (vertArray.type)
+            {
+            case Iqm::POSITION:
+                std::memcpy(&positions[0], headerBytes + vertArray.offset, sizeof(float) * positions.size());
+                break;
+            case Iqm::NORMAL:
+                std::memcpy(&normals[0], headerBytes + vertArray.offset, sizeof(float) * normals.size());
+                break;
+            case Iqm::TANGENT:
+                std::memcpy(&tangents[0], headerBytes + vertArray.offset, sizeof(float) * tangents.size());
+                break;
+            case Iqm::TEXCOORD:
+                std::memcpy(&texCoords[0], headerBytes + vertArray.offset, sizeof(float) * texCoords.size());
+                break;
+            case Iqm::BLENDINDICES:
+                std::memcpy(&blendIndices[0], headerBytes + vertArray.offset, sizeof(uint8_t) * blendIndices.size());
+                break;
+            case Iqm::BLENDWEIGHTS:
+                std::memcpy(&blendWeights[0], headerBytes + vertArray.offset, sizeof(uint8_t) * blendIndices.size());
+                break;
+            default: break;
+            }
+        }
+
+        //load index arrays for sub meshes
+        //do this first as we need to store triangle data if we create tangent data from UVs/faces
+        std::vector<Iqm::Triangle> triangles;
+        //std::vector<std::vector<std::uint16_t>> subMeshes;
+        std::vector<std::string> materialNames; //TODO store this somewhere so we can retreive them outside of the mesh builder
+
+        char* meshBytesIter = headerBytes + header.meshOffset;
+        for (auto i = 0u; i < header.meshCount; ++i)
+        {
+            Iqm::Mesh mesh;
+            meshBytesIter = readMesh(meshBytesIter, mesh);
+
+            std::string materialName = &strings[mesh.material];
+            //materialName = materialName.substr(0, materialName.find_last_of('.')) + ".cmf";
+            materialNames.push_back(materialName);
+
+            Iqm::Triangle triangle;
+            char* triangleIter = headerBytes + header.triangleOffset + (mesh.firstTriangle * sizeof(triangle.vertex));
+            std::vector<std::uint16_t> indices;
+
+            for (auto j = 0u; j < mesh.triangleCount; ++j)
+            {
+                std::memcpy(triangle.vertex, triangleIter, sizeof(triangle.vertex));
+                triangleIter += sizeof(triangle.vertex);
+                //IQM has triangles wound CW so they need reversing
+                indices.push_back(triangle.vertex[2]);
+                indices.push_back(triangle.vertex[1]);
+                indices.push_back(triangle.vertex[0]);
+
+                //if (createTanNormals) //cache triangles as we'll need them
+                /*{
+                    triangles.push_back(triangle);
+                }*/
+            }
+
+            m_indexArrays.push_back(indices);
+        }
+
+
+        //calc bitans
+        std::vector<float> pureTangents; //tangents with 4th component removed
+        std::vector<float> bitangents;
+        //if (!createTanNormals) //use loaded data from model
+        {
+            for (auto i = 0u, j = 0u; i < normals.size(); i += normalSize, j += (normalSize + 1))
+            {
+                glm::vec3 normal(normals[i], normals[i + 1u], normals[i + 2u]);
+                glm::vec3 tangent(tangents[j], tangents[j + 1u], tangents[j + 2u]);
+                glm::vec3 bitan = glm::cross(normal, tangent) * -tangents[j + 3u];
+
+                //also we can pre-empt swap here! :D
+                pureTangents.push_back(tangent.x);
+                pureTangents.push_back(tangent.y);
+                pureTangents.push_back(tangent.z);
+
+                bitangents.push_back(bitan.x);
+                bitangents.push_back(bitan.y);
+                bitangents.push_back(bitan.z);
+            }
+        }
+        //else
+        //{
+        //    //do manual calc from UVs (remember we haven't swapped coords yet!)
+        //    pureTangents.resize(normals.size());
+        //    std::memset(&pureTangents[0], 0, pureTangents.size());
+        //    bitangents.resize(normals.size());
+        //    std::memset(&bitangents[0], 0, bitangents.size());
+
+        //    normals.clear();
+        //    normals.resize(pureTangents.size());
+        //    std::memset(&normals[0], 0, normals.size());
+
+        //    for (const auto& t : triangles)
+        //    {
+        //        //calc face normal from vertex positions
+        //        std::vector<glm::vec3> facePositions =
+        //        {
+        //            vec3FromArray(t.vertex[0], positions),
+        //            vec3FromArray(t.vertex[1], positions),
+        //            vec3FromArray(t.vertex[2], positions)
+        //        };
+
+        //        glm::vec3 deltaPos1 = facePositions[1] - facePositions[0];
+        //        glm::vec3 deltaPos2 = facePositions[2] - facePositions[0];
+        //        glm::vec3 faceNormal = -glm::cross(deltaPos1, deltaPos2);
+
+        //        addVecToArray(t.vertex[0], normals, faceNormal);
+        //        addVecToArray(t.vertex[1], normals, faceNormal);
+        //        addVecToArray(t.vertex[2], normals, faceNormal);
+
+        //        //and tan / bitan from UV
+        //        std::vector<glm::vec2> faceUVs =
+        //        {
+        //            vec2FromArray(t.vertex[0], texCoords),
+        //            vec2FromArray(t.vertex[1], texCoords),
+        //            vec2FromArray(t.vertex[2], texCoords)
+        //        };
+
+        //        glm::vec2 deltaUV1 = faceUVs[1] - faceUVs[0];
+        //        glm::vec2 deltaUV2 = faceUVs[2] - faceUVs[0];
+
+        //        float sign = 1.f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+        //        glm::vec3 faceTan = (deltaPos1 * deltaUV2.y - deltaPos2 *deltaUV1.y) * sign;
+        //        glm::vec3 faceBitan = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * sign;
+
+        //        swapZY(faceTan);
+        //        swapZY(faceBitan);
+
+        //        addVecToArray(t.vertex[0], pureTangents, faceTan);
+        //        addVecToArray(t.vertex[1], pureTangents, faceTan);
+        //        addVecToArray(t.vertex[2], pureTangents, faceTan);
+
+        //        addVecToArray(t.vertex[0], bitangents, faceBitan);
+        //        addVecToArray(t.vertex[1], bitangents, faceBitan);
+        //        addVecToArray(t.vertex[2], bitangents, faceBitan);
+        //    }
+
+            /*normaliseVec3Array(normals);
+            normaliseVec3Array(pureTangents);
+            normaliseVec3Array(bitangents);
+        }*/
+
+        //interleave data
+        std::uint32_t posIndex = 0u;
+        std::uint32_t normalIndex = 0u;
+        std::uint32_t tanIndex = 0u;
+        std::uint32_t bitanIndex = 0u;
+        std::uint32_t uvIndex = 0u;
+        std::uint32_t blendIndex = 0u;
+        std::uint32_t blendWeightIndex = 0u;
+
+        for (auto i = 0u; i < header.vertexCount; ++i)
+        {
+            for (auto j = 0u; j < positionSize; ++j)
+            {
+                m_vertexData.push_back(positions[posIndex++]);
+            }
+
+            for (auto j = 0u; j < normalSize; ++j)
+            {
+                m_vertexData.push_back(normals[normalIndex++]);
+            }
+
+            for (auto j = 0u; j < normalSize; ++j)
+            {
+                m_vertexData.push_back(pureTangents[tanIndex++]);
+            }
+
+            for (auto j = 0u; j < normalSize; ++j)
+            {
+                m_vertexData.push_back(bitangents[bitanIndex++]);
+            }
+
+            for (auto j = 0u; j < uvSize; ++j)
+            {
+                m_vertexData.push_back(texCoords[uvIndex++]);
+            }
+            //TODO blend indices and blend weights
+        }
+        m_vertexCount = header.vertexCount;
     }
-
-
-    //calc bitans
-    std::vector<float> pureTangents; //tangents with 4th component removed
-    std::vector<float> bitangents;
-    //if (!createTanNormals) //use loaded data from model
-    {
-        for (auto i = 0u, j = 0u; i < normals.size(); i += normalSize, j += (normalSize + 1))
-        {
-            glm::vec3 normal(normals[i], normals[i + 1u], normals[i + 2u]);
-            glm::vec3 tangent(tangents[j], tangents[j + 1u], tangents[j + 2u]);
-            glm::vec3 bitan = glm::cross(normal, tangent) * -tangents[j + 3u];
-
-            //also we can pre-empt swap here! :D
-            pureTangents.push_back(tangent.x);
-            pureTangents.push_back(tangent.y);
-            pureTangents.push_back(tangent.z);
-
-            bitangents.push_back(bitan.x);
-            bitangents.push_back(bitan.y);
-            bitangents.push_back(bitan.z);
-        }
-    }
-    //else
-    //{
-    //    //do manual calc from UVs (remember we haven't swapped coords yet!)
-    //    pureTangents.resize(normals.size());
-    //    std::memset(&pureTangents[0], 0, pureTangents.size());
-    //    bitangents.resize(normals.size());
-    //    std::memset(&bitangents[0], 0, bitangents.size());
-
-    //    normals.clear();
-    //    normals.resize(pureTangents.size());
-    //    std::memset(&normals[0], 0, normals.size());
-
-    //    for (const auto& t : triangles)
-    //    {
-    //        //calc face normal from vertex positions
-    //        std::vector<glm::vec3> facePositions =
-    //        {
-    //            vec3FromArray(t.vertex[0], positions),
-    //            vec3FromArray(t.vertex[1], positions),
-    //            vec3FromArray(t.vertex[2], positions)
-    //        };
-
-    //        glm::vec3 deltaPos1 = facePositions[1] - facePositions[0];
-    //        glm::vec3 deltaPos2 = facePositions[2] - facePositions[0];
-    //        glm::vec3 faceNormal = -glm::cross(deltaPos1, deltaPos2);
-
-    //        addVecToArray(t.vertex[0], normals, faceNormal);
-    //        addVecToArray(t.vertex[1], normals, faceNormal);
-    //        addVecToArray(t.vertex[2], normals, faceNormal);
-
-    //        //and tan / bitan from UV
-    //        std::vector<glm::vec2> faceUVs =
-    //        {
-    //            vec2FromArray(t.vertex[0], texCoords),
-    //            vec2FromArray(t.vertex[1], texCoords),
-    //            vec2FromArray(t.vertex[2], texCoords)
-    //        };
-
-    //        glm::vec2 deltaUV1 = faceUVs[1] - faceUVs[0];
-    //        glm::vec2 deltaUV2 = faceUVs[2] - faceUVs[0];
-
-    //        float sign = 1.f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-    //        glm::vec3 faceTan = (deltaPos1 * deltaUV2.y - deltaPos2 *deltaUV1.y) * sign;
-    //        glm::vec3 faceBitan = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * sign;
-
-    //        swapZY(faceTan);
-    //        swapZY(faceBitan);
-
-    //        addVecToArray(t.vertex[0], pureTangents, faceTan);
-    //        addVecToArray(t.vertex[1], pureTangents, faceTan);
-    //        addVecToArray(t.vertex[2], pureTangents, faceTan);
-
-    //        addVecToArray(t.vertex[0], bitangents, faceBitan);
-    //        addVecToArray(t.vertex[1], bitangents, faceBitan);
-    //        addVecToArray(t.vertex[2], bitangents, faceBitan);
-    //    }
-
-        /*normaliseVec3Array(normals);
-        normaliseVec3Array(pureTangents);
-        normaliseVec3Array(bitangents);
-    }*/
-
-    //interleave data
-    std::uint32_t posIndex = 0u;
-    std::uint32_t normalIndex = 0u;
-    std::uint32_t tanIndex = 0u;
-    std::uint32_t bitanIndex = 0u;
-    std::uint32_t uvIndex = 0u;
-    std::uint32_t blendIndex = 0u;
-    std::uint32_t blendWeightIndex = 0u;
-
-    for (auto i = 0u; i < header.vertexCount; ++i)
-    {
-        for (auto j = 0u; j < positionSize; ++j)
-        {
-            m_vertexData.push_back(positions[posIndex++]);
-        }
-
-        for (auto j = 0u; j < normalSize; ++j)
-        {
-            m_vertexData.push_back(normals[normalIndex++]);
-        }
-
-        for (auto j = 0u; j < normalSize; ++j)
-        {
-            m_vertexData.push_back(pureTangents[tanIndex++]);
-        }
-
-        for (auto j = 0u; j < normalSize; ++j)
-        {
-            m_vertexData.push_back(bitangents[bitanIndex++]);
-        }
-
-        for (auto j = 0u; j < uvSize; ++j)
-        {
-            m_vertexData.push_back(texCoords[uvIndex++]);
-        }
-        //TODO blend indices and blend weights
-    }
-    m_vertexCount = header.vertexCount;
 }
 
 VertexLayout IQMBuilder::getVertexLayout() const
