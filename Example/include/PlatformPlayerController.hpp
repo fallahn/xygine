@@ -25,22 +25,44 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef STATE_IDS_HPP_
-#define STATE_IDS_HPP_
+#ifndef PLATFORM_PLAYER_HPP_
+#define PLATFORM_PLAYER_HPP_
 
-namespace States
+#include <xygine/components/Component.hpp>
+
+namespace xy
 {
-    enum ID
+    namespace Physics
     {
-        None = 0,
-        PlatformDemo,
-        ParticleDemo,
-        PhysicsDemo,
-        DeferredDemo,
-        NetworkDemo,
-        MenuMain,
-        MenuOptions
+        class RigidBody;
+    }
+}
+
+namespace Plat
+{
+    enum Input
+    {
+        Left = 0x1,
+        Right = 0x2,
+        Jump = 0x4
+    };
+
+    class PlayerController final : public xy::Component
+    {
+    public:
+        explicit PlayerController(xy::MessageBus&);
+        ~PlayerController() = default;
+
+        xy::Component::Type type() const override { return xy::Component::Type::Script; }
+        void entityUpdate(xy::Entity&, float) override;
+        void onStart(xy::Entity&) override;
+
+        void applyInput(sf::Uint8);
+    private:
+
+        xy::Physics::RigidBody* m_body;
+        sf::Uint8 m_lastInput;
     };
 }
 
-#endif //STATE_IDS_HPP_
+#endif //PLATFORM_PLAYER_HPP_

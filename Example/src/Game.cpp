@@ -33,6 +33,7 @@ source distribution.
 #include <PhysicsDemoState.hpp>
 #include <NetworkDemoState.hpp>
 #include <DeferredDemoState.hpp>
+#include <PlatformDemoState.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -113,4 +114,5 @@ void Game::registerStates()
     m_stateStack.registerState<ParticleDemoState>(States::ID::ParticleDemo);
     m_stateStack.registerState<NetworkDemoState>(States::ID::NetworkDemo);
     m_stateStack.registerState<DeferredDemoState>(States::ID::DeferredDemo);
+    m_stateStack.registerState<PlatformDemoState>(States::ID::PlatformDemo);
 }

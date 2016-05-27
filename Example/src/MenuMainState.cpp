@@ -93,6 +93,17 @@ void MenuMainState::buildMenu()
     const auto& font = m_fontResource.get("assets/fonts/VeraMono.ttf");
     
     auto button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
+    button->setText("Platform Demo");
+    button->setAlignment(xy::UI::Alignment::Centre);
+    button->setPosition(960.f, 275.f);
+    button->addCallback([this]()
+    {
+        close();
+        requestStackPush(States::ID::PlatformDemo);
+    });
+    m_uiContainer.addControl(button);
+
+    button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
     button->setText("Particle Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 375.f);

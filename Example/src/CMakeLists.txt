@@ -15,4 +15,6 @@ SET(EXAMPLE_SRC
   src/ParticleDemoState.cpp
   src/PhysicsDemoInputController.cpp
   src/PhysicsDemoLine.cpp
-  src/PhysicsDemoState.cpp)
+  src/PhysicsDemoState.cpp
+  src/PlatformDemoState.cpp
+  src/PlatformPlayerController.cpp)

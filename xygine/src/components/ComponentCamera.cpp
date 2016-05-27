@@ -52,7 +52,7 @@ void Camera::entityUpdate(Entity& entity, float)
 
 void Camera::lockTransform(Camera::TransformLock lock, bool locked)
 {
-    sf::Int8 val = (1 << static_cast<sf::Int8>(lock));
+    sf::Int8 val = (/*1 << */static_cast<sf::Int8>(lock));
     (locked) ? m_lockMask |= val : ~val;
 }
 
