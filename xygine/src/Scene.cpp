@@ -51,7 +51,7 @@ Scene::Scene(MessageBus& mb)
     : m_defaultCamera   (nullptr),
     m_activeCamera      (nullptr),
     m_messageBus        (mb),
-    m_drawDebug         (false) 
+    m_drawDebug         (false)
 {
     reset();
 
@@ -368,9 +368,10 @@ sf::Transform Scene::getViewMatrix()
 {
     if (m_instance)
     {
-        auto camEnt = m_instance->findEntity(m_instance->m_activeCamera->getParentUID());
-        XY_ASSERT(camEnt, "could not find scene camera entity");
-        return camEnt->getWorldTransform().getInverse(); //TODO this needs to be translated by -halfView
+        const auto& view = m_instance->getView();
+        sf::Transform tx;
+        tx.translate(view.getCenter() - (view.getSize() / 2.f));
+        return tx.getInverse();
     }
     return sf::Transform();
 }

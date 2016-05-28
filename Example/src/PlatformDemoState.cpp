@@ -27,6 +27,7 @@ source distribution.
 
 #include <PlatformDemoState.hpp>
 #include <PlatformPlayerController.hpp>
+#include <PlatformBackground.hpp>
 
 #include <xygine/Reports.hpp>
 #include <xygine/Entity.hpp>
@@ -34,6 +35,7 @@ source distribution.
 
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
+#include <xygine/util/Random.hpp>
 
 #include <xygine/components/AnimatedDrawable.hpp>
 #include <xygine/components/QuadTreeComponent.hpp>
@@ -46,9 +48,7 @@ source distribution.
 #include <xygine/physics/CollisionRectangleShape.hpp>
 
 #include <xygine/components/Model.hpp>
-#include <RotationComponent.hpp>
 #include <xygine/mesh/shaders/DeferredRenderer.hpp>
-#include <xygine/mesh/shaders/GeomVis.hpp>
 #include <xygine/mesh/SubMesh.hpp>
 #include <xygine/mesh/CubeBuilder.hpp>
 #include <xygine/mesh/IQMBuilder.hpp>
@@ -93,12 +93,13 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
 
+    cacheMeshes();
     buildTerrain();
     buildPhysics();
 
-    //TODO add some crates or so
+    addItems();
     addPlayer();
-    createMesh();
+
 
     context.renderWindow.setMouseCursorVisible(true);
 
@@ -251,9 +252,9 @@ void PlatformDemoState::handleMessage(const xy::Message& msg)
 }
 
 //private
-void PlatformDemoState::createMesh()
+void PlatformDemoState::cacheMeshes()
 {
-    xy::CubeBuilder cb(32.f);
+    xy::CubeBuilder cb(100.f);
     m_meshResource.add(MeshID::Cube, cb);
 
     xy::IQMBuilder ib("assets/models/mrfixit.iqm");
@@ -264,9 +265,9 @@ void PlatformDemoState::createMesh()
     m_shaderResource.preload(PlatformShaderId::VertexLit, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
     auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::VertexLit));
     demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/diffuse_test.png") });
-    demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/normal_test.png") });
-    demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/mask_test.png") });
+    demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/cube_diffuse.png") });
+    demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/platform/cube_normal.png") });
+    demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/platform/cube_mask.png") });
 
     auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::VertexLit));
     fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
@@ -289,21 +290,8 @@ void PlatformDemoState::createMesh()
     ent->setPosition(960.f, 370.f);
     m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
 
-
-    //tests cube mesh and default material
-    model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Cube));
-    //model->setSubMaterial(material, 0);
-    ent = xy::Entity::create(m_messageBus);
-    auto rotator = xy::Component::create<RotationComponent>(m_messageBus);
-    ent->addComponent(rotator);
-    ent->addComponent(model);
-    ent->setScale(12.f, 12.f);
-    ent->setPosition(1520.f, 540.f);
-    m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
-
-    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 1200.f, 220.f/*, sf::Color::Blue*/);
-    light->setDepth(600.f);
-    //light->setIntensity(1.5f);
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 800.f, 220.f/*, sf::Color::Blue*/);
+    light->setDepth(300.f);
 
     auto entity = xy::Entity::create(m_messageBus);
     entity->setPosition(xy::DefaultSceneSize / 2.f);
@@ -313,10 +301,15 @@ void PlatformDemoState::createMesh()
 
 void PlatformDemoState::buildTerrain()
 {
+    auto background = xy::Component::create<Plat::Background>(m_messageBus, m_textureResource);
+    auto entity = xy::Entity::create(m_messageBus);
+    entity->addComponent(background);
+    m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
+
     auto drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/platform/left_edge.png"));
 
-    auto entity = xy::Entity::create(m_messageBus);
+    entity = xy::Entity::create(m_messageBus);
     entity->addComponent(drawable);
 
     m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
@@ -453,6 +446,34 @@ void PlatformDemoState::buildPhysics()
     entity->addComponent(groundBody);
 
     m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
+}
+
+void PlatformDemoState::addItems()
+{
+    std::function<void(const sf::Vector2f&)> createBox = 
+        [this](const sf::Vector2f& position)
+    {
+        auto body = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
+        xy::Physics::CollisionRectangleShape cs({ 100.f, 100.f }, { -50.f, -50.f });
+        cs.setDensity(4.f);
+        cs.setFriction(0.1f);
+        body->addCollisionShape(cs);
+
+        auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Cube));
+        model->setBaseMaterial(m_materialResource.get(MatId::Demo));
+
+        auto ent = xy::Entity::create(m_messageBus);
+        ent->setPosition(position);
+        ent->addComponent(body);
+        ent->addComponent(model);
+
+        m_scene.addEntity(ent, xy::Scene::BackFront);
+    };
+
+    for (auto i = 0u; i < 8u; ++i)
+    {
+        createBox({ xy::Util::Random::value(20.f, 2500.f), 20.f });
+    }
 }
 
 void PlatformDemoState::addPlayer()

@@ -45,6 +45,7 @@ source distribution.
 
 #include <SFML/Graphics/Text.hpp>
 
+
 class PlatformDemoState final : public xy::State
 {
 public:
@@ -80,18 +81,19 @@ private:
         Fixit
     };
     xy::MeshResource m_meshResource;
-    
+
     enum MatId
     {
         Demo = 0,
         MrFixitBody,
         MrFixitHead
-    };    
+    };
     xy::MaterialResource m_materialResource;
 
-    void createMesh();
+    void cacheMeshes();
     void buildTerrain();
     void buildPhysics();
+    void addItems();
     void addPlayer();
 };
 

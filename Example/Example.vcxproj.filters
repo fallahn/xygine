@@ -99,6 +99,9 @@
     <ClInclude Include="include\PlatformPlayerController.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\PlatformBackground.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -156,6 +159,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\PlatformPlayerController.cpp">
+      <Filter>Source Files\platform demo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlatformBackground.cpp">
       <Filter>Source Files\platform demo</Filter>
     </ClCompile>
   </ItemGroup>

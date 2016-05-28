@@ -91,6 +91,7 @@
     <ClInclude Include="include\PhysicsDemoLine.hpp" />
     <ClInclude Include="include\PhysicsDemoState.hpp" />
     <ClInclude Include="include\DeferredDemoState.hpp" />
+    <ClInclude Include="include\PlatformBackground.hpp" />
     <ClInclude Include="include\PlatformDemoState.hpp" />
     <ClInclude Include="include\PlatformPlayerController.hpp" />
     <ClInclude Include="include\RotationComponent.hpp" />
@@ -115,6 +116,7 @@
     <ClCompile Include="src\PhysicsDemoLine.cpp" />
     <ClCompile Include="src\PhysicsDemoState.cpp" />
     <ClCompile Include="src\DeferredDemoState.cpp" />
+    <ClCompile Include="src\PlatformBackground.cpp" />
     <ClCompile Include="src\PlatformDemoState.cpp" />
     <ClCompile Include="src\PlatformPlayerController.cpp" />
   </ItemGroup>
