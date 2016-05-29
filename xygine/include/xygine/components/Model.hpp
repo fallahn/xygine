@@ -37,6 +37,7 @@ source distribution.
 
 #include <glm/mat4x4.hpp>
 #include <glm/vec3.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include <vector>
 #include <map>
@@ -76,18 +77,6 @@ namespace xy
         void entityUpdate(Entity&, float) override;
 
         /*!
-        \brief Sets the apparent depth of the model in the scene.
-        Provided for convenience this should normally be left at 0
-        and only altered if needed. As the rest of the scene is still
-        two-dimensional collision may appear incorrect with extreme depth
-        settings. This also does not take in to account the mesh's local
-        z values, which can cause the appearance of offsetting the model.
-        In these cases setting the depth of the model can be used to
-        correct this.
-        */
-        void setDepth(float depth) { m_depth = depth; }
-
-        /*!
         \brief Sets the base material used but the model.
         \param material Reference to Material to apply
         \param applyToAll Set to true if the Material should be
@@ -101,7 +90,7 @@ namespace xy
         void setSubMaterial(const Material&, std::size_t);
 
         /*!
-        \brief Adds a custom pre-transform rotation.
+        \brief Adds a pre-transform rotation.
         Some modelling packages such as blender use different coordinate
         systems to OpenGL causing imported models to appear disoriented. Use
         this function to correct any rotation, which is applied to the model
@@ -109,22 +98,46 @@ namespace xy
         \param Axis around which to rotate
         \param rotation, in degrees, by which to rotate the model
         */
-        void preTransform(Model::Axis, float);
+        void rotate(Model::Axis, float);
+
+        /*!
+        \brief Sets the position of the model relative to its entity.
+        Meshes may have an abitrary origin which is, by default, aligned
+        to the position of the model's entity. This function translates
+        the model relative to the entity position, so that models may be
+        aligned as required.
+        \param Position 3-component vector representing the position to
+        set the model relative to the entity to which it is attached.
+        */
+        void setPosition(const sf::Vector3f&);
+
+        /*!
+        \brief Sets the scale of the model's mesh.
+        Because units in xygine are generally used to match pixels as
+        screen coordinates many meshes are modelled with different units in
+        mind and will often appear very small. This function scales the model
+        relative to the entity, around the model's origin point. Some
+        correction may also be needed via setPosition to allow for any offset.
+        \param Scale 3-component vector representing the scale in each axis
+        */
+        void setScale(const sf::Vector3f&);
 
     private:
-
-        glm::vec3 m_rotation;
+        glm::vec3 m_translation;
+        glm::quat m_rotation;
+        glm::vec3 m_scale;
         glm::mat4 m_preTransform;
+        bool m_needsUpdate;
+        void updateTransform();
+
         glm::mat4 m_worldMatrix;
         const Mesh& m_mesh;
-        float m_depth;
 
         const Material* m_material;
         std::vector<const Material*> m_subMaterials;
         std::map<const Material*, VertexAttribBinding> m_vaoBindings;
 
         void draw(const glm::mat4&) const;
-
         void updateVertexAttribs(const Material* oldMat, const Material* newMat);
     };
 }

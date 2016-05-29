@@ -297,7 +297,7 @@ void PlatformDemoState::cacheMeshes()
     light->setDepth(400.f);
 
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Cube));
-    model->setDepth(light->getWorldPosition().z);
+    model->setPosition({ 0.f, 0.f, light->getWorldPosition().z });
     model->setSubMaterial(lightMaterial, 0);
 
     auto entity = xy::Entity::create(m_messageBus);
@@ -313,7 +313,7 @@ void PlatformDemoState::cacheMeshes()
     light->setDepth(100.f);
 
     model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Cube));
-    model->setDepth(light->getWorldPosition().z);
+    model->setPosition({ 0.f, 0.f, light->getWorldPosition().z });
     model->setSubMaterial(lightMaterial, 0);
 
     entity = xy::Entity::create(m_messageBus);
@@ -530,7 +530,7 @@ void PlatformDemoState::addPlayer()
     xy::Physics::CollisionRectangleShape cs({ 100.f, 160.f });
     cs.setFriction(0.6f);
     cs.setDensity(0.5f);
-    
+
     body->fixedRotation(true);
     body->addCollisionShape(cs);
 
@@ -543,8 +543,10 @@ void PlatformDemoState::addPlayer()
     auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Fixit));
     model->setSubMaterial(m_materialResource.get(MatId::MrFixitBody), 0);
     model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
-    model->preTransform(xy::Model::Axis::X, 90.f);
-    model->preTransform(xy::Model::Axis::Y, 90.f);
+    model->rotate(xy::Model::Axis::X, 90.f);
+    model->rotate(xy::Model::Axis::Z, 90.f);
+    model->setScale({ 50.f, 50.f, 50.f });
+    model->setPosition({ 50.f, 160.f, 0.f });
 
     auto entity = xy::Entity::create(m_messageBus);
     entity->setPosition(960.f, 540.f);

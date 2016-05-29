@@ -35,13 +35,15 @@ source distribution.
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 using namespace xy;
 
 Model::Model(MessageBus& mb, const Mesh& mesh, const MeshRenderer::Lock&)
     : Component     (mb, this),
+    m_scale         (1.f, 1.f, 1.f),
+    m_needsUpdate   (false),
     m_mesh          (mesh),
-    m_depth         (0.f),
     m_material      (nullptr)
 {
     m_subMaterials.resize(mesh.getSubMeshCount());
@@ -51,7 +53,7 @@ Model::Model(MessageBus& mb, const Mesh& mesh, const MeshRenderer::Lock&)
 void Model::entityUpdate(Entity& entity, float dt)
 {
     const auto position = entity.getWorldPosition();
-    m_worldMatrix = glm::translate(glm::mat4(), glm::vec3(position.x, position.y, m_depth));
+    m_worldMatrix = glm::translate(glm::mat4(), glm::vec3(position.x, position.y, 0.f));
     
     const float rotation = xy::Util::Const::degToRad * entity.getRotation();
     m_worldMatrix = glm::rotate(m_worldMatrix, rotation, glm::vec3(0.f, 0.f, 1.f));
@@ -59,6 +61,7 @@ void Model::entityUpdate(Entity& entity, float dt)
     const auto scale = entity.getScale();
     m_worldMatrix = glm::scale(m_worldMatrix, glm::vec3(scale.x, scale.y, (scale.x + scale.y) / 2.f));
 
+    if (m_needsUpdate) updateTransform();
     m_worldMatrix *= m_preTransform;
 }
 
@@ -86,32 +89,48 @@ void Model::setSubMaterial(const Material& material, std::size_t idx)
     }
 }
 
-void Model::preTransform(Model::Axis axis, float rotation)
+void Model::rotate(Model::Axis axis, float rotation)
 {
+    glm::vec3 normal;
     switch(axis)
     {
         default: break;
     case Axis::X:
-        m_rotation.x = xy::Util::Const::degToRad * rotation;
+        normal.x = 1.f;
         break;
     case Axis::Y:
-        m_rotation.y = xy::Util::Const::degToRad * rotation;
+        normal.y = 1.f;
         break;
     case Axis::Z:
-        m_rotation.z = xy::Util::Const::degToRad * rotation;
+        normal.z = 1.f;
         break;
     }
+    m_rotation = glm::rotate(m_rotation, xy::Util::Const::degToRad * rotation, normal);
+    m_needsUpdate = true;
+}
 
-    m_preTransform = glm::translate(glm::mat4(), { 50, 160.f, 0.f });
+void Model::setPosition(const sf::Vector3f& position)
+{
+    m_translation = { position.x, position.y, position.z };
+    m_needsUpdate = true;
+}
 
-    m_preTransform = glm::rotate(m_preTransform, m_rotation.y, glm::vec3(1.f, 0.f, 0.f));
-    m_preTransform = glm::rotate(m_preTransform, m_rotation.z, glm::vec3(0.f, 1.f, 0.f));
-    m_preTransform = glm::rotate(m_preTransform, m_rotation.x, glm::vec3(0.f, 0.f, 1.f));
-
-    m_preTransform = glm::scale(m_preTransform, { 50.f, 50.f, 50.f });
+void Model::setScale(const sf::Vector3f& scale)
+{
+    m_scale = { scale.x, scale.y, scale.y };
 }
 
 //private
+void Model::updateTransform()
+{
+    m_preTransform = glm::mat4();
+    m_preTransform = glm::translate(m_preTransform, m_translation);
+    m_preTransform *= glm::toMat4(m_rotation);
+    m_preTransform = glm::scale(m_preTransform, m_scale);
+
+    m_needsUpdate = false;
+}
+
 void Model::draw(const glm::mat4& viewMatrix) const
 {
     glm::mat4 worldViewMat = viewMatrix * m_worldMatrix;

@@ -50,7 +50,7 @@ namespace
 {
     const float fov = 30.f * xy::Util::Const::degToRad;
     const float nearPlane = 0.1f;
-    const int MAX_LIGHTS = 8;
+    const unsigned MAX_LIGHTS = 8;
 }
 
 MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
@@ -267,7 +267,7 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
 
     //update active lights
     const auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
-    auto i = 0;
+    auto i = 0u;
     for (; i < MAX_LIGHTS && i < lights.size(); ++i)
     {
         auto& colour = lights[i]->getDiffuseColour();
