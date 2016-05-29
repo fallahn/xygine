@@ -82,6 +82,13 @@ void Background::entityUpdate(xy::Entity& entity, float dt)
     m_nearVertices[3].texCoords = offset + sf::Vector2f(0.f, xy::DefaultSceneSize.y);
 }
 
+void Background::setAmbientColour(const sf::Color& colour)
+{
+
+    for (auto& v : m_farVertices) v.color = colour;
+    for (auto& v : m_nearVertices) v.color = colour;
+}
+
 //private
 void Background::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {

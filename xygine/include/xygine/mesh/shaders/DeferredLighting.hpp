@@ -74,7 +74,8 @@ namespace xy
                 "layout (std140) uniform u_lightBlock\n"
                 "{\n"
                 "    PointLight u_pointLights[MAX_POINT_LIGHTS];\n"
-                "    vec3 u_cameraWorldPosition;\n"
+                "    vec4 u_ambientColour;\n"
+                "    vec3 u_cameraWorldPosition;\n"                
                 "};\n"
 
                 "uniform sampler2D u_diffuseMap;\n"
@@ -83,7 +84,7 @@ namespace xy
                 "uniform sampler2D u_positionMap;\n"
                 "uniform sampler2D u_aoMap;\n"
                 "uniform sampler2D u_illuminationMap;\n"
-                "uniform vec4 u_ambientColour = vec4(0.2, 0.2, 0.2, 1.0);\n"
+                
 
                 "in vec2 v_texCoord;\n"
 

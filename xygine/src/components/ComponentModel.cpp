@@ -58,6 +58,8 @@ void Model::entityUpdate(Entity& entity, float dt)
 
     const auto scale = entity.getScale();
     m_worldMatrix = glm::scale(m_worldMatrix, glm::vec3(scale.x, scale.y, (scale.x + scale.y) / 2.f));
+
+    m_worldMatrix *= m_preTransform;
 }
 
 void Model::setBaseMaterial(const Material& material, bool applyToAll)
@@ -82,6 +84,31 @@ void Model::setSubMaterial(const Material& material, std::size_t idx)
         m_subMaterials[idx] = &material;
         updateVertexAttribs(oldMat, &material);
     }
+}
+
+void Model::preTransform(Model::Axis axis, float rotation)
+{
+    switch(axis)
+    {
+        default: break;
+    case Axis::X:
+        m_rotation.x = xy::Util::Const::degToRad * rotation;
+        break;
+    case Axis::Y:
+        m_rotation.y = xy::Util::Const::degToRad * rotation;
+        break;
+    case Axis::Z:
+        m_rotation.z = xy::Util::Const::degToRad * rotation;
+        break;
+    }
+
+    m_preTransform = glm::translate(glm::mat4(), { 50, 160.f, 0.f });
+
+    m_preTransform = glm::rotate(m_preTransform, m_rotation.y, glm::vec3(1.f, 0.f, 0.f));
+    m_preTransform = glm::rotate(m_preTransform, m_rotation.z, glm::vec3(0.f, 1.f, 0.f));
+    m_preTransform = glm::rotate(m_preTransform, m_rotation.x, glm::vec3(0.f, 0.f, 1.f));
+
+    m_preTransform = glm::scale(m_preTransform, { 50.f, 50.f, 50.f });
 }
 
 //private

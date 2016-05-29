@@ -29,6 +29,7 @@ source distribution.
 
 #include <xygine/App.hpp>
 #include <xygine/ui/Button.hpp>
+#include <xygine/util/Random.hpp>
 
 #include <SFML/Window/Mouse.hpp>
 

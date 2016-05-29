@@ -48,7 +48,8 @@ using namespace xy;
 using namespace std::placeholders;
 
 Scene::Scene(MessageBus& mb)
-    : m_defaultCamera   (nullptr),
+    : m_ambientColour   (51,51,51),
+    m_defaultCamera     (nullptr),
     m_activeCamera      (nullptr),
     m_messageBus        (mb),
     m_drawDebug         (false)
@@ -327,6 +328,8 @@ void Scene::reset()
     m_layers[Layer::BackRear]->addChild(entity);
 
     m_activeCamera = m_defaultCamera;
+
+    m_ambientColour = { 51, 51, 51 };
 }
 
 void Scene::addPostProcess(PostProcess::Ptr& pp)

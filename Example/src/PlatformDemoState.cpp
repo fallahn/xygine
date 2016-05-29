@@ -53,6 +53,8 @@ source distribution.
 #include <xygine/mesh/CubeBuilder.hpp>
 #include <xygine/mesh/IQMBuilder.hpp>
 
+#include <xygine/shaders/NormalMapped.hpp>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 
@@ -69,7 +71,9 @@ namespace
 
     enum PlatformShaderId
     {
-        VertexLit
+        SpecularSmooth2D,
+        SpecularBumped3D,
+        SpecularSmooth3D
     };
 
     Plat::PlayerController * playerController = nullptr;
@@ -89,6 +93,7 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     m_physWorld.setPixelScale(120.f);
 
     m_scene.setView(context.defaultView);
+    m_scene.setAmbientColour({ 91, 46, 13 });
 
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 30.f);
@@ -113,29 +118,31 @@ bool PlatformDemoState::update(float dt)
     m_scene.update(dt);
     m_meshRenderer.update();
 
-    ////update lighting
-    //auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
-    //auto i = 0;
-    //for (; i < lights.size() && i < xy::Shader::NormalMapped::MaxPointLights; ++i)
-    //{
-    //    auto light = lights[i];
-    //    if (light)
-    //    {
-    //        const std::string idx = std::to_string(i);
-    //        
-    //        auto pos = light->getWorldPosition();
-    //        shader->setUniform("u_pointLightPositions[" + std::to_string(i) + "]", pos);
-    //        shader->setUniform("u_pointLights[" + idx + "].intensity", light->getIntensity());
-    //        shader->setUniform("u_pointLights[" + idx + "].diffuseColour", sf::Glsl::Vec4(light->getDiffuseColour()));
-    //        shader->setUniform("u_pointLights[" + idx + "].specularColour", sf::Glsl::Vec4(light->getSpecularColour()));
-    //        shader->setUniform("u_pointLights[" + idx + "].inverseRange", light->getInverseRange());
-    //    }
-    //}
-    ////switch off inactive lights
-    //for (; i < xy::Shader::NormalMapped::MaxPointLights; ++i)
-    //{
-    //    shader->setUniform("u_pointLights[" + std::to_string(i) + "].intensity", 0.f);
-    //}
+    //update lighting
+    auto& shader = m_shaderResource.get(PlatformShaderId::SpecularSmooth2D);
+    shader.setUniform("u_ambientColour", sf::Glsl::Vec4(m_scene.getAmbientColour()));
+    auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
+    auto i = 0u;
+    for (; i < lights.size() && i < xy::Shader::NormalMapped::MaxPointLights; ++i)
+    {
+        auto light = lights[i];
+        if (light)
+        {
+            const std::string idx = std::to_string(i);
+            
+            auto pos = light->getWorldPosition();
+            shader.setUniform("u_pointLightPositions[" + std::to_string(i) + "]", pos);
+            shader.setUniform("u_pointLights[" + idx + "].intensity", light->getIntensity());
+            shader.setUniform("u_pointLights[" + idx + "].diffuseColour", sf::Glsl::Vec4(light->getDiffuseColour()));
+            shader.setUniform("u_pointLights[" + idx + "].specularColour", sf::Glsl::Vec4(light->getSpecularColour()));
+            shader.setUniform("u_pointLights[" + idx + "].inverseRange", light->getInverseRange());
+        }
+    }
+    //switch off inactive lights
+    for (; i < xy::Shader::NormalMapped::MaxPointLights; ++i)
+    {
+        shader.setUniform("u_pointLights[" + std::to_string(i) + "].intensity", 0.f);
+    }
 
     m_reportText.setString(xy::Stats::getString());
 
@@ -146,12 +153,13 @@ void PlatformDemoState::draw()
 {   
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);    
-    
-    rw.setView(m_scene.getView());
-    rw.draw(m_physWorld);
-    
+        
     rw.setView(getContext().defaultView);   
     rw.draw(m_meshRenderer);
+
+    //rw.setView(m_scene.getView());
+    //rw.draw(m_physWorld);
+
     rw.draw(m_reportText);
 }
 
@@ -260,54 +268,78 @@ void PlatformDemoState::cacheMeshes()
     xy::IQMBuilder ib("assets/models/mrfixit.iqm");
     m_meshResource.add(MeshID::Fixit, ib);
 
-    auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Fixit));
-
-    m_shaderResource.preload(PlatformShaderId::VertexLit, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
-    auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::VertexLit));
+    m_shaderResource.preload(PlatformShaderId::SpecularBumped3D, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
+    auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/cube_diffuse.png") });
     demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/platform/cube_normal.png") });
     demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/platform/cube_mask.png") });
 
-    auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::VertexLit));
+    auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     fixitMaterialBody.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitBody.png") });
     fixitMaterialBody.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitBody_normal.png") });
     fixitMaterialBody.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitBody_mask.png") });
 
-    auto& fixitMaterialHead = m_materialResource.add(MatId::MrFixitHead, m_shaderResource.get(PlatformShaderId::VertexLit));
+    auto& fixitMaterialHead = m_materialResource.add(MatId::MrFixitHead, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     fixitMaterialHead.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     fixitMaterialHead.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitHead.png") });
     fixitMaterialHead.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitHead_normal.png") });
     fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });
 
-    model->setSubMaterial(fixitMaterialBody, 0);
-    model->setSubMaterial(fixitMaterialHead, 1);
+    m_shaderResource.preload(PlatformShaderId::SpecularSmooth3D, DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
+    auto& lightMaterial = m_materialResource.add(MatId::LightSource, m_shaderResource.get(PlatformShaderId::SpecularSmooth3D));
+    lightMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    lightMaterial.addProperty({ "u_colour", sf::Color(255, 255, 100) });
+    lightMaterial.addProperty({ "u_maskColour", sf::Color::Blue });
 
-    auto ent = xy::Entity::create(m_messageBus);
-    ent->addComponent(model);
-    ent->setScale(50.f, 50.f);
-    ent->setPosition(960.f, 370.f);
-    m_scene.addEntity(ent, xy::Scene::Layer::FrontFront);
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 800.f, 500.f, sf::Color(255, 255, 100));
+    light->setDepth(400.f);
 
-    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 800.f, 220.f/*, sf::Color::Blue*/);
-    light->setDepth(300.f);
+    auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Cube));
+    model->setDepth(light->getWorldPosition().z);
+    model->setSubMaterial(lightMaterial, 0);
 
     auto entity = xy::Entity::create(m_messageBus);
     entity->setPosition(xy::DefaultSceneSize / 2.f);
+    entity->setScale(0.25f, 0.25f);
     entity->addComponent(light);
+    entity->addComponent(model);
+    m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
+
+
+    //---------------
+    light = xy::Component::create<xy::PointLight>(m_messageBus, 600.f, 500.f, sf::Color(255, 255, 100));
+    light->setDepth(100.f);
+
+    model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Cube));
+    model->setDepth(light->getWorldPosition().z);
+    model->setSubMaterial(lightMaterial, 0);
+
+    entity = xy::Entity::create(m_messageBus);
+    entity->setPosition(2000.f, 200.f);
+    entity->setScale(0.25f, 0.25f);
+    entity->addComponent(light);
+    entity->addComponent(model);
     m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
 }
 
 void PlatformDemoState::buildTerrain()
 {
+    m_shaderResource.preload(PlatformShaderId::SpecularSmooth2D, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED);
+    m_textureResource.setFallbackColour({ 127, 127, 255 });
+    const auto& normalTexture = m_textureResource.get("normalFallback");
+    
     auto background = xy::Component::create<Plat::Background>(m_messageBus, m_textureResource);
+    background->setAmbientColour(m_scene.getAmbientColour());
     auto entity = xy::Entity::create(m_messageBus);
     entity->addComponent(background);
     m_scene.addEntity(entity, xy::Scene::Layer::BackRear);
 
     auto drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/platform/left_edge.png"));
+    drawable->setNormalMap(normalTexture);
+    drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
 
     entity = xy::Entity::create(m_messageBus);
     entity->addComponent(drawable);
@@ -316,6 +348,8 @@ void PlatformDemoState::buildTerrain()
     //-------------------------
     drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/platform/ground_section.png"));
+    drawable->setNormalMap(normalTexture);
+    drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(256.f, 1080.f - 128.f);
@@ -325,6 +359,8 @@ void PlatformDemoState::buildTerrain()
     //-------------------------
     drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/platform/ground_section.png"));
+    drawable->setNormalMap(normalTexture);
+    drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(1024.f, 1080.f - 128.f);
@@ -334,6 +370,8 @@ void PlatformDemoState::buildTerrain()
     //-------------------------
     drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/platform/ground_section.png"));
+    drawable->setNormalMap(normalTexture);
+    drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(1792.f, 1080.f - 128.f);
@@ -343,6 +381,8 @@ void PlatformDemoState::buildTerrain()
     //-------------------------
     drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/platform/right_edge.png"));
+    drawable->setNormalMap(normalTexture);
+    drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(2560.f, 0.f);
@@ -352,6 +392,8 @@ void PlatformDemoState::buildTerrain()
     //-------------------------
     drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/platform/plat_01.png"));
+    drawable->setNormalMap(normalTexture);
+    drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(400.f, 700.f);
@@ -361,6 +403,8 @@ void PlatformDemoState::buildTerrain()
     //-------------------------
     drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/platform/plat_03.png"));
+    drawable->setNormalMap(normalTexture);
+    drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(2000.f, 550.f);
@@ -370,6 +414,8 @@ void PlatformDemoState::buildTerrain()
     //-------------------------
     drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/platform/plat_02.png"));
+    drawable->setNormalMap(normalTexture);
+    drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(1670.f, 450.f);
@@ -379,6 +425,8 @@ void PlatformDemoState::buildTerrain()
     //-------------------------
     drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/platform/plat_04.png"));
+    drawable->setNormalMap(normalTexture);
+    drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(1210.f, 600.f);
@@ -492,11 +540,18 @@ void PlatformDemoState::addPlayer()
     camera->lockTransform(xy::Camera::TransformLock::AxisY);
     camera->lockBounds({ 0.f,0.f, 2816.f, 1080.f });
 
+    auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Fixit));
+    model->setSubMaterial(m_materialResource.get(MatId::MrFixitBody), 0);
+    model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
+    model->preTransform(xy::Model::Axis::X, 90.f);
+    model->preTransform(xy::Model::Axis::Y, 90.f);
+
     auto entity = xy::Entity::create(m_messageBus);
     entity->setPosition(960.f, 540.f);
     entity->addComponent(body);
     playerController = entity->addComponent(controller);
     m_scene.setActiveCamera(entity->addComponent(camera));
+    entity->addComponent(model);
 
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 }

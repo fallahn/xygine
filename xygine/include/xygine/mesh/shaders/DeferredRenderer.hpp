@@ -62,7 +62,7 @@ namespace xy
                 "#if !defined(BUMP)\n"
                 "out vec3 v_normalVector;\n" \
                 "#else\n"
-                "out mat3 v_tbn;\n" \
+                "out vec3 v_tbn[3];\n" \
                 "#endif\n"
                 "out vec3 v_worldPosition;\n" \
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
@@ -82,64 +82,66 @@ namespace xy
                 "#if !defined(BUMP)\n"
                 "    v_normalVector = u_normalMatrix * a_normal;\n" \
                 "#else\n"
-                "    mat3 normalMatrix = inverse(mat3(u_worldMatrix));\n" \
-                "    vec3 t = normalize(normalMatrix * a_tangent);\n" \
-                "    vec3 b = normalize(normalMatrix * a_bitangent);\n" \
-                "    vec3 n = normalize(normalMatrix * a_normal);\n" \
-                "    v_tbn = mat3(t, b, n);\n" \
+                /*"    mat3 normalMatrix = inverse(mat3(u_worldMatrix));\n" \*/
+                "    v_tbn[0] = normalize(u_normalMatrix * a_tangent);\n" \
+                "    v_tbn[1] = normalize(u_normalMatrix * a_bitangent);\n" \
+                "    v_tbn[2] = normalize(u_normalMatrix * a_normal);\n" \
+                /*"    v_tbn = mat3(t, b, n);\n" \*/
                 "#endif\n"
                 "}";
 
-                const static std::string DeferredFragment =
-                    "#if !defined(BUMP)\n" \
-                    "in vec3 v_normalVector;\n"
-                    "#else\n" \
-                    "in mat3 v_tbn;\n" \
-                    "#endif\n" \
-                    "in vec3 v_worldPosition;\n" \
-                    "#if defined(TEXTURED) || defined(BUMP)\n" \
-                    "in vec2 v_texCoord;\n" \
-                    "#endif\n" \
+            const static std::string DeferredFragment =
+                "#if !defined(BUMP)\n" \
+                "in vec3 v_normalVector;\n"
+                "#else\n" \
+                "in vec3 v_tbn[3];\n" \
+                "#endif\n" \
+                "in vec3 v_worldPosition;\n" \
+                "#if defined(TEXTURED) || defined(BUMP)\n" \
+                "in vec2 v_texCoord;\n" \
+                "#endif\n" \
 
-                    "uniform float u_farPlane = 1500.0;\n" \
-                    "uniform vec4 u_colour = vec4(1.0);\n" \
-                    "#if defined(TEXTURED)\n"
-                    "uniform sampler2D u_diffuseMap;\n" \
-                    "#endif\n" \
-                    "#if defined(BUMP)\n"
-                    "uniform sampler2D u_normalMap;\n" \
-                    "#endif\n" \
-                    "#if defined(BUMP) || defined(TEXTURED)\n"
-                    "uniform sampler2D u_maskMap;\n"
-                    "#endif\n"
+                "uniform float u_farPlane = 1500.0;\n" \
+                "uniform vec4 u_colour = vec4(1.0);\n" \
+                "#if defined(TEXTURED)\n"
+                "uniform sampler2D u_diffuseMap;\n" \
+                "#endif\n" \
+                "#if defined(BUMP)\n"
+                "uniform sampler2D u_normalMap;\n" \
+                "#endif\n" \
+                "#if defined(BUMP) || defined(TEXTURED)\n"
+                "uniform sampler2D u_maskMap;\n"
+                "#else\n"
+                "uniform vec4 u_maskColour = vec4(vec3(0.0), 1.0);\n"
+                "#endif\n"
 
-                    "out vec4[4] fragOut;\n" \
+                "out vec4[4] fragOut;\n" \
 
-                    "const float nearPlane = 0.1;\n" \
-                    "float lineariseDepth(float val)\n" \
-                    "{\n" \
-                    "    float z = val * 2.0 - 1.0;\n" \
-                    "    return (2.0 * nearPlane * u_farPlane) / (u_farPlane + nearPlane - z * (u_farPlane - nearPlane));\n" \
-                    "}\n" \
+                "const float nearPlane = 0.1;\n" \
+                "float lineariseDepth(float val)\n" \
+                "{\n" \
+                "    float z = val * 2.0 - 1.0;\n" \
+                "    return (2.0 * nearPlane * u_farPlane) / (u_farPlane + nearPlane - z * (u_farPlane - nearPlane));\n" \
+                "}\n" \
 
-                    "void main()\n" \
-                    "{\n" \
-                    "#if defined(TEXTURED)\n" \
-                    "    fragOut[0] = texture(u_diffuseMap, v_texCoord) * u_colour;\n" \
-                    "#else\n" \
-                    "    fragOut[0] = u_colour;\n" \
-                    "#endif\n" \
+                "void main()\n" \
+                "{\n" \
+                "#if defined(TEXTURED)\n" \
+                "    fragOut[0] = texture(u_diffuseMap, v_texCoord) * u_colour;\n" \
+                "#else\n" \
+                "    fragOut[0] = u_colour;\n" \
+                "#endif\n" \
 
-                    "#if !defined(BUMP)\n" \
-                    "    fragOut[1] = vec4(normalize(v_normalVector), 1.0);\n" \
-                    "#else\n" \
-                    "    vec3 normal = texture(u_normalMap, v_texCoord).rgb * 2.0 - 1.0;\n" \
-                    "    fragOut[1] = vec4(normalize(v_tbn * normal).grb, 1.0);\n" \
-                    "#endif\n"
-                    "#if defined(BUMP) || defined(TEXTURED)\n"
-                    "    fragOut[2] = texture(u_maskMap, v_texCoord);\n"
-                    "#else\n"
-                    "    fragOut[2] = vec4(vec3(0.0), 1.0);\n"
+                "#if !defined(BUMP)\n" \
+                "    fragOut[1] = vec4(normalize(v_normalVector), 1.0);\n" \
+                "#else\n" \
+                "    vec3 normal = texture(u_normalMap, v_texCoord).rgb * 2.0 - 1.0;\n" \
+                "    fragOut[1] = vec4(normalize(v_tbn[0] * normal.x + v_tbn[1] * normal.y + v_tbn[2] * normal.z).grb, 1.0);\n" \
+                "#endif\n"
+                "#if defined(BUMP) || defined(TEXTURED)\n"
+                "    fragOut[2] = texture(u_maskMap, v_texCoord);\n"
+                "#else\n"
+                "    fragOut[2] = u_maskColour;\n"
                 "#endif\n"
                 "    fragOut[3].rgb = v_worldPosition;\n" \
                 "    fragOut[3].a = lineariseDepth(gl_FragCoord.z);\n" \

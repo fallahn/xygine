@@ -91,10 +91,10 @@ bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 
         }
         m_textures[i].setSmooth(false);
 
-        if (floatingPoint) //recreate the texture with float 32 type
+        if (floatingPoint) //recreate the texture with float 16 type
         {
             glCheck(glBindTexture(GL_TEXTURE_2D, m_textures[i].getNativeHandle()));
-            glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0));
+            glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, 0));
             glCheck(glBindTexture(GL_TEXTURE_2D, 0));
         }
     }

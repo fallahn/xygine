@@ -259,6 +259,12 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
     m_lightingBlock.u_cameraWorldPosition[1] = camWorldPosition.y;
     m_lightingBlock.u_cameraWorldPosition[2] = camWorldPosition.z;
 
+    auto ambient = m_scene.getAmbientColour();
+    m_lightingBlock.u_ambientColour[0] = static_cast<float>(ambient.r) / 255.f;
+    m_lightingBlock.u_ambientColour[1] = static_cast<float>(ambient.g) / 255.f;
+    m_lightingBlock.u_ambientColour[2] = static_cast<float>(ambient.b) / 255.f;
+    m_lightingBlock.u_ambientColour[3] = static_cast<float>(ambient.a) / 255.f;
+
     //update active lights
     const auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
     auto i = 0;

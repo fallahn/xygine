@@ -161,6 +161,7 @@ namespace xy
         struct LightBlock final
         {
             PointLight u_pointLights[8];
+            float u_ambientColour[4];
             float u_cameraWorldPosition[3];
         }m_lightingBlock;
         UniformBuffer m_lightingBlockBuffer;

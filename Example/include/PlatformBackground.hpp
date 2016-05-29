@@ -49,10 +49,11 @@ namespace Plat
         ~Background() = default;
 
         xy::Component::Type type() const override { return xy::Component::Type::Drawable; }
-
         void entityUpdate(xy::Entity&, float) override;
-
         sf::FloatRect globalBounds() const override { return{ {0.f, 0.f}, xy::DefaultSceneSize }; }
+
+        void setAmbientColour(const sf::Color&);
+
     private:
         std::array<sf::Vertex, 4u> m_nearVertices;
         std::array<sf::Vertex, 4u> m_farVertices;

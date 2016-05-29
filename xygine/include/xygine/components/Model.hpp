@@ -36,6 +36,7 @@ source distribution.
 #include <SFML/Graphics/Glsl.hpp>
 
 #include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
 
 #include <vector>
 #include <map>
@@ -53,6 +54,14 @@ namespace xy
     {
         friend class MeshRenderer;
     public:
+        /*!
+        \brief Define around which axis to prepend a model's transform
+        */
+        enum class Axis
+        {
+            X, Y, Z
+        };
+        
         /*!
         \brief Constructor.
         Model components should not (and cannot) be created via the
@@ -91,8 +100,21 @@ namespace xy
         */
         void setSubMaterial(const Material&, std::size_t);
 
+        /*!
+        \brief Adds a custom pre-transform rotation.
+        Some modelling packages such as blender use different coordinate
+        systems to OpenGL causing imported models to appear disoriented. Use
+        this function to correct any rotation, which is applied to the model
+        before the scene's world matrix transform.
+        \param Axis around which to rotate
+        \param rotation, in degrees, by which to rotate the model
+        */
+        void preTransform(Model::Axis, float);
+
     private:
 
+        glm::vec3 m_rotation;
+        glm::mat4 m_preTransform;
         glm::mat4 m_worldMatrix;
         const Mesh& m_mesh;
         float m_depth;

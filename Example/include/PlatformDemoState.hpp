@@ -86,7 +86,8 @@ private:
     {
         Demo = 0,
         MrFixitBody,
-        MrFixitHead
+        MrFixitHead,
+        LightSource
     };
     xy::MaterialResource m_materialResource;
 
