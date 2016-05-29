@@ -35,8 +35,7 @@ using namespace Plat;
 
 namespace
 {
-    const float moveForce = 600.f;
-    const float moveImpulse = 420.f;
+    const float moveForce = 800.f;
 }
 
 PlayerController::PlayerController(xy::MessageBus& mb)
@@ -48,7 +47,7 @@ PlayerController::PlayerController(xy::MessageBus& mb)
 }
 
 //public
-void PlayerController::entityUpdate(xy::Entity&, float)
+void PlayerController::entityUpdate(xy::Entity&, float dt)
 {
 
 }
@@ -61,23 +60,22 @@ void PlayerController::onStart(xy::Entity& entity)
 
 void PlayerController::applyInput(sf::Uint8 input)
 {
+    float velocity = 0.f;
     if (input & Left)
     {
-        m_body->applyForceToCentre({ -moveForce, 0.f });
-        if ((m_lastInput & Left) == 0)
-        {
-            m_body->applyLinearImpulse({ -moveImpulse, 0.f }, m_body->getLocalCentre());
-        }
+        velocity = -moveForce;
     }
 
     if (input & Right)
     {
-        m_body->applyForceToCentre({ moveForce, 0.f });
-        if ((m_lastInput & Right) == 0)
-        {
-            m_body->applyLinearImpulse({ moveImpulse, 0.f }, m_body->getLocalCentre());
-        }
+        velocity = moveForce;
     }
+
+    const auto currVelocity = m_body->getLinearVelocity();
+    const float velChange = velocity - currVelocity.x;
+    const float force = m_body->getMass() * velChange;
+    m_body->applyLinearImpulse({ force, 0.f }, m_body->getLocalCentre());
+
 
     if ((input & Jump) &&
         ((m_lastInput & Jump) == 0))

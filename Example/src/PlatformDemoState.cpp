@@ -78,6 +78,7 @@ namespace
 
     Plat::PlayerController * playerController = nullptr;
     sf::Uint8 playerInput = 0;
+    bool showDebug = false;
 }
 
 PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context)
@@ -105,7 +106,7 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     addItems();
     addPlayer();
 
-
+    REPORT("Q", "Show Debug");
     context.renderWindow.setMouseCursorVisible(true);
 
     quitLoadingScreen();
@@ -120,7 +121,7 @@ bool PlatformDemoState::update(float dt)
 
     //update lighting
     auto& shader = m_shaderResource.get(PlatformShaderId::SpecularSmooth2D);
-    shader.setUniform("u_ambientColour", sf::Glsl::Vec4(m_scene.getAmbientColour()));
+    //shader.setUniform("u_ambientColour", sf::Glsl::Vec4(m_scene.getAmbientColour()));
     auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
     auto i = 0u;
     for (; i < lights.size() && i < xy::Shader::NormalMapped::MaxPointLights; ++i)
@@ -145,7 +146,6 @@ bool PlatformDemoState::update(float dt)
     }
 
     m_reportText.setString(xy::Stats::getString());
-
     return true;
 }
 
@@ -157,8 +157,11 @@ void PlatformDemoState::draw()
     rw.setView(getContext().defaultView);   
     rw.draw(m_meshRenderer);
 
-    //rw.setView(m_scene.getView());
-    //rw.draw(m_physWorld);
+    if (showDebug)
+    {
+        rw.setView(m_scene.getView());
+        rw.draw(m_physWorld);
+    }
 
     rw.draw(m_reportText);
 }
@@ -222,7 +225,7 @@ bool PlatformDemoState::handleEvent(const sf::Event& evt)
 
             break;
         case sf::Keyboard::Q:
-
+            showDebug = !showDebug;
             break;
         default: break;
         }
@@ -503,8 +506,8 @@ void PlatformDemoState::addItems()
     {
         auto body = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
         xy::Physics::CollisionRectangleShape cs({ 100.f, 100.f }, { -50.f, -50.f });
-        cs.setDensity(4.f);
-        cs.setFriction(0.1f);
+        cs.setDensity(11.f);
+        cs.setFriction(0.7f);
         body->addCollisionShape(cs);
 
         auto model = m_meshRenderer.createModel(m_messageBus, m_meshResource.get(MeshID::Cube));
@@ -529,7 +532,7 @@ void PlatformDemoState::addPlayer()
     auto body = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
     xy::Physics::CollisionRectangleShape cs({ 100.f, 160.f });
     cs.setFriction(0.6f);
-    cs.setDensity(0.5f);
+    cs.setDensity(0.9f);
 
     body->fixedRotation(true);
     body->addCollisionShape(cs);
