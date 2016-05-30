@@ -32,6 +32,7 @@ source distribution.
 #include <xygine/mesh/MeshRenderer.hpp>
 #include <xygine/mesh/Material.hpp>
 #include <xygine/mesh/VertexAttribBinding.hpp>
+#include <xygine/mesh/BoundingBox.hpp>
 
 #include <SFML/Graphics/Glsl.hpp>
 
@@ -75,6 +76,11 @@ namespace xy
 
         Component::Type type() const override { return Component::Type::Mesh; }
         void entityUpdate(Entity&, float) override;
+        /*!
+        \brief Returns the 2D globally transformed AABB of the model based
+        on the 3D AABB of the model's mesh.
+        */
+        sf::FloatRect globalBounds() const override { return m_boundingBox.asFloatRect(); }
 
         /*!
         \brief Sets the base material used but the model.
@@ -132,12 +138,14 @@ namespace xy
 
         glm::mat4 m_worldMatrix;
         const Mesh& m_mesh;
+        BoundingBox m_boundingBox;
+        sf::FloatRect m_worldBounds;
 
         const Material* m_material;
         std::vector<const Material*> m_subMaterials;
         std::map<const Material*, VertexAttribBinding> m_vaoBindings;
 
-        void draw(const glm::mat4&) const;
+        std::size_t draw(const glm::mat4&, const sf::FloatRect&) const;
         void updateVertexAttribs(const Material* oldMat, const Material* newMat);
     };
 }

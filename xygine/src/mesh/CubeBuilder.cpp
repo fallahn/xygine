@@ -187,6 +187,8 @@ void CubeBuilder::build()
             0.f, 0.f, 1.f,
             0.f, 1.f
         };
+
+        m_boundingBox = { {-halfWidth, -halfWidth, -halfWidth}, {halfWidth, halfWidth,halfWidth} };
     }
 }
 

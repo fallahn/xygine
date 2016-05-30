@@ -93,12 +93,12 @@ namespace
         /*"    mat3 normalMatrix = transpose(mat3(u_inverseWorldViewMatrix));\n"*/
         "    vec3 n = normalize(vec3(u_inverseWorldViewMatrix * normal));\n"
         "    vec3 t = normalize(vec3(u_inverseWorldViewMatrix * tangent));\n"
-        "    t = normalize(t - (dot(t, n) * n));\n"
+        /*"    t = normalize(t - (dot(t, n) * n));\n"*/
         "    vec3 b = cross(n,t);\n" \
-        "    mat3 tangentSpaceTransformMatrix = mat3(t, b, n);\n"
+        /*"    mat3 tangentSpaceTransformMatrix = mat3(t, b, n);\n"*/
 
         "    vec3 bumpNormal = texture2D(u_normalMap, gl_TexCoord[0].xy).rgb * 2.0 - 1.0;\n"
-        /*"    bumpNormal = tangentSpaceTransformMatrix * bumpNormal;\n"*/
+        /*"    bumpNormal = normalize(t * bumpNormal.x + b * bumpNormal.y + n * bumpNormal.z);\n"*/
 
         "    gl_FragData[0] = texture2D(u_diffuseMap, gl_TexCoord[0].xy);\n"
         "    gl_FragData[1] = vec4(0.5 * (bumpNormal + 1.0), 1.0);\n"

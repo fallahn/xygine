@@ -65,7 +65,17 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_defaultMaterial = std::make_unique<Material>(m_defaultShader);
     
     //create the render buffer
-    m_gBuffer.create(size.x, size.y, 4u, true, true);
+    m_gBuffer.create(size.x, size.y, 4u, true);
+
+    //use floating point textures for position and normals
+    std::function<void(int)> useFloatingpoint = [size, this](int id)
+    {
+        glCheck(glBindTexture(GL_TEXTURE_2D, m_gBuffer.getTexture(id).getNativeHandle()));
+        glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, 0));
+        glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+    };
+    useFloatingpoint(MaterialChannel::Normal);
+    useFloatingpoint(MaterialChannel::Position);
 
     updateView();
     std::memset(&m_matrixBlock, 0, sizeof(m_matrixBlock));
@@ -198,11 +208,17 @@ void MeshRenderer::drawScene() const
     glEnable(GL_CULL_FACE); //TODO apply these in material passes
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
-    for (const auto& m : m_models)m->draw(m_viewMatrix);
+    auto visibleArea = m_scene.getVisibleArea();
+    std::size_t drawCount = 0;
+    for (const auto& m : m_models)
+    {
+        drawCount += m->draw(m_viewMatrix, visibleArea);
+    }
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     m_gBuffer.display();
     
+    REPORT("Draw Count", std::to_string(drawCount));
 
     //TODO get lights
     //foreach active light render scene to light depthmap

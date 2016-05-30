@@ -29,6 +29,7 @@ source distribution.
 #define XY_QUAD_BUILDER_HPP_
 
 #include <xygine/mesh/MeshBuilder.hpp>
+#include <xygine/mesh/BoundingBox.hpp>
 
 #include <array>
 
@@ -65,16 +66,19 @@ namespace xy
                 halfSizeX, halfSizeY, 0.f,  0.f, 0.f, 1.f,  1.f, 0.f, 0.f,  0.f, 1.f, 0.f,  1.f, 0.f,
                 halfSizeX, -halfSizeY, 0.f,  0.f, 0.f, 1.f,  1.f, 0.f, 0.f,  0.f, 1.f, 0.f,  1.f, 1.f
             };
+
+            m_boundingBox = { {-halfSizeX, -halfSizeY, -0.5f}, {halfSizeX, halfSizeY, 0.5f} };
         }
         VertexLayout getVertexLayout() const override { return VertexLayout(m_elements); }
         const float* getVertexData() const override { return m_vertexData.data(); }
-        std::size_t getVertexCount() const { return 4; }
-        std::vector<MeshBuilder::SubMeshLayout> getSubMeshLayouts() const override { return{}; }
+        std::size_t getVertexCount() const override { return 4; }
+        const BoundingBox& getBoundingBox() const override { return m_boundingBox; }
 
     private:
         sf::Vector2f m_size;
         std::array<float, 56> m_vertexData;
         std::vector<VertexLayout::Element> m_elements;
+        BoundingBox m_boundingBox;
     };
 }
 

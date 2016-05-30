@@ -70,6 +70,7 @@ Mesh& MeshResource::add(MeshResource::ID id, MeshBuilder& mb)
             subMesh.setIndexData(sml.data, 0, 0);
         }
     }
+    mesh.setBoundingBox(mb.getBoundingBox());
     return mesh;
 }
 

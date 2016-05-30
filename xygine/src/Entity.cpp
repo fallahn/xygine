@@ -341,7 +341,8 @@ sf::FloatRect Entity::globalBounds() const
     //find corner
     for (const auto& c : m_components)
     {
-        if (c->type() != Component::Type::Drawable) continue;
+        if (c->type() != Component::Type::Drawable
+            && c->type() != Component::Type::Mesh) continue;
         auto componentBounds = c->globalBounds();
         if (componentBounds.left < bounds.left) bounds.left = componentBounds.left;
         if (componentBounds.top < bounds.top) bounds.top = componentBounds.top;
@@ -350,7 +351,8 @@ sf::FloatRect Entity::globalBounds() const
     //find size
     for (const auto& c : m_components)
     {
-        if (c->type() != Component::Type::Drawable) continue;
+        if (c->type() != Component::Type::Drawable
+            && c->type() != Component::Type::Mesh) continue;
         auto componentBounds = c->globalBounds();
 
         /*auto right = bounds.left + bounds.width;

@@ -420,6 +420,10 @@ void IQMBuilder::build()
             //TODO blend indices and blend weights
         }
         m_vertexCount = header.vertexCount;
+
+        Iqm::Bounds bounds; //TODO we have unique bounds for each keyframe
+        std::memcpy(&bounds, headerBytes + header.boundsOffset, sizeof(Iqm::Bounds));
+        m_boundingBox = { {bounds.bbmin[0], bounds.bbmin[1], bounds.bbmin[2]}, {bounds.bbmax[0], bounds.bbmax[1], bounds.bbmax[2]} };
     }
 }
 

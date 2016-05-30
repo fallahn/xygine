@@ -29,6 +29,7 @@ source distribution.
 #define XY_MESH_HPP_
 
 #include <xygine/mesh/VertexLayout.hpp>
+#include <xygine/mesh/BoundingBox.hpp>
 #include <xygine/detail/GLExtensions.hpp>
 
 #include <vector>
@@ -140,7 +141,14 @@ namespace xy
         \brief Returns a pointer to the SubMesh at the given index if it is found, else nullptr
         */
         SubMesh* getSubMesh(std::size_t) const;
-
+        /*!
+        \brief returns the 3D AABB for this mesh in local coordinates
+        */
+        const BoundingBox& getBoundingBox() const { return m_boundingBox; }
+        /*!
+        \brief Set the BoundgBox used as the 3D AABB for this mesh, in local coordinates
+        */
+        void setBoundingBox(const BoundingBox& bb) { m_boundingBox = bb; }
     private:
 
         VertexLayout m_vertexLayout;
@@ -149,6 +157,8 @@ namespace xy
         PrimitiveType m_primitiveType;
         std::vector<std::unique_ptr<SubMesh>> m_subMeshes;
         bool m_dynamic;
+
+        BoundingBox m_boundingBox;
 
         struct Lock final {};
     };

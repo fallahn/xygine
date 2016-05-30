@@ -345,6 +345,9 @@
     <ClCompile Include="src\mesh\IQMBuilder.cpp">
       <Filter>Source Files\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="src\mesh\BoundingBox.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -738,6 +741,9 @@
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\mesh\QuadBuilder.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\BoundingBox.hpp">
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
   </ItemGroup>

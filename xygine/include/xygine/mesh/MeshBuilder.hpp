@@ -32,6 +32,7 @@ source distribution.
 
 namespace xy
 {
+    class BoundingBox;
     /*!
     \brief Mesh builder class.
     The MeshBuilder is an abstract base class from which should
@@ -96,6 +97,11 @@ namespace xy
         the mesh.
         */
         virtual std::size_t getVertexCount() const = 0;
+
+        /*!
+        \brief Returns the three dimensional AABB for this mesh
+        */
+        virtual const BoundingBox& getBoundingBox() const = 0;
 
         /*!
         \brief Returns whether or not the mesh created should be hinted as dynamic

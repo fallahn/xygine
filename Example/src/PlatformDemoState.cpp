@@ -226,6 +226,7 @@ bool PlatformDemoState::handleEvent(const sf::Event& evt)
             break;
         case sf::Keyboard::Q:
             showDebug = !showDebug;
+            m_scene.drawDebug(showDebug);
             break;
         default: break;
         }

@@ -29,6 +29,7 @@ source distribution.
 #define XY_IQM_BUILDER_HPP_
 
 #include <xygine/mesh/MeshBuilder.hpp>
+#include <xygine/mesh/BoundingBox.hpp>
 
 #include <string>
 #include <vector>
@@ -37,7 +38,7 @@ namespace xy
 {
     /*!
     \brief MeshBuilder implementation for loading IQM format models.
-    <a hre="http://sauerbraten.org/iqm/">Format Details</a>
+    <a href="http://sauerbraten.org/iqm/">Format Details</a>
     */
     class XY_EXPORT_API IQMBuilder final : public xy::MeshBuilder
     {
@@ -53,13 +54,14 @@ namespace xy
         VertexLayout getVertexLayout() const override;
         const float* getVertexData() const override { return m_vertexData.data(); }
         std::size_t getVertexCount() const { return m_vertexCount; }
+        const BoundingBox& getBoundingBox() const override { return m_boundingBox; }
         std::vector<MeshBuilder::SubMeshLayout> getSubMeshLayouts() const override;
 
     private:
         std::vector<float> m_vertexData;
         std::vector<std::vector<std::uint16_t>> m_indexArrays;
         std::vector<VertexLayout::Element> m_elements;
-
+        BoundingBox m_boundingBox;
         std::string m_filePath;
         std::size_t m_vertexCount;
     };

@@ -48,6 +48,8 @@ Model::Model(MessageBus& mb, const Mesh& mesh, const MeshRenderer::Lock&)
 {
     m_subMaterials.resize(mesh.getSubMeshCount());
     std::fill(m_subMaterials.begin(), m_subMaterials.end(), nullptr);
+
+    m_boundingBox = mesh.getBoundingBox();
 }
 
 void Model::entityUpdate(Entity& entity, float dt)
@@ -63,6 +65,8 @@ void Model::entityUpdate(Entity& entity, float dt)
 
     if (m_needsUpdate) updateTransform();
     m_worldMatrix *= m_preTransform;
+
+    m_worldBounds = entity.getWorldTransform().transformRect(m_boundingBox.asFloatRect());
 }
 
 void Model::setBaseMaterial(const Material& material, bool applyToAll)
@@ -128,11 +132,16 @@ void Model::updateTransform()
     m_preTransform *= glm::toMat4(m_rotation);
     m_preTransform = glm::scale(m_preTransform, m_scale);
 
+    m_boundingBox = m_mesh.getBoundingBox();
+    m_boundingBox.transform(m_preTransform);
+
     m_needsUpdate = false;
 }
 
-void Model::draw(const glm::mat4& viewMatrix) const
+std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibleArea) const
 {
+    if (!m_worldBounds.intersects(visibleArea)) return 0;
+    
     glm::mat4 worldViewMat = viewMatrix * m_worldMatrix;
 
     if (m_mesh.getSubMeshCount() > 0)
@@ -151,6 +160,7 @@ void Model::draw(const glm::mat4& viewMatrix) const
             glCheck(glDrawElements(static_cast<GLenum>(subMesh->getPrimitiveType()), subMesh->getIndexCount(), static_cast<GLenum>(subMesh->getIndexFormat()), 0));
             vao->second.unbind();
         }
+        return count;
     }
     else
     {
@@ -163,6 +173,7 @@ void Model::draw(const glm::mat4& viewMatrix) const
         glCheck(glDrawArrays(static_cast<GLenum>(m_mesh.getPrimitiveType()), 0, m_mesh.getVertexCount()));
         vao->second.unbind();
     }
+    return 1;
 }
 
 void Model::updateVertexAttribs(const Material* oldMat, const Material* newMat)

@@ -29,6 +29,7 @@ source distribution.
 #define XY_CUBE_BUILDER_HPP_
 
 #include <xygine/mesh/MeshBuilder.hpp>
+#include <xygine/mesh/BoundingBox.hpp>
 
 #include <array>
 
@@ -49,13 +50,13 @@ namespace xy
         VertexLayout getVertexLayout() const override;
         const float* getVertexData() const override { return m_vertexData.data(); }
         std::size_t getVertexCount() const override { return 24; }
-
+        const BoundingBox& getBoundingBox() const override { return m_boundingBox; }
         std::vector<MeshBuilder::SubMeshLayout> getSubMeshLayouts() const override;
 
     private:
 
         float m_size;
-
+        BoundingBox m_boundingBox;
         std::array<std::uint8_t, 36> m_indices;
 
         std::vector<float> m_vertexData;
