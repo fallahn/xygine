@@ -36,6 +36,11 @@ source distribution.
 
 namespace xy
 {
+    namespace Iqm
+    {
+        struct Header;
+    }
+    
     /*!
     \brief MeshBuilder implementation for loading IQM format models.
     <a href="http://sauerbraten.org/iqm/">Format Details</a>
@@ -57,6 +62,8 @@ namespace xy
         const BoundingBox& getBoundingBox() const override { return m_boundingBox; }
         std::vector<MeshBuilder::SubMeshLayout> getSubMeshLayouts() const override;
 
+        const std::vector<std::string>& getMaterialNames() const { return m_materialNames; }
+
     private:
         std::vector<float> m_vertexData;
         std::vector<std::vector<std::uint16_t>> m_indexArrays;
@@ -64,6 +71,11 @@ namespace xy
         BoundingBox m_boundingBox;
         std::string m_filePath;
         std::size_t m_vertexCount;
+
+        std::vector<std::string> m_materialNames;
+
+        void loadVertexData(const Iqm::Header&, char*, const std::string&);
+        void loadAnimationData(const Iqm::Header&, char*, const std::string&);
     };
 
     /*!
