@@ -103,7 +103,7 @@ void Skeleton::Animation::interpolate(const std::vector<glm::mat4>& a, const std
 {
     auto size = m_skeleton->m_keyFrames[m_startFrame].size();
     const auto& boneIndices = m_skeleton->m_jointIndices;
-    for (auto i = 0; i < size; ++i)
+    for (auto i = 0u; i < size; ++i)
     {
         glm::mat4 mat(glm::mix(a[i], b[i], time));
         if (boneIndices[i] >= 0)
