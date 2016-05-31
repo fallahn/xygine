@@ -83,28 +83,28 @@ namespace xy
         Models added to the MeshRenderer are mapped to the given ID an
         resource managed, along with any other model properties such as
         materials or animations.
+        \param std::int32_t Unique ID to map the model to.
         \param ModelBuilder Reference to the instance of a model builder
         used to load the model into the renderer's resource manager.
-        \param std::int32_t Unique ID to map the model to.
         */
-        void loadModel(const ModelBuilder&, std::int32_t);
+        void loadModel(std::int32_t, ModelBuilder&);
 
         /*!
         \brief Creates a model component from previously loaded model data.
         This will return a model component complete with mesh and any materials
         and aniamtions if they were loaded via the ModelBuilder.
-        \param MessageBus Reference to the actuve message bus.
         \param std::int32_t Unique ID used when loading the model.
+        \param MessageBus Reference to the actuve message bus.
         \returns Model component if successful, else nullptr (for example an invalid ID was provided)
         */
-        std::unique_ptr<Model> createModel(MessageBus&, std::int32_t);
+        std::unique_ptr<Model> createModel(std::int32_t, MessageBus&);
 
         /*!
         \brief Factory function for creating Model components.
         Model components require registration with the MeshRenderer
         so the only valid way to create them is via this function (or one of its overloads).
         */
-        std::unique_ptr<Model> createModel(MessageBus&, const Mesh&);
+        std::unique_ptr<Model> createModel(const Mesh&, MessageBus&);
 
         /*!
         \brief Updates the MeshRenderer with the current scene status.
@@ -148,9 +148,6 @@ namespace xy
 
     private:
         struct Lock final {};
-
-        sf::Shader m_defaultShader;
-        std::unique_ptr<Material> m_defaultMaterial;
 
         MeshResource m_meshResource;
         MaterialResource m_materialResource;

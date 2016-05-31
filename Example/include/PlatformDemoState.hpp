@@ -80,7 +80,6 @@ private:
         Cube = 0,
         Fixit
     };
-    xy::MeshResource m_meshResource;
 
     enum MatId
     {

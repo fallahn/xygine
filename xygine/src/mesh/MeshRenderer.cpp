@@ -60,10 +60,6 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_doLightBlur           (true),
     m_lightingBlockID       (-1)
 {
-    //set up a default material to assign to newly created models
-    m_defaultShader.loadFromMemory(DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
-    m_defaultMaterial = std::make_unique<Material>(m_defaultShader);
-    
     //create the render buffer
     m_gBuffer.create(size.x, size.y, 4u, true);
 
@@ -83,7 +79,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16 * sizeof(float));
     m_matrixBlockBuffer.create(m_matrixBlock);
 
-    m_defaultMaterial->addUniformBuffer(m_matrixBlockBuffer);
+    m_materialResource.get(0xffff).addUniformBuffer(m_matrixBlockBuffer);
     
     //set lighting uniform buffer
     std::memset(&m_lightingBlock, 0, sizeof(m_lightingBlock));
@@ -106,13 +102,31 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
 }
 
 //public
-std::unique_ptr<Model> MeshRenderer::createModel(MessageBus& mb, const Mesh& mesh)
+void MeshRenderer::loadModel(std::int32_t id, ModelBuilder& mb)
+{
+    m_meshResource.add(id, mb);
+
+    //TODO check for any material properties and map their IDs
+    //to material resource
+}
+
+std::unique_ptr<Model> MeshRenderer::createModel(std::int32_t id, MessageBus&mb)
+{
+    auto& mesh = m_meshResource.get(id);
+    auto model = createModel(mesh, mb);
+
+    //TODO check material ID for mesh ID and add materials if they exist
+
+    return std::move(model);
+}
+
+std::unique_ptr<Model> MeshRenderer::createModel(const Mesh& mesh, MessageBus& mb)
 {
     auto model = Component::create<Model>(mb, mesh, Lock());
     m_models.push_back(model.get());
     
     //set default material
-    model->setBaseMaterial(*m_defaultMaterial);
+    model->setBaseMaterial(m_materialResource.get(0xffff));
 
     return std::move(model);
 }
@@ -265,8 +279,8 @@ void MeshRenderer::updateView()
     m_projectionMatrix = glm::perspective(fov, viewSize.x / viewSize.y, nearPlane, m_cameraZ * 2.f);
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16);
 
-    m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
-    m_defaultShader.setUniform("u_farPlane", m_cameraZ * 2.f);
+    //m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
+    //m_defaultShader.setUniform("u_farPlane", m_cameraZ * 2.f);
 }
 
 void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
