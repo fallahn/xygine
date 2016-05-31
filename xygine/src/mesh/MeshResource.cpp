@@ -50,7 +50,7 @@ MeshResource::MeshResource()
 }
 
 //public
-Mesh& MeshResource::add(MeshResource::ID id, MeshBuilder& mb)
+Mesh& MeshResource::add(MeshResource::ID id, ModelBuilder& mb)
 {
     mb.build();
 

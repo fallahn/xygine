@@ -254,7 +254,7 @@
     <ClInclude Include="include\xygine\mesh\Material.hpp" />
     <ClInclude Include="include\xygine\mesh\MaterialResource.hpp" />
     <ClInclude Include="include\xygine\mesh\Mesh.hpp" />
-    <ClInclude Include="include\xygine\mesh\MeshBuilder.hpp" />
+    <ClInclude Include="include\xygine\mesh\ModelBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\MeshRenderer.hpp" />
     <ClInclude Include="include\xygine\mesh\MeshResource.hpp" />
     <ClInclude Include="include\xygine\mesh\QuadBuilder.hpp" />

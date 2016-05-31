@@ -285,20 +285,6 @@ VertexLayout IQMBuilder::getVertexLayout() const
     return VertexLayout(m_elements);
 }
 
-std::vector<MeshBuilder::SubMeshLayout> IQMBuilder::getSubMeshLayouts() const
-{
-    std::vector<MeshBuilder::SubMeshLayout> retVal(m_indexArrays.size());
-    for (auto i = 0u; i < m_indexArrays.size(); ++i)
-    {
-        retVal[i].data = (void*)m_indexArrays[i].data();
-        retVal[i].indexFormat = Mesh::IndexFormat::I16;
-        retVal[i].size = m_indexArrays[i].size();
-        retVal[i].type = Mesh::PrimitiveType::Triangles;
-    }
-
-    return std::move(retVal);
-}
-
 void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, const std::string& strings)
 {   
     //load vertex data (attributes are kept in separate arrays)
@@ -349,7 +335,7 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
         Iqm::Mesh mesh;
         meshBytesIter = readMesh(meshBytesIter, mesh);
 
-        m_materialNames.emplace_back(&strings[mesh.material]);
+        addMaterialName(&strings[mesh.material]);
 
         Iqm::Triangle triangle;
         char* triangleIter = headerBytes + header.triangleOffset + (mesh.firstTriangle * sizeof(triangle.vertex));
@@ -371,6 +357,13 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
         }
 
         m_indexArrays.push_back(indices);
+
+        SubMeshLayout sml;
+        sml.data = (void*)m_indexArrays.back().data();
+        sml.indexFormat = Mesh::IndexFormat::I16;
+        sml.size = m_indexArrays[i].size();
+        sml.type = Mesh::PrimitiveType::Triangles;
+        addSubMeshLayout(sml);
     }
 
 

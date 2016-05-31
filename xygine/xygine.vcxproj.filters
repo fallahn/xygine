@@ -710,9 +710,6 @@
     <ClInclude Include="include\xygine\mesh\MaterialResource.hpp">
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\mesh\MeshBuilder.hpp">
-      <Filter>Header Files\mesh</Filter>
-    </ClInclude>
     <ClInclude Include="include\xygine\mesh\CubeBuilder.hpp">
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
@@ -744,6 +741,9 @@
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\mesh\BoundingBox.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\ModelBuilder.hpp">
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
   </ItemGroup>

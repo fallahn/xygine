@@ -31,6 +31,9 @@ source distribution.
 #include <xygine/mesh/Material.hpp>
 #include <xygine/mesh/UniformBuffer.hpp>
 #include <xygine/mesh/RenderQuad.hpp>
+#include <xygine/mesh/MeshResource.hpp>
+#include <xygine/mesh/MaterialResource.hpp>
+#include <xygine/ShaderResource.hpp>
 #include <xygine/MultiRenderTexture.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
@@ -50,6 +53,7 @@ namespace xy
     class Mesh;
     class Model;
     class Scene;
+    class ModelBuilder;
     /*!
     \brief Mesh rendering class. The MeshRenderer is
     responsible for drawing the model components in a scene.
@@ -75,9 +79,30 @@ namespace xy
         ~MeshRenderer() = default;
 
         /*!
+        \brief Loads a model via the provided model builder.
+        Models added to the MeshRenderer are mapped to the given ID an
+        resource managed, along with any other model properties such as
+        materials or animations.
+        \param ModelBuilder Reference to the instance of a model builder
+        used to load the model into the renderer's resource manager.
+        \param std::int32_t Unique ID to map the model to.
+        */
+        void loadModel(const ModelBuilder&, std::int32_t);
+
+        /*!
+        \brief Creates a model component from previously loaded model data.
+        This will return a model component complete with mesh and any materials
+        and aniamtions if they were loaded via the ModelBuilder.
+        \param MessageBus Reference to the actuve message bus.
+        \param std::int32_t Unique ID used when loading the model.
+        \returns Model component if successful, else nullptr (for example an invalid ID was provided)
+        */
+        std::unique_ptr<Model> createModel(MessageBus&, std::int32_t);
+
+        /*!
         \brief Factory function for creating Model components.
         Model components require registration with the MeshRenderer
-        so the only valid way to create them is via this factory function.
+        so the only valid way to create them is via this function (or one of its overloads).
         */
         std::unique_ptr<Model> createModel(MessageBus&, const Mesh&);
 
@@ -101,7 +126,7 @@ namespace xy
         projection and view matrix. This UniformBuffer will automatically update
         the properties of any material which uses a shader with a u_matrixBlock
         uniform.
-        \see Shader3D::DefaultVertex
+        \see Shader::Mesh::DefaultVertex
         */
         const UniformBuffer& getMatrixUniforms() const { return m_matrixBlockBuffer; }
 
@@ -126,6 +151,10 @@ namespace xy
 
         sf::Shader m_defaultShader;
         std::unique_ptr<Material> m_defaultMaterial;
+
+        MeshResource m_meshResource;
+        MaterialResource m_materialResource;
+        ShaderResource m_shaderResource;
 
         const Scene& m_scene;
         glm::mat4 m_viewMatrix;

@@ -41,6 +41,12 @@ CubeBuilder::CubeBuilder(float size)
         16u, 17u, 18u, 16u, 18u, 19u,
         20u, 21u, 22u, 20u, 22u, 23u
     };
+
+    SubMeshLayout sml;
+    sml.data = (void*)m_indices.data();
+    sml.size = m_indices.size();
+    sml.type = Mesh::PrimitiveType::Triangles;
+    addSubMeshLayout(sml);
 }
 
 //public
@@ -195,14 +201,4 @@ void CubeBuilder::build()
 VertexLayout CubeBuilder::getVertexLayout() const
 {
     return VertexLayout(m_elements);
-}
-
-std::vector<MeshBuilder::SubMeshLayout> CubeBuilder::getSubMeshLayouts() const
-{
-    std::vector<MeshBuilder::SubMeshLayout> retval(1);
-    retval[0].data = (void*)m_indices.data();
-    retval[0].size = m_indices.size();
-    retval[0].type = Mesh::PrimitiveType::Triangles;
-
-    return std::move(retval);
 }

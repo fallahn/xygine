@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_CUBE_BUILDER_HPP_
 #define XY_CUBE_BUILDER_HPP_
 
-#include <xygine/mesh/MeshBuilder.hpp>
+#include <xygine/mesh/ModelBuilder.hpp>
 #include <xygine/mesh/BoundingBox.hpp>
 
 #include <array>
@@ -40,7 +40,7 @@ namespace xy
     cube meshes.
     \see MeshBuilder
     */
-    class XY_EXPORT_API CubeBuilder final : public MeshBuilder
+    class XY_EXPORT_API CubeBuilder final : public ModelBuilder
     {
     public:
         explicit CubeBuilder(float size);
@@ -51,7 +51,6 @@ namespace xy
         const float* getVertexData() const override { return m_vertexData.data(); }
         std::size_t getVertexCount() const override { return 24; }
         const BoundingBox& getBoundingBox() const override { return m_boundingBox; }
-        std::vector<MeshBuilder::SubMeshLayout> getSubMeshLayouts() const override;
 
     private:
 

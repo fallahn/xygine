@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_IQM_BUILDER_HPP_
 #define XY_IQM_BUILDER_HPP_
 
-#include <xygine/mesh/MeshBuilder.hpp>
+#include <xygine/mesh/ModelBuilder.hpp>
 #include <xygine/mesh/BoundingBox.hpp>
 
 #include <string>
@@ -45,7 +45,7 @@ namespace xy
     \brief MeshBuilder implementation for loading IQM format models.
     <a href="http://sauerbraten.org/iqm/">Format Details</a>
     */
-    class XY_EXPORT_API IQMBuilder final : public xy::MeshBuilder
+    class XY_EXPORT_API IQMBuilder final : public xy::ModelBuilder
     {
     public:
         /*!
@@ -60,9 +60,6 @@ namespace xy
         const float* getVertexData() const override { return m_vertexData.data(); }
         std::size_t getVertexCount() const { return m_vertexCount; }
         const BoundingBox& getBoundingBox() const override { return m_boundingBox; }
-        std::vector<MeshBuilder::SubMeshLayout> getSubMeshLayouts() const override;
-
-        const std::vector<std::string>& getMaterialNames() const { return m_materialNames; }
 
     private:
         std::vector<float> m_vertexData;
@@ -71,8 +68,6 @@ namespace xy
         BoundingBox m_boundingBox;
         std::string m_filePath;
         std::size_t m_vertexCount;
-
-        std::vector<std::string> m_materialNames;
 
         void loadVertexData(const Iqm::Header&, char*, const std::string&);
         void loadAnimationData(const Iqm::Header&, char*, const std::string&);

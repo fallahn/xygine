@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_QUAD_BUILDER_HPP_
 #define XY_QUAD_BUILDER_HPP_
 
-#include <xygine/mesh/MeshBuilder.hpp>
+#include <xygine/mesh/ModelBuilder.hpp>
 #include <xygine/mesh/BoundingBox.hpp>
 
 #include <array>
@@ -36,9 +36,9 @@ source distribution.
 namespace xy
 {
     /*!
-    \brief Creates a simpel quad mesh with normals and UV coordinates
+    \brief Creates a simple quad mesh with normals and UV coordinates
     */
-    class QuadBuilder final : public xy::MeshBuilder
+    class QuadBuilder final : public xy::ModelBuilder
     {
     public:
         explicit QuadBuilder(const sf::Vector2f& size)

@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_MESH_BUILDER_HPP_
-#define XY_MESH_BUILDER_HPP_
+#ifndef XY_MODEL_BUILDER_HPP_
+#define XY_MODEL_BUILDER_HPP_
 
 #include <xygine/mesh/Mesh.hpp>
 
@@ -34,22 +34,21 @@ namespace xy
 {
     class BoundingBox;
     /*!
-    \brief Mesh builder class.
-    The MeshBuilder is an abstract base class from which should
-    be inherited when creating a Mesh loader or generator, used
-    with the MeshRecource class. The MeshBuilder provides a single
-    interface which can be implemented to provide MeshResources
-    with the data they require. Instances are used once only when
-    they are added to a MeshResource so no special lifetime
-    requirements exist, and can be discarded once they have been used.
+    \brief Model builder class.
+    This abstract base class provides an interface for the mesh renderer to
+    load abitrary model types. Inherit this class when creating a loader for
+    a specific file format, or a mesh generator (such as the CubeBuilder or 
+    QuadBuilder).
     */
-    class XY_EXPORT_API MeshBuilder
+    class XY_EXPORT_API ModelBuilder
     {
     public:
         /*!
         \brief Describes the layout of a SubMesh
         belonging to the built mesh, and a pointer
-        to its data.
+        to its data. When parsing model data these
+        should be stored using addSubMeshLayout() for 
+        each submesh index in the model (if any)
         */
         struct SubMeshLayout final
         {
@@ -62,24 +61,26 @@ namespace xy
         /*!
         \brief Default constructor
         */
-        MeshBuilder() = default;
-        virtual ~MeshBuilder() = default;
+        ModelBuilder() = default;
+        virtual ~ModelBuilder() = default;
 
         /*!
         \brief Builds the mesh data.
         This should be overloaded by derived classes to
         assemble CPU side vertex data ready for consumption
-        by the MeshResource class. This is normally where 
+        by the MeshRenderer class. This is normally where 
         mesh format specific parsing would occur, for example
         when loading external files from disk exported from a
-        modelling program, or other external source.
+        modelling program, or other external source. Metadata
+        such as material names or animation info can also be
+        loaded here and stored with addMaterialName()
         */
         virtual void build() = 0;
 
         /*!
         \brief Returns the vertex layout information for the mesh.
         This function needs to be implemented to provide the
-        MeshResource vertex layout information for the loaded mesh.
+        MeshRenderer vertex layout information for the loaded mesh.
         \see VertexLayout
         */
         virtual xy::VertexLayout getVertexLayout() const = 0;
@@ -115,13 +116,37 @@ namespace xy
 
         /*!
         \brief Returns a vector of SubMeshLayout.
-        If a mesh requires SubMeshes (index arrays) implement this and
-        return a struct for each SubMesh required
         */
-        virtual std::vector<SubMeshLayout> getSubMeshLayouts() const { return{}; }
+        const std::vector<SubMeshLayout>& getSubMeshLayouts() const { return m_subMeshes; }
+
+        /*!
+        \brief Returns a list of material names (if they are stored in the model format)
+        in the order to which they applied to submeshes (or base mesh if there is only one)
+        */
+        const std::vector<std::string>& getMaterialNames() const { return m_materialNames; }
+
+    protected:
+        /*!
+        \brief Used to store descriptions of sub-meshes to be returned to the MeshRenderer
+        */
+        void addSubMeshLayout(const SubMeshLayout& l)
+        {
+            m_subMeshes.push_back(l);
+        }
+
+        /*!
+        \brief Used to store the names of materials
+        in the order to whic hthey are applied to sub-meshes
+        */
+        void addMaterialName(const std::string& n)
+        {
+            m_materialNames.push_back(n);
+        }
 
     private:
 
+        std::vector<SubMeshLayout> m_subMeshes;
+        std::vector<std::string> m_materialNames;
     };
 }
 
