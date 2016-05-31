@@ -47,6 +47,8 @@ set(XY_SRC
   ${XY_DIR}/mesh/MeshRenderer.cpp
   ${XY_DIR}/mesh/MeshResource.cpp
   ${XY_DIR}/mesh/RenderQuad.cpp
+  ${XY_DIR}/mesh/Skeleton.cpp
+  ${XY_DIR}/mesh/SkeletonAnimation.cpp
   ${XY_DIR}/mesh/SubMesh.cpp
   ${XY_DIR}/mesh/UniformBuffer.cpp
   ${XY_DIR}/mesh/VertexAttribBinding.cpp
