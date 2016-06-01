@@ -33,6 +33,7 @@ source distribution.
 #include <xygine/mesh/RenderQuad.hpp>
 #include <xygine/mesh/MeshResource.hpp>
 #include <xygine/mesh/MaterialResource.hpp>
+#include <xygine/mesh/Skeleton.hpp>
 #include <xygine/ShaderResource.hpp>
 #include <xygine/MultiRenderTexture.hpp>
 
@@ -152,6 +153,15 @@ namespace xy
         MeshResource m_meshResource;
         MaterialResource m_materialResource;
         ShaderResource m_shaderResource;
+
+        struct AnimationData
+        {
+            AnimationData(std::unique_ptr<Skeleton>& s, const std::vector<Skeleton::Animation>& a)
+                : skeleton(std::move(s)), animations(a) {}
+            std::unique_ptr<Skeleton> skeleton;
+            std::vector<Skeleton::Animation> animations;
+        };
+        std::map<std::int32_t, AnimationData> m_animationResource;
 
         const Scene& m_scene;
         glm::mat4 m_viewMatrix;

@@ -29,6 +29,9 @@ source distribution.
 #define XY_MODEL_BUILDER_HPP_
 
 #include <xygine/mesh/Mesh.hpp>
+#include <xygine/mesh/Skeleton.hpp>
+
+#include <memory>
 
 namespace xy
 {
@@ -125,6 +128,18 @@ namespace xy
         */
         const std::vector<std::string>& getMaterialNames() const { return m_materialNames; }
 
+        /*!
+        \brief Returns a unique_ptr to a Skeleton if the model has one, else nullptr
+        */
+        std::unique_ptr<Skeleton> getSkeleton() { return std::move(m_skeleton); }
+
+        /*!
+        \brief Returns a vector of Animation structs if the model contains animations
+        else returns an empty vector
+        This is only useful to query if the getSkeleton() function doesn't return nullptr
+        */
+        const std::vector<Skeleton::Animation>& getAnimations() const { return m_animations; }
+
     protected:
         /*!
         \brief Used to store descriptions of sub-meshes to be returned to the MeshRenderer
@@ -136,17 +151,33 @@ namespace xy
 
         /*!
         \brief Used to store the names of materials
-        in the order to whic hthey are applied to sub-meshes
+        in the order to which they are applied to sub-meshes
         */
         void addMaterialName(const std::string& n)
         {
             m_materialNames.push_back(n);
         }
 
+        /*!
+        \brief Allows adding a loaded animation to the vector of Animation structs
+        */
+        void addAnimation(const Skeleton::Animation& a) { m_animations.push_back(a); }
+
+        /*!
+        \brief Sets the skeletal data
+        */
+        void setSkeleton(const std::vector<std::int32_t>& jointIndices, const std::vector<std::vector<glm::mat4>>& keyFrames)
+        {
+            m_skeleton = std::make_unique<Skeleton>(jointIndices, keyFrames);
+        }
+
     private:
 
         std::vector<SubMeshLayout> m_subMeshes;
         std::vector<std::string> m_materialNames;
+
+        std::unique_ptr<Skeleton> m_skeleton;
+        std::vector<Skeleton::Animation> m_animations;
     };
 }
 

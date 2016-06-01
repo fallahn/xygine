@@ -49,21 +49,21 @@ Skeleton::Animation::Animation(std::size_t frameCount, std::size_t startFrame, f
 }
 
 //public
-const std::vector<glm::mat4>& Skeleton::Animation::getCurrentFrame() const
-{
-    return m_currentFrame;
-}
+//const std::vector<glm::mat4>& Skeleton::Animation::getCurrentFrame() const
+//{
+//    return m_currentFrame;
+//}
 
-void Skeleton::Animation::setSkeleton(Skeleton* s)
+void Skeleton::Animation::setSkeleton(const Skeleton* s)
 {
     m_skeleton = s;
-    if (m_skeleton)
-    {
-        buildFirstFrame();
-    }
+    //if (m_skeleton)
+    //{
+    //    buildFirstFrame();
+    //}
 }
 
-void Skeleton::Animation::update(float dt)
+void Skeleton::Animation::update(float dt, std::vector<glm::mat4>& output)
 {
     m_currentTime += dt;
     if (m_currentTime >= m_frameTime && (m_currentFrameIndex < m_endFrame || m_looped))
@@ -73,33 +73,33 @@ void Skeleton::Animation::update(float dt)
         m_nextFrameIndex = (m_currentFrameIndex + 1u) % m_frameCount;
         m_currentTime = 0.f;
     }
-    interpolate(m_skeleton->m_keyFrames[m_currentFrameIndex], m_skeleton->m_keyFrames[m_nextFrameIndex], m_currentTime / m_frameTime);
+    interpolate(m_skeleton->m_keyFrames[m_currentFrameIndex], m_skeleton->m_keyFrames[m_nextFrameIndex], m_currentTime / m_frameTime, output);
 }
 
 //private
-void Skeleton::Animation::buildFirstFrame()
-{
-    XY_ASSERT(m_skeleton, "Animation has no skeleton associated");
+//void Skeleton::Animation::buildFirstFrame()
+//{
+//    XY_ASSERT(m_skeleton, "Animation has no skeleton associated");
+//
+//    auto size = m_skeleton->m_keyFrames[m_startFrame].size();
+//    m_currentFrame.resize(size);
+//
+//    const auto& boneIndices = m_skeleton->m_jointIndices;
+//    for (auto i = 0u; i < size; ++i)
+//    {
+//        const auto& mat = m_skeleton->m_keyFrames[m_startFrame][i];       
+//        if (boneIndices[i] >= 0)
+//        {
+//            m_currentFrame[i] = m_currentFrame[boneIndices[i]] * mat;
+//        }
+//        else
+//        {
+//            m_currentFrame[i] = mat;
+//        }
+//    }
+//}
 
-    auto size = m_skeleton->m_keyFrames[m_startFrame].size();
-    m_currentFrame.resize(size);
-
-    const auto& boneIndices = m_skeleton->m_jointIndices;
-    for (auto i = 0u; i < size; ++i)
-    {
-        const auto& mat = m_skeleton->m_keyFrames[m_startFrame][i];       
-        if (boneIndices[i] >= 0)
-        {
-            m_currentFrame[i] = m_currentFrame[boneIndices[i]] * mat;
-        }
-        else
-        {
-            m_currentFrame[i] = mat;
-        }
-    }
-}
-
-void Skeleton::Animation::interpolate(const std::vector<glm::mat4>& a, const std::vector<glm::mat4>& b, float time)
+void Skeleton::Animation::interpolate(const std::vector<glm::mat4>& a, const std::vector<glm::mat4>& b, float time, std::vector<glm::mat4>& output)
 {
     auto size = m_skeleton->m_keyFrames[m_startFrame].size();
     const auto& boneIndices = m_skeleton->m_jointIndices;
@@ -108,11 +108,11 @@ void Skeleton::Animation::interpolate(const std::vector<glm::mat4>& a, const std
         glm::mat4 mat(glm::mix(a[i], b[i], time));
         if (boneIndices[i] >= 0)
         {
-            m_currentFrame[i] = m_currentFrame[boneIndices[i]] * mat;
+            output[i] = output[boneIndices[i]] * mat;
         }
         else
         {
-            m_currentFrame[i] = mat;
+            output[i] = mat;
         }
     }
 }

@@ -175,6 +175,21 @@ namespace
         return poseArrayPtr;
     }
 
+    char* readAnim(char* animArrayPtr, Iqm::Anim& dest)
+    {
+        std::memcpy(&dest.name, animArrayPtr, sizeof(dest.name));
+        animArrayPtr += sizeof(dest.name);
+        std::memcpy(&dest.firstFrame, animArrayPtr, sizeof(dest.firstFrame));
+        animArrayPtr += sizeof(dest.firstFrame);
+        std::memcpy(&dest.frameCount, animArrayPtr, sizeof(dest.frameCount));
+        animArrayPtr += sizeof(dest.frameCount);
+        std::memcpy(&dest.framerate, animArrayPtr, sizeof(dest.framerate));
+        animArrayPtr += sizeof(dest.framerate);
+        std::memcpy(&dest.flags, animArrayPtr, sizeof(dest.flags));
+        animArrayPtr += sizeof(dest.flags);
+
+        return animArrayPtr;
+    }
 
     glm::mat4 createBoneMatrix(const glm::quat& rotation, const glm::vec3& translation, const glm::vec3& scale)
     {
@@ -505,7 +520,7 @@ void IQMBuilder::loadAnimationData(const Iqm::Header& header, char* headerBytes,
     char* jointIter = headerBytes + header.jointOffset;
     std::vector<glm::mat4> bindPose(header.jointCount);
     std::vector<glm::mat4> inverseBindPose(header.jointCount);
-    std::vector<std::int32_t> boneIndices(header.jointCount);
+    std::vector<std::int32_t> jointIndices(header.jointCount);
 
     for (auto i = 0u; i < header.jointCount; ++i)
     {
@@ -531,7 +546,7 @@ void IQMBuilder::loadAnimationData(const Iqm::Header& header, char* headerBytes,
             inverseBindPose[i] *= inverseBindPose[joint.parent];
 
         }
-        boneIndices[i] = joint.parent; //we need to track these for blending frames during animation
+        jointIndices[i] = joint.parent; //we need to track these for blending frames during animation
     }
 
     //load keyframes - a 'pose' is a single posed joint, and a set of poses makes up one frame equivalent to a posed skeleton
@@ -587,4 +602,14 @@ void IQMBuilder::loadAnimationData(const Iqm::Header& header, char* headerBytes,
             }
         }
     }
+
+    char*  animIter = headerBytes + header.animOffset;
+    for (auto animIndex = 0u; animIndex < header.animCount; ++animIndex)
+    {
+        Iqm::Anim anim;
+        animIter = readAnim(animIter, anim);
+        addAnimation({ anim.frameCount, anim.firstFrame, anim.framerate,{ &strings[anim.name] } });
+    }
+
+    setSkeleton(jointIndices, keyframes);
 }

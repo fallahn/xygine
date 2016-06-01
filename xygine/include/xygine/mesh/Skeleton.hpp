@@ -69,15 +69,15 @@ namespace xy
             on the current animation time and the nearest two key frames.
             \returns Pointer to array of matrices to send directly to skinning shader
             */
-            const std::vector<glm::mat4>& getCurrentFrame() const;
+            //const std::vector<glm::mat4>& getCurrentFrame() const;
             /*!
             \brief Sets the skeleton to which this animation is applied
             */
-            void setSkeleton(Skeleton*);
+            void setSkeleton(const Skeleton*);
             /*!
             \brief Updates the animation based on the give frame time
             */
-            void update(float);
+            void update(float, std::vector<glm::mat4>&);
 
         private:
             std::size_t m_frameCount;
@@ -87,15 +87,15 @@ namespace xy
             std::string m_name;
             bool m_looped;
 
-            std::vector<glm::mat4> m_currentFrame; //<TODO pass this in to update as it's shared with all animations
-            Skeleton* m_skeleton;
+            //std::vector<glm::mat4> m_currentFrame; //<TODO pass this in to update as it's shared with all animations
+            const Skeleton* m_skeleton;
             float m_currentTime;
             float m_frameTime;
             std::size_t m_currentFrameIndex;
             std::size_t m_nextFrameIndex;
 
-            void buildFirstFrame();
-            void interpolate(const std::vector<glm::mat4>&, const std::vector<glm::mat4>&, float);
+            //void buildFirstFrame();
+            void interpolate(const std::vector<glm::mat4>&, const std::vector<glm::mat4>&, float, std::vector<glm::mat4>&);
         };
 
         /*!
@@ -105,6 +105,8 @@ namespace xy
         */
         Skeleton(const std::vector<std::int32_t>& jointIndices, const std::vector<std::vector<glm::mat4>>& keyFrames);
         ~Skeleton() = default;
+        Skeleton(Skeleton&&) noexcept = default;
+        Skeleton& operator = (Skeleton&&) = default;
 
         /*!
         \brief Returns the keyframe at the given index

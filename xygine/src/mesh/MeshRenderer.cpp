@@ -108,6 +108,13 @@ void MeshRenderer::loadModel(std::int32_t id, ModelBuilder& mb)
 
     //TODO check for any material properties and map their IDs
     //to material resource
+
+    //check for skeleton property and cache along with any animations if they are found
+    auto skeleton = mb.getSkeleton();
+    if (skeleton && m_animationResource.find(id) == m_animationResource.end())
+    {
+        m_animationResource.insert(std::make_pair(id, AnimationData(skeleton, mb.getAnimations())));
+    }
 }
 
 std::unique_ptr<Model> MeshRenderer::createModel(std::int32_t id, MessageBus&mb)
@@ -116,6 +123,14 @@ std::unique_ptr<Model> MeshRenderer::createModel(std::int32_t id, MessageBus&mb)
     auto model = createModel(mesh, mb);
 
     //TODO check material ID for mesh ID and add materials if they exist
+
+    //check for skeleton, and animations
+    auto result = m_animationResource.find(id);
+    if (result != m_animationResource.end())
+    {
+        model->setSkeleton(*result->second.skeleton.get());
+        model->setAnimations(result->second.animations);
+    }
 
     return std::move(model);
 }

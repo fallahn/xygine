@@ -128,6 +128,24 @@ namespace xy
         */
         void setScale(const sf::Vector3f&);
 
+        /*!
+        \brief Allows adding skeletal data to the model if the mesh supports
+        skeletal animation.
+        */
+        void setSkeleton(const Skeleton&);
+
+        /*!
+        \brief Adds an animation to the list of animations this model has
+        */
+        void addAnimation(const Skeleton::Animation&);
+
+        /*!
+        \brief Sets the list of animations of this model to the given list.
+        This will remove any existing animations. To append an animation to
+        the model's list use addAnimation()
+        */
+        void setAnimations(const std::vector<Skeleton::Animation>&);
+
     private:
         glm::vec3 m_translation;
         glm::quat m_rotation;
@@ -144,6 +162,11 @@ namespace xy
         const Material* m_material;
         std::vector<const Material*> m_subMaterials;
         std::map<const Material*, VertexAttribBinding> m_vaoBindings;
+
+        const Skeleton* m_skeleton;
+        std::vector<glm::mat4> m_currentFrame;
+        std::vector<Skeleton::Animation> m_animations;
+        std::size_t m_currentAnimation;
 
         std::size_t draw(const glm::mat4&, const sf::FloatRect&) const;
         void updateVertexAttribs(const Material* oldMat, const Material* newMat);

@@ -40,11 +40,13 @@ source distribution.
 using namespace xy;
 
 Model::Model(MessageBus& mb, const Mesh& mesh, const MeshRenderer::Lock&)
-    : Component     (mb, this),
-    m_scale         (1.f, 1.f, 1.f),
-    m_needsUpdate   (false),
-    m_mesh          (mesh),
-    m_material      (nullptr)
+    : Component         (mb, this),
+    m_scale             (1.f, 1.f, 1.f),
+    m_needsUpdate       (false),
+    m_mesh              (mesh),
+    m_material          (nullptr),
+    m_skeleton          (nullptr),
+    m_currentAnimation  (0)
 {
     m_subMaterials.resize(mesh.getSubMeshCount());
     std::fill(m_subMaterials.begin(), m_subMaterials.end(), nullptr);
@@ -122,6 +124,35 @@ void Model::setPosition(const sf::Vector3f& position)
 void Model::setScale(const sf::Vector3f& scale)
 {
     m_scale = { scale.x, scale.y, scale.y };
+}
+
+void Model::setSkeleton(const Skeleton& s)
+{
+    m_skeleton = &s;
+    for (auto& a : m_animations)
+    {
+        a.setSkeleton(m_skeleton);
+    }
+
+    m_currentFrame = m_skeleton->getFrame(0);
+}
+
+void Model::addAnimation(const Skeleton::Animation& animation)
+{
+    m_animations.push_back(animation);
+    if (m_skeleton) m_animations.back().setSkeleton(m_skeleton);
+}
+
+void Model::setAnimations(const std::vector<Skeleton::Animation>& animations)
+{
+    m_animations = animations;
+    if (m_skeleton)
+    {
+        for (auto& a : m_animations)
+        {
+            a.setSkeleton(m_skeleton);
+        }
+    }
 }
 
 //private
