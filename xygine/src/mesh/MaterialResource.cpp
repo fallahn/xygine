@@ -44,8 +44,8 @@ MaterialResource::MaterialResource()
     {
         Logger::log("Failed creating default shader for material resource", xy::Logger::Type::Error, xy::Logger::Output::All);
     }
-
-    m_materials.insert(std::make_pair(DefaultMaterial, Material(m_defaultShader)));
+    auto mat = Material(m_defaultShader);
+    m_materials.insert(std::make_pair(DefaultMaterial, /*Material(m_defaultShader)*/mat));
 }
 
 //public

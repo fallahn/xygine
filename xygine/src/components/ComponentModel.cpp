@@ -73,7 +73,11 @@ void Model::entityUpdate(Entity& entity, float dt)
 
 void Model::setBaseMaterial(const Material& material, bool applyToAll)
 {
-    auto oldMat = m_material;
+    //TODO iterate over all passes in materials
+    
+    auto oldShader = -1;
+    if(m_material) oldShader = m_material->getShader().getNativeHandle();
+
     m_material = &material;
     if (applyToAll)
     {
@@ -82,16 +86,18 @@ void Model::setBaseMaterial(const Material& material, bool applyToAll)
             setSubMaterial(material, i);
         }
     }
-    updateVertexAttribs(oldMat, m_material);
+    updateVertexAttribs(oldShader, m_material->getShader().getNativeHandle(), material);
 }
 
 void Model::setSubMaterial(const Material& material, std::size_t idx)
 {
+    //TODO make sure to iterate over all passes of old and new materials
     if (idx < m_mesh.getSubMeshCount())
     {
-        auto oldMat = m_subMaterials[idx];
+        auto oldShader = -1;
+        if(m_subMaterials[idx]) oldShader = m_subMaterials[idx]->getShader().getNativeHandle();
         m_subMaterials[idx] = &material;
-        updateVertexAttribs(oldMat, &material);
+        updateVertexAttribs(oldShader, material.getShader().getNativeHandle(), material);
     }
 }
 
@@ -169,7 +175,7 @@ void Model::updateTransform()
     m_needsUpdate = false;
 }
 
-std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibleArea) const
+std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibleArea, RenderPass::ID pass) const
 {
     if (!m_worldBounds.intersects(visibleArea)) return 0;
     
@@ -180,11 +186,12 @@ std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibl
         auto count = m_mesh.getSubMeshCount();
         for (auto i = 0u; i < count; ++i)
         {
+            if (!m_subMaterials[i]->setActivePass(pass)) continue;
             m_subMaterials[i]->getShader().setUniform("u_worldMatrix", sf::Glsl::Mat4(glm::value_ptr(m_worldMatrix)));
             m_subMaterials[i]->getShader().setUniform("u_worldViewMatrix", sf::Glsl::Mat4(glm::value_ptr(worldViewMat)));
             m_subMaterials[i]->getShader().setUniform("u_normalMatrix", sf::Glsl::Mat3(glm::value_ptr(glm::inverseTranspose(glm::mat3(worldViewMat)))));
             m_subMaterials[i]->bind();
-            auto vao = m_vaoBindings.find(m_subMaterials[i]);
+            auto vao = m_vaoBindings.find(m_subMaterials[i]->getShader().getNativeHandle());
             vao->second.bind();
             const auto subMesh = m_mesh.getSubMesh(i);
             glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, subMesh->getIndexBufferID()));
@@ -195,11 +202,12 @@ std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibl
     }
     else
     {
+        if(!m_material->setActivePass(pass)) return 0;
         m_material->getShader().setUniform("u_worldMatrix", sf::Glsl::Mat4(glm::value_ptr(m_worldMatrix)));
         m_material->getShader().setUniform("u_worldViewMatrix", sf::Glsl::Mat4(glm::value_ptr(worldViewMat)));
         m_material->getShader().setUniform("u_normalMatrix", sf::Glsl::Mat3(glm::value_ptr(glm::inverseTranspose(glm::mat3(worldViewMat)))));
         m_material->bind();
-        auto vao = m_vaoBindings.find(m_material);
+        auto vao = m_vaoBindings.find(m_material->getShader().getNativeHandle());
         vao->second.bind();
         glCheck(glDrawArrays(static_cast<GLenum>(m_mesh.getPrimitiveType()), 0, m_mesh.getVertexCount()));
         vao->second.unbind();
@@ -207,24 +215,26 @@ std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibl
     return 1;
 }
 
-void Model::updateVertexAttribs(const Material* oldMat, const Material* newMat)
+void Model::updateVertexAttribs(ShaderID oldShader, ShaderID newShader, const Material& newMat)
 {
-    XY_ASSERT(newMat, "New material cannot be null");
-    if (oldMat)
+    XY_ASSERT(newShader > -1, "New material cannot be null");
+ 
+    //count instances of old shader used, and remove binding if there are none
+    auto count = 0;
+    if (m_material->getShader().getNativeHandle() == oldShader) count++;
+    for (auto& m : m_subMaterials)
     {
-        //if not found in submeshes or used as main mat
-        if (oldMat != m_material &&
-            std::find(m_subMaterials.begin(), m_subMaterials.end(), oldMat) == m_subMaterials.end())
+        if (m->getShader().getNativeHandle() == oldShader)
         {
-            //remove from VAOs
-            m_vaoBindings.erase(oldMat);
+            count++;
         }
     }
+    if (count == 0) m_vaoBindings.erase(oldShader);
 
     //if we don't yet have a VAO for this material
     //create one
-    if (m_vaoBindings.count(newMat) == 0)
+    if (m_vaoBindings.count(newShader) == 0)
     {
-        m_vaoBindings.insert(std::make_pair(newMat, VertexAttribBinding(m_mesh, *newMat)));
+        m_vaoBindings.insert(std::make_pair(newShader, VertexAttribBinding(m_mesh, newMat)));
     }
 }

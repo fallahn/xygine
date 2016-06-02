@@ -88,7 +88,7 @@ private:
         MrFixitHead,
         LightSource
     };
-    xy::MaterialResource m_materialResource;
+    //xy::MaterialResource m_materialResource;
 
     void cacheMeshes();
     void buildTerrain();

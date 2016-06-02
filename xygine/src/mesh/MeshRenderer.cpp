@@ -241,7 +241,7 @@ void MeshRenderer::drawScene() const
     std::size_t drawCount = 0;
     for (const auto& m : m_models)
     {
-        drawCount += m->draw(m_viewMatrix, visibleArea);
+        drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::Default);
     }
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);

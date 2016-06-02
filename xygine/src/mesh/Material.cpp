@@ -27,93 +27,68 @@ source distribution.
 
 #include <xygine/mesh/Material.hpp>
 #include <xygine/mesh/UniformBuffer.hpp>
+#include <xygine/Assert.hpp>
 
 #include <SFML/Graphics/Shader.hpp>
 
 using namespace xy;
 
 Material::Material(sf::Shader& shader)
-    : m_shader      (shader)
+    : m_activePass (nullptr)
 {
-    XY_ASSERT(shader.getNativeHandle(), "Must compile shader first!");
-    
-    //look up the shader attributes and store them
-    GLint activeAttribs;
-    glCheck(glGetProgramiv(shader.getNativeHandle(), GL_ACTIVE_ATTRIBUTES, &activeAttribs));
-    if (activeAttribs > 0)
-    {
-        GLint length;
-        glCheck(glGetProgramiv(shader.getNativeHandle(), GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &length));
-        if (length > 0)
-        {
-            std::vector<GLchar> attribName(length + 1);
-            GLint attribSize;
-            GLenum attribType;
-            GLint attribLocation;
-
-            for (auto i = 0; i < activeAttribs; ++i)
-            {
-                glCheck(glGetActiveAttrib(shader.getNativeHandle(), i, length, nullptr, &attribSize, &attribType, attribName.data()));
-                attribName[length] = '\0';
-
-                glCheck(attribLocation = glGetAttribLocation(shader.getNativeHandle(), attribName.data()));
-                m_vertexAttributes.insert(std::make_pair(attribName.data(), attribLocation));
-            }
-        }
-    }
+    //add default pass
+    m_passes.insert(std::make_pair(RenderPass::Default, RenderPass(shader)));
+    m_activePass = &m_passes.find(RenderPass::Default)->second;
 }
 
 //public
+bool Material::setActivePass(RenderPass::ID id) const
+{
+    auto result = m_passes.find(id);
+    if (result != m_passes.end())
+    {
+        //godverdomme. sort this out.
+        m_activePass = const_cast<RenderPass*>(&result->second);
+        return true;
+    }
+    LOG("Pass not found in Material", xy::Logger::Type::Warning);
+    return false;
+}
+
 void Material::bind() const
 {
-    for (const auto& p : m_properties)
-    {
-        p.apply(m_shader);
-    }
-
-    for (auto & ubo : m_uniformBuffers)
-    {
-        ubo.second->bind(m_shader.getNativeHandle(), ubo.first);
-    }
-    sf::Shader::bind(&m_shader);
+    m_activePass->bind();
 }
 
-void Material::addProperty(const Material::Property& prop)
+void Material::addProperty(const MaterialProperty& prop)
 {
-    m_properties.push_back(prop);
+    //add to all passes
+    for (auto& p : m_passes)
+    {
+        p.second.addProperty(prop);
+    }
 }
 
-Material::Property* Material::getProperty(const std::string& name)
+MaterialProperty* Material::getProperty(const std::string& name)
 {
-    auto result = std::find_if(m_properties.begin(), m_properties.end(),
-        [&name](const Material::Property& prop)
-    {
-        return (prop.getName() == name);
-    });
-
-    if ( result != m_properties.end())
-    {
-        return &(*result);
-    }
-    return nullptr;
+    return m_activePass->getProperty(name);
 }
 
 bool Material::addUniformBuffer(const UniformBuffer& ubo)
 {
-    //look up the block name in the shader and add the UBO if it exists
-    UniformBlockID id;
-    glCheck(id = glGetUniformBlockIndex(m_shader.getNativeHandle(), ubo.getName().c_str()));
-    if (id != GL_INVALID_INDEX)
+    for (auto& p : m_passes)
     {
-        m_uniformBuffers.emplace_back(std::make_pair(id, &ubo));
-        return true;
+        p.second.addUniformBuffer(ubo);
     }
-    LOG("Uniform block " + ubo.getName() + " not found in Material", xy::Logger::Type::Error);
     return false;
 }
 
 VertexAttribID Material::getVertexAttributeID(const std::string& str) const
 {
-    auto result = m_vertexAttributes.find(str);
-    return (result == m_vertexAttributes.end()) ? -1 : result->second;
+    return m_activePass->getVertexAttributeID(str);
+}
+
+sf::Shader& Material::getShader() const
+{
+    return m_activePass->getShader();
 }

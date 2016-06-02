@@ -161,15 +161,15 @@ namespace xy
 
         const Material* m_material;
         std::vector<const Material*> m_subMaterials;
-        std::map<const Material*, VertexAttribBinding> m_vaoBindings;
+        std::map<ShaderID, VertexAttribBinding> m_vaoBindings;
 
         const Skeleton* m_skeleton;
         std::vector<glm::mat4> m_currentFrame;
         std::vector<Skeleton::Animation> m_animations;
         std::size_t m_currentAnimation;
 
-        std::size_t draw(const glm::mat4&, const sf::FloatRect&) const;
-        void updateVertexAttribs(const Material* oldMat, const Material* newMat);
+        std::size_t draw(const glm::mat4&, const sf::FloatRect&, RenderPass::ID) const;
+        void updateVertexAttribs(ShaderID oldShader, ShaderID newShader, const Material& newMaterial);
     };
 }
 

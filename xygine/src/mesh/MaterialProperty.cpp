@@ -25,82 +25,82 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/mesh/Material.hpp>
+#include <xygine/mesh/MaterialProperty.hpp>
 
 #include <SFML/Graphics/Shader.hpp>
 
 using namespace xy;
 
-Material::Property::Property(const std::string& name, float val)
+MaterialProperty::MaterialProperty(const std::string& name, float val)
     : m_type    (Type::Float),
     number      (val),
     m_name      (name){}
 
-Material::Property::Property(const std::string& name, const sf::Vector2f& val)
+MaterialProperty::MaterialProperty(const std::string& name, const sf::Vector2f& val)
     : m_type    (Type::Vec2),
     vec2        (val),
     m_name      (name) {}
 
-Material::Property::Property(const std::string& name, const sf::Vector3f& val)
+MaterialProperty::MaterialProperty(const std::string& name, const sf::Vector3f& val)
     : m_type    (Type::Vec3),
     vec3        (val),
     m_name      (name) {}
 
-Material::Property::Property(const std::string& name, const sf::Color& val)
+MaterialProperty::MaterialProperty(const std::string& name, const sf::Color& val)
     : m_type    (Type::Vec4),
     colour      (val),
     m_name      (name) {}
 
 
-Material::Property::Property(const std::string& name, const sf::Transform& val)
+MaterialProperty::MaterialProperty(const std::string& name, const sf::Transform& val)
     : m_type    (Type::Mat4),
     transform   (&val),
     m_name      (name) {}
 
-Material::Property::Property(const std::string& name, const sf::Texture& val)
+MaterialProperty::MaterialProperty(const std::string& name, const sf::Texture& val)
     : m_type    (Type::Texture),
     texture     (&val),
     m_name      (name) {}
 
 //public
-void Material::Property::setValue(float val)
+void MaterialProperty::setValue(float val)
 {
     m_type = Type::Float;
     number = val;
 }
 
-void Material::Property::setValue(const sf::Vector2f& val)
+void MaterialProperty::setValue(const sf::Vector2f& val)
 {
     m_type = Type::Vec2;
     vec2 = val;
 }
 
-void Material::Property::setValue(const sf::Vector3f& val)
+void MaterialProperty::setValue(const sf::Vector3f& val)
 {
     m_type = Type::Vec3;
     vec3 = val;
 }
 
-void Material::Property::setValue(const sf::Color& val)
+void MaterialProperty::setValue(const sf::Color& val)
 {
     m_type = Type::Vec4;
     colour = val;
 }
 
-void Material::Property::setValue(const sf::Transform& val)
+void MaterialProperty::setValue(const sf::Transform& val)
 {
     m_type = Type::Mat4;
     transform = &val;
 }
 
-void Material::Property::setValue(const sf::Texture& val)
+void MaterialProperty::setValue(const sf::Texture& val)
 {
     m_type = Type::Texture;
     texture = &val;
 }
 
 //private
-void Material::Property::apply(sf::Shader& shader) const
+void MaterialProperty::apply(sf::Shader& shader) const
 {
     switch (m_type)
     {
