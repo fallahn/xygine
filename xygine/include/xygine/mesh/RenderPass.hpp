@@ -93,7 +93,7 @@ namespace xy
         /*!
         \brief Returns the shaderused by this pass
         */
-        sf::Shader& getShader() const { return *m_shader; }
+        sf::Shader& getShader() const { return m_shader; }
 
         /*!
         \brief Returns the attribute ID of the requested vertex attribute if it
@@ -102,7 +102,7 @@ namespace xy
         VertexAttribID getVertexAttributeID(const std::string&) const;
 
     private:
-        sf::Shader* m_shader;
+        sf::Shader& m_shader;
 
         std::vector<MaterialProperty> m_properties;
         std::vector<std::pair<UniformBlockID, const UniformBuffer*>> m_uniformBuffers;

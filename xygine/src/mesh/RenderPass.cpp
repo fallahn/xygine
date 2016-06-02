@@ -32,7 +32,7 @@ source distribution.
 using namespace xy;
 
 RenderPass::RenderPass(sf::Shader& shader)
-    : m_shader(&shader)
+    : m_shader(shader)
 {
     XY_ASSERT(shader.getNativeHandle(), "Must compile shader first!");
 
@@ -67,14 +67,14 @@ void RenderPass::bind() const
 {
     for (const auto& p : m_properties)
     {
-        p.apply(*m_shader);
+        p.apply(m_shader);
     }
 
     for (auto & ubo : m_uniformBuffers)
     {
-        ubo.second->bind(m_shader->getNativeHandle(), ubo.first);
+        ubo.second->bind(m_shader.getNativeHandle(), ubo.first);
     }
-    sf::Shader::bind(m_shader);
+    sf::Shader::bind(&m_shader);
 }
 
 void RenderPass::addProperty(const MaterialProperty& prop)
@@ -102,7 +102,7 @@ bool RenderPass::addUniformBuffer(const UniformBuffer& ubo)
 {
     //look up the block name in the shader and add the UBO if it exists
     UniformBlockID id;
-    glCheck(id = glGetUniformBlockIndex(m_shader->getNativeHandle(), ubo.getName().c_str()));
+    glCheck(id = glGetUniformBlockIndex(m_shader.getNativeHandle(), ubo.getName().c_str()));
     if (id != GL_INVALID_INDEX)
     {
         m_uniformBuffers.emplace_back(std::make_pair(id, &ubo));

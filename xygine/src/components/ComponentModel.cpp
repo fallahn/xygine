@@ -78,6 +78,7 @@ void Model::setBaseMaterial(const Material& material, bool applyToAll)
     auto oldShader = -1;
     if(m_material) oldShader = m_material->getShader().getNativeHandle();
 
+    material.setActivePass(RenderPass::Default);
     m_material = &material;
     if (applyToAll)
     {
@@ -92,6 +93,8 @@ void Model::setBaseMaterial(const Material& material, bool applyToAll)
 void Model::setSubMaterial(const Material& material, std::size_t idx)
 {
     //TODO make sure to iterate over all passes of old and new materials
+
+    material.setActivePass(RenderPass::Default);
     if (idx < m_mesh.getSubMeshCount())
     {
         auto oldShader = -1;
@@ -217,14 +220,14 @@ std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibl
 
 void Model::updateVertexAttribs(ShaderID oldShader, ShaderID newShader, const Material& newMat)
 {
-    XY_ASSERT(newShader > -1, "New material cannot be null");
+    //XY_ASSERT(newShader > -1, "New material cannot be null");
  
     //count instances of old shader used, and remove binding if there are none
     auto count = 0;
     if (m_material->getShader().getNativeHandle() == oldShader) count++;
     for (auto& m : m_subMaterials)
     {
-        if (m->getShader().getNativeHandle() == oldShader)
+        if (m && m->getShader().getNativeHandle() == oldShader)
         {
             count++;
         }
