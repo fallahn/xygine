@@ -272,7 +272,7 @@ void PlatformDemoState::cacheMeshes()
     xy::IQMBuilder ib("assets/models/mrfixit.iqm");
     m_meshRenderer.loadModel(MeshID::Fixit, ib);
 
-    m_shaderResource.preload(PlatformShaderId::SpecularBumped3D, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
+    /*m_shaderResource.preload(PlatformShaderId::SpecularBumped3D, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
     auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/cube_diffuse.png") });
@@ -295,7 +295,7 @@ void PlatformDemoState::cacheMeshes()
     auto& lightMaterial = m_materialResource.add(MatId::LightSource, m_shaderResource.get(PlatformShaderId::SpecularSmooth3D));
     lightMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     lightMaterial.addProperty({ "u_colour", sf::Color(255, 255, 100) });
-    lightMaterial.addProperty({ "u_maskColour", sf::Color::Blue });
+    lightMaterial.addProperty({ "u_maskColour", sf::Color::Blue });*/
 
     auto light = xy::Component::create<xy::PointLight>(m_messageBus, 800.f, 500.f, sf::Color(255, 255, 100));
     light->setDepth(400.f);
@@ -318,7 +318,7 @@ void PlatformDemoState::cacheMeshes()
 
     model = m_meshRenderer.createModel(MeshID::Cube, m_messageBus);
     model->setPosition({ 0.f, 0.f, light->getWorldPosition().z });
-    model->setSubMaterial(lightMaterial, 0);
+    //model->setSubMaterial(lightMaterial, 0);
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(2000.f, 200.f);
@@ -512,7 +512,7 @@ void PlatformDemoState::addItems()
         body->addCollisionShape(cs);
 
         auto model = m_meshRenderer.createModel(MeshID::Cube, m_messageBus);
-        model->setBaseMaterial(m_materialResource.get(MatId::Demo));
+        //model->setBaseMaterial(m_materialResource.get(MatId::Demo));
 
         auto ent = xy::Entity::create(m_messageBus);
         ent->setPosition(position);
@@ -545,8 +545,8 @@ void PlatformDemoState::addPlayer()
     camera->lockBounds({ 0.f,0.f, 2816.f, 1080.f });
 
     auto model = m_meshRenderer.createModel(MeshID::Fixit, m_messageBus);
-    model->setSubMaterial(m_materialResource.get(MatId::MrFixitBody), 0);
-    model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
+    //model->setSubMaterial(m_materialResource.get(MatId::MrFixitBody), 0);
+    //model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
     model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, 90.f);
     model->setScale({ 50.f, 50.f, 50.f });

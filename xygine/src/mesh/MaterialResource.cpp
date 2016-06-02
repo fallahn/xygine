@@ -45,7 +45,7 @@ MaterialResource::MaterialResource()
         Logger::log("Failed creating default shader for material resource", xy::Logger::Type::Error, xy::Logger::Output::All);
     }
 
-    m_materials.insert(std::make_pair(DefaultMaterial, Material(m_defaultShader)));
+    m_materials.insert(std::make_pair(DefaultMaterial, std::forward<Material>(Material(m_defaultShader))));
 }
 
 //public
@@ -54,7 +54,7 @@ Material& MaterialResource::add(MaterialResource::ID id, sf::Shader& shader)
     XY_ASSERT(id != DefaultMaterial, "Cannot use this ID as it is a reserved value");
     XY_ASSERT(m_materials.count(id) == 0, "Material already exists with this ID");
 
-    m_materials.insert(std::make_pair(id, Material(shader)));
+    m_materials.insert(std::make_pair(id, std::forward<Material>(Material(shader))));
     return m_materials.find(id)->second;
 }
 
