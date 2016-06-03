@@ -91,7 +91,7 @@ namespace xy
         bool addUniformBuffer(const UniformBuffer&);
        
         /*!
-        \brief Returns the shaderused by this pass
+        \brief Returns the shader used by this pass
         */
         sf::Shader& getShader() const { return m_shader; }
 

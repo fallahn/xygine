@@ -65,6 +65,7 @@ RenderPass::RenderPass(sf::Shader& shader)
 //public
 void RenderPass::bind() const
 {
+    sf::Shader::bind(&m_shader);    
     for (const auto& p : m_properties)
     {
         p.apply(m_shader);
@@ -74,13 +75,22 @@ void RenderPass::bind() const
     {
         ubo.second->bind(m_shader.getNativeHandle(), ubo.first);
     }
-    sf::Shader::bind(&m_shader);
 }
 
 void RenderPass::addProperty(const MaterialProperty& prop)
 {
-    //TODO look up uniform ID and only store if found
-    m_properties.push_back(prop);
+    //look up uniform ID and only store if found
+    UniformID id;
+    glCheck(id = glGetUniformLocation(m_shader.getNativeHandle(), prop.m_name.c_str()));
+    if (id > -1)
+    {
+        m_properties.push_back(prop);
+        m_properties.back().m_uid = id;
+    }
+    else
+    {
+        LOG("Uniform " + prop.getName() + " not found in shader", Logger::Type::Warning);
+    }
 }
 
 MaterialProperty* RenderPass::getProperty(const std::string& name)

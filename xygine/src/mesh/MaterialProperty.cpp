@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/mesh/MaterialProperty.hpp>
+#include <xygine/detail/GLCheck.hpp>
 
 #include <SFML/Graphics/Shader.hpp>
 
@@ -34,33 +35,39 @@ using namespace xy;
 MaterialProperty::MaterialProperty(const std::string& name, float val)
     : m_type    (Type::Float),
     number      (val),
-    m_name      (name){}
+    m_name      (name),
+    m_uid       (-1) {}
 
 MaterialProperty::MaterialProperty(const std::string& name, const sf::Vector2f& val)
     : m_type    (Type::Vec2),
     vec2        (val),
-    m_name      (name) {}
+    m_name      (name),
+    m_uid       (-1) {}
 
 MaterialProperty::MaterialProperty(const std::string& name, const sf::Vector3f& val)
     : m_type    (Type::Vec3),
     vec3        (val),
-    m_name      (name) {}
+    m_name      (name),
+    m_uid       (-1) {}
 
 MaterialProperty::MaterialProperty(const std::string& name, const sf::Color& val)
     : m_type    (Type::Vec4),
     colour      (val),
-    m_name      (name) {}
+    m_name      (name),
+    m_uid       (-1) {}
 
 
 MaterialProperty::MaterialProperty(const std::string& name, const sf::Transform& val)
     : m_type    (Type::Mat4),
     transform   (&val),
-    m_name      (name) {}
+    m_name      (name),
+    m_uid       (-1) {}
 
 MaterialProperty::MaterialProperty(const std::string& name, const sf::Texture& val)
     : m_type    (Type::Texture),
     texture     (&val),
-    m_name      (name) {}
+    m_name      (name),
+    m_uid       (-1) {}
 
 //public
 void MaterialProperty::setValue(float val)
@@ -107,22 +114,23 @@ void MaterialProperty::apply(sf::Shader& shader) const
     default:
     case Type::None: break;
     case Type::Float:
-        shader.setUniform(m_name, number);
+        glCheck(glUniform1f(m_uid, number));
         break;
     case Type::Vec2:
-        shader.setUniform(m_name, vec2);
+        glCheck(glUniform2f(m_uid, vec2.x, vec2.y));
         break;
     case Type::Vec3:
-        shader.setUniform(m_name, vec3);
+        glCheck(glUniform3f(m_uid, vec3.x, vec3.y, vec3.z));
         break;
     case Type::Vec4:
-        shader.setUniform(m_name, sf::Glsl::Vec4(colour));
+        glCheck(glUniform4f(m_uid, static_cast<float>(colour.r) / 255.f, static_cast<float>(colour.g) / 255.f,
+                                    static_cast<float>(colour.b) / 255.f, static_cast<float>(colour.a) / 255.f));
         break;
     case Type::Mat3:
 
         break;
     case Type::Mat4:
-        shader.setUniform(m_name, sf::Glsl::Mat4(*transform));
+        glCheck(glUniformMatrix4fv(m_uid, 1, FALSE, sf::Glsl::Mat4(*transform).array));
         break;
     case Type::Texture:
         shader.setUniform(m_name, *texture);

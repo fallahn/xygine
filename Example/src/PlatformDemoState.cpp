@@ -289,20 +289,20 @@ void PlatformDemoState::cacheMeshes()
     fixitMaterialHead.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     fixitMaterialHead.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitHead.png") });
     fixitMaterialHead.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitHead_normal.png") });
-    fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });
+    fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });*/
 
     m_shaderResource.preload(PlatformShaderId::SpecularSmooth3D, DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
     auto& lightMaterial = m_materialResource.add(MatId::LightSource, m_shaderResource.get(PlatformShaderId::SpecularSmooth3D));
     lightMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     lightMaterial.addProperty({ "u_colour", sf::Color(255, 255, 100) });
-    lightMaterial.addProperty({ "u_maskColour", sf::Color::Blue });*/
+    lightMaterial.addProperty({ "u_maskColour", sf::Color::Blue });
 
     auto light = xy::Component::create<xy::PointLight>(m_messageBus, 800.f, 500.f, sf::Color(255, 255, 100));
     light->setDepth(400.f);
 
     auto model = m_meshRenderer.createModel(MeshID::Cube, m_messageBus);
     model->setPosition({ 0.f, 0.f, light->getWorldPosition().z });
-    //model->setSubMaterial(lightMaterial, 0);
+    model->setSubMaterial(lightMaterial, 0);
 
     auto entity = xy::Entity::create(m_messageBus);
     entity->setPosition(xy::DefaultSceneSize / 2.f);
@@ -318,7 +318,7 @@ void PlatformDemoState::cacheMeshes()
 
     model = m_meshRenderer.createModel(MeshID::Cube, m_messageBus);
     model->setPosition({ 0.f, 0.f, light->getWorldPosition().z });
-    //model->setSubMaterial(lightMaterial, 0);
+    model->setSubMaterial(lightMaterial, 0);
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(2000.f, 200.f);

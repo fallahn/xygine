@@ -81,6 +81,7 @@ namespace xy
     using VertexAttribID = GLint;
     using UniformBufferID = GLuint;
     using UniformBlockID = GLuint;
+    using UniformID = GLint;
     using ShaderID = GLuint;
 }
 

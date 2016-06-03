@@ -239,7 +239,7 @@ std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibl
             glCheck(glDrawElements(static_cast<GLenum>(subMesh->getPrimitiveType()), subMesh->getIndexCount(), static_cast<GLenum>(subMesh->getIndexFormat()), 0));
             vao->second.unbind();
         }
-        return count;
+        return 1;
     }
     else
     {

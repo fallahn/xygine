@@ -94,6 +94,7 @@ namespace xy
             const sf::Texture* texture;
         };
         std::string m_name;
+        UniformID m_uid;
         void apply(sf::Shader&) const;
     };
 }
