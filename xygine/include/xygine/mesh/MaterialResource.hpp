@@ -35,7 +35,6 @@ source distribution.
 #include <map>
 #include <memory>
 
-
 namespace xy
 {
     /*!
@@ -78,7 +77,7 @@ namespace xy
 
     private:
 
-        std::map<ID, Material> m_materials;
+        std::map<ID, std::unique_ptr<Material>> m_materials;
         sf::Shader m_defaultShader;
     };
 }

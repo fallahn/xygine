@@ -73,34 +73,72 @@ void Model::entityUpdate(Entity& entity, float dt)
 
 void Model::setBaseMaterial(const Material& material, bool applyToAll)
 {
-    //TODO iterate over all passes in materials
-    
-    auto oldShader = -1;
-    if(m_material) oldShader = m_material->getShader().getNativeHandle();
+    //check for old materials so we can remove vertex attrib
+    //bindings should old material shaders no longer be used
+    std::vector<ShaderID> oldShaders(RenderPass::ID::Count);
+    if (m_material)
+    {
+        for (auto i = 0; i < RenderPass::ID::Count; ++i)
+        {
+            if (m_material->setActivePass(static_cast<RenderPass::ID>(i)))
+            {
+                oldShaders[i] = m_material->getShader().getNativeHandle();
+            }
+        }
+    }
 
-    material.setActivePass(RenderPass::Default);
     m_material = &material;
     if (applyToAll)
     {
+        //this will also update the vertex attribs
         for (auto i = 0u; i < m_mesh.getSubMeshCount(); ++i)
         {
             setSubMaterial(material, i);
         }
     }
-    updateVertexAttribs(oldShader, m_material->getShader().getNativeHandle(), material);
+    else //update them explicitly
+    {        
+        for (auto i = 0; i < RenderPass::ID::Count; ++i)
+        {
+            if (m_material->setActivePass(static_cast<RenderPass::ID>(i)))
+            {
+                updateVertexAttribs(m_material->getShader().getNativeHandle(), material);
+            }
+        }
+
+        for(auto id : oldShaders) removeUnusedAttribs(id);
+    }
 }
 
 void Model::setSubMaterial(const Material& material, std::size_t idx)
 {
-    //TODO make sure to iterate over all passes of old and new materials
-
-    material.setActivePass(RenderPass::Default);
     if (idx < m_mesh.getSubMeshCount())
     {
-        auto oldShader = -1;
-        if(m_subMaterials[idx]) oldShader = m_subMaterials[idx]->getShader().getNativeHandle();
+        //store old shaders we might want to remove
+        std::vector<ShaderID> oldShaders(RenderPass::ID::Count);
+        if (m_subMaterials[idx])
+        {
+            for (auto i = 0; i < RenderPass::ID::Count; ++i)
+            {
+                if (m_subMaterials[idx]->setActivePass(static_cast<RenderPass::ID>(i)))
+                {
+                    oldShaders[i] = m_subMaterials[idx]->getShader().getNativeHandle();
+                }
+            }
+        }
+
         m_subMaterials[idx] = &material;
-        updateVertexAttribs(oldShader, material.getShader().getNativeHandle(), material);
+
+        //update vert attribs
+        for (auto i = 0; i < RenderPass::ID::Count; ++i)
+        {
+            if (m_subMaterials[idx]->setActivePass(static_cast<RenderPass::ID>(i)))
+            {
+                updateVertexAttribs(material.getShader().getNativeHandle(), material);
+            }
+        }
+        //and remove unused
+        for (auto id : oldShaders) removeUnusedAttribs(id);
     }
 }
 
@@ -218,26 +256,26 @@ std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibl
     return 1;
 }
 
-void Model::updateVertexAttribs(ShaderID oldShader, ShaderID newShader, const Material& newMat)
+void Model::updateVertexAttribs(ShaderID shader, const Material& mat)
 {
-    //XY_ASSERT(newShader > -1, "New material cannot be null");
- 
-    //count instances of old shader used, and remove binding if there are none
-    auto count = 0;
-    if (m_material->getShader().getNativeHandle() == oldShader) count++;
-    for (auto& m : m_subMaterials)
-    {
-        if (m && m->getShader().getNativeHandle() == oldShader)
-        {
-            count++;
-        }
-    }
-    if (count == 0) m_vaoBindings.erase(oldShader);
-
     //if we don't yet have a VAO for this material
     //create one
-    if (m_vaoBindings.count(newShader) == 0)
+    if (m_vaoBindings.count(shader) == 0)
     {
-        m_vaoBindings.insert(std::make_pair(newShader, VertexAttribBinding(m_mesh, newMat)));
+        m_vaoBindings.insert(std::make_pair(shader, VertexAttribBinding(m_mesh, mat)));
     }
+}
+
+void Model::removeUnusedAttribs(ShaderID id)
+{
+    //count instances of old shader used, and remove binding if there are none
+    if (m_material->getShader().getNativeHandle() == id) return;
+    for (auto& m : m_subMaterials)
+    {
+        if (m && m->getShader().getNativeHandle() == id)
+        {
+            return;
+        }
+    }
+    m_vaoBindings.erase(id);
 }

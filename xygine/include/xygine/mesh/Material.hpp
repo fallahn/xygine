@@ -66,6 +66,8 @@ namespace xy
         */
         explicit Material(sf::Shader&);
         ~Material() = default;
+        Material(const Material&) = delete;
+        Material& operator = (const Material&) = delete;
 
         /*!
         \brief Sets the current active RenderPass.

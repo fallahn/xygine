@@ -51,7 +51,7 @@ bool Material::setActivePass(RenderPass::ID id) const
         m_activePass = const_cast<RenderPass*>(&result->second);
         return true;
     }
-    LOG("Pass not found in Material", xy::Logger::Type::Warning);
+    //LOG("Pass not found in Material", xy::Logger::Type::Warning);
     return false;
 }
 

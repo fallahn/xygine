@@ -272,14 +272,14 @@ void PlatformDemoState::cacheMeshes()
     xy::IQMBuilder ib("assets/models/mrfixit.iqm");
     m_meshRenderer.loadModel(MeshID::Fixit, ib);
 
-    /*m_shaderResource.preload(PlatformShaderId::SpecularBumped3D, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
+    m_shaderResource.preload(PlatformShaderId::SpecularBumped3D, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
     auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/cube_diffuse.png") });
     demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/platform/cube_normal.png") });
     demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/platform/cube_mask.png") });
 
-    auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
+    /*auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     fixitMaterialBody.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitBody.png") });
     fixitMaterialBody.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitBody_normal.png") });
@@ -512,7 +512,7 @@ void PlatformDemoState::addItems()
         body->addCollisionShape(cs);
 
         auto model = m_meshRenderer.createModel(MeshID::Cube, m_messageBus);
-        //model->setBaseMaterial(m_materialResource.get(MatId::Demo));
+        model->setBaseMaterial(m_materialResource.get(MatId::Demo));
 
         auto ent = xy::Entity::create(m_messageBus);
         ent->setPosition(position);

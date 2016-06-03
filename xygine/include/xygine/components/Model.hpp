@@ -169,7 +169,8 @@ namespace xy
         std::size_t m_currentAnimation;
 
         std::size_t draw(const glm::mat4&, const sf::FloatRect&, RenderPass::ID) const;
-        void updateVertexAttribs(ShaderID oldShader, ShaderID newShader, const Material& newMaterial);
+        void updateVertexAttribs(ShaderID newShader, const Material& newMaterial);
+        void removeUnusedAttribs(ShaderID);
     };
 }
 
