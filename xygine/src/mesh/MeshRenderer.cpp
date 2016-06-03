@@ -80,14 +80,14 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_matrixBlockBuffer.create(m_matrixBlock);
 
     m_materialResource.get(0xffff).addUniformBuffer(m_matrixBlockBuffer);
-    
+
     //set lighting uniform buffer
     std::memset(&m_lightingBlock, 0, sizeof(m_lightingBlock));
     m_lightingBlockBuffer.create(m_lightingBlock);
 
     //set up the buffer for ssao
     //initSSAO();
-   
+
     //performs a light blur pass
     initSelfIllum();
 
@@ -113,7 +113,8 @@ void MeshRenderer::loadModel(std::int32_t id, ModelBuilder& mb)
     auto skeleton = mb.getSkeleton();
     if (skeleton && m_animationResource.find(id) == m_animationResource.end())
     {
-        m_animationResource.insert(std::make_pair(id, AnimationData(skeleton, mb.getAnimations())));
+        const auto& anims = mb.getAnimations();
+        m_animationResource.insert(std::make_pair(id, AnimationData(skeleton, anims)));
     }
 }
 
@@ -139,7 +140,7 @@ std::unique_ptr<Model> MeshRenderer::createModel(const Mesh& mesh, MessageBus& m
 {
     auto model = Component::create<Model>(mb, mesh, Lock());
     m_models.push_back(model.get());
-    
+
     //set default material
     model->setBaseMaterial(m_materialResource.get(0xffff));
 
@@ -167,7 +168,7 @@ void MeshRenderer::update()
     //rotate
     m_viewMatrix = glm::rotate(m_viewMatrix, rotation, glm::vec3(0.f, 0.f, 1.f));
     m_viewMatrix = glm::inverse(m_viewMatrix);
-    
+
     std::memcpy(m_matrixBlock.u_viewMatrix, glm::value_ptr(m_viewMatrix), 16 * sizeof(float));
     m_matrixBlockBuffer.update(m_matrixBlock);
 }
@@ -222,12 +223,12 @@ void MeshRenderer::createNoiseTexture()
 }
 
 void MeshRenderer::drawScene() const
-{    
+{
     m_gBuffer.setActive(true);
-    
+
     auto viewPort = m_gBuffer.getView().getViewport();
     glViewport(
-        static_cast<GLuint>(viewPort.left * xy::DefaultSceneSize.x), 
+        static_cast<GLuint>(viewPort.left * xy::DefaultSceneSize.x),
         static_cast<GLuint>(viewPort.top * xy::DefaultSceneSize.y),
         static_cast<GLuint>(viewPort.width * xy::DefaultSceneSize.x),
         static_cast<GLuint>(viewPort.height * xy::DefaultSceneSize.y));
@@ -246,7 +247,7 @@ void MeshRenderer::drawScene() const
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     m_gBuffer.display();
-    
+
     REPORT("Draw Count", std::to_string(drawCount));
 
     //TODO get lights
@@ -276,7 +277,7 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     //a render target is to draw something to it, which we need to
     //do in order to bind the lighting UBO to the correct context
     rt.draw(m_dummySprite);
-    
+
     m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
     rt.draw(*m_outputQuad);
     rt.resetGLStates();
@@ -378,7 +379,7 @@ void MeshRenderer::initSelfIllum()
     m_lightDownsampleShader.loadFromMemory(Shader::Mesh::QuadVertex, Shader::Mesh::LightDownsampleFrag);
     m_lightDownsampleShader.setUniform("u_diffuseMap", m_gBuffer.getTexture(MaterialChannel::Diffuse));
     m_lightDownsampleShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
-    
+
     m_lightBlurTexture.create(480, 270);
     m_lightBlurTexture.setSmooth(true);
     m_lightBlurSprite.setTexture(m_lightDownsampleTexture.getTexture());
@@ -392,7 +393,7 @@ void MeshRenderer::initSelfIllum()
 }
 
 void MeshRenderer::initOutput()
-{    
+{
     if (m_lightingShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::LightingFrag))
     {
         glCheck(m_lightingBlockID = glGetUniformBlockIndex(m_lightingShader.getNativeHandle(), m_lightingBlockBuffer.getName().c_str()));
