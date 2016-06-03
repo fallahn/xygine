@@ -130,7 +130,7 @@ void MaterialProperty::apply(sf::Shader& shader) const
 
         break;
     case Type::Mat4:
-        glCheck(glUniformMatrix4fv(m_uid, 1, FALSE, sf::Glsl::Mat4(*transform).array));
+        glCheck(glUniformMatrix4fv(m_uid, 1, GL_FALSE, sf::Glsl::Mat4(*transform).array));
         break;
     case Type::Texture:
         shader.setUniform(m_name, *texture);
