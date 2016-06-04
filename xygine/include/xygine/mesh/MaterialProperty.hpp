@@ -60,6 +60,7 @@ namespace xy
         MaterialProperty(const std::string&, const sf::Color&);
         MaterialProperty(const std::string&, const sf::Transform&);
         MaterialProperty(const std::string&, const sf::Texture&);
+        MaterialProperty(const std::string&, const float*, std::size_t);
         ~MaterialProperty() = default;
 
         //MaterialProperty(MaterialProperty&&) noexcept = default;
@@ -70,6 +71,7 @@ namespace xy
         void setValue(const sf::Color&);
         void setValue(const sf::Transform&);
         void setValue(const sf::Texture&);
+        void setValue(const float*, std::size_t);
         const std::string& getName() const { return m_name; }
     private:
         enum class Type
@@ -81,6 +83,7 @@ namespace xy
             Vec4,
             Mat3,
             Mat4,
+            Mat4Array,
             Texture
         }m_type;
 
@@ -92,9 +95,11 @@ namespace xy
             sf::Color colour;
             const sf::Transform* transform;
             const sf::Texture* texture;
+            const float* floatArray;
         };
         std::string m_name;
         UniformID m_uid;
+        std::size_t m_size;
         void apply(sf::Shader&) const;
     };
 }

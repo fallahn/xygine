@@ -38,6 +38,47 @@ source distribution.
 
 namespace xy
 {
+    enum BlendFunc
+    {
+        ZERO                    = GL_ZERO,
+        ONE                     = GL_ONE,
+        SRC_COLOUR              = GL_SRC_COLOR,
+        ONE_MINUS_SOURCE_COLOUR = GL_ONE_MINUS_SRC_COLOR,
+        DEST_COLOUR             = GL_DST_COLOR,
+        ONE_MINUS_DEST_COLOUR   = GL_ONE_MINUS_DST_COLOR,
+        SRC_ALPHA               = GL_SRC_ALPHA,
+        ONE_MINUS_SRC_ALPHA     = GL_ONE_MINUS_SRC_ALPHA,
+        DEST_ALPHA              = GL_DST_ALPHA,
+        ONE_MINUS_DEST_ALPHA    = GL_ONE_MINUS_DST_ALPHA,
+        CONST_ALPHA             = GL_CONSTANT_ALPHA,
+        ONE_MINUS_CONST_ALPHA   = GL_ONE_MINUS_CONSTANT_ALPHA
+    };
+
+    enum DepthFunc
+    {
+        NEVER    = GL_NEVER,
+        LESS     = GL_LESS,
+        EQUAL    = GL_EQUAL,
+        LEQUAL   = GL_LEQUAL,
+        GREATER  = GL_GREATER,
+        NOTEQUAL = GL_NOTEQUAL,
+        GEQUAL   = GL_GEQUAL,
+        ALWAYS   = GL_ALWAYS
+    };
+    
+    enum Winding
+    {
+        CLOCKWISE         = GL_CW,
+        COUNTER_CLOCKWISE = GL_CCW
+    };
+
+    enum CullFace
+    {
+        FRONT          = GL_FRONT,
+        BACK           = GL_BACK,
+        FRONT_AND_BACK = GL_FRONT_AND_BACK
+    };
+
     class UniformBuffer;
 
     /*!
@@ -74,8 +115,7 @@ namespace xy
         /*!
         \brief Returns a Property with the given name if it
         exists, else returns nullptr
-        */
-        
+        */       
         MaterialProperty* getProperty(const std::string&);
         
         /*!
@@ -101,6 +141,38 @@ namespace xy
         */
         VertexAttribID getVertexAttributeID(const std::string&) const;
 
+        /*!
+        \brief Sets the Source and Destination blend function paramters for this pass
+        \param src The source function
+        \param dst The destination function
+        */
+        void setBlendFunc(BlendFunc src, BlendFunc dst)
+        {
+            m_blendFuncSrc = src;
+            m_blendFuncDst = dst;
+        }
+
+        /*!
+        \brief Sets the depth function to be used by this pass
+        */
+        void setDepthFunc(DepthFunc func)
+        {
+            m_depthFunc = func;
+        }
+
+        /*!
+        \brief Sets the vertex winding direction which defines a front
+        facing polygon when this pass is rendered.
+        */
+        void setWinding(Winding winding) { m_winding = winding; }
+
+        /*!
+        \brief Sets which face direction should be culled when drawing with
+        this pass
+        */
+        void setCullFace(CullFace face) { m_cullface = face; }
+
+
     private:
         sf::Shader& m_shader;
 
@@ -108,6 +180,12 @@ namespace xy
         std::vector<std::pair<UniformBlockID, const UniformBuffer*>> m_uniformBuffers;
 
         std::unordered_map<std::string, VertexAttribID> m_vertexAttributes;
+
+        BlendFunc m_blendFuncSrc;
+        BlendFunc m_blendFuncDst;
+        DepthFunc m_depthFunc;
+        Winding m_winding;
+        CullFace m_cullface;
     };
 }
 

@@ -233,19 +233,18 @@ void MeshRenderer::drawScene() const
         static_cast<GLuint>(viewPort.width * xy::DefaultSceneSize.x),
         static_cast<GLuint>(viewPort.height * xy::DefaultSceneSize.y));
 
-    glClearColor(1.f, 1.f, 1.f, 0.f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_CULL_FACE); //TODO apply these in material passes
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
+    glCheck(glClearColor(1.f, 1.f, 1.f, 0.f));
+    glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    glCheck(glEnable(GL_CULL_FACE));
+    glCheck(glEnable(GL_DEPTH_TEST));
     auto visibleArea = m_scene.getVisibleArea();
     std::size_t drawCount = 0;
     for (const auto& m : m_models)
     {
         drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::Default);
     }
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
+    glCheck(glDisable(GL_DEPTH_TEST));
+    glCheck(glDisable(GL_CULL_FACE));
     m_gBuffer.display();
 
     REPORT("Draw Count", std::to_string(drawCount));

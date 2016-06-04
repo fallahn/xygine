@@ -27,6 +27,7 @@ source distribution.
 
 #include <xygine/mesh/MaterialProperty.hpp>
 #include <xygine/detail/GLCheck.hpp>
+#include <xygine/Assert.hpp>
 
 #include <SFML/Graphics/Shader.hpp>
 
@@ -36,38 +37,51 @@ MaterialProperty::MaterialProperty(const std::string& name, float val)
     : m_type    (Type::Float),
     number      (val),
     m_name      (name),
-    m_uid       (-1) {}
+    m_uid       (-1),
+    m_size(0){}
 
 MaterialProperty::MaterialProperty(const std::string& name, const sf::Vector2f& val)
     : m_type    (Type::Vec2),
     vec2        (val),
     m_name      (name),
-    m_uid       (-1) {}
+    m_uid       (-1),
+    m_size(0) {}
 
 MaterialProperty::MaterialProperty(const std::string& name, const sf::Vector3f& val)
     : m_type    (Type::Vec3),
     vec3        (val),
     m_name      (name),
-    m_uid       (-1) {}
+    m_uid       (-1),
+    m_size(0) {}
 
 MaterialProperty::MaterialProperty(const std::string& name, const sf::Color& val)
     : m_type    (Type::Vec4),
     colour      (val),
     m_name      (name),
-    m_uid       (-1) {}
+    m_uid       (-1),
+    m_size(0) {}
 
 
 MaterialProperty::MaterialProperty(const std::string& name, const sf::Transform& val)
     : m_type    (Type::Mat4),
     transform   (&val),
     m_name      (name),
-    m_uid       (-1) {}
+    m_uid       (-1),
+    m_size(0) {}
 
 MaterialProperty::MaterialProperty(const std::string& name, const sf::Texture& val)
     : m_type    (Type::Texture),
     texture     (&val),
     m_name      (name),
-    m_uid       (-1) {}
+    m_uid       (-1),
+    m_size(1) {}
+
+MaterialProperty::MaterialProperty(const std::string& name, const float* data, std::size_t size)
+    : m_type    (Type::Mat4Array),
+    floatArray  (data),
+    m_name      (name),
+    m_uid       (-1),
+    m_size      (size) {}
 
 //public
 void MaterialProperty::setValue(float val)
@@ -106,6 +120,14 @@ void MaterialProperty::setValue(const sf::Texture& val)
     texture = &val;
 }
 
+void MaterialProperty::setValue(const float* value, std::size_t size)
+{
+    XY_ASSERT(value, "Value must not be nullptr");
+    m_type = Type::Mat4Array;
+    floatArray = value;
+    m_size = size;
+}
+
 //private
 void MaterialProperty::apply(sf::Shader& shader) const
 {
@@ -130,10 +152,13 @@ void MaterialProperty::apply(sf::Shader& shader) const
 
         break;
     case Type::Mat4:
-        glCheck(glUniformMatrix4fv(m_uid, 1, GL_FALSE, sf::Glsl::Mat4(*transform).array));
+        glCheck(glUniformMatrix4fv(m_uid, m_size, GL_FALSE, sf::Glsl::Mat4(*transform).array));
         break;
     case Type::Texture:
         shader.setUniform(m_name, *texture);
+        break;
+    case Type::Mat4Array:
+        glCheck(glUniformMatrix4fv(m_uid, m_size, GL_FALSE, floatArray));
         break;
     }
 }

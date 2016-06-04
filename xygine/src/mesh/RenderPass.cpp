@@ -32,7 +32,12 @@ source distribution.
 using namespace xy;
 
 RenderPass::RenderPass(sf::Shader& shader)
-    : m_shader(shader)
+    : m_shader      (shader),
+    m_blendFuncSrc  (BlendFunc::SRC_ALPHA),
+    m_blendFuncDst  (BlendFunc::ONE_MINUS_SRC_ALPHA),
+    m_depthFunc     (DepthFunc::LEQUAL),
+    m_winding       (Winding::COUNTER_CLOCKWISE),
+    m_cullface      (CullFace::BACK)
 {
     XY_ASSERT(shader.getNativeHandle(), "Must compile shader first!");
 
@@ -75,6 +80,11 @@ void RenderPass::bind() const
     {
         ubo.second->bind(m_shader.getNativeHandle(), ubo.first);
     }
+
+    glCheck(glDepthFunc(m_depthFunc));
+    glCheck(glBlendFunc(m_blendFuncSrc, m_blendFuncDst));
+    glCheck(glFrontFace(m_winding));
+    glCheck(glCullFace(m_cullface));
 }
 
 void RenderPass::addProperty(const MaterialProperty& prop)
