@@ -78,7 +78,8 @@ private:
     enum MeshID
     {
         Cube = 0,
-        Fixit
+        Fixit,
+        Platform
     };
 
     enum MatId
@@ -86,7 +87,8 @@ private:
         Demo = 0,
         MrFixitBody,
         MrFixitHead,
-        LightSource
+        LightSource,
+        Terrain
     };
     xy::MaterialResource m_materialResource;
 

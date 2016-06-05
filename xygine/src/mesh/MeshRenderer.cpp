@@ -127,11 +127,11 @@ std::unique_ptr<Model> MeshRenderer::createModel(std::int32_t id, MessageBus&mb)
 
     //check for skeleton, and animations
     auto result = m_animationResource.find(id);
-    if (result != m_animationResource.end())
+    /*if (result != m_animationResource.end())
     {
         model->setSkeleton(*result->second.skeleton.get());
         model->setAnimations(result->second.animations);
-    }
+    }*/
 
     return std::move(model);
 }

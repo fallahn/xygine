@@ -73,7 +73,8 @@ namespace
     {
         SpecularSmooth2D,
         SpecularBumped3D,
-        SpecularSmooth3D
+        SpecularSmooth3D,
+        TexturedSmooth3D
     };
 
     Plat::PlayerController * playerController = nullptr;
@@ -272,6 +273,9 @@ void PlatformDemoState::cacheMeshes()
     xy::IQMBuilder ib("assets/models/mrfixit.iqm");
     m_meshRenderer.loadModel(MeshID::Fixit, ib);
 
+    xy::IQMBuilder ib2("assets/models/platform_01.iqm");
+    m_meshRenderer.loadModel(MeshID::Platform, ib2);
+
     m_shaderResource.preload(PlatformShaderId::SpecularBumped3D, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
     auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
@@ -290,6 +294,12 @@ void PlatformDemoState::cacheMeshes()
     fixitMaterialHead.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitHead.png") });
     fixitMaterialHead.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitHead_normal.png") });
     fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });*/
+
+    m_shaderResource.preload(PlatformShaderId::TexturedSmooth3D, DEFERRED_TEXTURED_VERTEX, DEFERRED_TEXTURED_FRAGMENT);
+
+    auto& platformMaterial = m_materialResource.add(MatId::Terrain, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
+    platformMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    platformMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_01.png") });
 
     m_shaderResource.preload(PlatformShaderId::SpecularSmooth3D, DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
     auto& lightMaterial = m_materialResource.add(MatId::LightSource, m_shaderResource.get(PlatformShaderId::SpecularSmooth3D));
@@ -394,14 +404,20 @@ void PlatformDemoState::buildTerrain()
 
     m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
     //-------------------------
-    drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
+    /*drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
     drawable->setTexture(m_textureResource.get("assets/images/platform/plat_01.png"));
     drawable->setNormalMap(normalTexture);
     drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
+*/
+    auto model = m_meshRenderer.createModel(MeshID::Platform, m_messageBus);
+    model->rotate(xy::Model::Axis::Z, 180.f);
+    model->setPosition({ 384.f, 158.f, 0.f });
+    model->setBaseMaterial(m_materialResource.get(MatId::Terrain));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(400.f, 700.f);
-    entity->addComponent(drawable);
+    //entity->addComponent(drawable);
+    entity->addComponent(model);
 
     m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
     //-------------------------
