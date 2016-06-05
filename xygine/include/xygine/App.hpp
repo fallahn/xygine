@@ -217,6 +217,13 @@ namespace xy
         */
         static sf::Vector2f getMouseWorldPosition();
 
+        /*!
+        \brief Displays the Report window.
+        The report window is used to display any properties written
+        to xy::Reports or via the REPORT macros for debug builds.
+        */
+        static void showReportWindow();
+
     protected:
         /*!
         \brief Returns a reference to the current render window
@@ -255,11 +262,10 @@ namespace xy
         */
         virtual void updateApp(float dt) = 0;
         /*!
-        \brief Updates the render window
-
-        The render window clear() and display() functions
-        should be called in the implementation, with any custom drawing
-        done in between
+        \brief Draws to the render window.
+        All drawing operations should be started from here. clear() and
+        display() are called automatically by xygine and need to be manually
+        used in derived applications.
         */
         virtual void draw() = 0;
 

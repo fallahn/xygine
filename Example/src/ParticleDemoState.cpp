@@ -103,9 +103,6 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     m_scene.addPostProcess(pp);
     m_scene.setClearColour({ 0u, 0u, 20u });
 
-    m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
-    m_reportText.setPosition(1500.f, 30.f);
-
     m_shaderResource.preload(ParticleShaderId::NormalMapTexturedSpecular, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED_SPECULAR);
     //m_shaderResource.preload(ParticleShaderId::NormalMapTextured, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED);
     shader = &m_shaderResource.get(ParticleShaderId::NormalMapTexturedSpecular);
@@ -147,7 +144,7 @@ bool ParticleDemoState::update(float dt)
     }
 
 
-    m_reportText.setString(xy::Stats::getString());
+    xy::App::showReportWindow();
 
     return true;
 }
@@ -158,7 +155,6 @@ void ParticleDemoState::draw()
     rw.draw(m_scene);
     rw.setView(getContext().defaultView);
     //rw.draw(m_physWorld);
-    rw.draw(m_reportText);
 }
 
 bool ParticleDemoState::handleEvent(const sf::Event& evt)

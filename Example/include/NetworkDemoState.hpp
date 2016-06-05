@@ -76,7 +76,6 @@ private:
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
 
-    sf::Text m_reportText;
     xy::MessageBus& m_messageBus;
     xy::Scene m_scene;    
     CollisionWorld m_collisionWorld;

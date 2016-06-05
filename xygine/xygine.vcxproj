@@ -161,6 +161,10 @@
     <ClCompile Include="src\components\ComponentPointLight.cpp" />
     <ClCompile Include="src\components\QuadTreeComponent.cpp" />
     <ClCompile Include="src\GLExtensions.cpp" />
+    <ClCompile Include="src\imgui\imgui_sfml.cpp" />
+    <ClCompile Include="src\imgui\imgui.cpp" />
+    <ClCompile Include="src\imgui\imgui_demo.cpp" />
+    <ClCompile Include="src\imgui\imgui_draw.cpp" />
     <ClCompile Include="src\mesh\BoundingBox.cpp" />
     <ClCompile Include="src\mesh\CubeBuilder.cpp" />
     <ClCompile Include="src\mesh\IQMBuilder.cpp" />
@@ -251,6 +255,13 @@
     <ClInclude Include="include\xygine\Config.hpp" />
     <ClInclude Include="include\xygine\detail\GLCheck.hpp" />
     <ClInclude Include="include\xygine\detail\GLExtensions.hpp" />
+    <ClInclude Include="include\xygine\imgui\imconfig.h" />
+    <ClInclude Include="include\xygine\imgui\imgui_sfml.h" />
+    <ClInclude Include="include\xygine\imgui\imgui.h" />
+    <ClInclude Include="include\xygine\imgui\imgui_internal.h" />
+    <ClInclude Include="include\xygine\imgui\stb_rect_pack.h" />
+    <ClInclude Include="include\xygine\imgui\stb_textedit.h" />
+    <ClInclude Include="include\xygine\imgui\stb_truetype.h" />
     <ClInclude Include="include\xygine\mesh\BoundingBox.hpp" />
     <ClInclude Include="include\xygine\mesh\CubeBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\IQMBuilder.hpp" />

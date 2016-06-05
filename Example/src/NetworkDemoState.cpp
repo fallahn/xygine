@@ -66,9 +66,6 @@ NetworkDemoState::NetworkDemoState(xy::StateStack& stack, Context context)
     m_packetHandler = std::bind(&NetworkDemoState::handlePacket, this, _1, _2, _3);
     m_connection.setPacketHandler(m_packetHandler);
 
-    m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
-    m_reportText.setPosition(40.f, 20.f);
-
     createUI();
 
     auto pp = xy::PostProcess::create<xy::PostChromeAb>();
@@ -123,7 +120,7 @@ bool NetworkDemoState::update(float dt)
         m_playerInput.counter++;
     }
 
-    m_reportText.setString(xy::Stats::getString());
+    xy::App::showReportWindow();
 
     return true;
 }
@@ -171,7 +168,6 @@ void NetworkDemoState::draw()
     rw.setView(getContext().defaultView);
     rw.draw(m_menu);
     rw.draw(m_waitingSign);
-    rw.draw(m_reportText);
 
     for (const auto& player : m_players)
     {

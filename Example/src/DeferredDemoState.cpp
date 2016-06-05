@@ -114,7 +114,7 @@ DeferredDemoState::DeferredDemoState(xy::StateStack& stateStack, Context context
     launchLoadingScreen();
 
     //m_scene.setView(context.defaultView);
-
+    xy::Stats::clear();
     m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
     m_reportText.setPosition(1500.f, 930.f); 
 

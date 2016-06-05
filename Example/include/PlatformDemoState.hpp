@@ -69,8 +69,6 @@ private:
     xy::FontResource m_fontResource;
     xy::ShaderResource m_shaderResource;
 
-    sf::Text m_reportText;
-
     xy::Physics::World m_physWorld;
 
     xy::MeshRenderer m_meshRenderer;

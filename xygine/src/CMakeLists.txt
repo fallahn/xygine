@@ -37,6 +37,11 @@ set(XY_SRC
   ${XY_DIR}/components/ComponentPointLight.cpp  
   ${XY_DIR}/components/QuadTreeComponent.cpp 
 
+  ${XY_DIR}/imgui/imgui.cpp
+  ${XY_DIR}/imgui/imgui_demo.cpp
+  ${XY_DIR}/imgui/imgui_draw.cpp
+  ${XY_DIR}/imgui/imgui_sfml.cpp
+
   ${XY_DIR}/mesh/BoundingBox.cpp
   ${XY_DIR}/mesh/CubeBuilder.cpp
   ${XY_DIR}/mesh/IQMBuilder.cpp

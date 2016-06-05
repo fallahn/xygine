@@ -97,9 +97,6 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     m_scene.setView(context.defaultView);
     m_scene.setAmbientColour({ 91, 46, 13 });
 
-    m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
-    m_reportText.setPosition(1500.f, 30.f);
-
     cacheMeshes();
     buildTerrain();
     buildPhysics();
@@ -146,7 +143,7 @@ bool PlatformDemoState::update(float dt)
         shader.setUniform("u_pointLights[" + std::to_string(i) + "].intensity", 0.f);
     }
 
-    m_reportText.setString(xy::Stats::getString());
+    xy::App::showReportWindow();
     return true;
 }
 
@@ -163,8 +160,6 @@ void PlatformDemoState::draw()
         rw.setView(m_scene.getView());
         rw.draw(m_physWorld);
     }
-
-    rw.draw(m_reportText);
 }
 
 bool PlatformDemoState::handleEvent(const sf::Event& evt)

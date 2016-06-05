@@ -33,6 +33,10 @@ source distribution.
 #include <xygine/Reports.hpp>
 #include <xygine/physics/World.hpp>
 
+#include <xygine/imgui/imgui.h>
+#include <xygine/imgui/imgui_sfml.h>
+#include <xygine/imgui/imgui_internal.h>
+
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
 
@@ -63,6 +67,7 @@ namespace
     sf::Clock frameClock;
 
     const sf::RenderWindow* renderWindow = nullptr;
+    App* instance = nullptr;
 }
 
 App::App(sf::ContextSettings contextSettings)
@@ -98,6 +103,8 @@ App::App(sf::ContextSettings contextSettings)
     {
         Logger::log("Failed loading OpenGL extensions, MultiRenderTargets will be unavailable", Logger::Type::Error, Logger::Output::All);
     }
+
+    instance = this;    
 }
 
 //public
@@ -108,6 +115,8 @@ void App::run()
         Logger::log("Shaders reported as unavailable.", Logger::Type::Error, Logger::Output::File);
         return;
     }
+
+    nim::SFML::Init(m_renderWindow);
 
     initialise();
 
@@ -124,15 +133,26 @@ void App::run()
         float elapsedTime = frameClock.restart().asSeconds();
         timeSinceLastUpdate += elapsedTime;
 
+        nim::SFML::Update();
         while (timeSinceLastUpdate > timePerFrame)
         {
             timeSinceLastUpdate -= timePerFrame;
-
+            
             handleEvents();
             handleMessages();
-            update(timePerFrame);
+           
+            //new/end frame fix flickering on occasions
+            //when update is called more than once - but
+            //also breaks input handling :/
+            //nim::NewFrame();
+            update(timePerFrame);          
+            //nim::EndFrame();       
         }
+        m_renderWindow.clear();
         draw();
+        nim::Render();
+        m_renderWindow.display();
+
 #ifdef _DEBUG_
         float fpsTime = 1.f / fpsClock.restart().asSeconds();
         if (fpsUpdateClock.getElapsedTime().asSeconds() > 0.25f)
@@ -157,6 +177,8 @@ void App::run()
     m_scores.save();
 
     finalise();
+
+    nim::SFML::Shutdown();
 }
 
 void App::pause()
@@ -242,6 +264,16 @@ sf::Vector2f App::getMouseWorldPosition()
 {
     XY_ASSERT(renderWindow, "no valid window instance");
     return renderWindow->mapPixelToCoords(sf::Mouse::getPosition(*renderWindow));
+}
+
+void App::showReportWindow()
+{
+    XY_ASSERT(instance, "no valid app instance");
+
+    nim::Begin("Stats:");
+    nim::Text(Stats::getString().c_str());
+    nim::End();
+    nim::ShowTestWindow();
 }
 
 //protected
@@ -347,8 +379,11 @@ void App::saveScreenshot()
 void App::handleEvents()
 {
     sf::Event evt;
+
     while (m_renderWindow.pollEvent(evt))
     {
+        bool nimConsumed = nim::SFML::ProcessEvent(evt);
+        
         switch (evt.type)
         {
         case sf::Event::LostFocus:
@@ -386,7 +421,7 @@ void App::handleEvents()
             default:break;
             }           
         }
-        eventHandler(evt);
+        if(!nimConsumed) eventHandler(evt);
     }   
 }
 

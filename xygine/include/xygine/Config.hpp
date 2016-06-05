@@ -64,6 +64,8 @@ source distribution.
 
 #endif //XY_STATIC
 
+namespace ImGui {}
+namespace nim = ImGui;
 
 //xygine-wide consts
 #include <SFML/System/Vector2.hpp>

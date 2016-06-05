@@ -87,9 +87,6 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     //m_scene.addPostProcess(pp);
     m_scene.setClearColour(sf::Color(0u, 0u, 10u));
 
-    m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
-    m_reportText.setPosition(1500.f, 30.f);
-
     //preload shaders
     m_shaderResource.preload(PhysicsShaderId::NormalMapTextured, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED);
     m_shaderResource.preload(PhysicsShaderId::NormalMapTexturedSpecular, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED_SPECULAR);
@@ -140,7 +137,7 @@ bool PhysicsDemoState::update(float dt)
         shader->setUniform("u_pointLights[" + std::to_string(i) + "].intensity", 0.f);
     }
 
-    m_reportText.setString(xy::Stats::getString());
+    xy::App::showReportWindow();
 
     return true;
 }
@@ -151,7 +148,6 @@ void PhysicsDemoState::draw()
     rw.draw(m_scene);
     rw.setView(getContext().defaultView);
     if(drawOverlay) rw.draw(m_physWorld);
-    rw.draw(m_reportText);
 }
 
 bool PhysicsDemoState::handleEvent(const sf::Event& evt)
