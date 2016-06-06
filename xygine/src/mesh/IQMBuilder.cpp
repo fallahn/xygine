@@ -204,7 +204,7 @@ namespace
         retVal[2].w = translation.z;
         retVal[3].w = 1.0;
 
-        return retVal;
+        return glm::transpose(retVal);
     }
 }
 

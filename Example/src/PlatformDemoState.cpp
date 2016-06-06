@@ -280,7 +280,7 @@ void PlatformDemoState::cacheMeshes()
     demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/platform/cube_mask.png") });
 
     m_shaderResource.preload(PlatformShaderId::TexturedSkinned, DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
-    auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
+    auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
     fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     fixitMaterialBody.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitBody.png") });
     fixitMaterialBody.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitBody_normal.png") });

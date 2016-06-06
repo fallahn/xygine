@@ -86,7 +86,7 @@ namespace xy
                 "	skinMatrix += u_boneMatrices[int(a_boneIndices.w)] * a_boneWeights.w;\n" \
                 "	position = (skinMatrix * vec4(position, 1.0)).xyz;\n" \
                 "#endif\n" \
-                
+
                 "    vec4 viewPosition = u_worldViewMatrix * vec4(position, 1.0);\n" \
                 "    v_worldPosition = (u_worldMatrix * vec4(position, 1.0)).xyz;\n" \
                 "    gl_Position = u_projectionMatrix * viewPosition;\n" \
@@ -95,13 +95,27 @@ namespace xy
                 "    v_texCoord = a_texCoord0;\n" \
                 "#endif\n" \
 
+                "    vec3 normal = a_normal;\n" \
+                "#if defined(SKINNED)\n" \
+                "    normal = (skinMatrix * vec4(normal, 1.0)).xyz;\n" \
+                "#endif\n" \
+
+                "#if defined(BUMP)\n" \
+                "    vec3 tangent = a_tangent;\n" \
+                "    vec3 bitangent = a_bitangent;\n" \
+                "#if defined(SKINNED)\n" \
+                "    tangent = (skinMatrix * vec4(tangent, 1.0)).xyz;\n" \
+                "    bitangent = (skinMatrix * vec4(bitangent, 1.0)).xyz;\n" \
+                "#endif\n" \
+                "#endif\n" \
+
                 "#if !defined(BUMP)\n"
-                "    v_normalVector = u_normalMatrix * a_normal;\n" \
+                "    v_normalVector = u_normalMatrix * normal;\n" \
                 "#else\n"
                 /*"    mat3 normalMatrix = inverse(mat3(u_worldMatrix));\n" \*/
-                "    v_tbn[0] = normalize(u_normalMatrix * a_tangent);\n" \
-                "    v_tbn[1] = normalize(u_normalMatrix * a_bitangent);\n" \
-                "    v_tbn[2] = normalize(u_normalMatrix * a_normal);\n" \
+                "    v_tbn[0] = normalize(u_normalMatrix * tangent);\n" \
+                "    v_tbn[1] = normalize(u_normalMatrix * bitangent);\n" \
+                "    v_tbn[2] = normalize(u_normalMatrix * normal);\n" \
                 /*"    v_tbn = mat3(t, b, n);\n" \*/
                 "#endif\n"
                 "}";
