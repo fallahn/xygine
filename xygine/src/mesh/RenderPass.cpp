@@ -70,7 +70,7 @@ RenderPass::RenderPass(sf::Shader& shader)
 //public
 void RenderPass::bind() const
 {
-    sf::Shader::bind(&m_shader);    
+    glCheck(glUseProgram(m_shader.getNativeHandle()));
     for (const auto& p : m_properties)
     {
         p.apply(m_shader);
@@ -80,6 +80,8 @@ void RenderPass::bind() const
     {
         ubo.second->bind(m_shader.getNativeHandle(), ubo.first);
     }
+    //we have to bind this afterwards because of SFMLs texture caching strategy
+    sf::Shader::bind(&m_shader);
 
     glCheck(glDepthFunc(m_depthFunc));
     glCheck(glBlendFunc(m_blendFuncSrc, m_blendFuncDst));

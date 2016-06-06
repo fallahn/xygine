@@ -171,6 +171,8 @@ namespace xy
         std::size_t draw(const glm::mat4&, const sf::FloatRect&, RenderPass::ID) const;
         void updateVertexAttribs(ShaderID newShader, const Material& newMaterial);
         void removeUnusedAttribs(ShaderID);
+
+        void setBones(sf::Shader&) const;
     };
 }
 

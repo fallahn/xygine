@@ -49,6 +49,12 @@ namespace xy
                 "in vec3 a_bitangent;\n" \
                 "#endif\n" \
 
+                "#if defined(SKINNED)\n" \
+                "in vec4 a_boneIndices;\n" \
+                "in vec4 a_boneWeights;\n" \
+                "uniform mat4[80] u_boneMatrices;\n" \
+                "#endif\n"
+
                 "uniform mat4 u_worldMatrix;\n" \
                 "uniform mat4 u_worldViewMatrix;\n" \
                 "uniform mat3 u_normalMatrix;\n" \
@@ -71,8 +77,18 @@ namespace xy
 
                 "void main()\n" \
                 "{\n" \
-                "    vec4 viewPosition = u_worldViewMatrix * vec4(a_position, 1.0);\n" \
-                "    v_worldPosition = (u_worldMatrix * vec4(a_position, 1.0)).xyz;\n" \
+                "    vec3 position = a_position;\n" \
+
+                "#if defined(SKINNED)\n" \
+                "	mat4 skinMatrix = u_boneMatrices[int(a_boneIndices.x)] * a_boneWeights.x;\n" \
+                "	skinMatrix += u_boneMatrices[int(a_boneIndices.y)] * a_boneWeights.y;\n" \
+                "	skinMatrix += u_boneMatrices[int(a_boneIndices.z)] * a_boneWeights.z;\n" \
+                "	skinMatrix += u_boneMatrices[int(a_boneIndices.w)] * a_boneWeights.w;\n" \
+                "	position = (skinMatrix * vec4(position, 1.0)).xyz;\n" \
+                "#endif\n" \
+                
+                "    vec4 viewPosition = u_worldViewMatrix * vec4(position, 1.0);\n" \
+                "    v_worldPosition = (u_worldMatrix * vec4(position, 1.0)).xyz;\n" \
                 "    gl_Position = u_projectionMatrix * viewPosition;\n" \
 
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
@@ -161,5 +177,7 @@ namespace xy
 
 #define DEFERRED_TEXTURED_BUMPED_VERTEX "#version 150\n#define BUMP\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredVertex
 #define DEFERRED_TEXTURED_BUMPED_FRAGMENT "#version 150\n#define BUMP\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredFragment
+
+#define DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX "#version 150\n#define BUMP\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex
 
 #endif //XY_MESH_DEFERRED_HPP_

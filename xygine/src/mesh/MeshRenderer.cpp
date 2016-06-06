@@ -79,7 +79,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16 * sizeof(float));
     m_matrixBlockBuffer.create(m_matrixBlock);
 
-    m_materialResource.get(0xffff).addUniformBuffer(m_matrixBlockBuffer);
+    m_materialResource.get(MaterialResource::Static).addUniformBuffer(m_matrixBlockBuffer);
 
     //set lighting uniform buffer
     std::memset(&m_lightingBlock, 0, sizeof(m_lightingBlock));
@@ -127,11 +127,12 @@ std::unique_ptr<Model> MeshRenderer::createModel(std::int32_t id, MessageBus&mb)
 
     //check for skeleton, and animations
     auto result = m_animationResource.find(id);
-    /*if (result != m_animationResource.end())
+    if (result != m_animationResource.end())
     {
         model->setSkeleton(*result->second.skeleton.get());
         model->setAnimations(result->second.animations);
-    }*/
+        //TODO set material to default skinned
+    }
 
     return std::move(model);
 }
@@ -142,7 +143,7 @@ std::unique_ptr<Model> MeshRenderer::createModel(const Mesh& mesh, MessageBus& m
     m_models.push_back(model.get());
 
     //set default material
-    model->setBaseMaterial(m_materialResource.get(0xffff));
+    model->setBaseMaterial(m_materialResource.get(MaterialResource::Static));
 
     return std::move(model);
 }

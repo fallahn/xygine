@@ -74,7 +74,8 @@ namespace
         SpecularSmooth2D,
         SpecularBumped3D,
         SpecularSmooth3D,
-        TexturedSmooth3D
+        TexturedSmooth3D,
+        TexturedSkinned
     };
 
     Plat::PlayerController * playerController = nullptr;
@@ -278,17 +279,18 @@ void PlatformDemoState::cacheMeshes()
     demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/platform/cube_normal.png") });
     demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/platform/cube_mask.png") });
 
-    /*auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
+    m_shaderResource.preload(PlatformShaderId::TexturedSkinned, DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
+    auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     fixitMaterialBody.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitBody.png") });
     fixitMaterialBody.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitBody_normal.png") });
     fixitMaterialBody.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitBody_mask.png") });
 
-    auto& fixitMaterialHead = m_materialResource.add(MatId::MrFixitHead, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
+    auto& fixitMaterialHead = m_materialResource.add(MatId::MrFixitHead, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
     fixitMaterialHead.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     fixitMaterialHead.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitHead.png") });
     fixitMaterialHead.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitHead_normal.png") });
-    fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });*/
+    fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });
 
     m_shaderResource.preload(PlatformShaderId::TexturedSmooth3D, DEFERRED_TEXTURED_VERTEX, DEFERRED_TEXTURED_FRAGMENT);
 
@@ -556,8 +558,8 @@ void PlatformDemoState::addPlayer()
     camera->lockBounds({ 0.f,0.f, 2816.f, 1080.f });
 
     auto model = m_meshRenderer.createModel(MeshID::Fixit, m_messageBus);
-    //model->setSubMaterial(m_materialResource.get(MatId::MrFixitBody), 0);
-    //model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
+    model->setSubMaterial(m_materialResource.get(MatId::MrFixitBody), 0);
+    model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
     model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, 90.f);
     model->setScale({ 50.f, 50.f, 50.f });

@@ -168,7 +168,10 @@ namespace xy
         */
         void setSkeleton(const std::vector<std::int32_t>& jointIndices, const std::vector<std::vector<glm::mat4>>& keyFrames)
         {
-            m_skeleton = std::make_unique<Skeleton>(jointIndices, keyFrames);
+            if (!jointIndices.empty() && !keyFrames.empty())
+            {
+                m_skeleton = std::make_unique<Skeleton>(jointIndices, keyFrames);
+            }
         }
 
     private:

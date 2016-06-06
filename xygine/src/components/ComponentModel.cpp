@@ -69,6 +69,11 @@ void Model::entityUpdate(Entity& entity, float dt)
     m_worldMatrix *= m_preTransform;
 
     m_worldBounds = entity.getWorldTransform().transformRect(m_boundingBox.asFloatRect());
+
+    if (!m_animations.empty())
+    {
+        m_animations[0].update(dt, m_currentFrame);
+    }
 }
 
 void Model::setBaseMaterial(const Material& material, bool applyToAll)
@@ -232,6 +237,7 @@ std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibl
             m_subMaterials[i]->getShader().setUniform("u_worldViewMatrix", sf::Glsl::Mat4(glm::value_ptr(worldViewMat)));
             m_subMaterials[i]->getShader().setUniform("u_normalMatrix", sf::Glsl::Mat3(glm::value_ptr(glm::inverseTranspose(glm::mat3(worldViewMat)))));
             m_subMaterials[i]->bind();
+            setBones(m_subMaterials[i]->getShader());
             auto vao = m_vaoBindings.find(m_subMaterials[i]->getShader().getNativeHandle());
             vao->second.bind();
             const auto subMesh = m_mesh.getSubMesh(i);
@@ -248,6 +254,7 @@ std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibl
         m_material->getShader().setUniform("u_worldViewMatrix", sf::Glsl::Mat4(glm::value_ptr(worldViewMat)));
         m_material->getShader().setUniform("u_normalMatrix", sf::Glsl::Mat3(glm::value_ptr(glm::inverseTranspose(glm::mat3(worldViewMat)))));
         m_material->bind();
+        setBones(m_material->getShader());
         auto vao = m_vaoBindings.find(m_material->getShader().getNativeHandle());
         vao->second.bind();
         glCheck(glDrawArrays(static_cast<GLenum>(m_mesh.getPrimitiveType()), 0, m_mesh.getVertexCount()));
@@ -278,4 +285,15 @@ void Model::removeUnusedAttribs(ShaderID id)
         }
     }
     m_vaoBindings.erase(id);
+}
+
+void Model::setBones(sf::Shader& shader) const
+{
+    if (m_skeleton)
+    {
+        //TODO get the cached UID from shader
+        UniformID id;
+        glCheck(id = glGetUniformLocation(shader.getNativeHandle(), "u_boneMatrices"));
+        glCheck(glUniformMatrix4fv(id, m_currentFrame.size(), GL_FALSE, glm::value_ptr(m_currentFrame[0])));
+    }
 }

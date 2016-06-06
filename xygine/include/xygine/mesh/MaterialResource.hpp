@@ -75,6 +75,12 @@ namespace xy
         */
         Material& get(ID);
 
+        enum DefaultID
+        {
+            Skinned = 0xffff,
+            Static  = 0xfffe
+        };
+
     private:
 
         std::map<ID, std::unique_ptr<Material>> m_materials;
