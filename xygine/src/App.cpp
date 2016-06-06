@@ -270,10 +270,13 @@ void App::showReportWindow()
 {
     XY_ASSERT(instance, "no valid app instance");
 
-    nim::Begin("Stats:");
+    IMGUI_ONCE_UPON_A_FRAME
+    {
+    nim::Begin("Stats:", nullptr, ImGuiWindowFlags_ShowBorders);
     nim::Text(Stats::getString().c_str());
     nim::End();
-    nim::ShowTestWindow();
+    //nim::ShowTestWindow();
+    }
 }
 
 //protected
@@ -359,7 +362,6 @@ void App::saveScreenshot()
 {
     std::time_t time = std::time(nullptr);
     struct tm* timeInfo;
-
     timeInfo = std::localtime(&time);
 
     std::array<char, 40u> buffer;

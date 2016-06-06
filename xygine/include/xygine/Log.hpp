@@ -37,9 +37,11 @@ source distribution.
 
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <list>
+#include <ctime>
 
 #ifdef _MSC_VER
 #define NOMINMAX
@@ -116,6 +118,11 @@ namespace xy
                 std::ofstream file("output.log", std::ios::app);
                 if (file.good())
                 {
+                    std::time_t time = std::time(nullptr);
+                    auto tm = *std::localtime(&time);
+
+                    file.imbue(std::locale());
+                    file << std::put_time(&tm, "%d/%m/%y-%H:%M:%S: ");
                     file << outstring << std::endl;
                     file.close();
                 }
