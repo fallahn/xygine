@@ -119,6 +119,12 @@ namespace xy
         */
         sf::Shader& getShader() const;
 
+        /*!
+        \brief Returns the uniform ID of the joint matrices if the active pass
+        supports skinning, else returns -1
+        */
+        UniformID getSkinID() const { return m_activePass->getSkinID(); }
+
     private:
 
         std::map<RenderPass::ID, RenderPass> m_passes;

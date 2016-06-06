@@ -115,8 +115,8 @@ bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 
                 return false;
             }
             glCheck(glBindRenderbuffer(GL_RENDERBUFFER, m_depthbuffer));
-            glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height));
-            glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer));
+            glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
+            glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer));
         }
         //attach textures
         for (auto i = 0u; i < count; ++i)

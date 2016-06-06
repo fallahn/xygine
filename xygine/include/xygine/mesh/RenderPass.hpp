@@ -172,6 +172,11 @@ namespace xy
         */
         void setCullFace(CullFace face) { m_cullface = face; }
 
+        /*!
+        \brief Returns the uniform ID of the joint array if this pass
+        supports skinning, else returns -1
+        */
+        UniformID getSkinID() const { return m_skinID; }
 
     private:
         sf::Shader& m_shader;
@@ -186,6 +191,8 @@ namespace xy
         DepthFunc m_depthFunc;
         Winding m_winding;
         CullFace m_cullface;
+
+        UniformID m_skinID;
     };
 }
 

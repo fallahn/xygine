@@ -172,7 +172,7 @@ namespace xy
         void updateVertexAttribs(ShaderID newShader, const Material& newMaterial);
         void removeUnusedAttribs(ShaderID);
 
-        void setBones(sf::Shader&) const;
+        void setBones(sf::Shader&, UniformID) const;
     };
 }
 

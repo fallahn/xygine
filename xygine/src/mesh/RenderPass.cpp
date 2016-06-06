@@ -37,7 +37,8 @@ RenderPass::RenderPass(sf::Shader& shader)
     m_blendFuncDst  (BlendFunc::ONE_MINUS_SRC_ALPHA),
     m_depthFunc     (DepthFunc::LEQUAL),
     m_winding       (Winding::COUNTER_CLOCKWISE),
-    m_cullface      (CullFace::BACK)
+    m_cullface      (CullFace::BACK),
+    m_skinID        (-1)
 {
     XY_ASSERT(shader.getNativeHandle(), "Must compile shader first!");
 
@@ -65,6 +66,11 @@ RenderPass::RenderPass(sf::Shader& shader)
             }
         }
     }
+
+    //check the shader to see if it supports skinning
+    glCheck(glUseProgram(m_shader.getNativeHandle()));
+    glCheck(m_skinID = glGetUniformLocation(shader.getNativeHandle(), "u_boneMatrices"));
+    glCheck(glUseProgram(0));
 }
 
 //public
