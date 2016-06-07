@@ -75,7 +75,7 @@ namespace xy
                 "{\n"
                 "    PointLight u_pointLights[MAX_POINT_LIGHTS];\n"
                 "    vec4 u_ambientColour;\n"
-                "    vec3 u_cameraWorldPosition;\n"                
+                "    vec3 u_cameraWorldPosition;\n"
                 "};\n"
 
                 "uniform sampler2D u_diffuseMap;\n"
@@ -84,7 +84,7 @@ namespace xy
                 "uniform sampler2D u_positionMap;\n"
                 "uniform sampler2D u_aoMap;\n"
                 "uniform sampler2D u_illuminationMap;\n"
-                
+
 
                 "in vec2 v_texCoord;\n"
 

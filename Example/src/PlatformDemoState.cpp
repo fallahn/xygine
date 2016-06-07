@@ -272,14 +272,20 @@ void PlatformDemoState::cacheMeshes()
     xy::IQMBuilder ib2("assets/models/platform_01.iqm");
     m_meshRenderer.loadModel(MeshID::Platform, ib2);
 
+    xy::IQMBuilder ib3("assets/models/batcat.iqm");
+    m_meshRenderer.loadModel(MeshID::Batcat, ib3);
+
     m_shaderResource.preload(PlatformShaderId::SpecularBumped3D, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
+    m_shaderResource.preload(PlatformShaderId::TexturedSkinned, DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
+    m_shaderResource.preload(PlatformShaderId::TexturedSmooth3D, DEFERRED_TEXTURED_VERTEX, DEFERRED_TEXTURED_FRAGMENT);
+    m_shaderResource.preload(PlatformShaderId::SpecularSmooth3D, DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
+
     auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/cube_diffuse.png") });
     demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/platform/cube_normal.png") });
     demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/platform/cube_mask.png") });
-
-    m_shaderResource.preload(PlatformShaderId::TexturedSkinned, DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
+  
     auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
     fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     fixitMaterialBody.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitBody.png") });
@@ -292,13 +298,15 @@ void PlatformDemoState::cacheMeshes()
     fixitMaterialHead.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitHead_normal.png") });
     fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });
 
-    m_shaderResource.preload(PlatformShaderId::TexturedSmooth3D, DEFERRED_TEXTURED_VERTEX, DEFERRED_TEXTURED_FRAGMENT);
-
     auto& platformMaterial = m_materialResource.add(MatId::Terrain, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
     platformMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     platformMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_01.png") });
 
-    m_shaderResource.preload(PlatformShaderId::SpecularSmooth3D, DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
+    auto& catMat = m_materialResource.add(MatId::BatcatMat, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
+    catMat.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    catMat.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/batcat_diffuse.png") });
+    //catMat.addProperty({ "u_colour", sf::Color::Blue });
+
     auto& lightMaterial = m_materialResource.add(MatId::LightSource, m_shaderResource.get(PlatformShaderId::SpecularSmooth3D));
     lightMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     lightMaterial.addProperty({ "u_colour", sf::Color(255, 255, 100) });
@@ -572,5 +580,20 @@ void PlatformDemoState::addPlayer()
     m_scene.setActiveCamera(entity->addComponent(camera));
     entity->addComponent(model);
 
+    m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
+
+
+    model = m_meshRenderer.createModel(MeshID::Batcat, m_messageBus);
+    model->setBaseMaterial(m_materialResource.get(MatId::BatcatMat), true);
+    //model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
+    model->rotate(xy::Model::Axis::X, 90.f);
+    model->rotate(xy::Model::Axis::Y, 100.f);
+    model->rotate(xy::Model::Axis::Z, 90.f);
+    model->setScale({ 300.f, 300.f, 300.f });
+    //model->setPosition({ 50.f, 160.f, -20.f });
+
+    entity = xy::Entity::create(m_messageBus);
+    entity->setPosition(1160.f, 540.f);
+    entity->addComponent(model);
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 }

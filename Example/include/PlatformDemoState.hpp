@@ -77,7 +77,8 @@ private:
     {
         Cube = 0,
         Fixit,
-        Platform
+        Platform,
+        Batcat
     };
 
     enum MatId
@@ -86,7 +87,8 @@ private:
         MrFixitBody,
         MrFixitHead,
         LightSource,
-        Terrain
+        Terrain,
+        BatcatMat
     };
     xy::MaterialResource m_materialResource;
 

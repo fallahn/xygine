@@ -550,7 +550,7 @@ void IQMBuilder::loadAnimationData(const Iqm::Header& header, char* headerBytes,
     }
 
     //load keyframes - a 'pose' is a single posed joint, and a set of poses makes up one frame equivalent to a posed skeleton
-    std::vector<std::vector<glm::mat4>> keyframes(header.frameCount);
+    std::vector<std::vector<glm::mat4>> keyframes(header.frameCount + 1); //we'll append the bind pose on the end if it exists
     std::uint16_t* frameIter = (std::uint16_t*)(headerBytes + header.frameOffset);
     if (bindPose.size() > 0)
     {
@@ -562,7 +562,7 @@ void IQMBuilder::loadAnimationData(const Iqm::Header& header, char* headerBytes,
                 Iqm::Pose pose;
                 poseIter = readPose(poseIter, pose);
 
-                keyframes[frameIndex].resize(header.poseCount);
+                keyframes[frameIndex].resize(header.poseCount); 
 
                 glm::quat rotation;
                 glm::vec3 translation, scale;
@@ -602,6 +602,7 @@ void IQMBuilder::loadAnimationData(const Iqm::Header& header, char* headerBytes,
             }
         }
     }
+    keyframes.back() = std::move(bindPose);
 
     char*  animIter = headerBytes + header.animOffset;
     for (auto animIndex = 0u; animIndex < header.animCount; ++animIndex)
