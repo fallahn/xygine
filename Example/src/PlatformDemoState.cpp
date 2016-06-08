@@ -302,7 +302,7 @@ void PlatformDemoState::cacheMeshes()
     platformMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     platformMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_01.png") });
 
-    auto& catMat = m_materialResource.add(MatId::BatcatMat, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
+    auto& catMat = m_materialResource.add(MatId::BatcatMat, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
     catMat.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     auto& tex = m_textureResource.get("assets/images/platform/batcat_diffuse.png");
     tex.setRepeated(true);
@@ -310,7 +310,9 @@ void PlatformDemoState::cacheMeshes()
     auto& tex2 = m_textureResource.get("assets/images/platform/batcat_normal.png");
     tex2.setRepeated(true);
     catMat.addProperty({ "u_normalMap", tex2 });
-    catMat.addProperty({ "u_maskMap", m_textureResource.get("null") });
+    auto& tex3 = m_textureResource.get("assets/images/platform/batcat_mask.png");
+    tex3.setRepeated(true);
+    catMat.addProperty({ "u_maskMap", tex3 });
 
     auto& lightMaterial = m_materialResource.add(MatId::LightSource, m_shaderResource.get(PlatformShaderId::SpecularSmooth3D));
     lightMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
@@ -420,6 +422,7 @@ void PlatformDemoState::buildTerrain()
     drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
 */
     auto model = m_meshRenderer.createModel(MeshID::Platform, m_messageBus);
+    model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, 180.f);
     model->setPosition({ 384.f, 158.f, 0.f });
     model->setBaseMaterial(m_materialResource.get(MatId::Terrain));
@@ -570,13 +573,11 @@ void PlatformDemoState::addPlayer()
     camera->lockTransform(xy::Camera::TransformLock::AxisY);
     camera->lockBounds({ 0.f,0.f, 2816.f, 1080.f });
 
-    auto model = m_meshRenderer.createModel(MeshID::Fixit, m_messageBus);
-    model->setSubMaterial(m_materialResource.get(MatId::MrFixitBody), 0);
-    model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
+    auto model = m_meshRenderer.createModel(MeshID::Batcat, m_messageBus);
+    model->setBaseMaterial(m_materialResource.get(MatId::BatcatMat));
     model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, 90.f);
-    model->setScale({ 50.f, 50.f, 50.f });
-    model->setPosition({ 50.f, 160.f, 0.f });
+    model->setPosition({ 50.f, 160.f, -20.f });
 
     auto entity = xy::Entity::create(m_messageBus);
     entity->setPosition(960.f, 540.f);
@@ -587,18 +588,16 @@ void PlatformDemoState::addPlayer()
 
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 
-
-    model = m_meshRenderer.createModel(MeshID::Batcat, m_messageBus);
-    model->setBaseMaterial(m_materialResource.get(MatId::BatcatMat));
-    //model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
+    model = m_meshRenderer.createModel(MeshID::Fixit, m_messageBus);
+    model->setSubMaterial(m_materialResource.get(MatId::MrFixitBody), 0);
+    model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
     model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, 90.f);
-    //model->setScale({ 200.f, 200.f, 200.f });
-    //model->setScale({ 2.f, 2.f, 2.f });
-    //model->setPosition({ 50.f, 160.f, -20.f });
+    model->setScale({ 50.f, 50.f, 50.f });
+    //model->setPosition({ 50.f, 160.f, 0.f });
 
     entity = xy::Entity::create(m_messageBus);
-    entity->setPosition(1160.f, 540.f);
+    entity->setPosition(1320.f, 660.f);
     entity->addComponent(model);
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 }
