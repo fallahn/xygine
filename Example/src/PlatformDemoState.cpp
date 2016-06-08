@@ -302,10 +302,15 @@ void PlatformDemoState::cacheMeshes()
     platformMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     platformMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_01.png") });
 
-    auto& catMat = m_materialResource.add(MatId::BatcatMat, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
+    auto& catMat = m_materialResource.add(MatId::BatcatMat, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     catMat.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    catMat.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/batcat_diffuse.png") });
-    //catMat.addProperty({ "u_colour", sf::Color::Blue });
+    auto& tex = m_textureResource.get("assets/images/platform/batcat_diffuse.png");
+    tex.setRepeated(true);
+    catMat.addProperty({ "u_diffuseMap", tex });
+    auto& tex2 = m_textureResource.get("assets/images/platform/batcat_normal.png");
+    tex2.setRepeated(true);
+    catMat.addProperty({ "u_normalMap", tex2 });
+    catMat.addProperty({ "u_maskMap", m_textureResource.get("null") });
 
     auto& lightMaterial = m_materialResource.add(MatId::LightSource, m_shaderResource.get(PlatformShaderId::SpecularSmooth3D));
     lightMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
@@ -584,12 +589,12 @@ void PlatformDemoState::addPlayer()
 
 
     model = m_meshRenderer.createModel(MeshID::Batcat, m_messageBus);
-    model->setBaseMaterial(m_materialResource.get(MatId::BatcatMat), true);
+    model->setBaseMaterial(m_materialResource.get(MatId::BatcatMat));
     //model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
     model->rotate(xy::Model::Axis::X, 90.f);
-    model->rotate(xy::Model::Axis::Y, 100.f);
     model->rotate(xy::Model::Axis::Z, 90.f);
-    model->setScale({ 300.f, 300.f, 300.f });
+    //model->setScale({ 200.f, 200.f, 200.f });
+    //model->setScale({ 2.f, 2.f, 2.f });
     //model->setPosition({ 50.f, 160.f, -20.f });
 
     entity = xy::Entity::create(m_messageBus);

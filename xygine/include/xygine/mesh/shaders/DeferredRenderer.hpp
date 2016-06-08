@@ -166,7 +166,7 @@ namespace xy
                 "    fragOut[1] = vec4(normalize(v_normalVector), 1.0);\n" \
                 "#else\n" \
                 "    vec3 normal = texture(u_normalMap, v_texCoord).rgb * 2.0 - 1.0;\n" \
-                "    fragOut[1] = vec4(normalize(v_tbn[0] * normal.x + v_tbn[1] * normal.y + v_tbn[2] * normal.z).grb, 1.0);\n" \
+                "    fragOut[1] = vec4(normalize(v_tbn[0] * normal.x + v_tbn[1] * normal.y + v_tbn[2] * normal.z).rgb, 1.0);\n" \
                 "#endif\n"
                 "#if defined(BUMP) || defined(TEXTURED)\n"
                 "    fragOut[2] = texture(u_maskMap, v_texCoord);\n"

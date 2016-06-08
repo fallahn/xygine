@@ -176,6 +176,7 @@ void Model::setPosition(const sf::Vector3f& position)
 void Model::setScale(const sf::Vector3f& scale)
 {
     m_scale = { scale.x, scale.y, scale.y };
+    m_needsUpdate = true;
 }
 
 void Model::setSkeleton(const Skeleton& s)
