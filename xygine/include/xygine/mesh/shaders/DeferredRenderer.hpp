@@ -97,15 +97,15 @@ namespace xy
 
                 "    vec3 normal = a_normal;\n" \
                 "#if defined(SKINNED)\n" \
-                "    normal = (skinMatrix * vec4(normal, 1.0)).xyz;\n" \
+                "    normal = (skinMatrix * vec4(normal, 0.0)).xyz;\n" \
                 "#endif\n" \
 
                 "#if defined(BUMP)\n" \
                 "    vec3 tangent = a_tangent;\n" \
                 "    vec3 bitangent = a_bitangent;\n" \
                 "#if defined(SKINNED)\n" \
-                "    tangent = (skinMatrix * vec4(tangent, 1.0)).xyz;\n" \
-                "    bitangent = (skinMatrix * vec4(bitangent, 1.0)).xyz;\n" \
+                "    tangent = (skinMatrix * vec4(tangent, 0.0)).xyz;\n" \
+                "    bitangent = (skinMatrix * vec4(bitangent, 0.0)).xyz;\n" \
                 "#endif\n" \
                 "#endif\n" \
 
@@ -113,9 +113,9 @@ namespace xy
                 "    v_normalVector = u_normalMatrix * normal;\n" \
                 "#else\n"
                 /*"    mat3 normalMatrix = inverse(mat3(u_worldMatrix));\n" \*/
-                "    v_tbn[0] = normalize(u_normalMatrix * tangent);\n" \
-                "    v_tbn[1] = normalize(u_normalMatrix * bitangent);\n" \
-                "    v_tbn[2] = normalize(u_normalMatrix * normal);\n" \
+                "    v_tbn[0] = normalize(u_worldMatrix * vec4(tangent, 0.0)).xyz;\n" \
+                "    v_tbn[1] = normalize(u_worldMatrix * vec4(bitangent, 0.0)).xyz;\n" \
+                "    v_tbn[2] = normalize(u_worldMatrix * vec4(normal, 0.0)).xyz;\n" \
                 /*"    v_tbn = mat3(t, b, n);\n" \*/
                 "#endif\n"
                 "}";
@@ -193,5 +193,6 @@ namespace xy
 #define DEFERRED_TEXTURED_BUMPED_FRAGMENT "#version 150\n#define BUMP\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredFragment
 
 #define DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX "#version 150\n#define BUMP\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex
+#define DEFERRED_TEXTURED_SKINNED_VERTEX "#version 150\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex
 
 #endif //XY_MESH_DEFERRED_HPP_

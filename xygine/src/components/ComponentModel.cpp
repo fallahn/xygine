@@ -236,7 +236,7 @@ std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibl
             if (!m_subMaterials[i]->setActivePass(pass)) continue;
             m_subMaterials[i]->getShader().setUniform("u_worldMatrix", sf::Glsl::Mat4(glm::value_ptr(m_worldMatrix)));
             m_subMaterials[i]->getShader().setUniform("u_worldViewMatrix", sf::Glsl::Mat4(glm::value_ptr(worldViewMat)));
-            m_subMaterials[i]->getShader().setUniform("u_normalMatrix", sf::Glsl::Mat3(glm::value_ptr(glm::inverseTranspose(glm::mat3(worldViewMat)))));
+            m_subMaterials[i]->getShader().setUniform("u_normalMatrix", sf::Glsl::Mat3(glm::value_ptr(glm::inverseTranspose(glm::mat3(m_worldMatrix)))));
             m_subMaterials[i]->bind();
             setBones(m_subMaterials[i]->getShader(), m_subMaterials[i]->getSkinID());
             auto vao = m_vaoBindings.find(m_subMaterials[i]->getShader().getNativeHandle());
@@ -253,7 +253,7 @@ std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibl
         if(!m_material->setActivePass(pass)) return 0;
         m_material->getShader().setUniform("u_worldMatrix", sf::Glsl::Mat4(glm::value_ptr(m_worldMatrix)));
         m_material->getShader().setUniform("u_worldViewMatrix", sf::Glsl::Mat4(glm::value_ptr(worldViewMat)));
-        m_material->getShader().setUniform("u_normalMatrix", sf::Glsl::Mat3(glm::value_ptr(glm::inverseTranspose(glm::mat3(worldViewMat)))));
+        m_material->getShader().setUniform("u_normalMatrix", sf::Glsl::Mat3(glm::value_ptr(glm::inverseTranspose(glm::mat3(m_worldMatrix)))));
         m_material->bind();
         setBones(m_material->getShader(), m_material->getSkinID());
         auto vao = m_vaoBindings.find(m_material->getShader().getNativeHandle());
