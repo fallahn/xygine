@@ -576,16 +576,15 @@ void PlatformDemoState::addPlayer()
     auto model = m_meshRenderer.createModel(MeshID::Batcat, m_messageBus);
     model->setBaseMaterial(m_materialResource.get(MatId::BatcatMat));
     model->rotate(xy::Model::Axis::X, 90.f);
-    model->rotate(xy::Model::Axis::Z, 90.f);
+    model->rotate(xy::Model::Axis::Z, -90.f);
     model->setPosition({ 50.f, 160.f, -20.f });
 
     auto entity = xy::Entity::create(m_messageBus);
     entity->setPosition(960.f, 540.f);
     entity->addComponent(body);
+    entity->addComponent(model);
     playerController = entity->addComponent(controller);
     m_scene.setActiveCamera(entity->addComponent(camera));
-    entity->addComponent(model);
-
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 
     model = m_meshRenderer.createModel(MeshID::Fixit, m_messageBus);

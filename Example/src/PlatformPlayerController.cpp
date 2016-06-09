@@ -30,18 +30,27 @@ source distribution.
 #include <xygine/Assert.hpp>
 #include <xygine/Entity.hpp>
 #include <xygine/physics/RigidBody.hpp>
+#include <xygine/components/Model.hpp>
+#include <xygine/Reports.hpp>
+#include <xygine/util/Vector.hpp>
 
 using namespace Plat;
 
 namespace
 {
     const float moveForce = 800.f;
+    const float maxVelocity = moveForce * moveForce;
+    const float rotationSpeed = 800.f;
+    const float faceRotation = 45.f;
 }
 
 PlayerController::PlayerController(xy::MessageBus& mb)
     : xy::Component (mb, this),
     m_body          (nullptr),
-    m_lastInput     (0)
+    m_model         (nullptr),
+    m_lastInput     (0),
+    m_faceLeft      (false),
+    m_faceRight     (false)
 {
 
 }
@@ -49,33 +58,62 @@ PlayerController::PlayerController(xy::MessageBus& mb)
 //public
 void PlayerController::entityUpdate(xy::Entity&, float dt)
 {
+    float rotation = m_model->getRotation(xy::Model::Axis::Z);
+    if (m_faceLeft && rotation > -faceRotation)
+    {
+        m_model->rotate(xy::Model::Axis::Z, -rotationSpeed * dt * (1.f - (rotation / -faceRotation)));
+    }
+    else
+    {
+        m_faceLeft = false;
+    }
 
+    if (m_faceRight && rotation < faceRotation)
+    {
+        m_model->rotate(xy::Model::Axis::Z, rotationSpeed * dt * (1.f - (rotation / faceRotation)));
+    }
+    else
+    {
+        m_faceRight = false;
+    }
+    
+    REPORT("Z Rotation", std::to_string(rotation));
+
+    const float speedRatio = xy::Util::Vector::lengthSquared(m_body->getLinearVelocity()) / maxVelocity;
+    REPORT("Velocity Ratio", std::to_string(speedRatio));
+    //TODO set animation speed based on ratio, unless it drops to
+    //zero, in which case play idle animation
 }
 
 void PlayerController::onStart(xy::Entity& entity)
 {
     m_body = entity.getComponent<xy::Physics::RigidBody>();
     XY_ASSERT(m_body, "Rigid body not found");
+
+    m_model = entity.getComponent<xy::Model>();
+    XY_ASSERT(m_model, "Model not found!");
 }
 
 void PlayerController::applyInput(sf::Uint8 input)
 {
+    //update physics
     float velocity = 0.f;
     if (input & Left)
     {
         velocity = -moveForce;
+        m_faceLeft = true;
     }
 
     if (input & Right)
     {
         velocity = moveForce;
+        m_faceRight = true;
     }
 
     const auto currVelocity = m_body->getLinearVelocity();
     const float velChange = velocity - currVelocity.x;
     const float force = m_body->getMass() * velChange;
     m_body->applyLinearImpulse({ force, 0.f }, m_body->getLocalCentre());
-
 
     if ((input & Jump) &&
         ((m_lastInput & Jump) == 0))

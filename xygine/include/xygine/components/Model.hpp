@@ -124,9 +124,25 @@ namespace xy
         mind and will often appear very small. This function scales the model
         relative to the entity, around the model's origin point. Some
         correction may also be needed via setPosition to allow for any offset.
-        \param Scale 3-component vector representing the scale in each axis
+        \param scale 3-component vector representing the scale in each axis
         */
-        void setScale(const sf::Vector3f&);
+        void setScale(const sf::Vector3f& scale);
+
+        /*!
+        \brief Returns the current rotation, in degrees, or the model around
+        the given axis.
+        */
+        float getRotation(Model::Axis) const;
+
+        /*!
+        \brief Returns the model's translation relative to its parent entity
+        */
+        sf::Vector3f getTranslation() const { return{ m_translation.x, m_translation.y, m_translation.z }; }
+
+        /*!
+        \brief Returns the model's scale, relative to its own origin
+        */
+        sf::Vector3f getScale() const { return{ m_scale.x, m_scale.y, m_scale.z }; }
 
         /*!
         \brief Allows adding skeletal data to the model if the mesh supports
@@ -173,6 +189,7 @@ namespace xy
         void removeUnusedAttribs(ShaderID);
 
         void setBones(sf::Shader&, UniformID) const;
+        void buildFirstFrame();
     };
 }
 

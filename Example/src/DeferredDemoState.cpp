@@ -67,8 +67,8 @@ namespace
         "uniform sampler2D u_maskMap;\n"
         "uniform mat4 u_inverseWorldViewMatrix;\n"
 
-        "const vec4 tangent = vec4(1.0, 0.0, 0.0, 1.0); \n"
-        "const vec4 normal = vec4(0.0, 0.0, 1.0, 1.0); \n"
+        "const vec4 tangent = vec4(1.0, 0.0, 0.0, 0.0); \n"
+        "const vec4 normal = vec4(0.0, 0.0, 1.0, 0.0); \n"
 
         /*"mat3 inverse(mat3 m)\n"
         "{\n"
@@ -91,14 +91,14 @@ namespace
         "{\n"
 
         /*"    mat3 normalMatrix = transpose(mat3(u_inverseWorldViewMatrix));\n"*/
-        "    vec3 n = normalize(vec3(u_inverseWorldViewMatrix * normal));\n"
-        "    vec3 t = normalize(vec3(u_inverseWorldViewMatrix * tangent));\n"
-        /*"    t = normalize(t - (dot(t, n) * n));\n"*/
+        "    vec3 n = normalize(vec3(gl_ModelViewMatrix * normal));\n"
+        "    vec3 t = normalize(vec3(gl_ModelViewMatrix * tangent));\n"
+        "    t = normalize(t - (dot(t, n) * n));\n"
         "    vec3 b = cross(n,t);\n" \
         /*"    mat3 tangentSpaceTransformMatrix = mat3(t, b, n);\n"*/
 
         "    vec3 bumpNormal = texture2D(u_normalMap, gl_TexCoord[0].xy).rgb * 2.0 - 1.0;\n"
-        /*"    bumpNormal = normalize(t * bumpNormal.x + b * bumpNormal.y + n * bumpNormal.z);\n"*/
+        "    bumpNormal = normalize(t * bumpNormal.x + b * bumpNormal.y + n * bumpNormal.z);\n"
 
         "    gl_FragData[0] = texture2D(u_diffuseMap, gl_TexCoord[0].xy);\n"
         "    gl_FragData[1] = vec4(0.5 * (bumpNormal + 1.0), 1.0);\n"

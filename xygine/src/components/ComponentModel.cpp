@@ -179,6 +179,20 @@ void Model::setScale(const sf::Vector3f& scale)
     m_needsUpdate = true;
 }
 
+float Model::getRotation(Model::Axis axis) const
+{
+    glm::vec3 rotation = glm::eulerAngles(m_rotation);
+
+    switch (axis)
+    {
+    default: break;
+    case Axis::X: return rotation.x * xy::Util::Const::radToDeg;
+    case Axis::Y: return rotation.y * xy::Util::Const::radToDeg;
+    case Axis::Z: return rotation.z * xy::Util::Const::radToDeg;
+    }
+    return 0.f;
+}
+
 void Model::setSkeleton(const Skeleton& s)
 {
     m_skeleton = &s;
@@ -187,13 +201,22 @@ void Model::setSkeleton(const Skeleton& s)
         a.setSkeleton(m_skeleton);
     }
 
-    m_currentFrame = m_skeleton->getFrame(0);
+    buildFirstFrame();
 }
 
 void Model::addAnimation(const Skeleton::Animation& animation)
 {
+    bool empty = m_animations.empty();
     m_animations.push_back(animation);
-    if (m_skeleton) m_animations.back().setSkeleton(m_skeleton);
+
+    if (m_skeleton)
+    {
+        m_animations.back().setSkeleton(m_skeleton);
+        if (empty)
+        {
+            buildFirstFrame();
+        }
+    }
 }
 
 void Model::setAnimations(const std::vector<Skeleton::Animation>& animations)
@@ -205,6 +228,7 @@ void Model::setAnimations(const std::vector<Skeleton::Animation>& animations)
         {
             a.setSkeleton(m_skeleton);
         }
+        buildFirstFrame();
     }
 }
 
@@ -293,5 +317,28 @@ void Model::setBones(sf::Shader& shader, UniformID id) const
     if (m_skeleton && id > -1)
     {
         glCheck(glUniformMatrix4fv(id, m_currentFrame.size(), GL_FALSE, glm::value_ptr(m_currentFrame[0])));
+    }
+}
+
+void Model::buildFirstFrame()
+{
+    if (!m_animations.empty())
+    {
+        const auto& frame = m_skeleton->getFrame(0);
+        auto size = frame.size();
+        m_currentFrame.resize(size);
+
+        const auto& boneIndices = m_skeleton->getJointIndices();
+        for (auto i = 0u; i < size; ++i)
+        {
+            if (boneIndices[i] >= 0)
+            {
+                m_currentFrame[i] = m_currentFrame[boneIndices[i]] * frame[i];
+            }
+            else
+            {
+                m_currentFrame[i] = frame[i];
+            }
+        }
     }
 }

@@ -407,7 +407,7 @@ void MeshRenderer::initOutput()
             m_lightingShader.setUniform("u_normalMap", m_gBuffer.getTexture(MaterialChannel::Normal));
             m_lightingShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
             m_lightingShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
-            m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
+            //m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
             m_lightingShader.setUniform("u_illuminationMap", m_lightBlurTexture.getTexture());
         }
     }

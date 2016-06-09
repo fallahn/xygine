@@ -36,6 +36,7 @@ namespace xy
     {
         class RigidBody;
     }
+    class Model;
 }
 
 namespace Plat
@@ -61,7 +62,11 @@ namespace Plat
     private:
 
         xy::Physics::RigidBody* m_body;
+        xy::Model* m_model;
         sf::Uint8 m_lastInput;
+
+        bool m_faceLeft;
+        bool m_faceRight;
     };
 }
 

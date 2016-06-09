@@ -64,20 +64,19 @@ namespace xy
             ~Animation() = default;
 
             /*!
-            \brief Returns the current frame.
-            The current frame is the calculated interpolated frame based
-            on the current animation time and the nearest two key frames.
-            \returns Pointer to array of matrices to send directly to skinning shader
-            */
-            //const std::vector<glm::mat4>& getCurrentFrame() const;
-            /*!
             \brief Sets the skeleton to which this animation is applied
             */
             void setSkeleton(const Skeleton*);
             /*!
             \brief Updates the animation based on the give frame time
+            \param float current frame time
+            \param std::vector<glm::mat4>& Destination for updated frame
+            \param bool Low-res. When true low resolution updates are performed
+            using only keyframes with no interpolation. For instance when an
+            animation is updated in the distance using low-res updates can
+            improve performance.
             */
-            void update(float, std::vector<glm::mat4>&);
+            void update(float, std::vector<glm::mat4>&, bool = false);
 
         private:
             std::size_t m_frameCount;
@@ -87,15 +86,14 @@ namespace xy
             std::string m_name;
             bool m_looped;
 
-            //std::vector<glm::mat4> m_currentFrame; //<TODO pass this in to update as it's shared with all animations
             const Skeleton* m_skeleton;
             float m_currentTime;
             float m_frameTime;
             std::size_t m_currentFrameIndex;
             std::size_t m_nextFrameIndex;
 
-            //void buildFirstFrame();
             void interpolate(const std::vector<glm::mat4>&, const std::vector<glm::mat4>&, float, std::vector<glm::mat4>&);
+            void copy(const std::vector<glm::mat4>&, std::vector<glm::mat4>&);
         };
 
         /*!
@@ -112,6 +110,11 @@ namespace xy
         \brief Returns the keyframe at the given index
         */
         const std::vector<glm::mat4>& getFrame(std::size_t) const;
+
+        /*!
+        \brief Returns a reference to the lists of joint indices
+        */
+        const std::vector<std::int32_t>& getJointIndices() const { return m_jointIndices; }
 
     private:
         std::vector<std::int32_t> m_jointIndices;
