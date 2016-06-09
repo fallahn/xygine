@@ -162,6 +162,19 @@ namespace xy
         */
         void setAnimations(const std::vector<Skeleton::Animation>&);
 
+        /*!
+        \brief Sets the playback rate of the current animation.
+        Currently only positive values are supported, where 1.0 is normal speed.
+        */
+        void setPlaybackRate(float);
+
+        /*!
+        \brief Plays the animation with the given index, if it exists.
+        \param index Animation index
+        \param fade Crossfade time to blend between animations
+        */
+        void playAnimation(std::size_t index, float fade);
+
     private:
         glm::vec3 m_translation;
         glm::quat m_rotation;
@@ -183,6 +196,8 @@ namespace xy
         std::vector<glm::mat4> m_currentFrame;
         std::vector<Skeleton::Animation> m_animations;
         std::size_t m_currentAnimation;
+
+        float m_playbackRate;
 
         std::size_t draw(const glm::mat4&, const sf::FloatRect&, RenderPass::ID) const;
         void updateVertexAttribs(ShaderID newShader, const Material& newMaterial);

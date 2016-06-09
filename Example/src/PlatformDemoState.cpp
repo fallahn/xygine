@@ -298,9 +298,13 @@ void PlatformDemoState::cacheMeshes()
     fixitMaterialHead.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitHead_normal.png") });
     fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });
 
-    auto& platformMaterial = m_materialResource.add(MatId::Terrain, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
-    platformMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    platformMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_01.png") });
+    auto& platformMaterial01 = m_materialResource.add(MatId::Platform01, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
+    platformMaterial01.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    platformMaterial01.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_01.png") });
+
+    auto& platformMaterial04 = m_materialResource.add(MatId::Platform04, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
+    platformMaterial04.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    platformMaterial04.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_04.png") });
 
     auto& catMat = m_materialResource.add(MatId::BatcatMat, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
     catMat.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
@@ -416,20 +420,14 @@ void PlatformDemoState::buildTerrain()
 
     m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
     //-------------------------
-    /*drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
-    drawable->setTexture(m_textureResource.get("assets/images/platform/plat_01.png"));
-    drawable->setNormalMap(normalTexture);
-    drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
-*/
     auto model = m_meshRenderer.createModel(MeshID::Platform, m_messageBus);
     model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, 180.f);
     model->setPosition({ 384.f, 158.f, 0.f });
-    model->setBaseMaterial(m_materialResource.get(MatId::Terrain));
+    model->setBaseMaterial(m_materialResource.get(MatId::Platform01));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(400.f, 700.f);
-    //entity->addComponent(drawable);
     entity->addComponent(model);
 
     m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
@@ -456,14 +454,16 @@ void PlatformDemoState::buildTerrain()
 
     m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
     //-------------------------
-    drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
-    drawable->setTexture(m_textureResource.get("assets/images/platform/plat_04.png"));
-    drawable->setNormalMap(normalTexture);
-    drawable->setShader(m_shaderResource.get(PlatformShaderId::SpecularSmooth2D));
+
+    model = m_meshRenderer.createModel(MeshID::Platform, m_messageBus);
+    model->rotate(xy::Model::Axis::X, 90.f);
+    model->rotate(xy::Model::Axis::Z, 180.f);
+    model->setPosition({ 384.f, 158.f, 0.f });
+    model->setBaseMaterial(m_materialResource.get(MatId::Platform04));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(1210.f, 600.f);
-    entity->addComponent(drawable);
+    entity->addComponent(model);
 
     m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
 
@@ -560,7 +560,7 @@ void PlatformDemoState::addItems()
 void PlatformDemoState::addPlayer()
 {
     auto body = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
-    xy::Physics::CollisionRectangleShape cs({ 100.f, 160.f });
+    xy::Physics::CollisionRectangleShape cs({ 120.f, 240.f });
     cs.setFriction(0.6f);
     cs.setDensity(0.9f);
 
@@ -577,7 +577,7 @@ void PlatformDemoState::addPlayer()
     model->setBaseMaterial(m_materialResource.get(MatId::BatcatMat));
     model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, -90.f);
-    model->setPosition({ 50.f, 160.f, -20.f });
+    model->setPosition({ 60.f, 240.f, 0.f });
 
     auto entity = xy::Entity::create(m_messageBus);
     entity->setPosition(960.f, 540.f);
@@ -587,16 +587,26 @@ void PlatformDemoState::addPlayer()
     m_scene.setActiveCamera(entity->addComponent(camera));
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 
+
+
+    body = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
+    body->fixedRotation(true);
+    cs.setRect({ 200.f, 300.f });
+    body->addCollisionShape(cs);
+    cs.setRect({ 80.f, 80.f }, { 60.f, -80.f });
+    body->addCollisionShape(cs);
+
     model = m_meshRenderer.createModel(MeshID::Fixit, m_messageBus);
     model->setSubMaterial(m_materialResource.get(MatId::MrFixitBody), 0);
     model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
     model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, 90.f);
     model->setScale({ 50.f, 50.f, 50.f });
-    //model->setPosition({ 50.f, 160.f, 0.f });
+    model->setPosition({ 100.f, 300.f, 0.f });
 
     entity = xy::Entity::create(m_messageBus);
-    entity->setPosition(1320.f, 660.f);
+    entity->setPosition(1320.f, 40.f);
     entity->addComponent(model);
+    entity->addComponent(body);
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 }

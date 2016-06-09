@@ -46,7 +46,8 @@ Model::Model(MessageBus& mb, const Mesh& mesh, const MeshRenderer::Lock&)
     m_mesh              (mesh),
     m_material          (nullptr),
     m_skeleton          (nullptr),
-    m_currentAnimation  (0)
+    m_currentAnimation  (0),
+    m_playbackRate      (1.f)
 {
     m_subMaterials.resize(mesh.getSubMeshCount());
     std::fill(m_subMaterials.begin(), m_subMaterials.end(), nullptr);
@@ -72,7 +73,7 @@ void Model::entityUpdate(Entity& entity, float dt)
 
     if (!m_animations.empty())
     {
-        m_animations[0].update(dt, m_currentFrame);
+        m_animations[m_currentAnimation].update(dt * m_playbackRate, m_currentFrame);
     }
 }
 
@@ -229,6 +230,20 @@ void Model::setAnimations(const std::vector<Skeleton::Animation>& animations)
             a.setSkeleton(m_skeleton);
         }
         buildFirstFrame();
+    }
+}
+
+void Model::setPlaybackRate(float rate)
+{
+    XY_ASSERT(rate >= 0, "Playback rate must be positive");
+    m_playbackRate = rate;
+}
+
+void Model::playAnimation(std::size_t index, float fade)
+{
+    if (index < m_animations.size())
+    {
+        m_currentAnimation = index;
     }
 }
 

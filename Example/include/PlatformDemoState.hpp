@@ -87,7 +87,8 @@ private:
         MrFixitBody,
         MrFixitHead,
         LightSource,
-        Terrain,
+        Platform01,
+        Platform04,
         BatcatMat
     };
     xy::MaterialResource m_materialResource;
