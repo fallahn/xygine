@@ -224,6 +224,19 @@ namespace xy
         */
         static void showReportWindow();
 
+        /*!
+        \brief Sets the visibility of the mouse cursor.
+        Prefer this to setting via the render window directly to allow
+        imgui windows to correctly display/hide the mouse based on their
+        visibility status
+        */
+        static void setMouseCursorVisible(bool);
+
+        /*!
+        \brief Quits the application
+        */
+        static void quit();
+
     protected:
         /*!
         \brief Returns a reference to the current render window

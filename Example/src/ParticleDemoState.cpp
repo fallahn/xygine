@@ -110,7 +110,7 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     setupParticles();
     buildTerrain();
 
-    context.renderWindow.setMouseCursorVisible(true);
+    xy::App::setMouseCursorVisible(true);
 
     quitLoadingScreen();
 }

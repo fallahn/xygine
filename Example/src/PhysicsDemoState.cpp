@@ -101,7 +101,7 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     createBodies();
     addLights();
 
-    context.renderWindow.setMouseCursorVisible(true);
+    xy::App::setMouseCursorVisible(true);
     quitLoadingScreen();
 
     REPORT("Q", "Toggle overlay");

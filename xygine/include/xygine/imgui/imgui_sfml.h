@@ -19,7 +19,7 @@ namespace SFML
     void Init(sf::Window& window, sf::RenderTarget& target);
     void Init(sf::RenderWindow& window); // for convenience
     bool ProcessEvent(const sf::Event& event);
-    void Update();
+    void Update(bool cursor);
     void Shutdown();
 
     void SetRenderTarget(sf::RenderTarget& target);

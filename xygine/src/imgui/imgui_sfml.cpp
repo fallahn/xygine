@@ -175,12 +175,12 @@ bool ProcessEvent(const sf::Event& event)
     return (io.WantCaptureKeyboard || io.WantCaptureMouse);
 }
 
-void Update()
+void Update(bool defaultCursor)
 {
     ImGuiIO& io = ImGui::GetIO();
     io.DisplaySize = getDisplaySize();
     io.DeltaTime = s_deltaClock.restart().asSeconds(); // restart the clock and get delta
-    //s_window->setMouseCursorVisible(!io.MouseDrawCursor); // don't draw mouse cursor if ImGui draws it
+    io.MouseDrawCursor = !defaultCursor && io.WantCaptureMouse;
 
     // update mouse
     assert(s_window);

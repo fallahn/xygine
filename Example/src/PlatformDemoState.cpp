@@ -35,6 +35,7 @@ source distribution.
 
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
+#include <xygine/Console.hpp>
 #include <xygine/util/Random.hpp>
 
 #include <xygine/components/AnimatedDrawable.hpp>
@@ -106,7 +107,7 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     addPlayer();
 
     REPORT("Q", "Show Debug");
-    context.renderWindow.setMouseCursorVisible(true);
+    xy::App::setMouseCursorVisible(true);
 
     quitLoadingScreen();
 }
@@ -145,6 +146,7 @@ bool PlatformDemoState::update(float dt)
     }
 
     xy::App::showReportWindow();
+    
     return true;
 }
 

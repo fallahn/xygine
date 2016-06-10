@@ -31,6 +31,7 @@ source distribution.
 #define XY_LOGGER_HPP_
 
 #include <xygine/FileSystem.hpp>
+#include <xygine/Console.hpp>
 
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
@@ -102,6 +103,8 @@ namespace xy
                     :
                     std::cout << outstring << std::endl;
 
+                Console::print(outstring);
+                
                 const std::size_t maxBuffer = 30;
                 buffer().push_back(outstring);
                 if (buffer().size() > maxBuffer)buffer().pop_front(); //no majick here pl0x

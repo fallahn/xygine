@@ -211,7 +211,7 @@ void NetworkDemoState::buildMenu()
         //close menu
         m_menu.setVisible(false);
         m_waitingSign.setVisible(true);
-        getContext().renderWindow.setMouseCursorVisible(false);
+        xy::App::setMouseCursorVisible(false);
     });
     m_menu.addControl(button);
 
@@ -223,7 +223,7 @@ void NetworkDemoState::buildMenu()
     m_waitingSign.addControl(label);
     m_waitingSign.setVisible(false);
 
-    getContext().renderWindow.setMouseCursorVisible(true);
+    xy::App::setMouseCursorVisible(true);
 }
 
 void NetworkDemoState::handlePacket(xy::Network::PacketType type, sf::Packet& packet, xy::Network::ClientConnection* connection)

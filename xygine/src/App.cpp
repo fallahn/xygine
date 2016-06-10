@@ -31,6 +31,7 @@ source distribution.
 #include <xygine/util/Math.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/Reports.hpp>
+#include <xygine/Console.hpp>
 #include <xygine/physics/World.hpp>
 
 #include <xygine/imgui/imgui.h>
@@ -53,9 +54,9 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
 #ifndef _DEBUG_
-    const std::string windowTitle("xygine game (Release Build)");
+    const std::string windowTitle("xygine game (Release Build) - Press F1 for console");
 #else
-    const std::string windowTitle("xygine game (Debug Build)");
+    const std::string windowTitle("xygine game (Debug Build) - Press F1 for console");
 #endif //_DEBUG_
     const std::string settingsFile("settings.set");
 
@@ -66,8 +67,10 @@ namespace
 
     sf::Clock frameClock;
 
-    const sf::RenderWindow* renderWindow = nullptr;
+    sf::RenderWindow* renderWindow = nullptr;
     App* instance = nullptr;
+
+    bool mouseCursorVisible = false;
 }
 
 App::App(sf::ContextSettings contextSettings)
@@ -117,6 +120,7 @@ void App::run()
     }
 
     nim::SFML::Init(m_renderWindow);
+    Console::registerDefaultCommands();
 
     initialise();
 
@@ -133,21 +137,19 @@ void App::run()
         float elapsedTime = frameClock.restart().asSeconds();
         timeSinceLastUpdate += elapsedTime;
 
-        nim::SFML::Update();
+        nim::SFML::Update(mouseCursorVisible);
+        
         while (timeSinceLastUpdate > timePerFrame)
         {
             timeSinceLastUpdate -= timePerFrame;
             
             handleEvents();
             handleMessages();
-           
-            //new/end frame fix flickering on occasions
-            //when update is called more than once - but
-            //also breaks input handling :/
-            //nim::NewFrame();
-            update(timePerFrame);          
-            //nim::EndFrame();       
+
+            update(timePerFrame);                 
         }
+        Console::draw();
+
         m_renderWindow.clear();
         draw();
         nim::Render();
@@ -220,7 +222,7 @@ void App::applyVideoSettings(const VideoSettings& settings)
 
     m_renderWindow.create(settings.VideoMode, windowTitle, settings.WindowStyle);
     m_renderWindow.setVerticalSyncEnabled(settings.VSync);
-    m_renderWindow.setMouseCursorVisible(false);
+    //m_renderWindow.setMouseCursorVisible(false);
     //TODO test validity and restore old settings if possible
     m_videoSettings = settings;
     m_videoSettings.AvailableVideoModes = availableModes;
@@ -277,6 +279,19 @@ void App::showReportWindow()
     nim::End();
     //nim::ShowTestWindow();
     }
+}
+
+void App::setMouseCursorVisible(bool visible)
+{
+    XY_ASSERT(renderWindow, "no valid window instance");
+    renderWindow->setMouseCursorVisible(visible);
+    mouseCursorVisible = visible;
+}
+
+void App::quit()
+{
+    XY_ASSERT(renderWindow, "no valid window instance");
+    renderWindow->close();
 }
 
 //protected
@@ -419,6 +434,9 @@ void App::handleEvents()
             {
             case sf::Keyboard::F5:
                 saveScreenshot();
+                break;
+            case sf::Keyboard::F1:
+                Console::show();
                 break;
             default:break;
             }           
