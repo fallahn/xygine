@@ -96,7 +96,7 @@ void Console::unregisterCommands(void* owner)
     //make sure this isn't nullptr else most if not all commands will get removed..
     XY_ASSERT(owner, "You really don't want to do that");
     
-    for (auto& i = commands.begin(); i != commands.end(); ++i)
+    for (auto i = commands.begin(); i != commands.end(); ++i)
     {
         if (i->second.second == owner)
         {
