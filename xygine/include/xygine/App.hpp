@@ -218,13 +218,6 @@ namespace xy
         static sf::Vector2f getMouseWorldPosition();
 
         /*!
-        \brief Displays the Report window.
-        The report window is used to display any properties written
-        to xy::Reports or via the REPORT macros for debug builds.
-        */
-        static void showReportWindow();
-
-        /*!
         \brief Sets the visibility of the mouse cursor.
         Prefer this to setting via the render window directly to allow
         imgui windows to correctly display/hide the mouse based on their

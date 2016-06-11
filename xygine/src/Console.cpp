@@ -34,6 +34,7 @@ source distribution.
 #include <list>
 #include <unordered_map>
 #include <algorithm>
+#include <fstream>
 
 using namespace xy;
 
@@ -47,6 +48,10 @@ namespace
     char input[MAX_INPUT];
     std::list<std::string> buffer;
     const std::size_t MAX_BUFFER = 100;
+
+    std::list<std::string> history;
+    const std::size_t MAX_HISTORY = 10;
+    std::int32_t historyIndex = -1;
 
     bool visible = false;
 
@@ -96,26 +101,69 @@ void Console::unregisterCommands(void* owner)
     //make sure this isn't nullptr else most if not all commands will get removed..
     XY_ASSERT(owner, "You really don't want to do that");
     
-    for (auto i = commands.begin(); i != commands.end(); ++i)
+    for (auto i = commands.begin(); i != commands.end();)
     {
         if (i->second.second == owner)
         {
             i = commands.erase(i);
         }
+        else
+        {
+            ++i;
+        }
     }
+}
+
+void Console::doCommand(const std::string& str)
+{
+    //store in history
+    history.push_back(str);
+    if (history.size() > MAX_HISTORY)
+    {
+        history.pop_front();
+    }
+    
+    //parse the command from the string
+    std::string command(str);
+    std::string params;
+    //shave off parameters if they exist
+    std::size_t pos = command.find_first_of(' ');
+    if (pos != std::string::npos)
+    {
+        if (pos < command.size())
+        {
+            params = command.substr(pos + 1);
+        }
+        command.resize(pos);
+    }
+
+    //locate command and execute it passing in params
+    auto cmd = commands.find(command);
+    if (cmd != commands.end())
+    {
+        cmd->second.first(params);
+    }
+    else
+    {
+        print(command + ": command not found!");
+    }
+
+    input[0] = '\0';
 }
 
 //private
 void Console::draw()
 {
     if (!visible) return;
+    
     nim::SetNextWindowSize({ 640, 480 });
-    nim::Begin("Console");
+    nim::Begin("Console", &visible, ImGuiWindowFlags_ShowBorders);
 
-    nim::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetItemsLineHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
+    nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetItemsLineHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
     nim::TextUnformatted(output.c_str(), output.c_str() + output.size());
     nim::SetScrollHere();
     nim::EndChild();
+
     nim::Separator();
 
     if (nim::InputText("", input, MAX_INPUT, 
@@ -163,52 +211,96 @@ void Console::registerDefaultCommands()
 
     //attempts to execute a config file
     addCommand("exec",
-        [](const std::string& file)
+        [](const std::string& filePath)
     {
-        if (file.empty())
+        if (filePath.empty())
         {
-            Console::print("Usage: exec <file> where <file> is the path relative to the working directory of the configuration file to execute.");
+            Console::print("Usage: exec <file> where <file> is the path relative to\nthe working directory of the configuration file to execute.");
             return;
         }
 
-        //TODO attempt to open the file and execute line by line
+        //attempt to open the file and execute line by line
+        //TODO we need to validate the string a bit
+        std::ifstream file(filePath);
+        std::string line;
+        if (file.good() && file.is_open())
+        {
+            Console::print("Executing " + filePath + "...");
+            while (std::getline(file, line))
+            {
+                if (line.find_first_of("//") == 0)
+                {
+                    //Console::print(line); //probably don't want to print comments
+                    continue;
+                }
+                else if (line.find_first_of("exec") == 0)
+                {
+                    //would be nice to execute other files as 'includes'
+                    //but including a file in itself or including a file
+                    //which executes the currently executing file is an
+                    //easy stack overflow contender
+                    continue;
+                }
+                else
+                {
+                    Console::doCommand(line);
+                }
+            }
+        }
+        else
+        {
+            Console::print("Unable to open file " + filePath);
+        }
+        file.close();
     });
 
     print("type list_all to see a list of availble commands");
 }
 
-void Console::doCommand(const std::string& str)
-{
-    //parse the command from the string
-    std::string command(str);
-    std::string params;
-    //shave off parameters if they exist
-    if (std::size_t pos = command.find_first_of(' ') != std::string::npos)
-    {
-        if (pos < commands.size())
-        {
-            params = command.substr(pos + 1);
-        }
-        command.resize(pos);
-    }
-
-    //locate command and execute it passing in params
-    auto cmd = commands.find(command);
-    if (cmd != commands.end())
-    {
-        cmd->second.first(params);
-    }
-    else
-    {
-        print(command + ": command not found!");
-    }
-
-    input[0] = '\0';
-}
-
 int textEditCallback(ImGuiTextEditCallbackData* data)
 {
-    //TODO we could use this to scroll up and down through command history
-    //or create an auto complete thinger
+    //use this to scroll up and down through command history
+    //TODO create an auto complete thinger
+
+    switch (data->EventFlag)
+    {
+    default: break;
+    case ImGuiInputTextFlags_CallbackCompletion: //user pressed tab to complete
+    case ImGuiInputTextFlags_CallbackHistory:
+        {
+            const int prev_history_pos = historyIndex;
+            if (data->EventKey == ImGuiKey_UpArrow)
+            {
+                if (historyIndex == -1)
+                {
+                    historyIndex = history.size() - 1;
+                }
+                else if (historyIndex > 0)
+                {
+                    historyIndex--;
+                }
+            }
+            else if (data->EventKey == ImGuiKey_DownArrow)
+            {
+                if (historyIndex != -1)
+                {
+                    if (++historyIndex >= history.size())
+                    {
+                        historyIndex = -1;
+                    }
+                }
+            }
+
+            //a better implementation would preserve the data on the current input line along with cursor position.
+            if (prev_history_pos != historyIndex)
+            {
+                data->CursorPos = data->SelectionStart = data->SelectionEnd = data->BufTextLen = 
+                    (int)snprintf(data->Buf, (size_t)data->BufSize, "%s", (historyIndex >= 0) ? std::next(history.begin(), historyIndex)->c_str() : "");
+                data->BufDirty = true;
+            }
+        }
+    break;
+    }
+
     return 0;
 }

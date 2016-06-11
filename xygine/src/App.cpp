@@ -54,9 +54,9 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
 #ifndef _DEBUG_
-    const std::string windowTitle("xygine game (Release Build) - Press F1 for console");
+    const std::string windowTitle("xygine game (Release Build) - F1: console F2: Stats");
 #else
-    const std::string windowTitle("xygine game (Debug Build) - Press F1 for console");
+    const std::string windowTitle("xygine game (Debug Build) - F1: console F2: Stats");
 #endif //_DEBUG_
     const std::string settingsFile("settings.set");
 
@@ -68,8 +68,6 @@ namespace
     sf::Clock frameClock;
 
     sf::RenderWindow* renderWindow = nullptr;
-    App* instance = nullptr;
-
     bool mouseCursorVisible = false;
 }
 
@@ -105,9 +103,7 @@ App::App(sf::ContextSettings contextSettings)
     if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
     {
         Logger::log("Failed loading OpenGL extensions, MultiRenderTargets will be unavailable", Logger::Type::Error, Logger::Output::All);
-    }
-
-    instance = this;    
+    } 
 }
 
 //public
@@ -149,6 +145,7 @@ void App::run()
             update(timePerFrame);                 
         }
         Console::draw();
+        StatsReporter::draw();
 
         m_renderWindow.clear();
         draw();
@@ -266,19 +263,6 @@ sf::Vector2f App::getMouseWorldPosition()
 {
     XY_ASSERT(renderWindow, "no valid window instance");
     return renderWindow->mapPixelToCoords(sf::Mouse::getPosition(*renderWindow));
-}
-
-void App::showReportWindow()
-{
-    XY_ASSERT(instance, "no valid app instance");
-
-    IMGUI_ONCE_UPON_A_FRAME
-    {
-    nim::Begin("Stats:", nullptr, ImGuiWindowFlags_ShowBorders);
-    nim::Text(Stats::getString().c_str());
-    nim::End();
-    //nim::ShowTestWindow();
-    }
 }
 
 void App::setMouseCursorVisible(bool visible)
@@ -437,6 +421,9 @@ void App::handleEvents()
                 break;
             case sf::Keyboard::F1:
                 Console::show();
+                break;
+            case sf::Keyboard::F2:
+                StatsReporter::show();
                 break;
             default:break;
             }           

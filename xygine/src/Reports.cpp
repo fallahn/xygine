@@ -26,8 +26,10 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/Reports.hpp>
-
+#include <xygine/Config.hpp>
+#include <xygine/imgui/imgui.h>
 #include <xygine/Assert.hpp>
+
 #include <algorithm>
 
 using namespace xy;
@@ -36,6 +38,7 @@ namespace
 {
     const std::string interweebl(": ");
     StatsReporter reporter;
+    bool visible = false;
 }
 
 //---exported functions---//
@@ -103,4 +106,22 @@ void StatsReporter::clear()
 {
     m_string.clear();
     m_data.clear();
+}
+
+void StatsReporter::show()
+{
+    visible = !visible;
+}
+
+//private
+void StatsReporter::draw()
+{
+    if (!visible) return;
+    nim::SetNextWindowSize({ 300, 200 });
+    nim::Begin("Stats:", &visible, ImGuiWindowFlags_ShowBorders);
+    nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetItemsLineHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
+    nim::TextUnformatted(Stats::getString().c_str(), Stats::getString().c_str() + Stats::getString().size());
+    nim::SetScrollHere();
+    nim::EndChild();
+    nim::End();
 }

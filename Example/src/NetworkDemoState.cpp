@@ -120,8 +120,6 @@ bool NetworkDemoState::update(float dt)
         m_playerInput.counter++;
     }
 
-    xy::App::showReportWindow();
-
     return true;
 }
 

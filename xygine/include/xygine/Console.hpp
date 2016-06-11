@@ -86,10 +86,16 @@ namespace xy
         */
         static void unregisterCommands(void*);
 
+        /*!
+        \brief Executes the given command line.
+        Allows programatically executing an arbitrary console command.
+        */
+        static void doCommand(const std::string&);
+
     private:
         static void draw();
         static void registerDefaultCommands();
-        static void doCommand(const std::string&);
+        
     };
 }
 

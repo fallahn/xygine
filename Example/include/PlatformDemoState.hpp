@@ -50,7 +50,7 @@ class PlatformDemoState final : public xy::State
 {
 public:
     PlatformDemoState(xy::StateStack& stateStack, Context context);
-    ~PlatformDemoState() = default;
+    ~PlatformDemoState();// = default;
 
     bool update(float dt) override;
     void draw() override;

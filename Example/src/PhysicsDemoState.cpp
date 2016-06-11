@@ -137,8 +137,6 @@ bool PhysicsDemoState::update(float dt)
         shader->setUniform("u_pointLights[" + std::to_string(i) + "].intensity", 0.f);
     }
 
-    xy::App::showReportWindow();
-
     return true;
 }
 

@@ -110,6 +110,13 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     xy::App::setMouseCursorVisible(true);
 
     quitLoadingScreen();
+
+    xy::Console::addCommand("do_flaps", [](const std::string&) {xy::Console::print("bus flaps and dicketry"); }, this);
+}
+
+PlatformDemoState::~PlatformDemoState()
+{
+    xy::Console::unregisterCommands(this);
 }
 
 bool PlatformDemoState::update(float dt)
@@ -144,8 +151,6 @@ bool PlatformDemoState::update(float dt)
     {
         shader.setUniform("u_pointLights[" + std::to_string(i) + "].intensity", 0.f);
     }
-
-    xy::App::showReportWindow();
     
     return true;
 }
