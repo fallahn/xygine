@@ -31,6 +31,7 @@ source distribution.
 #include <xygine/detail/GLCheck.hpp>
 #include <xygine/Entity.hpp>
 #include <xygine/util/Const.hpp>
+#include <xygine/Reports.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
@@ -47,6 +48,9 @@ Model::Model(MessageBus& mb, const Mesh& mesh, const MeshRenderer::Lock&)
     m_material          (nullptr),
     m_skeleton          (nullptr),
     m_currentAnimation  (0),
+    m_nextAnimation     (-1),
+    m_blendTime         (0.f),
+    m_currentBlendTime  (0.f),
     m_playbackRate      (1.f)
 {
     m_subMaterials.resize(mesh.getSubMeshCount());
@@ -73,7 +77,40 @@ void Model::entityUpdate(Entity& entity, float dt)
 
     if (!m_animations.empty())
     {
-        m_animations[m_currentAnimation].update(dt * m_playbackRate, m_currentFrame);
+        if (m_nextAnimation == -1)
+        {
+            m_animations[m_currentAnimation].update(dt * m_playbackRate, m_currentFrame);
+        }
+        else
+        {
+            //blend animations
+            m_currentBlendTime += dt;
+            const float ratio = std::min(m_currentBlendTime / m_blendTime, 1.f);
+
+            auto size = m_skeleton->getFrame(0).size();
+            const auto& boneIndices = m_skeleton->getJointIndices();
+            const auto& a = m_skeleton->getFrame(m_animations[m_currentAnimation].getCurrentFrame());
+            const auto& b = m_skeleton->getFrame(m_animations[m_nextAnimation].getStartFrame());
+            for (auto i = 0u; i < size; ++i)
+            {
+                glm::mat4 mat(glm::mix(a[i], b[i], ratio));
+                if (boneIndices[i] >= 0)
+                {
+                    m_currentFrame[i] = m_currentFrame[boneIndices[i]] * mat;
+                }
+                else
+                {
+                    m_currentFrame[i] = mat;
+                }
+            }
+
+            if (ratio == 1)
+            {
+                m_currentAnimation = m_nextAnimation;
+                m_animations[m_currentAnimation].play(0);
+                m_nextAnimation = -1;
+            }
+        }
     }
 }
 
@@ -241,9 +278,14 @@ void Model::setPlaybackRate(float rate)
 
 void Model::playAnimation(std::size_t index, float fade)
 {
-    if (index < m_animations.size())
+    XY_ASSERT(fade > 0, "would cause div by zero!");
+    if (index < m_animations.size() 
+        && index != m_currentAnimation
+        && index != m_nextAnimation)
     {
-        m_currentAnimation = index;
+        m_blendTime = fade;
+        m_currentBlendTime = 0.f;
+        m_nextAnimation = index;
     }
 }
 

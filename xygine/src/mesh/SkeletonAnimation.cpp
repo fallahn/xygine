@@ -35,10 +35,11 @@ using namespace xy;
 Skeleton::Animation::Animation(std::size_t frameCount, std::size_t startFrame, float frameRate, const std::string& name, bool looped)
     : m_frameCount      (frameCount),
     m_startFrame        (startFrame),
-    m_endFrame          (m_startFrame + frameCount),
+    m_endFrame          (m_startFrame + (frameCount - 1)),
     m_frameRate         (frameRate),
     m_name              (name),
     m_looped            (looped),
+    m_playing           (true),
     m_skeleton          (nullptr),
     m_currentTime       (0.f),
     m_frameTime         (1.f / frameRate),
@@ -57,22 +58,47 @@ void Skeleton::Animation::setSkeleton(const Skeleton* s)
 void Skeleton::Animation::update(float dt, std::vector<glm::mat4>& output, bool lowRes)
 {
     XY_ASSERT(output.size() == m_skeleton->m_keyFrames[0].size(), "Output frame incorrect size");
-    m_currentTime += dt;
-    if (m_currentTime >= m_frameTime && (m_currentFrameIndex < m_endFrame || m_looped))
+
+    if (m_playing)
     {
-        m_currentFrameIndex++;
-        if (m_currentFrameIndex == m_endFrame) m_currentFrameIndex = m_startFrame;
-        m_nextFrameIndex = (m_currentFrameIndex + 1u) % m_frameCount;
-        m_currentTime = 0.f;
-        if (lowRes)
+        m_currentTime += dt;
+        if (m_currentTime >= m_frameTime && (m_currentFrameIndex <= m_endFrame || m_looped))
         {
-            copy(m_skeleton->m_keyFrames[m_currentFrameIndex], output);
-            return;
+            m_currentFrameIndex++;
+            if (m_currentFrameIndex > m_endFrame)
+            {
+                m_currentFrameIndex = m_startFrame;
+                if (!m_looped)
+                {
+                    m_playing = false;
+                }
+            }
+            m_nextFrameIndex = m_currentFrameIndex + 1u;
+            if (m_nextFrameIndex > m_endFrame) m_nextFrameIndex = m_startFrame;
+
+            m_currentTime = 0.f;
+            if (lowRes)
+            {
+                copy(m_skeleton->m_keyFrames[m_currentFrameIndex], output);
+                return;
+            }
+        }
+        if (!lowRes)
+        {
+            interpolate(m_skeleton->m_keyFrames[m_currentFrameIndex], m_skeleton->m_keyFrames[m_nextFrameIndex], m_currentTime / m_frameTime, output);
         }
     }
-    if (!lowRes)
+}
+
+void Skeleton::Animation::play(std::size_t start)
+{
+    XY_ASSERT(start < m_frameCount, "start out of range");
+    if (!m_playing)
     {
-        interpolate(m_skeleton->m_keyFrames[m_currentFrameIndex], m_skeleton->m_keyFrames[m_nextFrameIndex], m_currentTime / m_frameTime, output);
+        m_currentFrameIndex = m_startFrame + start;
+        m_nextFrameIndex = m_currentFrameIndex + 1;
+        m_currentTime = 0.f;
+        m_playing = true;
     }
 }
 

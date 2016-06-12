@@ -78,6 +78,24 @@ namespace xy
             */
             void update(float, std::vector<glm::mat4>&, bool = false);
 
+            /*!
+            \brief Starts the animation playing from the given frame.
+            \param startFrame Offset value from this animations first
+            frame. For example if the animation starts at frame 20 then
+            passing in a value of 1 will play from frame 21.
+            */
+            void play(std::size_t);
+
+            /*!
+            \brief Returns the first frame of this animation
+            */
+            std::size_t getStartFrame() const { return m_startFrame; }
+
+            /*!
+            \brief Returns the current frame of this animation
+            */
+            std::size_t getCurrentFrame() const { return m_currentFrameIndex; }
+
         private:
             std::size_t m_frameCount;
             std::size_t m_startFrame;
@@ -85,6 +103,7 @@ namespace xy
             float m_frameRate;
             std::string m_name;
             bool m_looped;
+            bool m_playing;
 
             const Skeleton* m_skeleton;
             float m_currentTime;

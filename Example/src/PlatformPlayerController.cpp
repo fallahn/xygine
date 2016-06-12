@@ -50,8 +50,7 @@ PlayerController::PlayerController(xy::MessageBus& mb)
     m_model         (nullptr),
     m_lastInput     (0),
     m_faceLeft      (false),
-    m_faceRight     (false),
-    m_lastSpeedRatio(1.f)
+    m_faceRight     (false)
 {
 
 }
@@ -80,23 +79,10 @@ void PlayerController::entityUpdate(xy::Entity&, float dt)
     
     REPORT("Z Rotation", std::to_string(rotation));
 
-    const float speedRatio = std::max(0.f, xy::Util::Vector::lengthSquared(m_body->getLinearVelocity()) / maxVelocity);
-    REPORT("Velocity Ratio", std::to_string(speedRatio));
-    //set animation speed based on ratio, TODO unless it drops to
-    //zero, in which case play idle animation
-    m_model->setPlaybackRate(speedRatio);
-
-    /*if (speedRatio == 0 && speedRatio < m_lastSpeedRatio)
-    {
-        m_model->setPlaybackRate(1.f);
-        m_model->playAnimation(1, 0.2f);
-    }
-    else if (m_lastSpeedRatio == 0 && speedRatio > 0)
-    {
-        m_model->setPlaybackRate(speedRatio);
-        m_model->playAnimation(0, 0.2f);
-    }*/
-    m_lastSpeedRatio = speedRatio;
+    //const float speedRatio = std::max(0.f, xy::Util::Vector::lengthSquared(m_body->getLinearVelocity()) / maxVelocity);
+    //REPORT("Velocity Ratio", std::to_string(speedRatio));
+    //set animation speed based on ratio
+    //m_model->setPlaybackRate((speedRatio > 0) ? speedRatio : 1.f);
 }
 
 void PlayerController::onStart(xy::Entity& entity)
@@ -106,6 +92,7 @@ void PlayerController::onStart(xy::Entity& entity)
 
     m_model = entity.getComponent<xy::Model>();
     XY_ASSERT(m_model, "Model not found!");
+    m_model->playAnimation(1, 0.1f);
 }
 
 void PlayerController::applyInput(sf::Uint8 input)
@@ -116,13 +103,17 @@ void PlayerController::applyInput(sf::Uint8 input)
     {
         velocity = -moveForce;
         m_faceLeft = true;
+        m_model->playAnimation(0, 0.1f);
     }
 
     if (input & Right)
     {
         velocity = moveForce;
         m_faceRight = true;
+        m_model->playAnimation(0, 0.1f);
     }
+
+    if(input == 0) m_model->playAnimation(1, 0.1f);
 
     const auto currVelocity = m_body->getLinearVelocity();
     const float velChange = velocity - currVelocity.x;

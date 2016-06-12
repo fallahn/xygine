@@ -67,7 +67,6 @@ namespace Plat
 
         bool m_faceLeft;
         bool m_faceRight;
-        float m_lastSpeedRatio;
     };
 }
 

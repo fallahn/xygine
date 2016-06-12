@@ -196,6 +196,9 @@ namespace xy
         std::vector<glm::mat4> m_currentFrame;
         std::vector<Skeleton::Animation> m_animations;
         std::size_t m_currentAnimation;
+        std::int32_t m_nextAnimation;
+        float m_blendTime;
+        float m_currentBlendTime;
 
         float m_playbackRate;
 

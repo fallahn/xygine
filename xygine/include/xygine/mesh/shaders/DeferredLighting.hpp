@@ -127,7 +127,7 @@ namespace xy
                 "    //blendedColour *= texture(u_aoMap, v_texCoord).rgb;\n"
                 "    blendedColour = mix(blendedColour, diffuse.rgb, mask.b);\n"
                 "    blendedColour += texture(u_illuminationMap, v_texCoord).rgb;// * 4.0;\n"
-                "    fragOut = vec4(normal, diffuse.a);\n"
+                "    fragOut = vec4(blendedColour, diffuse.a);\n"
                 "}";
         }
     }
