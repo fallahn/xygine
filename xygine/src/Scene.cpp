@@ -31,6 +31,7 @@ source distribution.
 #include <xygine/components/AudioListener.hpp>
 #include <xygine/components/PointLight.hpp>
 #include <xygine/Reports.hpp>
+#include <xygine/Console.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -55,13 +56,14 @@ Scene::Scene(MessageBus& mb)
     m_drawDebug         (false)
 {
     reset();
-
+    setupConCommands();
     m_instance = this;
 }
 
 Scene::~Scene()
 {
     m_instance = nullptr;
+    Console::unregisterCommands(this);
 }
 
 //public
@@ -453,4 +455,27 @@ void Scene::postEffectRenderPath(sf::RenderTarget& rt, sf::RenderStates states) 
 
     rt.setView(rt.getDefaultView());
     m_renderPasses.back().postEffect->apply(*m_renderPasses.back().inBuffer, rt);    
+}
+
+void Scene::setupConCommands()
+{
+    Console::addCommand("r_debug",
+        [this](const std::string& params)
+    {
+        if (params.find_first_of('0') == 0 ||
+            params.find_first_of("false") == 0)
+        {
+            drawDebug(false);
+        }
+        else if (params.find_first_of('1') == 0 ||
+            params.find_first_of("true") == 0)
+        {
+            drawDebug(true);
+        }
+        else
+        {
+            Console::print("r_debug: valid parameters are 0, 1, false or true");
+        }
+
+    }, this);
 }

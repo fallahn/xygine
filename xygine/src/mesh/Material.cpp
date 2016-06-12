@@ -42,6 +42,18 @@ Material::Material(sf::Shader& shader)
 }
 
 //public
+void Material::addPass(RenderPass::ID id, sf::Shader& shader)
+{
+    if (m_passes.count(id) == 0)
+    {
+        m_passes.insert(std::make_pair(id, RenderPass(shader)));
+    }
+    else
+    {
+        Logger::log("Failed adding pass with ID: " + std::to_string(id) + " pass already exists", Logger::Type::Error);
+    }
+}
+
 bool Material::setActivePass(RenderPass::ID id) const
 {
     auto result = m_passes.find(id);

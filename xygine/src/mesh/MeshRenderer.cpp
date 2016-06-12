@@ -36,6 +36,7 @@ source distribution.
 #include <xygine/util/Const.hpp>
 #include <xygine/util/Random.hpp>
 #include <xygine/Reports.hpp>
+#include <xygine/Console.hpp>
 
 #include <SFML/Graphics/RenderStates.hpp>
 
@@ -99,6 +100,14 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     img.create(2, 2, sf::Color::Transparent);
     m_dummyTetxure.loadFromImage(img);
     m_dummySprite.setTexture(m_dummyTetxure);
+
+    //inits console commands which affect renderer
+    setupConCommands();
+}
+
+MeshRenderer::~MeshRenderer()
+{
+    Console::unregisterCommands(this);
 }
 
 //public
@@ -258,9 +267,9 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     drawScene();
 
-    //m_ssaoTexture.clear(sf::Color::Transparent);
-    //m_ssaoTexture.draw(m_ssaoSprite/*, &m_ssaoShader*/);
-    //m_ssaoTexture.display();
+    /*m_ssaoTexture.clear(sf::Color::Transparent);
+    m_ssaoTexture.draw(m_ssaoSprite, &m_ssaoShader);
+    m_ssaoTexture.display();*/
 
     if (m_doLightBlur)
     {
@@ -416,5 +425,86 @@ void MeshRenderer::initOutput()
         xy::Logger::log("Failed to create output shader for deferred renderer", xy::Logger::Type::Error, xy::Logger::Output::All);
     }
 
+    if (m_debugShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::DebugFrag))
+    {
+        m_debugShader.setUniform("u_texture", m_gBuffer.getTexture(MaterialChannel::Diffuse));
+    }
+    else
+    {
+        xy::Logger::log("Failed to create output shader for mesh debug", xy::Logger::Type::Error, xy::Logger::Output::All);
+    }
+
     m_outputQuad = std::make_unique<RenderQuad>(sf::Vector2f(200.f, 100.f), m_lightingShader);
+    m_outputQuad->addRenderPass(RenderPass::Debug, m_debugShader);
+
+}
+
+void MeshRenderer::setupConCommands()
+{
+    //allows disabling the self-illum glow pass
+    Console::addCommand("r_glowEnable",
+        [this](const std::string& params)
+    {
+        if (params.find_first_of('0') == 0 ||
+            params.find_first_of("false") == 0)
+        {
+            enableGlowPass(false);
+        }
+
+        else if (params.find_first_of('1') == 0 ||
+            params.find_first_of("true") == 0)
+        {
+            enableGlowPass(true);
+        }
+
+        else
+        {
+            Console::print("r_glowEnable: valid parameters are 0, 1, false or true");
+        }
+    }, this);
+
+    //allows switching the output to one of the gbuffer textures
+    Console::addCommand("r_gBuffer",
+        [this](const std::string& params)
+    {
+        if (params.find_first_of("0") == 0)
+        {
+            m_outputQuad->setActivePass(RenderPass::Default);
+            Console::print("Switched output to default");
+        }
+        else if (params.find_first_of("1") == 0)
+        {
+            m_outputQuad->setActivePass(RenderPass::Debug);
+            m_debugShader.setUniform("u_texture", m_gBuffer.getTexture(MaterialChannel::Diffuse));
+            Console::print("Switched output to diffuse");
+        }
+        else if (params.find_first_of("2") == 0)
+        {
+            m_outputQuad->setActivePass(RenderPass::Debug);
+            m_debugShader.setUniform("u_texture", m_gBuffer.getTexture(MaterialChannel::Normal));
+            Console::print("Switched output to world normals");
+        }
+        else if (params.find_first_of("3") == 0)
+        {
+            m_outputQuad->setActivePass(RenderPass::Debug);
+            m_debugShader.setUniform("u_texture", m_gBuffer.getTexture(MaterialChannel::Mask));
+            Console::print("Switched output to mask map");
+        }
+        else if (params.find_first_of("4") == 0)
+        {
+            m_outputQuad->setActivePass(RenderPass::Debug);
+            m_debugShader.setUniform("u_texture", m_gBuffer.getTexture(MaterialChannel::Position));
+            Console::print("Switched output to world positions");
+        }
+        /*else if (params.find_first_of("5") == 0)
+        {
+            m_outputQuad->setActivePass(RenderPass::Debug);
+            m_debugShader.setUniform("u_texture", m_ssaoTexture.getTexture());
+            Console::print("Switched output to SSAO");
+        }*/
+        else
+        {
+            Console::print("r_gBuffer: 0 Default, 1 Diffuse, 2 Normals, 3 Mask, 4 Position");
+        }
+    }, this);
 }

@@ -42,6 +42,13 @@ namespace
     const float maxVelocity = moveForce * moveForce;
     const float rotationSpeed = 800.f;
     const float faceRotation = 45.f;
+
+    enum Animation
+    {
+        Run  = 0,
+        Idle = 1,
+        Jump = 2
+    };
 }
 
 PlayerController::PlayerController(xy::MessageBus& mb)
@@ -103,18 +110,23 @@ void PlayerController::applyInput(sf::Uint8 input)
     {
         velocity = -moveForce;
         m_faceLeft = true;
-        m_model->playAnimation(0, 0.1f);
+        if (m_model->getCurrentAnimation() == Animation::Idle)
+        {
+            m_model->playAnimation(Animation::Run, 0.1f);
+        }
     }
 
     if (input & Right)
     {
         velocity = moveForce;
         m_faceRight = true;
-        m_model->playAnimation(0, 0.1f);
+        if (m_model->getCurrentAnimation() == Animation::Idle)
+        {
+            m_model->playAnimation(Animation::Run, 0.1f);
+        }
     }
 
-    if(input == 0) m_model->playAnimation(1, 0.1f);
-
+    
     const auto currVelocity = m_body->getLinearVelocity();
     const float velChange = velocity - currVelocity.x;
     const float force = m_body->getMass() * velChange;
@@ -125,7 +137,17 @@ void PlayerController::applyInput(sf::Uint8 input)
     {
         const float impulse = m_body->getMass() * 1000.f;
         m_body->applyLinearImpulse({ 0.f, -impulse }, m_body->getLocalCentre());
+
+        //flap wings
+        m_model->playAnimation(Animation::Jump, 0.2f);
     }
+
+    //idle if still
+    if (input == 0 && (m_model->getCurrentAnimation() == Animation::Run || xy::Util::Vector::lengthSquared(currVelocity) == 0))
+    {
+        m_model->playAnimation(Animation::Idle, 0.1f);
+    }
+
     m_lastInput = input;
 }
 

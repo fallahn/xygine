@@ -77,7 +77,7 @@ namespace xy
         which belong to this MeshRenderer
         */
         MeshRenderer(const sf::Vector2u&, const Scene&);
-        ~MeshRenderer() = default;
+        ~MeshRenderer();
 
         /*!
         \brief Loads a model via the provided model builder.
@@ -225,6 +225,7 @@ namespace xy
         mutable xy::MultiRenderTexture m_gBuffer;
         void drawScene() const;
 
+        sf::Shader m_debugShader;
         sf::Texture m_dummyTetxure;
         sf::Sprite m_dummySprite;
         std::unique_ptr<RenderQuad> m_outputQuad;
@@ -236,6 +237,8 @@ namespace xy
         void initSSAO();
         void initSelfIllum();
         void initOutput();
+
+        void setupConCommands();
     };
 }
 

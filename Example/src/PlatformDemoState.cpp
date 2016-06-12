@@ -110,13 +110,6 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     xy::App::setMouseCursorVisible(true);
 
     quitLoadingScreen();
-
-    xy::Console::addCommand("do_flaps", [](const std::string&) {xy::Console::print("bus flaps and dicketry"); }, this);
-}
-
-PlatformDemoState::~PlatformDemoState()
-{
-    xy::Console::unregisterCommands(this);
 }
 
 bool PlatformDemoState::update(float dt)
@@ -585,6 +578,7 @@ void PlatformDemoState::addPlayer()
     model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, -90.f);
     model->setPosition({ 60.f, 240.f, 0.f });
+    model->playAnimation(1, 0.2f);
 
     auto entity = xy::Entity::create(m_messageBus);
     entity->setPosition(960.f, 540.f);

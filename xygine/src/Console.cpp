@@ -122,6 +122,7 @@ void Console::doCommand(const std::string& str)
     {
         history.pop_front();
     }
+    historyIndex = -1;
     
     //parse the command from the string
     std::string command(str);
@@ -166,12 +167,14 @@ void Console::draw()
 
     nim::Separator();
 
+    nim::PushItemWidth(620.f);
     if (nim::InputText("", input, MAX_INPUT, 
         ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory,
         textEditCallback))
     {
         doCommand(input);
     }
+    nim::PopItemWidth();
 
     if (nim::IsItemHovered() || (nim::IsRootWindowOrAnyChildFocused()
         && !nim::IsAnyItemActive() && !nim::IsMouseClicked(0)))

@@ -245,6 +245,8 @@ namespace xy
 
         void defaultRenderPath(sf::RenderTarget&, sf::RenderStates) const;
         void postEffectRenderPath(sf::RenderTarget&, sf::RenderStates) const;
+
+        void setupConCommands();
     };
 }
 #endif //XY_SCENE_HPP_

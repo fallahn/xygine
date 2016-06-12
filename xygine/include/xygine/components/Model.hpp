@@ -175,6 +175,11 @@ namespace xy
         */
         void playAnimation(std::size_t index, float fade);
 
+        /*!
+        \brief Returns the index of the currently playing animation
+        */
+        std::size_t getCurrentAnimation() const { return m_currentAnimation; }
+
     private:
         glm::vec3 m_translation;
         glm::quat m_rotation;

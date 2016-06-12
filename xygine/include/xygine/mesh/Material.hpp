@@ -69,6 +69,11 @@ namespace xy
         Material(const Material&) = delete;
         Material& operator = (const Material&) = delete;
 
+        /*
+        !\brief Adds a new pass which ues the given shader, mapped to the given ID
+        */
+        void addPass(RenderPass::ID, sf::Shader&);
+
         /*!
         \brief Sets the current active RenderPass.
         All materials have a Default pass created with the shader supplied on 
