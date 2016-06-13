@@ -45,6 +45,7 @@ set(XY_SRC
 
   ${XY_DIR}/mesh/BoundingBox.cpp
   ${XY_DIR}/mesh/CubeBuilder.cpp
+  ${XY_DIR}/mesh/DepthRenderTexture.cpp
   ${XY_DIR}/mesh/IQMBuilder.cpp
   ${XY_DIR}/mesh/Material.cpp
   ${XY_DIR}/mesh/MaterialProperty.cpp

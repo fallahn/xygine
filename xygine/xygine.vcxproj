@@ -168,6 +168,7 @@
     <ClCompile Include="src\imgui\imgui_draw.cpp" />
     <ClCompile Include="src\mesh\BoundingBox.cpp" />
     <ClCompile Include="src\mesh\CubeBuilder.cpp" />
+    <ClCompile Include="src\mesh\DepthRenderTexture.cpp" />
     <ClCompile Include="src\mesh\IQMBuilder.cpp" />
     <ClCompile Include="src\mesh\MaterialProperty.cpp" />
     <ClCompile Include="src\mesh\MaterialResource.cpp" />
@@ -266,6 +267,7 @@
     <ClInclude Include="include\xygine\imgui\stb_truetype.h" />
     <ClInclude Include="include\xygine\mesh\BoundingBox.hpp" />
     <ClInclude Include="include\xygine\mesh\CubeBuilder.hpp" />
+    <ClInclude Include="include\xygine\mesh\DepthRenderTexture.hpp" />
     <ClInclude Include="include\xygine\mesh\IQMBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\Material.hpp" />
     <ClInclude Include="include\xygine\mesh\MaterialProperty.hpp" />

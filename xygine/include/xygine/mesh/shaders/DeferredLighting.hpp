@@ -71,6 +71,7 @@ namespace xy
                 "    vec2 padding;\n"
                 "    vec3 position;\n"
                 "    float morePadding;\n"
+                "    mat4 wvpMatrix;\n"
                 "};\n"
 
                 "layout (std140) uniform u_lightBlock\n"
@@ -86,7 +87,7 @@ namespace xy
                 "uniform sampler2D u_positionMap;\n"
                 "uniform sampler2D u_aoMap;\n"
                 "uniform sampler2D u_illuminationMap;\n"
-
+                "uniform int u_lightCount = MAX_POINT_LIGHTS;\n"
 
                 "in vec2 v_texCoord;\n"
 
@@ -119,7 +120,7 @@ namespace xy
                 "    vec3 blendedColour = diffuse.rgb * u_ambientColour.rgb;\n"
                 "    eyeDirection = normalize(u_cameraWorldPosition - fragPosition);\n"
 
-                "    for (int i = 0; i < MAX_POINT_LIGHTS; ++i)\n"
+                "    for (int i = 0; i < u_lightCount && i < MAX_POINT_LIGHTS; ++i)\n"
                 "    {\n"
                 "        vec3 pointLightDirection = (u_pointLights[i].position - fragPosition) * u_pointLights[i].inverseRange;\n"
                 "        float falloff = clamp(1.0 - sqrt(dot(pointLightDirection, pointLightDirection)), 0.0, 1.0);\n"

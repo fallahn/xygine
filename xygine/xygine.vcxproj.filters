@@ -378,6 +378,9 @@
     <ClCompile Include="src\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\mesh\DepthRenderTexture.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -808,6 +811,9 @@
     </ClInclude>
     <ClInclude Include="include\xygine\Console.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\DepthRenderTexture.hpp">
+      <Filter>Header Files\mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

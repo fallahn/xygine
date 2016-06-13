@@ -29,7 +29,8 @@ xygine isn't really an engine).
 ######Contributions
 Contributions should be acknowledged and are gratefully accepted from:  
 Jonny Paton  
-Jean-Sebastien Fauteux (OS X Testing) 
+Jean-Sebastien Fauteux (OS X Testing)  
+Josh Mercier for the awesome Batcat model
 
 -----------------------------------------------------------------------
 

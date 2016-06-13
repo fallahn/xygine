@@ -459,7 +459,7 @@ void Scene::postEffectRenderPath(sf::RenderTarget& rt, sf::RenderStates states) 
 
 void Scene::setupConCommands()
 {
-    Console::addCommand("r_debug",
+    Console::addCommand("r_drawDebug",
         [this](const std::string& params)
     {
         if (params.find_first_of('0') == 0 ||
@@ -474,7 +474,7 @@ void Scene::setupConCommands()
         }
         else
         {
-            Console::print("r_debug: valid parameters are 0, 1, false or true");
+            Console::print("r_drawDebug: valid parameters are 0, 1, false or true");
         }
 
     }, this);

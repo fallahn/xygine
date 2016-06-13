@@ -260,6 +260,7 @@ void MeshRenderer::drawScene() const
     REPORT("Draw Count", std::to_string(drawCount));
 
     //TODO get lights
+    //TODO get visible area from light POV to cull geometry
     //foreach active light render scene to light depthmap
 }
 
@@ -344,6 +345,13 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
         m_lightingBlock.u_pointLights[i].position[0] = position.x;
         m_lightingBlock.u_pointLights[i].position[1] = position.y;
         m_lightingBlock.u_pointLights[i].position[2] = position.z;
+
+        //use this to render a depth map with the light pointing to the centre
+        //of the viewable area, with a max depth of the light range
+        //TODO cache as much of this as possible
+        auto lightPerspectiveMatrix = glm::perspective(90.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, 0.f, 1.f / lights[i]->getInverseRange());
+        auto lightWorldMatrix = glm::lookAt(glm::vec3(position.x, position.y, position.z), glm::vec3(camWorldPosition.x, camWorldPosition.y, 0.f), glm::vec3(0.f, 1.f,0.f));
+        std::memcpy(m_lightingBlock.u_pointLights[i].wvpMatrix, glm::value_ptr(lightPerspectiveMatrix * m_viewMatrix * lightWorldMatrix), 16 * sizeof(float));
     }
 
     //turn off others by setting intensity to 0
@@ -352,6 +360,7 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
         m_lightingBlock.u_pointLights[i].intensity = 0.f;
     }
 
+    m_lightBlurShader.setUniform("u_lightCount", int(std::min(MAX_LIGHTS, lights.size())));
     m_lightingBlockBuffer.update(m_lightingBlock);
 }
 

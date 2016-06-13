@@ -193,6 +193,7 @@ namespace xy
             float padding[2]; //GLSL must align to multiple of vec4 (including the start of the next member!)
             float position[3];
             float morePadding;
+            float wvpMatrix[16];
         };
         struct LightBlock final
         {

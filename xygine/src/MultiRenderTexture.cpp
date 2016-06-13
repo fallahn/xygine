@@ -31,7 +31,6 @@ source distribution.
 #include <xygine/Assert.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/detail/GLCheck.hpp>
-#include <xygine/App.hpp>
 
 #include <vector>
 
