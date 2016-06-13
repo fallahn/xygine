@@ -360,7 +360,7 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
         m_lightingBlock.u_pointLights[i].intensity = 0.f;
     }
 
-    m_lightBlurShader.setUniform("u_lightCount", int(std::min(MAX_LIGHTS, lights.size())));
+    m_lightBlurShader.setUniform("u_lightCount", int(std::min(std::size_t(MAX_LIGHTS), lights.size())));
     m_lightingBlockBuffer.update(m_lightingBlock);
 }
 
