@@ -103,6 +103,9 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
 
     //inits console commands which affect renderer
     setupConCommands();
+
+    //testing depth texture
+    m_depthTexture.create(512u, 512u);
 }
 
 MeshRenderer::~MeshRenderer()
@@ -262,6 +265,18 @@ void MeshRenderer::drawScene() const
     //TODO get lights
     //TODO get visible area from light POV to cull geometry
     //foreach active light render scene to light depthmap
+    m_depthTexture.setActive();
+    glCheck(glClear(GL_DEPTH_BUFFER_BIT));
+    glCheck(glEnable(GL_CULL_FACE)); //TODO set to rear facing
+    glCheck(glEnable(GL_DEPTH_TEST));
+    drawCount = 0;
+    for (const auto& m : m_models)
+    {
+        drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::Default); //TODO set to shadow pass
+    }
+    glCheck(glDisable(GL_DEPTH_TEST));
+    glCheck(glDisable(GL_CULL_FACE));
+    m_depthTexture.display();
 }
 
 void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
@@ -443,9 +458,13 @@ void MeshRenderer::initOutput()
         xy::Logger::log("Failed to create output shader for mesh debug", xy::Logger::Type::Error, xy::Logger::Output::All);
     }
 
+    //---temp---//
+    m_depthShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::DepthFrag);
+    //----------//
     m_outputQuad = std::make_unique<RenderQuad>(sf::Vector2f(200.f, 100.f), m_lightingShader);
     m_outputQuad->addRenderPass(RenderPass::Debug, m_debugShader);
-
+    //---temp---//
+    m_outputQuad->addRenderPass(RenderPass::ShadowMap, m_depthShader);
 }
 
 void MeshRenderer::setupConCommands()
@@ -505,12 +524,12 @@ void MeshRenderer::setupConCommands()
             m_debugShader.setUniform("u_texture", m_gBuffer.getTexture(MaterialChannel::Position));
             Console::print("Switched output to world positions");
         }
-        /*else if (params.find_first_of("5") == 0)
+        else if (params.find_first_of("5") == 0)
         {
-            m_outputQuad->setActivePass(RenderPass::Debug);
-            m_debugShader.setUniform("u_texture", m_ssaoTexture.getTexture());
-            Console::print("Switched output to SSAO");
-        }*/
+            m_outputQuad->setActivePass(RenderPass::ShadowMap);
+            m_debugShader.setUniform("u_texture", m_depthTexture.getTexture());
+            Console::print("Switched output to depth map");
+        }
         else
         {
             Console::print("r_gBuffer: 0 Default, 1 Diffuse, 2 Normals, 3 Mask, 4 Position");

@@ -46,6 +46,18 @@ namespace xy
                 "    fragOut = texture(u_texture, v_texCoord);\n"
                 "}\n";
 
+            static const std::string DepthFrag =
+                "#version 150\n"
+                "uniform sampler2D u_texture;\n"
+                "in vec2 v_texCoord;\n"
+                "out vec4 fragOut;\n"
+                "void main()\n"
+                "{\n"
+                "    float depth = texture(u_texture, v_texCoord).x;\n"
+                "    depth = 1.0 - (1.0 - depth) * 25.0;\n"
+                "    fragOut = vec4(depth);\n"
+                "}\n";
+
             static const std::string LightingVert =
                 "#version 130\n"
 

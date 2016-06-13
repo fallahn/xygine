@@ -36,6 +36,7 @@ source distribution.
 #include <xygine/mesh/Skeleton.hpp>
 #include <xygine/ShaderResource.hpp>
 #include <xygine/MultiRenderTexture.hpp>
+#include <xygine/mesh/DepthRenderTexture.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -225,6 +226,9 @@ namespace xy
         mutable std::vector<Model*> m_models;
         mutable xy::MultiRenderTexture m_gBuffer;
         void drawScene() const;
+
+        mutable DepthRenderTexture m_depthTexture;
+        sf::Shader m_depthShader;
 
         sf::Shader m_debugShader;
         sf::Texture m_dummyTetxure;
