@@ -47,7 +47,7 @@ void Material::addRenderPass(RenderPass::ID id, sf::Shader& shader)
     if (m_passes.count(id) == 0)
     {        
         m_passes.insert(std::make_pair(id, RenderPass(shader)));
-        auto& pass = m_passes.find(id);
+        auto pass = m_passes.find(id);
 
         //update with existing uniforms/properties
         const auto& properties = m_activePass->getProperties();
