@@ -105,7 +105,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     setupConCommands();
 
     //testing depth texture
-    m_depthTexture.create(512u, 512u);
+    m_depthTexture.create(1024u, 1024u);
 }
 
 MeshRenderer::~MeshRenderer()
@@ -237,21 +237,50 @@ void MeshRenderer::createNoiseTexture()
 
 void MeshRenderer::drawScene() const
 {
-    m_gBuffer.setActive(true);
-
-    auto viewPort = m_gBuffer.getView().getViewport();
-    glViewport(
-        static_cast<GLuint>(viewPort.left * xy::DefaultSceneSize.x),
-        static_cast<GLuint>(viewPort.top * xy::DefaultSceneSize.y),
-        static_cast<GLuint>(viewPort.width * xy::DefaultSceneSize.x),
-        static_cast<GLuint>(viewPort.height * xy::DefaultSceneSize.y));
-
-    glCheck(glClearColor(1.f, 1.f, 1.f, 0.f));
-    glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-    glCheck(glEnable(GL_CULL_FACE));
-    glCheck(glEnable(GL_DEPTH_TEST));
     auto visibleArea = m_scene.getVisibleArea();
     std::size_t drawCount = 0;
+    //TODO get lights
+    //TODO get visible area from light POV to cull geometry
+    //foreach active light render scene to light depthmap
+    m_depthTexture.setActive(true);
+    auto viewPort = m_depthTexture.getView().getViewport();
+    auto size = m_depthTexture.getSize();
+    glViewport(
+        static_cast<GLuint>(viewPort.left * size.x),
+        static_cast<GLuint>(viewPort.top * size.y),
+        static_cast<GLuint>(viewPort.width * size.x),
+        static_cast<GLuint>(viewPort.height * size.y));
+
+    glCheck(glClearColor(0.5f, 1.f, 0.f, 1.f));
+    glCheck(glEnable(GL_DEPTH_TEST));
+    glCheck(glEnable(GL_CULL_FACE));
+    glCheck(glClear(GL_DEPTH_BUFFER_BIT));
+    for (const auto& m : m_models)
+    {
+        drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::ShadowMap);
+    }
+    glCheck(glDisable(GL_CULL_FACE));
+    glCheck(glDisable(GL_DEPTH_TEST));
+    m_depthTexture.display();  
+    REPORT("Shadow draw count", std::to_string(drawCount));
+   
+    //---------------------------------------------//
+
+    m_gBuffer.setActive(true);
+    viewPort = m_gBuffer.getView().getViewport();
+    size = m_gBuffer.getSize();
+    glViewport(
+    static_cast<GLuint>(viewPort.left * size.x),
+    static_cast<GLuint>(viewPort.top * size.y),
+    static_cast<GLuint>(viewPort.width * size.x),
+    static_cast<GLuint>(viewPort.height * size.y));
+
+    glCheck(glClearColor(1.f, 1.f, 1.f, 0.f));
+        
+    glCheck(glEnable(GL_CULL_FACE));
+    glCheck(glEnable(GL_DEPTH_TEST));
+    glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    drawCount = 0;
     for (const auto& m : m_models)
     {
         drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::Default);
@@ -259,24 +288,8 @@ void MeshRenderer::drawScene() const
     glCheck(glDisable(GL_DEPTH_TEST));
     glCheck(glDisable(GL_CULL_FACE));
     m_gBuffer.display();
-
+    
     REPORT("Draw Count", std::to_string(drawCount));
-
-    //TODO get lights
-    //TODO get visible area from light POV to cull geometry
-    //foreach active light render scene to light depthmap
-    m_depthTexture.setActive();
-    glCheck(glClear(GL_DEPTH_BUFFER_BIT));
-    glCheck(glEnable(GL_CULL_FACE)); //TODO set to rear facing
-    glCheck(glEnable(GL_DEPTH_TEST));
-    drawCount = 0;
-    for (const auto& m : m_models)
-    {
-        drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::Default); //TODO set to shadow pass
-    }
-    glCheck(glDisable(GL_DEPTH_TEST));
-    glCheck(glDisable(GL_CULL_FACE));
-    m_depthTexture.display();
 }
 
 void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
@@ -317,7 +330,7 @@ void MeshRenderer::updateView()
     const float angle = std::tan(fov / 2.f);
     m_cameraZ = ((viewSize.y / 2.f) / angle);
 
-    m_projectionMatrix = glm::perspective(fov, viewSize.x / viewSize.y, nearPlane, m_cameraZ * 2.f);
+    m_projectionMatrix = glm::perspective(fov, viewSize.x / viewSize.y, m_cameraZ * 0.8f, m_cameraZ * 1.2f);
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16);
 
     //m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
@@ -527,7 +540,7 @@ void MeshRenderer::setupConCommands()
         else if (params.find_first_of("5") == 0)
         {
             m_outputQuad->setActivePass(RenderPass::ShadowMap);
-            m_debugShader.setUniform("u_texture", m_depthTexture.getTexture());
+            m_depthShader.setUniform("u_texture", m_depthTexture.getTexture());
             Console::print("Switched output to depth map");
         }
         else

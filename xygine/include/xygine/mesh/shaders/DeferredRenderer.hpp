@@ -36,6 +36,46 @@ namespace xy
     {
         namespace Mesh
         {
+            const static std::string ShadowVertex =
+                "in vec3 a_position;\n"
+
+                "#if defined(SKINNED)\n"
+                "in vec4 a_boneIndices;\n"
+                "in vec4 a_boneWeights;\n"
+                "uniform mat4[80] u_boneMatrices;\n"
+                "#endif\n"
+
+                "uniform mat4 u_worldViewMatrix;\n"
+
+                "layout (std140) uniform u_matrixBlock\n"
+                "{\n" \
+                "    mat4 u_viewMatrix;\n"
+                "    mat4 u_projectionMatrix;\n"
+                "};\n"
+
+                "void main()\n"
+                "{\n"
+                "    vec3 position = a_position;\n"
+
+                "#if defined(SKINNED)\n"
+                "	mat4 skinMatrix = u_boneMatrices[int(a_boneIndices.x)] * a_boneWeights.x;\n"
+                "	skinMatrix += u_boneMatrices[int(a_boneIndices.y)] * a_boneWeights.y;\n"
+                "	skinMatrix += u_boneMatrices[int(a_boneIndices.z)] * a_boneWeights.z;\n"
+                "	skinMatrix += u_boneMatrices[int(a_boneIndices.w)] * a_boneWeights.w;\n"
+                "	position = (skinMatrix * vec4(position, 1.0)).xyz;\n"
+                "#endif\n" \
+
+                "    gl_Position = u_projectionMatrix * u_worldViewMatrix * vec4(position, 1.0);\n"
+                "}";
+
+            const static std::string ShadowFragment =
+                "#version 150\n"
+                "//out vec4 fragOut;\n"
+                "void main()\n"
+                "{\n"
+                "    //fragOut = vec4(vec3(gl_FragCoord.z), 1.0);\n"
+                "}";
+
             const static std::string DeferredVertex =
                 "in vec3 a_position;\n" \
                 "in vec3 a_normal;\n" \
@@ -87,9 +127,8 @@ namespace xy
                 "	position = (skinMatrix * vec4(position, 1.0)).xyz;\n" \
                 "#endif\n" \
 
-                "    vec4 viewPosition = u_worldViewMatrix * vec4(position, 1.0);\n" \
                 "    v_worldPosition = (u_worldMatrix * vec4(position, 1.0)).xyz;\n" \
-                "    gl_Position = u_projectionMatrix * viewPosition;\n" \
+                "    gl_Position = u_projectionMatrix * u_worldViewMatrix * vec4(position, 1.0);\n" \
 
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
                 "    v_texCoord = a_texCoord0;\n" \
@@ -179,6 +218,10 @@ namespace xy
         }
     }
 }
+
+#define SHADOW_VERTEX "#version 150\n" + xy::Shader::Mesh::ShadowVertex
+#define SHADOW_VERTEX_SKINNED "#version 150\n#define SKINNED\n" + xy::Shader::Mesh::ShadowVertex
+#define SHADOW_FRAGMENT xy::Shader::Mesh::ShadowFragment
 
 #define DEFERRED_COLOURED_VERTEX "#version 150\n" + xy::Shader::Mesh::DeferredVertex
 #define DEFERRED_COLOURED_FRAGMENT "#version 150\n" + xy::Shader::Mesh::DeferredFragment

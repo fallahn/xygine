@@ -76,7 +76,9 @@ namespace
         SpecularBumped3D,
         SpecularSmooth3D,
         TexturedSmooth3D,
-        TexturedSkinned
+        TexturedSkinned,
+        Shadow,
+        ShadowSkinned
     };
 
     Plat::PlayerController * playerController = nullptr;
@@ -279,24 +281,32 @@ void PlatformDemoState::cacheMeshes()
     m_shaderResource.preload(PlatformShaderId::TexturedSkinned, DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
     m_shaderResource.preload(PlatformShaderId::TexturedSmooth3D, DEFERRED_TEXTURED_VERTEX, DEFERRED_TEXTURED_FRAGMENT);
     m_shaderResource.preload(PlatformShaderId::SpecularSmooth3D, DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
+    m_shaderResource.preload(PlatformShaderId::ShadowSkinned, SHADOW_VERTEX_SKINNED, SHADOW_FRAGMENT);
+    m_shaderResource.preload(PlatformShaderId::Shadow, SHADOW_VERTEX, SHADOW_FRAGMENT);
 
     auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/cube_diffuse.png") });
     demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/platform/cube_normal.png") });
     demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/platform/cube_mask.png") });
+    demoMaterial.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::Shadow));
+    demoMaterial.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
   
     auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
     fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     fixitMaterialBody.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitBody.png") });
     fixitMaterialBody.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitBody_normal.png") });
     fixitMaterialBody.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitBody_mask.png") });
+    fixitMaterialBody.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::ShadowSkinned));
+    fixitMaterialBody.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
 
     auto& fixitMaterialHead = m_materialResource.add(MatId::MrFixitHead, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
     fixitMaterialHead.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     fixitMaterialHead.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitHead.png") });
     fixitMaterialHead.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitHead_normal.png") });
     fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });
+    fixitMaterialHead.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::ShadowSkinned));
+    fixitMaterialHead.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
 
     auto& platformMaterial01 = m_materialResource.add(MatId::Platform01, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
     platformMaterial01.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
@@ -317,6 +327,8 @@ void PlatformDemoState::cacheMeshes()
     auto& tex3 = m_textureResource.get("assets/images/platform/batcat_mask.png");
     tex3.setRepeated(true);
     catMat.addProperty({ "u_maskMap", tex3 });
+    catMat.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::ShadowSkinned));
+    catMat.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
 
     auto& lightMaterial = m_materialResource.add(MatId::LightSource, m_shaderResource.get(PlatformShaderId::SpecularSmooth3D));
     lightMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());

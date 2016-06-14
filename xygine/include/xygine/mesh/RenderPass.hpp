@@ -40,43 +40,43 @@ namespace xy
 {
     enum BlendFunc
     {
-        ZERO                    = GL_ZERO,
-        ONE                     = GL_ONE,
-        SRC_COLOUR              = GL_SRC_COLOR,
-        ONE_MINUS_SOURCE_COLOUR = GL_ONE_MINUS_SRC_COLOR,
-        DEST_COLOUR             = GL_DST_COLOR,
-        ONE_MINUS_DEST_COLOUR   = GL_ONE_MINUS_DST_COLOR,
-        SRC_ALPHA               = GL_SRC_ALPHA,
-        ONE_MINUS_SRC_ALPHA     = GL_ONE_MINUS_SRC_ALPHA,
-        DEST_ALPHA              = GL_DST_ALPHA,
-        ONE_MINUS_DEST_ALPHA    = GL_ONE_MINUS_DST_ALPHA,
-        CONST_ALPHA             = GL_CONSTANT_ALPHA,
-        ONE_MINUS_CONST_ALPHA   = GL_ONE_MINUS_CONSTANT_ALPHA
+        Zero                    = GL_ZERO,
+        One                     = GL_ONE,
+        SourceColour            = GL_SRC_COLOR,
+        OneMinusSourceColour    = GL_ONE_MINUS_SRC_COLOR,
+        DestColour              = GL_DST_COLOR,
+        OneMinusDestColour      = GL_ONE_MINUS_DST_COLOR,
+        SourceAlpha             = GL_SRC_ALPHA,
+        OneMinusSourceAlpha     = GL_ONE_MINUS_SRC_ALPHA,
+        DestAlpha               = GL_DST_ALPHA,
+        OneMinusDestAlpha       = GL_ONE_MINUS_DST_ALPHA,
+        ConstAlpha              = GL_CONSTANT_ALPHA,
+        OneMinusConstAlpha      = GL_ONE_MINUS_CONSTANT_ALPHA
     };
 
     enum DepthFunc
     {
-        NEVER    = GL_NEVER,
-        LESS     = GL_LESS,
-        EQUAL    = GL_EQUAL,
-        LEQUAL   = GL_LEQUAL,
-        GREATER  = GL_GREATER,
-        NOTEQUAL = GL_NOTEQUAL,
-        GEQUAL   = GL_GEQUAL,
-        ALWAYS   = GL_ALWAYS
+        Never    = GL_NEVER,
+        Less     = GL_LESS,
+        Equal    = GL_EQUAL,
+        LEqual   = GL_LEQUAL,
+        Greater  = GL_GREATER,
+        NotEqual = GL_NOTEQUAL,
+        GEqual   = GL_GEQUAL,
+        Always   = GL_ALWAYS
     };
     
     enum Winding
     {
-        CLOCKWISE         = GL_CW,
-        COUNTER_CLOCKWISE = GL_CCW
+        Clockwise         = GL_CW,
+        CounterClockwise  = GL_CCW
     };
 
     enum CullFace
     {
-        FRONT          = GL_FRONT,
-        BACK           = GL_BACK,
-        FRONT_AND_BACK = GL_FRONT_AND_BACK
+        Front          = GL_FRONT,
+        Back           = GL_BACK,
+        FrontAndBack   = GL_FRONT_AND_BACK
     };
 
     class UniformBuffer;
@@ -178,6 +178,10 @@ namespace xy
         */
         UniformID getSkinID() const { return m_skinID; }
 
+        /*!
+        \brief Returns a reference to this pass's properties
+        */
+        const std::vector<MaterialProperty>& getProperties() const { return m_properties; }
     private:
         sf::Shader& m_shader;
 

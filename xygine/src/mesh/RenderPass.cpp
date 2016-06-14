@@ -33,11 +33,11 @@ using namespace xy;
 
 RenderPass::RenderPass(sf::Shader& shader)
     : m_shader      (shader),
-    m_blendFuncSrc  (BlendFunc::SRC_ALPHA),
-    m_blendFuncDst  (BlendFunc::ONE_MINUS_SRC_ALPHA),
-    m_depthFunc     (DepthFunc::LEQUAL),
-    m_winding       (Winding::COUNTER_CLOCKWISE),
-    m_cullface      (CullFace::BACK),
+    m_blendFuncSrc  (BlendFunc::SourceAlpha),
+    m_blendFuncDst  (BlendFunc::OneMinusSourceAlpha),
+    m_depthFunc     (DepthFunc::LEqual),
+    m_winding       (Winding::CounterClockwise),
+    m_cullface      (CullFace::Back),
     m_skinID        (-1)
 {
     XY_ASSERT(shader.getNativeHandle(), "Must compile shader first!");

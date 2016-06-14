@@ -42,16 +42,38 @@ Material::Material(sf::Shader& shader)
 }
 
 //public
-void Material::addPass(RenderPass::ID id, sf::Shader& shader)
+void Material::addRenderPass(RenderPass::ID id, sf::Shader& shader)
 {
     if (m_passes.count(id) == 0)
-    {
+    {        
         m_passes.insert(std::make_pair(id, RenderPass(shader)));
+        auto& pass = m_passes.find(id);
+
+        //update with existing uniforms/properties
+        const auto& properties = m_activePass->getProperties();
+        for (const auto& p : properties)
+        {
+            pass->second.addProperty(p);
+        }
+        for (auto u : m_uniformBuffers)
+        {
+            pass->second.addUniformBuffer(*u);
+        }
     }
     else
     {
         Logger::log("Failed adding pass with ID: " + std::to_string(id) + " pass already exists", Logger::Type::Error);
     }
+}
+
+RenderPass* Material::getRenderPass(RenderPass::ID id)
+{
+    auto result = m_passes.find(id);
+    if (result != m_passes.end())
+    {
+        return &result->second;
+    }
+    return nullptr;
 }
 
 bool Material::setActivePass(RenderPass::ID id) const
@@ -86,13 +108,15 @@ MaterialProperty* Material::getProperty(const std::string& name)
     return m_activePass->getProperty(name);
 }
 
-bool Material::addUniformBuffer(const UniformBuffer& ubo)
+void Material::addUniformBuffer(const UniformBuffer& ubo)
 {
     for (auto& p : m_passes)
     {
         p.second.addUniformBuffer(ubo);
     }
-    return false;
+    //storee this to apply to any new passes added later
+    m_uniformBuffers.push_back(&ubo);
+    //return false;
 }
 
 VertexAttribID Material::getVertexAttributeID(const std::string& str) const

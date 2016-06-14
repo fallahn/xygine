@@ -72,7 +72,13 @@ namespace xy
         /*
         !\brief Adds a new pass which ues the given shader, mapped to the given ID
         */
-        void addPass(RenderPass::ID, sf::Shader&);
+        void addRenderPass(RenderPass::ID, sf::Shader&);
+
+        /*!
+        \brief Returns a pointer to the RenderPass with the given ID.
+        \returns nullptr if RenderPass doesn't exist
+        */
+        RenderPass* getRenderPass(RenderPass::ID);
 
         /*!
         \brief Sets the current active RenderPass.
@@ -111,11 +117,11 @@ namespace xy
         the Material. All Materials passes are updated if the uniform
         block exists within the pass shader
         */
-        bool addUniformBuffer(const UniformBuffer&);
+        void addUniformBuffer(const UniformBuffer&);
 
         /*!
         \brief Returns the attribute ID of the requested vertex attribute if it
-        exists in the active RenderPAss, else returns -1
+        exists in the active RenderPass, else returns -1
         */
         VertexAttribID getVertexAttributeID(const std::string&) const;
 
@@ -134,6 +140,7 @@ namespace xy
 
         std::map<RenderPass::ID, RenderPass> m_passes;
         mutable RenderPass* m_activePass;
+        std::vector<const UniformBuffer*> m_uniformBuffers;
     };
 }
 

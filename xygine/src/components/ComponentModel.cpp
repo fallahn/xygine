@@ -312,6 +312,7 @@ std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibl
     if (m_mesh.getSubMeshCount() > 0)
     {
         auto count = m_mesh.getSubMeshCount();
+        std::size_t ret = 0;
         for (auto i = 0u; i < count; ++i)
         {
             if (!m_subMaterials[i]->setActivePass(pass)) continue;
@@ -326,8 +327,9 @@ std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibl
             glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, subMesh->getIndexBufferID()));
             glCheck(glDrawElements(static_cast<GLenum>(subMesh->getPrimitiveType()), subMesh->getIndexCount(), static_cast<GLenum>(subMesh->getIndexFormat()), 0));
             vao->second.unbind();
+            ret = 1;
         }
-        return 1;
+        return ret;
     }
     else
     {

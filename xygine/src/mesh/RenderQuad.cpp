@@ -61,7 +61,7 @@ sf::Shader& RenderQuad::getShader() const { return m_material.getShader(); }
 
 void RenderQuad::addRenderPass(RenderPass::ID id, sf::Shader& shader)
 {
-    m_material.addPass(id, shader);
+    m_material.addRenderPass(id, shader);
 }
 
 void RenderQuad::setActivePass(RenderPass::ID id)

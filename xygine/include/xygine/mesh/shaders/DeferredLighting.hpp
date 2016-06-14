@@ -53,9 +53,8 @@ namespace xy
                 "out vec4 fragOut;\n"
                 "void main()\n"
                 "{\n"
-                "    float depth = texture(u_texture, v_texCoord).x;\n"
-                "    depth = 1.0 - (1.0 - depth) * 25.0;\n"
-                "    fragOut = vec4(depth);\n"
+                "    float depth = texture(u_texture, v_texCoord).r;\n"
+                "    fragOut = vec4(vec3(depth), 1.0);\n"
                 "}\n";
 
             static const std::string LightingVert =
