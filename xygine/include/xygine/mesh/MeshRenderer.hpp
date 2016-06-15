@@ -176,14 +176,15 @@ namespace xy
             Mask,
             Position
         };
-
+        //TODO sort out this mutable mess
         struct MatrixBlock final
         {
             //use raw arrays 'cos GLSL
             float u_viewMatrix[16];
-            float u_projectionMatrix[16];            
-        }m_matrixBlock;
-        UniformBuffer m_matrixBlockBuffer;
+            float u_projectionMatrix[16];
+            float u_lightWorldViewProjectionMatrix[16];
+        }mutable m_matrixBlock;
+        mutable UniformBuffer m_matrixBlockBuffer;
 
         struct PointLight final
         {
@@ -223,12 +224,13 @@ namespace xy
         sf::Shader m_lightingShader;
         UniformBlockID m_lightingBlockID;
 
+        mutable DepthRenderTexture m_depthTexture;
+        sf::Shader m_depthShader;
+        void drawDepth() const;
+
         mutable std::vector<Model*> m_models;
         mutable xy::MultiRenderTexture m_gBuffer;
         void drawScene() const;
-
-        mutable DepthRenderTexture m_depthTexture;
-        sf::Shader m_depthShader;
 
         sf::Shader m_debugShader;
         sf::Texture m_dummyTetxure;

@@ -105,7 +105,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     setupConCommands();
 
     //testing depth texture
-    m_depthTexture.create(1024u, 1024u);
+    m_depthTexture.create(1024u, 1024u, MAX_LIGHTS);
 }
 
 MeshRenderer::~MeshRenderer()
@@ -235,40 +235,60 @@ void MeshRenderer::createNoiseTexture()
     glCheck(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
+void MeshRenderer::drawDepth() const
+{
+    auto visibleArea = m_scene.getVisibleArea();
+    std::size_t drawCount = 0;
+    //get light count
+    auto lightCount = m_scene.getVisibleLights(visibleArea).size();
+    //TODO get visible area from light POV to cull geometry
+
+
+    //foreach active light render scene to light depthmap
+    
+    auto viewPort = m_depthTexture.getView().getViewport();
+    auto size = m_depthTexture.getSize();
+
+    //glCheck(glClearDepth(0.f));
+    for (auto i = 0u; i < lightCount; ++i)
+    {
+        //set projection to current light
+        std::memcpy(m_matrixBlock.u_lightWorldViewProjectionMatrix, m_lightingBlock.u_pointLights[i].wvpMatrix, sizeof(float) * 16);
+
+        //set active texture layer
+        m_depthTexture.setActive(true);
+        m_depthTexture.setLayerActive(i);
+
+        glViewport(
+            static_cast<GLuint>(viewPort.left * size.x),
+            static_cast<GLuint>(viewPort.top * size.y),
+            static_cast<GLuint>(viewPort.width * size.x),
+            static_cast<GLuint>(viewPort.height * size.y));
+
+        glCheck(glClearColor(1.f, 1.f, 1.f, 0.f));
+        glCheck(glEnable(GL_DEPTH_TEST));
+        glCheck(glEnable(GL_CULL_FACE));
+        glCheck(glClear(GL_DEPTH_BUFFER_BIT));
+        for (const auto& m : m_models)
+        {
+            drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::ShadowMap);
+        }
+        glCheck(glDisable(GL_CULL_FACE));
+        glCheck(glDisable(GL_DEPTH_TEST));
+        m_depthTexture.display(); 
+    }
+     
+    REPORT("Shadow draw count", std::to_string(drawCount));
+}
+
 void MeshRenderer::drawScene() const
 {
     auto visibleArea = m_scene.getVisibleArea();
     std::size_t drawCount = 0;
-    //TODO get lights
-    //TODO get visible area from light POV to cull geometry
-    //foreach active light render scene to light depthmap
-    m_depthTexture.setActive(true);
-    auto viewPort = m_depthTexture.getView().getViewport();
-    auto size = m_depthTexture.getSize();
-    glViewport(
-        static_cast<GLuint>(viewPort.left * size.x),
-        static_cast<GLuint>(viewPort.top * size.y),
-        static_cast<GLuint>(viewPort.width * size.x),
-        static_cast<GLuint>(viewPort.height * size.y));
-
-    glCheck(glClearColor(0.5f, 1.f, 0.f, 1.f));
-    glCheck(glEnable(GL_DEPTH_TEST));
-    glCheck(glEnable(GL_CULL_FACE));
-    glCheck(glClear(GL_DEPTH_BUFFER_BIT));
-    for (const auto& m : m_models)
-    {
-        drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::ShadowMap);
-    }
-    glCheck(glDisable(GL_CULL_FACE));
-    glCheck(glDisable(GL_DEPTH_TEST));
-    m_depthTexture.display();  
-    REPORT("Shadow draw count", std::to_string(drawCount));
-   
-    //---------------------------------------------//
 
     m_gBuffer.setActive(true);
-    viewPort = m_gBuffer.getView().getViewport();
-    size = m_gBuffer.getSize();
+    auto viewPort = m_gBuffer.getView().getViewport();
+    auto size = m_gBuffer.getSize();
     glViewport(
     static_cast<GLuint>(viewPort.left * size.x),
     static_cast<GLuint>(viewPort.top * size.y),
@@ -294,6 +314,7 @@ void MeshRenderer::drawScene() const
 
 void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    drawDepth();
     drawScene();
 
     /*m_ssaoTexture.clear(sf::Color::Transparent);
@@ -377,7 +398,7 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
         //use this to render a depth map with the light pointing to the centre
         //of the viewable area, with a max depth of the light range
         //TODO cache as much of this as possible
-        auto lightPerspectiveMatrix = glm::perspective(90.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, 0.f, 1.f / lights[i]->getInverseRange());
+        auto lightPerspectiveMatrix = glm::perspective(90.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, 0.f, /*1.f / lights[i]->getInverseRange()*/m_cameraZ);
         auto lightWorldMatrix = glm::lookAt(glm::vec3(position.x, position.y, position.z), glm::vec3(camWorldPosition.x, camWorldPosition.y, 0.f), glm::vec3(0.f, 1.f,0.f));
         std::memcpy(m_lightingBlock.u_pointLights[i].wvpMatrix, glm::value_ptr(lightPerspectiveMatrix * m_viewMatrix * lightWorldMatrix), 16 * sizeof(float));
     }
@@ -537,15 +558,25 @@ void MeshRenderer::setupConCommands()
             m_debugShader.setUniform("u_texture", m_gBuffer.getTexture(MaterialChannel::Position));
             Console::print("Switched output to world positions");
         }
-        else if (params.find_first_of("5") == 0)
-        {
-            m_outputQuad->setActivePass(RenderPass::ShadowMap);
-            m_depthShader.setUniform("u_texture", m_depthTexture.getTexture());
-            Console::print("Switched output to depth map");
-        }
         else
         {
             Console::print("r_gBuffer: 0 Default, 1 Diffuse, 2 Normals, 3 Mask, 4 Position");
         }
+    }, this);
+
+    Console::addCommand("r_showDepthMap", 
+        [this](const std::string& params)
+    {
+        //TODO check layer parameter
+        //TODO disable output again
+
+        m_outputQuad->setActivePass(RenderPass::ShadowMap);
+        sf::Shader::bind(&m_depthShader);
+        auto loc = glGetUniformLocation(m_depthShader.getNativeHandle(), "u_texture");
+        glCheck(glActiveTexture(GL_TEXTURE0)); //we know this shader only has one texture sampler
+        glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_depthTexture.getNativeHandle()));
+        glCheck(glUniform1i(loc, 0));
+
+        Console::print("Switched output to depth map");
     }, this);
 }

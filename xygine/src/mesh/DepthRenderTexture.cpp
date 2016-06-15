@@ -31,10 +31,19 @@ source distribution.
 
 using namespace xy;
 
-DepthRenderTexture::DepthRenderTexture()
-    : m_fbo(0)
+namespace
 {
+    GLint maxLayers = 0;
+}
 
+DepthRenderTexture::DepthRenderTexture()
+    : m_fbo     (0),
+    m_layerCount(0)
+{
+    if (maxLayers == 0)
+    {
+        glCheck(glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, &maxLayers));
+    }
 }
 
 DepthRenderTexture::~DepthRenderTexture()
@@ -49,29 +58,40 @@ DepthRenderTexture::~DepthRenderTexture()
 }
 
 //public
-bool DepthRenderTexture::create(sf::Uint32 width, sf::Uint32 height)
+bool DepthRenderTexture::create(sf::Uint32 width, sf::Uint32 height, std::uint8_t layerCount)
 {
+    XY_ASSERT(layerCount > 0, "Requires at least one layer");
+    XY_ASSERT(layerCount < maxLayers, "Maximum layer count on this hardware is " + std::to_string(maxLayers));
+
     if (!glGenFramebuffers)
     {
         Logger::log("OpenGL extensions required for depth texture are unavailable", Logger::Type::Error);
         return false;
     }
 
-    if (!m_texture.create(width, height))
-    {
-        Logger::log("failed creating depth texture", Logger::Type::Error);
-        return false;
-    }
-    else
-    {
-        //override the default type
-        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.getNativeHandle()));
-        glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
-        glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-        glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-        glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-        glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-    }
+    //if (!m_texture.create(width, height))
+    //{
+    //    Logger::log("failed creating depth texture", Logger::Type::Error);
+    //    return false;
+    //}
+    //else
+    //{
+    //    //override the default type
+    //    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.getNativeHandle()));
+    //    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
+    //    glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    //    glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    //    glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    //    glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    //}
+
+    glCheck(glGenTextures(1, &m_textureID));
+    glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_textureID));
+    glCheck(glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, width, height, layerCount, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
+    glCheck(glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    glCheck(glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    glCheck(glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    glCheck(glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
     m_context = std::make_unique<sf::Context>();
     //create FBO
@@ -85,7 +105,8 @@ bool DepthRenderTexture::create(sf::Uint32 width, sf::Uint32 height)
     }
     glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
 
-    glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_texture.getNativeHandle(), 0));
+//    glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_texture.getNativeHandle(), 0));
+    glCheck(glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_textureID, 0, 0));
     glCheck(glDrawBuffer(GL_NONE));
     glCheck(glReadBuffer(GL_NONE));
 
@@ -98,6 +119,9 @@ bool DepthRenderTexture::create(sf::Uint32 width, sf::Uint32 height)
         Logger::log("Failed to attach texture to FBO", xy::Logger::Type::Error, xy::Logger::Output::All);
         return false;
     }
+    m_size.x = width;
+    m_size.y = height;
+    m_layerCount = layerCount;
 
     sf::RenderTarget::initialize();
     return true;
@@ -118,12 +142,30 @@ void DepthRenderTexture::display()
 
 sf::Vector2u DepthRenderTexture::getSize() const
 {
-    return m_texture.getSize();
+    //return m_texture.getSize();
+    return m_size;
 }
 
 const sf::Texture& DepthRenderTexture::getTexture() const 
 {
     return m_texture;
+}
+
+bool DepthRenderTexture::setLayerActive(std::uint8_t layer)
+{
+    XY_ASSERT(layer < m_layerCount, "Index out of range");
+    glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
+    glCheck(glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_textureID, 0, layer));
+
+    GLenum result;
+    glCheck(result = glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    if (result != GL_FRAMEBUFFER_COMPLETE)
+    {       
+        Logger::log("Failed to switch depth texture layer to " + std::to_string(layer), xy::Logger::Type::Error, xy::Logger::Output::All);
+        glCheck(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+        return false;
+    }
+    return true;
 }
 
 //private

@@ -59,9 +59,12 @@ namespace xy
 
         /*!
         \brief (Re)creates the DepthRenderTexture.
+        \param width Width of the texture to create
+        \param height Height of the texture to create
+        \param layerCount Number of layers to create. Useful for multple shadow maps
         \returns true if successful, else false.
         */
-        bool create(sf::Uint32 width, sf::Uint32 height);
+        bool create(sf::Uint32 width, sf::Uint32 height, std::uint8_t layerCount = 1);
 
         /*!
         \brief Activate or deactivate the depth texture for rendering.
@@ -86,10 +89,25 @@ namespace xy
         */
         const sf::Texture& getTexture() const;
 
+        /*!
+        \brief Returns the handle of the texture array
+        */
+        unsigned int getNativeHandle() const { return m_textureID; }
+
+        /*!
+        \brief Zero based index of the layer to set active for drawing.
+        \returns true if successful else false
+        */
+        bool setLayerActive(std::uint8_t);
+
     private:
 
         std::unique_ptr<sf::Context> m_context;
         unsigned int m_fbo;
+        unsigned int m_textureID;
+        std::uint8_t m_layerCount;
+        sf::Vector2u m_size;
+
         sf::Texture m_texture;
 
         bool activate(bool) override;

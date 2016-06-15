@@ -51,6 +51,7 @@ namespace xy
                 "{\n" \
                 "    mat4 u_viewMatrix;\n"
                 "    mat4 u_projectionMatrix;\n"
+                "    mat4 u_lightWorldViewProjectionMatrix;\n"
                 "};\n"
 
                 "void main()\n"
@@ -64,8 +65,8 @@ namespace xy
                 "	skinMatrix += u_boneMatrices[int(a_boneIndices.w)] * a_boneWeights.w;\n"
                 "	position = (skinMatrix * vec4(position, 1.0)).xyz;\n"
                 "#endif\n" \
-
-                "    gl_Position = u_projectionMatrix * u_worldViewMatrix * vec4(position, 1.0);\n"
+                "    //gl_Position = u_projectionMatrix * u_worldViewMatrix * vec4(position, 1.0);\n"
+                "    gl_Position = u_lightWorldViewProjectionMatrix * vec4(position, 1.0);\n"
                 "}";
 
             const static std::string ShadowFragment =
@@ -103,6 +104,7 @@ namespace xy
                 "{\n" \
                 "    mat4 u_viewMatrix;\n" \
                 "    mat4 u_projectionMatrix;\n" \
+                "    mat4 u_lightWorldViewProjectionMatrix;\n" \
                 "};\n" \
 
                 "#if !defined(BUMP)\n"

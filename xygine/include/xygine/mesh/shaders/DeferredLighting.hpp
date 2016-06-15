@@ -48,12 +48,12 @@ namespace xy
 
             static const std::string DepthFrag =
                 "#version 150\n"
-                "uniform sampler2D u_texture;\n"
+                "uniform sampler2DArray u_texture;\n"
                 "in vec2 v_texCoord;\n"
                 "out vec4 fragOut;\n"
                 "void main()\n"
                 "{\n"
-                "    float depth = texture(u_texture, v_texCoord).r;\n"
+                "    float depth = texture(u_texture, vec3(v_texCoord, 1.0)).r;\n"
                 "    fragOut = vec4(vec3(depth), 1.0);\n"
                 "}\n";
 

@@ -257,7 +257,7 @@ void Console::registerDefaultCommands()
         file.close();
     });
 
-    print("type list_all to see a list of availble commands");
+    print("type list_all to see a list of available commands");
 }
 
 int textEditCallback(ImGuiTextEditCallbackData* data)
