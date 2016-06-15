@@ -31,7 +31,6 @@ source distribution.
 #include <xygine/Config.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/Texture.hpp>
 
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/Context.hpp>
@@ -85,11 +84,6 @@ namespace xy
         sf::Vector2u getSize() const override;
 
         /*!
-        \brief Returns a reference to the texture attached to the buffer.
-        */
-        const sf::Texture& getTexture() const;
-
-        /*!
         \brief Returns the handle of the texture array
         */
         unsigned int getNativeHandle() const { return m_textureID; }
@@ -100,6 +94,11 @@ namespace xy
         */
         bool setLayerActive(std::uint8_t);
 
+        /*!
+        \brief Returns the number of layers used by the depth texture
+        */
+        std::uint8_t getLayerCount() const { return m_layerCount; }
+
     private:
 
         std::unique_ptr<sf::Context> m_context;
@@ -107,8 +106,6 @@ namespace xy
         unsigned int m_textureID;
         std::uint8_t m_layerCount;
         sf::Vector2u m_size;
-
-        sf::Texture m_texture;
 
         bool activate(bool) override;
     };

@@ -45,13 +45,13 @@ namespace xy
                 "uniform mat4[80] u_boneMatrices;\n"
                 "#endif\n"
 
-                "uniform mat4 u_worldViewMatrix;\n"
+                "uniform mat4 u_worldMatrix;\n"
 
                 "layout (std140) uniform u_matrixBlock\n"
                 "{\n" \
                 "    mat4 u_viewMatrix;\n"
                 "    mat4 u_projectionMatrix;\n"
-                "    mat4 u_lightWorldViewProjectionMatrix;\n"
+                "    mat4 u_lightViewProjectionMatrix;\n"
                 "};\n"
 
                 "void main()\n"
@@ -66,7 +66,7 @@ namespace xy
                 "	position = (skinMatrix * vec4(position, 1.0)).xyz;\n"
                 "#endif\n" \
                 "    //gl_Position = u_projectionMatrix * u_worldViewMatrix * vec4(position, 1.0);\n"
-                "    gl_Position = u_lightWorldViewProjectionMatrix * vec4(position, 1.0);\n"
+                "    gl_Position = u_lightViewProjectionMatrix * u_worldMatrix * vec4(position, 1.0);\n"
                 "}";
 
             const static std::string ShadowFragment =
@@ -104,7 +104,7 @@ namespace xy
                 "{\n" \
                 "    mat4 u_viewMatrix;\n" \
                 "    mat4 u_projectionMatrix;\n" \
-                "    mat4 u_lightWorldViewProjectionMatrix;\n" \
+                "    mat4 u_lightViewProjectionMatrix;\n" \
                 "};\n" \
 
                 "#if !defined(BUMP)\n"

@@ -69,22 +69,6 @@ bool DepthRenderTexture::create(sf::Uint32 width, sf::Uint32 height, std::uint8_
         return false;
     }
 
-    //if (!m_texture.create(width, height))
-    //{
-    //    Logger::log("failed creating depth texture", Logger::Type::Error);
-    //    return false;
-    //}
-    //else
-    //{
-    //    //override the default type
-    //    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture.getNativeHandle()));
-    //    glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
-    //    glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-    //    glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-    //    glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-    //    glCheck(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-    //}
-
     glCheck(glGenTextures(1, &m_textureID));
     glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_textureID));
     glCheck(glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, width, height, layerCount, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
@@ -142,13 +126,7 @@ void DepthRenderTexture::display()
 
 sf::Vector2u DepthRenderTexture::getSize() const
 {
-    //return m_texture.getSize();
     return m_size;
-}
-
-const sf::Texture& DepthRenderTexture::getTexture() const 
-{
-    return m_texture;
 }
 
 bool DepthRenderTexture::setLayerActive(std::uint8_t layer)

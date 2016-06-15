@@ -182,7 +182,7 @@ namespace xy
             //use raw arrays 'cos GLSL
             float u_viewMatrix[16];
             float u_projectionMatrix[16];
-            float u_lightWorldViewProjectionMatrix[16];
+            float u_lightViewProjectionMatrix[16];
         }mutable m_matrixBlock;
         mutable UniformBuffer m_matrixBlockBuffer;
 
@@ -195,7 +195,7 @@ namespace xy
             float padding[2]; //GLSL must align to multiple of vec4 (including the start of the next member!)
             float position[3];
             float morePadding;
-            float wvpMatrix[16];
+            float vpMatrix[16];
         };
         struct LightBlock final
         {

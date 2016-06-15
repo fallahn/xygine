@@ -241,11 +241,9 @@ void MeshRenderer::drawDepth() const
     std::size_t drawCount = 0;
     //get light count
     auto lightCount = m_scene.getVisibleLights(visibleArea).size();
-    //TODO get visible area from light POV to cull geometry
+    //TODO get visible area from light POV to cull geometry?
 
-
-    //foreach active light render scene to light depthmap
-    
+    //foreach active light render scene to light depthmap   
     auto viewPort = m_depthTexture.getView().getViewport();
     auto size = m_depthTexture.getSize();
 
@@ -253,7 +251,8 @@ void MeshRenderer::drawDepth() const
     for (auto i = 0u; i < lightCount; ++i)
     {
         //set projection to current light
-        std::memcpy(m_matrixBlock.u_lightWorldViewProjectionMatrix, m_lightingBlock.u_pointLights[i].wvpMatrix, sizeof(float) * 16);
+        std::memcpy(m_matrixBlock.u_lightViewProjectionMatrix, m_lightingBlock.u_pointLights[i].vpMatrix, sizeof(float) * 16);
+        m_matrixBlockBuffer.update(m_matrixBlock);
 
         //set active texture layer
         m_depthTexture.setActive(true);
@@ -396,11 +395,13 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
         m_lightingBlock.u_pointLights[i].position[2] = position.z;
 
         //use this to render a depth map with the light pointing to the centre
+        //TODO ths could be a problem with locked cameras and objects moving out of the FOV
+        //alternately we could try looking down the z-axis always and use a 180 degree FOV
         //of the viewable area, with a max depth of the light range
         //TODO cache as much of this as possible
-        auto lightPerspectiveMatrix = glm::perspective(90.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, 0.f, /*1.f / lights[i]->getInverseRange()*/m_cameraZ);
-        auto lightWorldMatrix = glm::lookAt(glm::vec3(position.x, position.y, position.z), glm::vec3(camWorldPosition.x, camWorldPosition.y, 0.f), glm::vec3(0.f, 1.f,0.f));
-        std::memcpy(m_lightingBlock.u_pointLights[i].wvpMatrix, glm::value_ptr(lightPerspectiveMatrix * m_viewMatrix * lightWorldMatrix), 16 * sizeof(float));
+        auto lightPerspectiveMatrix = glm::perspective(90.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, position.z / 3.f, /*1.f / lights[i]->getInverseRange()*/m_cameraZ);
+        auto lightViewMatrix = glm::lookAt(glm::vec3(position.x, position.y, position.z), glm::vec3(camWorldPosition.x, camWorldPosition.y, 0.f), glm::vec3(0.f, 1.f,0.f));
+        std::memcpy(m_lightingBlock.u_pointLights[i].vpMatrix, glm::value_ptr(lightPerspectiveMatrix * lightViewMatrix), 16 * sizeof(float));
     }
 
     //turn off others by setting intensity to 0
@@ -567,16 +568,41 @@ void MeshRenderer::setupConCommands()
     Console::addCommand("r_showDepthMap", 
         [this](const std::string& params)
     {
-        //TODO check layer parameter
-        //TODO disable output again
+        if (!params.empty())
+        {
+            try
+            {
+                float index = std::stof(params);
+                if (index < m_depthTexture.getLayerCount())
+                {
+                    m_depthShader.setUniform("u_texIndex", index);
+                }
+                else
+                {
+                    Console::print("Only " + std::to_string(m_depthTexture.getLayerCount()) + " depth maps exist");
+                    return;
+                }
+            }
+            catch (...)
+            {
+                Console::print(params + ": invalid depth map index");
+                return;
+            }
+            m_outputQuad->setActivePass(RenderPass::ShadowMap);
+            sf::Shader::bind(&m_depthShader);
+            auto loc = glGetUniformLocation(m_depthShader.getNativeHandle(), "u_texture");
+            glCheck(glActiveTexture(GL_TEXTURE0)); //we know this shader only has one texture sampler
+            glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_depthTexture.getNativeHandle()));
+            glCheck(glUniform1i(loc, 0));
 
-        m_outputQuad->setActivePass(RenderPass::ShadowMap);
-        sf::Shader::bind(&m_depthShader);
-        auto loc = glGetUniformLocation(m_depthShader.getNativeHandle(), "u_texture");
-        glCheck(glActiveTexture(GL_TEXTURE0)); //we know this shader only has one texture sampler
-        glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_depthTexture.getNativeHandle()));
-        glCheck(glUniform1i(loc, 0));
-
-        Console::print("Switched output to depth map");
+            Console::print("Switched output to depth map");
+        }
+        else
+        {
+            Console::print("Usage: r_showDepthMap <index>");
+            
+            //switch to default display
+            Console::doCommand("r_gBuffer 0");
+        }
     }, this);
 }
