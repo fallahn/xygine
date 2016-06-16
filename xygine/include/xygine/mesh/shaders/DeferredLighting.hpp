@@ -83,7 +83,7 @@ namespace xy
                 "    vec2 padding;\n"
                 "    vec3 position;\n"
                 "    float morePadding;\n"
-                "    mat4 wvpMatrix;\n"
+                "    mat4 vpMatrix;\n"
                 "};\n"
 
                 "layout (std140) uniform u_lightBlock\n"
@@ -97,9 +97,10 @@ namespace xy
                 "uniform sampler2D u_normalMap;\n"
                 "uniform sampler2D u_maskMap;\n"
                 "uniform sampler2D u_positionMap;\n"
-                "uniform sampler2D u_aoMap;\n"
+                "//uniform sampler2D u_aoMap;\n"
                 "uniform sampler2D u_illuminationMap;\n"
                 "uniform int u_lightCount = MAX_POINT_LIGHTS;\n"
+                "uniform sampler2DArray u_depthMaps;\n"
 
                 "in vec2 v_texCoord;\n"
 
@@ -122,6 +123,16 @@ namespace xy
                 "    return mixedColour + (specularColour * mask.g);\n"
                 "}\n" \
 
+                "float calcShadow(int layer, float falloff, vec3 position)\n"
+                "{\n"
+                "    vec4 positionLightSpace = u_pointLights[layer].vpMatrix * vec4(position, 1.0);\n"
+                "    vec3 projectionCoords = positionLightSpace.xyz / positionLightSpace.w;\n"
+                "    projectionCoords = projectionCoords * 0.5 + 0.5;\n"
+                "    float lightDepth = texture(u_depthMaps, vec3(projectionCoords.xy, float(layer))).r;\n"
+                "    float shadow = projectionCoords.z > lightDepth ? 0.0 : 1.0;\n"
+                "    return shadow;// * falloff;\n"
+                "}\n"
+
                 "void main()\n"
                 "{\n"
                 "    vec3 fragPosition = texture(u_positionMap, v_texCoord).xyz;\n"
@@ -136,13 +147,16 @@ namespace xy
                 "    {\n"
                 "        vec3 pointLightDirection = (u_pointLights[i].position - fragPosition) * u_pointLights[i].inverseRange;\n"
                 "        float falloff = clamp(1.0 - sqrt(dot(pointLightDirection, pointLightDirection)), 0.0, 1.0);\n"
-                "        blendedColour += calcLighting(normal, normalize(pointLightDirection), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
+                "        vec3 lighting = calcLighting(normal, normalize(pointLightDirection), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
+                "        //lighting *= calcShadow(i, falloff, fragPosition);\n"
+                "        blendedColour += lighting;\n"
+                "        blendedColour *= calcShadow(i, falloff, fragPosition);\n"
                 "    }\n"
 
                 "    //blendedColour *= texture(u_aoMap, v_texCoord).rgb;\n"
                 "    blendedColour = mix(blendedColour, diffuse.rgb, mask.b);\n"
                 "    blendedColour += texture(u_illuminationMap, v_texCoord).rgb;// * 4.0;\n"
-                "    fragOut = vec4(blendedColour, diffuse.a);\n"
+                "    fragOut = vec4(blendedColour, diffuse.a);//vec4(vec3(texture(u_depthMaps, vec3(v_texCoord, 1.0)).r), 1.0);//\n"
                 "}";
         }
     }

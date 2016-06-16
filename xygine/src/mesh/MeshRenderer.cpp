@@ -337,6 +337,12 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     rt.draw(m_dummySprite);
 
     m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
+    //we can't directly access the shader's texture count so we have to make this
+    //assumption based on the above to get the corect texture unit. BEAR THIS IN MIND
+    sf::Shader::bind(&m_lightingShader);
+    glCheck(glActiveTexture(GL_TEXTURE0 + 10));
+    glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_depthTexture.getNativeHandle()));
+
     rt.draw(*m_outputQuad);
     rt.resetGLStates();
 }
@@ -477,6 +483,12 @@ void MeshRenderer::initOutput()
             m_lightingShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
             //m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
             m_lightingShader.setUniform("u_illuminationMap", m_lightBlurTexture.getTexture());
+
+            ////we can't directly access the shader's texture count so we have to make this
+            ////assumption based on the above to get the corect texture unit. BEAR THIS IN MIND
+            sf::Shader::bind(&m_lightingShader);
+            auto loc = glGetUniformLocation(m_lightingShader.getNativeHandle(), "u_depthMaps");
+            glCheck(glUniform1i(loc, 10));
         }
     }
     else
@@ -484,6 +496,7 @@ void MeshRenderer::initOutput()
         xy::Logger::log("Failed to create output shader for deferred renderer", xy::Logger::Type::Error, xy::Logger::Output::All);
     }
 
+    //allow debugging each channel of MRT
     if (m_debugShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::DebugFrag))
     {
         m_debugShader.setUniform("u_texture", m_gBuffer.getTexture(MaterialChannel::Diffuse));
@@ -493,12 +506,20 @@ void MeshRenderer::initOutput()
         xy::Logger::log("Failed to create output shader for mesh debug", xy::Logger::Type::Error, xy::Logger::Output::All);
     }
 
-    //---temp---//
-    m_depthShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::DepthFrag);
-    //----------//
+    //debugging depth output
+    if (m_depthShader.loadFromMemory(xy::Shader::Mesh::LightingVert, xy::Shader::Mesh::DepthFrag))
+    {
+        sf::Shader::bind(&m_depthShader);
+        auto loc = glGetUniformLocation(m_depthShader.getNativeHandle(), "u_texture");
+        glCheck(glUniform1i(loc, 0));
+    }
+    else
+    {
+        xy::Logger::log("Failed to create output shader for depth debug", xy::Logger::Type::Error, xy::Logger::Output::All);
+    }
+
     m_outputQuad = std::make_unique<RenderQuad>(sf::Vector2f(200.f, 100.f), m_lightingShader);
     m_outputQuad->addRenderPass(RenderPass::Debug, m_debugShader);
-    //---temp---//
     m_outputQuad->addRenderPass(RenderPass::ShadowMap, m_depthShader);
 }
 
@@ -590,10 +611,8 @@ void MeshRenderer::setupConCommands()
             }
             m_outputQuad->setActivePass(RenderPass::ShadowMap);
             sf::Shader::bind(&m_depthShader);
-            auto loc = glGetUniformLocation(m_depthShader.getNativeHandle(), "u_texture");
             glCheck(glActiveTexture(GL_TEXTURE0)); //we know this shader only has one texture sampler
             glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_depthTexture.getNativeHandle()));
-            glCheck(glUniform1i(loc, 0));
 
             Console::print("Switched output to depth map");
         }
