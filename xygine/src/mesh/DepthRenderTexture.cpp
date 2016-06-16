@@ -76,6 +76,8 @@ bool DepthRenderTexture::create(sf::Uint32 width, sf::Uint32 height, std::uint8_
     glCheck(glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
     glCheck(glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     glCheck(glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+    //GLfloat borderColour[] = { 1.0, 1.0, 1.0, 1.0 };
+    //glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColour);
 
     m_context = std::make_unique<sf::Context>();
     //create FBO

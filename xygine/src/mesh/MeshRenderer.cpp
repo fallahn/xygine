@@ -52,6 +52,8 @@ namespace
     const float fov = 30.f * xy::Util::Const::degToRad;
     const float nearPlane = 0.1f;
     const unsigned MAX_LIGHTS = 8;
+    const unsigned DepthTextureUnit = 10u; //only used in a single shader which we know won't have this many textures
+    const unsigned shadowmapSize = 1024u;
 }
 
 MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
@@ -103,9 +105,6 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
 
     //inits console commands which affect renderer
     setupConCommands();
-
-    //testing depth texture
-    m_depthTexture.create(1024u, 1024u, MAX_LIGHTS);
 }
 
 MeshRenderer::~MeshRenderer()
@@ -338,9 +337,8 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 
     m_lightingBlockBuffer.bind(m_lightingShader.getNativeHandle(), m_lightingBlockID);
     //we can't directly access the shader's texture count so we have to make this
-    //assumption based on the above to get the corect texture unit. BEAR THIS IN MIND
-    sf::Shader::bind(&m_lightingShader);
-    glCheck(glActiveTexture(GL_TEXTURE0 + 10));
+    //assumption to get the correct texture unit. BEAR THIS IN MIND
+    glCheck(glActiveTexture(GL_TEXTURE0 + DepthTextureUnit));
     glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_depthTexture.getNativeHandle()));
 
     rt.draw(*m_outputQuad);
@@ -484,11 +482,11 @@ void MeshRenderer::initOutput()
             //m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
             m_lightingShader.setUniform("u_illuminationMap", m_lightBlurTexture.getTexture());
 
-            ////we can't directly access the shader's texture count so we have to make this
-            ////assumption based on the above to get the corect texture unit. BEAR THIS IN MIND
+            //we can't directly access the shader's texture count so we have to make this
+            //assumption based on the above to get the correct texture unit. BEAR THIS IN MIND
             sf::Shader::bind(&m_lightingShader);
             auto loc = glGetUniformLocation(m_lightingShader.getNativeHandle(), "u_depthMaps");
-            glCheck(glUniform1i(loc, 10));
+            glCheck(glUniform1i(loc, DepthTextureUnit));
         }
     }
     else
@@ -521,6 +519,9 @@ void MeshRenderer::initOutput()
     m_outputQuad = std::make_unique<RenderQuad>(sf::Vector2f(200.f, 100.f), m_lightingShader);
     m_outputQuad->addRenderPass(RenderPass::Debug, m_debugShader);
     m_outputQuad->addRenderPass(RenderPass::ShadowMap, m_depthShader);
+
+    //depth texture for shadow maps
+    m_depthTexture.create(shadowmapSize, shadowmapSize, MAX_LIGHTS);
 }
 
 void MeshRenderer::setupConCommands()
@@ -610,7 +611,7 @@ void MeshRenderer::setupConCommands()
                 return;
             }
             m_outputQuad->setActivePass(RenderPass::ShadowMap);
-            sf::Shader::bind(&m_depthShader);
+
             glCheck(glActiveTexture(GL_TEXTURE0)); //we know this shader only has one texture sampler
             glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_depthTexture.getNativeHandle()));
 
