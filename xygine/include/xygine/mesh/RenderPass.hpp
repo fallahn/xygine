@@ -89,7 +89,7 @@ namespace xy
     public:
         enum ID
         {
-            Default,
+            Default = 0,
             ShadowMap,
             Debug,
             Count

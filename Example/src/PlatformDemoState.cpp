@@ -53,6 +53,7 @@ source distribution.
 #include <xygine/mesh/SubMesh.hpp>
 #include <xygine/mesh/CubeBuilder.hpp>
 #include <xygine/mesh/IQMBuilder.hpp>
+#include <xygine/mesh/QuadBuilder.hpp>
 
 #include <xygine/shaders/NormalMapped.hpp>
 
@@ -277,6 +278,9 @@ void PlatformDemoState::cacheMeshes()
     xy::IQMBuilder ib3("assets/models/batcat.iqm");
     m_meshRenderer.loadModel(MeshID::Batcat, ib3);
 
+    xy::QuadBuilder qb({ 500.f, 550.f });
+    m_meshRenderer.loadModel(MeshID::Quad, qb);
+
     m_shaderResource.preload(PlatformShaderId::SpecularBumped3D, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
     m_shaderResource.preload(PlatformShaderId::TexturedSkinned, DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
     m_shaderResource.preload(PlatformShaderId::TexturedSmooth3D, DEFERRED_TEXTURED_VERTEX, DEFERRED_TEXTURED_FRAGMENT);
@@ -371,7 +375,7 @@ void PlatformDemoState::buildTerrain()
     m_shaderResource.preload(PlatformShaderId::SpecularSmooth2D, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED);
     m_textureResource.setFallbackColour({ 127, 127, 255 });
     const auto& normalTexture = m_textureResource.get("normalFallback");
-    
+
     auto background = xy::Component::create<Plat::Background>(m_messageBus, m_textureResource);
     background->setAmbientColour(m_scene.getAmbientColour());
     auto entity = xy::Entity::create(m_messageBus);
@@ -418,7 +422,7 @@ void PlatformDemoState::buildTerrain()
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(1792.f, 1080.f - 128.f);
     entity->addComponent(drawable);
-    
+
     m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
     //-------------------------
     drawable = xy::Component::create<xy::AnimatedDrawable>(m_messageBus);
@@ -479,8 +483,23 @@ void PlatformDemoState::buildTerrain()
 
     m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
 
-}
+    //------some shadow receivers-------//
+    model = m_meshRenderer.createModel(MeshID::Quad, m_messageBus);
+    model->setPosition({ 0.f, 0.f, -50.f });
 
+    entity = xy::Entity::create(m_messageBus);
+    entity->setPosition(1000.f, 702.f);
+    entity->addComponent(model);
+    m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
+
+    model = m_meshRenderer.createModel(MeshID::Quad, m_messageBus);
+    model->rotate(xy::Model::Axis::X, 90.f);
+
+    entity = xy::Entity::create(m_messageBus);
+    entity->setPosition(1000.f, 952.f);
+    entity->addComponent(model);
+    m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
+}
 void PlatformDemoState::buildPhysics()
 {
     auto groundBody = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Static);

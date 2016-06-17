@@ -131,7 +131,7 @@ void Model::setBaseMaterial(const Material& material, bool applyToAll)
     }
 
     m_material = &material;
-    if (applyToAll)
+    if (applyToAll && m_mesh.getSubMeshCount() > 0)
     {
         //this will also update the vertex attribs
         for (auto i = 0u; i < m_mesh.getSubMeshCount(); ++i)

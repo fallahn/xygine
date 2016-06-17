@@ -61,10 +61,10 @@ namespace xy
             const float halfSizeY = m_size.y / 2.f;
             m_vertexData = 
             {
-                -halfSizeX, halfSizeY, 0.f,  0.f, 0.f, 1.f,  1.f, 0.f, 0.f,  0.f, 1.f, 0.f,  0.f, 0.f,
-                -halfSizeX, -halfSizeY, 0.f,  0.f, 0.f, 1.f,  1.f, 0.f, 0.f,  0.f, 1.f, 0.f,  0.f, 1.f,
-                halfSizeX, halfSizeY, 0.f,  0.f, 0.f, 1.f,  1.f, 0.f, 0.f,  0.f, 1.f, 0.f,  1.f, 0.f,
-                halfSizeX, -halfSizeY, 0.f,  0.f, 0.f, 1.f,  1.f, 0.f, 0.f,  0.f, 1.f, 0.f,  1.f, 1.f
+                -halfSizeX, halfSizeY, 0.f,  0.f, 0.f, 1.f,  1.f, 0.f, 0.f,  0.f, 1.f, 0.f,  0.f, 1.f,
+                -halfSizeX, -halfSizeY, 0.f,  0.f, 0.f, 1.f,  1.f, 0.f, 0.f,  0.f, 1.f, 0.f,  0.f, 0.f,
+                halfSizeX, halfSizeY, 0.f,  0.f, 0.f, 1.f,  1.f, 0.f, 0.f,  0.f, 1.f, 0.f,  1.f, 1.f,
+                halfSizeX, -halfSizeY, 0.f,  0.f, 0.f, 1.f,  1.f, 0.f, 0.f,  0.f, 1.f, 0.f,  1.f, 0.f
             };
 
             m_boundingBox = { {-halfSizeX, -halfSizeY, -0.5f}, {halfSizeX, halfSizeY, 0.5f} };

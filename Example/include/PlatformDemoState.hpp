@@ -78,7 +78,8 @@ private:
         Cube = 0,
         Fixit,
         Platform,
-        Batcat
+        Batcat,
+        Quad
     };
 
     enum MatId

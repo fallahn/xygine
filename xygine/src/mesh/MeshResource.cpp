@@ -63,6 +63,7 @@ Mesh& MeshResource::add(MeshResource::ID id, ModelBuilder& mb)
 
     auto& mesh = *m_meshes.find(id)->second;
     mesh.setVertexData(mb.getVertexData());
+    mesh.setPrimitiveType(mb.primitiveType());
 
     const auto& subMeshLayouts = mb.getSubMeshLayouts();
     if (!subMeshLayouts.empty())
