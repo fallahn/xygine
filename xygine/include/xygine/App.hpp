@@ -328,6 +328,8 @@ namespace xy
 
         void handleEvents();
         void handleMessages();
+
+        void registerConCommands();
     };
 }
 #endif //XY_APP_HPP_

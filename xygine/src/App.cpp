@@ -78,6 +78,7 @@ App::App(sf::ContextSettings contextSettings)
 {
     loadSettings();
     m_scores.load();
+    registerConCommands();
 
     renderWindow = &m_renderWindow;
 
@@ -475,3 +476,45 @@ void App::handleMessages()
     } 
 }
 
+void App::registerConCommands()
+{
+    Console::addCommand("r_vsyncEnable",
+    [this](const std::string& params)
+    {
+        if (params == "1" || params == "true")
+        {
+            m_videoSettings.VSync = true;
+            m_renderWindow.setVerticalSyncEnabled(true);
+            m_renderWindow.setFramerateLimit(0);
+            Console::print("VSync enabled");
+        }
+        else if (params == "0" || params == "false")
+        {
+            m_videoSettings.VSync = false;
+            m_renderWindow.setVerticalSyncEnabled(false);
+            Console::print("VSync disabled");
+        }
+        else
+        {
+            Console::print("usage - r_vsyncEnable <param>: 0, 1, true or false");
+        }
+    });
+
+    Console::addCommand("r_framerateLimit",
+        [this](const std::string& params)
+    {
+        try
+        {
+            auto limit = std::stoi(params);
+            m_renderWindow.setFramerateLimit(limit);
+
+            m_renderWindow.setVerticalSyncEnabled(false);
+            m_videoSettings.VSync = false;
+            Console::print("Framerate limit set to " + params);
+        }
+        catch (...)
+        {
+            Console::print("usage: r_framerateLimit <int>");
+        }
+    });
+}
