@@ -121,13 +121,6 @@ void App::run()
 
     initialise();
 
-#ifdef _DEBUG_
-    sf::Clock fpsClock;
-    sf::Clock fpsUpdateClock;
-    sf::Clock frameTimeClock;
-    float framesElapsed = 0.f;
-#endif //_DEBUG_
-
     frameClock.restart();
     while (m_renderWindow.isOpen())
     {
@@ -152,24 +145,6 @@ void App::run()
         draw();
         nim::Render();
         m_renderWindow.display();
-
-#ifdef _DEBUG_
-        float fpsTime = 1.f / fpsClock.restart().asSeconds();
-        if (fpsUpdateClock.getElapsedTime().asSeconds() > 0.25f)
-        {
-            REPORT("FPS", std::to_string(fpsTime));
-            fpsUpdateClock.restart();
-        }
-
-        framesElapsed++;
-        if (frameTimeClock.getElapsedTime().asSeconds() > 1.f)
-        {
-            float time = 1000.f / framesElapsed;
-            REPORT("Frame Time", std::to_string(time) + "ms");
-            frameTimeClock.restart();            
-            framesElapsed = 0.f;
-        }
-#endif //_DEBUG_
     }
     m_messageBus.disable(); //prevents spamming with loads of entity quit messages
 
