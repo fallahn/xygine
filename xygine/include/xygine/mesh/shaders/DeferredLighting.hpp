@@ -79,8 +79,9 @@ namespace xy
                 "    vec4 diffuseColour;\n"
                 "    vec4 specularColour;\n"
                 "    float inverseRange;\n"
+                "    float range;\n"
                 "    float intensity;\n"
-                "    vec2 padding;\n"
+                "    float padding;\n"
                 "    vec3 position;\n"
                 "    float morePadding;\n"
                 "    mat4 vpMatrix;\n"
@@ -142,6 +143,11 @@ namespace xy
                 "    return 1.0 - (shadow / 9.0);\n"
                 "}\n"
 
+                "float lenSqr(vec3 vector)\n"
+                "{\n"
+                "    return dot(vector, vector);\n"
+                "}\n"
+
                 "void main()\n"
                 "{\n"
                 "    vec3 fragPosition = texture(u_positionMap, v_texCoord).xyz;\n"
@@ -154,7 +160,11 @@ namespace xy
 
                 "    for (int i = 0; i < u_lightCount && i < MAX_POINT_LIGHTS; ++i)\n"
                 "    {\n"
-                "        vec3 pointLightDirection = (u_pointLights[i].position - fragPosition) * u_pointLights[i].inverseRange;\n"
+                "        vec3 pointLightDirection = (u_pointLights[i].position - fragPosition);\n"
+                "        float range = u_pointLights[i].range;\n"
+                "        if(lenSqr(pointLightDirection) > (range * range)) continue;//fragment not in light range\n"
+
+                "        pointLightDirection *= u_pointLights[i].inverseRange;\n"
                 "        float falloff = clamp(1.0 - sqrt(dot(pointLightDirection, pointLightDirection)), 0.0, 1.0);\n"
                 "        vec3 lighting = calcLighting(normal, normalize(pointLightDirection), u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
                 "        lighting *= calcShadow(i, max(0.05 * (1.0 - dot(normal, pointLightDirection)), 0.005), fragPosition);\n"

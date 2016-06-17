@@ -108,15 +108,15 @@ bool StateStack::empty() const
 sf::View StateStack::updateView()
 {
     //calculate the correct view size / ratio for window size
-    m_context.defaultView.setSize(1920.f, 1080.f);
-    m_context.defaultView.setCenter(960.f, 540.f);
+    m_context.defaultView.setSize(DefaultSceneSize);
+    m_context.defaultView.setCenter(DefaultSceneSize / 2.f);
 
     auto vModeWidth = static_cast<float>(m_context.appInstance.getVideoSettings().VideoMode.width);
     auto vModeHeight = static_cast<float>(m_context.appInstance.getVideoSettings().VideoMode.height);
 
     auto winSize = sf::Vector2f(vModeWidth, vModeHeight);
     float windowRatio = winSize.x / winSize.y;
-    float viewRatio = 16.f / 9.f;
+    float viewRatio = DefaultSceneSize.x / DefaultSceneSize.y;
 
     float sizeY = windowRatio / viewRatio;
     float top = (1.f - sizeY) / 2.f;

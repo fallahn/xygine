@@ -124,7 +124,13 @@ namespace xy
         float getInverseRange() const;
 
         /*!
-        \brief Returns the light's radius
+        \brief Returns the range of the light
+        */
+        float getRange() const { return m_range; }
+
+        /*!
+        \brief Returns the light's radius, used by the scene
+        when culling visible light sources.
         */
         float getRadius() const;
 

@@ -229,6 +229,9 @@ void App::applyVideoSettings(const VideoSettings& settings)
 
     auto msg = m_messageBus.post<Message::UIEvent>(Message::UIMessage);
     msg->type = Message::UIEvent::ResizedWindow;
+
+    std::int32_t resolution = (settings.VideoMode.width << 16) | settings.VideoMode.height;
+    msg->value = static_cast<float>(resolution);
 }
 
 MessageBus& App::getMessageBus()

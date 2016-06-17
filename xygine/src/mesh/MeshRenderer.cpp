@@ -63,18 +63,18 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_doLightBlur           (true),
     m_lightingBlockID       (-1)
 {
-    //create the render buffer
-    m_gBuffer.create(size.x, size.y, 4u, true);
-
-    //use floating point textures for position and normals
-    std::function<void(int)> useFloatingpoint = [size, this](int id)
+    auto width = size.x;
+    auto height = size.y;
+    if (width > height)
     {
-        glCheck(glBindTexture(GL_TEXTURE_2D, m_gBuffer.getTexture(id).getNativeHandle()));
-        glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, 0));
-        glCheck(glBindTexture(GL_TEXTURE_2D, 0));
-    };
-    useFloatingpoint(MaterialChannel::Normal);
-    useFloatingpoint(MaterialChannel::Position);
+        height = (width / 16) * 9;
+    }
+    else
+    {
+        width = (height / 9) * 16;
+    }
+    
+    resizeGBuffer(width, height);
 
     updateView();
     std::memset(&m_matrixBlock, 0, sizeof(m_matrixBlock));
@@ -196,6 +196,30 @@ void MeshRenderer::handleMessage(const Message& msg)
         default:
         case xy::Message::SceneEvent::CameraChanged:
             updateView();
+            break;
+        }
+    }
+    else if (msg.id == xy::Message::UIMessage)
+    {
+        const auto& msgData = msg.getData<xy::Message::UIEvent>();
+        switch (msgData.type)
+        {
+        default: break;
+        case xy::Message::UIEvent::ResizedWindow:
+            std::int32_t resolution = static_cast<std::int32_t>(msgData.value);
+            auto width = resolution >> 16;
+            auto height = resolution & 0xffff;
+
+            if (width > height)
+            {
+                height = (width / 16) * 9;
+            }
+            else
+            {
+                width = (height / 9) * 16;
+            }
+
+            resizeGBuffer(static_cast<sf::Uint32>(width), static_cast<sf::Uint32>(height));
             break;
         }
     }
@@ -392,6 +416,7 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
 
         m_lightingBlock.u_pointLights[i].intensity = lights[i]->getIntensity();
         m_lightingBlock.u_pointLights[i].inverseRange = lights[i]->getInverseRange();
+        m_lightingBlock.u_pointLights[i].range = lights[i]->getRange();
 
         auto& position = lights[i]->getWorldPosition();
         m_lightingBlock.u_pointLights[i].position[0] = position.x;
@@ -416,6 +441,22 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
 
     m_lightBlurShader.setUniform("u_lightCount", int(std::min(std::size_t(MAX_LIGHTS), lights.size())));
     m_lightingBlockBuffer.update(m_lightingBlock);
+}
+
+void MeshRenderer::resizeGBuffer(sf::Uint32 x, sf::Uint32 y)
+{
+    //create the render buffer
+    m_gBuffer.create(x, y, 4u, true);
+
+    //use floating point textures for position and normals
+    std::function<void(int)> useFloatingpoint = [x, y, this](int id)
+    {
+        glCheck(glBindTexture(GL_TEXTURE_2D, m_gBuffer.getTexture(id).getNativeHandle()));
+        glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, x, y, 0, GL_RGBA, GL_FLOAT, 0));
+        glCheck(glBindTexture(GL_TEXTURE_2D, 0));
+    };
+    useFloatingpoint(MaterialChannel::Normal);
+    useFloatingpoint(MaterialChannel::Position);
 }
 
 void MeshRenderer::initSSAO()
@@ -519,6 +560,7 @@ void MeshRenderer::initOutput()
     m_outputQuad = std::make_unique<RenderQuad>(sf::Vector2f(200.f, 100.f), m_lightingShader);
     m_outputQuad->addRenderPass(RenderPass::Debug, m_debugShader);
     m_outputQuad->addRenderPass(RenderPass::ShadowMap, m_depthShader);
+
 
     //depth texture for shadow maps
     m_depthTexture.create(shadowmapSize, shadowmapSize, MAX_LIGHTS);

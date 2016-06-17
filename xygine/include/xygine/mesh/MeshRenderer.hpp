@@ -191,8 +191,9 @@ namespace xy
             float diffuseColour[4];
             float specularColour[4];
             float inverseRange;
+            float range;
             float intensity;
-            float padding[2]; //GLSL must align to multiple of vec4 (including the start of the next member!)
+            float padding; //GLSL must align to multiple of vec4 (including the start of the next member!)
             float position[3];
             float morePadding;
             float vpMatrix[16];
@@ -240,6 +241,8 @@ namespace xy
 
         void updateView();
         void updateLights(const glm::vec3&);     
+
+        void resizeGBuffer(sf::Uint32, sf::Uint32);
 
         void initSSAO();
         void initSelfIllum();

@@ -92,7 +92,7 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     m_messageBus    (context.appInstance.getMessageBus()),
     m_scene         (m_messageBus),
     m_physWorld     (m_messageBus),
-    m_meshRenderer  ({ 1920, 1080 }, m_scene)
+    m_meshRenderer  ({ context.appInstance.getVideoSettings().VideoMode.width, context.appInstance.getVideoSettings().VideoMode.height }, m_scene)
 {
     launchLoadingScreen();
     xy::Stats::clear();
@@ -485,7 +485,7 @@ void PlatformDemoState::buildTerrain()
 
     //------some shadow receivers-------//
     model = m_meshRenderer.createModel(MeshID::Quad, m_messageBus);
-    model->setPosition({ 0.f, 0.f, -50.f });
+    model->setPosition({ 0.f, 0.f, -250.f });
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(1000.f, 702.f);
