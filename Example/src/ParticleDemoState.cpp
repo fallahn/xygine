@@ -107,6 +107,16 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     //m_shaderResource.preload(ParticleShaderId::NormalMapTextured, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED);
     shader = &m_shaderResource.get(ParticleShaderId::NormalMapTexturedSpecular);
 
+    auto& skyLight = m_scene.getSkyLight();
+    skyLight.setDiffuseColour({255, 255, 220});
+    skyLight.setSpecularColour(sf::Color::Green);
+    skyLight.setIntensity(0.5f);
+    skyLight.setDirection({ 1.f, 1.f, -1.f });
+    shader->setUniform("u_directionalLight.diffuseColour", sf::Glsl::Vec4(skyLight.getDiffuseColour()));
+    shader->setUniform("u_directionalLight.specularColour", sf::Glsl::Vec4(skyLight.getSpecularColour()));
+    shader->setUniform("u_directionalLight.intensity", skyLight.getIntensity());
+    shader->setUniform("u_directionaLightDirection", skyLight.getDirection());
+
     setupParticles();
     buildTerrain();
 

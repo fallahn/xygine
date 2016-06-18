@@ -80,7 +80,7 @@ namespace xy
     {
         friend class MessageBus;
     public:
-        using Id = sf::Int32;
+        using ID = sf::Int32;
         enum Type
         {
             AudioMessage = 0,
@@ -97,7 +97,7 @@ namespace xy
         */
         struct AudioEvent
         {
-            sf::Uint64 entityId = 0;
+            sf::Uint64 entityID = 0;
             enum
             {
                 Play,
@@ -160,7 +160,7 @@ namespace xy
                 SelectionChanged
             }type;
             float value = 0.f;
-            StateId stateId = -1;
+            StateID stateID = -1;
             Difficulty difficulty;
             UIControlID controlID = -1;
         };
@@ -173,7 +173,7 @@ namespace xy
             {
                 Deleted
             }action;
-            sf::Uint64 entityId = 0;
+            sf::Uint64 entityID = 0;
             Component* ptr = nullptr;
         };
         /*!
@@ -200,7 +200,7 @@ namespace xy
             }action;
         };
 
-        Id id = -1;
+        ID id = -1;
 
         /*!
         \brief Returns the actual data containend in the message
@@ -272,11 +272,11 @@ namespace xy
         Custom message types should have a unique 32 bit integer ID which can be used
         to identify the message type when reading messages. Message data has a maximum
         size of 128 bytes.
-        \param id Unique Id for this message type
+        \param id Unique ID for this message type
         \returns Pointer to an empty message of given type.
         */
         TEMPLATE_GUARD
-        T* post(Message::Id id)
+        T* post(Message::ID id)
         {
             if (!m_enabled) return static_cast<T*>((void*)m_pendingBuffer.data());
 

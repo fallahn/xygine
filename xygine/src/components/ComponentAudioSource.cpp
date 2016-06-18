@@ -93,7 +93,7 @@ void AudioSource::entityUpdate(Entity& entity, float dt)
                 (m_mode == Mode::Cached) ? m_sound.stop() : m_music.stop();
 
                 auto msg = getMessageBus().post<xy::Message::AudioEvent>(xy::Message::AudioMessage);
-                msg->entityId = getParentUID();
+                msg->entityID = getParentUID();
                 msg->action = xy::Message::AudioEvent::Stop;
             }
 
@@ -120,7 +120,7 @@ void AudioSource::entityUpdate(Entity& entity, float dt)
                 m_currentStatus = Status::Stopped;
 
                 auto msg = getMessageBus().post<xy::Message::AudioEvent>(xy::Message::AudioMessage);
-                msg->entityId = getParentUID();
+                msg->entityID = getParentUID();
                 msg->action = xy::Message::AudioEvent::Stop;
             }
         }
@@ -293,7 +293,7 @@ void AudioSource::play(bool looped)
         }
 
         auto msg = getMessageBus().post<xy::Message::AudioEvent>(xy::Message::AudioMessage);
-        msg->entityId = getParentUID();
+        msg->entityID = getParentUID();
         msg->action = xy::Message::AudioEvent::Play;
     }
 }
@@ -308,7 +308,7 @@ void AudioSource::pause()
         m_music.pause();
 
     auto msg = getMessageBus().post<xy::Message::AudioEvent>(xy::Message::AudioMessage);
-    msg->entityId = getParentUID();
+    msg->entityID = getParentUID();
     msg->action = xy::Message::AudioEvent::Pause;
 }
 
@@ -325,7 +325,7 @@ void AudioSource::stop()
         m_currentStatus = Status::Stopped;
 
         auto msg = getMessageBus().post<xy::Message::AudioEvent>(xy::Message::AudioMessage);
-        msg->entityId = getParentUID();
+        msg->entityID = getParentUID();
         msg->action = xy::Message::AudioEvent::Stop;
     }
     else

@@ -85,7 +85,7 @@ namespace xy
         when a state is requested it can be correctly constructed
         */
         template <typename T>
-        void registerState(StateId id)
+        void registerState(StateID id)
         {
             static_assert(std::is_base_of<State, T>::value, "Must derive from State class");
             m_factories[id] = [this]()
@@ -101,7 +101,7 @@ namespace xy
         \param args List of arguments to be passed to the state constructor
         */
         template <typename T, typename... Args>
-        void registerState(StateId id, Args&&... args)
+        void registerState(StateID id, Args&&... args)
         {
             static_assert(std::is_base_of<State, T>::value, "Must derive from State class");
             m_factories[id] = [&args..., this]()
@@ -137,7 +137,7 @@ namespace xy
         /*!
         \brief Push a new instance of a state with the given ID to the stack
         */
-        void pushState(StateId id);
+        void pushState(StateID id);
         /*!
         \brief Pops the top most state from the stack
         */
@@ -164,7 +164,7 @@ namespace xy
         void applyPendingChanges();
 
     private:
-        static const StateId bufferID = -100;
+        static const StateID bufferID = -100;
         //gets pushed on top of new states for one frame to consume
         //spurious window events
         class BufferState final : public State
@@ -177,21 +177,21 @@ namespace xy
             bool handleEvent(const sf::Event&) override { return false; }
             void handleMessage(const Message&) override{}
             void draw() override {}
-            StateId stateID() const override { return bufferID; }
+            StateID stateID() const override { return bufferID; }
         };
 
         struct Pendingchange
         {
-            explicit Pendingchange(Action, StateId id = 0);
+            explicit Pendingchange(Action, StateID id = 0);
             Action action;
-            StateId id;
+            StateID id;
         };
 
         std::vector<State::Ptr> m_stack;
         std::vector<Pendingchange> m_pendingChanges;
         State::Context m_context;
-        std::map<StateId, std::function<State::Ptr()>> m_factories;
-        State::Ptr createState(StateId id);
+        std::map<StateID, std::function<State::Ptr()>> m_factories;
+        State::Ptr createState(StateID id);
 
     };
 }

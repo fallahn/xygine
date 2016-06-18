@@ -55,7 +55,7 @@ namespace xy
         MusicPlayer m_musicPlayer;
         SoundPlayer m_soundPlayer;
 
-        enum SoundIds
+        enum SoundIDs
         {
             Size
         };

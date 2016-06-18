@@ -54,7 +54,7 @@ public:
     bool update(float) override;
     void draw() override;
 
-    xy::StateId stateID() const { return States::NetworkDemo; }
+    xy::StateID stateID() const { return States::NetworkDemo; }
 
 private:
 

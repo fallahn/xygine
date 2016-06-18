@@ -38,6 +38,7 @@ source distribution.
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/System/Vector3.hpp>
 
 #include <vector>
 #include <functional>
@@ -55,6 +56,65 @@ namespace xy
     class XY_EXPORT_API Scene final : public sf::Drawable
     {
     public:
+        /*!
+        \brief A single directional light, used by normal mapped
+        materials and the mesh renderer.
+        Useful for representing sun/moon light or any far off light
+        source. Setting the intensity to zero will disable the light
+        altogether (preventing it from being considered in lighting
+        calculations). By default the sky light is disabled.
+        */
+        struct XY_EXPORT_API SkyLight final
+        {
+        public:
+            SkyLight() : m_diffuseColour(sf::Color::White), m_specularColour(sf::Color::White), m_direction(0.f, 1.f, 0.f), m_intensity(0.f) {}
+            ~SkyLight() = default;
+            /*!
+            \brief Returns the current diffuse colour of the sky light
+            */
+            const sf::Color& getDiffuseColour() const { return m_diffuseColour; }
+            /*!
+            \brief Sets the current diffuse colour of the sky light
+            */
+            void setDiffuseColour(const sf::Color& c) { m_diffuseColour = c; }
+            /*!
+            \brief Gets the current specular colour
+            */
+            const sf::Color& getSpecularColour() const { return m_specularColour; }
+            /*!
+            \brief Sets the sky light's specular colour.
+            The specular colour is use to tint the glossy highlights from the light
+            */
+            void setSpecularColour(const sf::Color& c) { m_specularColour = c; }
+            /*!
+            \brief Gets the direction from which the sky light is cast
+            */
+            const sf::Vector3f& getDirection() const { return m_direction; }
+            /*!
+            \brief Sets the direction from which the sky light is cast
+            */
+            void setDirection(const sf::Vector3f& d) { m_direction = d; }
+            /*!
+            \brief Returns the intensity of the sky light.
+            Zeros is off and no light is cast. 1 is full brightness,
+            values can be higher than this although will likely cause
+            saturation.
+            */
+            float getIntensity() const { return m_intensity; }
+            /*!
+            \brief Sets the sky light intensity.
+            A value of 0 effectively turns off the light, and any positive
+            value is used to multiply the colour. Values greater than 1 are
+            possible although will probably cause saturation.
+            */
+            void setIntensity(float i) { XY_ASSERT(i >= 0, "Must be a positive value"); m_intensity = i; }
+        private:
+            sf::Color m_diffuseColour;
+            sf::Color m_specularColour;
+            sf::Vector3f m_direction;
+            float m_intensity;
+        };
+
         /*!
         \brief Layer names to which entities may be added
         */
@@ -212,11 +272,22 @@ namespace xy
         \brief Sets the ambient colour for shaders which are used in scene lighting
         */
         void setAmbientColour(const sf::Color& colour) { m_ambientColour = colour; }
+        /*!
+        \brief Returns a modifyable (non-const) reference to the Scene's sky light.
+        This can be used to set the properties of the sky light, or retrieve them
+        when setting properties of s lighting shader (such as the default normal map)
+        */
+        SkyLight& getSkyLight() { return m_skyLight; }
+        /*!
+        \brief Returns const reference to the Scene's sky light
+        */
+        const SkyLight& getSkyLight() const { return m_skyLight; }
     private:
 
         QuadTree m_quadTree; //must live longer than any entity
         QuadTree m_lightTree;
         sf::Color m_ambientColour;
+        SkyLight m_skyLight;
         std::vector<Entity::Ptr> m_layers;
         std::vector<std::pair<Layer, Entity::Ptr>> m_pendingEntities;
         

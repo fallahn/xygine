@@ -48,7 +48,7 @@ namespace sf
 
 namespace xy
 {
-    using StateId = sf::Int32;
+    using StateID = sf::Int32;
     
     class StateStack;
     class App;
@@ -127,7 +127,7 @@ namespace xy
         /*!
         \brief Returns the unique ID of this state
         */
-        virtual StateId stateID() const = 0;
+        virtual StateID stateID() const = 0;
         /*!
         \brief Applies a new context for this state
 
@@ -141,7 +141,7 @@ namespace xy
         \brief Request a new istance of a state with the given ID
         be pushed on top of the state stack to which this state belongs
         */
-        void requestStackPush(StateId id);
+        void requestStackPush(StateID id);
         /*!
         \brief Request that the state on top of the stack to which this
         state belongs is popped (and therefore destroyed)

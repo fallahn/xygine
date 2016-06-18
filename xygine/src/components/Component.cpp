@@ -35,7 +35,7 @@ Component::~Component()
     //auto msg = m_messageBus.post<Message::ComponentEvent>(Message::ComponentSystemMessage);
     //msg->action = Message::ComponentEvent::Deleted;
     //msg->ptr = this;
-    //msg->entityId = m_parentUID;
+    //msg->entityID = m_parentUID;
 }
 
 //public
@@ -73,7 +73,7 @@ void Component::destroy()
     auto msg = m_messageBus.post<Message::ComponentEvent>(Message::ComponentSystemMessage);
     msg->action = Message::ComponentEvent::Deleted;
     msg->ptr = this;
-    msg->entityId = m_parentUID;
+    msg->entityID = m_parentUID;
 }
 
 bool Component::destroyed() const

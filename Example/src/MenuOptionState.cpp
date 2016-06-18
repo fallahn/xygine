@@ -61,7 +61,7 @@ MenuOptionState::MenuOptionState(xy::StateStack& stateStack, Context context)
 
     auto msg = m_messageBus.post<xy::Message::UIEvent>(xy::Message::UIMessage);
     msg->type = xy::Message::UIEvent::MenuOpened;
-    msg->stateId = States::ID::MenuOptions;
+    msg->stateID = States::ID::MenuOptions;
 }
 
 //public
@@ -278,5 +278,5 @@ void MenuOptionState::close()
 
     auto msg = m_messageBus.post<xy::Message::UIEvent>(xy::Message::UIMessage);
     msg->type = xy::Message::UIEvent::MenuClosed;
-    msg->stateId = States::ID::MenuOptions;
+    msg->stateID = States::ID::MenuOptions;
 }

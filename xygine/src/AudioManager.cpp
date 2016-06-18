@@ -48,7 +48,7 @@ using namespace xy;
 AudioManager::AudioManager()
     : m_fadeInTime      (4.f),
     m_currentFadeTime   (0.f),
-    m_fxSounds          (SoundIds::Size),
+    m_fxSounds          (SoundIDs::Size),
     m_muted             (false)
 {   
     m_musicPlayer.setVolume(0.f);

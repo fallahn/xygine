@@ -68,7 +68,7 @@ namespace xy
         struct MessageHandler final
         {
             using Action = std::function<void(const Message&)>;
-            Message::Id id; //< Message ID for this handler to respond to
+            Message::ID id; //< Message ID for this handler to respond to
             Action action; //< Executed when message with ID is received
         };
 

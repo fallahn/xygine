@@ -265,6 +265,7 @@ void MeshRenderer::drawDepth() const
     //get light count
     auto lightCount = m_scene.getVisibleLights(visibleArea).size();
     //TODO get visible area from light POV to cull geometry?
+    REPORT("Active Light Count", std::to_string(lightCount));
 
     //foreach active light render scene to light depthmap   
     auto viewPort = m_depthTexture.getView().getViewport();
@@ -299,7 +300,38 @@ void MeshRenderer::drawDepth() const
         glCheck(glDisable(GL_DEPTH_TEST));
         m_depthTexture.display(); 
     }
-     
+    
+
+    //draw the skylight if it's enabled
+    if (m_lightingBlock.u_skyLight.intensity > 0)
+    {
+        //set projection to current light
+        std::memcpy(m_matrixBlock.u_lightViewProjectionMatrix, m_lightingBlock.u_skyLight.vpMatrix, sizeof(float) * 16);
+        m_matrixBlockBuffer.update(m_matrixBlock);
+
+        //set active texture layer
+        m_depthTexture.setActive(true);
+        m_depthTexture.setLayerActive(m_depthTexture.getLayerCount() - 1);
+
+        glViewport(
+            static_cast<GLuint>(viewPort.left * size.x),
+            static_cast<GLuint>(viewPort.top * size.y),
+            static_cast<GLuint>(viewPort.width * size.x),
+            static_cast<GLuint>(viewPort.height * size.y));
+
+        glCheck(glClearColor(1.f, 1.f, 1.f, 0.f));
+        glCheck(glEnable(GL_DEPTH_TEST));
+        glCheck(glEnable(GL_CULL_FACE));
+        glCheck(glClear(GL_DEPTH_BUFFER_BIT));
+        for (const auto& m : m_models)
+        {
+            drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::ShadowMap);
+        }
+        glCheck(glDisable(GL_CULL_FACE));
+        glCheck(glDisable(GL_DEPTH_TEST));
+        m_depthTexture.display();
+    }
+
     REPORT("Shadow draw count", std::to_string(drawCount));
 }
 
@@ -402,13 +434,13 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
     auto i = 0u;
     for (; i < MAX_LIGHTS && i < lights.size(); ++i)
     {
-        auto& colour = lights[i]->getDiffuseColour();
+        const auto& colour = lights[i]->getDiffuseColour();
         m_lightingBlock.u_pointLights[i].diffuseColour[0] = static_cast<float>(colour.r) / 255.f;
         m_lightingBlock.u_pointLights[i].diffuseColour[1] = static_cast<float>(colour.g) / 255.f;
         m_lightingBlock.u_pointLights[i].diffuseColour[2] = static_cast<float>(colour.b) / 255.f;
         m_lightingBlock.u_pointLights[i].diffuseColour[3] = static_cast<float>(colour.a) / 255.f;
 
-        auto& spec = lights[i]->getSpecularColour();
+        const auto& spec = lights[i]->getSpecularColour();
         m_lightingBlock.u_pointLights[i].specularColour[0] = static_cast<float>(spec.r) / 255.f;
         m_lightingBlock.u_pointLights[i].specularColour[1] = static_cast<float>(spec.g) / 255.f;
         m_lightingBlock.u_pointLights[i].specularColour[2] = static_cast<float>(spec.b) / 255.f;
@@ -418,7 +450,7 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
         m_lightingBlock.u_pointLights[i].inverseRange = lights[i]->getInverseRange();
         m_lightingBlock.u_pointLights[i].range = lights[i]->getRange();
 
-        auto& position = lights[i]->getWorldPosition();
+        const auto& position = lights[i]->getWorldPosition();
         m_lightingBlock.u_pointLights[i].position[0] = position.x;
         m_lightingBlock.u_pointLights[i].position[1] = position.y;
         m_lightingBlock.u_pointLights[i].position[2] = position.z;
@@ -428,7 +460,7 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
         //alternately we could try looking down the z-axis always and use a 180 degree FOV
         //of the viewable area, with a max depth of the light range
         //TODO cache as much of this as possible
-        auto lightPerspectiveMatrix = glm::perspective(90.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, position.z / 3.f, /*1.f / lights[i]->getInverseRange()*/m_cameraZ);
+        auto lightPerspectiveMatrix = glm::perspective(90.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, position.z / 3.f, m_cameraZ);
         auto lightViewMatrix = glm::lookAt(glm::vec3(position.x, position.y, position.z), glm::vec3(camWorldPosition.x, camWorldPosition.y, 0.f), glm::vec3(0.f, 1.f,0.f));
         std::memcpy(m_lightingBlock.u_pointLights[i].vpMatrix, glm::value_ptr(lightPerspectiveMatrix * lightViewMatrix), 16 * sizeof(float));
     }
@@ -439,7 +471,35 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
         m_lightingBlock.u_pointLights[i].intensity = 0.f;
     }
 
-    m_lightBlurShader.setUniform("u_lightCount", int(std::min(std::size_t(MAX_LIGHTS), lights.size())));
+
+    //set the scene skylight
+    const auto& skylight = m_scene.getSkyLight();
+    glm::vec3 target(camWorldPosition.x, camWorldPosition.y, 0.f);
+    const auto& direction = skylight.getDirection();
+    auto skyPerspective = glm::ortho(-960.f, 960.f, -540.f, 540.f, -DefaultSceneSize.y / 2.f, DefaultSceneSize.y);
+    auto skyView = glm::lookAt(target - glm::vec3(direction.x, direction.y, direction.z), target, glm::vec3(0.f, 1.f,0.f));
+    //auto skyPerspective = glm::perspective(90.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, 300.f, DefaultSceneSize.y);
+    //auto skyView = glm::lookAt(target - (glm::normalize(glm::vec3(direction.x, direction.y, direction.z)) * (DefaultSceneSize.y / 2.f)), target, glm::vec3(0.f, 1.f, 0.f));
+    std::memcpy(m_lightingBlock.u_skyLight.vpMatrix, glm::value_ptr(skyPerspective * skyView), sizeof(float) * 16);
+
+    m_lightingBlock.u_skyLight.direction[0] = direction.x;
+    m_lightingBlock.u_skyLight.direction[1] = direction.y;
+    m_lightingBlock.u_skyLight.direction[2] = direction.z;
+    m_lightingBlock.u_skyLight.intensity = skylight.getIntensity();
+
+    const auto& diffuse = skylight.getDiffuseColour();
+    m_lightingBlock.u_skyLight.diffuseColour[0] = static_cast<float>(diffuse.r) / 255.f;
+    m_lightingBlock.u_skyLight.diffuseColour[1] = static_cast<float>(diffuse.g) / 255.f;
+    m_lightingBlock.u_skyLight.diffuseColour[2] = static_cast<float>(diffuse.b) / 255.f;
+    m_lightingBlock.u_skyLight.diffuseColour[3] = static_cast<float>(diffuse.a) / 255.f;
+
+    const auto& specular = skylight.getSpecularColour();
+    m_lightingBlock.u_skyLight.specularColour[0] = static_cast<float>(specular.r) / 255.f;
+    m_lightingBlock.u_skyLight.specularColour[1] = static_cast<float>(specular.g) / 255.f;
+    m_lightingBlock.u_skyLight.specularColour[2] = static_cast<float>(specular.b) / 255.f;
+    m_lightingBlock.u_skyLight.specularColour[3] = static_cast<float>(specular.a) / 255.f;
+
+    m_lightingShader.setUniform("u_lightCount", int(std::min(std::size_t(MAX_LIGHTS), lights.size())));
     m_lightingBlockBuffer.update(m_lightingBlock);
 }
 
@@ -563,7 +623,7 @@ void MeshRenderer::initOutput()
 
 
     //depth texture for shadow maps
-    m_depthTexture.create(shadowmapSize, shadowmapSize, MAX_LIGHTS);
+    m_depthTexture.create(shadowmapSize, shadowmapSize, MAX_LIGHTS + 1); //extra for skylight
 }
 
 void MeshRenderer::setupConCommands()

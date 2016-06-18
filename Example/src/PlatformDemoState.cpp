@@ -82,17 +82,17 @@ namespace
         ShadowSkinned
     };
 
-    Plat::PlayerController * playerController = nullptr;
+    Plat::PlayerController* playerController = nullptr;
     sf::Uint8 playerInput = 0;
     bool showDebug = false;
 }
 
 PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context)
-    : State         (stateStack, context),
-    m_messageBus    (context.appInstance.getMessageBus()),
-    m_scene         (m_messageBus),
-    m_physWorld     (m_messageBus),
-    m_meshRenderer  ({ context.appInstance.getVideoSettings().VideoMode.width, context.appInstance.getVideoSettings().VideoMode.height }, m_scene)
+    : State(stateStack, context),
+    m_messageBus(context.appInstance.getMessageBus()),
+    m_scene(m_messageBus),
+    m_physWorld(m_messageBus),
+    m_meshRenderer({ context.appInstance.getVideoSettings().VideoMode.width, context.appInstance.getVideoSettings().VideoMode.height }, m_scene)
 {
     launchLoadingScreen();
     xy::Stats::clear();
@@ -100,7 +100,11 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     m_physWorld.setPixelScale(120.f);
 
     m_scene.setView(context.defaultView);
-    m_scene.setAmbientColour({ 91, 46, 13 });
+    m_scene.setAmbientColour({ 66, 56, 78 });
+    m_scene.getSkyLight().setIntensity(0.7f);
+    m_scene.getSkyLight().setDiffuseColour({ 230, 220, 250 });
+    m_scene.getSkyLight().setSpecularColour({ 120, 255, 58 });
+    m_scene.getSkyLight().setDirection({ 0.4f, 1.1f, -0.1f });
 
     cacheMeshes();
     buildTerrain();
@@ -148,6 +152,13 @@ bool PlatformDemoState::update(float dt)
         shader.setUniform("u_pointLights[" + std::to_string(i) + "].intensity", 0.f);
     }
     
+    //update skylight
+    const auto& skyLight = m_scene.getSkyLight();
+    shader.setUniform("u_directionalLight.diffuseColour", sf::Glsl::Vec4(skyLight.getDiffuseColour()));
+    shader.setUniform("u_directionalLight.specularColour", sf::Glsl::Vec4(skyLight.getSpecularColour()));
+    shader.setUniform("u_directionalLight.intensity", skyLight.getIntensity());
+    shader.setUniform("u_directionaLightDirection", skyLight.getDirection());
+
     return true;
 }
 

@@ -236,7 +236,7 @@ void Entity::handleMessage(const Message& msg)
     case Message::Type::ComponentSystemMessage:
     {
         auto& msgData = msg.getData<Message::ComponentEvent>();
-        if (msgData.entityId == m_uid)
+        if (msgData.entityID == m_uid)
         {
             switch (msgData.action)
             {

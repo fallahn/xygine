@@ -52,7 +52,7 @@ public:
     void draw() override;
     bool handleEvent(const sf::Event& evt) override;
     void handleMessage(const xy::Message&) override;
-    xy::StateId stateID() const override
+    xy::StateID stateID() const override
     {
         return States::ID::MenuOptions;
     }

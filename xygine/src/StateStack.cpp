@@ -73,7 +73,7 @@ void StateStack::handleMessage(const Message& msg)
         switch (msgData.type)
         {
         case Message::UIEvent::RequestState:
-            pushState(msgData.stateId);
+            pushState(msgData.stateID);
             break;
         default: break;
         }
@@ -82,7 +82,7 @@ void StateStack::handleMessage(const Message& msg)
     for (auto& s : m_stack) s->handleMessage(msg);
 }
 
-void StateStack::pushState(StateId id)
+void StateStack::pushState(StateID id)
 {
     if (empty() || m_stack.back()->stateID() != id)
     {
@@ -130,7 +130,7 @@ sf::View StateStack::updateView()
 }
 
 //private
-State::Ptr StateStack::createState(StateId id)
+State::Ptr StateStack::createState(StateID id)
 {
     auto result = m_factories.find(id);
     XY_ASSERT(result != m_factories.end(), "state factory is empty");
@@ -162,7 +162,7 @@ void StateStack::applyPendingChanges()
 
 //---------------------------------------
 
-StateStack::Pendingchange::Pendingchange(Action a, StateId i)
+StateStack::Pendingchange::Pendingchange(Action a, StateID i)
     : action    (a),
     id          (i)
 {

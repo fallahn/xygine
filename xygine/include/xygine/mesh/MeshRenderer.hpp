@@ -198,11 +198,22 @@ namespace xy
             float morePadding;
             float vpMatrix[16];
         };
+        struct SkyLight final
+        {
+            float diffuseColour[4];
+            float specularColour[4];
+            float direction[3];
+            float padding;
+            float vpMatrix[16];
+            float intensity;           
+        };
         struct LightBlock final
         {
             PointLight u_pointLights[8];
             float u_ambientColour[4];
             float u_cameraWorldPosition[3];
+            float padding;
+            SkyLight u_skyLight;
         }m_lightingBlock;
         UniformBuffer m_lightingBlockBuffer;
 
