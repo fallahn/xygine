@@ -101,10 +101,10 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
 
     m_scene.setView(context.defaultView);
     m_scene.setAmbientColour({ 66, 56, 78 });
-    m_scene.getSkyLight().setIntensity(0.7f);
-    m_scene.getSkyLight().setDiffuseColour({ 230, 220, 250 });
+    m_scene.getSkyLight().setIntensity(0.6f);
+    m_scene.getSkyLight().setDiffuseColour({ 255, 255, 100 });
     m_scene.getSkyLight().setSpecularColour({ 120, 255, 58 });
-    m_scene.getSkyLight().setDirection({ 0.4f, 1.1f, -0.1f });
+    m_scene.getSkyLight().setDirection({ 0.2f, 0.4f, -0.1f });
 
     cacheMeshes();
     buildTerrain();
@@ -368,6 +368,7 @@ void PlatformDemoState::cacheMeshes()
     //---------------
     light = xy::Component::create<xy::PointLight>(m_messageBus, 600.f, 500.f, sf::Color(255, 255, 100));
     light->setDepth(100.f);
+    light->setIntensity(2.5f);
 
     model = m_meshRenderer.createModel(MeshID::Cube, m_messageBus);
     model->setPosition({ 0.f, 0.f, light->getWorldPosition().z });

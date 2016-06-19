@@ -94,7 +94,7 @@ namespace xy
                 "    vec3 direction;\n"
                 "    float padding;\n"
                 "    mat4 vpMatrix;\n"
-                "    float intensity;\n"               
+                "    float intensity;\n"
                 "};\n"
 
                 "layout (std140) uniform u_lightBlock\n"
@@ -169,27 +169,29 @@ namespace xy
                 "    vec3 blendedColour = diffuse.rgb * u_ambientColour.rgb;\n"
                 "    eyeDirection = normalize(u_cameraWorldPosition - fragPosition);\n"
 
+                "    if(u_skyLight.intensity > 0.0)\n"
+                "    {\n"
+                "         vec3 lighting = calcLighting(normal, normalize(-u_skyLight.direction), u_skyLight.diffuseColour.rgb, u_skyLight.specularColour.rgb, 1.0) * u_skyLight.intensity;\n"
+                "         lighting *= calcShadow(MAX_POINT_LIGHTS, 0.001, u_skyLight.vpMatrix * vec4(fragPosition, 1.0));\n"
+                "         blendedColour += lighting;\n"
+                "    }\n"
+
                 "    for (int i = 0; i < u_lightCount && i < MAX_POINT_LIGHTS; ++i)\n"
                 "    {\n"
                 "        vec3 pointLightDirection = (u_pointLights[i].position - fragPosition);\n"
-                "        float range = u_pointLights[i].range;\n"
-                "        if(lenSqr(pointLightDirection) > (range * range)) continue;//fragment not in light range\n"
+                "        float range = u_pointLights[i].range * u_pointLights[i].range;\n"
+                "        float distance = lenSqr(pointLightDirection);\n"
+                "        if(distance > range) continue;//fragment not in light range\n"
 
                 "        pointLightDirection *= u_pointLights[i].inverseRange;\n"
                 "        float falloff = clamp(1.0 - sqrt(dot(pointLightDirection, pointLightDirection)), 0.0, 1.0);\n"
                 "        pointLightDirection = normalize(pointLightDirection);\n"
                 "        vec3 lighting = calcLighting(normal, pointLightDirection, u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
-                "        lighting *= calcShadow(i, max(0.05 * (1.0 - dot(normal, pointLightDirection)), 0.005), u_pointLights[i].vpMatrix * vec4(fragPosition, 1.0));\n"
+                "        lighting *= (calcShadow(i, max(0.05 * (1.0 - dot(normal, pointLightDirection)), 0.005), u_pointLights[i].vpMatrix * vec4(fragPosition, 1.0)) * (distance / range));\n"
                 "        blendedColour += lighting;\n"
                 "        //blendedColour *= calcShadow(i, max(0.05 * (1.0 - dot(normal, pointLightDirection)), 0.005), u_pointLights[i].vpMatrix * vec4(fragPosition, 1.0));\n"
                 "    }\n"
 
-                "    if(u_skyLight.intensity > 0.0)\n"
-                "    {\n"
-                "         vec3 lighting = calcLighting(normal, normalize(-u_skyLight.direction), u_skyLight.diffuseColour.rgb, u_skyLight.specularColour.rgb, 1.0) * u_skyLight.intensity;\n"
-                "         lighting *= calcShadow(MAX_POINT_LIGHTS, max(0.05 * (1.0 - dot(normal, normalize(u_skyLight.direction))), 0.005), u_skyLight.vpMatrix * vec4(fragPosition, 1.0));\n"
-                "         blendedColour += lighting;\n"
-                "    }\n"
 
                 "    //blendedColour *= texture(u_aoMap, v_texCoord).rgb;\n"
                 "    blendedColour = mix(blendedColour, diffuse.rgb, mask.b);\n"

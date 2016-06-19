@@ -476,7 +476,7 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
     const auto& skylight = m_scene.getSkyLight();
     glm::vec3 target(camWorldPosition.x, camWorldPosition.y, 0.f);
     const auto& direction = skylight.getDirection();
-    auto skyPerspective = glm::ortho(-960.f, 960.f, -540.f, 540.f, -DefaultSceneSize.y / 2.f, DefaultSceneSize.y);
+    auto skyPerspective = glm::ortho(-960.f, 960.f, -540.f, 540.f, -DefaultSceneSize.x / 2.f, DefaultSceneSize.x);
     auto skyView = glm::lookAt(target - glm::vec3(direction.x, direction.y, direction.z), target, glm::vec3(0.f, 1.f,0.f));
     //auto skyPerspective = glm::perspective(90.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, 300.f, DefaultSceneSize.y);
     //auto skyView = glm::lookAt(target - (glm::normalize(glm::vec3(direction.x, direction.y, direction.z)) * (DefaultSceneSize.y / 2.f)), target, glm::vec3(0.f, 1.f, 0.f));
