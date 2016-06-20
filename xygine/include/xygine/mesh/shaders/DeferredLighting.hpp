@@ -83,9 +83,9 @@ namespace xy
                 "    float inverseRange;\n"
                 "    float range;\n"
                 "    float intensity;\n"
-                "    float padding;\n"
+                "    bool castShadows;\n"
                 "    vec3 position;\n"
-                "    float morePadding;\n"
+                "    float padding;\n"
                 "    mat4 vpMatrix;\n"
                 "};\n"
 
@@ -237,7 +237,7 @@ namespace xy
                 "        float falloff = clamp(1.0 - sqrt(dot(pointLightDirection, pointLightDirection)), 0.0, 1.0);\n"
                 "        pointLightDirection = normalize(pointLightDirection);\n"
                 "        vec3 lighting = calcLighting(normal, pointLightDirection, u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
-                "        lighting *= (calcShadow(i, u_pointLights[i].vpMatrix * vec4(fragPosition, 1.0)) * (distance / range));\n"
+                "        if(u_pointLights[i].castShadows) lighting *= (calcShadow(i, u_pointLights[i].vpMatrix * vec4(fragPosition, 1.0)) * (distance / range));\n"
                 "        blendedColour += lighting;\n"
                 "        //blendedColour *= calcShadow(i, max(0.05 * (1.0 - dot(normal, pointLightDirection)), 0.005), u_pointLights[i].vpMatrix * vec4(fragPosition, 1.0));\n"
                 "    }\n"
@@ -245,7 +245,8 @@ namespace xy
 
                 "    //blendedColour *= texture(u_aoMap, v_texCoord).rgb;\n"
                 "    blendedColour = mix(blendedColour, diffuse.rgb, mask.b);\n"
-                "    blendedColour = mix(getReflection(normal), blendedColour, mask.a);\n"
+                "    //blendedColour = mix(getReflection(normal), blendedColour, mask.a);\n"
+                "    blendedColour += getReflection(normal) * (1.0 - mask.a);\n"
 
                 /*"    vec3 illumination  = texture(u_illuminationMap, v_texCoord).rgb;\n"
                 "    illumination.r = blendOverlay(blendedColour.r, illumination.r);\n"

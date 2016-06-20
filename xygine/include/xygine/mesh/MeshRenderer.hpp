@@ -193,10 +193,10 @@ namespace xy
             float inverseRange;
             float range;
             float intensity;
-            float padding; //GLSL must align to multiple of vec4 (including the start of the next member!)
+            bool castShadow;
             float position[3];
-            float morePadding;
-            float vpMatrix[16];
+            float padding;
+            float vpMatrix[16];            
         };
         struct SkyLight final
         {

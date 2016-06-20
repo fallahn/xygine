@@ -100,8 +100,8 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     m_physWorld.setPixelScale(120.f);
 
     m_scene.setView(context.defaultView);
-    m_scene.setAmbientColour({ 66, 56, 78 });
-    m_scene.getSkyLight().setIntensity(0.6f);
+    m_scene.setAmbientColour({ 76, 70, 72 });
+    m_scene.getSkyLight().setIntensity(0.4f);
     m_scene.getSkyLight().setDiffuseColour({ 255, 255, 100 });
     m_scene.getSkyLight().setSpecularColour({ 120, 255, 58 });
     m_scene.getSkyLight().setDirection({ 0.2f, 0.4f, -0.1f });
@@ -311,7 +311,7 @@ void PlatformDemoState::cacheMeshes()
     fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     fixitMaterialBody.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitBody.png") });
     fixitMaterialBody.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitBody_normal.png") });
-    fixitMaterialBody.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitBody_mask.png") });
+    fixitMaterialBody.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitBody_mask.tga") });
     fixitMaterialBody.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::ShadowSkinned));
     fixitMaterialBody.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
 
@@ -347,11 +347,12 @@ void PlatformDemoState::cacheMeshes()
 
     auto& lightMaterial = m_materialResource.add(MatId::LightSource, m_shaderResource.get(PlatformShaderId::SpecularSmooth3D));
     lightMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    lightMaterial.addProperty({ "u_colour", sf::Color(255, 255, 100) });
+    lightMaterial.addProperty({ "u_colour", sf::Color(135, 135, 80) });
     lightMaterial.addProperty({ "u_maskColour", sf::Color::Blue });
 
     auto light = xy::Component::create<xy::PointLight>(m_messageBus, 800.f, 500.f, sf::Color(255, 255, 100));
     light->setDepth(400.f);
+    light->enableShadowCasting(true);
 
     auto model = m_meshRenderer.createModel(MeshID::Cube, m_messageBus);
     model->setPosition({ 0.f, 0.f, light->getWorldPosition().z });
@@ -369,6 +370,7 @@ void PlatformDemoState::cacheMeshes()
     light = xy::Component::create<xy::PointLight>(m_messageBus, 600.f, 500.f, sf::Color(255, 255, 100));
     light->setDepth(300.f);
     light->setIntensity(2.5f);
+    light->enableShadowCasting(true);
 
     model = m_meshRenderer.createModel(MeshID::Cube, m_messageBus);
     model->setPosition({ 0.f, 0.f, light->getWorldPosition().z });

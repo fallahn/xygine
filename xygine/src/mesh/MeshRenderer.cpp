@@ -292,7 +292,7 @@ void MeshRenderer::drawDepth() const
         glCheck(glClearColor(1.f, 1.f, 1.f, 1.f));
         glCheck(glEnable(GL_DEPTH_TEST));
         glCheck(glEnable(GL_CULL_FACE));
-        glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        glCheck(glClear(GL_DEPTH_BUFFER_BIT));
         for (const auto& m : m_models)
         {
             drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::ShadowMap);
@@ -323,7 +323,7 @@ void MeshRenderer::drawDepth() const
         glCheck(glClearColor(1.f, 1.f, 1.f, 1.f));
         glCheck(glEnable(GL_DEPTH_TEST));
         glCheck(glEnable(GL_CULL_FACE));
-        glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        glCheck(glClear(GL_DEPTH_BUFFER_BIT));
         for (const auto& m : m_models)
         {
             drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::ShadowMap);
@@ -334,8 +334,6 @@ void MeshRenderer::drawDepth() const
     }
 
     REPORT("Shadow draw count", std::to_string(drawCount));
-
-    //TODO run shadowmap through blur pass if using VSM. Then optimise the fuck out of it.
 }
 
 void MeshRenderer::drawScene() const
@@ -474,6 +472,8 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
         auto lightPerspectiveMatrix = glm::perspective(90.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, position.z / 3.f, m_cameraZ);
         auto lightViewMatrix = glm::lookAt(glm::vec3(position.x, position.y, position.z), glm::vec3(camWorldPosition.x, camWorldPosition.y, 0.f), glm::vec3(0.f, 1.f,0.f));
         std::memcpy(m_lightingBlock.u_pointLights[i].vpMatrix, glm::value_ptr(lightPerspectiveMatrix * lightViewMatrix), 16 * sizeof(float));
+
+        m_lightingBlock.u_pointLights[i].castShadow = lights[i]->castShadows();
     }
 
     //turn off others by setting intensity to 0
@@ -567,7 +567,6 @@ void MeshRenderer::initSelfIllum()
     m_lightBlurTexture.create(480, 270);
     m_lightBlurTexture.setSmooth(true);
     m_lightBlurSprite.setTexture(m_lightDownsampleTexture.getTexture());
-    //m_lightBlurShader.loadFromMemory(Shader::Mesh::QuadVertex, Shader::Mesh::LightBlurFrag);
     m_lightBlurShader.loadFromMemory(Shader::PostGaussianBlur::fragment, sf::Shader::Fragment);
     m_lightBlurShader.setUniform("u_sourceTexture", m_lightDownsampleTexture.getTexture());
     
@@ -743,7 +742,7 @@ void MeshRenderer::setupConCommands()
         {
             m_outputQuad->setActivePass(RenderPass::Debug);
             m_debugShader.setUniform("u_texture", m_scene.getReflection());
-            Console::print("Switched output to glow map");
+            Console::print("Switched output to reflection map");
         }
 
         else
