@@ -30,6 +30,7 @@ source distribution.
 #include <xygine/mesh/shaders/DeferredRenderer.hpp>
 #include <xygine/mesh/shaders/SSAO.hpp>
 #include <xygine/mesh/shaders/LightBlur.hpp>
+#include <xygine/shaders/PostGaussianBlur.hpp>
 #include <xygine/components/Model.hpp>
 #include <xygine/components/PointLight.hpp>
 #include <xygine/Scene.hpp>
@@ -288,10 +289,10 @@ void MeshRenderer::drawDepth() const
             static_cast<GLuint>(viewPort.width * size.x),
             static_cast<GLuint>(viewPort.height * size.y));
 
-        glCheck(glClearColor(1.f, 1.f, 1.f, 0.f));
+        glCheck(glClearColor(1.f, 1.f, 1.f, 1.f));
         glCheck(glEnable(GL_DEPTH_TEST));
         glCheck(glEnable(GL_CULL_FACE));
-        glCheck(glClear(GL_DEPTH_BUFFER_BIT));
+        glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
         for (const auto& m : m_models)
         {
             drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::ShadowMap);
@@ -319,10 +320,10 @@ void MeshRenderer::drawDepth() const
             static_cast<GLuint>(viewPort.width * size.x),
             static_cast<GLuint>(viewPort.height * size.y));
 
-        glCheck(glClearColor(1.f, 1.f, 1.f, 0.f));
+        glCheck(glClearColor(1.f, 1.f, 1.f, 1.f));
         glCheck(glEnable(GL_DEPTH_TEST));
         glCheck(glEnable(GL_CULL_FACE));
-        glCheck(glClear(GL_DEPTH_BUFFER_BIT));
+        glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
         for (const auto& m : m_models)
         {
             drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::ShadowMap);
@@ -333,6 +334,8 @@ void MeshRenderer::drawDepth() const
     }
 
     REPORT("Shadow draw count", std::to_string(drawCount));
+
+    //TODO run shadowmap through blur pass if using VSM. Then optimise the fuck out of it.
 }
 
 void MeshRenderer::drawScene() const
@@ -381,9 +384,17 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         m_lightDownsampleTexture.draw(m_downSampleSprite, &m_lightDownsampleShader);
         m_lightDownsampleTexture.display();
 
+        m_lightBlurShader.setUniform("u_sourceTexture", m_lightDownsampleTexture.getTexture());
+        m_lightBlurShader.setUniform("u_offset", sf::Vector2f(0.f, 1.f / 270.f));
         m_lightBlurTexture.clear();
         m_lightBlurTexture.draw(m_lightBlurSprite, &m_lightBlurShader);
         m_lightBlurTexture.display();
+
+        m_lightBlurShader.setUniform("u_sourceTexture", m_lightBlurTexture.getTexture());
+        m_lightBlurShader.setUniform("u_offset", sf::Vector2f(1.f / 480.f, 0.f));
+        m_lightDownsampleTexture.clear();
+        m_lightDownsampleTexture.draw(m_lightBlurSprite, &m_lightBlurShader);
+        m_lightDownsampleTexture.display();
     }
 
     //this is a kludge, as it seems the only way to activate
@@ -556,8 +567,10 @@ void MeshRenderer::initSelfIllum()
     m_lightBlurTexture.create(480, 270);
     m_lightBlurTexture.setSmooth(true);
     m_lightBlurSprite.setTexture(m_lightDownsampleTexture.getTexture());
-    m_lightBlurShader.loadFromMemory(Shader::Mesh::QuadVertex, Shader::Mesh::LightBlurFrag);
-    m_lightBlurShader.setUniform("u_diffuseMap", m_lightDownsampleTexture.getTexture());
+    //m_lightBlurShader.loadFromMemory(Shader::Mesh::QuadVertex, Shader::Mesh::LightBlurFrag);
+    m_lightBlurShader.loadFromMemory(Shader::PostGaussianBlur::fragment, sf::Shader::Fragment);
+    m_lightBlurShader.setUniform("u_sourceTexture", m_lightDownsampleTexture.getTexture());
+    
 
     //use this when disabling the blur output
     sf::Image img;
@@ -581,7 +594,8 @@ void MeshRenderer::initOutput()
             m_lightingShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
             m_lightingShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
             //m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
-            m_lightingShader.setUniform("u_illuminationMap", m_lightBlurTexture.getTexture());
+            m_lightingShader.setUniform("u_illuminationMap", m_lightDownsampleTexture.getTexture());
+            m_lightingShader.setUniform("u_reflectMap", m_scene.getReflection());
 
             //we can't directly access the shader's texture count so we have to make this
             //assumption based on the above to get the correct texture unit. BEAR THIS IN MIND
@@ -689,6 +703,56 @@ void MeshRenderer::setupConCommands()
         }
     }, this);
 
+    //displays the texture used by self illumination
+    Console::addCommand("r_showGlowMap", 
+        [this](const std::string& params)
+    {
+        if (params.find_first_of('0') == 0 ||
+            params.find_first_of("false") == 0)
+        {
+            m_outputQuad->setActivePass(RenderPass::Default);
+            Console::print("Switched output to default");
+        }
+
+        else if (params.find_first_of('1') == 0 ||
+            params.find_first_of("true") == 0)
+        {
+            m_outputQuad->setActivePass(RenderPass::Debug);
+            m_debugShader.setUniform("u_texture", m_lightDownsampleTexture.getTexture());
+            Console::print("Switched output to glow map");
+        }
+
+        else
+        {
+            Console::print("r_showGlowMap: valid parameters are 0, 1, false or true");
+        }
+    });
+
+    Console::addCommand("r_showReflectMap",
+        [this](const std::string& params)
+    {
+        if (params.find_first_of('0') == 0 ||
+            params.find_first_of("false") == 0)
+        {
+            m_outputQuad->setActivePass(RenderPass::Default);
+            Console::print("Switched output to default");
+        }
+
+        else if (params.find_first_of('1') == 0 ||
+            params.find_first_of("true") == 0)
+        {
+            m_outputQuad->setActivePass(RenderPass::Debug);
+            m_debugShader.setUniform("u_texture", m_scene.getReflection());
+            Console::print("Switched output to glow map");
+        }
+
+        else
+        {
+            Console::print("r_showReflectMap: valid parameters are 0, 1, false or true");
+        }
+    });
+
+    //shows the selected depth map
     Console::addCommand("r_showDepthMap", 
         [this](const std::string& params)
     {
@@ -724,7 +788,8 @@ void MeshRenderer::setupConCommands()
             Console::print("Usage: r_showDepthMap <index>");
             
             //switch to default display
-            Console::doCommand("r_gBuffer 0");
+            m_outputQuad->setActivePass(RenderPass::Default);
+            Console::print("Switched output to default");
         }
     }, this);
 }

@@ -296,8 +296,8 @@ void PlatformDemoState::cacheMeshes()
     m_shaderResource.preload(PlatformShaderId::TexturedSkinned, DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
     m_shaderResource.preload(PlatformShaderId::TexturedSmooth3D, DEFERRED_TEXTURED_VERTEX, DEFERRED_TEXTURED_FRAGMENT);
     m_shaderResource.preload(PlatformShaderId::SpecularSmooth3D, DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
-    m_shaderResource.preload(PlatformShaderId::ShadowSkinned, SHADOW_VERTEX_SKINNED, SHADOW_FRAGMENT);
-    m_shaderResource.preload(PlatformShaderId::Shadow, SHADOW_VERTEX, SHADOW_FRAGMENT);
+    m_shaderResource.preload(PlatformShaderId::ShadowSkinned, SHADOW_VERTEX_SKINNED, xy::Shader::Mesh::ShadowFragment);
+    m_shaderResource.preload(PlatformShaderId::Shadow, SHADOW_VERTEX, xy::Shader::Mesh::ShadowFragment);
 
     auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
@@ -367,7 +367,7 @@ void PlatformDemoState::cacheMeshes()
 
     //---------------
     light = xy::Component::create<xy::PointLight>(m_messageBus, 600.f, 500.f, sf::Color(255, 255, 100));
-    light->setDepth(100.f);
+    light->setDepth(300.f);
     light->setIntensity(2.5f);
 
     model = m_meshRenderer.createModel(MeshID::Cube, m_messageBus);
@@ -376,7 +376,7 @@ void PlatformDemoState::cacheMeshes()
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(2000.f, 200.f);
-    entity->setScale(0.25f, 0.25f);
+    entity->setScale(0.35f, 0.35f);
     entity->addComponent(light);
     entity->addComponent(model);
     m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
@@ -512,6 +512,7 @@ void PlatformDemoState::buildTerrain()
     entity->addComponent(model);
     m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
 }
+
 void PlatformDemoState::buildPhysics()
 {
     auto groundBody = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Static);

@@ -54,6 +54,8 @@ namespace xy
                 "    mat4 u_lightViewProjectionMatrix;\n"
                 "};\n"
 
+                "out vec4 v_position;\n"
+
                 "void main()\n"
                 "{\n"
                 "    vec3 position = a_position;\n"
@@ -67,6 +69,7 @@ namespace xy
                 "#endif\n" \
                 "    //gl_Position = u_projectionMatrix * u_worldViewMatrix * vec4(position, 1.0);\n"
                 "    gl_Position = u_lightViewProjectionMatrix * u_worldMatrix * vec4(position, 1.0);\n"
+                "    v_position = gl_Position;\n"
                 "}";
 
             const static std::string ShadowFragment =
@@ -75,6 +78,26 @@ namespace xy
                 "void main()\n"
                 "{\n"
                 "    //fragOut = vec4(vec3(gl_FragCoord.z), 1.0);\n"
+                "}";
+
+            const static std::string ShadowFragmentVSM =
+                "#version 150\n"
+                "in vec4 v_position;\n"
+                "out vec4 fragOut;\n"
+
+                "void main()\n"
+                "{\n"
+                "    float depth = v_position.z / v_position.w;\n"
+                "    depth = depth * 0.5 + 0.5;\n"
+
+                "    float moment1 = depth;\n"
+                "    float moment2 = depth * depth;\n"
+
+                "    float dx = dFdx(depth);\n"
+                "    float dy = dFdy(depth);\n"
+                "    moment2 += 0.25*(dx*dx + dy*dy);\n"
+
+                "    fragOut = vec4(moment1, moment2, 0.0, 0.0);\n"
                 "}";
 
             const static std::string DeferredVertex =

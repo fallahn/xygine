@@ -282,6 +282,12 @@ namespace xy
         \brief Returns const reference to the Scene's sky light
         */
         const SkyLight& getSkyLight() const { return m_skyLight; }
+
+        /*!
+        \brief Returns a low resolution render of the background layers
+        which can be used as a reflection map.
+        */
+        const sf::Texture& getReflection() const { return m_reflectionTexture.getTexture(); }
     private:
 
         QuadTree m_quadTree; //must live longer than any entity
@@ -291,6 +297,8 @@ namespace xy
         std::vector<Entity::Ptr> m_layers;
         std::vector<std::pair<Layer, Entity::Ptr>> m_pendingEntities;
         
+        mutable sf::RenderTexture m_reflectionTexture;
+
         Camera* m_defaultCamera;
         const Camera* m_activeCamera;
         

@@ -224,11 +224,11 @@ namespace xy
         sf::Texture m_ssaoNoiseTexture;
         void createNoiseTexture();
 
-        sf::Shader m_lightBlurShader;
+        mutable sf::Shader m_lightBlurShader;
         sf::Shader m_lightDownsampleShader;
         mutable sf::RenderTexture m_lightBlurTexture;
         mutable sf::RenderTexture m_lightDownsampleTexture;
-        sf::Sprite m_lightBlurSprite;
+        mutable sf::Sprite m_lightBlurSprite;
         sf::Sprite m_downSampleSprite;
         bool m_doLightBlur;
         sf::Texture m_lightFallback;

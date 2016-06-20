@@ -56,6 +56,8 @@ namespace xy
                 "{\n"
                 "    float depth = texture(u_texture, vec3(v_texCoord, u_texIndex)).r;\n"
                 "    fragOut = vec4(vec3(depth), 1.0);\n"
+                "    //fragOut.rgb = texture(u_texture, vec3(v_texCoord, u_texIndex)).rgb;\n"
+                "    //fragOut.a = 1.0;\n"
                 "}\n";
 
             static const std::string LightingVert =
@@ -112,6 +114,7 @@ namespace xy
                 "uniform sampler2D u_positionMap;\n"
                 "//uniform sampler2D u_aoMap;\n"
                 "uniform sampler2D u_illuminationMap;\n"
+                "uniform sampler2D u_reflectMap;\n"
                 "uniform int u_lightCount = MAX_POINT_LIGHTS;\n"
                 "uniform sampler2DArray u_depthMaps;\n"
 
@@ -136,27 +139,74 @@ namespace xy
                 "    return mixedColour + (specularColour * mask.g);\n"
                 "}\n" \
 
-                "float calcShadow(int layer, float bias, vec4 position)\n"
+                "const vec2 kernel[16] = vec2[](\n"
+                "    vec2(-0.94201624, -0.39906216),\n"
+                "    vec2(0.94558609, -0.76890725),\n"
+                "    vec2(-0.094184101, -0.92938870),\n"
+                "    vec2(0.34495938, 0.29387760),\n"
+                "    vec2(-0.91588581, 0.45771432),\n"
+                "    vec2(-0.81544232, -0.87912464),\n"
+                "    vec2(-0.38277543, 0.27676845),\n"
+                "    vec2(0.97484398, 0.75648379),\n"
+                "    vec2(0.44323325, -0.97511554),\n"
+                "    vec2(0.53742981, -0.47373420),\n"
+                "    vec2(-0.26496911, -0.41893023),\n"
+                "    vec2(0.79197514, 0.19090188),\n"
+                "    vec2(-0.24188840, 0.99706507),\n"
+                "    vec2(-0.81409955, 0.91437590),\n"
+                "    vec2(0.19984126, 0.78641367),\n"
+                "    vec2(0.14383161, -0.14100790)\n"
+                ");\n"
+                "const int filterSize = 3;\n"
+                "float calcShadow(int layer, vec4 position)\n"
                 "{\n"
+                "    float bias = 0.001;\n"
                 "    vec3 projectionCoords = position.xyz / position.w;\n"
                 "    projectionCoords = projectionCoords * 0.5 + 0.5;\n"
                 "    if(projectionCoords.z > 1.0) return 1.0;\n"
                 "    float shadow = 0.0;\n"
                 "    vec2 texelSize = 1.0 / textureSize(u_depthMaps, 0).xy;\n"
-                "    for(int x = -1; x <= 1; ++x)\n"
+                "    for(int x = 0; x < filterSize; ++x)\n"
                 "    {\n"
-                "        for(int y = -1; y <=1; ++y)\n"
+                "        for(int y = 0; y < filterSize; ++y)\n"
                 "        {\n"
-                "            float pcfDepth = texture(u_depthMaps, vec3(projectionCoords.xy + vec2(x, y) * texelSize, float(layer))).r;\n"
+                "            float pcfDepth = texture(u_depthMaps, vec3(projectionCoords.xy + kernel[y * filterSize + x] * texelSize, float(layer))).r;\n"
                 "            shadow += (projectionCoords.z - bias) > pcfDepth ? 1.0 : 0.0;\n"
                 "        }\n"
                 "    }\n"
                 "    return 1.0 - (shadow / 9.0);\n"
                 "}\n"
 
+                "float vsmShadow(int layer, vec4 position)\n"
+                "{\n"
+                "	vec3 projectionCoords = position.xyz / position.w;\n"
+                "	projectionCoords = projectionCoords * 0.5 + 0.5;\n"
+
+                "	vec2 moments = texture(u_depthMaps, vec3(projectionCoords.xy, float(layer))).rg;\n"
+                "	if (projectionCoords.z <= moments.x) return 1.0;\n"
+                "	float variance = moments.y - (moments.x * moments.x);\n"
+                "	variance = max(variance, 0.00002);\n"
+                "	float d = projectionCoords.z - moments.x;\n"
+                "	float p_max = variance / (variance + d * d);\n"
+
+                "	return p_max;\n"
+                "}\n"
+
                 "float lenSqr(vec3 vector)\n"
                 "{\n"
                 "    return dot(vector, vector);\n"
+                "}\n"
+
+                /*"    float blendOverlay(float base, float blend)\n"
+                "    {\n"
+                "        return (base < 0.5) ? (2.0 * base * blend) : (1.0 - 2.0 * (1.0 - base) * (1.0 - blend));\n"
+                "    }\n"*/
+
+                "vec3 getReflection(vec3 normal)\n"
+                "{\n"
+                "    vec3 reflection = reflect(normal, eyeDirection);\n"
+                "    vec2 coord = vec2(reflection.x, reflection.y);\n"
+                "    return texture(u_reflectMap, coord).rgb;\n"
                 "}\n"
 
                 "void main()\n"
@@ -172,7 +222,7 @@ namespace xy
                 "    if(u_skyLight.intensity > 0.0)\n"
                 "    {\n"
                 "         vec3 lighting = calcLighting(normal, normalize(-u_skyLight.direction), u_skyLight.diffuseColour.rgb, u_skyLight.specularColour.rgb, 1.0) * u_skyLight.intensity;\n"
-                "         lighting *= calcShadow(MAX_POINT_LIGHTS, 0.001, u_skyLight.vpMatrix * vec4(fragPosition, 1.0));\n"
+                "         lighting *= calcShadow(MAX_POINT_LIGHTS, u_skyLight.vpMatrix * vec4(fragPosition, 1.0));\n"
                 "         blendedColour += lighting;\n"
                 "    }\n"
 
@@ -187,7 +237,7 @@ namespace xy
                 "        float falloff = clamp(1.0 - sqrt(dot(pointLightDirection, pointLightDirection)), 0.0, 1.0);\n"
                 "        pointLightDirection = normalize(pointLightDirection);\n"
                 "        vec3 lighting = calcLighting(normal, pointLightDirection, u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
-                "        lighting *= (calcShadow(i, max(0.05 * (1.0 - dot(normal, pointLightDirection)), 0.005), u_pointLights[i].vpMatrix * vec4(fragPosition, 1.0)) * (distance / range));\n"
+                "        lighting *= (calcShadow(i, u_pointLights[i].vpMatrix * vec4(fragPosition, 1.0)) * (distance / range));\n"
                 "        blendedColour += lighting;\n"
                 "        //blendedColour *= calcShadow(i, max(0.05 * (1.0 - dot(normal, pointLightDirection)), 0.005), u_pointLights[i].vpMatrix * vec4(fragPosition, 1.0));\n"
                 "    }\n"
@@ -195,7 +245,15 @@ namespace xy
 
                 "    //blendedColour *= texture(u_aoMap, v_texCoord).rgb;\n"
                 "    blendedColour = mix(blendedColour, diffuse.rgb, mask.b);\n"
-                "    blendedColour += texture(u_illuminationMap, v_texCoord).rgb;// * 4.0;\n"
+                "    blendedColour = mix(getReflection(normal), blendedColour, mask.a);\n"
+
+                /*"    vec3 illumination  = texture(u_illuminationMap, v_texCoord).rgb;\n"
+                "    illumination.r = blendOverlay(blendedColour.r, illumination.r);\n"
+                "    illumination.g = blendOverlay(blendedColour.g, illumination.g);\n"
+                "    illumination.b = blendOverlay(blendedColour.b, illumination.b);\n"
+                "    blendedColour += illumination;\n"*/
+                
+                "    blendedColour += texture(u_illuminationMap, v_texCoord).rgb * (2.0 - u_skyLight.intensity);\n"
                 "    fragOut = vec4(blendedColour, diffuse.a);//vec4(vec3(texture(u_depthMaps, vec3(v_texCoord, 1.0)).r), 1.0);//\n"
                 "}";
         }

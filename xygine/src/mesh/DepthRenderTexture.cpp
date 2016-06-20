@@ -72,6 +72,7 @@ bool DepthRenderTexture::create(sf::Uint32 width, sf::Uint32 height, std::uint8_
     glCheck(glGenTextures(1, &m_textureID));
     glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_textureID));
     glCheck(glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, width, height, layerCount, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL));
+    //glCheck(glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RG32F, width, height, layerCount, 0, GL_RG, GL_FLOAT, NULL));
     glCheck(glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
     glCheck(glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
     glCheck(glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
@@ -91,8 +92,8 @@ bool DepthRenderTexture::create(sf::Uint32 width, sf::Uint32 height, std::uint8_
     }
     glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
 
-//    glCheck(glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_texture.getNativeHandle(), 0));
     glCheck(glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_textureID, 0, 0));
+    //glCheck(glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_textureID, 0, 0));
     glCheck(glDrawBuffer(GL_NONE));
     glCheck(glReadBuffer(GL_NONE));
 
@@ -136,6 +137,7 @@ bool DepthRenderTexture::setLayerActive(std::uint8_t layer)
     XY_ASSERT(layer < m_layerCount, "Index out of range");
     glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
     glCheck(glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_textureID, 0, layer));
+    //glCheck(glFramebufferTextureLayer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_textureID, 0, layer));
 
     GLenum result;
     glCheck(result = glCheckFramebufferStatus(GL_FRAMEBUFFER));

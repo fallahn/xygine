@@ -53,12 +53,11 @@ namespace xy
                 "    {"
                 "        for (int y = 0; y < blurSize; ++y)\n"
                 "        {\n"
-                "            vec2 offset = (vec2(-6.0) + vec2(float(x), float(y))) * texelSize;\n"
+                "            vec2 offset = (vec2(-6.0) + vec2(float(x * 1.2), float(y * 1.2))) * texelSize;\n"
                 "            result += texture2D(u_illuminationMap, v_texCoord + offset);\n"
                 "        }\n"
                 "    }\n"
-
-                "    fragOut = result / float(blurSize * blurSize);\n"
+                "    fragOut = result / float(blurSize * 4.0);\n"
                 "}";
 
             static const std::string LightDownsampleFrag =

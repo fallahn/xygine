@@ -332,6 +332,10 @@ void Scene::reset()
     m_activeCamera = m_defaultCamera;
 
     m_ambientColour = { 51, 51, 51 };
+
+    m_reflectionTexture.create(static_cast<sf::Uint32>(DefaultSceneSize.x) / 8, static_cast<sf::Uint32>(DefaultSceneSize.y) / 8);
+    m_reflectionTexture.setRepeated(true);
+    m_reflectionTexture.setSmooth(true);
 }
 
 void Scene::addPostProcess(PostProcess::Ptr& pp)
@@ -384,11 +388,19 @@ sf::Transform Scene::getViewMatrix()
 //private
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    sf::View v(m_activeCamera->getView().getCenter(), DefaultSceneSize);
+    v.rotate(180.f);
+    m_reflectionTexture.setView(v);
+    m_reflectionTexture.clear(m_activeCamera->getClearColour());
+    m_reflectionTexture.draw(*m_layers[Layer::BackRear]);
+    m_reflectionTexture.draw(*m_layers[Layer::BackMiddle]);
+    m_reflectionTexture.display();
+
     m_currentRenderPath(rt, states);
 }
 
 void Scene::defaultRenderPath(sf::RenderTarget& rt, sf::RenderStates states) const
-{
+{   
     rt.setView(m_activeCamera->getView());
  
 #ifdef _DEBUG_
