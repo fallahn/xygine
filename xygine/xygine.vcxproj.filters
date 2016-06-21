@@ -81,9 +81,6 @@
     <ClCompile Include="src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\AudioManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\CommandQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -127,9 +124,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ShaderResource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SoundPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\State.cpp">
@@ -381,12 +375,12 @@
     <ClCompile Include="src\mesh\DepthRenderTexture.cpp">
       <Filter>Source Files\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="src\components\ComponentSoundPlayer.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\AudioManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\Command.hpp">
@@ -438,9 +432,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\ShaderResource.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\SoundPlayer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\State.hpp">
@@ -814,6 +805,9 @@
     </ClInclude>
     <ClInclude Include="include\xygine\mesh\DepthRenderTexture.hpp">
       <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\SoundPlayer.hpp">
+      <Filter>Header Files\components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

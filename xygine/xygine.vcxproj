@@ -159,6 +159,7 @@
     <ClCompile Include="src\components\ComponentParticleController.cpp" />
     <ClCompile Include="src\components\ComponentParticleSystem.cpp" />
     <ClCompile Include="src\components\ComponentPointLight.cpp" />
+    <ClCompile Include="src\components\ComponentSoundPlayer.cpp" />
     <ClCompile Include="src\components\QuadTreeComponent.cpp" />
     <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="src\GLExtensions.cpp" />
@@ -193,7 +194,6 @@
     <ClCompile Include="src\parsers\pugixml.cpp" />
     <ClCompile Include="src\ParticleAffectors.cpp" />
     <ClCompile Include="src\App.cpp" />
-    <ClCompile Include="src\AudioManager.cpp" />
     <ClCompile Include="src\CommandQueue.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\FileSystem.cpp" />
@@ -231,7 +231,6 @@
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Score.cpp" />
     <ClCompile Include="src\ShaderResource.cpp" />
-    <ClCompile Include="src\SoundPlayer.cpp" />
     <ClCompile Include="src\spriter\SpriterDocument.cpp" />
     <ClCompile Include="src\spriter\SpriterDocumentAttribute.cpp" />
     <ClCompile Include="src\spriter\SpriterDocumentElement.cpp" />
@@ -254,6 +253,7 @@
   <ItemGroup>
     <ClInclude Include="include\xygine\components\Model.hpp" />
     <ClInclude Include="include\xygine\components\PointLight.hpp" />
+    <ClInclude Include="include\xygine\components\SoundPlayer.hpp" />
     <ClInclude Include="include\xygine\Config.hpp" />
     <ClInclude Include="include\xygine\Console.hpp" />
     <ClInclude Include="include\xygine\detail\GLCheck.hpp" />
@@ -304,7 +304,6 @@
     <ClInclude Include="include\xygine\ParticleAffectors.hpp" />
     <ClInclude Include="include\xygine\App.hpp" />
     <ClInclude Include="include\xygine\Assert.hpp" />
-    <ClInclude Include="include\xygine\AudioManager.hpp" />
     <ClInclude Include="include\xygine\Command.hpp" />
     <ClInclude Include="include\xygine\components\AnimatedDrawable.hpp" />
     <ClInclude Include="include\xygine\components\AnimationController.hpp" />
@@ -368,7 +367,6 @@
     <ClInclude Include="include\xygine\shaders\PostChromeAb.hpp" />
     <ClInclude Include="include\xygine\shaders\PostDownSample.hpp" />
     <ClInclude Include="include\xygine\shaders\PostGaussianBlur.hpp" />
-    <ClInclude Include="include\xygine\SoundPlayer.hpp" />
     <ClInclude Include="include\xygine\spriter\Document.hpp" />
     <ClInclude Include="include\xygine\spriter\DocumentAttribute.hpp" />
     <ClInclude Include="include\xygine\spriter\DocumentElement.hpp" />

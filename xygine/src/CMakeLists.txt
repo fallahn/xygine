@@ -1,6 +1,5 @@
 set(XY_SRC
   ${XY_DIR}/App.cpp
-  ${XY_DIR}/AudioManager.cpp
   ${XY_DIR}/CommandQueue.cpp 
   ${XY_DIR}/Console.cpp 
   ${XY_DIR}/Entity.cpp
@@ -22,7 +21,6 @@ set(XY_SRC
   ${XY_DIR}/Scene.cpp
   ${XY_DIR}/Score.cpp
   ${XY_DIR}/ShaderResource.cpp
-  ${XY_DIR}/SoundPlayer.cpp
   ${XY_DIR}/State.cpp
   ${XY_DIR}/StateStack.cpp
 
@@ -36,6 +34,7 @@ set(XY_SRC
   ${XY_DIR}/components/ComponentParticleController.cpp
   ${XY_DIR}/components/ComponentParticleSystem.cpp  
   ${XY_DIR}/components/ComponentPointLight.cpp  
+  ${XY_DIR}/components/ComponentSoundPlayer.cpp
   ${XY_DIR}/components/QuadTreeComponent.cpp 
 
   ${XY_DIR}/imgui/imgui.cpp
