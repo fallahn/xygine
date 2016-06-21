@@ -226,8 +226,7 @@ IQMBuilder::IQMBuilder(const std::string& path)
 
 //public
 void IQMBuilder::build()
-{
-    
+{   
     if (m_vertexData.empty())
     {
         XY_ASSERT(!m_filePath.empty(), "IQM Model path cannot be empty");
@@ -286,7 +285,11 @@ void IQMBuilder::build()
         strings.resize(header.textCount);
         std::memcpy(&strings[0], textIter, header.textCount);
 
-        loadVertexData(header, headerBytes, strings);
+        if (header.vertexCount > 0)
+        {
+            loadVertexData(header, headerBytes, strings);
+            Logger::log("No vertex data was loaded from " + m_filePath + ". Is this an animation file?", Logger::Type::Warning, Logger::Output::All);
+        }
         loadAnimationData(header, headerBytes, strings);
 
         Iqm::Bounds bounds; //TODO we have unique bounds for each keyframe
@@ -611,6 +614,6 @@ void IQMBuilder::loadAnimationData(const Iqm::Header& header, char* headerBytes,
         animIter = readAnim(animIter, anim);
         addAnimation({ anim.frameCount, anim.firstFrame, anim.framerate,{ &strings[anim.name] }, (anim.flags & Iqm::IQM_LOOP) != 0 });
     }
-
+    //TODO search path for external animation files to load
     setSkeleton(jointIndices, keyframes);
 }

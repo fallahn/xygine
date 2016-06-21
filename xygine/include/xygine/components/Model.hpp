@@ -192,6 +192,7 @@ namespace xy
         const Mesh& m_mesh;
         BoundingBox m_boundingBox;
         sf::FloatRect m_worldBounds;
+        mutable bool m_visible;
 
         const Material* m_material;
         std::vector<const Material*> m_subMaterials;

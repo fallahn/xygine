@@ -45,6 +45,7 @@ Model::Model(MessageBus& mb, const Mesh& mesh, const MeshRenderer::Lock&)
     m_scale             (1.f, 1.f, 1.f),
     m_needsUpdate       (false),
     m_mesh              (mesh),
+    m_visible           (false),
     m_material          (nullptr),
     m_skeleton          (nullptr),
     m_currentAnimation  (0),
@@ -75,7 +76,7 @@ void Model::entityUpdate(Entity& entity, float dt)
 
     m_worldBounds = entity.getWorldTransform().transformRect(m_boundingBox.asFloatRect());
 
-    if (!m_animations.empty())
+    if (!m_animations.empty() && m_visible)
     {
         if (m_nextAnimation == -1)
         {
@@ -305,7 +306,8 @@ void Model::updateTransform()
 
 std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibleArea, RenderPass::ID pass) const
 {
-    if (!m_worldBounds.intersects(visibleArea)) return 0;
+    m_visible = m_worldBounds.intersects(visibleArea);
+    if (!m_visible) return 0;
     
     glm::mat4 worldViewMat = viewMatrix * m_worldMatrix;
 
