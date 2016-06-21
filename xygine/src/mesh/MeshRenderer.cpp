@@ -38,11 +38,14 @@ source distribution.
 #include <xygine/util/Random.hpp>
 #include <xygine/Reports.hpp>
 #include <xygine/Console.hpp>
+#include <xygine/App.hpp>
 
 #include <SFML/Graphics/RenderStates.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <xygine/imgui/imgui.h>
 
 #include <cstring>
 
@@ -106,11 +109,18 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
 
     //inits console commands which affect renderer
     setupConCommands();
+
+#ifdef _DEBUG_
+    addDebugMenus();
+#endif
 }
 
 MeshRenderer::~MeshRenderer()
 {
     Console::unregisterCommands(this);
+#ifdef _DEBUG_
+    App::removeUserWindow(this);
+#endif
 }
 
 //public
@@ -275,31 +285,34 @@ void MeshRenderer::drawDepth() const
     //glCheck(glClearDepth(0.f));
     for (auto i = 0u; i < lightCount; ++i)
     {
-        //set projection to current light
-        std::memcpy(m_matrixBlock.u_lightViewProjectionMatrix, m_lightingBlock.u_pointLights[i].vpMatrix, sizeof(float) * 16);
-        m_matrixBlockBuffer.update(m_matrixBlock);
-
-        //set active texture layer
-        m_depthTexture.setActive(true);
-        m_depthTexture.setLayerActive(i);
-
-        glViewport(
-            static_cast<GLuint>(viewPort.left * size.x),
-            static_cast<GLuint>(viewPort.top * size.y),
-            static_cast<GLuint>(viewPort.width * size.x),
-            static_cast<GLuint>(viewPort.height * size.y));
-
-        glCheck(glClearColor(1.f, 1.f, 1.f, 1.f));
-        glCheck(glEnable(GL_DEPTH_TEST));
-        glCheck(glEnable(GL_CULL_FACE));
-        glCheck(glClear(GL_DEPTH_BUFFER_BIT));
-        for (const auto& m : m_models)
+        if (m_lightingBlock.u_pointLights[i].castShadow)
         {
-            drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::ShadowMap);
+            //set projection to current light
+            std::memcpy(m_matrixBlock.u_lightViewProjectionMatrix, m_lightingBlock.u_pointLights[i].vpMatrix, sizeof(float) * 16);
+            m_matrixBlockBuffer.update(m_matrixBlock);
+
+            //set active texture layer
+            m_depthTexture.setActive(true);
+            m_depthTexture.setLayerActive(i);
+
+            glViewport(
+                static_cast<GLuint>(viewPort.left * size.x),
+                static_cast<GLuint>(viewPort.top * size.y),
+                static_cast<GLuint>(viewPort.width * size.x),
+                static_cast<GLuint>(viewPort.height * size.y));
+
+            glCheck(glClearColor(1.f, 1.f, 1.f, 1.f));
+            glCheck(glEnable(GL_DEPTH_TEST));
+            glCheck(glEnable(GL_CULL_FACE));
+            glCheck(glClear(GL_DEPTH_BUFFER_BIT));
+            for (const auto& m : m_models)
+            {
+                drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::ShadowMap);
+            }
+            glCheck(glDisable(GL_CULL_FACE));
+            glCheck(glDisable(GL_DEPTH_TEST));
+            m_depthTexture.display();
         }
-        glCheck(glDisable(GL_CULL_FACE));
-        glCheck(glDisable(GL_DEPTH_TEST));
-        m_depthTexture.display(); 
     }
     
 
@@ -791,4 +804,76 @@ void MeshRenderer::setupConCommands()
             Console::print("Switched output to default");
         }
     }, this);
+}
+
+void MeshRenderer::addDebugMenus()
+{
+    std::function<void()> debugWindow = [this]()
+    {
+        nim::SetNextWindowSize({ 200.f, 300.f });
+        nim::Begin("Switch Output");
+        static int selected = 0;
+        static int lastSelected = selected;
+        nim::RadioButton("Default", &selected, 0);
+        nim::RadioButton("Diffuse", &selected, 1);
+        nim::RadioButton("World Normals", &selected, 2);
+        nim::RadioButton("Mask", &selected, 3);
+        nim::RadioButton("Position", &selected, 4);
+        nim::RadioButton("Illumination", &selected, 5);
+        nim::RadioButton("Reflection Map", &selected, 6);
+        nim::RadioButton("Depth Map", &selected, 7);
+        static int mapIndex = 0;
+        static int lastMapIndex = mapIndex;
+        nim::SliderInt("Depth", &mapIndex, 0, 8);
+        nim::End();
+
+        if (selected != lastSelected)
+        {
+            switch (selected)
+            {
+            default: break;
+            case 0:
+                m_outputQuad->setActivePass(RenderPass::Default);
+                break;
+            case 1:
+                m_outputQuad->setActivePass(RenderPass::Debug);
+                m_debugShader.setUniform("u_texture", m_gBuffer.getTexture(MaterialChannel::Diffuse));
+                break;
+            case 2:
+                m_outputQuad->setActivePass(RenderPass::Debug);
+                m_debugShader.setUniform("u_texture", m_gBuffer.getTexture(MaterialChannel::Normal));
+                break;
+            case 3:
+                m_outputQuad->setActivePass(RenderPass::Debug);
+                m_debugShader.setUniform("u_texture", m_gBuffer.getTexture(MaterialChannel::Mask));
+                break;
+            case 4:
+                m_outputQuad->setActivePass(RenderPass::Debug);
+                m_debugShader.setUniform("u_texture", m_gBuffer.getTexture(MaterialChannel::Position));
+                break;
+            case 5:
+                m_outputQuad->setActivePass(RenderPass::Debug);
+                m_debugShader.setUniform("u_texture", m_lightDownsampleTexture.getTexture());
+                break;
+            case 6:
+                m_outputQuad->setActivePass(RenderPass::Debug);
+                m_debugShader.setUniform("u_texture", m_scene.getReflection());
+                break;
+            case 7:
+                m_outputQuad->setActivePass(RenderPass::ShadowMap);
+                m_depthShader.setUniform("u_texIndex", static_cast<float>(mapIndex));
+                glCheck(glActiveTexture(GL_TEXTURE0)); //we know this shader only has one texture sampler
+                glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_depthTexture.getNativeHandle()));
+                break;
+            }
+        }
+        lastSelected = selected;
+
+        if (mapIndex != lastMapIndex)
+        {
+            m_depthShader.setUniform("u_texIndex", static_cast<float>(mapIndex));
+        }
+        lastMapIndex = mapIndex;
+    };
+    App::addUserWindow(debugWindow, this);
 }

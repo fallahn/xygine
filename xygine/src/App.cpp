@@ -69,6 +69,13 @@ namespace
 
     sf::RenderWindow* renderWindow = nullptr;
     bool mouseCursorVisible = false;
+
+    struct UserWindow
+    {
+        void* owner = nullptr;
+        std::function<void()> draw;
+    };
+    std::vector<UserWindow> uiWindows;
 }
 
 App::App(sf::ContextSettings contextSettings)
@@ -140,6 +147,10 @@ void App::run()
         }
         Console::draw();
         StatsReporter::draw();
+        //draws any user registered windows
+        //got an error here? Make sure invalid windows are removed
+        //by registering objects when they are destroyed.
+        for (const auto& w : uiWindows) w.draw();
 
         m_renderWindow.clear();
         draw();
@@ -236,6 +247,23 @@ void App::setPlayerInitials(const std::string& initials)
     if (str.size() > 3) str = str.substr(0, 3);
 
     std::strcpy(&m_gameSettings.playerInitials[0], str.c_str());
+}
+
+void App::addUserWindow(const std::function<void()>& window, void* owner)
+{
+    uiWindows.emplace_back();
+    uiWindows.back().draw = window;
+    uiWindows.back().owner = owner;
+}
+
+void App::removeUserWindow(void* owner)
+{
+    XY_ASSERT(owner, "Cannot be nullptr");
+    uiWindows.erase(std::remove_if(uiWindows.begin(), uiWindows.end(), 
+        [owner](const UserWindow& uw)
+    {
+        return uw.owner == owner;
+    }), uiWindows.end());
 }
 
 sf::Vector2f App::getMouseWorldPosition()

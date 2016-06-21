@@ -210,6 +210,29 @@ namespace xy
         void setPlayerInitials(const std::string&);
 
         /*!
+        \brief Allows adding a custom imGui based window.
+        Drawing imGui windows directly within the update loop may
+        cause flickering on occassions when the App is updated
+        more than once in a single frame. Adding a window function
+        here ensures that it is drawn correctly. To help prevent
+        registering the same window multiple times a pointer to the
+        registering object can optionally passed to this function.
+        Using the same pointer with removeUserWindow() will remove
+        the function, for example when the registering object is destroyed.
+        */
+        static void addUserWindow(const std::function<void()>&, void* = nullptr);
+
+        /*!
+        \brief Removes a registered user window if it exists.
+        Care should be taken to remove user windows which are registered
+        by objects which no longer exist, so that invalid window functions
+        are not called. Passing in a pointer to an object, usually via
+        its destructor, will make sure any windows that object registered
+        via addUserWindow() will be removed.
+        */
+        static void removeUserWindow(void*);
+
+        /*!
         \brief Returns the mouse position in world coordinates
 
         This is only valid while an instance of the app is running

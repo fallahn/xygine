@@ -260,6 +260,7 @@ namespace xy
         void initOutput();
 
         void setupConCommands();
+        void addDebugMenus();
     };
 }
 
