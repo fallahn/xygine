@@ -74,7 +74,7 @@ void SoundPlayer::playSound(ResourceID id, float x, float y, float pitch)
 void SoundPlayer::setMasterVolume(float vol)
 {
     XY_ASSERT(vol >= 0, "Volume cannot be negative");
-    m_volume = std::min(vol, MaxVolume);
+    m_volume = std::min(vol * MaxVolume, MaxVolume);
 }
 
 void SoundPlayer::setChannelVolume(sf::Uint8 channel, float vol)

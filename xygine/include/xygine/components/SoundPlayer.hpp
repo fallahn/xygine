@@ -51,7 +51,7 @@ namespace xy
     of sounds can be adjusted together. The volume of a channel
     is relative to the master audio volume of the sound player.
     */
-    class SoundPlayer final : public xy::Component
+    class XY_EXPORT_API SoundPlayer final : public xy::Component
     {
     public:
         SoundPlayer(xy::MessageBus&, xy::SoundResource&);
@@ -79,7 +79,7 @@ namespace xy
         void playSound(ResourceID, float x, float y, float pitch = 1.f);
         /*!
         \brief Sets the master volume of the sound player.
-        Range is 0.f - 100.f
+        Range is 0.f - 1.f
         */
         void setMasterVolume(float);
         /*!
