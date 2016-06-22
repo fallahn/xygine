@@ -16,8 +16,37 @@
 //#define IM_ASSERT(_EXPR)  MyAssert(_EXPR)
 
 //---- Define attributes of all API symbols declarations, e.g. for DLL under Windows.
-//#define IMGUI_API __declspec( dllexport )
+#if !defined(XY_STATIC)
+#if defined(_WIN32)
+
+#define IMGUI_API __declspec( dllexport )
 //#define IMGUI_API __declspec( dllimport )
+//for vc compilers we also need to turn off this annoying C4251 warning
+#ifdef _MSC_VER
+#pragma warning(disable: 4251)
+#endif //_MSC_VER
+
+#else //linux, FreeBSD, Mac OS X
+
+#if __GNUC__ >= 4
+
+//gcc 4 has special keywords for showing/hiding symbols,
+//the same keyword is used for both importing and exporting
+#define IMGUI_API __attribute__ ((__visibility__ ("default")))
+
+#else
+//gcc < 4 has no mechanism to explicitly hide symbols, everything's exported
+#define IMGUI_API
+#endif //__GNUC__
+
+#endif //_WIN32
+
+#else
+
+//static build doesn't need import/export macros
+#define IMGUI_API
+
+#endif //XY_STATIC
 
 //---- Include imgui_user.h at the end of imgui.h
 //#define IMGUI_INCLUDE_IMGUI_USER_H

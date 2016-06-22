@@ -220,7 +220,7 @@ namespace xy
         Using the same pointer with removeUserWindow() will remove
         the function, for example when the registering object is destroyed.
         */
-        static void addUserWindow(const std::function<void()>&, void* = nullptr);
+        static void addUserWindow(const std::function<void()>&, const void* = nullptr);
 
         /*!
         \brief Removes a registered user window if it exists.
@@ -230,7 +230,7 @@ namespace xy
         its destructor, will make sure any windows that object registered
         via addUserWindow() will be removed.
         */
-        static void removeUserWindow(void*);
+        static void removeUserWindows(const void*);
 
         /*!
         \brief Returns the mouse position in world coordinates

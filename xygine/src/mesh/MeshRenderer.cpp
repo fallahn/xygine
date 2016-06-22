@@ -119,7 +119,7 @@ MeshRenderer::~MeshRenderer()
 {
     Console::unregisterCommands(this);
 #ifdef _DEBUG_
-    App::removeUserWindow(this);
+    App::removeUserWindows(this);
 #endif
 }
 

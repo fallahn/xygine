@@ -68,7 +68,7 @@ namespace xy
         be used to unregister a command should that object no longer exist. See
         unregisterCommands()
         */
-        static void addCommand(const std::string& name, const Command& command, void* owner = nullptr);
+        static void addCommand(const std::string& name, const Command& command, const void* owner = nullptr);
 
         /*!
         \brief Unregisters any commands registered by the objected pointed to by the
@@ -84,7 +84,7 @@ namespace xy
         the console, so that trying to execute them will result in defined (non)
         behaviour.
         */
-        static void unregisterCommands(void*);
+        static void unregisterCommands(const void*);
 
         /*!
         \brief Executes the given command line.

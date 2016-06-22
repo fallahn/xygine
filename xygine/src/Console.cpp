@@ -55,7 +55,7 @@ namespace
 
     bool visible = false;
 
-    std::unordered_map<std::string, std::pair<Console::Command, void*>> commands;
+    std::unordered_map<std::string, std::pair<Console::Command, const void*>> commands;
 }
 int textEditCallback(ImGuiTextEditCallbackData* data);
 
@@ -82,7 +82,7 @@ void Console::show()
     visible = !visible;
 }
 
-void Console::addCommand(const std::string& name, const Console::Command& command, void* owner)
+void Console::addCommand(const std::string& name, const Console::Command& command, const void* owner)
 {
     XY_ASSERT(!name.empty(), "Command cannot have an empty string");
     if (commands.count(name) != 0)
@@ -96,7 +96,7 @@ void Console::addCommand(const std::string& name, const Console::Command& comman
     }
 }
 
-void Console::unregisterCommands(void* owner)
+void Console::unregisterCommands(const void* owner)
 {
     //make sure this isn't nullptr else most if not all commands will get removed..
     XY_ASSERT(owner, "You really don't want to do that");

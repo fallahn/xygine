@@ -72,7 +72,7 @@ namespace
 
     struct UserWindow
     {
-        void* owner = nullptr;
+        const void* owner = nullptr;
         std::function<void()> draw;
     };
     std::vector<UserWindow> uiWindows;
@@ -249,14 +249,14 @@ void App::setPlayerInitials(const std::string& initials)
     std::strcpy(&m_gameSettings.playerInitials[0], str.c_str());
 }
 
-void App::addUserWindow(const std::function<void()>& window, void* owner)
+void App::addUserWindow(const std::function<void()>& window, const void* owner)
 {
     uiWindows.emplace_back();
     uiWindows.back().draw = window;
     uiWindows.back().owner = owner;
 }
 
-void App::removeUserWindow(void* owner)
+void App::removeUserWindows(const void* owner)
 {
     XY_ASSERT(owner, "Cannot be nullptr");
     uiWindows.erase(std::remove_if(uiWindows.begin(), uiWindows.end(), 
