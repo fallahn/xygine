@@ -123,6 +123,8 @@ void App::run()
         return;
     }
 
+    setMouseCursorVisible(true);
+
     nim::SFML::Init(m_renderWindow);
     Console::registerDefaultCommands();
 

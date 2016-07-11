@@ -37,7 +37,7 @@ namespace xy
 {
     class BoundingBox;
     /*!
-    \brief Model builder class.
+    \brief ModelBuilder class.
     This abstract base class provides an interface for the mesh renderer to
     load abitrary model types. Inherit this class when creating a loader for
     a specific file format, or a mesh generator (such as the CubeBuilder or 

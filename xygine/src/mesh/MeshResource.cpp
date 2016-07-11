@@ -48,6 +48,7 @@ MeshResource::MeshResource()
     };
     m_defaultMesh.setVertexData(verts.data());
     m_defaultMesh.setPrimitiveType(xy::Mesh::PrimitiveType::TriangleStrip);
+    m_defaultMesh.setBoundingBox({ {-10.5, -10.5f, -1.f}, {10.5f, 10.5f, 1.f} });
 }
 
 //public

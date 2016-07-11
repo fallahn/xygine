@@ -42,7 +42,7 @@ namespace xy
     }
     
     /*!
-    \brief MeshBuilder implementation for loading IQM format models.
+    \brief ModelBuilder implementation for loading IQM format models.
     <a href="http://sauerbraten.org/iqm/">Format Details</a>
     */
     class XY_EXPORT_API IQMBuilder final : public xy::ModelBuilder

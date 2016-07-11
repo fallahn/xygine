@@ -180,6 +180,10 @@ namespace xy
         */
         std::size_t getCurrentAnimation() const { return m_currentAnimation; }
 
+        /*!
+        \brief Returns a const reference to the Model's mesh
+        */
+        const Mesh& getMesh() const { return m_mesh; }
     private:
         glm::vec3 m_translation;
         glm::quat m_rotation;

@@ -36,9 +36,9 @@ source distribution.
 namespace xy
 {
     /*!
-    \brief Implements the MeshBuilder interface for quickly creating
+    \brief Implements the ModelBuilder interface for quickly creating
     cube meshes.
-    \see MeshBuilder
+    \see ModelBuilder
     */
     class XY_EXPORT_API CubeBuilder final : public ModelBuilder
     {
