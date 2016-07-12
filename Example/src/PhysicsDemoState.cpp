@@ -414,7 +414,6 @@ void PhysicsDemoState::createBodies()
 
     m_scene.addEntity(tableEntity, xy::Scene::Layer::BackMiddle);
 
-
     //add balls
     auto cueball = addBall({ 1260.f, 560.f });
     auto cbEntity = m_scene.findEntity(cueball->getParentUID());
@@ -566,7 +565,7 @@ xy::Physics::RigidBody* PhysicsDemoState::addBall(const sf::Vector2f& position)
     drawable->setOrigin({ size.x / 2.f, size.y / 2.f });
     drawable->setShader(m_shaderResource.get(PhysicsShaderId::NormalMapTexturedSpecular));
     ballEntity->addComponent(drawable);
-    
+
     m_scene.addEntity(ballEntity, xy::Scene::Layer::BackMiddle);
 
     return b;

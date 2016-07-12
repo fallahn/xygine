@@ -378,6 +378,9 @@
     <ClCompile Include="src\components\ComponentSoundPlayer.cpp">
       <Filter>Source Files\components</Filter>
     </ClCompile>
+    <ClCompile Include="src\components\ComponentSpriteBatch.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -807,6 +810,9 @@
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\components\SoundPlayer.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\SpriteBatch.hpp">
       <Filter>Header Files\components</Filter>
     </ClInclude>
   </ItemGroup>

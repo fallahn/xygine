@@ -160,6 +160,7 @@
     <ClCompile Include="src\components\ComponentParticleSystem.cpp" />
     <ClCompile Include="src\components\ComponentPointLight.cpp" />
     <ClCompile Include="src\components\ComponentSoundPlayer.cpp" />
+    <ClCompile Include="src\components\ComponentSpriteBatch.cpp" />
     <ClCompile Include="src\components\QuadTreeComponent.cpp" />
     <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="src\GLExtensions.cpp" />
@@ -254,6 +255,7 @@
     <ClInclude Include="include\xygine\components\Model.hpp" />
     <ClInclude Include="include\xygine\components\PointLight.hpp" />
     <ClInclude Include="include\xygine\components\SoundPlayer.hpp" />
+    <ClInclude Include="include\xygine\components\SpriteBatch.hpp" />
     <ClInclude Include="include\xygine\Config.hpp" />
     <ClInclude Include="include\xygine\Console.hpp" />
     <ClInclude Include="include\xygine\detail\GLCheck.hpp" />
