@@ -28,34 +28,34 @@ source distribution.
 #ifndef XY_CUBE_BUILDER_HPP_
 #define XY_CUBE_BUILDER_HPP_
 
-#include <xygine/mesh/MeshBuilder.hpp>
+#include <xygine/mesh/ModelBuilder.hpp>
+#include <xygine/mesh/BoundingBox.hpp>
 
 #include <array>
 
 namespace xy
 {
     /*!
-    \brief Implements the MeshBuilder interface for quickly creating
+    \brief Implements the ModelBuilder interface for quickly creating
     cube meshes.
-    \see MeshBuilder
+    \see ModelBuilder
     */
-    class XY_EXPORT_API CubeBuilder final : public MeshBuilder
+    class XY_EXPORT_API CubeBuilder final : public ModelBuilder
     {
     public:
-        CubeBuilder(float size);
+        explicit CubeBuilder(float size);
         ~CubeBuilder() = default;
 
         void build() override;
         VertexLayout getVertexLayout() const override;
         const float* getVertexData() const override { return m_vertexData.data(); }
         std::size_t getVertexCount() const override { return 24; }
-
-        std::vector<MeshBuilder::SubMeshLayout> getSubMeshLayouts() const override;
+        const BoundingBox& getBoundingBox() const override { return m_boundingBox; }
 
     private:
 
         float m_size;
-
+        BoundingBox m_boundingBox;
         std::array<std::uint8_t, 36> m_indices;
 
         std::vector<float> m_vertexData;

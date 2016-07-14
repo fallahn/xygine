@@ -70,6 +70,7 @@ namespace xy
     */
     class XY_EXPORT_API StatsReporter final
     {
+        friend class App;
     public:
         StatsReporter();
         ~StatsReporter() = default;
@@ -111,12 +112,19 @@ namespace xy
         \brief Clears the current report string
         */
         void clear();
+
+        /*!
+        \brief Toggles displaying the stats window
+        */
+        static void show();
     private:
         std::map<std::string, std::string> m_data;
         std::string m_string;
         bool m_rebuildString;
 
         sf::Mutex m_mutex;
+
+        static void draw();
     };
 }
 #endif //XY_REPORTS_HPP_

@@ -62,7 +62,7 @@ void ParticleController::onStart(Entity& entity)
     m_pendingDefinitions.clear();
 }
 
-void ParticleController::addDefinition(SystemId id, const ParticleSystem::Definition& d)
+void ParticleController::addDefinition(SystemID id, const ParticleSystem::Definition& d)
 {
     auto ent = Entity::create(getMessageBus());
     m_activeSystems[id] = std::make_pair(ent.get(), d);
@@ -77,7 +77,7 @@ void ParticleController::addDefinition(SystemId id, const ParticleSystem::Defini
     }
 }
 
-void ParticleController::fire(SystemId id, const sf::Vector2f& position)
+void ParticleController::fire(SystemID id, const sf::Vector2f& position)
 {
     auto& pair = m_activeSystems[id];
     auto ent = pair.first;

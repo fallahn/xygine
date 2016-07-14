@@ -28,14 +28,15 @@ source distribution.
 #include <xygine/mesh/MeshResource.hpp>
 #include <xygine/mesh/SubMesh.hpp>
 #include <xygine/Log.hpp>
+#include <xygine/Assert.hpp>
 
 #include <array>
 
 using namespace xy;
 
 MeshResource::MeshResource()
-    : m_defaultLayout({ xy::VertexLayout::Element(xy::VertexLayout::Element::Type::Position, 3) }),
-    m_defaultMesh(m_defaultLayout, 4)
+    : m_defaultLayout   ({ xy::VertexLayout::Element(xy::VertexLayout::Element::Type::Position, 3) }),
+    m_defaultMesh       (m_defaultLayout, 4)
 {
     //TODO add colour data
     std::array<float, 12> verts =
@@ -47,11 +48,14 @@ MeshResource::MeshResource()
     };
     m_defaultMesh.setVertexData(verts.data());
     m_defaultMesh.setPrimitiveType(xy::Mesh::PrimitiveType::TriangleStrip);
+    m_defaultMesh.setBoundingBox({ {-10.5, -10.5f, -1.f}, {10.5f, 10.5f, 1.f} });
 }
 
 //public
-Mesh& MeshResource::add(MeshResource::ID id, MeshBuilder& mb)
+Mesh& MeshResource::add(MeshResource::ID id, ModelBuilder& mb)
 {
+    XY_ASSERT(m_meshes.find(id) == m_meshes.end(), "Mesh ID is already used by this resource");
+    
     mb.build();
 
     Mesh m(mb.getVertexLayout(), mb.getVertexCount(), mb.dynamic());
@@ -60,8 +64,9 @@ Mesh& MeshResource::add(MeshResource::ID id, MeshBuilder& mb)
 
     auto& mesh = *m_meshes.find(id)->second;
     mesh.setVertexData(mb.getVertexData());
+    mesh.setPrimitiveType(mb.primitiveType());
 
-    auto subMeshLayouts = mb.getSubMeshLayouts();
+    const auto& subMeshLayouts = mb.getSubMeshLayouts();
     if (!subMeshLayouts.empty())
     {
         for (const auto& sml : subMeshLayouts)
@@ -70,6 +75,7 @@ Mesh& MeshResource::add(MeshResource::ID id, MeshBuilder& mb)
             subMesh.setIndexData(sml.data, 0, 0);
         }
     }
+    mesh.setBoundingBox(mb.getBoundingBox());
     return mesh;
 }
 

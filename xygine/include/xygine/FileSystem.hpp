@@ -62,6 +62,21 @@ namespace xy
         the file name, including trailing separator char.
         */
         static std::string getFilePath(const std::string& path);
+        /*!
+        \brief Tries to create a directory relative to the executable
+        or via an absolute path.
+        \returns false if creation fails and attempts to log the reason,
+        else returns true.
+        \param std::string Path to create.
+        */
+        static bool createDirectory(const std::string&);
+        /*!
+        \brief Attempts to determine if a directory at the given path exists.
+        \returns true if the directory exists, else false. Attempts to log any
+        errors to the console.
+        */
+        static bool directoryExists(const std::string&);
+
     private:
 
     };

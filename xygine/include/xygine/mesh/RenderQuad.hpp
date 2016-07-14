@@ -31,6 +31,7 @@ source distribution.
 #include <xygine/mesh/Mesh.hpp>
 #include <xygine/mesh/Material.hpp>
 #include <xygine/mesh/VertexAttribBinding.hpp>
+#include <xygine/mesh/RenderPass.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
 
@@ -41,6 +42,11 @@ namespace sf
 
 namespace xy
 {
+    /*
+    \brief Drawable textured quad.
+    Used internally by the mesh model renderer, it is recommended
+    for other uses that standard SFML drawables be used.
+    */
     class RenderQuad final : public sf::Drawable
     {
     public:
@@ -48,12 +54,14 @@ namespace xy
         ~RenderQuad() = default;
 
         sf::Shader& getShader() const;
+        
+        void addRenderPass(RenderPass::ID, sf::Shader&);
+        void setActivePass(RenderPass::ID);
 
     private:
         xy::Mesh m_mesh;
         xy::Material m_material;
         xy::VertexAttribBinding m_vao;
-        sf::Shader& m_shader;
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }

@@ -64,6 +64,8 @@ source distribution.
 
 #endif //XY_STATIC
 
+namespace ImGui {}
+namespace nim = ImGui;
 
 //xygine-wide consts
 #include <SFML/System/Vector2.hpp>
@@ -81,6 +83,7 @@ namespace xy
     using VertexAttribID = GLint;
     using UniformBufferID = GLuint;
     using UniformBlockID = GLuint;
+    using UniformID = GLint;
     using ShaderID = GLuint;
 }
 

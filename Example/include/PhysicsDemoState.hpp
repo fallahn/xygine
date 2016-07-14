@@ -38,13 +38,7 @@ source distribution.
 #include <xygine/physics/World.hpp>
 #include <xygine/Resource.hpp>
 #include <xygine/ShaderResource.hpp>
-//-------
-#include <xygine/mesh/MeshRenderer.hpp>
-#include <xygine/mesh/MeshResource.hpp>
-#include <xygine/mesh/Material.hpp>
-#include <xygine/mesh/MaterialResource.hpp>
-#include <SFML/Graphics/Shader.hpp>
-//-------
+
 #include <SFML/Graphics/Text.hpp>
 
 namespace sf
@@ -70,7 +64,7 @@ public:
     void draw() override;
     bool handleEvent(const sf::Event& evt) override;
     void handleMessage(const xy::Message&) override;
-    xy::StateId stateID() const override
+    xy::StateID stateID() const override
     {
         return States::ID::PhysicsDemo;
     }
@@ -84,21 +78,9 @@ private:
     xy::FontResource m_fontResource;
     xy::ShaderResource m_shaderResource;
 
-    sf::Text m_reportText;
-
     void createBodies();
     void addLights();
     xy::Physics::RigidBody* addBall(const sf::Vector2f& position);
-
-    xy::MeshRenderer m_meshRenderer;
-    xy::MeshResource m_meshResource;
-    sf::Shader m_meshShader;
-    xy::MaterialResource m_materialResource;
-    enum MatId
-    {
-        Blue = 0
-    };
-    void createMesh();
 };
 
 #endif //PHYSICS_DEMO_STATE_HPP_

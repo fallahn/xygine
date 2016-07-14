@@ -31,7 +31,12 @@ source distribution.
 #include <xygine/util/Math.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/Reports.hpp>
+#include <xygine/Console.hpp>
 #include <xygine/physics/World.hpp>
+
+#include <xygine/imgui/imgui.h>
+#include <xygine/imgui/imgui_sfml.h>
+#include <xygine/imgui/imgui_internal.h>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -49,9 +54,9 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
 #ifndef _DEBUG_
-    const std::string windowTitle("xygine game (Release Build)");
+    const std::string windowTitle("xygine game (Release Build) - F1: console F2: Stats");
 #else
-    const std::string windowTitle("xygine game (Debug Build)");
+    const std::string windowTitle("xygine game (Debug Build) - F1: console F2: Stats");
 #endif //_DEBUG_
     const std::string settingsFile("settings.set");
 
@@ -62,7 +67,15 @@ namespace
 
     sf::Clock frameClock;
 
-    const sf::RenderWindow* renderWindow = nullptr;
+    sf::RenderWindow* renderWindow = nullptr;
+    bool mouseCursorVisible = false;
+
+    struct UserWindow
+    {
+        const void* owner = nullptr;
+        std::function<void()> draw;
+    };
+    std::vector<UserWindow> uiWindows;
 }
 
 App::App(sf::ContextSettings contextSettings)
@@ -72,6 +85,7 @@ App::App(sf::ContextSettings contextSettings)
 {
     loadSettings();
     m_scores.load();
+    registerConCommands();
 
     renderWindow = &m_renderWindow;
 
@@ -97,7 +111,7 @@ App::App(sf::ContextSettings contextSettings)
     if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
     {
         Logger::log("Failed loading OpenGL extensions, MultiRenderTargets will be unavailable", Logger::Type::Error, Logger::Output::All);
-    }
+    } 
 }
 
 //public
@@ -109,13 +123,12 @@ void App::run()
         return;
     }
 
-    //m_renderWindow.setMouseCursorVisible(false);
-    initialise();
+    setMouseCursorVisible(true);
 
-#ifdef _DEBUG_
-    sf::Clock fpsClock;
-    sf::Clock fpsUpdateClock;
-#endif //_DEBUG_
+    nim::SFML::Init(m_renderWindow);
+    Console::registerDefaultCommands();
+
+    initialise();
 
     frameClock.restart();
     while (m_renderWindow.isOpen())
@@ -123,23 +136,28 @@ void App::run()
         float elapsedTime = frameClock.restart().asSeconds();
         timeSinceLastUpdate += elapsedTime;
 
+        nim::SFML::Update(mouseCursorVisible);
+        
         while (timeSinceLastUpdate > timePerFrame)
         {
             timeSinceLastUpdate -= timePerFrame;
-
+            
             handleEvents();
             handleMessages();
-            update(timePerFrame);
+
+            update(timePerFrame);                 
         }
+        Console::draw();
+        StatsReporter::draw();
+        //draws any user registered windows
+        //got an error here? Make sure invalid windows are removed
+        //by registering objects when they are destroyed.
+        for (const auto& w : uiWindows) w.draw();
+
+        m_renderWindow.clear();
         draw();
-#ifdef _DEBUG_
-        float fpsTime = 1.f / fpsClock.restart().asSeconds();
-        if (fpsUpdateClock.getElapsedTime().asSeconds() > 0.25f)
-        {
-            REPORT("FPS", std::to_string(fpsTime));
-            fpsUpdateClock.restart();
-        }
-#endif //_DEBUG_
+        nim::Render();
+        m_renderWindow.display();
     }
     m_messageBus.disable(); //prevents spamming with loads of entity quit messages
 
@@ -147,6 +165,8 @@ void App::run()
     m_scores.save();
 
     finalise();
+
+    nim::SFML::Shutdown();
 }
 
 void App::pause()
@@ -188,7 +208,7 @@ void App::applyVideoSettings(const VideoSettings& settings)
 
     m_renderWindow.create(settings.VideoMode, windowTitle, settings.WindowStyle);
     m_renderWindow.setVerticalSyncEnabled(settings.VSync);
-    m_renderWindow.setMouseCursorVisible(false);
+    //m_renderWindow.setMouseCursorVisible(false);
     //TODO test validity and restore old settings if possible
     m_videoSettings = settings;
     m_videoSettings.AvailableVideoModes = availableModes;
@@ -197,6 +217,9 @@ void App::applyVideoSettings(const VideoSettings& settings)
 
     auto msg = m_messageBus.post<Message::UIEvent>(Message::UIMessage);
     msg->type = Message::UIEvent::ResizedWindow;
+
+    std::int32_t resolution = (settings.VideoMode.width << 16) | settings.VideoMode.height;
+    msg->value = static_cast<float>(resolution);
 }
 
 MessageBus& App::getMessageBus()
@@ -228,10 +251,40 @@ void App::setPlayerInitials(const std::string& initials)
     std::strcpy(&m_gameSettings.playerInitials[0], str.c_str());
 }
 
+void App::addUserWindow(const std::function<void()>& window, const void* owner)
+{
+    uiWindows.emplace_back();
+    uiWindows.back().draw = window;
+    uiWindows.back().owner = owner;
+}
+
+void App::removeUserWindows(const void* owner)
+{
+    XY_ASSERT(owner, "Cannot be nullptr");
+    uiWindows.erase(std::remove_if(uiWindows.begin(), uiWindows.end(), 
+        [owner](const UserWindow& uw)
+    {
+        return uw.owner == owner;
+    }), uiWindows.end());
+}
+
 sf::Vector2f App::getMouseWorldPosition()
 {
     XY_ASSERT(renderWindow, "no valid window instance");
     return renderWindow->mapPixelToCoords(sf::Mouse::getPosition(*renderWindow));
+}
+
+void App::setMouseCursorVisible(bool visible)
+{
+    XY_ASSERT(renderWindow, "no valid window instance");
+    renderWindow->setMouseCursorVisible(visible);
+    mouseCursorVisible = visible;
+}
+
+void App::quit()
+{
+    XY_ASSERT(renderWindow, "no valid window instance");
+    renderWindow->close();
 }
 
 //protected
@@ -317,7 +370,6 @@ void App::saveScreenshot()
 {
     std::time_t time = std::time(nullptr);
     struct tm* timeInfo;
-
     timeInfo = std::localtime(&time);
 
     std::array<char, 40u> buffer;
@@ -337,8 +389,11 @@ void App::saveScreenshot()
 void App::handleEvents()
 {
     sf::Event evt;
+
     while (m_renderWindow.pollEvent(evt))
     {
+        bool nimConsumed = nim::SFML::ProcessEvent(evt);
+        
         switch (evt.type)
         {
         case sf::Event::LostFocus:
@@ -373,10 +428,16 @@ void App::handleEvents()
             case sf::Keyboard::F5:
                 saveScreenshot();
                 break;
+            case sf::Keyboard::F1:
+                Console::show();
+                break;
+            case sf::Keyboard::F2:
+                StatsReporter::show();
+                break;
             default:break;
             }           
         }
-        eventHandler(evt);
+        if(!nimConsumed) eventHandler(evt);
     }   
 }
 
@@ -423,3 +484,45 @@ void App::handleMessages()
     } 
 }
 
+void App::registerConCommands()
+{
+    Console::addCommand("r_vsyncEnable",
+    [this](const std::string& params)
+    {
+        if (params == "1" || params == "true")
+        {
+            m_videoSettings.VSync = true;
+            m_renderWindow.setVerticalSyncEnabled(true);
+            m_renderWindow.setFramerateLimit(0);
+            Console::print("VSync enabled");
+        }
+        else if (params == "0" || params == "false")
+        {
+            m_videoSettings.VSync = false;
+            m_renderWindow.setVerticalSyncEnabled(false);
+            Console::print("VSync disabled");
+        }
+        else
+        {
+            Console::print("usage - r_vsyncEnable <param>: 0, 1, true or false");
+        }
+    });
+
+    Console::addCommand("r_framerateLimit",
+        [this](const std::string& params)
+    {
+        try
+        {
+            auto limit = std::stoi(params);
+            m_renderWindow.setFramerateLimit(limit);
+
+            m_renderWindow.setVerticalSyncEnabled(false);
+            m_videoSettings.VSync = false;
+            Console::print("Framerate limit set to " + params);
+        }
+        catch (...)
+        {
+            Console::print("usage: r_framerateLimit <int>");
+        }
+    });
+}

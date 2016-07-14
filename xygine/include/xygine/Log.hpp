@@ -31,15 +31,18 @@ source distribution.
 #define XY_LOGGER_HPP_
 
 #include <xygine/FileSystem.hpp>
+#include <xygine/Console.hpp>
 
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
 
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <list>
+#include <ctime>
 
 #ifdef _MSC_VER
 #define NOMINMAX
@@ -100,6 +103,8 @@ namespace xy
                     :
                     std::cout << outstring << std::endl;
 
+                Console::print(outstring);
+                
                 const std::size_t maxBuffer = 30;
                 buffer().push_back(outstring);
                 if (buffer().size() > maxBuffer)buffer().pop_front(); //no majick here pl0x
@@ -116,6 +121,11 @@ namespace xy
                 std::ofstream file("output.log", std::ios::app);
                 if (file.good())
                 {
+                    std::time_t time = std::time(nullptr);
+                    auto tm = *std::localtime(&time);
+
+                    file.imbue(std::locale());
+                    file << std::put_time(&tm, "%d/%m/%y-%H:%M:%S: ");
                     file << outstring << std::endl;
                     file.close();
                 }

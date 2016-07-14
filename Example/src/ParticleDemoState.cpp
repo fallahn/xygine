@@ -103,17 +103,24 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
     m_scene.addPostProcess(pp);
     m_scene.setClearColour({ 0u, 0u, 20u });
 
-    m_reportText.setFont(m_fontResource.get("assets/fonts/Console.ttf"));
-    m_reportText.setPosition(1500.f, 30.f);
-
     m_shaderResource.preload(ParticleShaderId::NormalMapTexturedSpecular, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED_SPECULAR);
     //m_shaderResource.preload(ParticleShaderId::NormalMapTextured, xy::Shader::NormalMapped::vertex, NORMAL_FRAGMENT_TEXTURED);
     shader = &m_shaderResource.get(ParticleShaderId::NormalMapTexturedSpecular);
 
+    auto& skyLight = m_scene.getSkyLight();
+    skyLight.setDiffuseColour({255, 255, 220});
+    skyLight.setSpecularColour(sf::Color::Green);
+    skyLight.setIntensity(0.5f);
+    skyLight.setDirection({ 1.f, 1.f, -1.f });
+    shader->setUniform("u_directionalLight.diffuseColour", sf::Glsl::Vec4(skyLight.getDiffuseColour()));
+    shader->setUniform("u_directionalLight.specularColour", sf::Glsl::Vec4(skyLight.getSpecularColour()));
+    shader->setUniform("u_directionalLight.intensity", skyLight.getIntensity());
+    shader->setUniform("u_directionaLightDirection", skyLight.getDirection());
+
     setupParticles();
     buildTerrain();
 
-    context.renderWindow.setMouseCursorVisible(true);
+    xy::App::setMouseCursorVisible(true);
 
     quitLoadingScreen();
 }
@@ -146,9 +153,6 @@ bool ParticleDemoState::update(float dt)
         shader->setUniform("u_pointLights[" + std::to_string(i) + "].intensity", 0.f);
     }
 
-
-    m_reportText.setString(xy::Stats::getString());
-
     return true;
 }
 
@@ -158,7 +162,6 @@ void ParticleDemoState::draw()
     rw.draw(m_scene);
     rw.setView(getContext().defaultView);
     //rw.draw(m_physWorld);
-    rw.draw(m_reportText);
 }
 
 bool ParticleDemoState::handleEvent(const sf::Event& evt)

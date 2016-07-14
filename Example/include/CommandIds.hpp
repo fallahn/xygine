@@ -40,8 +40,10 @@ enum PhysicsShaderId
 {
     NormalMapTextured = 1,
     NormalMapTexturedSpecular,
-    ReflectionMap
+    ReflectionMap,
+    VertexLit
 };
+
 //----------------//
 
 enum NetMessageId

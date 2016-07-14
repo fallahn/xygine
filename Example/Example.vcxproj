@@ -45,7 +45,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>include;../xygine/include;../xygine/extlibs/include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG_;_MBCS;%(PreprocessorDefinitions);SFML_NO_DEPRECATED_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG_;_MBCS;%(PreprocessorDefinitions);SFML_NO_DEPRECATED_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -61,7 +61,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>include;../xygine/include;../xygine/extlibs/include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);SFML_NO_DEPRECATED_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions);SFML_NO_DEPRECATED_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -91,6 +91,9 @@
     <ClInclude Include="include\PhysicsDemoLine.hpp" />
     <ClInclude Include="include\PhysicsDemoState.hpp" />
     <ClInclude Include="include\DeferredDemoState.hpp" />
+    <ClInclude Include="include\PlatformBackground.hpp" />
+    <ClInclude Include="include\PlatformDemoState.hpp" />
+    <ClInclude Include="include\PlatformPlayerController.hpp" />
     <ClInclude Include="include\RotationComponent.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
     <ClInclude Include="include\TimedDestruction.hpp" />
@@ -113,6 +116,9 @@
     <ClCompile Include="src\PhysicsDemoLine.cpp" />
     <ClCompile Include="src\PhysicsDemoState.cpp" />
     <ClCompile Include="src\DeferredDemoState.cpp" />
+    <ClCompile Include="src\PlatformBackground.cpp" />
+    <ClCompile Include="src\PlatformDemoState.cpp" />
+    <ClCompile Include="src\PlatformPlayerController.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

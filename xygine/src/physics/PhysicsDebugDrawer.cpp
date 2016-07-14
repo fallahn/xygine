@@ -128,15 +128,16 @@ void DebugDraw::DrawTransform(const b2Transform& xf)
 
 void DebugDraw::DrawPoint(const b2Vec2& p, float32 size, const b2Color& colour)
 {
+    size *= 2.f;
     sf::Color newColour = World::boxToSfColour(colour);
     std::vector<sf::Vertex> verts =
     {
-        { World::boxToSfVec(p) - sf::Vector2f(size / 2.f, 0.f), newColour },
-        { World::boxToSfVec(p) + sf::Vector2f(size / 2.f, 0.f), newColour },
-        { World::boxToSfVec(p) + sf::Vector2f(size / 2.f, 0.f), sf::Color::Transparent },
-        { World::boxToSfVec(p) + sf::Vector2f(0.f, size / 2.f), sf::Color::Transparent },
-        { World::boxToSfVec(p) + sf::Vector2f(0.f, size / 2.f), newColour },
-        { World::boxToSfVec(p) - sf::Vector2f(0.f, size / 2.f), newColour }
+        { World::boxToSfVec(p) - sf::Vector2f(size, 0.f), newColour },
+        { World::boxToSfVec(p) + sf::Vector2f(size, 0.f), newColour },
+        { World::boxToSfVec(p) + sf::Vector2f(size, 0.f), sf::Color::Transparent },
+        { World::boxToSfVec(p) + sf::Vector2f(0.f, size), sf::Color::Transparent },
+        { World::boxToSfVec(p) + sf::Vector2f(0.f, size), newColour },
+        { World::boxToSfVec(p) - sf::Vector2f(0.f, size), newColour }
     };
 
     m_renderTarget.draw(verts.data(), verts.size(), sf::PrimitiveType::LinesStrip);

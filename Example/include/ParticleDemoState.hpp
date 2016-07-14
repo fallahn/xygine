@@ -51,7 +51,7 @@ public:
     void draw() override;
     bool handleEvent(const sf::Event& evt) override;
     void handleMessage(const xy::Message&) override;
-    xy::StateId stateID() const override
+    xy::StateID stateID() const override
     {
         return States::ID::ParticleDemo;
     }
@@ -63,8 +63,6 @@ private:
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
     xy::ShaderResource m_shaderResource;
-
-    sf::Text m_reportText;
 
     xy::Physics::World m_physWorld;
     xy::ParticleSystem::Definition m_particleDef;

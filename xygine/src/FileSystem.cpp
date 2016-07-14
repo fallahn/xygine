@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/FileSystem.hpp>
+#include <xygine/Log.hpp>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -35,12 +36,16 @@ source distribution.
 //TODO check this macro works on all windows compilers
 //(only tested in VC right now)
 #ifdef _WIN32
-
 #include <Windows.h>
-
+#ifdef _MSC_VER
+#include <direct.h> //gcc doesn't use this
+#endif //_MSC_VER
 #else
 #include <libgen.h>
 #include <dirent.h>
+
+#include <fcntl.h>
+#include <unistd.h>
 
 #endif //_WIN32
 
@@ -171,4 +176,91 @@ std::string FileSystem::getFilePath(const std::string& path)
 #endif
 
     return searchFunc('/', path);
+}
+
+bool FileSystem::createDirectory(const std::string& path)
+{
+    //TODO regex this or at least check for illegal chars
+#ifdef _WIN32
+    if (_mkdir(path.c_str()) == 0)
+    {
+        return true;
+    }
+    else
+    {
+        auto result = errno;
+        if (result == EEXIST)
+        {
+            xy::Logger::log(path + " directory already exists!", xy::Logger::Type::Info);
+        }
+        else if (result == ENOENT)
+        {
+            xy::Logger::log("Unable to create " + path + " directory not found.", xy::Logger::Type::Error);
+        }
+    }
+    return false;
+#else
+    if (mkdir(path.c_str(), 0777) == 0)
+    {
+        return true;
+    }
+    else
+    {
+        auto result = errno;
+        switch (result)
+        {
+        case EEXIST:
+            {
+                xy::Logger::log(path + " directory already exists!", xy::Logger::Type::Info);
+            }
+            break;
+        case ENOENT:
+            {
+                xy::Logger::log("Unable to create " + path + " directory not found.", xy::Logger::Type::Error);
+            }
+            break;
+        case EFAULT:
+            {
+                xy::Logger::log("Unable to create " + path + ". Reason: EFAULT", xy::Logger::Type::Error);
+            }
+            break;
+        case EACCES:
+            {
+                xy::Logger::log("Unable to create " + path + ". Reason: EACCES", xy::Logger::Type::Error);
+            }
+            break;
+        case ENAMETOOLONG:
+            {
+                xy::Logger::log("Unable to create " + path + ". Reason: ENAMETOOLONG", xy::Logger::Type::Error);
+            }
+            break;
+        case ENOTDIR:
+            {
+                xy::Logger::log("Unable to create " + path + ". Reason: ENOTDIR", xy::Logger::Type::Error);
+            }
+            break;
+        case ENOMEM:
+            {
+                xy::Logger::log("Unable to create " + path + ". Reason: ENOMEM", xy::Logger::Type::Error);
+            }
+            break;
+        }
+    }
+    return false;
+#endif //_WIN32
+}
+
+bool FileSystem::directoryExists(const std::string& path)
+{
+    struct stat info;
+    if (stat(path.c_str(), &info) != 0)
+    {
+        xy::Logger::log(path + " access denied, or doesn't exist", xy::Logger::Type::Warning);
+        return false;
+    }
+    else if (info.st_mode & S_IFDIR)
+    {
+        return true;
+    }
+    return false;
 }

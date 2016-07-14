@@ -61,7 +61,7 @@ namespace xy
     class XY_EXPORT_API ParticleController final : public Component
     {
     public:          
-        using SystemId = sf::Int32;
+        using SystemID = sf::Int32;
         using Ptr = std::unique_ptr<ParticleController>;
 
         explicit ParticleController(MessageBus&);
@@ -79,30 +79,30 @@ namespace xy
         definition is added to the controller it is paired with the
         given ID which can be used to identify a system when fired.
 
-        \param SystemId An integer value used to identify a particular
+        \param SystemID An integer value used to identify a particular
         particle system definition
         \param ParticleSystem::Definition used to create a set of
         predefined values for a particle system
 
         \see ParticleSystem::Definition
         */
-        void addDefinition(SystemId, const ParticleSystem::Definition&);
+        void addDefinition(SystemID, const ParticleSystem::Definition&);
         /*!
         \brief Fires a particle system
 
         If a particle system has been added with the given ID the system
         is then started based on its definition paramters.
 
-        \param SystemId ID of the system to fire
+        \param SystemID ID of the system to fire
         \param position World space coordinates at which the system is fired
         */
-        void fire(SystemId, const sf::Vector2f& position);
+        void fire(SystemID, const sf::Vector2f& position);
 
     private:
 
         Entity* m_entity;
         std::vector<Entity::Ptr> m_pendingDefinitions;
-        std::map<ParticleController::SystemId, std::pair<Entity*, ParticleSystem::Definition>> m_activeSystems;
+        std::map<ParticleController::SystemID, std::pair<Entity*, ParticleSystem::Definition>> m_activeSystems;
     };
 }
 #endif //XY_PARTICLE_CONTROLLER_HPP_

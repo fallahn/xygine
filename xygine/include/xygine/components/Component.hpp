@@ -72,7 +72,7 @@ namespace xy
         struct MessageHandler final
         {
             using Action = std::function<void(Component*, const Message&)>;
-            Message::Id id;
+            Message::ID id;
             Action action;
         };
 

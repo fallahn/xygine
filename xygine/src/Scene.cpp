@@ -31,6 +31,7 @@ source distribution.
 #include <xygine/components/AudioListener.hpp>
 #include <xygine/components/PointLight.hpp>
 #include <xygine/Reports.hpp>
+#include <xygine/Console.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -48,19 +49,21 @@ using namespace xy;
 using namespace std::placeholders;
 
 Scene::Scene(MessageBus& mb)
-    : m_defaultCamera   (nullptr),
+    : m_ambientColour   (51,51,51),
+    m_defaultCamera     (nullptr),
     m_activeCamera      (nullptr),
     m_messageBus        (mb),
-    m_drawDebug         (false) 
+    m_drawDebug         (false)
 {
     reset();
-
+    setupConCommands();
     m_instance = this;
 }
 
 Scene::~Scene()
 {
     m_instance = nullptr;
+    Console::unregisterCommands(this);
 }
 
 //public
@@ -327,6 +330,12 @@ void Scene::reset()
     m_layers[Layer::BackRear]->addChild(entity);
 
     m_activeCamera = m_defaultCamera;
+
+    m_ambientColour = { 51, 51, 51 };
+
+    m_reflectionTexture.create(static_cast<sf::Uint32>(DefaultSceneSize.x) / 8, static_cast<sf::Uint32>(DefaultSceneSize.y) / 8);
+    m_reflectionTexture.setRepeated(true);
+    m_reflectionTexture.setSmooth(true);
 }
 
 void Scene::addPostProcess(PostProcess::Ptr& pp)
@@ -368,9 +377,10 @@ sf::Transform Scene::getViewMatrix()
 {
     if (m_instance)
     {
-        auto camEnt = m_instance->findEntity(m_instance->m_activeCamera->getParentUID());
-        XY_ASSERT(camEnt, "could not find scene camera entity");
-        return camEnt->getWorldTransform().getInverse(); //TODO this needs to be translated by -halfView
+        const auto& view = m_instance->getView();
+        sf::Transform tx;
+        tx.translate(view.getCenter() - (view.getSize() / 2.f));
+        return tx.getInverse();
     }
     return sf::Transform();
 }
@@ -378,11 +388,19 @@ sf::Transform Scene::getViewMatrix()
 //private
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    sf::View v(m_activeCamera->getView().getCenter(), DefaultSceneSize);
+    v.rotate(180.f);
+    m_reflectionTexture.setView(v);
+    m_reflectionTexture.clear(m_activeCamera->getClearColour());
+    m_reflectionTexture.draw(*m_layers[Layer::BackRear]);
+    m_reflectionTexture.draw(*m_layers[Layer::BackMiddle]);
+    m_reflectionTexture.display();
+
     m_currentRenderPath(rt, states);
 }
 
 void Scene::defaultRenderPath(sf::RenderTarget& rt, sf::RenderStates states) const
-{
+{   
     rt.setView(m_activeCamera->getView());
  
 #ifdef _DEBUG_
@@ -449,4 +467,27 @@ void Scene::postEffectRenderPath(sf::RenderTarget& rt, sf::RenderStates states) 
 
     rt.setView(rt.getDefaultView());
     m_renderPasses.back().postEffect->apply(*m_renderPasses.back().inBuffer, rt);    
+}
+
+void Scene::setupConCommands()
+{
+    Console::addCommand("r_drawDebug",
+        [this](const std::string& params)
+    {
+        if (params.find_first_of('0') == 0 ||
+            params.find_first_of("false") == 0)
+        {
+            drawDebug(false);
+        }
+        else if (params.find_first_of('1') == 0 ||
+            params.find_first_of("true") == 0)
+        {
+            drawDebug(true);
+        }
+        else
+        {
+            Console::print("r_drawDebug: valid parameters are 0, 1, false or true");
+        }
+
+    }, this);
 }

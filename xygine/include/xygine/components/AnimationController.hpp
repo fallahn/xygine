@@ -58,7 +58,7 @@ namespace xy
     private:
 
         AnimatedDrawable* m_drawable;
-        enum AnimationId //TODO we need to ensure these are properly mapped to loaded animations
+        enum AnimationID //TODO we need to ensure these are properly mapped to loaded animations
         {
             MoveRight,
             MoveLeft,

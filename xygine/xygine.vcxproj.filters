@@ -70,12 +70,15 @@
     <Filter Include="Header Files\mesh\shaders">
       <UniqueIdentifier>{0c663f08-4b4e-4abf-a172-274fb1780768}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\imgui">
+      <UniqueIdentifier>{7e671232-4ad5-4506-94c4-5e736d732930}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\imgui">
+      <UniqueIdentifier>{c28d4e43-c780-4626-aeed-89762862b05c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AudioManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\CommandQueue.cpp">
@@ -121,9 +124,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ShaderResource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SoundPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\State.cpp">
@@ -342,12 +342,48 @@
     <ClCompile Include="src\mesh\RenderQuad.cpp">
       <Filter>Source Files\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="src\mesh\IQMBuilder.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\BoundingBox.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\SkeletonAnimation.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\Skeleton.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\RenderPass.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_demo.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_draw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_sfml.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Console.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh\DepthRenderTexture.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ComponentSoundPlayer.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\ComponentSpriteBatch.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\AudioManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\Command.hpp">
@@ -399,9 +435,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\ShaderResource.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\SoundPlayer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\State.hpp">
@@ -704,9 +737,6 @@
     <ClInclude Include="include\xygine\mesh\MaterialResource.hpp">
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\mesh\MeshBuilder.hpp">
-      <Filter>Header Files\mesh</Filter>
-    </ClInclude>
     <ClInclude Include="include\xygine\mesh\CubeBuilder.hpp">
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
@@ -727,6 +757,63 @@
     </ClInclude>
     <ClInclude Include="include\xygine\mesh\shaders\DeferredLighting.hpp">
       <Filter>Header Files\mesh\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\shaders\LightBlur.hpp">
+      <Filter>Header Files\mesh\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\IQMBuilder.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\QuadBuilder.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\BoundingBox.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\ModelBuilder.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\Skeleton.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\RenderPass.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\MaterialProperty.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\imgui\imconfig.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\imgui\imgui.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\imgui\imgui_internal.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\imgui\stb_rect_pack.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\imgui\stb_textedit.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\imgui\stb_truetype.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\imgui\imgui_sfml.h">
+      <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\Console.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\DepthRenderTexture.hpp">
+      <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\SoundPlayer.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\SpriteBatch.hpp">
+      <Filter>Header Files\components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

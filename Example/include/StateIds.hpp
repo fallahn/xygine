@@ -33,6 +33,7 @@ namespace States
     enum ID
     {
         None = 0,
+        PlatformDemo,
         ParticleDemo,
         PhysicsDemo,
         DeferredDemo,

@@ -125,6 +125,9 @@
       <AdditionalDependencies>opengl32.lib;sfml-audio.lib;sfml-graphics.lib;sfml-main.lib;sfml-network.lib;sfml-system.lib;sfml-window.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)Release\$(TargetName).dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">
     <ClCompile>
@@ -156,16 +159,29 @@
     <ClCompile Include="src\components\ComponentParticleController.cpp" />
     <ClCompile Include="src\components\ComponentParticleSystem.cpp" />
     <ClCompile Include="src\components\ComponentPointLight.cpp" />
+    <ClCompile Include="src\components\ComponentSoundPlayer.cpp" />
+    <ClCompile Include="src\components\ComponentSpriteBatch.cpp" />
     <ClCompile Include="src\components\QuadTreeComponent.cpp" />
+    <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="src\GLExtensions.cpp" />
+    <ClCompile Include="src\imgui\imgui_sfml.cpp" />
+    <ClCompile Include="src\imgui\imgui.cpp" />
+    <ClCompile Include="src\imgui\imgui_demo.cpp" />
+    <ClCompile Include="src\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\mesh\BoundingBox.cpp" />
     <ClCompile Include="src\mesh\CubeBuilder.cpp" />
+    <ClCompile Include="src\mesh\DepthRenderTexture.cpp" />
+    <ClCompile Include="src\mesh\IQMBuilder.cpp" />
     <ClCompile Include="src\mesh\MaterialProperty.cpp" />
     <ClCompile Include="src\mesh\MaterialResource.cpp" />
     <ClCompile Include="src\mesh\Mesh.cpp" />
     <ClCompile Include="src\mesh\MeshRenderer.cpp" />
     <ClCompile Include="src\mesh\Material.cpp" />
     <ClCompile Include="src\mesh\MeshResource.cpp" />
+    <ClCompile Include="src\mesh\RenderPass.cpp" />
     <ClCompile Include="src\mesh\RenderQuad.cpp" />
+    <ClCompile Include="src\mesh\Skeleton.cpp" />
+    <ClCompile Include="src\mesh\SkeletonAnimation.cpp" />
     <ClCompile Include="src\mesh\SubMesh.cpp" />
     <ClCompile Include="src\mesh\UniformBuffer.cpp" />
     <ClCompile Include="src\mesh\VertexAttribBinding.cpp" />
@@ -179,7 +195,6 @@
     <ClCompile Include="src\parsers\pugixml.cpp" />
     <ClCompile Include="src\ParticleAffectors.cpp" />
     <ClCompile Include="src\App.cpp" />
-    <ClCompile Include="src\AudioManager.cpp" />
     <ClCompile Include="src\CommandQueue.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\FileSystem.cpp" />
@@ -217,7 +232,6 @@
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Score.cpp" />
     <ClCompile Include="src\ShaderResource.cpp" />
-    <ClCompile Include="src\SoundPlayer.cpp" />
     <ClCompile Include="src\spriter\SpriterDocument.cpp" />
     <ClCompile Include="src\spriter\SpriterDocumentAttribute.cpp" />
     <ClCompile Include="src\spriter\SpriterDocumentElement.cpp" />
@@ -240,22 +254,40 @@
   <ItemGroup>
     <ClInclude Include="include\xygine\components\Model.hpp" />
     <ClInclude Include="include\xygine\components\PointLight.hpp" />
+    <ClInclude Include="include\xygine\components\SoundPlayer.hpp" />
+    <ClInclude Include="include\xygine\components\SpriteBatch.hpp" />
     <ClInclude Include="include\xygine\Config.hpp" />
+    <ClInclude Include="include\xygine\Console.hpp" />
     <ClInclude Include="include\xygine\detail\GLCheck.hpp" />
     <ClInclude Include="include\xygine\detail\GLExtensions.hpp" />
+    <ClInclude Include="include\xygine\imgui\imconfig.h" />
+    <ClInclude Include="include\xygine\imgui\imgui_sfml.h" />
+    <ClInclude Include="include\xygine\imgui\imgui.h" />
+    <ClInclude Include="include\xygine\imgui\imgui_internal.h" />
+    <ClInclude Include="include\xygine\imgui\stb_rect_pack.h" />
+    <ClInclude Include="include\xygine\imgui\stb_textedit.h" />
+    <ClInclude Include="include\xygine\imgui\stb_truetype.h" />
+    <ClInclude Include="include\xygine\mesh\BoundingBox.hpp" />
     <ClInclude Include="include\xygine\mesh\CubeBuilder.hpp" />
+    <ClInclude Include="include\xygine\mesh\DepthRenderTexture.hpp" />
+    <ClInclude Include="include\xygine\mesh\IQMBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\Material.hpp" />
+    <ClInclude Include="include\xygine\mesh\MaterialProperty.hpp" />
     <ClInclude Include="include\xygine\mesh\MaterialResource.hpp" />
     <ClInclude Include="include\xygine\mesh\Mesh.hpp" />
-    <ClInclude Include="include\xygine\mesh\MeshBuilder.hpp" />
+    <ClInclude Include="include\xygine\mesh\ModelBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\MeshRenderer.hpp" />
     <ClInclude Include="include\xygine\mesh\MeshResource.hpp" />
+    <ClInclude Include="include\xygine\mesh\QuadBuilder.hpp" />
+    <ClInclude Include="include\xygine\mesh\RenderPass.hpp" />
     <ClInclude Include="include\xygine\mesh\RenderQuad.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\Default.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\DeferredLighting.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\DeferredRenderer.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\GeomVis.hpp" />
+    <ClInclude Include="include\xygine\mesh\shaders\LightBlur.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\SSAO.hpp" />
+    <ClInclude Include="include\xygine\mesh\Skeleton.hpp" />
     <ClInclude Include="include\xygine\mesh\StaticConsts.hpp" />
     <ClInclude Include="include\xygine\mesh\SubMesh.hpp" />
     <ClInclude Include="include\xygine\mesh\UniformBuffer.hpp" />
@@ -274,7 +306,6 @@
     <ClInclude Include="include\xygine\ParticleAffectors.hpp" />
     <ClInclude Include="include\xygine\App.hpp" />
     <ClInclude Include="include\xygine\Assert.hpp" />
-    <ClInclude Include="include\xygine\AudioManager.hpp" />
     <ClInclude Include="include\xygine\Command.hpp" />
     <ClInclude Include="include\xygine\components\AnimatedDrawable.hpp" />
     <ClInclude Include="include\xygine\components\AnimationController.hpp" />
@@ -338,7 +369,6 @@
     <ClInclude Include="include\xygine\shaders\PostChromeAb.hpp" />
     <ClInclude Include="include\xygine\shaders\PostDownSample.hpp" />
     <ClInclude Include="include\xygine\shaders\PostGaussianBlur.hpp" />
-    <ClInclude Include="include\xygine\SoundPlayer.hpp" />
     <ClInclude Include="include\xygine\spriter\Document.hpp" />
     <ClInclude Include="include\xygine\spriter\DocumentAttribute.hpp" />
     <ClInclude Include="include\xygine\spriter\DocumentElement.hpp" />

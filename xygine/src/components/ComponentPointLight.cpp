@@ -39,7 +39,8 @@ PointLight::PointLight(MessageBus& mb, float range, float radius, const sf::Colo
     m_position      (0.f, 0.f, 1300.f),
     m_intensity     (1.f),
     m_diffuseColour (diffuse),
-    m_specularColour(spec)
+    m_specularColour(spec),
+    m_castShadows   (false)
 {
     XY_ASSERT(radius > 0, "light radius must be greater than zero");
 }

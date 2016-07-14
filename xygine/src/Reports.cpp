@@ -26,9 +26,14 @@ source distribution.
 *********************************************************************/
 
 #include <xygine/Reports.hpp>
-
+#include <xygine/Config.hpp>
+#include <xygine/imgui/imgui.h>
 #include <xygine/Assert.hpp>
+
+#include <SFML/System/Clock.hpp>
+
 #include <algorithm>
+#include <array>
 
 using namespace xy;
 
@@ -36,6 +41,8 @@ namespace
 {
     const std::string interweebl(": ");
     StatsReporter reporter;
+    bool visible = false;
+    sf::Clock frameTimer;
 }
 
 //---exported functions---//
@@ -103,4 +110,49 @@ void StatsReporter::clear()
 {
     m_string.clear();
     m_data.clear();
+}
+
+void StatsReporter::show()
+{
+    visible = !visible;
+}
+
+//private
+void StatsReporter::draw()
+{
+    if (!visible) return;
+    nim::SetNextWindowSize({ 300, 600 });
+    nim::Begin("Stats:", &visible, ImGuiWindowFlags_ShowBorders);
+
+    static std::array<float, 90> timeValues = { 0.f };
+    static std::array<float, 90> frameValues = { 0.f };
+    static std::size_t valuesIndex = 0;
+
+    const float elapsed = frameTimer.restart().asSeconds();
+    const float frameTime = elapsed * 1000.f;
+    const float frameRate = 1.f / elapsed;
+
+    static float avgTime = 0.f;
+    avgTime -= avgTime / timeValues.size();
+    avgTime += frameTime / timeValues.size();
+    std::string avgTStr = "Avg: " + std::to_string(avgTime) + " (ms)";
+
+    static float avgFrame = 0.f;
+    avgFrame -= avgFrame / frameValues.size();
+    avgFrame += frameRate / frameValues.size();
+    std::string avgFStr = "Avg: " + std::to_string(avgFrame);
+
+    timeValues[valuesIndex] = frameTime;
+    frameValues[valuesIndex] = frameRate;
+    valuesIndex = (valuesIndex + 1) % timeValues.size();
+    nim::PlotLines("Frame Time", timeValues.data(), timeValues.size(), valuesIndex, avgTStr.c_str(), 0.f, std::max(33.f, frameTime), ImVec2(0, 40));
+    nim::PlotLines("Frame Rate", frameValues.data(), frameValues.size(), valuesIndex, avgFStr.c_str(), 0.f, std::max(950.f, frameRate), ImVec2(0, 40));
+
+    nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetItemsLineHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
+    nim::TextUnformatted(Stats::getString().c_str(), Stats::getString().c_str() + Stats::getString().size());
+    nim::SetScrollHere();
+    nim::EndChild();
+    nim::End();
+
+    //nim::ShowTestWindow(&visible);
 }

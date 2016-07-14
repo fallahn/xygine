@@ -1,7 +1,7 @@
 set(XY_SRC
   ${XY_DIR}/App.cpp
-  ${XY_DIR}/AudioManager.cpp
   ${XY_DIR}/CommandQueue.cpp 
+  ${XY_DIR}/Console.cpp 
   ${XY_DIR}/Entity.cpp
   ${XY_DIR}/FileSystem.cpp
   ${XY_DIR}/FontResource.cpp
@@ -21,7 +21,6 @@ set(XY_SRC
   ${XY_DIR}/Scene.cpp
   ${XY_DIR}/Score.cpp
   ${XY_DIR}/ShaderResource.cpp
-  ${XY_DIR}/SoundPlayer.cpp
   ${XY_DIR}/State.cpp
   ${XY_DIR}/StateStack.cpp
 
@@ -35,16 +34,29 @@ set(XY_SRC
   ${XY_DIR}/components/ComponentParticleController.cpp
   ${XY_DIR}/components/ComponentParticleSystem.cpp  
   ${XY_DIR}/components/ComponentPointLight.cpp  
+  ${XY_DIR}/components/ComponentSoundPlayer.cpp
+  ${XY_DIR}/components/ComponentSpriteBatch.cpp
   ${XY_DIR}/components/QuadTreeComponent.cpp 
 
+  ${XY_DIR}/imgui/imgui.cpp
+  ${XY_DIR}/imgui/imgui_demo.cpp
+  ${XY_DIR}/imgui/imgui_draw.cpp
+  ${XY_DIR}/imgui/imgui_sfml.cpp
+
+  ${XY_DIR}/mesh/BoundingBox.cpp
   ${XY_DIR}/mesh/CubeBuilder.cpp
+  ${XY_DIR}/mesh/DepthRenderTexture.cpp
+  ${XY_DIR}/mesh/IQMBuilder.cpp
   ${XY_DIR}/mesh/Material.cpp
   ${XY_DIR}/mesh/MaterialProperty.cpp
   ${XY_DIR}/mesh/MaterialResource.cpp
   ${XY_DIR}/mesh/Mesh.cpp
   ${XY_DIR}/mesh/MeshRenderer.cpp
   ${XY_DIR}/mesh/MeshResource.cpp
+  ${XY_DIR}/mesh/RenderPass.cpp
   ${XY_DIR}/mesh/RenderQuad.cpp
+  ${XY_DIR}/mesh/Skeleton.cpp
+  ${XY_DIR}/mesh/SkeletonAnimation.cpp
   ${XY_DIR}/mesh/SubMesh.cpp
   ${XY_DIR}/mesh/UniformBuffer.cpp
   ${XY_DIR}/mesh/VertexAttribBinding.cpp

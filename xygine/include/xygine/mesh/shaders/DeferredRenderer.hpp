@@ -36,6 +36,70 @@ namespace xy
     {
         namespace Mesh
         {
+            const static std::string ShadowVertex =
+                "in vec3 a_position;\n"
+
+                "#if defined(SKINNED)\n"
+                "in vec4 a_boneIndices;\n"
+                "in vec4 a_boneWeights;\n"
+                "uniform mat4[80] u_boneMatrices;\n"
+                "#endif\n"
+
+                "uniform mat4 u_worldMatrix;\n"
+
+                "layout (std140) uniform u_matrixBlock\n"
+                "{\n" \
+                "    mat4 u_viewMatrix;\n"
+                "    mat4 u_projectionMatrix;\n"
+                "    mat4 u_lightViewProjectionMatrix;\n"
+                "};\n"
+
+                "out vec4 v_position;\n"
+
+                "void main()\n"
+                "{\n"
+                "    vec3 position = a_position;\n"
+
+                "#if defined(SKINNED)\n"
+                "	mat4 skinMatrix = u_boneMatrices[int(a_boneIndices.x)] * a_boneWeights.x;\n"
+                "	skinMatrix += u_boneMatrices[int(a_boneIndices.y)] * a_boneWeights.y;\n"
+                "	skinMatrix += u_boneMatrices[int(a_boneIndices.z)] * a_boneWeights.z;\n"
+                "	skinMatrix += u_boneMatrices[int(a_boneIndices.w)] * a_boneWeights.w;\n"
+                "	position = (skinMatrix * vec4(position, 1.0)).xyz;\n"
+                "#endif\n" \
+                "    //gl_Position = u_projectionMatrix * u_worldViewMatrix * vec4(position, 1.0);\n"
+                "    gl_Position = u_lightViewProjectionMatrix * u_worldMatrix * vec4(position, 1.0);\n"
+                "    v_position = gl_Position;\n"
+                "}";
+
+            const static std::string ShadowFragment =
+                "#version 150\n"
+                "//out vec4 fragOut;\n"
+                "void main()\n"
+                "{\n"
+                "    //fragOut = vec4(vec3(gl_FragCoord.z), 1.0);\n"
+                "}";
+
+            const static std::string ShadowFragmentVSM =
+                "#version 150\n"
+                "in vec4 v_position;\n"
+                "out vec4 fragOut;\n"
+
+                "void main()\n"
+                "{\n"
+                "    float depth = v_position.z / v_position.w;\n"
+                "    depth = depth * 0.5 + 0.5;\n"
+
+                "    float moment1 = depth;\n"
+                "    float moment2 = depth * depth;\n"
+
+                "    float dx = dFdx(depth);\n"
+                "    float dy = dFdy(depth);\n"
+                "    moment2 += 0.25*(dx*dx + dy*dy);\n"
+
+                "    fragOut = vec4(moment1, moment2, 0.0, 0.0);\n"
+                "}";
+
             const static std::string DeferredVertex =
                 "in vec3 a_position;\n" \
                 "in vec3 a_normal;\n" \
@@ -49,6 +113,12 @@ namespace xy
                 "in vec3 a_bitangent;\n" \
                 "#endif\n" \
 
+                "#if defined(SKINNED)\n" \
+                "in vec4 a_boneIndices;\n" \
+                "in vec4 a_boneWeights;\n" \
+                "uniform mat4[80] u_boneMatrices;\n" \
+                "#endif\n"
+
                 "uniform mat4 u_worldMatrix;\n" \
                 "uniform mat4 u_worldViewMatrix;\n" \
                 "uniform mat3 u_normalMatrix;\n" \
@@ -57,36 +127,60 @@ namespace xy
                 "{\n" \
                 "    mat4 u_viewMatrix;\n" \
                 "    mat4 u_projectionMatrix;\n" \
+                "    mat4 u_lightViewProjectionMatrix;\n" \
                 "};\n" \
 
                 "#if !defined(BUMP)\n"
                 "out vec3 v_normalVector;\n" \
                 "#else\n"
-                "out mat3 v_tbn;\n" \
+                "out vec3 v_tbn[3];\n" \
                 "#endif\n"
-                "out vec3 v_viewPosition;\n" \
+                "out vec3 v_worldPosition;\n" \
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
                 "out vec2 v_texCoord;\n" \
                 "#endif\n" \
 
                 "void main()\n" \
                 "{\n" \
-                "    vec4 viewPosition = u_worldViewMatrix * vec4(a_position, 1.0);\n" \
-                "    v_viewPosition = viewPosition.xyz;\n" \
-                "    gl_Position = u_projectionMatrix * viewPosition;\n" \
+                "    vec3 position = a_position;\n" \
+
+                "#if defined(SKINNED)\n" \
+                "	mat4 skinMatrix = u_boneMatrices[int(a_boneIndices.x)] * a_boneWeights.x;\n" \
+                "	skinMatrix += u_boneMatrices[int(a_boneIndices.y)] * a_boneWeights.y;\n" \
+                "	skinMatrix += u_boneMatrices[int(a_boneIndices.z)] * a_boneWeights.z;\n" \
+                "	skinMatrix += u_boneMatrices[int(a_boneIndices.w)] * a_boneWeights.w;\n" \
+                "	position = (skinMatrix * vec4(position, 1.0)).xyz;\n" \
+                "#endif\n" \
+
+                "    v_worldPosition = (u_worldMatrix * vec4(position, 1.0)).xyz;\n" \
+                "    gl_Position = u_projectionMatrix * u_worldViewMatrix * vec4(position, 1.0);\n" \
 
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
                 "    v_texCoord = a_texCoord0;\n" \
                 "#endif\n" \
 
+                "    vec3 normal = a_normal;\n" \
+                "#if defined(SKINNED)\n" \
+                "    normal = (skinMatrix * vec4(normal, 0.0)).xyz;\n" \
+                "#endif\n" \
+
+                "#if defined(BUMP)\n" \
+                "    vec3 tangent = a_tangent;\n" \
+                "    vec3 bitangent = a_bitangent;\n" \
+                "#if defined(SKINNED)\n" \
+                "    tangent = (skinMatrix * vec4(tangent, 0.0)).xyz;\n" \
+                "    bitangent = (skinMatrix * vec4(bitangent, 0.0)).xyz;\n" \
+                "#endif\n" \
+                "#endif\n" \
+
                 "#if !defined(BUMP)\n"
-                "    v_normalVector = u_normalMatrix * a_normal;\n" \
+                "    v_normalVector = u_normalMatrix * normal;\n" \
                 "#else\n"
-                "    mat3 normalMatrix = inverse(mat3(u_worldViewMatrix));\n" \
-                "    vec3 t = normalize(normalMatrix * a_tangent);\n" \
-                "    vec3 b = normalize(normalMatrix * a_bitangent);\n" \
-                "    vec3 n = normalize(normalMatrix * a_normal);\n" \
-                "    v_tbn = mat3(t, b, n);\n" \
+                /*"    mat3 normalMatrix = inverse(mat3(u_worldMatrix));\n" \*/
+                "    v_tbn[0] = normalize(u_worldMatrix * vec4(tangent, 0.0)).xyz;\n" \
+                "    v_tbn[1] = normalize(u_worldMatrix * vec4(bitangent, 0.0)).xyz;\n" \
+                "    v_tbn[2] = normalize(u_worldMatrix * vec4(normal, 0.0)).xyz;\n" \
+                /*"    v_tbn = mat3(t, b, n);\n" \*/
                 "#endif\n"
                 "}";
 
@@ -94,9 +188,9 @@ namespace xy
                 "#if !defined(BUMP)\n" \
                 "in vec3 v_normalVector;\n"
                 "#else\n" \
-                "in mat3 v_tbn;\n" \
+                "in vec3 v_tbn[3];\n" \
                 "#endif\n" \
-                "in vec3 v_viewPosition;\n" \
+                "in vec3 v_worldPosition;\n" \
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
                 "in vec2 v_texCoord;\n" \
                 "#endif\n" \
@@ -109,8 +203,13 @@ namespace xy
                 "#if defined(BUMP)\n"
                 "uniform sampler2D u_normalMap;\n" \
                 "#endif\n" \
+                "#if defined(BUMP) || defined(TEXTURED)\n"
+                "uniform sampler2D u_maskMap;\n"
+                "#else\n"
+                "uniform vec4 u_maskColour = vec4(vec3(0.0), 1.0);\n"
+                "#endif\n"
 
-                "out vec4[3] fragOut;\n" \
+                "out vec4[4] fragOut;\n" \
 
                 "const float nearPlane = 0.1;\n" \
                 "float lineariseDepth(float val)\n" \
@@ -127,19 +226,27 @@ namespace xy
                 "    fragOut[0] = u_colour;\n" \
                 "#endif\n" \
 
-                "    fragOut[1].rgb = v_viewPosition;\n" \
-                "    fragOut[1].a = lineariseDepth(gl_FragCoord.z);\n" \
-
                 "#if !defined(BUMP)\n" \
-                "    fragOut[2] = vec4(normalize(v_normalVector), 1.0);\n" \
+                "    fragOut[1] = vec4(normalize(v_normalVector), 1.0);\n" \
                 "#else\n" \
                 "    vec3 normal = texture(u_normalMap, v_texCoord).rgb * 2.0 - 1.0;\n" \
-                "    fragOut[2] = vec4(normalize(v_tbn * normal), 1.0);\n" \
+                "    fragOut[1] = vec4(normalize(v_tbn[0] * normal.x + v_tbn[1] * normal.y + v_tbn[2] * normal.z).rgb, 1.0);\n" \
                 "#endif\n"
+                "#if defined(BUMP) || defined(TEXTURED)\n"
+                "    fragOut[2] = texture(u_maskMap, v_texCoord);\n"
+                "#else\n"
+                "    fragOut[2] = u_maskColour;\n"
+                "#endif\n"
+                "    fragOut[3].rgb = v_worldPosition;\n" \
+                "    fragOut[3].a = lineariseDepth(gl_FragCoord.z);\n" \
                 "}";
         }
     }
 }
+
+#define SHADOW_VERTEX "#version 150\n" + xy::Shader::Mesh::ShadowVertex
+#define SHADOW_VERTEX_SKINNED "#version 150\n#define SKINNED\n" + xy::Shader::Mesh::ShadowVertex
+#define SHADOW_FRAGMENT xy::Shader::Mesh::ShadowFragment
 
 #define DEFERRED_COLOURED_VERTEX "#version 150\n" + xy::Shader::Mesh::DeferredVertex
 #define DEFERRED_COLOURED_FRAGMENT "#version 150\n" + xy::Shader::Mesh::DeferredFragment
@@ -152,5 +259,8 @@ namespace xy
 
 #define DEFERRED_TEXTURED_BUMPED_VERTEX "#version 150\n#define BUMP\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredVertex
 #define DEFERRED_TEXTURED_BUMPED_FRAGMENT "#version 150\n#define BUMP\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredFragment
+
+#define DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX "#version 150\n#define BUMP\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex
+#define DEFERRED_TEXTURED_SKINNED_VERTEX "#version 150\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex
 
 #endif //XY_MESH_DEFERRED_HPP_

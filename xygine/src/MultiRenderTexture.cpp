@@ -31,7 +31,6 @@ source distribution.
 #include <xygine/Assert.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/detail/GLCheck.hpp>
-#include <xygine/App.hpp>
 
 #include <vector>
 
@@ -68,7 +67,7 @@ MultiRenderTexture::~MultiRenderTexture()
 }
 
 //public
-bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 count, bool depthBuffer, bool floatingPoint)
+bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 count, bool depthBuffer)
 {    
     if (!glGenFramebuffers)
     {
@@ -90,13 +89,6 @@ bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 
             return false;
         }
         m_textures[i].setSmooth(false);
-
-        if (floatingPoint) //recreate the texture with float 32 type
-        {
-            glCheck(glBindTexture(GL_TEXTURE_2D, m_textures[i].getNativeHandle()));
-            glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0));
-            glCheck(glBindTexture(GL_TEXTURE_2D, 0));
-        }
     }
 
     {
@@ -122,8 +114,8 @@ bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 
                 return false;
             }
             glCheck(glBindRenderbuffer(GL_RENDERBUFFER, m_depthbuffer));
-            glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height));
-            glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer));
+            glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
+            glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer));
         }
         //attach textures
         for (auto i = 0u; i < count; ++i)

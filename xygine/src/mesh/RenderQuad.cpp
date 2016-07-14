@@ -43,8 +43,7 @@ namespace
 RenderQuad::RenderQuad(const sf::Vector2f& size, sf::Shader& shader)
     : m_mesh    (layout, 4),
     m_material  (shader),
-    m_vao       (m_mesh, m_material),
-    m_shader    (shader)   
+    m_vao       (m_mesh, m_material)
 {
     std::array<float, 20> vertData = 
     {
@@ -58,7 +57,17 @@ RenderQuad::RenderQuad(const sf::Vector2f& size, sf::Shader& shader)
 }
 
 //public
-sf::Shader& RenderQuad::getShader() const { return m_shader; }
+sf::Shader& RenderQuad::getShader() const { return m_material.getShader(); }
+
+void RenderQuad::addRenderPass(RenderPass::ID id, sf::Shader& shader)
+{
+    m_material.addRenderPass(id, shader);
+}
+
+void RenderQuad::setActivePass(RenderPass::ID id)
+{
+    m_material.setActivePass(id);
+}
 
 //private
 void RenderQuad::draw(sf::RenderTarget&, sf::RenderStates) const

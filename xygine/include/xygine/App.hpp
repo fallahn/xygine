@@ -210,12 +210,48 @@ namespace xy
         void setPlayerInitials(const std::string&);
 
         /*!
+        \brief Allows adding a custom imGui based window.
+        Drawing imGui windows directly within the update loop may
+        cause flickering on occassions when the App is updated
+        more than once in a single frame. Adding a window function
+        here ensures that it is drawn correctly. To help prevent
+        registering the same window multiple times a pointer to the
+        registering object can optionally passed to this function.
+        Using the same pointer with removeUserWindow() will remove
+        the function, for example when the registering object is destroyed.
+        */
+        static void addUserWindow(const std::function<void()>&, const void* = nullptr);
+
+        /*!
+        \brief Removes a registered user window if it exists.
+        Care should be taken to remove user windows which are registered
+        by objects which no longer exist, so that invalid window functions
+        are not called. Passing in a pointer to an object, usually via
+        its destructor, will make sure any windows that object registered
+        via addUserWindow() will be removed.
+        */
+        static void removeUserWindows(const void*);
+
+        /*!
         \brief Returns the mouse position in world coordinates
 
         This is only valid while an instance of the app is running
         and will cause an assertion error otherwise
         */
         static sf::Vector2f getMouseWorldPosition();
+
+        /*!
+        \brief Sets the visibility of the mouse cursor.
+        Prefer this to setting via the render window directly to allow
+        imgui windows to correctly display/hide the mouse based on their
+        visibility status
+        */
+        static void setMouseCursorVisible(bool);
+
+        /*!
+        \brief Quits the application
+        */
+        static void quit();
 
     protected:
         /*!
@@ -255,11 +291,10 @@ namespace xy
         */
         virtual void updateApp(float dt) = 0;
         /*!
-        \brief Updates the render window
-
-        The render window clear() and display() functions
-        should be called in the implementation, with any custom drawing
-        done in between
+        \brief Draws to the render window.
+        All drawing operations should be started from here. clear() and
+        display() are called automatically by xygine and need to be manually
+        used in derived applications.
         */
         virtual void draw() = 0;
 
@@ -316,6 +351,8 @@ namespace xy
 
         void handleEvents();
         void handleMessages();
+
+        void registerConCommands();
     };
 }
 #endif //XY_APP_HPP_

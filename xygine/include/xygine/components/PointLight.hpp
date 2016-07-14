@@ -124,7 +124,13 @@ namespace xy
         float getInverseRange() const;
 
         /*!
-        \brief Returns the light's radius
+        \brief Returns the range of the light
+        */
+        float getRange() const { return m_range; }
+
+        /*!
+        \brief Returns the light's radius, used by the scene
+        when culling visible light sources.
         */
         float getRadius() const;
 
@@ -138,6 +144,24 @@ namespace xy
         */
         const sf::Color& getSpecularColour() const;
 
+        /*!
+        \brief Tell this light whether or not to cast shadows.
+        When used with the MeshRenderer sub-system it is possible
+        for point lights to cast shadows. This is disabled by default
+        as, although it looks pretty, many shadow casters incur a 
+        perfomance hit. Shadow casting should generally be limited to
+        two or three lights within a scene.
+        */
+        void enableShadowCasting(bool enable) { m_castShadows = enable; }
+
+        /*!
+        \brief Returns whether or not this light should cast shadows.
+        This is used by default by the MeshRenderer sub-system. it can also
+        be used to set properties of custom shaders for effects such as
+        <a href = "http://ncase.me/sight-and-light/">this</a>.
+        */
+        bool castShadows() const { return m_castShadows; }
+
     private:
 
         float m_range;
@@ -147,6 +171,7 @@ namespace xy
         float m_intensity;
         sf::Color m_diffuseColour;
         sf::Color m_specularColour;
+        bool m_castShadows;
     };
 }
 

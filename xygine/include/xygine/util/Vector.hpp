@@ -30,6 +30,7 @@ source distribution.
 
 #include <xygine/util/Const.hpp>
 #include <xygine/util/String.hpp>
+#include <xygine/Assert.hpp>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -55,8 +56,8 @@ namespace xy
             static inline sf::Vector2f normalise(sf::Vector2f source)
             {
                 float length = std::sqrt(dot(source, source));
-                if (length != 0) source /= length;
-                return source;
+                XY_ASSERT(length != 0, "Division by zero");
+                return source /= length;
             }
             /*!
             \brief Returns length of a vector squared

@@ -22,6 +22,9 @@
     <Filter Include="Source Files\network demo">
       <UniqueIdentifier>{42cb5927-966f-4a0d-a780-2976b2d3e224}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\platform demo">
+      <UniqueIdentifier>{5ed3de57-fc98-4186-8ecd-b306cff4e0e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -90,6 +93,15 @@
     <ClInclude Include="include\RotationComponent.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\PlatformDemoState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlatformPlayerController.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlatformBackground.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -142,6 +154,15 @@
     </ClCompile>
     <ClCompile Include="src\DeferredDemoState.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlatformDemoState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlatformPlayerController.cpp">
+      <Filter>Source Files\platform demo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlatformBackground.cpp">
+      <Filter>Source Files\platform demo</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

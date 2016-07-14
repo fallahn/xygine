@@ -28,19 +28,12 @@ source distribution.
 #ifndef XY_MATERIAL_HPP_
 #define XY_MATERIAL_HPP_
 
-#include <xygine/Config.hpp>
+#include <xygine/mesh/RenderPass.hpp>
 
 #include <SFML/Graphics/Glsl.hpp>
 
-#include <string>
 #include <vector>
-#include <unordered_map>
-
-namespace sf
-{
-    class Shader;
-    class Texture;
-}
+#include <set>
 
 namespace xy
 {
@@ -68,101 +61,86 @@ namespace xy
     {
     public:
         /*!
-        Material Property.
-        Wraps material specific settings which are applied to the
-        material's shader via uniform values when the material is drawn.
+        \brief Constructor.
+        \param Shader used to create the default render pass for this material
         */
-        class XY_EXPORT_API Property final
-        {
-            friend class Material;
-        public:
-            Property(const std::string&, float);
-            Property(const std::string&, const sf::Vector2f&);
-            Property(const std::string&, const sf::Vector3f&);
-            Property(const std::string&, const sf::Color&);
-            Property(const std::string&, const sf::Transform&);
-            Property(const std::string&, const sf::Texture&);
-            ~Property() = default;
-            void setValue(float);
-            void setValue(const sf::Vector2f&);
-            void setValue(const sf::Vector3f&);
-            void setValue(const sf::Color&);
-            void setValue(const sf::Transform&);
-            void setValue(const sf::Texture&);
-            const std::string& getName() const { return m_name; }
-        private:
-            enum class Type
-            {
-                None,
-                Float,
-                Vec2,
-                Vec3,
-                Vec4,
-                Mat3,
-                Mat4,
-                Texture
-            }m_type;
-
-            union
-            {
-                float number;
-                sf::Vector2f vec2;
-                sf::Vector3f vec3;
-                sf::Color colour;
-                const sf::Transform* transform;
-                const sf::Texture* texture;
-            };
-            std::string m_name;
-            void apply(sf::Shader&) const;
-        };
-
         explicit Material(sf::Shader&);
         ~Material() = default;
+        Material(const Material&) = delete;
+        Material& operator = (const Material&) = delete;
+
+        /*
+        !\brief Adds a new pass which ues the given shader, mapped to the given ID
+        */
+        void addRenderPass(RenderPass::ID, sf::Shader&);
 
         /*!
-        \brief Binds this material for drawing
+        \brief Returns a pointer to the RenderPass with the given ID.
+        \returns nullptr if RenderPass doesn't exist
+        */
+        RenderPass* getRenderPass(RenderPass::ID);
+
+        /*!
+        \brief Sets the current active RenderPass.
+        All materials have a Default pass created with the shader supplied on 
+        construction. Subsequent passes need to be activated before drawing in
+        order to enable them, via this function.
+        \param ID if the RenderPass to activate
+        \returns true is activation successful, else false
+        */
+        bool setActivePass(RenderPass::ID) const;
+
+        /*!
+        \brief Binds this active pass for drawing
         */
         void bind() const;
 
         /*!
-        \brief Adds a new property to the Material
+        \brief Adds a new property to the Material.
+        All passes whose shader contain this property
+        are updated.
         */
-        void addProperty(const Property&);
+        void addProperty(const MaterialProperty&);
+        
         /*!
         \brief Returns a Property with the given name if it
-        exists, else returns nullptr
+        exists in the active pass, else returns nullptr
         */
-        Property* getProperty(const std::string&);
+        MaterialProperty* getProperty(const std::string&);
+        
         /*!
         \brief Add a UniformBuffer to be bound when drawing
         with the Material.
         UniformBuffers are useful for setting blocks of values
         used by multiple materials such as projection matrices.
         Care should be taken to make sure the UniformBuffer outlives
-        the Material.
-        \returns true If the UniformBuffer name was found in the shader
-        and the UniformBuffer was successfully added, else returns false
+        the Material. All Materials passes are updated if the uniform
+        block exists within the pass shader
         */
-        bool addUniformBuffer(const UniformBuffer&);
+        void addUniformBuffer(const UniformBuffer&);
 
         /*!
         \brief Returns the attribute ID of the requested vertex attribute if it
-        exists in the Material's shader, else returns -1
+        exists in the active RenderPass, else returns -1
         */
         VertexAttribID getVertexAttributeID(const std::string&) const;
 
         /*!
-        \brief Returns a reference to the Material shader
+        \brief Returns a reference to the shader belonging to the active pass
         */
-        sf::Shader& getShader() const { return m_shader; }
+        sf::Shader& getShader() const;
+
+        /*!
+        \brief Returns the uniform ID of the joint matrices if the active pass
+        supports skinning, else returns -1
+        */
+        UniformID getSkinID() const { return m_activePass->getSkinID(); }
 
     private:
-        sf::Shader& m_shader;
 
-        std::vector<Property> m_properties;
-        std::vector<std::pair<UniformBlockID, const UniformBuffer*>> m_uniformBuffers;
-
-        std::unordered_map<std::string, VertexAttribID> m_vertexAttributes;
+        std::map<RenderPass::ID, RenderPass> m_passes;
+        mutable RenderPass* m_activePass;
+        std::vector<const UniformBuffer*> m_uniformBuffers;
     };
 }
 

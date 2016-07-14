@@ -33,11 +33,12 @@ source distribution.
 #include <PhysicsDemoState.hpp>
 #include <NetworkDemoState.hpp>
 #include <DeferredDemoState.hpp>
+#include <PlatformDemoState.hpp>
 
 #include <SFML/Window/Event.hpp>
 
 Game::Game()
-    : xy::App   (sf::ContextSettings(0, 0, 0, 3, 2)),
+    : xy::App   (/*sf::ContextSettings(0, 0, 0, 3, 2, sf::ContextSettings::Core)*/),
     m_stateStack({ getRenderWindow(), *this })
 {
 
@@ -86,9 +87,7 @@ void Game::updateApp(float dt)
 
 void Game::draw()
 {
-    getRenderWindow().clear(sf::Color::Black);
     m_stateStack.draw();
-    getRenderWindow().display();
 }
 
 void Game::initialise()
@@ -113,4 +112,5 @@ void Game::registerStates()
     m_stateStack.registerState<ParticleDemoState>(States::ID::ParticleDemo);
     m_stateStack.registerState<NetworkDemoState>(States::ID::NetworkDemo);
     m_stateStack.registerState<DeferredDemoState>(States::ID::DeferredDemo);
+    m_stateStack.registerState<PlatformDemoState>(States::ID::PlatformDemo);
 }

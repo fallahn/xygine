@@ -52,7 +52,7 @@ namespace xy
     {
     public:
 
-        using Id = sf::Int32;
+        using ID = sf::Int32;
 
         ShaderResource();
         ~ShaderResource() = default;
@@ -67,7 +67,7 @@ namespace xy
         the the Unique ID should start at at least Shader::Type::Count
         \see preLoad
         */
-        sf::Shader& get(Id);
+        sf::Shader& get(ID);
         /*!
         \brief Preloads a shader.
 
@@ -75,7 +75,7 @@ namespace xy
         can be a time consuming action. Preloading shaders when other resources
         are loaded allows shaders to be returned more efficiently at run time.
 
-        \param Id A unique 32 bit integer to identify the loaded shader
+        \param ID A unique 32 bit integer to identify the loaded shader
         \param string A string containing the source for the vertex shader.
         The string can either be a constant stored within a source file, or loaded
         from an external file at run time.
@@ -83,10 +83,10 @@ namespace xy
         The string can either be a constant stored within a source file, or loaded
         from an external file at run time.
         */
-        void preload(Id, const std::string&, const std::string&);
+        void preload(ID, const std::string&, const std::string&);
 
     private:
-        std::map<Id, std::unique_ptr<sf::Shader>> m_shaders;
+        std::map<ID, std::unique_ptr<sf::Shader>> m_shaders;
     };
 }
 #endif //XY_SHADER_RESOURCE_HPP_

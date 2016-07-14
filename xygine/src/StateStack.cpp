@@ -73,7 +73,7 @@ void StateStack::handleMessage(const Message& msg)
         switch (msgData.type)
         {
         case Message::UIEvent::RequestState:
-            pushState(msgData.stateId);
+            pushState(msgData.stateID);
             break;
         default: break;
         }
@@ -82,7 +82,7 @@ void StateStack::handleMessage(const Message& msg)
     for (auto& s : m_stack) s->handleMessage(msg);
 }
 
-void StateStack::pushState(StateId id)
+void StateStack::pushState(StateID id)
 {
     if (empty() || m_stack.back()->stateID() != id)
     {
@@ -108,15 +108,15 @@ bool StateStack::empty() const
 sf::View StateStack::updateView()
 {
     //calculate the correct view size / ratio for window size
-    m_context.defaultView.setSize(1920.f, 1080.f);
-    m_context.defaultView.setCenter(960.f, 540.f);
+    m_context.defaultView.setSize(DefaultSceneSize);
+    m_context.defaultView.setCenter(DefaultSceneSize / 2.f);
 
     auto vModeWidth = static_cast<float>(m_context.appInstance.getVideoSettings().VideoMode.width);
     auto vModeHeight = static_cast<float>(m_context.appInstance.getVideoSettings().VideoMode.height);
 
     auto winSize = sf::Vector2f(vModeWidth, vModeHeight);
     float windowRatio = winSize.x / winSize.y;
-    float viewRatio = 16.f / 9.f;
+    float viewRatio = DefaultSceneSize.x / DefaultSceneSize.y;
 
     float sizeY = windowRatio / viewRatio;
     float top = (1.f - sizeY) / 2.f;
@@ -130,7 +130,7 @@ sf::View StateStack::updateView()
 }
 
 //private
-State::Ptr StateStack::createState(StateId id)
+State::Ptr StateStack::createState(StateID id)
 {
     auto result = m_factories.find(id);
     XY_ASSERT(result != m_factories.end(), "state factory is empty");
@@ -162,7 +162,7 @@ void StateStack::applyPendingChanges()
 
 //---------------------------------------
 
-StateStack::Pendingchange::Pendingchange(Action a, StateId i)
+StateStack::Pendingchange::Pendingchange(Action a, StateID i)
     : action    (a),
     id          (i)
 {

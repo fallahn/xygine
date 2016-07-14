@@ -62,7 +62,7 @@ void State::setContext(Context c)
 }
 
 //protected
-void State::requestStackPush(StateId id)
+void State::requestStackPush(StateID id)
 {
     m_stateStack.pushState(id);
 }
