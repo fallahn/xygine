@@ -50,6 +50,13 @@ if(X11_FOUND)
   include_directories(${X11_INCLUDE_DIRS})
 endif()
 
+if(APPLE)
+  if(XY_STATIC_RUNTIME)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14 -static")
+  else()
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14 -fPIC")
+  endif()
+endif()
 
   include(${CMAKE_SOURCE_DIR}/src/CMakeLists.txt)
 

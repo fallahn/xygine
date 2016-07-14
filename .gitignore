@@ -6,3 +6,6 @@ obj
 DebugShared
 DebugStatic
 ReleaseStatic
+
+# OSX #
+*.DS_Store
