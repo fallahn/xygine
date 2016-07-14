@@ -44,6 +44,11 @@ namespace
     //as warnings or errors can be highlighted
     //see https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp#L2076
     std::string output;
+#if __APPLE__
+    //Apple defines MAX_INPUT in syslimits.h
+    // We need to un-define it for this to work and compile
+    #undef MAX_INPUT
+#endif
     constexpr std::size_t MAX_INPUT = 400;
     char input[MAX_INPUT];
     std::list<std::string> buffer;
