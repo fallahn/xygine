@@ -145,22 +145,22 @@ namespace xy
             void addCollisionShapeDestroyedCallback(const CollisionShapeDestroyedCallback&);
             /*!
             \brief Adds a callback to the pre-solve listener.            
-            \returns Callback index so that callback my be unregistered again
+            \returns Callback index so that callback may be unregistered again
             */
             CallbackIndex addContactPreSolveCallback(const ContactCallback&);
             /*!
             \brief Adds a callback to the post-solve listener. 
-            \returns Callback index so callback my be unregistered again
+            \returns Callback index so callback may be unregistered again
             */
             CallbackIndex addContactPostSolveCallback(const ContactCallback&);
             /*!
             \brief Adds a callback to the contact begin listener.
-            \returns Callback index so callback my be unregistered again
+            \returns Callback index so callback may be unregistered again
             */
             CallbackIndex addContactBeginCallback(const ContactCallback&);
             /*!
             \brief Adds a callback to the contact end listener.
-            \returns Callback index so callback my be unregistered again
+            \returns Callback index so callback may be unregistered again
             */
             CallbackIndex addContactEndCallback(const ContactCallback&);
             /*!

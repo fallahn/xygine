@@ -189,7 +189,7 @@ namespace xy
         }
 
         /*!
-        \brief Find a commponent by type
+        \brief Find a component by type
 
         If multiple components of the same type are attached this function
         only returns the first instance found.

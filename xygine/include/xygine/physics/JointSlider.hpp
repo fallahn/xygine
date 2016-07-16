@@ -48,7 +48,7 @@ namespace xy
         public:
             /*!
             \brief Construtor
-            \param bodyA First bosy to which this joint is attached
+            \param bodyA First body to which this joint is attached
             \param worldAnchorPos Position in world coordinates at which this joint is connected to bodyA
             \param slideVector direction in which the second body is moved relative to the world anchor point
             */
@@ -84,7 +84,7 @@ namespace xy
             \brief Set whether or not the slide limit is enabled
 
             If the slide limiti is enable the attached bodies will slide only
-            ass far as the upper and lower limit from the anchor point
+            as far as the upper and lower limit from the anchor point
             */
             void limitEnabled(bool);
             /*!
