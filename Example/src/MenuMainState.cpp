@@ -31,6 +31,8 @@ source distribution.
 #include <xygine/ui/Button.hpp>
 #include <xygine/util/Random.hpp>
 
+#include <xygine/tilemap/Map.hpp>
+
 #include <SFML/Window/Mouse.hpp>
 
 namespace
@@ -54,6 +56,12 @@ MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
     msg->stateID = States::ID::MenuMain;
 
     xy::App::setMouseCursorVisible(false);
+
+    //xy::tmx::Map map;
+    //if (map.load("assets/maps/platform.tmx"))
+    //{
+    //    LOG("Map loaded!", xy::Logger::Type::Info);
+    //}
 }
 
 //public

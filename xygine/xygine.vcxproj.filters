@@ -76,6 +76,12 @@
     <Filter Include="Header Files\imgui">
       <UniqueIdentifier>{c28d4e43-c780-4626-aeed-89762862b05c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\tilemap">
+      <UniqueIdentifier>{fbf71865-3aad-4c66-9f95-9a5e08e8070d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tilemap">
+      <UniqueIdentifier>{fa1d85ee-4f6a-4d40-9436-72894538a160}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -380,6 +386,12 @@
     </ClCompile>
     <ClCompile Include="src\components\ComponentSpriteBatch.cpp">
       <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tilemap\miniz.c">
+      <Filter>Source Files\tilemap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tilemap\Map.cpp">
+      <Filter>Source Files\tilemap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -814,6 +826,27 @@
     </ClInclude>
     <ClInclude Include="include\xygine\components\SpriteBatch.hpp">
       <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\tilemap\Map.hpp">
+      <Filter>Header Files\tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\tilemap\Tileset.hpp">
+      <Filter>Header Files\tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\tilemap\Layer.hpp">
+      <Filter>Header Files\tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\tilemap\ObjectGroup.hpp">
+      <Filter>Header Files\tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\tilemap\ImageLayer.hpp">
+      <Filter>Header Files\tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\tilemap\Property.hpp">
+      <Filter>Header Files\tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\tilemap\FreeFuncs.hpp">
+      <Filter>Header Files\tilemap</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

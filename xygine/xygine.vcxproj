@@ -239,6 +239,8 @@
     <ClCompile Include="src\spriter\SpriterModel.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
+    <ClCompile Include="src\tilemap\Map.cpp" />
+    <ClCompile Include="src\tilemap\miniz.c" />
     <ClCompile Include="src\ui\UIButton.cpp" />
     <ClCompile Include="src\ui\UICheckBox.cpp" />
     <ClCompile Include="src\ui\UIComboBox.cpp" />
@@ -376,6 +378,13 @@
     <ClInclude Include="include\xygine\spriter\Model.hpp" />
     <ClInclude Include="include\xygine\State.hpp" />
     <ClInclude Include="include\xygine\StateStack.hpp" />
+    <ClInclude Include="include\xygine\tilemap\FreeFuncs.hpp" />
+    <ClInclude Include="include\xygine\tilemap\ImageLayer.hpp" />
+    <ClInclude Include="include\xygine\tilemap\Layer.hpp" />
+    <ClInclude Include="include\xygine\tilemap\Map.hpp" />
+    <ClInclude Include="include\xygine\tilemap\ObjectGroup.hpp" />
+    <ClInclude Include="include\xygine\tilemap\Property.hpp" />
+    <ClInclude Include="include\xygine\tilemap\Tileset.hpp" />
     <ClInclude Include="include\xygine\ui\Button.hpp" />
     <ClInclude Include="include\xygine\ui\CheckBox.hpp" />
     <ClInclude Include="include\xygine\ui\ComboBox.hpp" />

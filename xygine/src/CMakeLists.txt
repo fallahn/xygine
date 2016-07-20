@@ -97,6 +97,9 @@ set(XY_SRC
   ${XY_DIR}/spriter/SpriterHelpers.cpp
   ${XY_DIR}/spriter/SpriterModel.cpp
 
+  ${XY_DIR}/tilemap/Map.cpp
+  ${XY_DIR}/tilemap/miniz.c
+
   ${XY_DIR}/ui/UIButton.cpp
   ${XY_DIR}/ui/UICheckBox.cpp
   ${XY_DIR}/ui/UIComboBox.cpp
