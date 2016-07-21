@@ -99,6 +99,7 @@ set(XY_SRC
 
   ${XY_DIR}/tilemap/Map.cpp
   ${XY_DIR}/tilemap/miniz.c
+  ${XY_DIR}/tilemap/Tileset.cpp
 
   ${XY_DIR}/ui/UIButton.cpp
   ${XY_DIR}/ui/UICheckBox.cpp

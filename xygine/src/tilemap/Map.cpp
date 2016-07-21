@@ -63,6 +63,11 @@ bool Map::load(const std::string& path)
     }
 
     m_workingDirectory = FileSystem::getFilePath(path);
+    std::replace(m_workingDirectory.begin(), m_workingDirectory.end(), '\\', '/');
+    if (m_workingDirectory.find_last_of('/') == m_workingDirectory.size() - 1)
+    {
+        m_workingDirectory.pop_back();
+    }
 
     //find the map node and bail if it doesn't exist
     auto mapNode = doc.child("map");
@@ -174,7 +179,7 @@ bool Map::load(const std::string& path)
         if (name == "tileset")
         {
             m_tilesets.emplace_back(m_workingDirectory);
-            m_tilesets.back().parse(node);
+            m_tilesets.back().parse(node, m_textureResource);
         }
         else if (name == "layer")
         {
@@ -193,8 +198,12 @@ bool Map::load(const std::string& path)
         }
         else if (name == "properties")
         {
-            m_properties.emplace_back();
-            m_properties.back().parse(node);
+            const auto& children = node.children();
+            for (const auto& child : children)
+            {
+                m_properties.emplace_back();
+                m_properties.back().parse(child);
+            }
         }
         else
         {

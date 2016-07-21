@@ -33,6 +33,7 @@ source distribution.
 #include <xygine/tilemap/ObjectGroup.hpp>
 #include <xygine/tilemap/ImageLayer.hpp>
 #include <xygine/tilemap/Property.hpp>
+#include <xygine/Resource.hpp>
 
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -179,6 +180,8 @@ namespace xy
             std::vector<ObjectGroup> m_objectGroups;
             std::vector<ImageLayer> m_imageLayers;
             std::vector<Property> m_properties;
+
+            xy::TextureResource m_textureResource;
 
             //always returns false so we can return this
             //on load failure

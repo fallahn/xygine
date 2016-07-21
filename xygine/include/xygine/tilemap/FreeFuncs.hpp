@@ -28,6 +28,8 @@ source distribution.
 #ifndef XY_TILE_FUNCS_HPP_
 #define XY_TILE_FUNCS_HPP_
 
+#include <xygine/Log.hpp>
+
 #include <SFML/Graphics/Color.hpp>
 
 #include <string>
@@ -36,8 +38,28 @@ namespace xy
 {
     namespace tmx
     {
-        static inline sf::Color colourFromString(const std::string& str)
+        static inline sf::Color colourFromString(std::string str)
         {
+            std::remove(str.begin(), str.end(), '#');
+            if (str.size() == 6 || str.size() == 8)
+            {
+                unsigned int value, r, g, b;
+                unsigned int a = 255;
+                std::stringstream input(str);
+                input >> std::hex >> value;
+
+                r = (value >> 16) & 0xff;
+                g = (value >> 8) & 0xff;
+                b = value & 0xff;
+
+                if (str.size() == 8)
+                {
+                    a = (value >> 24) & 0xff;
+                }
+
+                return sf::Color(r, g, b, a);
+            }
+            Logger::log(str + ": not a valid colour string", Logger::Type::Error);
             return sf::Color();
         }
     }
