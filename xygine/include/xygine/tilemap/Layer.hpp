@@ -29,10 +29,13 @@ source distribution.
 #define XY_TMX_LAYER_HPP_
 
 #include <xygine/Config.hpp>
+#include <xygine/tilemap/Property.hpp>
+
 #include <SFML/Config.hpp>
 
 #include <string>
 #include <memory>
+#include <vector>
 
 namespace pugi
 {
@@ -88,13 +91,17 @@ namespace xy
             of the layer, in pixels
             */
             const sf::Vector2u& getOffset() const { return m_offset; }
-
+            /*!
+            \brief Returns the list of properties of this layer
+            */
+            const std::vector<Property>& getProperties() const { return m_properties; }
         protected:
 
             void setName(const std::string& name) { m_name = name; }
             void setOpacity(float opacity) { m_opacity = opacity; }
             void setVisible(bool visible) { m_visible = visible; }
             void setOffset(sf::Uint32 x, sf::Uint32 y) { m_offset = sf::Vector2u(x, y); }
+            void addProperty(const pugi::xml_node& node) { m_properties.emplace_back(); m_properties.back().parse(node); }
 
         private:
             std::string m_name;
@@ -102,6 +109,7 @@ namespace xy
             bool m_visible;
             sf::Vector2u m_offset;
 
+            std::vector<Property> m_properties;
         };
     }
 }

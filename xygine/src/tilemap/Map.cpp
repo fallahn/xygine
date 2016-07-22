@@ -193,7 +193,7 @@ bool Map::load(const std::string& path)
         }
         else if (name == "imagelayer")
         {
-            m_layers.emplace_back(std::make_unique<ImageLayer>());
+            m_layers.emplace_back(std::make_unique<ImageLayer>(m_workingDirectory, m_textureResource));
             m_layers.back()->parse(node);
         }
         else if (name == "properties")

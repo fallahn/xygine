@@ -25,34 +25,43 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_TMX_IMAGELAYER_HPP_
-#define XY_TMX_IMAGELAYER_HPP_
+#include <xygine/tilemap/ImageLayer.hpp>
+#include <xygine/tilemap/FreeFuncs.hpp>
+#include <xygine/parsers/pugixml.hpp>
 
-#include <xygine/tilemap/Layer.hpp>
+using namespace xy;
+using namespace xy::tmx;
 
-#include <SFML/Graphics/Texture.hpp>
-
-namespace xy
+ImageLayer::ImageLayer(const std::string& workingDir, xy::TextureResource& tr)
+    : m_workingDir      (workingDir),
+    m_textureResource   (tr)
 {
-    class TextureResource;
-    namespace tmx
+
+}
+
+//public
+void ImageLayer::parse(const pugi::xml_node& node)
+{
+    std::string attribName = node.name();
+    if (attribName != "imagelayer")
     {
-        class XY_EXPORT_API ImageLayer final : public Layer
+        Logger::log("Node not an image layer, node skipped", Logger::Type::Error);
+        return;
+    }
+
+    for (const auto& child : node.children())
+    {
+        attribName = child.name();
+        if (attribName == "image")
         {
-        public:
-            ImageLayer(const std::string&, xy::TextureResource&);
-            ~ImageLayer() = default;
-
-            Type getType() const override { return Layer::Type::Image; }
-            void parse(const pugi::xml_node&) override;
-
-            const sf::Texture& getTexture() const { return m_texture; }
-
-        private:
-            sf::Texture m_texture;
-            std::string m_workingDir;
-            xy::TextureResource& m_textureResource;
-        };
+            m_texture = parseImageNode(child, m_textureResource, m_workingDir);
+        }
+        else if (attribName == "properties")
+        {
+            for (const auto& p : child.children())
+            {
+                addProperty(p);
+            }
+        }
     }
 }
-#endif //XY_TMX_IMAGELAYER_HPP_

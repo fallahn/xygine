@@ -35,5 +35,8 @@
  </objectgroup>
  <imagelayer name="Test Image Layer" offsetx="1216" offsety="1920">
   <image source="../images/mask_test.png" width="128" height="128"/>
+  <properties>
+   <property name="image layer property" value="buns"/>
+  </properties>
  </imagelayer>
 </map>
