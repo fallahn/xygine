@@ -27,9 +27,6 @@ source distribution.
 
 #include <xygine/tilemap/Tileset.hpp>
 #include <xygine/tilemap/FreeFuncs.hpp>
-#include <xygine/parsers/pugixml.hpp>
-#include <xygine/Resource.hpp>
-#include <xygine/Log.hpp>
 
 #include <ctype.h>
 
@@ -69,7 +66,7 @@ void Tileset::parse(pugi::xml_node node, xy::TextureResource& textureResource)
     {
         //parse TSX doc
         std::string path = node.attribute("source").as_string();
-        path = resolveFilePath(path);
+        path = resolveFilePath(path, m_workingDir);
 
         //see if doc can be opened
         
@@ -111,7 +108,7 @@ void Tileset::parse(pugi::xml_node node, xy::TextureResource& textureResource)
         std::string name = node.name();
         if (name == "image")
         {
-            m_texture = parseImageNode(node, textureResource);
+            m_texture = parseImageNode(node, textureResource, m_workingDir);
         }
         else if (name == "tileoffset")
         {
@@ -148,41 +145,6 @@ void Tileset::reset()
     m_texture = sf::Texture();
     m_terrainTypes.clear();
     m_tiles.clear();
-}
-
-sf::Texture Tileset::parseImageNode(const pugi::xml_node& node, xy::TextureResource& tr)
-{
-    //LOG("found image node!", Logger::Type::Info);
-    //TODO check format attrib and data node.
-    //currently I can't see how to export embedded images
-    //from tiled so I don't know how to test this
-
-    std::string file = node.attribute("source").as_string();
-    if (file.empty())
-    {
-        Logger::log("Tileset image node has missing source property.");
-        tr.setFallbackColour(sf::Color::Magenta);
-        return tr.get("missing_tileset");
-    }
-
-    //file is a relative path so we need to resolve directory
-    //movement to working directory
-    std::string imagePath = resolveFilePath(file);
-    sf::Texture texture = tr.get(imagePath);
-
-    //if we have a transparency colour then set the
-    //matching pixels alpha to zero
-    if (node.attribute("trans"))
-    {
-        std::string colourStr = node.attribute("trans").as_string();
-        sf::Color colour = colourFromString(colourStr);
-
-        sf::Image img = texture.copyToImage();
-        img.createMaskFromColor(colour);
-        texture.update(img);
-        LOG("Set tile set transparency colour to " + colourStr, Logger::Type::Info);
-    }
-    return texture;
 }
 
 void Tileset::parseOffsetNode(const pugi::xml_node& node)
@@ -289,7 +251,7 @@ void Tileset::parseTileNode(const pugi::xml_node& node, xy::TextureResource& tr)
         }
         else if (name == "image")
         {
-            tile.texture = parseImageNode(child, tr);
+            tile.texture = parseImageNode(child, tr, m_workingDir);
         }
         else if (name == "animation")
         {
@@ -303,28 +265,4 @@ void Tileset::parseTileNode(const pugi::xml_node& node, xy::TextureResource& tr)
         }
     }
     m_tiles.push_back(tile);
-}
-
-std::string Tileset::resolveFilePath(std::string path)
-{
-    static const std::string match("../");
-    std::size_t result = path.find(match);
-    std::size_t count = 0;
-    while (result != std::string::npos)
-    {
-        count++;
-        path = path.substr(result + match.size());
-        result = path.find(match);
-    }
-
-    std::string outPath = m_workingDir;
-    for (auto i = 0u; i < count; ++i)
-    {
-        result = outPath.find_last_of('/');
-        if (result != std::string::npos)
-        {
-            outPath = outPath.substr(0, result);
-        }
-    }
-    return std::move(outPath += '/' + path);
 }

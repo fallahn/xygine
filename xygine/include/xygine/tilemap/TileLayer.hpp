@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_TMX_OBJECTGROUP_HPP_
-#define XY_TMX_OBJECTGROUP_HPP_
+#ifndef XY_TILELAYER_HPP_
+#define XY_TILELAYER_HPP_
 
 #include <xygine/tilemap/Layer.hpp>
 
@@ -34,16 +34,19 @@ namespace xy
 {
     namespace tmx
     {
-        class XY_EXPORT_API ObjectGroup final : public Layer
+        /*!
+        \brief A layer made up from a series of tile sets
+        */
+        class XY_EXPORT_API TileLayer final : public Layer
         {
         public:
-            ObjectGroup() {};
-            ~ObjectGroup() = default;
+            TileLayer() {};
+            ~TileLayer() = default;
 
-            Type getType() const override { return Layer::Type::Object; }
-            void parse(const pugi::xml_node&) override {};
+            Type getType() const override { return Layer::Type::Tile; }
+            void parse(const pugi::xml_node&) override {}
         };
     }
 }
 
-#endif //XY_TMX_OBJECTGROUP_HPP_
+#endif //XY_TILE_LAYER_HPP_

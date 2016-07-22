@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="left-down" width="200" height="40" tilewidth="64" tileheight="64" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="left-down" width="200" height="40" tilewidth="64" tileheight="64" nextobjectid="6">
+ <properties>
+  <property name="test map property" type="float" value="12.43"/>
+ </properties>
  <tileset firstgid="1" source="../images/tilemap/platform.tsx"/>
  <layer name="Far" width="200" height="40">
   <data encoding="base64" compression="zlib">
@@ -16,4 +19,21 @@
    eJzt2+FqwjAUBtDihO2fbnPv/6rbYGUxNOuqbW9izoEgIsqF+jVpczsMAAAAAACkPqILgIq9RxdA1U7RBQSTDyiTjz4dowtoxJr5eP0a52T0PjfX7PDzuuUxajmDY+3mD7byFF3AHcba5YN7nSfGt0PxG/WLzke6FnsLqgFKovNBXVwrXhvnvsswPT9ODed5lvC/YU/5+t45HwCgX+la0HUJsIaWexBga3M9CM+7VAH1SNedf/Ug9JCNUm8G9Mxzm1CmrwfKWsrHXN/RlP/s7S/9TfqR58N9PPiV5+PWZ4n0YPGI1soHPKJL9r7lZ+0AAAAgZQ+Bnr3MfO4eKb3LM5Lujy29Rzq3t3ZLX8VeTkPd9QHU4hO/Kwa1
   </data>
  </layer>
+ <objectgroup name="Objects">
+  <object id="1" name="Buns" type="Floor" x="128" y="2496" width="2240" height="64"/>
+  <object id="2" name="Flaps" type="Wall" x="0" y="896" width="64" height="1536">
+   <properties>
+    <property name="Custom Object Property" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="3" name="Dicketry" type="Wall" x="64" y="2432">
+   <polyline points="0,0 64,64"/>
+  </object>
+  <object id="4" x="2368" y="2496">
+   <polyline points="0,0 0,-64 64,-64 64,-128 256,-128 256,-192 384,-192 384,-256 448,-256 448,-320 576,-320 576,-384 704,-384 704,-448 1344,-448 1344,-384 1408,-384 1408,-320 1472,-320 1472,-256 1536,-256 1536,-192 1600,-192 1600,-128 1728,-128 1728,-64 1792,-64 1792,0"/>
+  </object>
+ </objectgroup>
+ <imagelayer name="Test Image Layer" offsetx="1216" offsety="1920">
+  <image source="../images/mask_test.png" width="128" height="128"/>
+ </imagelayer>
 </map>

@@ -386,6 +386,7 @@
     <ClInclude Include="include\xygine\tilemap\Map.hpp" />
     <ClInclude Include="include\xygine\tilemap\ObjectGroup.hpp" />
     <ClInclude Include="include\xygine\tilemap\Property.hpp" />
+    <ClInclude Include="include\xygine\tilemap\TileLayer.hpp" />
     <ClInclude Include="include\xygine\tilemap\Tileset.hpp" />
     <ClInclude Include="include\xygine\ui\Button.hpp" />
     <ClInclude Include="include\xygine\ui\CheckBox.hpp" />

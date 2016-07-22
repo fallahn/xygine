@@ -28,24 +28,20 @@ source distribution.
 #ifndef XY_TMX_IMAGELAYER_HPP_
 #define XY_TMX_IMAGELAYER_HPP_
 
-#include <xygine/Config.hpp>
-
-namespace pugi
-{
-    class xml_node;
-}
+#include <xygine/tilemap/Layer.hpp>
 
 namespace xy
 {
     namespace tmx
     {
-        class XY_EXPORT_API ImageLayer final
+        class XY_EXPORT_API ImageLayer final : public Layer
         {
         public:
             ImageLayer() {};
             ~ImageLayer() = default;
 
-            void parse(const pugi::xml_node&) {};
+            Type getType() const override { return Layer::Type::Image; }
+            void parse(const pugi::xml_node&) override {};
         };
     }
 }

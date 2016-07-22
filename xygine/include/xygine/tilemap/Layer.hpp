@@ -29,8 +29,10 @@ source distribution.
 #define XY_TMX_LAYER_HPP_
 
 #include <xygine/Config.hpp>
+#include <SFML/Config.hpp>
 
 #include <string>
+#include <memory>
 
 namespace pugi
 {
@@ -43,15 +45,63 @@ namespace xy
     {
         /*!
         \brief Represents a layer of a tmx format tile map.
-        
+        This is an abstract base class from which all layer
+        types are derived.
         */
-        class XY_EXPORT_API Layer final
+        class XY_EXPORT_API Layer
         {
         public:
-            Layer() {};
-            ~Layer() = default;
+            using Ptr = std::unique_ptr<Layer>;
 
-            void parse(const pugi::xml_node&) {};
+            Layer() : m_opacity(1.f), m_visible(true) {};
+            virtual ~Layer() = default;
+
+            enum class Type
+            {
+                Tile,
+                Object,
+                Image
+            };
+
+            /*!
+            \brief Returns a Type value representing the concrete type
+            */
+            virtual Type getType() const = 0;
+            /*!
+            \brief Attempts to parse the specific node layer type
+            */
+            virtual void parse(const pugi::xml_node&) = 0;
+            /*!
+            \brief Returns the name of the layer
+            */
+            const std::string& getName() const { return m_name; }
+            /*!
+            \brief Returns the opacity value for the layer
+            */
+            float getOpacity() const { return m_opacity; }
+            /*!
+            \brief Returns whether this layer is visible or not
+            */
+            bool getVisible() const { return m_visible; }
+            /*!
+            \brief Returns the offset from the top left corner
+            of the layer, in pixels
+            */
+            const sf::Vector2u& getOffset() const { return m_offset; }
+
+        protected:
+
+            void setName(const std::string& name) { m_name = name; }
+            void setOpacity(float opacity) { m_opacity = opacity; }
+            void setVisible(bool visible) { m_visible = visible; }
+            void setOffset(sf::Uint32 x, sf::Uint32 y) { m_offset = sf::Vector2u(x, y); }
+
+        private:
+            std::string m_name;
+            float m_opacity;
+            bool m_visible;
+            sf::Vector2u m_offset;
+
         };
     }
 }

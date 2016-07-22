@@ -190,13 +190,10 @@ namespace xy
 
             void reset();
 
-            sf::Texture parseImageNode(const pugi::xml_node&, xy::TextureResource&);
             void parseOffsetNode(const pugi::xml_node&);
             void parsePropertyNode(const pugi::xml_node&);
             void parseTerrainNode(const pugi::xml_node&);
             void parseTileNode(const pugi::xml_node&, xy::TextureResource&);
-
-            std::string resolveFilePath(std::string);
         };
     }
 }

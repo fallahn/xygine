@@ -30,8 +30,6 @@ source distribution.
 
 #include <xygine/tilemap/Tileset.hpp>
 #include <xygine/tilemap/Layer.hpp>
-#include <xygine/tilemap/ObjectGroup.hpp>
-#include <xygine/tilemap/ImageLayer.hpp>
 #include <xygine/tilemap/Property.hpp>
 #include <xygine/Resource.hpp>
 
@@ -93,6 +91,9 @@ namespace xy
         to a Scene they can be interacted with in the same way as any other
         xygine Entity/Component, providing a flexible interface with tile
         maps.
+
+        The class also provides direct read-only access to map data so that 
+        it may be used for any custom interpretation.
         */
         class XY_EXPORT_API Map final
         {
@@ -158,6 +159,21 @@ namespace xy
             \brief Returns the background colour of the map.
             */
             const sf::Color& getBackgroundColour() const { return m_backgroundColour; }
+            /*!
+            \brief Returns a reference to the vector of tile sets used by the map
+            */
+            const std::vector<Tileset>& getTilesets() const { return m_tilesets; }
+            /*!
+            \brief Returns a reference to the vector containing the layer data.
+            Layers are pointer-to-baseclass, the concrete type of which can be
+            found via Layer::getType()
+            \see Layer
+            */
+            const std::vector<Layer::Ptr>& getLayers() const { return m_layers; }
+            /*!
+            \brief Returns a vector of Property objects loaded by the map
+            */
+            const std::vector<Property>& getProperties() const { return m_properties; }
 
         private:
             Version m_version;
@@ -176,9 +192,7 @@ namespace xy
             std::string m_workingDirectory;
 
             std::vector<Tileset> m_tilesets;
-            std::vector<Layer> m_layers;
-            std::vector<ObjectGroup> m_objectGroups;
-            std::vector<ImageLayer> m_imageLayers;
+            std::vector<Layer::Ptr> m_layers;
             std::vector<Property> m_properties;
 
             xy::TextureResource m_textureResource;

@@ -854,5 +854,8 @@
     <ClInclude Include="include\xygine\tilemap\FreeFuncs.hpp">
       <Filter>Header Files\tilemap</Filter>
     </ClInclude>
+    <ClInclude Include="include\xygine\tilemap\TileLayer.hpp">
+      <Filter>Header Files\tilemap</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

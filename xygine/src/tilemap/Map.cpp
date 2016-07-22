@@ -27,10 +27,11 @@ source distribution.
 
 #include <xygine/tilemap/Map.hpp>
 #include <xygine/tilemap/FreeFuncs.hpp>
+#include <xygine/tilemap/ObjectGroup.hpp>
+#include <xygine/tilemap/ImageLayer.hpp>
+#include <xygine/tilemap/TileLayer.hpp>
 
-#include <xygine/Log.hpp>
 #include <xygine/Assert.hpp>
-#include <xygine/parsers/pugixml.hpp>
 #include <xygine/FileSystem.hpp>
 
 using namespace xy;
@@ -174,7 +175,6 @@ bool Map::load(const std::string& path)
     //parse all child nodes
     for (const auto& node : mapNode.children())
     {
-        //TODO we need to track the order of these so that they are drawn correctly
         std::string name = node.name();
         if (name == "tileset")
         {
@@ -183,18 +183,18 @@ bool Map::load(const std::string& path)
         }
         else if (name == "layer")
         {
-            m_layers.emplace_back();
-            m_layers.back().parse(node);
+            m_layers.emplace_back(std::make_unique<TileLayer>());
+            m_layers.back()->parse(node);
         }
         else if (name == "objectgroup")
         {
-            m_objectGroups.emplace_back();
-            m_objectGroups.back().parse(node);
+            m_layers.emplace_back(std::make_unique<ObjectGroup>());
+            m_layers.back()->parse(node);
         }
         else if (name == "imagelayer")
         {
-            m_imageLayers.emplace_back();
-            m_imageLayers.back().parse(node);
+            m_layers.emplace_back(std::make_unique<ImageLayer>());
+            m_layers.back()->parse(node);
         }
         else if (name == "properties")
         {
@@ -229,8 +229,6 @@ bool Map::reset()
 
     m_tilesets.clear();
     m_layers.clear();
-    m_objectGroups.clear();
-    m_imageLayers.clear();
     m_properties.clear();
 
     return false;
