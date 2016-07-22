@@ -241,6 +241,7 @@
     <ClCompile Include="src\StateStack.cpp" />
     <ClCompile Include="src\tilemap\Map.cpp" />
     <ClCompile Include="src\tilemap\miniz.c" />
+    <ClCompile Include="src\tilemap\Property.cpp" />
     <ClCompile Include="src\tilemap\Tileset.cpp" />
     <ClCompile Include="src\ui\UIButton.cpp" />
     <ClCompile Include="src\ui\UICheckBox.cpp" />

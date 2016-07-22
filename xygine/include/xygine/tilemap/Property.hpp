@@ -29,6 +29,9 @@ source distribution.
 #define XY_TMX_PROPERTY_HPP_
 
 #include <xygine/Config.hpp>
+#include <xygine/Assert.hpp>
+
+#include <string>
 
 namespace pugi
 {
@@ -39,13 +42,72 @@ namespace xy
 {
     namespace tmx
     {
+        /*!
+        \brief Represents a custom property.
+        Tiles, objects and layers of a tmx may all have custom
+        properties assigned to them. This class represents a 
+        single property and provides access to its value, the
+        type of which can be determined with getType()
+        */
         class XY_EXPORT_API Property final
         {
         public:
-            Property() {};
+            
+            enum class Type
+            {
+                Boolean,
+                Float,
+                Int,
+                String,
+                Undef
+            };
+            
+            Property();
             ~Property() = default;
 
-            void parse(const pugi::xml_node&) {};
+            /*!
+            \brief Attempts to parse the given node as a property
+            */
+            void parse(const pugi::xml_node&);
+            /*!
+            \brief Returns the type of data stored in the property.
+            This should generally be called first before trying to
+            read the proprty value, as reading the incorrect type
+            will lead to undefined behaviour.
+            */
+            Type getType() const { return m_type; }
+            /*!
+            \brief Returns the name of this property
+            */
+            const std::string& getName() const { return m_name; }
+            /*!
+            \brief Returns the property's value as a boolean
+            */
+            bool getBoolValue() const { XY_ASSERT(m_type == Type::Boolean, "Check property's type with getType() first"); return m_boolValue; }
+            /*!
+            \brief Returns the property's value as a float
+            */
+            float getFloatValue() const { XY_ASSERT(m_type == Type::Float, "Check property's type with getType() first"); return m_floatValue; }
+            /*!
+            \brief Returns the property's value as an integer
+            */
+            int getIntValue() const { XY_ASSERT(m_type == Type::Int, "Check property's type with getType() first"); return m_intValue; }
+            /*!
+            \brief Returns the property's value as a string
+            */
+            const std::string& getStringValue() const { XY_ASSERT(m_type == Type::String, "Check property's type with getType() first"); return m_stringValue; }
+
+        private:
+            union
+            {
+                bool m_boolValue;
+                float m_floatValue;
+                int m_intValue;
+            };
+            std::string m_stringValue;
+            std::string m_name;
+
+            Type m_type;
         };
     }
 }

@@ -57,8 +57,8 @@ bool Map::load(const std::string& path)
     auto result = doc.load_file(path.c_str());
     if (!result)
     {
-        LOG("Failed opening " + path, Logger::Type::Error);
-        LOG("Reason: " + std::string(result.description()), Logger::Type::Error);
+        Logger::log("Failed opening " + path, Logger::Type::Error);
+        Logger::log("Reason: " + std::string(result.description()), Logger::Type::Error);
         return false;
     }
 
@@ -73,7 +73,7 @@ bool Map::load(const std::string& path)
     auto mapNode = doc.child("map");
     if(!mapNode)
     {
-        LOG("Failed opening map: " + path + ", no map data found", Logger::Type::Error);
+        Logger::log("Failed opening map: " + path + ", no map data found", Logger::Type::Error);
         return reset();
     }
 
@@ -82,7 +82,7 @@ bool Map::load(const std::string& path)
     std::string attribString = mapNode.attribute("version").as_string();
     if (attribString.empty() || (pointPos = attribString.find('.')) == std::string::npos)
     {
-        LOG("Invalid map version value, map not loaded.", Logger::Type::Error);
+        Logger::log("Invalid map version value, map not loaded.", Logger::Type::Error);
         return reset();
     }
 
@@ -92,7 +92,7 @@ bool Map::load(const std::string& path)
     attribString = mapNode.attribute("orientation").as_string();
     if (attribString.empty())
     {
-        LOG("Missing map orientation attribute, map not loaded.", Logger::Type::Error);
+        Logger::log("Missing map orientation attribute, map not loaded.", Logger::Type::Error);
         return reset();
     }
 
@@ -102,14 +102,14 @@ bool Map::load(const std::string& path)
     }
     else
     {
-        LOG(attribString + " format maps aren't supported yet, sorry! Map not laoded", Logger::Type::Error);
+        Logger::log(attribString + " format maps aren't supported yet, sorry! Map not laoded", Logger::Type::Error);
         return reset();
     }
 
     attribString = mapNode.attribute("renderorder").as_string();
     if (attribString.empty())
     {
-        LOG("missing render-order attribute, map not loaded.", Logger::Type::Error);
+        Logger::log("missing render-order attribute, map not loaded.", Logger::Type::Error);
         return reset();
     }
 
@@ -131,7 +131,7 @@ bool Map::load(const std::string& path)
     }
     else
     {
-        LOG(attribString + ": invalid render order. Map not loaded.", Logger::Type::Error);
+        Logger::log(attribString + ": invalid render order. Map not loaded.", Logger::Type::Error);
         return reset();
     }
 
@@ -143,7 +143,7 @@ bool Map::load(const std::string& path)
     }
     else
     {
-        LOG("Invalid map tile count, map not loaded", Logger::Type::Error);
+        Logger::log("Invalid map tile count, map not loaded", Logger::Type::Error);
         return reset();
     }
 
@@ -155,7 +155,7 @@ bool Map::load(const std::string& path)
     }
     else
     {
-        LOG("Invalid tile size, map not loaded", Logger::Type::Error);
+        Logger::log("Invalid tile size, map not loaded", Logger::Type::Error);
         return reset();
     }
 

@@ -396,6 +396,9 @@
     <ClCompile Include="src\tilemap\Tileset.cpp">
       <Filter>Source Files\tilemap</Filter>
     </ClCompile>
+    <ClCompile Include="src\tilemap\Property.cpp">
+      <Filter>Source Files\tilemap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
