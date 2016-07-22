@@ -87,8 +87,8 @@ bool Map::load(const std::string& path)
         return reset();
     }
 
-    m_version.major = std::stoi(attribString.substr(0, pointPos));
-    m_version.minor = std::stoi(attribString.substr(pointPos + 1));
+    m_version.upper = std::stoi(attribString.substr(0, pointPos));
+    m_version.lower = std::stoi(attribString.substr(pointPos + 1));
 
     attribString = mapNode.attribute("orientation").as_string();
     if (attribString.empty())

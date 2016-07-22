@@ -45,10 +45,11 @@ namespace xy
     {
         struct XY_EXPORT_API Version
         {
-            sf::Uint16 major;
-            sf::Uint16 minor;
+            //major/minor are apparently reserved by gcc            
+            sf::Uint16 upper;
+            sf::Uint16 lower;
             Version(sf::Uint16 maj = 0, sf::Uint16 min = 0)
-             : major(maj), minor(min) {}
+             : upper(maj), lower(min) {}
         };
         
         enum class XY_EXPORT_API Orientation
