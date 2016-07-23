@@ -10,6 +10,9 @@
   </data>
  </layer>
  <layer name="Middle" width="200" height="40">
+  <properties>
+   <property name="test layer property" type="bool" value="true"/>
+  </properties>
   <data encoding="base64" compression="zlib">
    eJztm0lSwzAQRZsFrIADQAEN5P5nJCkIFYKH2G71EL1X9ZdJybGe1BqyEwAYYvcTAPgPfgCMgx8A4+CHLTfRDQBT8MOW14F8hrYItoAfEMXTPs8zeQlr3Tf4ATAOfvjC+qQW+OHDh7AuqQh+QHVazsn4AZUZmpct52b8sOX8fVFD1QY/8sOa3oaHfe7P8jjzGfzIyVjdwLy0jqnfc+q3xI+2rBmzroU18162uRI/2rF2zFpCtv6k+7w1yrvfY/zSsx9DY3uF8T3TWYrK3z68axxvT3r1g/p+Gyo+PozFy5Fe/YB1qMR64e0IfsAcKn71U7Z6Cz/q0rJGVMnrhOdcgh9wRKWWEx6O4AccUInv35aOHPa9x/Ynp3K6d3l78r09kO2sIAsq8f3aMlbnLaffeS3M1eTs3f5FJb4/Vwj0h0p8v6sSiGNpnTx1vn9JDalSdw2OH/2g0u6u0qV1NcGPJVwyllvcz1KJf+cEP5Ywt663WOOrMIZXTHWy792q4EXlVEYl538HjqjEv1/Snx8qy8Zkb0eWto/kTSVU1vc7D0e2tI/kTBVUtj9rS0cs2kfyJTsqtmNyC0fUsH0kVzKi0vZMy2rdfmxn9Dsk7XIn6+4DW+X8zE0dn32LI57tJLGJuOuQ5Q5ElXYS/3wBZXVJwA==
   </data>

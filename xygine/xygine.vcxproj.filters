@@ -402,6 +402,12 @@
     <ClCompile Include="src\tilemap\ImageLayer.cpp">
       <Filter>Source Files\tilemap</Filter>
     </ClCompile>
+    <ClCompile Include="src\tilemap\FreeFuncs.cpp">
+      <Filter>Source Files\tilemap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tilemap\TileLayer.cpp">
+      <Filter>Source Files\tilemap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">

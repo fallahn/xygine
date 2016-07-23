@@ -97,10 +97,12 @@ set(XY_SRC
   ${XY_DIR}/spriter/SpriterHelpers.cpp
   ${XY_DIR}/spriter/SpriterModel.cpp
 
+  ${XY_DIR}/tilemap/FreeFuncs.cpp
   ${XY_DIR}/tilemap/ImageLayer.cpp
   ${XY_DIR}/tilemap/Map.cpp
   ${XY_DIR}/tilemap/miniz.c
   ${XY_DIR}/tilemap/Property.cpp
+  ${XY_DIR}/tilemap/TileLayer.cpp
   ${XY_DIR}/tilemap/Tileset.cpp
 
   ${XY_DIR}/ui/UIButton.cpp

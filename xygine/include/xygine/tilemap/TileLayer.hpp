@@ -40,11 +40,45 @@ namespace xy
         class XY_EXPORT_API TileLayer final : public Layer
         {
         public:
-            TileLayer() {};
+            /*!
+            \brief Tile information for a layer
+            */
+            struct Tile final
+            {
+                sf::Uint32 ID = 0; //< Global ID of the tile
+                sf::Uint8 flipFlags = 0; //< Flags marking if the tile shjould be flipped when drawn
+            };
+
+            /*!
+            \brief Flags used to tell if a tile is flipped when drawn
+            */
+            enum FlipFlag
+            {
+                Horizontal = 0x8,
+                Vertical = 0x4,
+                Diagonal = 0x2
+            };
+            
+            explicit TileLayer(std::size_t);
             ~TileLayer() = default;
 
             Type getType() const override { return Layer::Type::Tile; }
-            void parse(const pugi::xml_node&) override {}
+            void parse(const pugi::xml_node&) override;
+
+            /*!
+            \brief Returns the list of tiles used to make up the layer
+            */
+            const std::vector<Tile>& getTiles() const { return m_tiles; }
+
+        private:
+            std::vector<Tile> m_tiles;
+            std::size_t m_tileCount;
+
+            void parseBase64(const pugi::xml_node&);
+            void parseCSV(const pugi::xml_node&);
+            void parseUnencoded(const pugi::xml_node&);
+
+            void createTiles(const std::vector<sf::Uint32>&);
         };
     }
 }
