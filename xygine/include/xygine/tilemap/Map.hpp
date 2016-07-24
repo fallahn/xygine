@@ -31,7 +31,6 @@ source distribution.
 #include <xygine/tilemap/Tileset.hpp>
 #include <xygine/tilemap/Layer.hpp>
 #include <xygine/tilemap/Property.hpp>
-#include <xygine/Resource.hpp>
 
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -101,6 +100,8 @@ namespace xy
         public:
             Map();
             ~Map() = default;
+            Map(const Map&) = delete;
+            Map& operator  = (const Map&) = delete;
 
             /*!
             \brief Attempts to parse the tilemap at the given location.
@@ -195,8 +196,6 @@ namespace xy
             std::vector<Tileset> m_tilesets;
             std::vector<Layer::Ptr> m_layers;
             std::vector<Property> m_properties;
-
-            xy::TextureResource m_textureResource;
 
             //always returns false so we can return this
             //on load failure

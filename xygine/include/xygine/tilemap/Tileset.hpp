@@ -84,7 +84,7 @@ namespace xy
                 }animation;
                 std::vector<Property> properties;
                 ObjectGroup objectGroup;
-                sf::Texture texture;
+                std::string imagePath;
             };
             
             /*!
@@ -103,7 +103,7 @@ namespace xy
             If node parsing fails an error is printed in the console
             and the Tileset remains in an uninitialised state.
             */
-            void parse(pugi::xml_node, xy::TextureResource&);
+            void parse(pugi::xml_node);
             /*!
             \brief Returns the first GID of this tile set.
             This the ID of the first tile in the tile set, so that
@@ -147,16 +147,16 @@ namespace xy
             */
             const std::vector<Property>& getProperties() const { return m_properties; }
             /*!
-            \brief Returns the associated texture for this tile set.
-            Textures are either loaded from disk and automatically resource
-            managed by the Map object which loaded this node, else they are created
-            from embedded data in the map file, in which case they are not resource managed.
+            \brief Returns the file path to the tile set image, relative to the
+            working directory. Use this to load the texture required by whichever
+            method you choose to render the map.
             */
-            sf::Texture& getTexture() { return m_texture; }
+            const std::string getImagePath() const { return m_imagePath; }
             /*!
-            \see getTexture()
+            \brief Returns the colour used by the tile map image to represent transparency.
+            By default this is a transparent colour (0, 0, 0, 0)
             */
-            const sf::Texture& getTexture() const { return m_texture; }
+            const sf::Color getTransparencyColour() const { return m_transparencyColour; }
             /*!
             \brief Returns a vector of Terrain types associated with one
             or more tiles within this tile set
@@ -170,7 +170,7 @@ namespace xy
 
         private:
 
-            const std::string& m_workingDir;
+            std::string m_workingDir;
 
             sf::Uint32 m_firstGID;
             std::string m_source;
@@ -183,7 +183,8 @@ namespace xy
             sf::Vector2u m_tileOffset;
 
             std::vector<Property> m_properties;
-            sf::Texture m_texture;
+            std::string m_imagePath;
+            sf::Color m_transparencyColour;
 
             std::vector<Terrain> m_terrainTypes;
             std::vector<Tile> m_tiles;
@@ -193,7 +194,7 @@ namespace xy
             void parseOffsetNode(const pugi::xml_node&);
             void parsePropertyNode(const pugi::xml_node&);
             void parseTerrainNode(const pugi::xml_node&);
-            void parseTileNode(const pugi::xml_node&, xy::TextureResource&);
+            void parseTileNode(const pugi::xml_node&);
         };
     }
 }

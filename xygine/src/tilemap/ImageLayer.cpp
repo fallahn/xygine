@@ -32,9 +32,8 @@ source distribution.
 using namespace xy;
 using namespace xy::tmx;
 
-ImageLayer::ImageLayer(const std::string& workingDir, xy::TextureResource& tr)
-    : m_workingDir      (workingDir),
-    m_textureResource   (tr)
+ImageLayer::ImageLayer(const std::string& workingDir)
+    : m_workingDir      (workingDir)
 {
 
 }
@@ -54,7 +53,18 @@ void ImageLayer::parse(const pugi::xml_node& node)
         attribName = child.name();
         if (attribName == "image")
         {
-            m_texture = parseImageNode(child, m_textureResource, m_workingDir);
+            attribName = node.attribute("source").as_string();
+            if (attribName.empty())
+            {
+                Logger::log("Image Layer has missing source property", Logger::Type::Warning);
+                return;
+            }
+            m_filePath = resolveFilePath(attribName, m_workingDir);
+            if (node.attribute("trans"))
+            {
+                attribName = node.attribute("trans").as_string();
+                m_transparencyColour = colourFromString(attribName);
+            }
         }
         else if (attribName == "properties")
         {

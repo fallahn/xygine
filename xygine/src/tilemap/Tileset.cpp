@@ -34,18 +34,19 @@ using namespace xy;
 using namespace xy::tmx;
 
 Tileset::Tileset(const std::string& workingDir)
-    : m_workingDir  (workingDir),
-    m_firstGID      (0),
-    m_spacing       (0),
-    m_margin        (0),
-    m_tileCount     (0),
-    m_columnCount   (0)
+    : m_workingDir          (workingDir),
+    m_firstGID              (0),
+    m_spacing               (0),
+    m_margin                (0),
+    m_tileCount             (0),
+    m_columnCount           (0),
+    m_transparencyColour    (0, 0, 0, 0)
 {
 
 }
 
 //public
-void Tileset::parse(pugi::xml_node node, xy::TextureResource& textureResource)
+void Tileset::parse(pugi::xml_node node)
 {
     std::string attribString = node.name();
     if (attribString != "tileset")
@@ -68,8 +69,19 @@ void Tileset::parse(pugi::xml_node node, xy::TextureResource& textureResource)
         std::string path = node.attribute("source").as_string();
         path = resolveFilePath(path, m_workingDir);
 
-        //see if doc can be opened
-        
+        //as the TSX file now dictates the image path, the working
+        //directory is now that of the tsx file
+        auto position = path.find_last_of('/');
+        if (position != std::string::npos)
+        {
+            m_workingDir = path.substr(0, position);
+        }
+        else
+        {
+            m_workingDir = "";
+        }
+
+        //see if doc can be opened       
         auto result = tsxDoc.load_file(path.c_str());
         if (!result)
         {
@@ -108,7 +120,22 @@ void Tileset::parse(pugi::xml_node node, xy::TextureResource& textureResource)
         std::string name = node.name();
         if (name == "image")
         {
-            m_texture = parseImageNode(node, textureResource, m_workingDir);
+            //TODO this currently doesn't cover embedded images
+            //mostly because I can't figure out how to export them
+            //from the Tiled editor... but also resource handling
+            //should be handled by the renderer, not the parser.
+            attribString = node.attribute("source").as_string();
+            if (attribString.empty())
+            {
+                Logger::log("Tileset image node has missing source property, tile set not loaded", Logger::Type::Error);
+                return reset();
+            }
+            m_imagePath = resolveFilePath(attribString, m_workingDir);
+            if (node.attribute("trans"))
+            {
+                attribString = node.attribute("trans").as_string();
+                m_transparencyColour = colourFromString(attribString);
+            }
         }
         else if (name == "tileoffset")
         {
@@ -124,7 +151,7 @@ void Tileset::parse(pugi::xml_node node, xy::TextureResource& textureResource)
         }
         else if (name == "tile")
         {
-            parseTileNode(node, textureResource);
+            parseTileNode(node);
         }
     }
 }
@@ -142,21 +169,20 @@ void Tileset::reset()
     m_columnCount = 0;
     m_tileOffset = { 0,0 };
     m_properties.clear();
-    m_texture = sf::Texture();
+    m_imagePath = "";
+    m_transparencyColour = { 0, 0, 0, 0 };
     m_terrainTypes.clear();
     m_tiles.clear();
 }
 
 void Tileset::parseOffsetNode(const pugi::xml_node& node)
 {
-    //LOG("found offset node!", Logger::Type::Info);
     m_tileOffset.x = node.attribute("x").as_int();
     m_tileOffset.y = node.attribute("y").as_int();
 }
 
 void Tileset::parsePropertyNode(const pugi::xml_node& node)
 {
-    //LOG("found property node!", Logger::Type::Info);
     const auto& children = node.children();
     for (const auto& child : children)
     {
@@ -167,7 +193,6 @@ void Tileset::parsePropertyNode(const pugi::xml_node& node)
 
 void Tileset::parseTerrainNode(const pugi::xml_node& node)
 {
-    //LOG("found terrain node!", Logger::Type::Info);
     const auto& children = node.children();
     for (const auto& child : children)
     {
@@ -195,9 +220,8 @@ void Tileset::parseTerrainNode(const pugi::xml_node& node)
     }
 }
 
-void Tileset::parseTileNode(const pugi::xml_node& node, xy::TextureResource& tr)
+void Tileset::parseTileNode(const pugi::xml_node& node)
 {
-    //LOG("found tile node!", Logger::Type::Info);
     Tile tile;
     tile.ID = node.attribute("id").as_int();
     if (node.attribute("terrain"))
@@ -251,7 +275,18 @@ void Tileset::parseTileNode(const pugi::xml_node& node, xy::TextureResource& tr)
         }
         else if (name == "image")
         {
-            tile.texture = parseImageNode(child, tr, m_workingDir);
+            std::string attribString = node.attribute("source").as_string();
+            if (attribString.empty())
+            {
+                Logger::log("Tile image path missing", xy::Logger::Type::Warning);
+                continue;
+            }
+            tile.imagePath = resolveFilePath(attribString, m_workingDir);
+            if (node.attribute("trans"))
+            {
+                attribString = node.attribute("trans").as_string();
+                m_transparencyColour = colourFromString(attribString);
+            }
         }
         else if (name == "animation")
         {

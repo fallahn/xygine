@@ -37,21 +37,35 @@ namespace xy
     class TextureResource;
     namespace tmx
     {
+        /*!
+        \brief Image layers contain a single image which make up that
+        layer. The parser contains the fully reolved path to the image
+        relative to the working directory.
+        */
         class XY_EXPORT_API ImageLayer final : public Layer
         {
         public:
-            ImageLayer(const std::string&, xy::TextureResource&);
+            ImageLayer(const std::string&);
             ~ImageLayer() = default;
 
             Type getType() const override { return Layer::Type::Image; }
             void parse(const pugi::xml_node&) override;
 
-            const sf::Texture& getTexture() const { return m_texture; }
+            /*!
+            \brief Returns the path, relative to the working directory,
+            of the image used by the image layer.
+            */
+            const std::string& getImagePath() const { return m_filePath; }
+            /*!
+            \brief Returns the colour userd by the image to represent transparent
+            pixels. By default this is (0, 0, 0, 0)
+            */
+            const sf::Color getTransparencyColour() const { return m_transparencyColour; }
 
         private:
-            sf::Texture m_texture;
+            std::string m_filePath;
+            sf::Color m_transparencyColour;
             std::string m_workingDir;
-            xy::TextureResource& m_textureResource;
         };
     }
 }
