@@ -243,6 +243,8 @@
     <ClCompile Include="src\tilemap\ImageLayer.cpp" />
     <ClCompile Include="src\tilemap\Map.cpp" />
     <ClCompile Include="src\tilemap\miniz.c" />
+    <ClCompile Include="src\tilemap\Object.cpp" />
+    <ClCompile Include="src\tilemap\ObjectGroup.cpp" />
     <ClCompile Include="src\tilemap\Property.cpp" />
     <ClCompile Include="src\tilemap\TileLayer.cpp" />
     <ClCompile Include="src\tilemap\Tileset.cpp" />
@@ -387,6 +389,7 @@
     <ClInclude Include="include\xygine\tilemap\ImageLayer.hpp" />
     <ClInclude Include="include\xygine\tilemap\Layer.hpp" />
     <ClInclude Include="include\xygine\tilemap\Map.hpp" />
+    <ClInclude Include="include\xygine\tilemap\Object.hpp" />
     <ClInclude Include="include\xygine\tilemap\ObjectGroup.hpp" />
     <ClInclude Include="include\xygine\tilemap\Property.hpp" />
     <ClInclude Include="include\xygine\tilemap\TileLayer.hpp" />

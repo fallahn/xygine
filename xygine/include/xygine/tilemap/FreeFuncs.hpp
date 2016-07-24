@@ -181,40 +181,6 @@ namespace xy
             }
             return std::move(outPath += '/' + path);
         }
-
-        static inline sf::Texture parseImageNode(const pugi::xml_node& node, xy::TextureResource& tr, const std::string& workingDir)
-        {
-            //TODO check format attrib and data node.
-            //currently I can't see how to export embedded images
-            //from tiled so I don't know how to test this
-
-            std::string file = node.attribute("source").as_string();
-            if (file.empty())
-            {
-                Logger::log("Tileset image node has missing source property.");
-                tr.setFallbackColour(sf::Color::Magenta);
-                return tr.get("missing_tileset");
-            }
-
-            //file is a relative path so we need to resolve directory
-            //movement to working directory
-            std::string imagePath = resolveFilePath(file, workingDir);
-            sf::Texture texture = tr.get(imagePath);
-
-            //if we have a transparency colour then set the
-            //matching pixels alpha to zero
-            if (node.attribute("trans"))
-            {
-                std::string colourStr = node.attribute("trans").as_string();
-                sf::Color colour = colourFromString(colourStr);
-
-                sf::Image img = texture.copyToImage();
-                img.createMaskFromColor(colour);
-                texture.update(img);
-                LOG("Set tile set transparency colour to " + colourStr, Logger::Type::Info);
-            }
-            return texture;
-        }
     }
 }
 

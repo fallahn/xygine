@@ -25,58 +25,63 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/tilemap/ImageLayer.hpp>
-#include <xygine/tilemap/FreeFuncs.hpp>
+#include <xygine/tilemap/ObjectGroup.hpp>
 #include <xygine/parsers/pugixml.hpp>
+#include <xygine/tilemap/FreeFuncs.hpp>
 
 using namespace xy;
 using namespace xy::tmx;
 
-ImageLayer::ImageLayer(const std::string& workingDir)
-    : m_workingDir      (workingDir)
+ObjectGroup::ObjectGroup()
+    : m_colour  (127, 127, 127, 255),
+    m_drawOrder (DrawOrder::TopDown)
 {
 
 }
 
 //public
-void ImageLayer::parse(const pugi::xml_node& node)
+void ObjectGroup::parse(const pugi::xml_node& node)
 {
-    std::string attribName = node.name();
-    if (attribName != "imagelayer")
+    std::string attribString = node.name();
+    if (attribString != "objectgroup")
     {
-        Logger::log("Node not an image layer, node skipped", Logger::Type::Error);
+        Logger::log("Node was not an object group, node will be skipped.", Logger::Type::Error);
         return;
     }
 
     setName(node.attribute("name").as_string());
-    setOpacity(node.attribute("opacity").as_float(1.f));
-    setVisible(node.attribute("visible").as_bool(true));
+
+    attribString = node.attribute("color").as_string();
+    if (!attribString.empty())
+    {
+        m_colour = colourFromString(attribString);
+    }
+
+    setOpacity(node.attribute("opacity").as_float());
+    setVisible(node.attribute("visible").as_bool());
     setOffset(node.attribute("offsetx").as_int(), node.attribute("offsety").as_int());
+
+    attribString = node.attribute("draworder").as_string();
+    if (attribString == "index")
+    {
+        m_drawOrder = DrawOrder::Index;
+    }
 
     for (const auto& child : node.children())
     {
-        attribName = child.name();
-        if (attribName == "image")
+        attribString = child.name();
+        if (attribString == "properties")
         {
-            attribName = child.attribute("source").as_string();
-            if (attribName.empty())
+            for (const auto& p : child)
             {
-                Logger::log("Image Layer has missing source property", Logger::Type::Warning);
-                return;
-            }
-            m_filePath = resolveFilePath(attribName, m_workingDir);
-            if (child.attribute("trans"))
-            {
-                attribName = node.attribute("trans").as_string();
-                m_transparencyColour = colourFromString(attribName);
+                m_properties.emplace_back();
+                m_properties.back().parse(p);
             }
         }
-        else if (attribName == "properties")
+        else if (attribString == "object")
         {
-            for (const auto& p : child.children())
-            {
-                addProperty(p);
-            }
+            m_objects.emplace_back();
+            m_objects.back().parse(child);
         }
     }
 }

@@ -29,19 +29,60 @@ source distribution.
 #define XY_TMX_OBJECTGROUP_HPP_
 
 #include <xygine/tilemap/Layer.hpp>
+#include <xygine/tilemap/Object.hpp>
+
+#include <SFML/Graphics/Color.hpp>
+
+#include <vector>
 
 namespace xy
 {
     namespace tmx
     {
+        /*!
+        \brief ObjectGroup layers contain a series of Objects
+        which may be made up of shapes or images.
+        */
         class XY_EXPORT_API ObjectGroup final : public Layer
         {
         public:
-            ObjectGroup() {};
+            enum class DrawOrder
+            {
+                Index, //< objects should be drawn in the order in which they appear
+                TopDown //< objects should be drawn sorted by their Y position
+            };
+
+            ObjectGroup();
             ~ObjectGroup() = default;
 
             Type getType() const override { return Layer::Type::Object; }
-            void parse(const pugi::xml_node&) override {};
+            void parse(const pugi::xml_node&) override;
+
+            /*!
+            \brief Returns the colour associated with this layer
+            */
+            const sf::Color getColour() const { return m_colour; }
+            /*!
+            \brief Returns the DrawOrder for the objects in this group.
+            Defaults to TopDown, where Objects are drawn sorted by Y position
+            */
+            DrawOrder getDrawOrder() const { return m_drawOrder; }
+            /*!
+            \brief Returns a reference to the vector of properties for
+            the ObjectGroup
+            */
+            const std::vector<Property>& getProperties() const { return m_properties; }
+            /*!
+            \brief Returns a reference to the vector of Objects which belong to the group
+            */
+            const std::vector<Object>& getObjects() const { return m_objects; }
+
+        private:
+            sf::Color m_colour;
+            DrawOrder m_drawOrder;
+
+            std::vector<Property> m_properties;
+            std::vector<Object> m_objects;
         };
     }
 }

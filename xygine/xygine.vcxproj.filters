@@ -408,6 +408,12 @@
     <ClCompile Include="src\tilemap\TileLayer.cpp">
       <Filter>Source Files\tilemap</Filter>
     </ClCompile>
+    <ClCompile Include="src\tilemap\Object.cpp">
+      <Filter>Source Files\tilemap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tilemap\ObjectGroup.cpp">
+      <Filter>Source Files\tilemap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -864,6 +870,9 @@
       <Filter>Header Files\tilemap</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\tilemap\TileLayer.hpp">
+      <Filter>Header Files\tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\tilemap\Object.hpp">
       <Filter>Header Files\tilemap</Filter>
     </ClInclude>
   </ItemGroup>

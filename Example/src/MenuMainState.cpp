@@ -52,11 +52,11 @@ MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
 
     xy::App::setMouseCursorVisible(false);
 
-    xy::tmx::Map map;
+    /*xy::tmx::Map map;
     if (map.load("assets/maps/platform.tmx"))
     {
         LOG("Map loaded!", xy::Logger::Type::Info);
-    }
+    }*/
 }
 
 //public
