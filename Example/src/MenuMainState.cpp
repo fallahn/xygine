@@ -31,8 +31,6 @@ source distribution.
 #include <xygine/ui/Button.hpp>
 #include <xygine/util/Random.hpp>
 
-#include <xygine/tilemap/Map.hpp>
-
 #include <SFML/Window/Mouse.hpp>
 
 MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
