@@ -101,9 +101,21 @@ bool Map::load(const std::string& path)
     {
         m_orientation = Orientation::Orthogonal;
     }
+    else if (attribString == "isometric")
+    {
+        m_orientation = Orientation::Isometric;
+    }
+    else if (attribString == "staggered")
+    {
+        m_orientation = Orientation::Staggered;
+    }
+    else if (attribString == "hexagonal")
+    {
+        m_orientation = Orientation::Hexagonal;
+    }
     else
     {
-        Logger::log(attribString + " format maps aren't supported yet, sorry! Map not laoded", Logger::Type::Error);
+        Logger::log(attribString + " format maps aren't supported yet, sorry! Map not loaded", Logger::Type::Error);
         return reset();
     }
 
@@ -160,7 +172,45 @@ bool Map::load(const std::string& path)
         return reset();
     }
 
-    //TODO check for stagger properties when hex and staggered maps are implemented
+    m_hexSideLength = mapNode.attribute("hexsidelength").as_float();
+    if (m_orientation == Orientation::Hexagonal && m_hexSideLength <= 0)
+    {
+        Logger::log("Invalid he side length found, map not loaded", Logger::Type::Error);
+        return reset();
+    }
+
+    attribString = mapNode.attribute("staggeraxis").as_string();
+    if (attribString == "x")
+    {
+        m_staggerAxis = StaggerAxis::X;
+    }
+    else if (attribString == "y")
+    {
+        m_staggerAxis = StaggerAxis::Y;
+    }
+    if ((m_orientation == Orientation::Staggered || m_orientation == Orientation::Hexagonal)
+        && m_staggerAxis == StaggerAxis::None)
+    {
+        Logger::log("Map missing stagger axis property. Map not loaded.", Logger::Type::Error);
+        return reset();
+    }
+
+    attribString = mapNode.attribute("staggerindex").as_string();
+    if (attribString == "odd")
+    {
+        m_staggerIndex = StaggerIndex::Odd;
+    }
+    else if (attribString == "even")
+    {
+        m_staggerIndex = StaggerIndex::Even;
+    }
+    if ((m_orientation == Orientation::Staggered || m_orientation == Orientation::Hexagonal)
+        && m_staggerIndex == StaggerIndex::None)
+    {
+        Logger::log("Map missing stagger index property. Map not loaded.", Logger::Type::Error);
+        return reset();
+    }
+
 
     //colour property is optional
     attribString = mapNode.attribute("backgroundcolor").as_string();

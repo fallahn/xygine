@@ -131,7 +131,7 @@ bool ParticleDemoState::update(float dt)
 
     //update lighting
     auto lights = m_scene.getVisibleLights(m_scene.getVisibleArea());
-    auto i = 0;
+    auto i = 0u;
     for (; i < lights.size() && i < xy::Shader::NormalMapped::MaxPointLights; ++i)
     {
         auto light = lights[i];
