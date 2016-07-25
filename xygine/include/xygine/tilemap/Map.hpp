@@ -51,7 +51,7 @@ namespace xy
              : upper(maj), lower(min) {}
         };
         
-        enum class XY_EXPORT_API Orientation
+        enum class Orientation
         {
             Orthogonal,
             Isometric,
@@ -60,7 +60,7 @@ namespace xy
             None
         };
 
-        enum class XY_EXPORT_API RenderOrder
+        enum class RenderOrder
         {
             RightDown,
             RightUp,
@@ -69,12 +69,12 @@ namespace xy
             None
         };
 
-        enum class XY_EXPORT_API StaggerAxis
+        enum class StaggerAxis
         {
             X, Y, None
         };
 
-        enum class XY_EXPORT_API StaggerIndex
+        enum class StaggerIndex
         {
             Even, Odd, None
         };

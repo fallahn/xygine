@@ -105,7 +105,6 @@ bool xy::tmx::decompress(const char* source, std::vector<unsigned char>& dest, i
     byteArray = std::move(newArray);
 
     //copy bytes to vector
-    int length = currentSize / sizeof(unsigned char);
     dest.insert(dest.begin(), byteArray.begin(), byteArray.end());
 
     return true;
