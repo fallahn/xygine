@@ -103,7 +103,7 @@ namespace xy
         class XY_EXPORT_API Map final
         {
         public:
-            friend class TileMapLayer;
+            friend class xy::TileMapLayer;
             
             Map();
             ~Map() = default;
