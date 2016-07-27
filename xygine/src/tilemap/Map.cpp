@@ -31,8 +31,12 @@ source distribution.
 #include <xygine/tilemap/ImageLayer.hpp>
 #include <xygine/tilemap/TileLayer.hpp>
 
+#include <xygine/components/TileMapLayer.hpp>
+
 #include <xygine/Assert.hpp>
 #include <xygine/FileSystem.hpp>
+#include <xygine/Resource.hpp>
+#include <xygine/ShaderResource.hpp>
 
 using namespace xy;
 using namespace xy::tmx;
@@ -262,6 +266,27 @@ bool Map::load(const std::string& path)
     }
 
     return true;
+}
+
+std::unique_ptr<TileMapLayer> Map::getDrawable(const Layer& layer, TextureResource&, ShaderResource&)
+{
+
+    return nullptr;
+}
+
+std::unique_ptr<Physics::RigidBody> Map::createRigidBody(const ObjectGroup& og, Physics::BodyType bodyType)
+{
+    return nullptr;
+}
+
+std::unique_ptr<Physics::RigidBody> Map::createRigidBody(const Object& object, Physics::BodyType bodyType)
+{
+    return nullptr;
+}
+
+std::unique_ptr<Physics::CollisionShape> Map::createCollisionShape(const Object& object)
+{
+    return nullptr;
 }
 
 //private

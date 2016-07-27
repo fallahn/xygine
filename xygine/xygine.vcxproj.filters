@@ -414,6 +414,9 @@
     <ClCompile Include="src\tilemap\ObjectGroup.cpp">
       <Filter>Source Files\tilemap</Filter>
     </ClCompile>
+    <ClCompile Include="src\components\ComponentTileMapLayer.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -874,6 +877,9 @@
     </ClInclude>
     <ClInclude Include="include\xygine\tilemap\Object.hpp">
       <Filter>Header Files\tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\TileMapLayer.hpp">
+      <Filter>Header Files\components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

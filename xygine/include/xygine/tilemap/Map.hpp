@@ -32,6 +32,9 @@ source distribution.
 #include <xygine/tilemap/Layer.hpp>
 #include <xygine/tilemap/Property.hpp>
 
+#include <xygine/physics/RigidBody.hpp>
+#include <xygine/physics/CollisionShape.hpp>
+
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Color.hpp>
 
@@ -40,6 +43,8 @@ source distribution.
 
 namespace xy
 {
+    class TileMapLayer;
+    class ShaderResource;
     namespace tmx
     {
         struct XY_EXPORT_API Version
@@ -98,6 +103,8 @@ namespace xy
         class XY_EXPORT_API Map final
         {
         public:
+            friend class TileMapLayer;
+            
             Map();
             ~Map() = default;
             Map(const Map&) = delete;
@@ -177,6 +184,44 @@ namespace xy
             */
             const std::vector<Property>& getProperties() const { return m_properties; }
 
+            /*!
+            \brief Creates a drawable component from the given layer which can
+            be attached to a Scene Entity.
+            Only TileLayer and ImageLayer types are valid, trying to create a 
+            drawable component from an object layer will return a nullptr. Passing
+            a reference to a layer which doesn't belong to this map will also cause
+            a nullptr to be returned.
+            \returns Drawable component if successful, else nullptr
+            */
+            std::unique_ptr<TileMapLayer> getDrawable(const Layer&, TextureResource&, ShaderResource&);
+
+            /*!
+            \brief Creates a RigidBody component from a given ObjectGroup.
+            This function will attempt to parse all objects in a given ObjectGroup
+            and attach them to a single RigidBody component. This is usefule for map
+            layers designed to contain, for example, solid collision objects.
+            If the given ObjectGroup is invalid or does not belong to the loaded map
+            then this function returns a nullptr.
+            */
+            std::unique_ptr<Physics::RigidBody> createRigidBody(const ObjectGroup&, Physics::BodyType = Physics::BodyType::Static);
+
+            /*!
+            \brief Creates a RigidBody component from a given object.
+            This function attempts to create a RigidBody component from a given object,
+            useful for dynamic items which each require their own physics body. If the
+            function fails then it will return nullptr.
+            */
+            std::unique_ptr<Physics::RigidBody> createRigidBody(const Object&, Physics::BodyType = Physics::BodyType::Dynamic);
+
+            /*!
+            \brief Attempts to create a CollisionShape from a given object.
+            Collision shapes created from the given object can then be attached to
+            arbitrary RigidBody components, and so is useful for creating template
+            type shapes from an object on a map, for example when dynamically spawning
+            new Entities at run time.
+            */
+            std::unique_ptr<Physics::CollisionShape> createCollisionShape(const Object&);
+
         private:
             Version m_version;
             Orientation m_orientation;
@@ -200,6 +245,8 @@ namespace xy
             //always returns false so we can return this
             //on load failure
             bool reset();
+
+            struct Key {};
         };
     }
 }

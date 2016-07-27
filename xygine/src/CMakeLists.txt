@@ -36,6 +36,7 @@ set(XY_SRC
   ${XY_DIR}/components/ComponentPointLight.cpp  
   ${XY_DIR}/components/ComponentSoundPlayer.cpp
   ${XY_DIR}/components/ComponentSpriteBatch.cpp
+  ${XY_DIR}/components/ComponentTileMapLayer.cpp
   ${XY_DIR}/components/QuadTreeComponent.cpp 
 
   ${XY_DIR}/imgui/imgui.cpp
