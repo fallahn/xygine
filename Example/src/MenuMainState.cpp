@@ -91,7 +91,7 @@ void MenuMainState::buildMenu()
     auto button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
     button->setText("Platform Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
-    button->setPosition(960.f, 275.f);
+    button->setPosition(960.f, 175.f);
     button->addCallback([this]()
     {
         close();
@@ -102,7 +102,7 @@ void MenuMainState::buildMenu()
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
     button->setText("Particle Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
-    button->setPosition(960.f, 375.f);
+    button->setPosition(960.f, 275.f);
     button->addCallback([this]()
     {
         close();
@@ -113,7 +113,7 @@ void MenuMainState::buildMenu()
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
     button->setText("Physics Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
-    button->setPosition(960.f, 475.f);
+    button->setPosition(960.f, 375.f);
     button->addCallback([this]()
     {
         close();
@@ -124,7 +124,7 @@ void MenuMainState::buildMenu()
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
     button->setText("Network Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
-    button->setPosition(960.f, 575.f);
+    button->setPosition(960.f, 475.f);
     button->addCallback([this]()
     {
         close();
@@ -136,11 +136,23 @@ void MenuMainState::buildMenu()
     button->setText("Deferred Rendering");
     button->setFontSize(26u);
     button->setAlignment(xy::UI::Alignment::Centre);
-    button->setPosition(960.f, 675.f);
+    button->setPosition(960.f, 575.f);
     button->addCallback([this]()
     {
         close();
         requestStackPush(States::ID::DeferredDemo);
+    });
+    m_uiContainer.addControl(button);
+
+    button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
+    button->setText("2D Tilemap");
+    button->setFontSize(26u);
+    button->setAlignment(xy::UI::Alignment::Centre);
+    button->setPosition(960.f, 675.f);
+    button->addCallback([this]()
+    {
+        close();
+        requestStackPush(States::ID::TilemapDemo);
     });
     m_uiContainer.addControl(button);
 

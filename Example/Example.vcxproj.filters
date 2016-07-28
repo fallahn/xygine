@@ -102,6 +102,9 @@
     <ClInclude Include="include\PlatformBackground.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\TilemapDemoState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Game.cpp">
@@ -163,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="src\PlatformBackground.cpp">
       <Filter>Source Files\platform demo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TilemapDemoState.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

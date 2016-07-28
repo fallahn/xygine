@@ -96,6 +96,7 @@
     <ClInclude Include="include\PlatformPlayerController.hpp" />
     <ClInclude Include="include\RotationComponent.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
+    <ClInclude Include="include\TilemapDemoState.hpp" />
     <ClInclude Include="include\TimedDestruction.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -119,6 +120,7 @@
     <ClCompile Include="src\PlatformBackground.cpp" />
     <ClCompile Include="src\PlatformDemoState.cpp" />
     <ClCompile Include="src\PlatformPlayerController.cpp" />
+    <ClCompile Include="src\TilemapDemoState.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

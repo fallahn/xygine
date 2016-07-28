@@ -38,6 +38,7 @@ namespace States
         PhysicsDemo,
         DeferredDemo,
         NetworkDemo,
+        TilemapDemo,
         MenuMain,
         MenuOptions
     };

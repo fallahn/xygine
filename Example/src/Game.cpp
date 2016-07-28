@@ -34,6 +34,7 @@ source distribution.
 #include <NetworkDemoState.hpp>
 #include <DeferredDemoState.hpp>
 #include <PlatformDemoState.hpp>
+#include <TilemapDemoState.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -113,4 +114,5 @@ void Game::registerStates()
     m_stateStack.registerState<NetworkDemoState>(States::ID::NetworkDemo);
     m_stateStack.registerState<DeferredDemoState>(States::ID::DeferredDemo);
     m_stateStack.registerState<PlatformDemoState>(States::ID::PlatformDemo);
+    m_stateStack.registerState<TilemapDemoState>(States::ID::TilemapDemo);
 }

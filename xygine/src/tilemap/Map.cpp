@@ -88,10 +88,10 @@ namespace
             }
             if (positive && negative)
             {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }
 
@@ -329,7 +329,7 @@ std::unique_ptr<TileMapLayer> Map::getDrawable(xy::MessageBus& mb, const Layer& 
         Logger::log("Layer is not a drawawble type", Logger::Type::Error);
         return nullptr;
     }
-
+    //TODO check layer belongs to this map
 
 
     return nullptr;
@@ -427,6 +427,8 @@ std::unique_ptr<Physics::RigidBody> Map::createRigidBody(xy::MessageBus& mb, con
 
 std::unique_ptr<Physics::CollisionShape> Map::createCollisionShape(const Object& object)
 {
+    //TODO this doesn't apply rotation properties.
+    
     switch (object.getShape())
     {
     default: return nullptr;
@@ -670,8 +672,8 @@ std::vector<Map::PointList> Map::splitConcave(const PointList& points)
                 std::size_t j1 = 0;
                 std::size_t j2 = 0;
                 sf::Vector2f v1, v2;
-                std::size_t h = 0;
-                std::size_t k = 0;
+                int h = 0;
+                int k = 0;
                 sf::Vector2f hitPoint;
 
                 for (auto j = 0u; j < size; ++j)

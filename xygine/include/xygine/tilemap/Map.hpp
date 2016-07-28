@@ -198,10 +198,9 @@ namespace xy
             /*!
             \brief Creates a RigidBody component from a given ObjectGroup.
             This function will attempt to parse all objects in a given ObjectGroup
-            and attach them to a single RigidBody component. This is usefule for map
+            and attach them to a single RigidBody component. This is useful for map
             layers designed to contain, for example, solid collision objects.
-            If the given ObjectGroup is invalid or does not belong to the loaded map
-            then this function returns a nullptr.
+            If the given ObjectGroup is invalid then this function returns a nullptr.
             */
             std::unique_ptr<Physics::RigidBody> createRigidBody(xy::MessageBus&, const ObjectGroup&, Physics::BodyType = Physics::BodyType::Static);
 

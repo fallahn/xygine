@@ -18,4 +18,5 @@ SET(EXAMPLE_SRC
   src/PhysicsDemoState.cpp
   src/PlatformBackground.cpp
   src/PlatformDemoState.cpp
-  src/PlatformPlayerController.cpp)
+  src/PlatformPlayerController.cpp
+  src/TilemapDemoState.cpp)
