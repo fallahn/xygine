@@ -37,9 +37,63 @@ source distribution.
 #include <xygine/FileSystem.hpp>
 #include <xygine/Resource.hpp>
 #include <xygine/ShaderResource.hpp>
+#include <xygine/util/Vector.hpp>
+
+#include <xygine/physics/CollisionCircleShape.hpp>
+#include <xygine/physics/CollisionEdgeShape.hpp>
+#include <xygine/physics/CollisionPolygonShape.hpp>
+#include <xygine/physics/CollisionRectangleShape.hpp>
+#include <xygine/physics/RigidBody.hpp>
+
+#include <queue>
 
 using namespace xy;
 using namespace xy::tmx;
+
+namespace
+{
+    float cross(const sf::Vector2f& lv, const sf::Vector2f& rv)
+    {
+        return lv.x * rv.y - lv.y * rv.x;
+    }
+    
+    float cross(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& c)
+    {
+        sf::Vector2f BA = a - b;
+        sf::Vector2f BC = c - b;
+        return cross(BA, BC);
+    }
+    const float pointTolerance = 0.1f;
+    
+    bool concave(const std::vector<sf::Vector2f>& points)
+    {
+        bool negative = false;
+        bool positive = false;
+
+        std::size_t a, b, c, n = points.size();
+        for (a = 0u; a < n; ++a)
+        {
+            b = (a + 1) % n;
+            c = (b + 1) % n;
+
+            float cr = cross(points[a], points[b], points[c]);
+
+            if (cr < 0.f)
+            {
+                negative = true;
+            }
+            else if (cr > 0.f)
+            {
+                positive = true;
+            }
+            if (positive && negative)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+}
 
 
 Map::Map()
@@ -268,24 +322,192 @@ bool Map::load(const std::string& path)
     return true;
 }
 
-std::unique_ptr<TileMapLayer> Map::getDrawable(const Layer& layer, TextureResource&, ShaderResource&)
+std::unique_ptr<TileMapLayer> Map::getDrawable(xy::MessageBus& mb, const Layer& layer, TextureResource&, ShaderResource&)
 {
+    if (layer.getType() == Layer::Type::Object)
+    {
+        Logger::log("Layer is not a drawawble type", Logger::Type::Error);
+        return nullptr;
+    }
+
+
 
     return nullptr;
 }
 
-std::unique_ptr<Physics::RigidBody> Map::createRigidBody(const ObjectGroup& og, Physics::BodyType bodyType)
+std::unique_ptr<Physics::RigidBody> Map::createRigidBody(xy::MessageBus& mb, const ObjectGroup& og, Physics::BodyType bodyType)
 {
-    return nullptr;
+    auto rb = xy::Component::create<xy::Physics::RigidBody>(mb, bodyType);
+    for (const auto& o : og.getObjects())
+    {
+        //check if polygon and sub-divide if necessary
+        bool conc = false;
+        const auto& points = o.getPoints();
+        PointList pointlist;
+        for (const auto& p : points)
+        {
+            pointlist.push_back(p + o.getPosition());
+        }
+
+        if (o.getShape() == Object::Shape::Polygon &&
+            (points.size() > Physics::CollisionPolygonShape::maxPoints() || (conc = concave(points))))
+        {
+            //subdivide
+            LOG("subdividing polygon " + o.getName(), Logger::Type::Info);
+            subDivide(rb.get(), pointlist, conc);
+        }
+        else
+        {
+            auto cs = createCollisionShape(o);
+            XY_ASSERT(cs, "failed creating collision shape");
+            switch (cs->type())
+            {
+            default: break;
+            case Physics::CollisionShape::Type::Box:
+                rb->addCollisionShape(*dynamic_cast<Physics::CollisionRectangleShape*>(cs.get()));
+                break;
+            case Physics::CollisionShape::Type::Circle:
+                rb->addCollisionShape(*dynamic_cast<Physics::CollisionCircleShape*>(cs.get()));
+                break;
+            case Physics::CollisionShape::Type::Edge:
+                rb->addCollisionShape(*dynamic_cast<Physics::CollisionEdgeShape*>(cs.get()));
+                break;
+            case Physics::CollisionShape::Type::Polygon:
+                rb->addCollisionShape(*dynamic_cast<Physics::CollisionPolygonShape*>(cs.get()));
+                break;
+            }
+        }
+    }
+    
+    return std::move(rb);
 }
 
-std::unique_ptr<Physics::RigidBody> Map::createRigidBody(const Object& object, Physics::BodyType bodyType)
+std::unique_ptr<Physics::RigidBody> Map::createRigidBody(xy::MessageBus& mb, const Object& object, Physics::BodyType bodyType)
 {
-    return nullptr;
+    auto rb = xy::Component::create<xy::Physics::RigidBody>(mb, bodyType);    
+    
+    //check if polygon and sub-divide if necessary
+    const auto& points = object.getPoints();
+    PointList pointlist;
+    for (const auto& p : points)
+    {
+        pointlist.push_back(p + object.getPosition());
+    }
+    bool conc = false;
+    if (object.getShape() == Object::Shape::Polygon &&
+        (object.getPoints().size() > Physics::CollisionPolygonShape::maxPoints() || (conc = concave(object.getPoints()))))
+    {
+        //subdivide
+        LOG("subdividing polygon " + object.getName(), Logger::Type::Info);
+        subDivide(rb.get(), pointlist, conc);
+    }
+    else
+    {
+        auto cs = createCollisionShape(object);
+        XY_ASSERT(cs, "failed creating collision shape");
+        switch (cs->type())
+        {
+        default: break;
+        case Physics::CollisionShape::Type::Box:
+            rb->addCollisionShape(*dynamic_cast<Physics::CollisionRectangleShape*>(cs.get()));
+            break;
+        case Physics::CollisionShape::Type::Circle:
+            rb->addCollisionShape(*dynamic_cast<Physics::CollisionCircleShape*>(cs.get()));
+            break;
+        case Physics::CollisionShape::Type::Edge:
+            rb->addCollisionShape(*dynamic_cast<Physics::CollisionEdgeShape*>(cs.get()));
+            break;
+        case Physics::CollisionShape::Type::Polygon:
+            rb->addCollisionShape(*dynamic_cast<Physics::CollisionPolygonShape*>(cs.get()));
+            break;
+        }
+    }
+    return std::move(rb);
 }
 
 std::unique_ptr<Physics::CollisionShape> Map::createCollisionShape(const Object& object)
 {
+    switch (object.getShape())
+    {
+    default: return nullptr;
+    case Object::Shape::Ellipse:
+    {
+        auto size = object.getAABB();
+        if (size.width == size.height)
+        {
+            //we have a circle
+            const float radius = size.width / 2.f;
+
+            std::unique_ptr<Physics::CollisionShape> cs =
+                std::make_unique<Physics::CollisionCircleShape>(radius);
+            dynamic_cast<Physics::CollisionCircleShape*>(cs.get())->setPosition({size.left + radius, size.top + radius});
+            return std::move(cs);
+        }
+        else
+        {
+            //elliptical
+            const float x = size.width / 2.f;
+            const float y = size.height / 2.f;
+            const float tau = 6.283185f;
+            const float step = tau / 16.f; //number of points to make up ellipse
+            std::vector<sf::Vector2f> points;
+            for (float angle = 0.f; angle < tau; angle += step)
+            {
+                points.emplace_back((x + x * std::cos(angle)) + size.left, (y + y * std::sin(angle)) + size.top);               
+            }
+            std::unique_ptr<Physics::CollisionShape> cs =
+                std::make_unique<Physics::CollisionEdgeShape>(points, Physics::CollisionEdgeShape::Option::Loop);
+            return std::move(cs);
+        }
+    }
+    case Object::Shape::Polygon:
+    {
+        const auto& points = object.getPoints();
+        if (points.size() > Physics::CollisionPolygonShape::maxPoints())
+        {
+            Logger::log("Polygon " + object.getName() + " has more than maximum allowable points (8), consider breaking into smaller parts.", Logger::Type::Warning);
+            Logger::log("Polygon " + object.getName() + " will be returned as an edge shape", Logger::Type::Info);
+            goto polyline;
+        }
+        else if (concave(points))
+        {
+            Logger::log("Polygon " + object.getName() + " is concave, consider breaking into smaller parts.", Logger::Type::Warning);
+            Logger::log("Polygon " + object.getName() + " will be returned as an edge shape", Logger::Type::Info);
+            goto polyline;
+        }
+
+        std::vector<sf::Vector2f> worldPoints;
+        for (const auto& p : points)
+        {
+            worldPoints.push_back(p + object.getPosition());
+        }
+        std::unique_ptr<Physics::CollisionShape> cs =
+            std::make_unique<Physics::CollisionPolygonShape>(worldPoints);
+        return std::move(cs);
+    }
+        break;
+    case Object::Shape::Polyline:
+        polyline:
+    {
+        const auto& points = object.getPoints();
+        std::vector<sf::Vector2f> worldPoints;
+        for (const auto& p : points)
+        {
+            worldPoints.push_back(p + object.getPosition());
+        }
+
+        std::unique_ptr<Physics::CollisionShape> cs =
+            std::make_unique<Physics::CollisionEdgeShape>(worldPoints);
+        return std::move(cs);
+    }
+    case Object::Shape::Rectangle:
+    {
+        std::unique_ptr<Physics::CollisionShape> cs =
+            std::make_unique<Physics::CollisionRectangleShape>(sf::Vector2f(object.getAABB().width, object.getAABB().height), sf::Vector2f(object.getPosition()));
+        return std::move(cs);
+    }
+    }
+    
     return nullptr;
 }
 
@@ -307,4 +529,271 @@ bool Map::reset()
     m_properties.clear();
 
     return false;
+}
+
+void Map::subDivide(Physics::RigidBody* rb, const PointList& points, bool conc)
+{
+    std::vector<PointList> pointLists;
+    if (conc)
+    {
+        pointLists = splitConcave(points);
+    }
+    else
+    {
+        pointLists = splitConvex(points);
+    }
+
+    for (const auto& list : pointLists)
+    {
+        Physics::CollisionPolygonShape cs(list);
+        rb->addCollisionShape(cs);
+    }
+}
+
+std::vector<Map::PointList> Map::splitConvex(const PointList& points)
+{
+    XY_ASSERT(points.size() > 3, "can't create polygon with < 3 points");
+    std::vector<PointList> retVal;
+
+    const std::size_t maxVerts = Physics::CollisionPolygonShape::maxPoints();
+    const std::size_t shapeCount = static_cast<std::size_t>(std::floor(points.size() / maxVerts));
+    const std::size_t size = points.size();
+
+    for (auto i = 0u; i <= shapeCount; ++i)
+    {
+        retVal.emplace_back();
+        PointList& newPoints = retVal.back();
+        for (auto j = 0u; j < maxVerts; ++j)
+        {
+            auto index = i * maxVerts * j;
+            if (i) index--;
+            if (index < size)
+            {
+                newPoints.push_back(points[index]);
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+    //close loop
+    const PointList& endList = retVal[retVal.size() - 2];
+    retVal.back().push_back(retVal.front().front());
+    retVal.back().push_back(endList.back());
+
+    return retVal;
+}
+
+std::vector<Map::PointList> Map::splitConcave(const PointList& points)
+{
+    std::function<float(const sf::Vector2f&, const sf::Vector2f&, const sf::Vector2f&)> getWinding = 
+        [](const sf::Vector2f& p1, const sf::Vector2f& p2, const sf::Vector2f& p3) ->float
+    {
+        return p1.x * p2.y + p2.x * p3.y + p3.x * p1.y - p1.y * p2.x - p2.y * p3.x - p3.y * p1.x;
+    };
+    
+    std::function<sf::Vector2f(const sf::Vector2f&, const sf::Vector2f&, const sf::Vector2f&, const sf::Vector2f&)> hitsPoint = 
+        [](const sf::Vector2f& p1, const sf::Vector2f& p2, const sf::Vector2f& p3, const sf::Vector2f& p4)->sf::Vector2f
+    {
+        sf::Vector2f g1 = p3 - p1;
+        sf::Vector2f g2 = p2 - p1;
+        sf::Vector2f g3 = p4 - p3;
+
+        float t = cross(g3, g2);
+        float a = cross(g3, g1) / t;
+
+        return sf::Vector2f(p1.x + a * g2.x, p1.y + a * g2.y);
+    };
+
+    std::function<bool(const sf::Vector2f&, const sf::Vector2f&, const sf::Vector2f&)> onLine =
+        [](const sf::Vector2f& p, const sf::Vector2f& start, const sf::Vector2f& end)->bool
+    {
+        if (end.x - start.x > pointTolerance || start.x - end.x > pointTolerance)
+        {
+            float a = (end.y - start.y) / (end.x - start.x);
+            float newY = a * (p.x - start.x) + start.y;
+            float diff = std::abs(newY - p.y);
+            return (diff < pointTolerance);
+        }
+
+        return (p.x - start.x < pointTolerance || start.x - p.x < pointTolerance);
+    };
+
+    std::function<bool(const sf::Vector2f&, const sf::Vector2f&, const sf::Vector2f&)> onSeg = 
+        [&onLine](const sf::Vector2f& p, const sf::Vector2f& start, const sf::Vector2f& end)->bool
+    {
+        bool a = (start.x + pointTolerance >= p.x && p.x >= end.x - pointTolerance)
+            || (start.x - pointTolerance <= p.x && p.x <= end.x + pointTolerance);
+        bool b = (start.y + pointTolerance >= p.y && p.y >= end.y - pointTolerance)
+            || (start.y - pointTolerance <= p.y && p.y <= end.y + pointTolerance);
+        return ((a && b) && onLine(p, start, end));
+    };
+
+    std::function<bool(const sf::Vector2f&, const sf::Vector2f&)> pointsMatch = 
+        [](const sf::Vector2f& p1, const sf::Vector2f& p2)->bool
+    {
+        float x = std::abs(p2.x - p1.x);
+        float y = std::abs(p2.y - p1.y);
+        return (x < pointTolerance && y < pointTolerance);
+    };
+
+    //--------------------------------------------------------------------------------
+
+    std::queue<PointList> queue;
+    queue.push(points);
+
+    std::vector<PointList> retVal;
+
+    while (!queue.empty())
+    {
+        const auto& list = queue.front();
+        std::size_t size = list.size();
+        bool convex = true;
+
+        for (auto i = 0u; i < size; ++i)
+        {
+            std::size_t i1 = i;
+            std::size_t i2 = (i < size - 1u) ? i + 1u : i + 1u - size;
+            std::size_t i3 = (i < size - 2u) ? i + 2u : i + 2u - size;
+
+            sf::Vector2f p1 = list[i1];
+            sf::Vector2f p2 = list[i2];
+            sf::Vector2f p3 = list[i3];
+
+            float direction = getWinding(p1, p2, p3);
+            if (direction < 0.f)
+            {
+                convex = false;
+                float minLen = FLT_MAX;
+                std::size_t j1 = 0;
+                std::size_t j2 = 0;
+                sf::Vector2f v1, v2;
+                std::size_t h = 0;
+                std::size_t k = 0;
+                sf::Vector2f hitPoint;
+
+                for (auto j = 0u; j < size; ++j)
+                {
+                    if (j != i1 && j != i2)
+                    {
+                        j1 = j;
+                        j2 = (j < size - 1u) ? j + 1u : 0;
+
+                        v1 = list[j1];
+                        v2 = list[j2];
+
+                        sf::Vector2f hp = hitsPoint(p1, p2, v1, v2);
+                        bool b1 = onSeg(p2, p1, hp);
+                        bool b2 = onSeg(hp, v1, v2);
+
+                        if (b1 && b2)
+                        {
+                            sf::Vector2f dist = p2 - hp;
+                            float t = Util::Vector::lengthSquared(dist);
+
+                            if (t < minLen)
+                            {
+                                h = j1;
+                                k = j2;
+                                hitPoint = hp;
+                                minLen = t;
+                            }
+                        }
+                    }
+                }
+
+                PointList list1;
+                PointList list2;
+
+                j1 = h;
+                j2 = k;
+                v1 = list[j1];
+                v2 = list[j2];
+
+                if (!pointsMatch(hitPoint, v2))
+                {
+                    list1.push_back(hitPoint);
+                }
+                if (!pointsMatch(hitPoint, v1))
+                {
+                    list2.push_back(hitPoint);
+                }
+
+                h = -1;
+                k = i1;
+                while (true)
+                {
+                    if (k != j2)
+                    {
+                        list1.push_back(list[k]);
+                    }
+                    else
+                    {
+                        XY_ASSERT(h >= 0 && h < size, "");
+                        if (!onSeg(v2, list[h], p1))
+                        {
+                            list1.push_back(list[k]);
+                        }
+                        break;
+                    }
+
+                    h = k;
+                    if ((k - 1) < 0)
+                    {
+                        k = size - 1u;
+                    }
+                    else
+                    {
+                        k--;
+                    }
+                }
+
+                std::reverse(list1.begin(), list1.end());
+
+                h = -1;
+                k = i2;
+                while (true)
+                {
+                    if (k != j1)
+                    {
+                        list2.push_back(list[k]);
+                    }
+                    else
+                    {
+                        XY_ASSERT(h >= 0 && h < size, "");
+                        if ((k == j1) && !onSeg(v1, list[h], p2))
+                        {
+                           list2.push_back(list[k]);
+                        }
+                        break;
+                    }
+
+                    h = k;
+                    if (k + 1 > size - 1u)
+                    {
+                        k = 0;
+                    }
+                    else
+                    {
+                        k++;
+                    }
+                }
+                queue.push(list1);
+                queue.push(list2);
+                queue.pop();
+
+                break;
+            }
+        }
+
+        if (convex)
+        {
+            retVal.push_back(queue.front());
+            queue.pop();
+        }
+    }
+
+    return retVal;
 }

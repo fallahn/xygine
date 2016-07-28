@@ -145,7 +145,7 @@ namespace xy
             
             The original shape is unmodified (so it can be attached to 
             multiple bodies) and a pointer to the newly created shape is returned.
-            Be aware that this pointer will become invalid should the body be destoyed
+            Be aware that this pointer will become invalid should the body be destroyed
             \returns Pointer to newly created collision shape attached to this body.
             */
             template <typename T>

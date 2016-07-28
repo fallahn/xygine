@@ -74,6 +74,13 @@ namespace xy
             */
             void setPoints(const std::vector<sf::Vector2f>& points);
 
+            /*!
+            \brief Returns the maximum number of points allowed by a polygon.
+            If a polygon requires more than the allowed maximum points it should
+            be subdivided into smaller convex polygons.
+            */
+            static inline std::size_t maxPoints() { return b2_maxPolygonVertices; }
+
         private:
             b2PolygonShape m_polyShape;
         };

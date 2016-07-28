@@ -193,7 +193,7 @@ namespace xy
             a nullptr to be returned.
             \returns Drawable component if successful, else nullptr
             */
-            std::unique_ptr<TileMapLayer> getDrawable(const Layer&, TextureResource&, ShaderResource&);
+            std::unique_ptr<TileMapLayer> getDrawable(xy::MessageBus&, const Layer&, TextureResource&, ShaderResource&);
 
             /*!
             \brief Creates a RigidBody component from a given ObjectGroup.
@@ -203,7 +203,7 @@ namespace xy
             If the given ObjectGroup is invalid or does not belong to the loaded map
             then this function returns a nullptr.
             */
-            std::unique_ptr<Physics::RigidBody> createRigidBody(const ObjectGroup&, Physics::BodyType = Physics::BodyType::Static);
+            std::unique_ptr<Physics::RigidBody> createRigidBody(xy::MessageBus&, const ObjectGroup&, Physics::BodyType = Physics::BodyType::Static);
 
             /*!
             \brief Creates a RigidBody component from a given object.
@@ -211,7 +211,7 @@ namespace xy
             useful for dynamic items which each require their own physics body. If the
             function fails then it will return nullptr.
             */
-            std::unique_ptr<Physics::RigidBody> createRigidBody(const Object&, Physics::BodyType = Physics::BodyType::Dynamic);
+            std::unique_ptr<Physics::RigidBody> createRigidBody(xy::MessageBus&, const Object&, Physics::BodyType = Physics::BodyType::Dynamic);
 
             /*!
             \brief Attempts to create a CollisionShape from a given object.
@@ -245,6 +245,11 @@ namespace xy
             //always returns false so we can return this
             //on load failure
             bool reset();
+
+            using PointList = std::vector<sf::Vector2f>;
+            void subDivide(Physics::RigidBody*, const PointList&, bool);
+            std::vector<PointList> splitConvex(const PointList&);
+            std::vector<PointList> splitConcave(const PointList&);
 
             struct Key {};
         };
