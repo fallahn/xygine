@@ -93,6 +93,20 @@ namespace
         }
         return false;
     }
+
+    void enforceWinding(std::vector<sf::Vector2f>& points)
+    {
+        float result = 0.f;
+        for (auto i = 0u; i < points.size() - 1u; ++i)
+        {
+            result += ((points[i + 1].x - points[i].x) * (points[i + 1].y - points[i].y));
+        }
+        //reverse winding if counter clockwise
+        if (result > 0)
+        {
+            std::reverse(points.begin(), points.end());
+        }
+    }
 }
 
 
@@ -423,6 +437,7 @@ std::unique_ptr<Physics::CollisionShape> Map::createCollisionShape(const Object&
             auto point = tx.transformPoint(p);
             worldPoints.push_back(point + object.getPosition());
         }
+        enforceWinding(worldPoints);
         std::unique_ptr<Physics::CollisionShape> cs =
             std::make_unique<Physics::CollisionPolygonShape>(worldPoints);
         return std::move(cs);
@@ -507,23 +522,31 @@ bool Map::reset()
 void Map::processObject(Physics::RigidBody* rb, const Object& object)
 {
     //check if polygon and sub-divide if necessary
-    const auto& points = object.getPoints();
-    sf::Transform tx;
-    tx.rotate(object.getRotation());
-    PointList pointlist;
-    for (const auto& p : points)
-    {
-        auto point = tx.transformPoint(p);
-        pointlist.push_back(point + object.getPosition());
-    }
-    bool conc = false;
-    if (object.getShape() == Object::Shape::Polygon &&
-        (object.getPoints().size() > Physics::CollisionPolygonShape::maxPoints() || (conc = concave(object.getPoints()))))
-    {
-        //subdivide
-        LOG("subdividing polygon " + object.getName(), Logger::Type::Info);
-        subDivide(rb, pointlist, conc);
-    }
+    //if (object.getShape() == Object::Shape::Polygon)
+    //{
+        const auto& points = object.getPoints();
+        PointList pointlist;
+        if (!points.empty())
+        {
+            sf::Transform tx;
+            tx.rotate(object.getRotation());            
+            for (const auto& p : points)
+            {
+                auto point = tx.transformPoint(p);
+                pointlist.push_back(point + object.getPosition());
+            }
+            enforceWinding(pointlist);
+        }
+
+        bool conc = false;
+        if (object.getShape() == Object::Shape::Polygon &&
+            (object.getPoints().size() > Physics::CollisionPolygonShape::maxPoints() || (conc = concave(object.getPoints()))))
+        {
+            //subdivide
+            LOG("subdividing polygon " + object.getName(), Logger::Type::Info);
+            subDivide(rb, pointlist, conc);
+        }
+    //}
     else
     {
         auto cs = createCollisionShape(object);
@@ -568,10 +591,10 @@ void Map::subDivide(Physics::RigidBody* rb, const PointList& points, bool conc)
 
 std::vector<Map::PointList> Map::splitConvex(const PointList& points)
 {
-    XY_ASSERT(points.size() > 3, "can't create polygon with < 3 points");
+    XY_ASSERT(points.size() > Physics::CollisionPolygonShape::maxPoints(), "shouldn't be trying to split this");
     std::vector<PointList> retVal;
 
-    const std::size_t maxVerts = Physics::CollisionPolygonShape::maxPoints();
+    const std::size_t maxVerts = Physics::CollisionPolygonShape::maxPoints() - 2u;
     const std::size_t shapeCount = static_cast<std::size_t>(std::floor(points.size() / maxVerts));
     const std::size_t size = points.size();
 
@@ -581,7 +604,7 @@ std::vector<Map::PointList> Map::splitConvex(const PointList& points)
         PointList& newPoints = retVal.back();
         for (auto j = 0u; j < maxVerts; ++j)
         {
-            auto index = i * maxVerts * j;
+            auto index = i * maxVerts + j;
             if (i) index--;
             if (index < size)
             {
@@ -683,8 +706,8 @@ std::vector<Map::PointList> Map::splitConcave(const PointList& points)
             {
                 convex = false;
                 float minLen = FLT_MAX;
-                std::size_t j1 = 0;
-                std::size_t j2 = 0;
+                int j1 = 0;
+                int j2 = 0;
                 sf::Vector2f v1, v2;
                 int h = 0;
                 int k = 0;
