@@ -46,6 +46,7 @@ namespace xy
 {
     namespace tmx
     {
+        class Map;
         /*!
         \brief Represents a layer of a tmx format tile map.
         This is an abstract base class from which all layer
@@ -56,7 +57,7 @@ namespace xy
         public:
             using Ptr = std::unique_ptr<Layer>;
 
-            Layer() : m_opacity(1.f), m_visible(true) {};
+            explicit Layer() : m_opacity(1.f), m_visible(true) {};
             virtual ~Layer() = default;
 
             enum class Type
@@ -95,6 +96,7 @@ namespace xy
             \brief Returns the list of properties of this layer
             */
             const std::vector<Property>& getProperties() const { return m_properties; }
+
         protected:
 
             void setName(const std::string& name) { m_name = name; }

@@ -33,7 +33,7 @@ using namespace xy;
 using namespace xy::tmx;
 
 ImageLayer::ImageLayer(const std::string& workingDir)
-    : m_workingDir      (workingDir)
+    : m_workingDir    (workingDir)
 {
 
 }

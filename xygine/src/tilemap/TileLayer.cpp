@@ -35,7 +35,7 @@ using namespace xy;
 using namespace xy::tmx;
 
 TileLayer::TileLayer(std::size_t tileCount)
-    : m_tileCount   (tileCount)
+    : m_tileCount (tileCount)
 {
     m_tiles.reserve(tileCount);
 }

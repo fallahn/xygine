@@ -53,8 +53,7 @@ namespace xy
         /*!
         \brief Represents a Tileset node as loaded
         from a *.tmx format tile map via the tmx::Map
-        class. These are used internally by the map
-        class and are generally useless on their own.
+        class.
         */
         class XY_EXPORT_API Tileset final
         {

@@ -45,7 +45,7 @@ namespace xy
         class XY_EXPORT_API ImageLayer final : public Layer
         {
         public:
-            ImageLayer(const std::string&);
+            explicit ImageLayer(const std::string&);
             ~ImageLayer() = default;
 
             Type getType() const override { return Layer::Type::Image; }

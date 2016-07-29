@@ -144,6 +144,10 @@ namespace xy
             */
             const sf::Vector2u& getTileSize() const { return m_tileSize; }
             /*!
+            \brief Returns the bounds of the map in SFML units
+            */
+            sf::FloatRect getBounds() const { return sf::FloatRect(0.f, 0.f, static_cast<float>(m_tileCount.x * m_tileSize.x), static_cast<float>(m_tileCount.y * m_tileSize.y)); }
+            /*!
             \brief Returns the length of an edge of a tile if a Hexagonal
             map is loaded.
             The length returned is in pixels of the straight edge running
@@ -194,6 +198,15 @@ namespace xy
             \returns Drawable component if successful, else nullptr
             */
             std::unique_ptr<TileMapLayer> getDrawable(xy::MessageBus&, const Layer&, TextureResource&, ShaderResource&);
+
+            /*!
+            \brief Attempts to create a RigidBody component from a given Layer.
+            This function will attempt to parse all objects in a given ObjectGroup
+            and attach them to a single RigidBody component. This is useful for map
+            layers designed to contain, for example, solid collision objects.
+            If the given layer is not an ObjectGroup then this function returns a nullptr.
+            */
+            std::unique_ptr<Physics::RigidBody> createRigidBody(xy::MessageBus&, const Layer&, Physics::BodyType = Physics::BodyType::Static);
 
             /*!
             \brief Creates a RigidBody component from a given ObjectGroup.

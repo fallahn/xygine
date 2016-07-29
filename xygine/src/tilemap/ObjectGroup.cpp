@@ -33,7 +33,7 @@ using namespace xy;
 using namespace xy::tmx;
 
 ObjectGroup::ObjectGroup()
-    : m_colour  (127, 127, 127, 255),
+    : m_colour    (127, 127, 127, 255),
     m_drawOrder (DrawOrder::TopDown)
 {
 

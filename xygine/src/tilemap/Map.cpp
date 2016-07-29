@@ -343,10 +343,34 @@ std::unique_ptr<TileMapLayer> Map::getDrawable(xy::MessageBus& mb, const Layer& 
         Logger::log("Layer is not a drawawble type", Logger::Type::Error);
         return nullptr;
     }
-    //TODO check layer belongs to this map
+    //check layer belongs to this map
+    /*if (&layer.getMap() != this)
+    {
+        Logger::log("Layer does not belong to the current map, so drawable will not be created.", Logger::Type::Error);
+        return nullptr;
+    }*/
 
+    //this type of drawable only implements orthogonal maps right now
+    if (m_orientation != Orientation::Orthogonal)
+    {
+        Logger::log("This map is not an Orthogonal map, so rendering results may not be as expected.", Logger::Type::Warning);
+        Logger::log("While non-orthogonal data is fully parsed, it is recommended the renderer is user implemented.");
+    }
 
-    return nullptr;
+    auto tml = xy::Component::create<TileMapLayer>(mb, Key());
+    tml->setTileData(dynamic_cast<const TileLayer*>(&layer), m_tilesets);
+
+    return std::move(tml);
+}
+
+std::unique_ptr<Physics::RigidBody> Map::createRigidBody(xy::MessageBus& mb, const Layer& layer, Physics::BodyType bodyType)
+{
+    if (layer.getType() != Layer::Type::Object)
+    {
+        Logger::log("cannot create RigidBody from non-object group layer", Logger::Type::Warning);
+        return nullptr;
+    }
+    return createRigidBody(mb, *dynamic_cast<const xy::tmx::ObjectGroup*>(&layer)); //ew.
 }
 
 std::unique_ptr<Physics::RigidBody> Map::createRigidBody(xy::MessageBus& mb, const ObjectGroup& og, Physics::BodyType bodyType)
@@ -405,7 +429,7 @@ std::unique_ptr<Physics::CollisionShape> Map::createCollisionShape(const Object&
             {
                 points[i] = tx.transformPoint(points[i]);
                 points[i].x += size.left;
-                points[i].x += size.top;
+                points[i].y += size.top;
             }
 
             std::unique_ptr<Physics::CollisionShape> cs =

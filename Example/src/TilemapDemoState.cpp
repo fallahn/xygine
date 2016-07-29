@@ -34,6 +34,11 @@ source distribution.
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
 
+#include <xygine/components/TileMapLayer.hpp>
+#include <xygine/components/Camera.hpp>
+#include <xygine/physics/RigidBody.hpp>
+#include <xygine/physics/CollisionCircleShape.hpp>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Window/Event.hpp>
@@ -73,7 +78,7 @@ void TilemapDemoState::draw()
 {
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
-    rw.setView(getContext().defaultView);
+    rw.setView(m_scene.getView());
     /*if (drawOverlay)*/ rw.draw(m_physWorld);
 }
 
@@ -175,18 +180,43 @@ void TilemapDemoState::buildScene()
     if (m_tilemap.load("assets/maps/platform.tmx"))
     {
         auto entity = xy::Entity::create(m_messageBus);
-
         const auto& layers = m_tilemap.getLayers();
         for (const auto& l : layers)
         {
             if (l->getType() == xy::tmx::Layer::Type::Object)
             {
                 xy::Logger::log("found object layer - attempting to create physics components", xy::Logger::Type::Info);
-                auto rb = m_tilemap.createRigidBody(m_messageBus, *dynamic_cast<xy::tmx::ObjectGroup*>(l.get()));
+                auto rb = m_tilemap.createRigidBody(m_messageBus, *l);
                 entity->addComponent(rb);
             }
+            else
+            {
+                auto drawable = m_tilemap.getDrawable(m_messageBus, *l, m_textureResource, m_shaderResource);
+                if (drawable)
+                {
+                    xy::Logger::log("created layer drawable, adding to scene...");
+                    entity->addComponent(drawable);                 
+                }
+            }
         }
-
         m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
+
+        auto body = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
+        auto cs = xy::Physics::CollisionCircleShape(30.f);
+        cs.setDensity(0.9f);
+        cs.setRestitution(1.f);
+        body->addCollisionShape(cs);
+
+        auto cam = xy::Component::create<xy::Camera>(m_messageBus, getContext().defaultView);
+        cam->lockTransform(xy::Camera::TransformLock::Rotation, true);
+        cam->lockBounds(m_tilemap.getBounds());
+        
+        entity = xy::Entity::create(m_messageBus);
+        entity->setPosition(800.f, 400.f);
+        entity->addComponent(body);
+        auto camPtr = entity->addComponent(cam);
+
+        m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
+        m_scene.setActiveCamera(camPtr);
     }
 }

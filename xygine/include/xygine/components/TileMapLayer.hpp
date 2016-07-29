@@ -30,6 +30,7 @@ source distribution.
 
 #include <xygine/components/Component.hpp>
 #include <xygine/tilemap/Map.hpp>
+#include <xygine/tilemap/TileLayer.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
 
@@ -40,7 +41,7 @@ namespace xy
     This component represents a single layer loaded via xy::tmx::Map.
     As the map class itself is not drawable, these components can be
     requested from the map object, passing in the layer which this
-    component should represent. The compnent can be used to draw either
+    component should represent. The component can be used to draw either
     TileLayer or ImageLayer type layers loaded by the map.
     \see tmx::Map::getDrawable()
     */
@@ -55,7 +56,16 @@ namespace xy
         xy::Component::Type type() const override { return Component::Type::Drawable; }
         void entityUpdate(Entity&, float) override;
 
+        void setTileData(const tmx::TileLayer*, const std::vector<tmx::Tileset>&);
+
     private:
+
+        struct TileData
+        {
+            std::unique_ptr<sf::Texture> lookupTexture;
+            sf::Texture* tileTexture = nullptr;
+        };
+        std::vector<TileData> m_tileData;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };

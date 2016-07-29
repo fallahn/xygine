@@ -41,6 +41,10 @@ TileMapLayer::TileMapLayer(MessageBus& mb, const tmx::Map::Key&)
 //public
 void TileMapLayer::entityUpdate(Entity&, float) {}
 
+void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tmx::Tileset>& tileSets)
+{
+
+}
 
 //private
 void TileMapLayer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
