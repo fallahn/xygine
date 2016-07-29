@@ -245,6 +245,7 @@ namespace xy
             //on load failure
             bool reset();
 
+            void processObject(Physics::RigidBody*, const Object&);
             using PointList = std::vector<sf::Vector2f>;
             void subDivide(Physics::RigidBody*, const PointList&, bool);
             std::vector<PointList> splitConvex(const PointList&);

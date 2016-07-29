@@ -340,43 +340,7 @@ std::unique_ptr<Physics::RigidBody> Map::createRigidBody(xy::MessageBus& mb, con
     auto rb = xy::Component::create<xy::Physics::RigidBody>(mb, bodyType);
     for (const auto& o : og.getObjects())
     {
-        //check if polygon and sub-divide if necessary
-        bool conc = false;
-        const auto& points = o.getPoints();
-        PointList pointlist;
-        for (const auto& p : points)
-        {
-            pointlist.push_back(p + o.getPosition());
-        }
-
-        if (o.getShape() == Object::Shape::Polygon &&
-            (points.size() > Physics::CollisionPolygonShape::maxPoints() || (conc = concave(points))))
-        {
-            //subdivide
-            LOG("subdividing polygon " + o.getName(), Logger::Type::Info);
-            subDivide(rb.get(), pointlist, conc);
-        }
-        else
-        {
-            auto cs = createCollisionShape(o);
-            XY_ASSERT(cs, "failed creating collision shape");
-            switch (cs->type())
-            {
-            default: break;
-            case Physics::CollisionShape::Type::Box:
-                rb->addCollisionShape(*dynamic_cast<Physics::CollisionRectangleShape*>(cs.get()));
-                break;
-            case Physics::CollisionShape::Type::Circle:
-                rb->addCollisionShape(*dynamic_cast<Physics::CollisionCircleShape*>(cs.get()));
-                break;
-            case Physics::CollisionShape::Type::Edge:
-                rb->addCollisionShape(*dynamic_cast<Physics::CollisionEdgeShape*>(cs.get()));
-                break;
-            case Physics::CollisionShape::Type::Polygon:
-                rb->addCollisionShape(*dynamic_cast<Physics::CollisionPolygonShape*>(cs.get()));
-                break;
-            }
-        }
+        processObject(rb.get(), o);
     }
     
     return std::move(rb);
@@ -385,50 +349,13 @@ std::unique_ptr<Physics::RigidBody> Map::createRigidBody(xy::MessageBus& mb, con
 std::unique_ptr<Physics::RigidBody> Map::createRigidBody(xy::MessageBus& mb, const Object& object, Physics::BodyType bodyType)
 {
     auto rb = xy::Component::create<xy::Physics::RigidBody>(mb, bodyType);    
+    processObject(rb.get(), object);
     
-    //check if polygon and sub-divide if necessary
-    const auto& points = object.getPoints();
-    PointList pointlist;
-    for (const auto& p : points)
-    {
-        pointlist.push_back(p + object.getPosition());
-    }
-    bool conc = false;
-    if (object.getShape() == Object::Shape::Polygon &&
-        (object.getPoints().size() > Physics::CollisionPolygonShape::maxPoints() || (conc = concave(object.getPoints()))))
-    {
-        //subdivide
-        LOG("subdividing polygon " + object.getName(), Logger::Type::Info);
-        subDivide(rb.get(), pointlist, conc);
-    }
-    else
-    {
-        auto cs = createCollisionShape(object);
-        XY_ASSERT(cs, "failed creating collision shape");
-        switch (cs->type())
-        {
-        default: break;
-        case Physics::CollisionShape::Type::Box:
-            rb->addCollisionShape(*dynamic_cast<Physics::CollisionRectangleShape*>(cs.get()));
-            break;
-        case Physics::CollisionShape::Type::Circle:
-            rb->addCollisionShape(*dynamic_cast<Physics::CollisionCircleShape*>(cs.get()));
-            break;
-        case Physics::CollisionShape::Type::Edge:
-            rb->addCollisionShape(*dynamic_cast<Physics::CollisionEdgeShape*>(cs.get()));
-            break;
-        case Physics::CollisionShape::Type::Polygon:
-            rb->addCollisionShape(*dynamic_cast<Physics::CollisionPolygonShape*>(cs.get()));
-            break;
-        }
-    }
     return std::move(rb);
 }
 
 std::unique_ptr<Physics::CollisionShape> Map::createCollisionShape(const Object& object)
-{
-    //TODO this doesn't apply rotation properties.
-    
+{   
     switch (object.getShape())
     {
     default: return nullptr;
@@ -455,8 +382,18 @@ std::unique_ptr<Physics::CollisionShape> Map::createCollisionShape(const Object&
             std::vector<sf::Vector2f> points;
             for (float angle = 0.f; angle < tau; angle += step)
             {
-                points.emplace_back((x + x * std::cos(angle)) + size.left, (y + y * std::sin(angle)) + size.top);               
+                points.emplace_back((x + x * std::cos(angle)), (y + y * std::sin(angle)));               
             }
+
+            sf::Transform tx;
+            tx.rotate(object.getRotation());
+            for (auto i = 0u; i < points.size(); ++i)
+            {
+                points[i] = tx.transformPoint(points[i]);
+                points[i].x += size.left;
+                points[i].x += size.top;
+            }
+
             std::unique_ptr<Physics::CollisionShape> cs =
                 std::make_unique<Physics::CollisionEdgeShape>(points, Physics::CollisionEdgeShape::Option::Loop);
             return std::move(cs);
@@ -478,10 +415,13 @@ std::unique_ptr<Physics::CollisionShape> Map::createCollisionShape(const Object&
             goto polyline;
         }
 
+        sf::Transform tx;
+        tx.rotate(object.getRotation());
         std::vector<sf::Vector2f> worldPoints;
         for (const auto& p : points)
         {
-            worldPoints.push_back(p + object.getPosition());
+            auto point = tx.transformPoint(p);
+            worldPoints.push_back(point + object.getPosition());
         }
         std::unique_ptr<Physics::CollisionShape> cs =
             std::make_unique<Physics::CollisionPolygonShape>(worldPoints);
@@ -492,10 +432,13 @@ std::unique_ptr<Physics::CollisionShape> Map::createCollisionShape(const Object&
         polyline:
     {
         const auto& points = object.getPoints();
+        sf::Transform tx;
+        tx.rotate(object.getRotation());
         std::vector<sf::Vector2f> worldPoints;
         for (const auto& p : points)
         {
-            worldPoints.push_back(p + object.getPosition());
+            auto point = tx.transformPoint(p);
+            worldPoints.push_back(point + object.getPosition());
         }
 
         std::unique_ptr<Physics::CollisionShape> cs =
@@ -504,9 +447,37 @@ std::unique_ptr<Physics::CollisionShape> Map::createCollisionShape(const Object&
     }
     case Object::Shape::Rectangle:
     {
-        std::unique_ptr<Physics::CollisionShape> cs =
-            std::make_unique<Physics::CollisionRectangleShape>(sf::Vector2f(object.getAABB().width, object.getAABB().height), sf::Vector2f(object.getPosition()));
-        return std::move(cs);
+        float rotation = object.getRotation();
+        if (rotation == 0)
+        {
+            std::unique_ptr<Physics::CollisionShape> cs =
+                std::make_unique<Physics::CollisionRectangleShape>(sf::Vector2f(object.getAABB().width, object.getAABB().height), sf::Vector2f(object.getPosition()));
+            return std::move(cs);
+        }
+        else
+        {
+            //create a rotated polygon instead
+            auto size = object.getAABB();
+            std::vector<sf::Vector2f> points =
+            {
+                sf::Vector2f(),
+                sf::Vector2f(size.width, 0.f),
+                sf::Vector2f(size.width, size.height),
+                sf::Vector2f(0.f, size.height)
+            };
+
+            sf::Transform tx;
+            tx.rotate(rotation);
+            for (auto& p : points)
+            {
+                p = tx.transformPoint(p);
+                p += {size.left, size.top};
+            }
+
+            std::unique_ptr<Physics::CollisionShape> cs =
+                std::make_unique<Physics::CollisionPolygonShape>(points);
+            return std::move(cs);
+        }
     }
     }
     
@@ -531,6 +502,49 @@ bool Map::reset()
     m_properties.clear();
 
     return false;
+}
+
+void Map::processObject(Physics::RigidBody* rb, const Object& object)
+{
+    //check if polygon and sub-divide if necessary
+    const auto& points = object.getPoints();
+    sf::Transform tx;
+    tx.rotate(object.getRotation());
+    PointList pointlist;
+    for (const auto& p : points)
+    {
+        auto point = tx.transformPoint(p);
+        pointlist.push_back(point + object.getPosition());
+    }
+    bool conc = false;
+    if (object.getShape() == Object::Shape::Polygon &&
+        (object.getPoints().size() > Physics::CollisionPolygonShape::maxPoints() || (conc = concave(object.getPoints()))))
+    {
+        //subdivide
+        LOG("subdividing polygon " + object.getName(), Logger::Type::Info);
+        subDivide(rb, pointlist, conc);
+    }
+    else
+    {
+        auto cs = createCollisionShape(object);
+        XY_ASSERT(cs, "failed creating collision shape");
+        switch (cs->type())
+        {
+        default: break;
+        case Physics::CollisionShape::Type::Box:
+            rb->addCollisionShape(*dynamic_cast<Physics::CollisionRectangleShape*>(cs.get()));
+            break;
+        case Physics::CollisionShape::Type::Circle:
+            rb->addCollisionShape(*dynamic_cast<Physics::CollisionCircleShape*>(cs.get()));
+            break;
+        case Physics::CollisionShape::Type::Edge:
+            rb->addCollisionShape(*dynamic_cast<Physics::CollisionEdgeShape*>(cs.get()));
+            break;
+        case Physics::CollisionShape::Type::Polygon:
+            rb->addCollisionShape(*dynamic_cast<Physics::CollisionPolygonShape*>(cs.get()));
+            break;
+        }
+    }
 }
 
 void Map::subDivide(Physics::RigidBody* rb, const PointList& points, bool conc)

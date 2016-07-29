@@ -42,10 +42,10 @@
   <object id="6" x="320" y="64" width="128" height="64" rotation="90">
    <ellipse/>
   </object>
-  <object id="8" x="504" y="183">
+  <object id="8" x="504" y="183" rotation="45">
    <polygon points="0,0 -66,98 -22,206 100,234 226,152 187,3"/>
   </object>
-  <object id="12" x="589" y="521">
+  <object id="12" x="589" y="521" rotation="-25">
    <polygon points="0,0 51,94 206,1 70,243 -156,149"/>
   </object>
  </objectgroup>
