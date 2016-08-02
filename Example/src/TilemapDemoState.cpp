@@ -195,7 +195,7 @@ void TilemapDemoState::buildScene()
                 if (drawable)
                 {
                     xy::Logger::log("created layer drawable, adding to scene...");
-                    entity->addComponent(drawable);                 
+                    entity->addComponent(drawable);
                 }
             }
         }

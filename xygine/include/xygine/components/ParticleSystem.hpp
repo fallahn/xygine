@@ -108,7 +108,7 @@ namespace xy
             /*!
             \brief Loads a particle system configuration file
 
-            Configuration files a json formatted text file, usually
+            Configuration files are a json formatted text file, usually
             with the file extension *.xyp. If file loading or parsing
             fails then the definition is left unmodified from its
             existing state.

@@ -33,9 +33,12 @@ source distribution.
 #include <xygine/tilemap/TileLayer.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 namespace xy
 {
+    class TextureResource;
+
     /*
     \brief Drawable tile map layer.
     This component represents a single layer loaded via xy::tmx::Map.
@@ -50,22 +53,40 @@ namespace xy
     public:
         friend class tmx::Map;
 
-        TileMapLayer(xy::MessageBus&, const tmx::Map::Key&);
+        TileMapLayer(xy::MessageBus&, const tmx::Map::Key&, sf::Uint32 = 1024u);
         ~TileMapLayer() = default;
 
         xy::Component::Type type() const override { return Component::Type::Drawable; }
         void entityUpdate(Entity&, float) override;
+        sf::FloatRect globalBounds() const override { return m_globalBounds; }
 
-        void setTileData(const tmx::TileLayer*, const std::vector<tmx::Tileset>&);
+        void setTileData(const tmx::TileLayer*, const std::vector<tmx::Tileset>&, const tmx::Map&, TextureResource&);
 
     private:
 
-        struct TileData
+        struct TileData final
         {
             std::unique_ptr<sf::Texture> lookupTexture;
             sf::Texture* tileTexture = nullptr;
         };
-        std::vector<TileData> m_tileData;
+        
+        struct Chunk final : public sf::Drawable
+        {
+            std::vector<TileData> tileData;
+            sf::FloatRect bounds;
+            std::array<sf::Vertex, 4u> vertices;
+        private:
+            void draw(sf::RenderTarget&, sf::RenderStates) const override;
+        };
+
+        std::vector<Chunk> m_chunks;
+        std::vector<const Chunk*> m_drawList;
+        sf::Uint32 m_chunkResolution;
+
+        float m_opacity;
+        sf::FloatRect m_globalBounds;
+
+        sf::Shader m_testShader;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
