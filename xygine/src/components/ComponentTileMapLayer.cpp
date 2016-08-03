@@ -74,15 +74,29 @@ namespace
         "uniform usampler2D u_lookup;\n"
         "uniform sampler2D u_tileMap;\n"
 
+        "uniform vec2 u_tileSize;\n"
+        "uniform vec2 u_tilesetCount;\n"
+
         "out vec4 colour;\n"
 
         "void main()\n"
         "{\n"
-        "    uvec2 values = texture(u_lookup, v_texCoord / 64.0).rg;\n"
-        "    if(values.r > 0u) colour = vec4(vec3(1.0), 0.3);\n"
-        "    else colour = vec4(0.5, 0.2, 0.0, 0.3);\n"
-        "    //colour = texture(u_tileMap, v_texCoord);\n"
-        "    //colour *= v_colour;\n"
+        "    uvec2 values = texture(u_lookup, v_texCoord / u_tileSize).rg;\n"
+        "    if(values.r > 0u)\n"
+        "    {\n"
+        "        //colour = vec4(vec3(1.0), 0.33333);\n"
+        "        //vec2 size = textureSize(u_tileMap, 0);\n"
+        "        float index = float(values.r) - 1.0;\n"
+        "        vec2 position = floor(vec2(mod(index, u_tilesetCount.x), index / u_tilesetCount.x)) / u_tilesetCount;\n"
+        "        //vec2 offset = mod(u_tileSize, (v_texCoord / u_tileSize));\n"
+        "        //vec2 tilePosition = (size / u_tilesetCount) * position;\n"
+        "        colour = texture(u_tileMap, position);\n"
+        "    }\n"
+        "    else\n"
+        "    {\n"
+        "         colour = vec4(0.0);"
+        "    }\n"
+        "    colour *= v_colour;\n"
         "}";
 
     const std::string frag2 =
@@ -160,15 +174,14 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
             chunk.bounds = { x * floatRes, y * floatRes, floatRes, floatRes };
             chunk.bounds.left += layer->getOffset().x;
             chunk.bounds.top += layer->getOffset().y;
-            chunk.vertices = 
+            chunk.vertices = //TODO colour this on layer?
             {
                 sf::Vertex(sf::Vector2f(chunk.bounds.left, chunk.bounds.top), sf::Vector2f()),
                 sf::Vertex(sf::Vector2f(chunk.bounds.left + floatRes, chunk.bounds.top), sf::Vector2f(floatRes, 0.f)),
                 sf::Vertex(sf::Vector2f(chunk.bounds.left + floatRes, chunk.bounds.top + floatRes), sf::Vector2f(floatRes, floatRes)),
                 sf::Vertex(sf::Vector2f(chunk.bounds.left, chunk.bounds.top + floatRes), sf::Vector2f(0.f, floatRes))
             };
-            chunk.vertices[0].color = sf::Color::Blue;
-
+            
             //check each used tileset, and if it's used by this chunk create a lookup texture
             for (const auto ts : usedTileSets)
             {
@@ -188,7 +201,7 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
                         {
                             //ID belongs to this tile set
                             tsUsed = true;
-                            pixelData.push_back(static_cast<std::uint16_t>(tileIDs[colPos].ID)); //red channel
+                            pixelData.push_back(static_cast<std::uint16_t>((tileIDs[colPos].ID - ts->getFirstGID()) + 1)); //red channel - making sure to index relative to the tileset
                             pixelData.push_back(static_cast<std::uint16_t>(tileIDs[colPos].flipFlags)); //green channel
                         }
                         else
@@ -210,8 +223,12 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
                     setTextureProperties(tileData.lookupTexture.get(), pixelData, tileXCount, tileYCount);
 
                     //load / assign tileset texture
+                    //TODO shader will need to know tileset data such as margin
+                    //and offset. Could use a struct uniform ideally
                     tr.setFallbackColour(sf::Color::Cyan);
                     tileData.tileTexture = &tr.get(ts->getImagePath());
+                    tileData.tileCount.x = ts->getTileCount() % ts->getTileSize().x;
+                    tileData.tileCount.y = ts->getTileCount() / ts->getTileSize().y;
                 }
             }
 
@@ -222,12 +239,14 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
 
     m_opacity = layer->getOpacity();
     m_globalBounds = map.getBounds();
+
+    m_testShader.setUniform("u_tileSize", sf::Glsl::Vec2(map.getTileSize()));
 }
 
 //private
 void TileMapLayer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    //TODO set states shader to tilemap shader
+    //set states shader to tilemap shader
     states.shader = &m_testShader;
     //TODO set shader uniform for layer opacity
     
@@ -243,8 +262,10 @@ void TileMapLayer::Chunk::draw(sf::RenderTarget& rt, sf::RenderStates states) co
     for (const auto& td : tileData)
     {
         //set shader texture uniforms
-        const_cast<sf::Shader*>(states.shader)->setUniform("u_lookup", *td.lookupTexture);
-        const_cast<sf::Shader*>(states.shader)->setUniform("u_tileMap", *td.tileTexture);
+        sf::Shader* shader = const_cast<sf::Shader*>(states.shader);
+        shader->setUniform("u_lookup", *td.lookupTexture);
+        shader->setUniform("u_tileMap", *td.tileTexture);
+        shader->setUniform("u_tilesetCount", sf::Glsl::Vec2(td.tileCount));
         states.texture = td.lookupTexture.get();
         rt.draw(vertices.data(), vertices.size(), sf::Quads, states);
     }

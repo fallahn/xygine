@@ -68,6 +68,7 @@ namespace xy
         {
             std::unique_ptr<sf::Texture> lookupTexture;
             sf::Texture* tileTexture = nullptr;
+            sf::Vector2u tileCount;
         };
         
         struct Chunk final : public sf::Drawable
