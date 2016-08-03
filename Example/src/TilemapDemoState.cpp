@@ -33,6 +33,7 @@ source distribution.
 
 #include <xygine/App.hpp>
 #include <xygine/Log.hpp>
+#include <xygine/util/Vector.hpp>
 
 #include <xygine/components/TileMapLayer.hpp>
 #include <xygine/components/Camera.hpp>
@@ -53,6 +54,18 @@ namespace
 
     const float joyDeadZone = 25.f;
     const float joyMaxAxis = 100.f;
+
+    enum Input
+    {
+        Up = 0x1,
+        Down = 0x2,
+        Left = 0x4,
+        Right = 0x8
+    };
+    const float moveSpeed = 1500.f;
+
+    xy::Entity* ent = nullptr;
+    sf::Uint8 input = 0;
 }
 
 TilemapDemoState::TilemapDemoState(xy::StateStack& stateStack, Context context)
@@ -70,6 +83,25 @@ TilemapDemoState::TilemapDemoState(xy::StateStack& stateStack, Context context)
 
 bool TilemapDemoState::update(float dt)
 {    
+    sf::Vector2f vel;
+    if (input & Input::Up)
+    {
+        vel.y = -1.f;
+    }
+    if (input & Input::Down)
+    {
+        vel.y = 1.f;
+    }
+    if (input & Input::Right)
+    {
+        vel.x = 1.f;
+    }
+    if (input & Input::Left)
+    {
+        vel.x = -1.f;
+    }
+    if(input) ent->move(xy::Util::Vector::normalise(vel) * moveSpeed * dt);
+    
     m_scene.update(dt);
     return true;
 }
@@ -97,16 +129,16 @@ bool TilemapDemoState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         case upKey:
-
+            input |= Input::Up;
             break;
         case downKey:
-
+            input |= Input::Down;
             break;
         case leftKey:
-
+            input |= Input::Left;
             break;
         case rightKey:
-
+            input |= Input::Right;
             break;
         case fireKey:
 
@@ -126,16 +158,16 @@ bool TilemapDemoState::handleEvent(const sf::Event& evt)
             //requestStackPush(States::ID::MenuPaused);
             break;
         case upKey:
-
+            input &= ~Input::Up;
             break;
         case downKey:
-
+            input &= ~Input::Down;
             break;
         case leftKey:
-
+            input &= ~Input::Left;
             break;
         case rightKey:
-
+            input &= ~Input::Right;
             break;
         case fireKey:
 
@@ -189,7 +221,7 @@ void TilemapDemoState::buildScene()
                 auto rb = m_tilemap.createRigidBody(m_messageBus, *l);
                 entity->addComponent(rb);
             }
-            else
+            else //if(l->getName() == "Middle")
             {
                 auto drawable = m_tilemap.getDrawable(m_messageBus, *l, m_textureResource, m_shaderResource);
                 if (drawable)
@@ -216,7 +248,7 @@ void TilemapDemoState::buildScene()
         entity->addComponent(body);
         auto camPtr = entity->addComponent(cam);
 
-        m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
+        ent = m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
         m_scene.setActiveCamera(camPtr);
     }
 }

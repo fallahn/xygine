@@ -78,11 +78,11 @@ namespace
 
         "void main()\n"
         "{\n"
-        "    uvec2 values = texture(u_lookup, v_texCoord).rg;\n"
-        "    if(values.r > 0u) colour = vec4(1.0);\n"
-        "    else colour = vec4(0.5, 0.2, 0.0, 1.0);\n"
+        "    uvec2 values = texture(u_lookup, v_texCoord / 64.0).rg;\n"
+        "    if(values.r > 0u) colour = vec4(vec3(1.0), 0.3);\n"
+        "    else colour = vec4(0.5, 0.2, 0.0, 0.3);\n"
         "    //colour = texture(u_tileMap, v_texCoord);\n"
-        "    colour *= v_colour;\n"
+        "    //colour *= v_colour;\n"
         "}";
 
     const std::string frag2 =
@@ -144,20 +144,22 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
     const auto bounds = map.getBounds();
     sf::Uint32 chunkX = static_cast<sf::Uint32>(std::ceil(bounds.width / m_chunkResolution));
     sf::Uint32 chunkY = static_cast<sf::Uint32>(std::ceil(bounds.height / m_chunkResolution));
-    sf::Uint32 chunkCount = chunkX * chunkY;
     float floatRes = static_cast<float>(m_chunkResolution);
 
     sf::Uint32 tileXCount = m_chunkResolution / map.getTileSize().x;
     sf::Uint32 tileYCount = m_chunkResolution / map.getTileSize().y;
+    sf::Uint32 rowCount = static_cast<sf::Uint32>(bounds.width / map.getTileSize().x);
 
     for (auto y = 0u; y < chunkY; ++y)
     {
         for (auto x = 0u; x < chunkX; ++x)
         {
-            //add a new chunk - TODO account for layer offset property
+            //add a new chunk
             m_chunks.emplace_back();
             auto& chunk = m_chunks.back();
             chunk.bounds = { x * floatRes, y * floatRes, floatRes, floatRes };
+            chunk.bounds.left += layer->getOffset().x;
+            chunk.bounds.top += layer->getOffset().y;
             chunk.vertices = 
             {
                 sf::Vertex(sf::Vector2f(chunk.bounds.left, chunk.bounds.top), sf::Vector2f()),
@@ -173,19 +175,21 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
                 std::vector<std::uint16_t> pixelData;
                 bool tsUsed = false;
 
-                auto yOffset = y * tileYCount;
-                for (auto ty = yOffset; ty < yOffset + tileYCount; ++ty)
+                auto chunkSize = rowCount * tileYCount;
+                auto chunkStart = (y * (tileYCount * rowCount)) + (x * tileXCount); //find starting tile of this chunk
+                
+                for (auto rowPos = chunkStart; rowPos < chunkStart + chunkSize; rowPos += rowCount)
                 {
-                    auto xOffset = x * tileXCount;
-                    for (auto tx = xOffset; tx < xOffset + tileXCount; ++tx)
+                    auto colStart = rowPos;
+                    for (auto colPos = colStart; colPos < colStart + tileXCount; ++colPos)
                     {
-                        auto idx = ty * tileYCount + tx;
-                        if (tileIDs[idx].ID >= ts->getFirstGID() && tileIDs[idx].ID < ts->getFirstGID() + ts->getTileCount())
+                        if (colPos < tileIDs.size() && tileIDs[colPos].ID >= ts->getFirstGID() 
+                            && tileIDs[colPos].ID < (ts->getFirstGID() + ts->getTileCount()))
                         {
                             //ID belongs to this tile set
                             tsUsed = true;
-                            pixelData.push_back(static_cast<std::uint16_t>(tileIDs[idx].ID)); //red channel
-                            pixelData.push_back(static_cast<std::uint16_t>(tileIDs[idx].flipFlags)); //green channel
+                            pixelData.push_back(static_cast<std::uint16_t>(tileIDs[colPos].ID)); //red channel
+                            pixelData.push_back(static_cast<std::uint16_t>(tileIDs[colPos].flipFlags)); //green channel
                         }
                         else
                         {
