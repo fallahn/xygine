@@ -37,11 +37,13 @@ source distribution.
 
 #include <xygine/components/TileMapLayer.hpp>
 #include <xygine/components/Camera.hpp>
+#include <xygine/components/SfDrawableComponent.hpp>
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/physics/CollisionCircleShape.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Window/Event.hpp>
 
 namespace
@@ -66,6 +68,8 @@ namespace
 
     xy::Entity* ent = nullptr;
     sf::Uint8 input = 0;
+
+    bool drawOverlay = false;
 }
 
 TilemapDemoState::TilemapDemoState(xy::StateStack& stateStack, Context context)
@@ -77,6 +81,9 @@ TilemapDemoState::TilemapDemoState(xy::StateStack& stateStack, Context context)
     launchLoadingScreen();
 
     buildScene();
+
+    REPORT("Q", "Show Debug");
+    //xy::StatsReporter::show();
 
     quitLoadingScreen();
 }
@@ -111,7 +118,7 @@ void TilemapDemoState::draw()
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
     rw.setView(m_scene.getView());
-    /*if (drawOverlay) rw.draw(m_physWorld);*/
+    if (drawOverlay) rw.draw(m_physWorld);
 }
 
 bool TilemapDemoState::handleEvent(const sf::Event& evt)
@@ -172,6 +179,9 @@ bool TilemapDemoState::handleEvent(const sf::Event& evt)
         case fireKey:
 
             break;
+        case sf::Keyboard::Q:
+            drawOverlay = !drawOverlay;
+            break;
         default: break;
         }
         break;
@@ -221,7 +231,7 @@ void TilemapDemoState::buildScene()
                 auto rb = m_tilemap.createRigidBody(m_messageBus, *l);
                 entity->addComponent(rb);
             }
-            else //if(l->getName() == "Middle")
+            else
             {
                 auto drawable = m_tilemap.getDrawable(m_messageBus, *l, m_textureResource, m_shaderResource);
                 if (drawable)
@@ -233,11 +243,19 @@ void TilemapDemoState::buildScene()
         }
         m_scene.addEntity(entity, xy::Scene::Layer::BackFront);
 
+        static const float radius = 30.f;
+
         auto body = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
-        auto cs = xy::Physics::CollisionCircleShape(30.f);
+        auto cs = xy::Physics::CollisionCircleShape(radius);
         cs.setDensity(0.9f);
         cs.setRestitution(1.f);
         body->addCollisionShape(cs);
+
+        auto drawable = xy::Component::create<xy::SfDrawableComponent<sf::CircleShape>>(m_messageBus);
+        drawable->getDrawable().setRadius(radius);
+        drawable->getDrawable().setOrigin({ radius, radius });
+        drawable->getDrawable().setFillColor({ 255, 255, 255, 200 });
+        drawable->getDrawable().setOutlineThickness(2.f);
 
         auto cam = xy::Component::create<xy::Camera>(m_messageBus, getContext().defaultView);
         cam->lockTransform(xy::Camera::TransformLock::Rotation, true);
@@ -245,7 +263,8 @@ void TilemapDemoState::buildScene()
         
         entity = xy::Entity::create(m_messageBus);
         entity->setPosition(800.f, 400.f);
-        //entity->addComponent(body);
+        entity->addComponent(body);
+        entity->addComponent(drawable);
         auto camPtr = entity->addComponent(cam);
 
         ent = m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);

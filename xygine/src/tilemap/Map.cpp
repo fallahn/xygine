@@ -357,19 +357,24 @@ std::unique_ptr<TileMapLayer> Map::getDrawable(xy::MessageBus& mb, const Layer& 
         Logger::log("While non-orthogonal data is fully parsed, it is recommended the renderer is user implemented.");
     }
 
-    //TODO calculate chunk size based on map's tile size (ie so it fits tiles perfectly)
-    if (layer.getType() == tmx::Layer::Type::Tile)
-    {
-        auto tml = xy::Component::create<TileMapLayer>(mb, Key());
-        tml->setTileData(dynamic_cast<const TileLayer*>(&layer), m_tilesets, *this, tr, sr);
+    //calculate chunk size based on map's tile size (ie so it fits tiles perfectly)
+    sf::Vector2u chunkSize(1024u, 1024u);
+    while (chunkSize.x % getTileSize().x != 0) { chunkSize.x--; }
+    while (chunkSize.y % getTileSize().y != 0) { chunkSize.y--; }
+    LOG("Set chunk size to " + std::to_string(chunkSize.x), Logger::Type::Info);
 
-        return std::move(tml);
+    auto tml = xy::Component::create<TileMapLayer>(mb, Key(), chunkSize);
+    if (layer.getType() == tmx::Layer::Type::Tile)
+    {       
+        tml->setTileData(dynamic_cast<const TileLayer*>(&layer), m_tilesets, *this, tr, sr);
     }
     else
     {
-        //TODO create image layer
+        //create image layer - TODO actually implement this
+        tml->setImageData(dynamic_cast<const ImageLayer*>(&layer), *this, tr);
+        return nullptr; //TODO remove this when implemented
     }
-    return nullptr;
+    return std::move(tml);
 }
 
 std::unique_ptr<Physics::RigidBody> Map::createRigidBody(xy::MessageBus& mb, const Layer& layer, Physics::BodyType bodyType)

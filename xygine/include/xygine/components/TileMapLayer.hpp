@@ -30,13 +30,18 @@ source distribution.
 
 #include <xygine/components/Component.hpp>
 #include <xygine/tilemap/Map.hpp>
-#include <xygine/tilemap/TileLayer.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Shader.hpp>
 
 namespace xy
 {
+    namespace tmx
+    {
+        class ImageLayer;
+        class TileLayer;
+    }
+
     class TextureResource;
     class ShaderResource;
 
@@ -52,9 +57,8 @@ namespace xy
     class TileMapLayer final : public xy::Component, public sf::Drawable
     {
     public:
-        //friend class tmx::Map;
 
-        TileMapLayer(xy::MessageBus&, const tmx::Map::Key&, sf::Uint32 = 1024u);
+        TileMapLayer(xy::MessageBus&, const tmx::Map::Key&, const sf::Vector2u&);
         ~TileMapLayer() = default;
 
         xy::Component::Type type() const override { return Component::Type::Drawable; }
@@ -62,6 +66,7 @@ namespace xy
         sf::FloatRect globalBounds() const override { return m_globalBounds; }
 
         void setTileData(const tmx::TileLayer*, const std::vector<tmx::Tileset>&, const tmx::Map&, TextureResource&, ShaderResource&);
+        void setImageData(const tmx::ImageLayer*, const tmx::Map&, TextureResource&);
 
     private:
 
@@ -70,6 +75,7 @@ namespace xy
             std::unique_ptr<sf::Texture> lookupTexture;
             sf::Texture* tileTexture = nullptr;
             sf::Vector2u tileCount;
+            sf::Vector2f tileScale; //this tile set's scale relative to map
         };
         
         struct Chunk final : public sf::Drawable
@@ -83,7 +89,7 @@ namespace xy
 
         std::vector<Chunk> m_chunks;
         std::vector<const Chunk*> m_drawList;
-        sf::Uint32 m_chunkResolution;
+        sf::Vector2u m_chunkResolution;
 
         float m_opacity;
         sf::FloatRect m_globalBounds;

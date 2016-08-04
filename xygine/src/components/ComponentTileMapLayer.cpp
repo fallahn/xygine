@@ -37,6 +37,9 @@ source distribution.
 #include <xygine/detail/GLCheck.hpp>
 #include <xygine/detail/GLExtensions.hpp>
 
+#include <xygine/tilemap/TileLayer.hpp>
+#include <xygine/tilemap/ImageLayer.hpp>
+
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -57,10 +60,11 @@ namespace
     bool shaderLoaded = false;
 }
 
-TileMapLayer::TileMapLayer(MessageBus& mb, const tmx::Map::Key&, sf::Uint32 chunkResolution)
+TileMapLayer::TileMapLayer(MessageBus& mb, const tmx::Map::Key&, const sf::Vector2u& chunkResolution)
     : Component         (mb, this),
     m_chunkResolution   (chunkResolution),
-    m_opacity           (1.f)
+    m_opacity           (1.f),
+    m_shader            (nullptr)
 {
 
 }
@@ -108,12 +112,12 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
 
     //divide layer into chunks
     const auto bounds = map.getBounds();
-    sf::Uint32 chunkX = static_cast<sf::Uint32>(std::ceil(bounds.width / m_chunkResolution));
-    sf::Uint32 chunkY = static_cast<sf::Uint32>(std::ceil(bounds.height / m_chunkResolution));
-    float floatRes = static_cast<float>(m_chunkResolution);
+    sf::Uint32 chunkX = static_cast<sf::Uint32>(std::ceil(bounds.width / m_chunkResolution.x));
+    sf::Uint32 chunkY = static_cast<sf::Uint32>(std::ceil(bounds.height / m_chunkResolution.y));
+    sf::Vector2f floatRes(m_chunkResolution);
 
-    sf::Uint32 tileXCount = m_chunkResolution / map.getTileSize().x;
-    sf::Uint32 tileYCount = m_chunkResolution / map.getTileSize().y;
+    sf::Uint32 tileXCount = m_chunkResolution.x / map.getTileSize().x;
+    sf::Uint32 tileYCount = m_chunkResolution.y / map.getTileSize().y;
     sf::Uint32 rowCount = static_cast<sf::Uint32>(bounds.width / map.getTileSize().x);
 
     for (auto y = 0u; y < chunkY; ++y)
@@ -123,15 +127,15 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
             //add a new chunk
             m_chunks.emplace_back();
             auto& chunk = m_chunks.back();
-            chunk.bounds = { x * floatRes, y * floatRes, floatRes, floatRes };
+            chunk.bounds = { x * floatRes.x, y * floatRes.y, floatRes.x, floatRes.y };
             chunk.bounds.left += layer->getOffset().x;
             chunk.bounds.top += layer->getOffset().y;
             chunk.vertices =
             {
                 sf::Vertex(sf::Vector2f(chunk.bounds.left, chunk.bounds.top), sf::Vector2f()),
-                sf::Vertex(sf::Vector2f(chunk.bounds.left + floatRes, chunk.bounds.top), sf::Vector2f(floatRes, 0.f)),
-                sf::Vertex(sf::Vector2f(chunk.bounds.left + floatRes, chunk.bounds.top + floatRes), sf::Vector2f(floatRes, floatRes)),
-                sf::Vertex(sf::Vector2f(chunk.bounds.left, chunk.bounds.top + floatRes), sf::Vector2f(0.f, floatRes))
+                sf::Vertex(sf::Vector2f(chunk.bounds.left + floatRes.x, chunk.bounds.top), sf::Vector2f(floatRes.x, 0.f)),
+                sf::Vertex(sf::Vector2f(chunk.bounds.left + floatRes.x, chunk.bounds.top + floatRes.y), floatRes),
+                sf::Vertex(sf::Vector2f(chunk.bounds.left, chunk.bounds.top + floatRes.y), sf::Vector2f(0.f, floatRes.y))
             };
             
             //check each used tileset, and if it's used by this chunk create a lookup texture
@@ -173,7 +177,7 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
                     chunk.tileData.emplace_back();
                     auto& tileData = chunk.tileData.back();
                     tileData.lookupTexture = std::make_unique<sf::Texture>();
-                    tileData.lookupTexture->create(m_chunkResolution, m_chunkResolution);
+                    tileData.lookupTexture->create(m_chunkResolution.x, m_chunkResolution.y);
                     setTextureProperties(tileData.lookupTexture.get(), pixelData, tileXCount, tileYCount);
 
                     //load / assign tileset texture
@@ -183,6 +187,8 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
                     tileData.tileTexture = &tr.get(ts->getImagePath());
                     tileData.tileCount.x = tileData.tileTexture->getSize().x / ts->getTileSize().x;
                     tileData.tileCount.y = tileData.tileTexture->getSize().y / ts->getTileSize().y;
+                    tileData.tileScale.x = static_cast<float>(map.getTileSize().x) / ts->getTileSize().x;
+                    tileData.tileScale.y = static_cast<float>(map.getTileSize().y) / ts->getTileSize().y;
                 }
             }
 
@@ -201,7 +207,12 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
         shaderLoaded = true;
     }
     m_shader = &sr.get(Shader::Tilemap);
+    XY_ASSERT(m_shader, "failed to load tilemap shader");
+}
 
+void TileMapLayer::setImageData(const tmx::ImageLayer*, const tmx::Map&, TextureResource&)
+{
+    //TODO implement this
 }
 
 //private
@@ -230,6 +241,8 @@ void TileMapLayer::Chunk::draw(sf::RenderTarget& rt, sf::RenderStates states) co
         shader->setUniform("u_lookup", *td.lookupTexture);
         shader->setUniform("u_tileMap", *td.tileTexture);
         shader->setUniform("u_tilesetCount", sf::Glsl::Vec2(td.tileCount));
+        shader->setUniform("u_tilesetScale", td.tileScale);
+
         states.texture = td.lookupTexture.get();
         rt.draw(vertices.data(), vertices.size(), sf::Quads, states);
     }

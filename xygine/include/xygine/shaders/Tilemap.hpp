@@ -64,6 +64,7 @@ namespace xy
 
                 "uniform vec2 u_tileSize;\n"
                 "uniform vec2 u_tilesetCount;\n"
+                "uniform vec2 u_tilesetScale = vec2(1.0);\n"
 
                 "uniform float u_opacity = 1.0;\n"
 
@@ -77,7 +78,7 @@ namespace xy
                 "        //colour = vec4(vec3(1.0), 0.33333);\n"
                 "        float index = float(values.r) - 1.0;\n"
                 "        vec2 position = vec2(mod(index, u_tilesetCount.x), floor(index / u_tilesetCount.x)) / u_tilesetCount;\n"
-                "        vec2 offset = mod((v_texCoord * textureSize(u_lookup, 0)) / u_tileSize, 1.0) / u_tilesetCount;\n"
+                "        vec2 offset = mod((v_texCoord * (textureSize(u_lookup, 0) * u_tilesetScale)) / u_tileSize, 1.0) / u_tilesetCount;\n"
 
                 "        if(values.g != 0u)\n"
                 "        {\n"
