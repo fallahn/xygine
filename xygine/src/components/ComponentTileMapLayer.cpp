@@ -85,12 +85,10 @@ namespace
         "    if(values.r > 0u)\n"
         "    {\n"
         "        //colour = vec4(vec3(1.0), 0.33333);\n"
-        "        //vec2 size = textureSize(u_tileMap, 0);\n"
         "        float index = float(values.r) - 1.0;\n"
-        "        vec2 position = floor(vec2(mod(index, u_tilesetCount.x), index / u_tilesetCount.x)) / u_tilesetCount;\n"
-        "        //vec2 offset = mod(u_tileSize, (v_texCoord / u_tileSize));\n"
-        "        //vec2 tilePosition = (size / u_tilesetCount) * position;\n"
-        "        colour = texture(u_tileMap, position);\n"
+        "        vec2 position = vec2(mod(index, u_tilesetCount.x), floor(index / u_tilesetCount.x)) / u_tilesetCount;\n"
+        "        vec2 offset = mod((v_texCoord * textureSize(u_lookup, 0)) / u_tileSize, 1.0) / u_tilesetCount;\n"
+        "        colour = texture(u_tileMap, position + offset);\n"
         "    }\n"
         "    else\n"
         "    {\n"
@@ -227,8 +225,8 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
                     //and offset. Could use a struct uniform ideally
                     tr.setFallbackColour(sf::Color::Cyan);
                     tileData.tileTexture = &tr.get(ts->getImagePath());
-                    tileData.tileCount.x = ts->getTileCount() % ts->getTileSize().x;
-                    tileData.tileCount.y = ts->getTileCount() / ts->getTileSize().y;
+                    tileData.tileCount.x = tileData.tileTexture->getSize().x / ts->getTileSize().x;
+                    tileData.tileCount.y = tileData.tileTexture->getSize().y / ts->getTileSize().y;
                 }
             }
 
