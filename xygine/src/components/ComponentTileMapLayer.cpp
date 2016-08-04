@@ -30,6 +30,9 @@ source distribution.
 #include <xygine/Scene.hpp>
 #include <xygine/Reports.hpp>
 #include <xygine/Resource.hpp>
+#include <xygine/ShaderResource.hpp>
+#include <xygine/shaders/Default.hpp>
+#include <xygine/shaders/Tilemap.hpp>
 
 #include <xygine/detail/GLCheck.hpp>
 #include <xygine/detail/GLExtensions.hpp>
@@ -51,94 +54,15 @@ namespace
         glCheck(glBindTexture(GL_TEXTURE_2D, 0));
     }
 
-    const std::string vert =
-        "#version 120\n"
-
-        "varying vec2 v_texCoord;\n"
-        "varying vec4 v_colour;\n"
-
-        "void main()\n"
-        "{\n"
-        "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;"
-        "    v_texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;"
-        /*"    gl_FrontColor = gl_Color;"*/
-        "    v_colour = gl_Color;\n"
-        "}";
-
-    const std::string frag =
-        "#version 130\n"
-        "#define FLIP_HORIZONTAL 0x08u\n"
-        "#define FLIP_VERTICAL 0x04u\n"
-        "#define FLIP_DIAGONAL 0x02u\n"
-
-        "in vec2 v_texCoord;\n"
-        "in vec4 v_colour;\n"
-
-        "uniform usampler2D u_lookup;\n"
-        "uniform sampler2D u_tileMap;\n"
-
-        "uniform vec2 u_tileSize;\n"
-        "uniform vec2 u_tilesetCount;\n"
-
-        "uniform float u_opacity = 1.0;\n"
-
-        "out vec4 colour;\n"
-
-        "void main()\n"
-        "{\n"
-        "    uvec2 values = texture(u_lookup, v_texCoord / u_tileSize).rg;\n"
-        "    if(values.r > 0u)\n"
-        "    {\n"
-        "        //colour = vec4(vec3(1.0), 0.33333);\n"
-        "        float index = float(values.r) - 1.0;\n"
-        "        vec2 position = vec2(mod(index, u_tilesetCount.x), floor(index / u_tilesetCount.x)) / u_tilesetCount;\n"
-        "        vec2 offset = mod((v_texCoord * textureSize(u_lookup, 0)) / u_tileSize, 1.0) / u_tilesetCount;\n"
-
-        "        if(values.g != 0u)\n"
-        "        {\n"
-        "            vec2 tileSize = vec2(1.0) / u_tilesetCount;\n"
-        "            if((values.g & FLIP_DIAGONAL) != 0u)\n"
-        "            {\n"
-        "                float temp = offset.x;\n"
-        "                offset.x = offset.y;\n"
-        "                offset.y = temp;\n"
-        "                temp = tileSize.x / tileSize.y;\n"
-        "                offset.x *= temp;\n"
-        "                offset.y /= temp;\n"
-        "                offset.x = tileSize.x - offset.x;\n"
-        "                offset.y = tileSize.y - offset.y;\n"
-        "            }\n"
-        "            if((values.g & FLIP_VERTICAL) != 0u)\n"
-        "            {\n"
-        "                offset.y = tileSize.y - offset.y;\n"
-        "            }\n"
-        "            if((values.g & FLIP_HORIZONTAL) != 0u)\n"
-        "            {\n"
-        "                offset.x = tileSize.x - offset.x;\n"
-        "            }\n"
-        "        }\n"
-        "        colour = texture(u_tileMap, position + offset);\n"
-        "        colour.a = min(colour.a, u_opacity);\n"
-        "    }\n"
-        "    else\n"
-        "    {\n"
-        "         colour = vec4(0.0);"
-        "    }\n"
-        "    colour *= v_colour;\n"
-        "}";
-
-    const std::string frag2 =
-        "#version 120\n"
-        "void main(){gl_FragColor = vec4(gl_TexCoord[0].y, 0.0, 0.0, 1.0);}";
+    bool shaderLoaded = false;
 }
 
 TileMapLayer::TileMapLayer(MessageBus& mb, const tmx::Map::Key&, sf::Uint32 chunkResolution)
-    : Component(mb, this),
-    m_chunkResolution(chunkResolution),
-    m_opacity(1.f)
+    : Component         (mb, this),
+    m_chunkResolution   (chunkResolution),
+    m_opacity           (1.f)
 {
-    m_testShader.loadFromMemory(vert, frag);
-    //m_testShader.loadFromMemory(frag2, sf::Shader::Fragment);
+
 }
 
 //public
@@ -160,7 +84,7 @@ void TileMapLayer::entityUpdate(Entity& entity, float)
     }
 }
 
-void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tmx::Tileset>& tileSets, const tmx::Map& map, TextureResource& tr)
+void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tmx::Tileset>& tileSets, const tmx::Map& map, TextureResource& tr, ShaderResource& sr)
 {
     XY_ASSERT(layer, "not a valid layer");
     
@@ -202,7 +126,7 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
             chunk.bounds = { x * floatRes, y * floatRes, floatRes, floatRes };
             chunk.bounds.left += layer->getOffset().x;
             chunk.bounds.top += layer->getOffset().y;
-            chunk.vertices = //TODO colour this on layer?
+            chunk.vertices =
             {
                 sf::Vertex(sf::Vector2f(chunk.bounds.left, chunk.bounds.top), sf::Vector2f()),
                 sf::Vertex(sf::Vector2f(chunk.bounds.left + floatRes, chunk.bounds.top), sf::Vector2f(floatRes, 0.f)),
@@ -269,16 +193,26 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
 
     m_opacity = layer->getOpacity();
     m_globalBounds = map.getBounds();
+    m_tileSize = map.getTileSize();
 
-    m_testShader.setUniform("u_tileSize", sf::Glsl::Vec2(map.getTileSize()));
+    if (!shaderLoaded)
+    {
+        sr.preload(Shader::Tilemap, Shader::tsx::vertex, Shader::tsx::fragment);
+        shaderLoaded = true;
+    }
+    m_shader = &sr.get(Shader::Tilemap);
+
 }
 
 //private
 void TileMapLayer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     //set states shader to tilemap shader
-    states.shader = &m_testShader;
-    //TODO set shader uniform for layer opacity
+    states.shader = m_shader;
+
+    //set shader uniforms
+    m_shader->setUniform("u_tileSize", sf::Glsl::Vec2(m_tileSize));
+    m_shader->setUniform("u_opacity", m_opacity);
     
     //draw each texture in current list
     for (const auto chunk : m_drawList)

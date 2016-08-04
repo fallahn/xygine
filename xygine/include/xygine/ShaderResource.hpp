@@ -64,7 +64,7 @@ namespace xy
 
         Before a shader can be returned it must be preloaded and associated with
         the given ID. If using custom shaders along side the built in xygine shaders
-        the the Unique ID should start at at least Shader::Type::Count
+        the the Unique ID should start at least Shader::Type::Count
         \see preLoad
         */
         sf::Shader& get(ID);

@@ -45,6 +45,7 @@ namespace xy
             AdditiveBlend,
             ChromeAb,
             Lightray,
+            Tilemap,
             Count
         };
 

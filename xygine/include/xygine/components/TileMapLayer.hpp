@@ -38,6 +38,7 @@ source distribution.
 namespace xy
 {
     class TextureResource;
+    class ShaderResource;
 
     /*
     \brief Drawable tile map layer.
@@ -51,7 +52,7 @@ namespace xy
     class TileMapLayer final : public xy::Component, public sf::Drawable
     {
     public:
-        friend class tmx::Map;
+        //friend class tmx::Map;
 
         TileMapLayer(xy::MessageBus&, const tmx::Map::Key&, sf::Uint32 = 1024u);
         ~TileMapLayer() = default;
@@ -60,7 +61,7 @@ namespace xy
         void entityUpdate(Entity&, float) override;
         sf::FloatRect globalBounds() const override { return m_globalBounds; }
 
-        void setTileData(const tmx::TileLayer*, const std::vector<tmx::Tileset>&, const tmx::Map&, TextureResource&);
+        void setTileData(const tmx::TileLayer*, const std::vector<tmx::Tileset>&, const tmx::Map&, TextureResource&, ShaderResource&);
 
     private:
 
@@ -86,9 +87,9 @@ namespace xy
 
         float m_opacity;
         sf::FloatRect m_globalBounds;
-
-        sf::Shader m_testShader;
-
+        sf::Vector2u m_tileSize;
+        sf::Shader* m_shader;
+        
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }

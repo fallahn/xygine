@@ -361,7 +361,7 @@ std::unique_ptr<TileMapLayer> Map::getDrawable(xy::MessageBus& mb, const Layer& 
     if (layer.getType() == tmx::Layer::Type::Tile)
     {
         auto tml = xy::Component::create<TileMapLayer>(mb, Key());
-        tml->setTileData(dynamic_cast<const TileLayer*>(&layer), m_tilesets, *this, tr);
+        tml->setTileData(dynamic_cast<const TileLayer*>(&layer), m_tilesets, *this, tr, sr);
 
         return std::move(tml);
     }

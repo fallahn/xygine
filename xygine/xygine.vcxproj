@@ -380,6 +380,7 @@
     <ClInclude Include="include\xygine\shaders\PostChromeAb.hpp" />
     <ClInclude Include="include\xygine\shaders\PostDownSample.hpp" />
     <ClInclude Include="include\xygine\shaders\PostGaussianBlur.hpp" />
+    <ClInclude Include="include\xygine\shaders\Tilemap.hpp" />
     <ClInclude Include="include\xygine\spriter\Document.hpp" />
     <ClInclude Include="include\xygine\spriter\DocumentAttribute.hpp" />
     <ClInclude Include="include\xygine\spriter\DocumentElement.hpp" />

@@ -4,6 +4,9 @@
   <property name="test map property" type="float" value="12.43"/>
  </properties>
  <tileset firstgid="1" source="../images/tilemap/platform.tsx"/>
+ <tileset firstgid="43" name="tileset02" tilewidth="32" tileheight="32" tilecount="24" columns="6">
+  <image source="../images/tilemap/tileset02.png" width="192" height="128"/>
+ </tileset>
  <layer name="Far" width="200" height="40">
   <data encoding="base64" compression="zlib">
    eJzt21sKwjAQBdCuwscKrPvfoPghqHSENth0MudA0J9CBrxJmsFpgn1dNgwY1ZY8yAtVyQLE7Bnw23nFgEpOKwZUsyYf8kIlcgHLrhsHjK533+Pe8CyMbu49ATgw+YCYfLRxPh3brfcEkrO+QEw+ICYfEHM+BQAAYA/V+l+vei9fn7Ck2v1l9nqrrWe9Vbu/jOrN8n+b7Pkmp+c566j5eN8z5IMejrx/zMF34PNMWO08TF7elSFmLQcAAADIZ/Q7z9Hr479G7++OXh//1fL7ybA2ywctWnpmGfptGeYI0NMDIO0Tcg==
@@ -19,7 +22,7 @@
  </layer>
  <layer name="Near" width="200" height="40">
   <data encoding="base64" compression="zlib">
-   eJzt2+FqwjAUBtDihO2fbnPv/6rbYGUxNOuqbW9izoEgIsqF+jVpczsMAAAAAACkPqILgIq9RxdA1U7RBQSTDyiTjz4dowtoxJr5eP0a52T0PjfX7PDzuuUxajmDY+3mD7byFF3AHcba5YN7nSfGt0PxG/WLzke6FnsLqgFKovNBXVwrXhvnvsswPT9ODed5lvC/YU/5+t45HwCgX+la0HUJsIaWexBga3M9CM+7VAH1SNedf/Ug9JCNUm8G9Mxzm1CmrwfKWsrHXN/RlP/s7S/9TfqR58N9PPiV5+PWZ4n0YPGI1soHPKJL9r7lZ+0AAAAgZQ+Bnr3MfO4eKb3LM5Lujy29Rzq3t3ZLX8VeTkPd9QHU4hO/Kwa1
+   eJzt29FqwjAUBuDghO1O59xTDObtHnePOgsWstKsa61N2nwfBBFRDtS/SZvTEAAAAAAAiL3nLgAK9pa7AIp2yF1AZvIBafJRp33uAlZizny8XscxGrXPzSXb3V4feYzWnMG2dvMHj/KUu4A7tLXLB/c69ozGLvmN8uXOR7wWO2WqAVJy54OyuFb8rZ37zqF/fuwbzvOM4X/Dkrrre+d8AIB6xWtB1yXAHNbcgzDVZwjfzchdB+Ub6kF4XqSKZV2u2bjIBwnxuvOvHoQtZqPxcRtfId2bATXz3Cak6euBtDXlY6jvqM9/9vbH/ib16Oajxvt4kNLNx9RnifRgsUVz5QO26Nx5v+Zn7QAAACBmD4GavQx87h4ptetmJN4fG3uPdGhvbUpfxVIOoez6AErxA+PyCn0=
   </data>
  </layer>
  <objectgroup name="Objects" offsetx="1" offsety="-2">
