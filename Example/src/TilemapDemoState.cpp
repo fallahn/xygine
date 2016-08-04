@@ -111,7 +111,7 @@ void TilemapDemoState::draw()
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
     rw.setView(m_scene.getView());
-    /*if (drawOverlay)*/ rw.draw(m_physWorld);
+    /*if (drawOverlay) rw.draw(m_physWorld);*/
 }
 
 bool TilemapDemoState::handleEvent(const sf::Event& evt)
@@ -245,7 +245,7 @@ void TilemapDemoState::buildScene()
         
         entity = xy::Entity::create(m_messageBus);
         entity->setPosition(800.f, 400.f);
-        entity->addComponent(body);
+        //entity->addComponent(body);
         auto camPtr = entity->addComponent(cam);
 
         ent = m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);

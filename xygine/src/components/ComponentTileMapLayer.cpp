@@ -67,6 +67,9 @@ namespace
 
     const std::string frag =
         "#version 130\n"
+        "#define FLIP_HORIZONTAL 0x08u\n"
+        "#define FLIP_VERTICAL 0x04u\n"
+        "#define FLIP_DIAGONAL 0x02u\n"
 
         "in vec2 v_texCoord;\n"
         "in vec4 v_colour;\n"
@@ -76,6 +79,8 @@ namespace
 
         "uniform vec2 u_tileSize;\n"
         "uniform vec2 u_tilesetCount;\n"
+
+        "uniform float u_opacity = 1.0;\n"
 
         "out vec4 colour;\n"
 
@@ -88,7 +93,32 @@ namespace
         "        float index = float(values.r) - 1.0;\n"
         "        vec2 position = vec2(mod(index, u_tilesetCount.x), floor(index / u_tilesetCount.x)) / u_tilesetCount;\n"
         "        vec2 offset = mod((v_texCoord * textureSize(u_lookup, 0)) / u_tileSize, 1.0) / u_tilesetCount;\n"
+
+        "        if(values.g != 0u)\n"
+        "        {\n"
+        "            vec2 tileSize = vec2(1.0) / u_tilesetCount;\n"
+        "            if((values.g & FLIP_DIAGONAL) != 0u)\n"
+        "            {\n"
+        "                float temp = offset.x;\n"
+        "                offset.x = offset.y;\n"
+        "                offset.y = temp;\n"
+        "                temp = tileSize.x / tileSize.y;\n"
+        "                offset.x *= temp;\n"
+        "                offset.y /= temp;\n"
+        "                offset.x = tileSize.x - offset.x;\n"
+        "                offset.y = tileSize.y - offset.y;\n"
+        "            }\n"
+        "            if((values.g & FLIP_VERTICAL) != 0u)\n"
+        "            {\n"
+        "                offset.y = tileSize.y - offset.y;\n"
+        "            }\n"
+        "            if((values.g & FLIP_HORIZONTAL) != 0u)\n"
+        "            {\n"
+        "                offset.x = tileSize.x - offset.x;\n"
+        "            }\n"
+        "        }\n"
         "        colour = texture(u_tileMap, position + offset);\n"
+        "        colour.a = min(colour.a, u_opacity);\n"
         "    }\n"
         "    else\n"
         "    {\n"
@@ -201,6 +231,8 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
                             tsUsed = true;
                             pixelData.push_back(static_cast<std::uint16_t>((tileIDs[colPos].ID - ts->getFirstGID()) + 1)); //red channel - making sure to index relative to the tileset
                             pixelData.push_back(static_cast<std::uint16_t>(tileIDs[colPos].flipFlags)); //green channel
+
+                            if (tileIDs[colPos].flipFlags) std::cout << pixelData.back() << std::endl;
                         }
                         else
                         {

@@ -182,11 +182,11 @@ void TileLayer::createTiles(const std::vector<sf::Uint32>& IDs)
     XY_WARNING(IDs.size() != m_tileCount, "Layer tile count does not match expected size. Found: "
         + std::to_string(IDs.size()) + ", expected: " + std::to_string(m_tileCount));
     
-    static const sf::Uint32 mask = 0xff000000;
+    static const sf::Uint32 mask = 0xf0000000;
     for (const auto& id : IDs)
     {
         m_tiles.emplace_back();
-        m_tiles.back().flipFlags = ((id & mask) >> 24);
+        m_tiles.back().flipFlags = ((id & mask) >> 28);
         m_tiles.back().ID = id & ~mask;
     }
 }

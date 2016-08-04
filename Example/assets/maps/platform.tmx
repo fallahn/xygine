@@ -6,7 +6,7 @@
  <tileset firstgid="1" source="../images/tilemap/platform.tsx"/>
  <layer name="Far" width="200" height="40">
   <data encoding="base64" compression="zlib">
-   eJzt2VsKwyAQBdCsoo8VNN3/BvvbQC1Em9iZOQeE/AQcyFXjLAuc69YxIKuePMgLVckCtNkz4LvrjgGVXHYMqGZPPuSFSuQCPrt3Dshudt/jOfAuZLfOngD8MfmANvkY43ya22P2BIKzvkCbfECbfECb8ykAAABnqNb/qlYvY6rdX0avV77PVe3+Mnq90fMNv/a+Z8gHbK2NZ2B7Jox+PqQO/8rQZi0HAAAAiCf7nWf2+jhW9v5u9vo41sj3E2Ftlg9GjPTMIvTbIswRYKYXswgSvA==
+   eJzt21sKwjAQBdCuwscKrPvfoPghqHSENth0MudA0J9CBrxJmsFpgn1dNgwY1ZY8yAtVyQLE7Bnw23nFgEpOKwZUsyYf8kIlcgHLrhsHjK533+Pe8CyMbu49ATgw+YCYfLRxPh3brfcEkrO+QEw+ICYfEHM+BQAAYA/V+l+vei9fn7Ck2v1l9nqrrWe9Vbu/jOrN8n+b7Pkmp+c566j5eN8z5IMejrx/zMF34PNMWO08TF7elSFmLQcAAADIZ/Q7z9Hr479G7++OXh//1fL7ybA2ywctWnpmGfptGeYI0NMDIO0Tcg==
   </data>
  </layer>
  <layer name="Middle" width="200" height="40">
@@ -14,7 +14,7 @@
    <property name="test layer property" type="bool" value="true"/>
   </properties>
   <data encoding="base64" compression="zlib">
-   eJztm0lSwzAQRZsFrIADQAEN5P5nJCkIFYKH2G71EL1X9ZdJybGe1BqyEwAYYvcTAPgPfgCMgx8A4+CHLTfRDQBT8MOW14F8hrYItoAfEMXTPs8zeQlr3Tf4ATAOfvjC+qQW+OHDh7AuqQh+QHVazsn4AZUZmpct52b8sOX8fVFD1QY/8sOa3oaHfe7P8jjzGfzIyVjdwLy0jqnfc+q3xI+2rBmzroU18162uRI/2rF2zFpCtv6k+7w1yrvfY/zSsx9DY3uF8T3TWYrK3z68axxvT3r1g/p+Gyo+PozFy5Fe/YB1qMR64e0IfsAcKn71U7Z6Cz/q0rJGVMnrhOdcgh9wRKWWEx6O4AccUInv35aOHPa9x/Ynp3K6d3l78r09kO2sIAsq8f3aMlbnLaffeS3M1eTs3f5FJb4/Vwj0h0p8v6sSiGNpnTx1vn9JDalSdw2OH/2g0u6u0qV1NcGPJVwyllvcz1KJf+cEP5Ywt663WOOrMIZXTHWy792q4EXlVEYl538HjqjEv1/Snx8qy8Zkb0eWto/kTSVU1vc7D0e2tI/kTBVUtj9rS0cs2kfyJTsqtmNyC0fUsH0kVzKi0vZMy2rdfmxn9Dsk7XIn6+4DW+X8zE0dn32LI57tJLGJuOuQ5Q5ElXYS/3wBZXVJwA==
+   eJztm0tOwzAQhocFrIAlC1BhgG64BUfhKByFo3A0HNGiNOTROON52P8n/YpUiWrS+LMncdgTAGCM/SEAgP/ADwCmgR8ATAM/ZLmwLgCIAj9keUl5HOTVtCKwBfgBrLhPeVjIzqy6X+AHANPAD11wfxIL+KED7ktiAj9AdEquyfADRGZsXZZcm+GHLMPrhR4qNvDDP7inl+Em5XqQ24W/gR8+meobsC7lMfd7zv2W8KMsOXNWLeSse97WSvhRjtw5aw3exhOnPBXKs95p/NGyH2Nze4T53dNeCtPpGN4XjrYnrfqB/n4bTDo+TEXLkVb9AHkw2Xqh7Qj8AEsw6fVP3vqtFvy4GxxroWSPyOTXCc21pHY/OifeiL4Px4/aHJGEKZYTGo7U7kdHreuHJEz241vSke6599Tzybn0n11e9r63BbztFXiByX5cS0Zqv6X/nbWwS71U13un83vvH9Pnn8e+PHnyZVmjJ5jsx3OEgPZgsh93UQLsWNsnz+3vn9NDMsW9B4cf7cBU7l2lc/tqBH6s4Zy5XOL9LCb7a47AjzUs7bdJ7L0xYQ6PmOh4f3bLBC8iJzJMPv934AiT/fVF2vODad2crO3I2voQv4kEU/6403BkS32Iz0SBafu5lnREoj7EX7zDJDsnl3CEBetDfMUjTGX3tKTu2491Wl9DpFyuKO99YKkM99xY8dy3OKJZJ2Ibi3cdvLwDEaVORD8/V4tODg==
   </data>
  </layer>
  <layer name="Near" width="200" height="40">
