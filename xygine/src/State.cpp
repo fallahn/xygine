@@ -117,3 +117,8 @@ void State::loadingScreenThread()
     }
     m_context.renderWindow.setActive(false);
 }
+
+std::size_t State::getStateCount() const
+{
+    return m_stateStack.getStackSize();
+}

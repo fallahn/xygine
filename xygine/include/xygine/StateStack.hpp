@@ -162,6 +162,10 @@ namespace xy
         \brief Applies any changes requested by states active on the stack.
         */
         void applyPendingChanges();
+        /*!
+        \brief Returns the number of actives states on the stack
+        */
+        std::size_t getStackSize() const { return m_stack.size(); }
 
     private:
         static const StateID bufferID = -100;

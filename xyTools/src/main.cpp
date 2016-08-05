@@ -25,37 +25,20 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UTIL_POSITION_HPP_
-#define XY_UTIL_POSITION_HPP_
+#include <Game.hpp>
 
-#include <cmath>
+#ifdef __linux
+#include <X11/Xlib.h>
+#endif // __linux
 
-namespace xy
+int main()
 {
-    namespace Util
-    {
-        namespace Position
-        {
-            /*!
-            \brief Centres the origin of sf::Transformable types
-            */
-            template <typename T>
-            static inline void centreOrigin(T& transformable)
-            {
-                static_assert(std::is_base_of<sf::Transformable, T>::value, "only transformable type allowed");
-                sf::FloatRect bounds = transformable.getLocalBounds();
-                transformable.setOrigin(std::floor(bounds.width / 2.f), std::floor(bounds.height / 2.f));
+#ifdef __linux
+    XInitThreads();
+#endif //__linux
 
-                //sf::text is, unfortunately, a special case
-                if (typeid(T) == typeid(sf::Text))
-                {
-                    auto origin = transformable.getOrigin();
-                    origin.y += bounds.top;
-                    transformable.setOrigin(origin);
-                }
-            }
-        }
-    }
+    Game game;
+    game.run();
+
+    return 0;
 }
-
-#endif //XY_UTIL_POSITION_HPP_

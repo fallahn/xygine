@@ -25,37 +25,19 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UTIL_POSITION_HPP_
-#define XY_UTIL_POSITION_HPP_
+#ifndef STATE_IDS_HPP_
+#define STATE_IDS_HPP_
 
-#include <cmath>
-
-namespace xy
+namespace States
 {
-    namespace Util
+    enum ID
     {
-        namespace Position
-        {
-            /*!
-            \brief Centres the origin of sf::Transformable types
-            */
-            template <typename T>
-            static inline void centreOrigin(T& transformable)
-            {
-                static_assert(std::is_base_of<sf::Transformable, T>::value, "only transformable type allowed");
-                sf::FloatRect bounds = transformable.getLocalBounds();
-                transformable.setOrigin(std::floor(bounds.width / 2.f), std::floor(bounds.height / 2.f));
-
-                //sf::text is, unfortunately, a special case
-                if (typeid(T) == typeid(sf::Text))
-                {
-                    auto origin = transformable.getOrigin();
-                    origin.y += bounds.top;
-                    transformable.setOrigin(origin);
-                }
-            }
-        }
-    }
+        None = 0,
+        MenuMain,
+        SpriteEditor,
+        ParticleEditor,
+        MaterialEditor
+    };
 }
 
-#endif //XY_UTIL_POSITION_HPP_
+#endif //STATE_IDS_HPP_

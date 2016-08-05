@@ -25,37 +25,42 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UTIL_POSITION_HPP_
-#define XY_UTIL_POSITION_HPP_
+//main menu state
 
-#include <cmath>
+#ifndef MENU_MAIN_STATE_HPP_
+#define MENU_MAIN_STATE_HPP_
+
+#include <StateIds.hpp>
+
+#include <xygine/State.hpp>
+#include <xygine/Resource.hpp>
+#include <xygine/ui/Container.hpp>
 
 namespace xy
 {
-    namespace Util
-    {
-        namespace Position
-        {
-            /*!
-            \brief Centres the origin of sf::Transformable types
-            */
-            template <typename T>
-            static inline void centreOrigin(T& transformable)
-            {
-                static_assert(std::is_base_of<sf::Transformable, T>::value, "only transformable type allowed");
-                sf::FloatRect bounds = transformable.getLocalBounds();
-                transformable.setOrigin(std::floor(bounds.width / 2.f), std::floor(bounds.height / 2.f));
-
-                //sf::text is, unfortunately, a special case
-                if (typeid(T) == typeid(sf::Text))
-                {
-                    auto origin = transformable.getOrigin();
-                    origin.y += bounds.top;
-                    transformable.setOrigin(origin);
-                }
-            }
-        }
-    }
+    class MessageBus;
 }
+class MenuMainState final : public xy::State
+{
+public:
+    MenuMainState(xy::StateStack&, Context);
+    ~MenuMainState() = default;
 
-#endif //XY_UTIL_POSITION_HPP_
+    bool update(float) override;
+    void draw() override;
+    bool handleEvent(const sf::Event&) override;
+    void handleMessage(const xy::Message&) override;
+    xy::StateID stateID() const override
+    {
+        return States::ID::MenuMain;
+    }
+private:
+    xy::MessageBus& m_messageBus;
+    xy::UI::Container m_uiContainer;
+    xy::TextureResource m_textureResource;
+    xy::FontResource m_fontResource;
+
+    void buildMenu();
+    void buildSettings();
+};
+#endif //MENU_MAIN_STATE_HPP_

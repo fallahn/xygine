@@ -172,6 +172,11 @@ namespace xy
         */
         virtual void updateLoadingScreen(float dt, sf::RenderWindow&);
 
+        /*!
+        \brief Returns the number of active states on this state's stack
+        */
+        std::size_t getStateCount() const;
+
     private:
         StateStack& m_stateStack;
         Context m_context;

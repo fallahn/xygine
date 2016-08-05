@@ -25,37 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UTIL_POSITION_HPP_
-#define XY_UTIL_POSITION_HPP_
+#ifndef GAME_HPP_
+#define GAME_HPP_
 
-#include <cmath>
+#include <xygine/App.hpp>
 
-namespace xy
+class Game final : public xy::App
 {
-    namespace Util
-    {
-        namespace Position
-        {
-            /*!
-            \brief Centres the origin of sf::Transformable types
-            */
-            template <typename T>
-            static inline void centreOrigin(T& transformable)
-            {
-                static_assert(std::is_base_of<sf::Transformable, T>::value, "only transformable type allowed");
-                sf::FloatRect bounds = transformable.getLocalBounds();
-                transformable.setOrigin(std::floor(bounds.width / 2.f), std::floor(bounds.height / 2.f));
+public:
+    Game();
+    ~Game() = default;
+    Game(const Game&) = delete;
+    Game& operator = (const Game&) = delete;
 
-                //sf::text is, unfortunately, a special case
-                if (typeid(T) == typeid(sf::Text))
-                {
-                    auto origin = transformable.getOrigin();
-                    origin.y += bounds.top;
-                    transformable.setOrigin(origin);
-                }
-            }
-        }
-    }
-}
+private:
 
-#endif //XY_UTIL_POSITION_HPP_
+    xy::StateStack m_stateStack;
+
+    void handleEvent(const sf::Event&) override;
+    void handleMessage(const xy::Message&) override;
+
+    void registerStates() override;
+    void updateApp(float dt) override;
+    void draw() override;
+
+    void initialise() override;
+    void finalise() override;
+};
+
+
+#endif //GAME_HPP_

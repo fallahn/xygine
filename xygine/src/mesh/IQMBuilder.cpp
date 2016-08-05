@@ -288,6 +288,9 @@ void IQMBuilder::build()
         if (header.vertexCount > 0)
         {
             loadVertexData(header, headerBytes, strings);
+        }
+        else
+        {
             Logger::log("No vertex data was loaded from " + m_filePath + ". Is this an animation file?", Logger::Type::Warning, Logger::Output::All);
         }
         loadAnimationData(header, headerBytes, strings);
