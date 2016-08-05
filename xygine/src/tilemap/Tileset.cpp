@@ -135,6 +135,7 @@ void Tileset::parse(pugi::xml_node node)
             {
                 attribString = node.attribute("trans").as_string();
                 m_transparencyColour = colourFromString(attribString);
+
             }
         }
         else if (name == "tileoffset")

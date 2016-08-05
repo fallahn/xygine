@@ -39,7 +39,7 @@ namespace xy
     {
         /*!
         \brief Image layers contain a single image which make up that
-        layer. The parser contains the fully reolved path to the image
+        layer. The parser contains the fully resolved path to the image
         relative to the working directory.
         */
         class XY_EXPORT_API ImageLayer final : public Layer
@@ -61,10 +61,16 @@ namespace xy
             pixels. By default this is (0, 0, 0, 0)
             */
             const sf::Color getTransparencyColour() const { return m_transparencyColour; }
+            /*!
+            \brief Returns true if the image used by this layer specifically states a 
+            colour to use as transparency
+            */
+            bool hasTransparency() const { return m_hasTransparency; }
 
         private:
             std::string m_filePath;
             sf::Color m_transparencyColour;
+            bool m_hasTransparency;
             std::string m_workingDir;
         };
     }

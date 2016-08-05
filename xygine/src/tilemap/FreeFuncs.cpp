@@ -51,7 +51,7 @@ bool xy::tmx::decompress(const char* source, std::vector<unsigned char>& dest, i
     //to be incorrect in miniz. This is fine for zlib
     //compressed data, but gzip compressed streams
     //will fail to inflate. IMO still preferable to
-    //try build/linking zlib
+    //trying to build/link zlib
     if (inflateInit(&stream/*, 15 + 32*/) != Z_OK)
     {
         LOG("inflate init failed", Logger::Type::Error);

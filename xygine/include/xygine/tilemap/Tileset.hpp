@@ -157,6 +157,11 @@ namespace xy
             */
             const sf::Color getTransparencyColour() const { return m_transparencyColour; }
             /*!
+            \brief Returns true if the image used by this tileset specifically requests
+            a colour to use as transparency.
+            */
+            bool hasTransparency() const { return m_hasTransparency; }
+            /*!
             \brief Returns a vector of Terrain types associated with one
             or more tiles within this tile set
             */
@@ -184,6 +189,7 @@ namespace xy
             std::vector<Property> m_properties;
             std::string m_imagePath;
             sf::Color m_transparencyColour;
+            bool m_hasTransparency;
 
             std::vector<Terrain> m_terrainTypes;
             std::vector<Tile> m_tiles;

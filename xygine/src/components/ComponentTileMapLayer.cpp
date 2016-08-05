@@ -186,6 +186,14 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
                     //and offset. Could use a struct uniform ideally
                     tr.setFallbackColour(sf::Color::Cyan);
                     tileData.tileTexture = &tr.get(ts->getImagePath());
+                    
+                    //set the transparency colour
+                    if (ts->hasTransparency())
+                    {
+                        sf::Image img = tileData.tileTexture->copyToImage();
+                        img.createMaskFromColor(ts->getTransparencyColour());
+                        tileData.tileTexture->update(img);
+                    }
                     tileData.tileCount.x = tileData.tileTexture->getSize().x / ts->getTileSize().x;
                     tileData.tileCount.y = tileData.tileTexture->getSize().y / ts->getTileSize().y;
                     tileData.tileScale.x = static_cast<float>(map.getTileSize().x) / ts->getTileSize().x;
@@ -224,7 +232,14 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
 
 void TileMapLayer::setImageData(const tmx::ImageLayer* layer, const tmx::Map&, TextureResource& tr)
 {
-    m_imageSprite.setTexture(tr.get(layer->getImagePath()));
+    auto& texture = tr.get(layer->getImagePath());   
+    if (layer->hasTransparency())
+    {
+        sf::Image img = texture.copyToImage();
+        img.createMaskFromColor(layer->getTransparencyColour());
+        texture.update(img);
+    }
+    m_imageSprite.setTexture(texture);
     m_imageSprite.setPosition(sf::Vector2f(layer->getOffset()));
 
     sf::Color colour = sf::Color::White;

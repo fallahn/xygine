@@ -71,6 +71,8 @@ namespace xy
                 "uniform float u_opacity = 1.0;\n"
 
                 "out vec4 colour;\n"
+                /*fixes rounding imprecision on AMD cards*/
+                "const float epsilon = 0.05;\n"
 
                 "void main()\n"
                 "{\n"
@@ -79,7 +81,7 @@ namespace xy
                 "    {\n"
                 "        //colour = vec4(vec3(1.0), 0.33333);\n"
                 "        float index = float(values.r) - 1.0;\n"
-                "        vec2 position = vec2(mod(index, u_tilesetCount.x), floor(index / u_tilesetCount.x)) / u_tilesetCount;\n"
+                "        vec2 position = vec2(mod(index, u_tilesetCount.x), floor((index / u_tilesetCount.x) + epsilon)) / u_tilesetCount;\n"
                 "        vec2 offsetCoord = (v_texCoord * (textureSize(u_lookup, 0) * u_tilesetScale)) / u_tileSize;\n"
 
                 "        vec2 offset = mod(offsetCoord, 1.0) / u_tilesetCount;\n"

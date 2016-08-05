@@ -85,7 +85,7 @@ namespace xy
             */
             const std::string& getType() const { return m_type; }
             /*!
-            \brief, Returns the position of the Object in pixels
+            \brief Returns the position of the Object in pixels
             */
             const sf::Vector2f& getPosition() const { return m_position; }
             /*!

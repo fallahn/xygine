@@ -33,7 +33,8 @@ using namespace xy;
 using namespace xy::tmx;
 
 ImageLayer::ImageLayer(const std::string& workingDir)
-    : m_workingDir    (workingDir)
+    : m_workingDir      (workingDir),
+    m_hasTransparency   (false)
 {
 
 }
@@ -69,6 +70,7 @@ void ImageLayer::parse(const pugi::xml_node& node)
             {
                 attribName = node.attribute("trans").as_string();
                 m_transparencyColour = colourFromString(attribName);
+                m_hasTransparency = true;
             }
         }
         else if (attribName == "properties")
