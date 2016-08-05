@@ -28,6 +28,8 @@ source distribution.
 #ifndef XY_TILEMAP_SHADER_HPP_
 #define XY_TILEMAP_SHADER_HPP_
 
+#include <xygine/shaders/Default.hpp>
+
 #include <string>
 
 namespace xy
@@ -78,7 +80,9 @@ namespace xy
                 "        //colour = vec4(vec3(1.0), 0.33333);\n"
                 "        float index = float(values.r) - 1.0;\n"
                 "        vec2 position = vec2(mod(index, u_tilesetCount.x), floor(index / u_tilesetCount.x)) / u_tilesetCount;\n"
-                "        vec2 offset = mod((v_texCoord * (textureSize(u_lookup, 0) * u_tilesetScale)) / u_tileSize, 1.0) / u_tilesetCount;\n"
+                "        vec2 offsetCoord = (v_texCoord * (textureSize(u_lookup, 0) * u_tilesetScale)) / u_tileSize;\n"
+
+                "        vec2 offset = mod(offsetCoord, 1.0) / u_tilesetCount;\n"
 
                 "        if(values.g != 0u)\n"
                 "        {\n"

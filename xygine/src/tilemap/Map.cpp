@@ -370,9 +370,8 @@ std::unique_ptr<TileMapLayer> Map::getDrawable(xy::MessageBus& mb, const Layer& 
     }
     else
     {
-        //create image layer - TODO actually implement this
+        //create image layer
         tml->setImageData(dynamic_cast<const ImageLayer*>(&layer), *this, tr);
-        return nullptr; //TODO remove this when implemented
     }
     return std::move(tml);
 }

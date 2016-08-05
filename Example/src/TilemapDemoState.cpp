@@ -40,6 +40,7 @@ source distribution.
 #include <xygine/components/SfDrawableComponent.hpp>
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/physics/CollisionCircleShape.hpp>
+#include <xygine/shaders/Tilemap.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -79,6 +80,8 @@ TilemapDemoState::TilemapDemoState(xy::StateStack& stateStack, Context context)
     m_physWorld (m_messageBus)
 {
     launchLoadingScreen();
+    m_scene.setView(context.defaultView);
+    m_shaderResource.preload(xy::Shader::Tilemap, xy::Shader::tsx::vertex, xy::Shader::tsx::fragment);
 
     buildScene();
 

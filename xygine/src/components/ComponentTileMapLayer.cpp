@@ -56,8 +56,6 @@ namespace
         glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, x, y, GL_RG_INTEGER, GL_UNSIGNED_SHORT, (void*)data.data()));
         glCheck(glBindTexture(GL_TEXTURE_2D, 0));
     }
-
-    bool shaderLoaded = false;
 }
 
 TileMapLayer::TileMapLayer(MessageBus& mb, const tmx::Map::Key&, const sf::Vector2u& chunkResolution)
@@ -141,6 +139,11 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
             //check each used tileset, and if it's used by this chunk create a lookup texture
             for (const auto ts : usedTileSets)
             {
+                if (ts->getTileCount() == 0)
+                {
+                    Logger::log(ts->getName() + " missing tile count property. This tileset will not be drawn", Logger::Type::Warning);
+                }
+                
                 std::vector<std::uint16_t> pixelData;
                 bool tsUsed = false;
 
@@ -159,8 +162,6 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
                             tsUsed = true;
                             pixelData.push_back(static_cast<std::uint16_t>((tileIDs[colPos].ID - ts->getFirstGID()) + 1)); //red channel - making sure to index relative to the tileset
                             pixelData.push_back(static_cast<std::uint16_t>(tileIDs[colPos].flipFlags)); //green channel
-
-                            if (tileIDs[colPos].flipFlags) std::cout << pixelData.back() << std::endl;
                         }
                         else
                         {
@@ -201,35 +202,45 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
     m_globalBounds = map.getBounds();
     m_tileSize = map.getTileSize();
 
-    if (!shaderLoaded)
-    {
-        sr.preload(Shader::Tilemap, Shader::tsx::vertex, Shader::tsx::fragment);
-        shaderLoaded = true;
-    }
     m_shader = &sr.get(Shader::Tilemap);
     XY_ASSERT(m_shader, "failed to load tilemap shader");
+
+    m_renderFunc = [this](sf::RenderTarget& rt, sf::RenderStates states)
+    {
+        //set states shader to tilemap shader
+        states.shader = m_shader;
+
+        //set shader uniforms
+        m_shader->setUniform("u_tileSize", sf::Glsl::Vec2(m_tileSize));
+        m_shader->setUniform("u_opacity", m_opacity);
+
+        //draw each texture in current list
+        for (const auto chunk : m_drawList)
+        {
+            rt.draw(*chunk, states);
+        }
+    };
 }
 
-void TileMapLayer::setImageData(const tmx::ImageLayer*, const tmx::Map&, TextureResource&)
+void TileMapLayer::setImageData(const tmx::ImageLayer* layer, const tmx::Map&, TextureResource& tr)
 {
-    //TODO implement this
+    m_imageSprite.setTexture(tr.get(layer->getImagePath()));
+    m_imageSprite.setPosition(sf::Vector2f(layer->getOffset()));
+
+    sf::Color colour = sf::Color::White;
+    colour.a = static_cast<sf::Uint8>(255.f * layer->getOpacity());
+    m_imageSprite.setColor(colour);
+
+    m_renderFunc = [this](sf::RenderTarget& rt, sf::RenderStates states)
+    {
+        rt.draw(m_imageSprite);
+    };
 }
 
 //private
 void TileMapLayer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    //set states shader to tilemap shader
-    states.shader = m_shader;
-
-    //set shader uniforms
-    m_shader->setUniform("u_tileSize", sf::Glsl::Vec2(m_tileSize));
-    m_shader->setUniform("u_opacity", m_opacity);
-    
-    //draw each texture in current list
-    for (const auto chunk : m_drawList)
-    {
-        rt.draw(*chunk, states);
-    }
+    m_renderFunc(rt, states);
 }
 
 void TileMapLayer::Chunk::draw(sf::RenderTarget& rt, sf::RenderStates states) const

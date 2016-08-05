@@ -33,6 +33,9 @@ source distribution.
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+
+#include <functional>
 
 namespace xy
 {
@@ -96,6 +99,9 @@ namespace xy
         sf::Vector2u m_tileSize;
         sf::Shader* m_shader;
         
+        sf::Sprite m_imageSprite;
+
+        std::function<void(sf::RenderTarget&, sf::RenderStates)> m_renderFunc;
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }
