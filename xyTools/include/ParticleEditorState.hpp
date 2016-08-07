@@ -33,6 +33,8 @@ source distribution.
 #include <xygine/State.hpp>
 #include <xygine/Resource.hpp>
 
+#include <xygine/Scene.hpp>
+
 namespace xy
 {
     class MessageBus;
@@ -54,7 +56,10 @@ public:
 private:
     xy::MessageBus& m_messageBus;
     xy::TextureResource m_textureResource;
+    xy::Scene m_scene;
 
     void buildMenu();
+    void setupScene();
+    void applySettings();
 };
 #endif //XYT_PARTICLE_EDITOR_STATE_HPP_

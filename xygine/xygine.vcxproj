@@ -262,6 +262,7 @@
     <ClCompile Include="src\ui\UIWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\xygine\components\CallbackProvider.hpp" />
     <ClInclude Include="include\xygine\components\Model.hpp" />
     <ClInclude Include="include\xygine\components\PointLight.hpp" />
     <ClInclude Include="include\xygine\components\SoundPlayer.hpp" />

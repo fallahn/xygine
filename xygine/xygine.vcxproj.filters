@@ -884,5 +884,8 @@
     <ClInclude Include="include\xygine\shaders\Tilemap.hpp">
       <Filter>Header Files\shaders</Filter>
     </ClInclude>
+    <ClInclude Include="include\xygine\components\CallbackProvider.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

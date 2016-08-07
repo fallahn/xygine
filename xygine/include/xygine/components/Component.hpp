@@ -190,7 +190,7 @@ namespace xy
         /*!
         \brief Notification of parent entity's impending destruction
 
-        Use this is you need to tidy up the state of a component befor it is
+        Use this is you need to tidy up the state of a component before it is
         destroyed by its parent entity's destruction
         */
         virtual void onParentDestroyed(Entity&) {}
