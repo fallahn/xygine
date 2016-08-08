@@ -166,7 +166,7 @@ void Console::draw(App* app)
 {
     if (!visible) return;
     
-    nim::SetNextWindowSize({ 640, 480 });
+    nim::SetNextWindowSizeConstraints({ 640, 480 }, { 1024.f, 768.f });
     if (!nim::Begin("Console", &visible, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_ShowBorders))
     {
         //window is collapsed so save your effort..

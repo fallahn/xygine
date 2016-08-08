@@ -121,7 +121,8 @@ void StatsReporter::show()
 void StatsReporter::draw()
 {
     if (!visible) return;
-    nim::SetNextWindowSize({ 300, 600 });
+
+    nim::SetNextWindowSizeConstraints({ 300.f, 200.f }, { 400.f, 1000.f });
     nim::Begin("Stats:", &visible, ImGuiWindowFlags_ShowBorders);
 
     static std::array<float, 90> timeValues = { 0.f };
