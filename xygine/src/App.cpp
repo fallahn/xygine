@@ -126,7 +126,7 @@ void App::run()
     setMouseCursorVisible(true);
 
     nim::SFML::Init(m_renderWindow);
-    Console::registerDefaultCommands();
+    Console::registerDefaultCommands(this);
 
     initialise();
 
@@ -147,7 +147,7 @@ void App::run()
 
             update(timePerFrame);                 
         }
-        Console::draw();
+        Console::draw(this);
         StatsReporter::draw();
         //draws any user registered windows
         //got an error here? Make sure invalid windows are removed

@@ -40,17 +40,21 @@ using namespace xy;
 
 namespace
 {
+    bool showVideoOptions = false;
+    bool fullScreen = false;
+
+    std::vector<sf::VideoMode> modes;
+    int currentResolution = 0;
+    char resolutionNames[300];
+    
+    
     //TODO we can make each line separate so output such
     //as warnings or errors can be highlighted
     //see https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp#L2076
     std::string output;
-#if __APPLE__
-    //Apple defines MAX_INPUT in syslimits.h
-    // We need to un-define it for this to work and compile
-    #undef MAX_INPUT
-#endif
-    constexpr std::size_t MAX_INPUT = 400;
-    char input[MAX_INPUT];
+
+    constexpr std::size_t MAX_INPUT_CHARS = 400;
+    char input[MAX_INPUT_CHARS];
     std::list<std::string> buffer;
     const std::size_t MAX_BUFFER = 100;
 
@@ -158,12 +162,46 @@ void Console::doCommand(const std::string& str)
 }
 
 //private
-void Console::draw()
+void Console::draw(App* app)
 {
     if (!visible) return;
     
     nim::SetNextWindowSize({ 640, 480 });
-    nim::Begin("Console", &visible, ImGuiWindowFlags_ShowBorders);
+    if (!nim::Begin("Console", &visible, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_ShowBorders))
+    {
+        //window is collapsed so save your effort..
+        nim::End();
+        return;
+    }
+
+    //options at top of window
+    if (nim::BeginMenuBar())
+    {
+        if (nim::BeginMenu("Options"))
+        {
+            if (nim::MenuItem("Video", nullptr, &showVideoOptions))
+            {
+                //select active mode
+                const auto& activeMode = app->getVideoSettings().VideoMode;
+                for (auto i = 0u; i < modes.size(); ++i)
+                {
+                    if (modes[i] == activeMode)
+                    {
+                        currentResolution = i;
+                        break;
+                    }
+                }
+            }
+            nim::EndMenu();
+        }
+
+        if (nim::BeginMenu("Quit"))
+        {
+            xy::App::quit();
+            nim::EndMenu();
+        }
+        nim::EndMenuBar();
+    }
 
     nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetItemsLineHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
     nim::TextUnformatted(output.c_str(), output.c_str() + output.size());
@@ -173,7 +211,7 @@ void Console::draw()
     nim::Separator();
 
     nim::PushItemWidth(620.f);
-    if (nim::InputText("", input, MAX_INPUT, 
+    if (nim::InputText("", input, MAX_INPUT_CHARS,
         ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory,
         textEditCallback))
     {
@@ -188,10 +226,54 @@ void Console::draw()
     }
 
     nim::End();
+
+    //draw options window if visible
+    if (!showVideoOptions) return;
+
+    nim::SetNextWindowSize({ 300.f, 100.f });
+    nim::Begin("Video Options", &showVideoOptions, ImGuiWindowFlags_ShowBorders);
+
+    nim::Combo("Resolution", &currentResolution, resolutionNames);
+
+    nim::Checkbox("Full Screen", &fullScreen);
+    if (nim::Button("Apply", { 50.f, 20.f }))
+    {
+        //apply settings
+        xy::App::VideoSettings settings;
+        settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
+        settings.VideoMode = modes[currentResolution];
+        app->applyVideoSettings(settings);
+    }
+    nim::End();
 }
 
-void Console::registerDefaultCommands()
+void Console::registerDefaultCommands(App* app)
 {
+    //sets up the video options
+    modes = app->getVideoSettings().AvailableVideoModes;
+    int i = 0;
+    for (const auto& mode : modes)
+    {
+        if (mode.bitsPerPixel == 32u && mode.isValid())
+        {
+            std::string width = std::to_string(mode.width);
+            std::string height = std::to_string(mode.height);
+
+            for (char c : width)
+            {
+                resolutionNames[i++] = c;
+            }
+            resolutionNames[i++] = ' ';
+            resolutionNames[i++] = 'x';
+            resolutionNames[i++] = ' ';
+            for (char c : height)
+            {
+                resolutionNames[i++] = c;
+            }
+            resolutionNames[i++] = '\0';
+        }
+    }
+    
     //list all available commands to the console
     addCommand("list_all",
         [](const std::string&)

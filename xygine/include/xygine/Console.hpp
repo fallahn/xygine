@@ -93,8 +93,8 @@ namespace xy
         static void doCommand(const std::string&);
 
     private:
-        static void draw();
-        static void registerDefaultCommands();
+        static void draw(App*);
+        static void registerDefaultCommands(App*);
         
     };
 }
