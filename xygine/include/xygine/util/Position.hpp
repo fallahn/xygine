@@ -28,6 +28,8 @@ source distribution.
 #ifndef XY_UTIL_POSITION_HPP_
 #define XY_UTIL_POSITION_HPP_
 
+#include <SFML/Graphics/Text.hpp>
+
 #include <cmath>
 
 namespace xy
