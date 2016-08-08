@@ -68,10 +68,10 @@ namespace xy
             bool hasTransparency() const { return m_hasTransparency; }
 
         private:
+            std::string m_workingDir;
             std::string m_filePath;
             sf::Color m_transparencyColour;
             bool m_hasTransparency;
-            std::string m_workingDir;
         };
     }
 }

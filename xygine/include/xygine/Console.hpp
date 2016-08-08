@@ -35,6 +35,7 @@ source distribution.
 
 namespace xy
 {
+    class App;    
     /*!
     \brief Console class
     The console is used to display messages and xygine specific information
