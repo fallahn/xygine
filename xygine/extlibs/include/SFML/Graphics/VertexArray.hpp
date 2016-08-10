@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -209,7 +209,7 @@ private:
 ///
 /// Example:
 /// \code
-/// sf::VertexArray lines(sf::LinesStrip, 4);
+/// sf::VertexArray lines(sf::LineStrip, 4);
 /// lines[0].position = sf::Vector2f(10, 0);
 /// lines[1].position = sf::Vector2f(20, 0);
 /// lines[2].position = sf::Vector2f(30, 5);

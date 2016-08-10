@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -347,6 +347,21 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void setMouseCursorVisible(bool visible);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Grab or release the mouse cursor
+    ///
+    /// If set, grabs the mouse cursor inside this window's client
+    /// area so it may no longer be moved outside its bounds.
+    /// Note that grabbing is only active while the window has
+    /// focus and calling this function for fullscreen windows
+    /// won't have any effect (fullscreen windows always grab the
+    /// cursor).
+    ///
+    /// \param grabbed True to enable, false to disable
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMouseCursorGrabbed(bool grabbed);
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat

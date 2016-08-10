@@ -36,7 +36,7 @@ if(XY_STATIC_SFML)
   SET(SFML_STATIC_LIBRARIES TRUE)
 endif()
 
-SET(SFML_MIN_VERSION "2.3.2")
+SET(SFML_MIN_VERSION "2.4")
 if(WIN32)
   find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system network main)
 else()

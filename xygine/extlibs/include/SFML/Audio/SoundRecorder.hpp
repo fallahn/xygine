@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2015 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -145,6 +145,34 @@ public:
     const std::string& getDevice() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the channel count of the audio capture device
+    ///
+    /// This method allows you to specify the number of channels
+    /// used for recording. Currently only 16-bit mono and
+    /// 16-bit stereo are supported.
+    ///
+    /// \param channelCount Number of channels. Currently only
+    ///                     mono (1) and stereo (2) are supported.
+    ///
+    /// \see getChannelCount
+    ///
+    ////////////////////////////////////////////////////////////
+    void setChannelCount(unsigned int channelCount);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the number of channels used by this recorder
+    ///
+    /// Currently only mono and stereo are supported, so the
+    /// value is either 1 (for mono) or 2 (for stereo).
+    ///
+    /// \return Number of channels
+    ///
+    /// \see setChannelCount
+    ///
+    ////////////////////////////////////////////////////////////
+    unsigned int getChannelCount() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Check if the system supports audio capture
     ///
     /// This function should always be called before using
@@ -263,6 +291,7 @@ private:
     Time               m_processingInterval; ///< Time period between calls to onProcessSamples
     bool               m_isCapturing;        ///< Capturing state
     std::string        m_deviceName;         ///< Name of the audio capture device
+    unsigned int       m_channelCount;       ///< Number of recording channels
 };
 
 } // namespace sf
@@ -309,6 +338,12 @@ private:
 /// by calling setDevice() with the appropriate device. Otherwise
 /// the default capturing device will be used.
 ///
+/// By default the recording is in 16-bit mono. Using the
+/// setChannelCount method you can change the number of channels
+/// used by the audio capture device to record. Note that you
+/// have to decide whether you want to record in mono or stereo
+/// before starting the recording.
+///
 /// It is important to note that the audio capture happens in a
 /// separate thread, so that it doesn't block the rest of the
 /// program. In particular, the onProcessSamples virtual function
@@ -316,11 +351,20 @@ private:
 /// from this separate thread. It is important to keep this in
 /// mind, because you may have to take care of synchronization
 /// issues if you share data between threads.
+/// Another thing to bear in mind is that you must call stop()
+/// in the destructor of your derived class, so that the recording
+/// thread finishes before your object is destroyed.
 ///
 /// Usage example:
 /// \code
 /// class CustomRecorder : public sf::SoundRecorder
 /// {
+///     ~CustomRecorder()
+///     {
+///         // Make sure to stop the recording thread
+///         stop();
+///     }
+///
 ///     virtual bool onStart() // optional
 ///     {
 ///         // Initialize whatever has to be done before the capture starts

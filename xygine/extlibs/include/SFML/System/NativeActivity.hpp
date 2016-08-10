@@ -22,56 +22,41 @@
 //
 ////////////////////////////////////////////////////////////
 
+#ifndef SFML_NATIVEACTIVITY_HPP
+#define SFML_NATIVEACTIVITY_HPP
+
+
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/System/Export.hpp>
+
+
+#if !defined(SFML_SYSTEM_ANDROID)
+#error NativeActivity.hpp: This header is Android only.
+#endif
+
+
+struct ANativeActivity;
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-template <typename T>
-ThreadLocalPtr<T>::ThreadLocalPtr(T* value) :
-ThreadLocal(value)
-{
-}
-
-
+/// \ingroup system
+/// \brief Return a pointer to the Android native activity
+///
+/// You shouldn't have to use this function, unless you want
+/// to implement very specific details, that SFML doesn't
+/// support, or to use a workaround for a known issue.
+///
+/// \return Pointer to Android native activity structure
+///
+/// \sfplatform{Android,SFML/System/NativeActivity.hpp}
+///
 ////////////////////////////////////////////////////////////
-template <typename T>
-T& ThreadLocalPtr<T>::operator *() const
-{
-    return *static_cast<T*>(getValue());
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-T* ThreadLocalPtr<T>::operator ->() const
-{
-    return static_cast<T*>(getValue());
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-ThreadLocalPtr<T>::operator T*() const
-{
-    return static_cast<T*>(getValue());
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-ThreadLocalPtr<T>& ThreadLocalPtr<T>::operator =(T* value)
-{
-    setValue(value);
-    return *this;
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-ThreadLocalPtr<T>& ThreadLocalPtr<T>::operator =(const ThreadLocalPtr<T>& right)
-{
-    setValue(right.getValue());
-    return *this;
-}
+SFML_SYSTEM_API ANativeActivity* getNativeActivity();
 
 } // namespace sf
+
+
+#endif // SFML_NATIVEACTIVITY_HPP
