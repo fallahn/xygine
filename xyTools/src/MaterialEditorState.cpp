@@ -29,7 +29,7 @@ source distribution.
 
 #include <xygine/App.hpp>
 #include <xygine/imgui/imgui.h>
-#include <xygine/FileSystem.hpp>
+#include <xygine/imgui/CommonDialogues.hpp>
 
 MaterialEditorState::MaterialEditorState(xy::StateStack& stack, Context context)
     :xy::State  (stack, context),
@@ -68,17 +68,32 @@ void MaterialEditorState::handleMessage(const xy::Message&)
 
 //private
 void MaterialEditorState::buildMenu()
-{
-    xy::Logger::log(xy::FileSystem::getCurrentDirectory(), xy::Logger::Type::Info);
-    auto dirs = xy::FileSystem::listDirectories("/assets");
-    for (const auto& str : dirs)
-    {
-        xy::Logger::log(str, xy::Logger::Type::Info);
-    }
-    
+{    
     xy::App::addUserWindow([]()
-    {
-        nim::Begin("Material Editor!");
+    {        
+        static std::string selectedFile;
+        
+        nim::SetNextWindowSizeConstraints({ 200.f, 500.f }, { 800.f, 600.f });
+        if (!nim::Begin("Model Viewer and Material Editor", nullptr, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_ShowBorders))
+        {
+            nim::End();
+            return;
+        }
+
+        if (nim::fileBrowseDialogue("Select Model", selectedFile, nim::Button("Open Model"))
+            && !selectedFile.empty())
+        {
+            //attempt to load model
+        }
+
+        selectedFile.clear();
+        nim::SameLine();
+        if (nim::fileBrowseDialogue("Select Material", selectedFile, nim::Button("Open Material"))
+            && !selectedFile.empty())
+        {
+            //attempt to load material
+        }
+        //TODO loading images, saving materials, switching on debug view
 
         nim::End();
     }, this);

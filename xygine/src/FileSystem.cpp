@@ -269,14 +269,14 @@ bool FileSystem::directoryExists(const std::string& path)
 std::vector<std::string> FileSystem::listDirectories(const std::string& path)
 {
     std::vector<std::string> retVal;
-    std::string workingPath = path;
-    std::replace(workingPath.begin(), workingPath.end(), '\\', '/');
+    std::string fullPath = path;
+    std::replace(fullPath.begin(), fullPath.end(), '\\', '/');
 
     //make sure the given path is relative to the working directory
-    std::string fullPath = getCurrentDirectory();
+    /*std::string fullPath = getCurrentDirectory();
     std::replace(fullPath.begin(), fullPath.end(), '\\', '/');
     if (workingPath.empty() || workingPath[0] != '/') fullPath.push_back('/');
-    fullPath += workingPath;
+    fullPath += workingPath;*/
 
 #ifdef _WIN32
 
@@ -327,7 +327,9 @@ std::string FileSystem::getCurrentDirectory()
         Logger::log("Failed to find the current working directory, error: " + std::to_string(GetLastError()), Logger::Type::Error);
         return{};
     }
-    return{ output };
+    std::string retVal(output);
+    std::replace(retVal.begin(), retVal.end(), '\\', '/');
+    return std::move(retVal);
 #else //this may not work on OSx
     char output[FILENAME_MAX];
     if (getcwd(output, FILENAME_MAX) == 0)

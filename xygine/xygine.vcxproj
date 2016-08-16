@@ -165,6 +165,7 @@
     <ClCompile Include="src\components\QuadTreeComponent.cpp" />
     <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="src\GLExtensions.cpp" />
+    <ClCompile Include="src\imgui\CommonDialogues.cpp" />
     <ClCompile Include="src\imgui\imgui_sfml.cpp" />
     <ClCompile Include="src\imgui\imgui.cpp" />
     <ClCompile Include="src\imgui\imgui_demo.cpp" />
@@ -272,6 +273,7 @@
     <ClInclude Include="include\xygine\Console.hpp" />
     <ClInclude Include="include\xygine\detail\GLCheck.hpp" />
     <ClInclude Include="include\xygine\detail\GLExtensions.hpp" />
+    <ClInclude Include="include\xygine\imgui\CommonDialogues.hpp" />
     <ClInclude Include="include\xygine\imgui\imconfig.h" />
     <ClInclude Include="include\xygine\imgui\imgui_sfml.h" />
     <ClInclude Include="include\xygine\imgui\imgui.h" />
