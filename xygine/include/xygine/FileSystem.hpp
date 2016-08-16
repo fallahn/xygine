@@ -76,7 +76,15 @@ namespace xy
         errors to the console.
         */
         static bool directoryExists(const std::string&);
-
+        /*!
+        \brief Returns a vector of strings containing the names of directories
+        found in the given path.
+        */
+        static std::vector<std::string> listDirectories(const std::string&);
+        /*!
+        \brief Returns the name of the current working directory
+        */
+        static std::string getCurrentDirectory();
     private:
 
     };

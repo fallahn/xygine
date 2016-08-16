@@ -37,6 +37,14 @@ A special SFML compatible MultiRenderTarget - not dissimilar to SFML's
 render texture - is used to create a g-buffer for deferred rendering with
 normal mapping and dynamic lighting.
 
+3D Mesh rendering.
+The platform example demonstratoes how to use xygine's MeshRenderer to
+overlay 3D models on the curent scene.
+
+Tilemap.
+xygine includes a parser for Tiled TMX format tile maps, and the tilemap
+demo included renders an orthogonal example map, and demonstrates conversion
+from map objects into xygine's physics components.
 
 ######Contributions
 Contributions should be acknowledged and are gratefully accepted from:  

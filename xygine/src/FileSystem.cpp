@@ -32,6 +32,7 @@ source distribution.
 #include <sys/stat.h>
 
 #include <iostream>
+#include <algorithm>
 
 //TODO check this macro works on all windows compilers
 //(only tested in VC right now)
@@ -263,4 +264,76 @@ bool FileSystem::directoryExists(const std::string& path)
         return true;
     }
     return false;
+}
+
+std::vector<std::string> FileSystem::listDirectories(const std::string& path)
+{
+    std::vector<std::string> retVal;
+    std::string workingPath = path;
+    std::replace(workingPath.begin(), workingPath.end(), '\\', '/');
+
+#ifdef _WIN32
+    //make sure the given path is relative to the working directory
+    std::string fullPath = getCurrentDirectory();
+    std::replace(fullPath.begin(), fullPath.end(), '\\', '/');
+    if (workingPath.empty() || workingPath[0] != '/') fullPath.push_back('/');
+    fullPath += workingPath;
+
+    WIN32_FIND_DATA findFileData;
+    HANDLE hFind = INVALID_HANDLE_VALUE;
+
+    char fullpath[MAX_PATH];
+    GetFullPathName(fullPath.c_str(), MAX_PATH, fullpath, 0);
+    std::string fp(fullpath);
+
+    hFind = FindFirstFile((LPCSTR)(fp + "\\*").c_str(), &findFileData);
+    if (hFind != INVALID_HANDLE_VALUE)
+    {
+        do
+        {
+            if ((findFileData.dwFileAttributes | FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY
+                && (findFileData.cFileName[0] != '.'))
+            {
+                retVal.push_back(findFileData.cFileName);
+            }
+        } while (FindNextFile(hFind, &findFileData) != 0);
+    }
+#else
+    DIR *dp;
+    struct dirent *dirp;
+    if ((dp = opendir(path.c_str())) == nullptr)
+    {
+        Logger::log("Error(" + std::to_string(errno) + ") opening " + path, Logger::Type::Error);
+        return retVal;
+    }
+
+    while ((dirp = readdir(dp)) != nullptr)
+    {
+        retVal.push_back(string(dirp->d_name));
+    }
+    closedir(dp);
+
+#endif //_WIN32
+    return std::move(retVal);
+}
+
+std::string FileSystem::getCurrentDirectory()
+{
+#ifdef _WIN32
+    TCHAR output[FILENAME_MAX];
+    if (GetCurrentDirectory(FILENAME_MAX, output) == 0)
+    {
+        Logger::log("Failed to find the current working directory, error: " + std::to_string(GetLastError()), Logger::Type::Error);
+        return{};
+    }
+    return{ output };
+#else //this may not work on OSx
+    char output[FILENAME_MAX];
+    if (getcwd(output, FILENAME_MAX) == 0)
+    {
+        Logger::log("Failed to find the current working directory, error: " + std::to_string(errno), Logger::Type::Error);
+        return{};
+    }
+    return{ output };
+#endif //_WIN32
 }

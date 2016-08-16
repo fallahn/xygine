@@ -29,6 +29,7 @@ source distribution.
 
 #include <xygine/App.hpp>
 #include <xygine/imgui/imgui.h>
+#include <xygine/FileSystem.hpp>
 
 MaterialEditorState::MaterialEditorState(xy::StateStack& stack, Context context)
     :xy::State  (stack, context),
@@ -68,6 +69,13 @@ void MaterialEditorState::handleMessage(const xy::Message&)
 //private
 void MaterialEditorState::buildMenu()
 {
+    xy::Logger::log(xy::FileSystem::getCurrentDirectory(), xy::Logger::Type::Info);
+    auto dirs = xy::FileSystem::listDirectories("/assets");
+    for (const auto& str : dirs)
+    {
+        xy::Logger::log(str, xy::Logger::Type::Info);
+    }
+    
     xy::App::addUserWindow([]()
     {
         nim::Begin("Material Editor!");
