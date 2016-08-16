@@ -272,12 +272,13 @@ std::vector<std::string> FileSystem::listDirectories(const std::string& path)
     std::string workingPath = path;
     std::replace(workingPath.begin(), workingPath.end(), '\\', '/');
 
-#ifdef _WIN32
     //make sure the given path is relative to the working directory
     std::string fullPath = getCurrentDirectory();
     std::replace(fullPath.begin(), fullPath.end(), '\\', '/');
     if (workingPath.empty() || workingPath[0] != '/') fullPath.push_back('/');
     fullPath += workingPath;
+
+#ifdef _WIN32
 
     WIN32_FIND_DATA findFileData;
     HANDLE hFind = INVALID_HANDLE_VALUE;
@@ -301,7 +302,7 @@ std::vector<std::string> FileSystem::listDirectories(const std::string& path)
 #else
     DIR *dp;
     struct dirent *dirp;
-    if ((dp = opendir(path.c_str())) == nullptr)
+    if ((dp = opendir(fullPath.c_str())) == nullptr)
     {
         Logger::log("Error(" + std::to_string(errno) + ") opening " + path, Logger::Type::Error);
         return retVal;
@@ -309,7 +310,7 @@ std::vector<std::string> FileSystem::listDirectories(const std::string& path)
 
     while ((dirp = readdir(dp)) != nullptr)
     {
-        retVal.push_back(string(dirp->d_name));
+        retVal.push_back(dirp->d_name);
     }
     closedir(dp);
 
