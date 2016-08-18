@@ -188,7 +188,7 @@ void MaterialEditorState::buildMenu()
         nim::SliderAngle("Rotation X", &rotX);
         nim::SliderAngle("Rotation Y", &rotY);
         nim::SliderAngle("Rotation Z", &rotZ);
-        if (nim::Button("Reset"))
+        if (nim::Button("Reset Transform"))
         {
             scale = 1.f;
             rotX = 0.f;

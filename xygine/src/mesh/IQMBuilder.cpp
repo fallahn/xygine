@@ -295,9 +295,18 @@ void IQMBuilder::build()
         }
         loadAnimationData(header, headerBytes, strings);
 
-        Iqm::Bounds bounds; //TODO we have unique bounds for each keyframe
-        std::memcpy(&bounds, headerBytes + header.boundsOffset, sizeof(Iqm::Bounds));
-        m_boundingBox = { {bounds.bbmin[0], bounds.bbmin[1], bounds.bbmin[2]}, {bounds.bbmax[0], bounds.bbmax[1], bounds.bbmax[2]} };
+        //check to see if model stores a bounding box
+        if (header.boundsOffset > 0)
+        {
+            Iqm::Bounds bounds; //TODO we have unique bounds for each keyframe
+            std::memcpy(&bounds, headerBytes + header.boundsOffset, sizeof(Iqm::Bounds));
+            m_boundingBox = { { bounds.bbmin[0], bounds.bbmin[1], bounds.bbmin[2] },{ bounds.bbmax[0], bounds.bbmax[1], bounds.bbmax[2] } };
+        }
+        else
+        {
+            Logger::log("IQM model " + xy::FileSystem::getFileName(m_filePath) + " contains no bounds value, attempting to use calculated bounds...", Logger::Type::Warning);
+            Logger::log("If scene culling appears to work incorrectly consider exporting model with a default animation", Logger::Type::Info);
+        }      
     }
 }
 
@@ -479,11 +488,30 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
     std::uint32_t blendIndex = 0u;
     std::uint32_t blendWeightIndex = 0u;
 
+    glm::vec3 min, max;
     for (auto i = 0u; i < header.vertexCount; ++i)
     {
         for (auto j = 0u; j < positionSize; ++j)
         {
-            m_vertexData.push_back(positions[posIndex++]);
+            float value = positions[posIndex++];
+            //guestimate a bounding box
+            switch (j)
+            {
+            default: break;
+            case 0:
+                if (value < min.x) min.x = value;
+                else if (value > max.x) max.x = value;
+                break;
+            case 1:
+                if (value < min.y) min.y = value;
+                else if (value > max.y) max.y = value;
+                break;
+            case 2:
+                if (value < min.z) min.z = value;
+                else if (value > max.z) max.z = value;
+                break;
+            }
+            m_vertexData.push_back(value);
         }
 
         for (auto j = 0u; j < normalSize; ++j)
@@ -517,6 +545,7 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
             m_vertexData.push_back(static_cast<float>(blendWeights[blendWeightIndex++]) / 255.f);
         }
     }
+    m_boundingBox = { min, max };
     m_vertexCount = header.vertexCount;
 }
 
