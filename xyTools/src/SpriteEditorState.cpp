@@ -42,6 +42,7 @@ SpriteEditorState::SpriteEditorState(xy::StateStack& stack, Context context)
 SpriteEditorState::~SpriteEditorState()
 {
     xy::App::removeUserWindows(this);
+    getContext().renderWindow.setTitle("xy tools");
 }
 
 //public

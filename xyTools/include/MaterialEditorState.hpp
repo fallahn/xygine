@@ -32,6 +32,10 @@ source distribution.
 
 #include <xygine/State.hpp>
 #include <xygine/Resource.hpp>
+#include <xygine/ShaderResource.hpp>
+#include <xygine/mesh/MaterialResource.hpp>
+#include <xygine/mesh/MeshRenderer.hpp>
+#include <xygine/Scene.hpp>
 
 namespace xy
 {
@@ -54,7 +58,13 @@ public:
 private:
     xy::MessageBus& m_messageBus;
     xy::TextureResource m_textureResource;
+    xy::ShaderResource m_shaderResource;
+    xy::MaterialResource m_materialResource;
+    xy::Scene m_scene;
+    xy::MeshRenderer m_meshRenderer;
 
     void buildMenu();
+
+    void loadModel(const std::string& path);
 };
 #endif //XYT_MATERIAL_EDITOR_STATE_HPP_

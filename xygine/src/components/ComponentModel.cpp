@@ -37,6 +37,7 @@ source distribution.
 #include <glm/gtc/matrix_inverse.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 using namespace xy;
 
@@ -203,6 +204,12 @@ void Model::rotate(Model::Axis axis, float rotation)
         break;
     }
     m_rotation = glm::rotate(m_rotation, xy::Util::Const::degToRad * rotation, normal);
+    m_needsUpdate = true;
+}
+
+void Model::setRotation(const sf::Vector3f& rotation)
+{
+    m_rotation = glm::toQuat(glm::orientate3(glm::vec3(rotation.x, rotation.y, rotation.z)));
     m_needsUpdate = true;
 }
 

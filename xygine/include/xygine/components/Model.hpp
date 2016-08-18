@@ -107,6 +107,17 @@ namespace xy
         void rotate(Model::Axis, float);
 
         /*!
+        \brief Sets a pre-transform rotation.
+        Some modelling packages such as blender use different coordinate
+        systems to OpenGL causing imported models to appear disoriented. Use
+        this function to correct any rotation, which is applied to the model
+        before the scene's world matrix transform.
+        \param 3 component vector representing the euler rotation, in degrees,
+        to which the model's rotation should be set.
+        */
+        void setRotation(const sf::Vector3f&);
+
+        /*!
         \brief Sets the position of the model relative to its entity.
         Meshes may have an abitrary origin which is, by default, aligned
         to the position of the model's entity. This function translates

@@ -40,10 +40,10 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
         nim::OpenPopup(title.c_str());
     }
 
-    nim::SetNextWindowSize({ 400.f, 300.f });
+    nim::SetNextWindowSize({ 400.f, 360.f });
     if (nim::BeginPopupModal(title.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        nim::Text(currentDir.c_str());
+        nim::TextWrapped(currentDir.c_str());
 
         if (nim::Button("Up"))
         {
@@ -71,9 +71,16 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
         for (const auto& file : files)
         {
             //set output 
-            if (nim::Selectable(file.c_str()))
+            if (nim::Selectable(file.c_str(), false, ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowDoubleClick))
             {
-                output = currentDir + "/" + file;
+                if (nim::IsMouseDoubleClicked(0))
+                {
+                    output = currentDir + "/" + file;
+                    nim::EndChild();
+                    nim::CloseCurrentPopup();
+                    nim::EndPopup();
+                    return true;
+                }
             }
         }
 
@@ -85,13 +92,12 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
 
         nim::EndChild();
 
-        bool retVal = false;
-        if (retVal = nim::Button("Select"))
+        if (nim::Button("Close"))
         {
             nim::CloseCurrentPopup();
         }
         nim::EndPopup();
-        return retVal;
+        return false;
     }
     return false;
 }

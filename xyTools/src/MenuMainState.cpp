@@ -62,6 +62,7 @@ MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
     msg->stateID = States::ID::MenuMain;
 
     xy::App::setMouseCursorVisible(true);
+    getContext().renderWindow.setTitle("xy tools");
 
     quitLoadingScreen();
 }

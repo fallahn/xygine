@@ -295,7 +295,7 @@ std::vector<std::string> FileSystem::listDirectories(const std::string& path)
             if ((findFileData.dwFileAttributes | FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY
                 && (findFileData.cFileName[0] != '.'))
             {
-                retVal.push_back(findFileData.cFileName);
+                retVal.emplace_back(findFileData.cFileName);
             }
         } while (FindNextFile(hFind, &findFileData) != 0);
     }
@@ -310,7 +310,11 @@ std::vector<std::string> FileSystem::listDirectories(const std::string& path)
 
     while ((dirp = readdir(dp)) != nullptr)
     {
-        retVal.push_back(dirp->d_name);
+        std::string str(dirp->d_name);
+        if (str != "." && str != "..")
+        {
+            retVal.emplace_back(std::move(str));
+        }
     }
     closedir(dp);
 

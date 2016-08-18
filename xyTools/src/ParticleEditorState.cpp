@@ -56,6 +56,7 @@ ParticleEditorState::ParticleEditorState(xy::StateStack& stack, Context context)
 ParticleEditorState::~ParticleEditorState()
 {
     xy::App::removeUserWindows(this);
+    getContext().renderWindow.setTitle("xy tools");
 }
 
 //public
