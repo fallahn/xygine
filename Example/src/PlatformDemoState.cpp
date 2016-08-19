@@ -57,7 +57,6 @@ source distribution.
 #include <xygine/mesh/QuadBuilder.hpp>
 
 #include <xygine/shaders/NormalMapped.hpp>
-#include <xygine/PostBloom.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -107,10 +106,7 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     m_scene.getSkyLight().setIntensity(0.4f);
     m_scene.getSkyLight().setDiffuseColour({ 255, 255, 100 });
     m_scene.getSkyLight().setSpecularColour({ 120, 255, 58 });
-    m_scene.getSkyLight().setDirection({ 0.2f, 0.4f, -0.f });
-
-    //auto pp = xy::PostProcess::create<xy::PostBloom>();
-    //m_scene.addPostProcess(pp);
+    m_scene.getSkyLight().setDirection({ 0.2f, 0.4f, -0.1f });
 
     //m_meshRenderer.setView(context.defaultView);
 

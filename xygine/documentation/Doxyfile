@@ -866,7 +866,10 @@ EXCLUDE                = ../include/xygine/picojson.h \
                          ../src/GLExtensions.cpp \
                          ../include/glm \
                          ../include/xygine/imgui \
-                         ../src/imgui
+                         ../src/imgui \
+                         ../include/xygine/picojson.h \
+                         ../src/tilemap/miniz.h \
+                         ../src/tilemap/miniz.c
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

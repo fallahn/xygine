@@ -42,7 +42,7 @@ namespace xy
     to draw the 3D world within a specific layer in a Scene. This component can be
     attached to a node within a scene graph for this purpose. It is generally not 
     recommended to have more than one of these components in a Scene from a performance
-    perspective as it while cause the entire 3D scene to be drawn multiple times. In
+    perspective as it will cause the entire 3D scene to be drawn multiple times. In
     these cases it's better to draw the MeshRenderer directly to another buffer such as
     an sf::RenderTexture, and then use that texture for a sprite placed within the Scene.
     */

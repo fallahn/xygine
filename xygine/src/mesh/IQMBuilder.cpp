@@ -213,19 +213,7 @@ IQMBuilder::IQMBuilder(const std::string& path)
     : m_filePath    (path),
     m_vertexCount   (0)
 {
-    //TODO we should only be allocating memory for elements
-    //which actually exist in the model
-    m_elements = 
-    {
-        {VertexLayout::Element::Type::Position, positionSize},
-        {VertexLayout::Element::Type::Normal, normalSize},
-        {VertexLayout::Element::Type::Tangent, normalSize},
-        {VertexLayout::Element::Type::Bitangent, normalSize},
-        {VertexLayout::Element::Type::UV0, uvSize},
-        {VertexLayout::Element::Type::BlendIndices, blendIndexSize},
-        {VertexLayout::Element::Type::BlendWeights, blendWeightSize},
-        {VertexLayout::Element::Type::Colour, colourSize}
-    };
+
 }
 
 //public
@@ -324,13 +312,13 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
     //load vertex data (attributes are kept in separate arrays)
     //TODO this memory should only be allocated if the data exists
     char* vertArrayIter = headerBytes + header.varrayOffset;
-    std::vector<float> positions(header.vertexCount * positionSize);
-    std::vector<float> normals(header.vertexCount * normalSize);
-    std::vector<float> tangents(header.vertexCount * (normalSize + 1)); //tangent data is 4 component - w is sign of cross product used for bitan
-    std::vector<float> texCoords(header.vertexCount * uvSize);
-    std::vector<std::uint8_t> blendIndices(header.vertexCount * blendIndexSize);
-    std::vector<std::uint8_t> blendWeights(header.vertexCount * blendWeightSize);
-    std::vector<std::uint8_t> colours(header.vertexCount * colourSize);
+    std::vector<float> positions;
+    std::vector<float> normals;
+    std::vector<float> tangents;//tangent data is 4 component - w is sign of cross product used for bitan
+    std::vector<float> texCoords;
+    std::vector<std::uint8_t> blendIndices;
+    std::vector<std::uint8_t> blendWeights;
+    std::vector<std::uint8_t> colours;
 
     for (auto i = 0u; i < header.varrayCount; ++i)
     {
@@ -340,24 +328,31 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
         switch (vertArray.type)
         {
         case Iqm::POSITION:
+            positions.resize(header.vertexCount * positionSize);
             std::memcpy(&positions[0], headerBytes + vertArray.offset, sizeof(float) * positions.size());
             break;
         case Iqm::NORMAL:
+            normals.resize(header.vertexCount * normalSize);
             std::memcpy(&normals[0], headerBytes + vertArray.offset, sizeof(float) * normals.size());
             break;
         case Iqm::TANGENT:
+            tangents.resize(header.vertexCount * (normalSize + 1));
             std::memcpy(&tangents[0], headerBytes + vertArray.offset, sizeof(float) * tangents.size());
             break;
         case Iqm::TEXCOORD:
+            texCoords.resize(header.vertexCount * uvSize);
             std::memcpy(&texCoords[0], headerBytes + vertArray.offset, sizeof(float) * texCoords.size());
             break;
         case Iqm::BLENDINDICES:
+            blendIndices.resize(header.vertexCount * blendIndexSize);
             std::memcpy(&blendIndices[0], headerBytes + vertArray.offset, sizeof(uint8_t) * blendIndices.size());
             break;
         case Iqm::BLENDWEIGHTS:
+            blendWeights.resize(header.vertexCount * blendWeightSize);
             std::memcpy(&blendWeights[0], headerBytes + vertArray.offset, sizeof(uint8_t) * blendIndices.size());
             break;
         case Iqm::COLOUR:
+            colours.resize(header.vertexCount * colourSize);
             std::memcpy(colours.data(), headerBytes + vertArray.offset, sizeof(std::uint8_t) * colours.size());
             break;
         default: break;
@@ -501,7 +496,7 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
     glm::vec3 min, max;
     for (auto i = 0u; i < header.vertexCount; ++i)
     {
-        for (auto j = 0u; j < positionSize; ++j)
+        for (auto j = 0u; j < positionSize && !positions.empty(); ++j)
         {
             float value = positions[posIndex++];
             //guestimate a bounding box
@@ -524,44 +519,54 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
             m_vertexData.push_back(value);
         }
 
-        for (auto j = 0u; j < normalSize; ++j)
+        for (auto j = 0u; j < normalSize && !normals.empty(); ++j)
         {
             m_vertexData.push_back(normals[normalIndex++]);
         }
 
-        for (auto j = 0u; j < normalSize; ++j)
+        for (auto j = 0u; j < normalSize && !pureTangents.empty(); ++j)
         {
             m_vertexData.push_back(pureTangents[tanIndex++]);
         }
 
-        for (auto j = 0u; j < normalSize; ++j)
+        for (auto j = 0u; j < normalSize && !bitangents.empty(); ++j)
         {
             m_vertexData.push_back(bitangents[bitanIndex++]);
         }
 
-        for (auto j = 0u; j < uvSize; ++j)
+        for (auto j = 0u; j < uvSize && !texCoords.empty(); ++j)
         {
             m_vertexData.push_back(texCoords[uvIndex++]);
         }
 
-        for (auto j = 0u; j < blendIndexSize; ++j)
+        for (auto j = 0u; j < blendIndexSize && !blendIndices.empty(); ++j)
         {
             m_vertexData.push_back(static_cast<float>(blendIndices[blendIndex++]));
         }
 
-        for (auto j = 0u; j < blendWeightSize; ++j)
+        for (auto j = 0u; j < blendWeightSize && !blendWeights.empty(); ++j)
         {
             //blend weights need to be normalised
             m_vertexData.push_back(static_cast<float>(blendWeights[blendWeightIndex++]) / 255.f);
         }
 
-        for (auto j = 0u; j < colourSize; ++j)
+        for (auto j = 0u; j < colourSize && !colours.empty(); ++j)
         {
             m_vertexData.push_back(static_cast<float>(colours[colourIndex++]) / 255.f);
         }
     }
     m_boundingBox = { min, max };
     m_vertexCount = header.vertexCount;
+
+    //set up the vertex element data based on what we actually contain
+    if (!positions.empty()) m_elements.emplace_back(VertexLayout::Element::Type::Position, positionSize);
+    if (!normals.empty())m_elements.emplace_back(VertexLayout::Element::Type::Normal, normalSize);
+    if (!pureTangents.empty()) m_elements.emplace_back(VertexLayout::Element::Type::Tangent, normalSize);
+    if (!bitangents.empty()) m_elements.emplace_back(VertexLayout::Element::Type::Bitangent, normalSize);
+    if (!texCoords.empty())m_elements.emplace_back(VertexLayout::Element::Type::UV0, uvSize);
+    if (!blendIndices.empty()) m_elements.emplace_back(VertexLayout::Element::Type::BlendIndices, blendIndexSize);
+    if (!blendWeights.empty()) m_elements.emplace_back(VertexLayout::Element::Type::BlendWeights, blendWeightSize);
+    if (!colours.empty())m_elements.emplace_back(VertexLayout::Element::Type::Colour, colourSize);
 }
 
 void IQMBuilder::loadAnimationData(const Iqm::Header& header, char* headerBytes, const std::string& strings)
