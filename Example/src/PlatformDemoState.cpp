@@ -87,6 +87,7 @@ namespace
     Plat::PlayerController* playerController = nullptr;
     sf::Uint8 playerInput = 0;
     bool showDebug = false;
+    xy::Camera* playerCamera = nullptr;
 }
 
 PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context)
@@ -293,6 +294,11 @@ void PlatformDemoState::handleMessage(const xy::Message& msg)
         case xy::Message::UIEvent::ResizedWindow:
             //m_meshRenderer.setView(getContext().defaultView);
             //m_scene.setView(getContext().defaultView);
+        {
+            auto v = playerCamera->getView();
+            v.setViewport(getContext().defaultView.getViewport());
+            playerCamera->setView(v);
+        }
             break;
         }
     }
@@ -655,7 +661,8 @@ void PlatformDemoState::addPlayer()
     entity->addComponent(body);
     entity->addComponent(model);
     playerController = entity->addComponent(controller);
-    m_scene.setActiveCamera(entity->addComponent(camera));
+    playerCamera = entity->addComponent(camera);
+    m_scene.setActiveCamera(playerCamera);
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 
     body = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);

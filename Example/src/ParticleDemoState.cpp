@@ -160,7 +160,7 @@ void ParticleDemoState::draw()
 {   
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
-    //rw.setView(getContext().defaultView);
+    rw.setView(getContext().defaultView); //need to restore this to return correct mouse position
     //rw.draw(m_physWorld);
 }
 
