@@ -403,6 +403,7 @@ void App::handleEvents()
             eventHandler = std::bind(&App::handleEvent, this, _1);
             continue;
         case sf::Event::Closed:
+            uiWindows.clear();
             m_renderWindow.close();
             return;
         default: break;
@@ -414,6 +415,7 @@ void App::handleEvents()
             switch (evt.key.code)
             {
             case sf::Keyboard::Escape:
+                uiWindows.clear();
                 m_renderWindow.close();
                 break;
             default: break;
