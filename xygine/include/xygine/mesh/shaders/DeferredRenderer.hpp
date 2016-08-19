@@ -104,6 +104,10 @@ namespace xy
                 "in vec3 a_position;\n" \
                 "in vec3 a_normal;\n" \
 
+                "#if defined(VERTEX_COLOUR)\n"
+                "in vec4 a_colour;\n"
+                "#endif\n"
+
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
                 "in vec2 a_texCoord0;\n" \
                 "#endif\n" \
@@ -139,6 +143,10 @@ namespace xy
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
                 "out vec2 v_texCoord;\n" \
                 "#endif\n" \
+
+                "#if defined(VERTEX_COLOUR)\n"
+                "out vec4 v_colour;\n"
+                "#endif\n"
 
                 "void main()\n" \
                 "{\n" \
@@ -182,6 +190,10 @@ namespace xy
                 "    v_tbn[2] = normalize(u_worldMatrix * vec4(normal, 0.0)).xyz;\n" \
                 /*"    v_tbn = mat3(t, b, n);\n" \*/
                 "#endif\n"
+
+                "#if defined(VERTEX_COLOUR)\n"
+                "    v_colour = a_colour;\n"
+                "#endif\n"
                 "}";
 
             const static std::string DeferredFragment =
@@ -194,6 +206,10 @@ namespace xy
                 "#if defined(TEXTURED) || defined(BUMP)\n" \
                 "in vec2 v_texCoord;\n" \
                 "#endif\n" \
+
+                "#if defined(VERTEX_COLOUR)\n"
+                "in vec4 v_colour;\n"
+                "#endif\n"
 
                 "uniform float u_farPlane = 1500.0;\n" \
                 "uniform vec4 u_colour = vec4(1.0);\n" \
@@ -225,6 +241,10 @@ namespace xy
                 "#else\n" \
                 "    fragOut[0] = u_colour;\n" \
                 "#endif\n" \
+
+                "#if defined(VERTEX_COLOUR)\n"
+                "    fragOut[0] *= v_colour;\n"
+                "#endif\n"
 
                 "#if !defined(BUMP)\n" \
                 "    fragOut[1] = vec4(normalize(v_normalVector), 1.0);\n" \
@@ -262,5 +282,11 @@ namespace xy
 
 #define DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX "#version 150\n#define BUMP\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex
 #define DEFERRED_TEXTURED_SKINNED_VERTEX "#version 150\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex
+
+#define DEFERRED_VERTCOLOURED_VERTEX "#version 150\n#define VERTEX_COLOUR\n" + xy::Shader::Mesh::DeferredVertex
+#define DEFERRED_VERTCOLOURED_FRAGMENT "#version 150\n#define VERTEX_COLOUR\n" + xy::Shader::Mesh::DeferredFragment
+
+#define DEFERRED_VERTCOLOURED_SKINNED_VERTEX "#version 150\n#define VERTEX_COLOUR\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex
+
 
 #endif //XY_MESH_DEFERRED_HPP_

@@ -48,6 +48,7 @@ namespace
     const std::uint8_t uvSize = 2u;
     const std::uint8_t blendIndexSize = 4u;
     const std::uint8_t blendWeightSize = 4u;
+    const std::uint8_t colourSize = 4u;
 
     char* readHeader(char* headerPtr, Iqm::Header& dest)
     {
@@ -212,6 +213,8 @@ IQMBuilder::IQMBuilder(const std::string& path)
     : m_filePath    (path),
     m_vertexCount   (0)
 {
+    //TODO we should only be allocating memory for elements
+    //which actually exist in the model
     m_elements = 
     {
         {VertexLayout::Element::Type::Position, positionSize},
@@ -220,7 +223,8 @@ IQMBuilder::IQMBuilder(const std::string& path)
         {VertexLayout::Element::Type::Bitangent, normalSize},
         {VertexLayout::Element::Type::UV0, uvSize},
         {VertexLayout::Element::Type::BlendIndices, blendIndexSize},
-        {VertexLayout::Element::Type::BlendWeights, blendWeightSize}
+        {VertexLayout::Element::Type::BlendWeights, blendWeightSize},
+        {VertexLayout::Element::Type::Colour, colourSize}
     };
 }
 
@@ -318,6 +322,7 @@ VertexLayout IQMBuilder::getVertexLayout() const
 void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, const std::string& strings)
 {   
     //load vertex data (attributes are kept in separate arrays)
+    //TODO this memory should only be allocated if the data exists
     char* vertArrayIter = headerBytes + header.varrayOffset;
     std::vector<float> positions(header.vertexCount * positionSize);
     std::vector<float> normals(header.vertexCount * normalSize);
@@ -325,6 +330,7 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
     std::vector<float> texCoords(header.vertexCount * uvSize);
     std::vector<std::uint8_t> blendIndices(header.vertexCount * blendIndexSize);
     std::vector<std::uint8_t> blendWeights(header.vertexCount * blendWeightSize);
+    std::vector<std::uint8_t> colours(header.vertexCount * colourSize);
 
     for (auto i = 0u; i < header.varrayCount; ++i)
     {
@@ -350,6 +356,9 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
             break;
         case Iqm::BLENDWEIGHTS:
             std::memcpy(&blendWeights[0], headerBytes + vertArray.offset, sizeof(uint8_t) * blendIndices.size());
+            break;
+        case Iqm::COLOUR:
+            std::memcpy(colours.data(), headerBytes + vertArray.offset, sizeof(std::uint8_t) * colours.size());
             break;
         default: break;
         }
@@ -487,6 +496,7 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
     std::uint32_t uvIndex = 0u;
     std::uint32_t blendIndex = 0u;
     std::uint32_t blendWeightIndex = 0u;
+    std::uint32_t colourIndex = 0u;
 
     glm::vec3 min, max;
     for (auto i = 0u; i < header.vertexCount; ++i)
@@ -543,6 +553,11 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
         {
             //blend weights need to be normalised
             m_vertexData.push_back(static_cast<float>(blendWeights[blendWeightIndex++]) / 255.f);
+        }
+
+        for (auto j = 0u; j < colourSize; ++j)
+        {
+            m_vertexData.push_back(static_cast<float>(colours[colourIndex++]) / 255.f);
         }
     }
     m_boundingBox = { min, max };
