@@ -30,6 +30,7 @@ set(XY_SRC
   ${XY_DIR}/components/ComponentAudioListener.cpp
   ${XY_DIR}/components/ComponentAudioSource.cpp
   ${XY_DIR}/components/ComponentCamera.cpp
+  ${XY_DIR}/components/ComponentMeshDrawable.cpp
   ${XY_DIR}/components/ComponentModel.cpp
   ${XY_DIR}/components/ComponentParticleController.cpp
   ${XY_DIR}/components/ComponentParticleSystem.cpp  

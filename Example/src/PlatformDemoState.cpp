@@ -48,6 +48,7 @@ source distribution.
 #include <xygine/physics/CollisionEdgeShape.hpp>
 #include <xygine/physics/CollisionRectangleShape.hpp>
 
+#include <xygine/components/MeshDrawable.hpp>
 #include <xygine/components/Model.hpp>
 #include <xygine/mesh/shaders/DeferredRenderer.hpp>
 #include <xygine/mesh/SubMesh.hpp>
@@ -56,6 +57,7 @@ source distribution.
 #include <xygine/mesh/QuadBuilder.hpp>
 
 #include <xygine/shaders/NormalMapped.hpp>
+#include <xygine/PostBloom.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -88,11 +90,11 @@ namespace
 }
 
 PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context)
-    : State(stateStack, context),
-    m_messageBus(context.appInstance.getMessageBus()),
-    m_scene(m_messageBus),
-    m_physWorld(m_messageBus),
-    m_meshRenderer({ context.appInstance.getVideoSettings().VideoMode.width, context.appInstance.getVideoSettings().VideoMode.height }, m_scene)
+    : State         (stateStack, context),
+    m_messageBus    (context.appInstance.getMessageBus()),
+    m_scene         (m_messageBus),
+    m_physWorld     (m_messageBus),
+    m_meshRenderer  ({ context.appInstance.getVideoSettings().VideoMode.width, context.appInstance.getVideoSettings().VideoMode.height }, m_scene)
 {
     launchLoadingScreen();
     xy::Stats::clear();
@@ -106,12 +108,22 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     m_scene.getSkyLight().setSpecularColour({ 120, 255, 58 });
     m_scene.getSkyLight().setDirection({ 0.2f, 0.4f, -0.f });
 
+    //auto pp = xy::PostProcess::create<xy::PostBloom>();
+    //m_scene.addPostProcess(pp);
+
+    //m_meshRenderer.setView(context.defaultView);
+
     cacheMeshes();
     buildTerrain();
     buildPhysics();
 
     addItems();
     addPlayer();
+
+    auto e = xy::Entity::create(m_messageBus);
+    auto md = m_meshRenderer.createDrawable(m_messageBus);
+    e->addComponent(md);
+    m_scene.addEntity(e, xy::Scene::Layer::FrontFront);
 
     REPORT("Q", "Show Debug");
     xy::App::setMouseCursorVisible(true);
@@ -166,9 +178,8 @@ void PlatformDemoState::draw()
 {   
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);    
-        
-    rw.setView(getContext().defaultView);   
-    rw.draw(m_meshRenderer);
+
+    //rw.draw(m_meshRenderer);
 
     if (showDebug)
     {
@@ -269,9 +280,22 @@ bool PlatformDemoState::handleEvent(const sf::Event& evt)
 }
 
 void PlatformDemoState::handleMessage(const xy::Message& msg)
-{ 
+{   
     m_scene.handleMessage(msg);
-    m_meshRenderer.handleMessage(msg);
+    m_meshRenderer.handleMessage(msg);    
+    
+    if (msg.id == xy::Message::UIMessage)
+    {
+        const auto& msgData = msg.getData<xy::Message::UIEvent>();
+        switch (msgData.type)
+        {
+        default: break;
+        case xy::Message::UIEvent::ResizedWindow:
+            //m_meshRenderer.setView(getContext().defaultView);
+            //m_scene.setView(getContext().defaultView);
+            break;
+        }
+    }
 }
 
 //private
@@ -633,8 +657,6 @@ void PlatformDemoState::addPlayer()
     playerController = entity->addComponent(controller);
     m_scene.setActiveCamera(entity->addComponent(camera));
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
-
-
 
     body = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
     body->fixedRotation(true);

@@ -53,6 +53,7 @@ namespace xy
     class MessageBus;
     class Message;
     class Mesh;
+    class MeshDrawable;
     class Model;
     class Scene;
     class ModelBuilder;
@@ -63,11 +64,13 @@ namespace xy
     into 3D space and aligns it with the 2D world so that 3D models will
     fit, creating a 2.5D like effect. The mesh renderer itself is an
     SFML drawable, so can be drawn on top of a scene like any other
-    drawable class.
+    drawable class, but can also return a drawable component, allowing
+    the 3D view to be drawn on any layer in a Scene.
     */
     class XY_EXPORT_API MeshRenderer final : public sf::Drawable
     {
         friend class Model;
+        friend class MeshDrawable;
     public:
         /*!
         \brief Constructor.
@@ -109,6 +112,15 @@ namespace xy
         std::unique_ptr<Model> createModel(const Mesh&, MessageBus&);
 
         /*!
+        \brief Factory function to create drawable components of the MeshRenderer.
+        MeshSrawable components allow drawing the MeshRenderer directly within a 
+        Scene, and therefore enables layer ordering. It is recommended for performance
+        reasons that there usually be no more than one of these per MeshRenderer.
+        \see MeshDrawable
+        */
+        std::unique_ptr<MeshDrawable> createDrawable(MessageBus&);
+
+        /*!
         \brief Updates the MeshRenderer with the current scene status.
         Should be called once per frame after updating the scene to which
         the MeshRenderer is associated.
@@ -148,6 +160,16 @@ namespace xy
         */
         void enableGlowPass(bool);
 
+        /*!
+        \brief Sets the view to be used  when rendering the 3D scene.
+        This view will override any active view when the MeshRenderer is drawn, before
+        restoring the original view. This is generally the default view of the Stack context
+        but can be set multiple times, for example when drawing split screen views.
+        This is also useful for setting the view to that of render buffers other than the
+        default window, such as sf::RenderTexture or xy::MultiRenderTexture
+        */
+        void setView(const sf::View& v) { m_view = v; }
+
     private:
         struct Lock final {};
 
@@ -168,6 +190,7 @@ namespace xy
         glm::mat4 m_viewMatrix;
         glm::mat4 m_projectionMatrix;
         float m_cameraZ;
+        sf::View m_view;
 
         enum MaterialChannel
         {

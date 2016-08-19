@@ -420,6 +420,9 @@
     <ClCompile Include="src\imgui\CommonDialogues.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\components\ComponentMeshDrawable.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -892,6 +895,9 @@
     </ClInclude>
     <ClInclude Include="include\xygine\imgui\CommonDialogues.hpp">
       <Filter>Header Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\components\MeshDrawable.hpp">
+      <Filter>Header Files\components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

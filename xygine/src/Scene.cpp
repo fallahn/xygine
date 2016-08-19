@@ -250,6 +250,13 @@ void Scene::setActiveCamera(const Camera* camera)
     {
         m_activeCamera = m_defaultCamera;
     }
+
+    //we don't want to letterbox render buffers
+    if (!m_renderPasses.empty())
+    {
+        const_cast<Camera*>(m_activeCamera)->setViewport({ { 0.f, 0.f },{ 1.f, 1.f } });
+    }
+
     auto msg = m_messageBus.post<xy::Message::SceneEvent>(xy::Message::SceneMessage);
     msg->action = xy::Message::SceneEvent::CameraChanged;
 }

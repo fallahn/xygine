@@ -155,6 +155,7 @@
     <ClCompile Include="src\components\ComponentAudioListener.cpp" />
     <ClCompile Include="src\components\ComponentAudioSource.cpp" />
     <ClCompile Include="src\components\ComponentCamera.cpp" />
+    <ClCompile Include="src\components\ComponentMeshDrawable.cpp" />
     <ClCompile Include="src\components\ComponentModel.cpp" />
     <ClCompile Include="src\components\ComponentParticleController.cpp" />
     <ClCompile Include="src\components\ComponentParticleSystem.cpp" />
@@ -264,6 +265,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\components\CallbackProvider.hpp" />
+    <ClInclude Include="include\xygine\components\MeshDrawable.hpp" />
     <ClInclude Include="include\xygine\components\Model.hpp" />
     <ClInclude Include="include\xygine\components\PointLight.hpp" />
     <ClInclude Include="include\xygine\components\SoundPlayer.hpp" />

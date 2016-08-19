@@ -32,6 +32,7 @@ source distribution.
 #include <xygine/mesh/shaders/LightBlur.hpp>
 #include <xygine/shaders/PostGaussianBlur.hpp>
 #include <xygine/components/Model.hpp>
+#include <xygine/components/MeshDrawable.hpp>
 #include <xygine/components/PointLight.hpp>
 #include <xygine/Scene.hpp>
 #include <xygine/util/Const.hpp>
@@ -168,6 +169,12 @@ std::unique_ptr<Model> MeshRenderer::createModel(const Mesh& mesh, MessageBus& m
     model->setBaseMaterial(m_materialResource.get(MaterialResource::Static));
 
     return std::move(model);
+}
+
+std::unique_ptr<MeshDrawable> MeshRenderer::createDrawable(MessageBus& mb)
+{
+    auto md = xy::Component::create<MeshDrawable>(mb, *this, Lock());
+    return std::move(md);
 }
 
 void MeshRenderer::update()
@@ -382,6 +389,9 @@ void MeshRenderer::drawScene() const
 
 void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    auto oldView = rt.getView();
+    rt.setView(m_view);
+    
     drawDepth();
     drawScene();
 
@@ -421,6 +431,7 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 
     rt.draw(*m_outputQuad);
     rt.resetGLStates();
+    rt.setView(oldView);
 }
 
 void MeshRenderer::updateView()
