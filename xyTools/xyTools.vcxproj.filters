@@ -53,5 +53,8 @@
     <ClInclude Include="include\MaterialEditorState.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Enumerations.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

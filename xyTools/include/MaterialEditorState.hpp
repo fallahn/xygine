@@ -63,6 +63,7 @@ private:
     xy::Scene m_scene;
     xy::MeshRenderer m_meshRenderer;
 
+    void loadMaterials();
     void buildMenu();
 
     void loadModel(const std::string& path);
