@@ -158,6 +158,17 @@ bool MaterialEditorState::handleEvent(const sf::Event& evt)
 
 void MaterialEditorState::handleMessage(const xy::Message& msg)
 {
+    if (msg.id == xy::Message::UIMessage)
+    {
+        const auto& data = msg.getData<xy::Message::UIEvent>();
+        switch (data.type)
+        {
+        default:break;
+        case xy::Message::UIEvent::ResizedWindow:
+            m_scene.setView(getContext().defaultView);
+            break;
+        }
+    }
     m_scene.handleMessage(msg);
     m_meshRenderer.handleMessage(msg);
 }
@@ -200,14 +211,33 @@ void MaterialEditorState::loadMaterials()
     entity->setPosition(xy::DefaultSceneSize / 2.f);
     m_scene.addEntity(entity, xy::Scene::Layer::FrontRear);
 
-    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 1800.f, 1400.f/*, sf::Color(255, 255, 100)*/);
-    //light->enableShadowCasting(true);
+    auto light = xy::Component::create<xy::PointLight>(m_messageBus, 1800.f, 1400.f);
     light->setIntensity(0.8f);
     light->setDepth(100.f);
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(xy::DefaultSceneSize / 2.f);
     entity->move(0.f, -385.f);
+    entity->addComponent(light);
+    m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
+
+    light = xy::Component::create<xy::PointLight>(m_messageBus, 1800.f, 1400.f, sf::Color::Red);
+    light->setIntensity(0.4f);
+    light->setDepth(50.f);
+
+    entity = xy::Entity::create(m_messageBus);
+    entity->setPosition(xy::DefaultSceneSize / 2.f);
+    entity->move(285.f, 0.f);
+    entity->addComponent(light);
+    m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
+
+    light = xy::Component::create<xy::PointLight>(m_messageBus, 1800.f, 1400.f, sf::Color::Green);
+    light->setIntensity(0.4f);
+    light->setDepth(50.f);
+
+    entity = xy::Entity::create(m_messageBus);
+    entity->setPosition(xy::DefaultSceneSize / 2.f);
+    entity->move(-285.f, 0.f);
     entity->addComponent(light);
     m_scene.addEntity(entity, xy::Scene::Layer::FrontMiddle);
 

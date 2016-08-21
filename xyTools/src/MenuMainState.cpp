@@ -37,6 +37,7 @@ source distribution.
 namespace
 {
     const float buttonSpacing = 60.f;
+    const float buttonMargin = 30.f;
 
     bool showVideoOptions = false;
     bool fullScreen = false;
@@ -104,6 +105,7 @@ void MenuMainState::buildMenu()
     
     auto button = xy::UI::create<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
     button->setText("Settings");
+    button->setPosition({ buttonMargin, buttonMargin });
     button->addCallback([this]()
     {
         showVideoOptions = !showVideoOptions;
@@ -119,10 +121,10 @@ void MenuMainState::buildMenu()
     });
     m_uiContainer.addControl(button);
 
-    float currentSpacing = buttonSpacing;
+    float currentSpacing = buttonSpacing + buttonMargin;
     button = xy::UI::create<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
     button->setText("Sprite Editor");
-    button->setPosition({ 0.f, currentSpacing });
+    button->setPosition({ buttonMargin, currentSpacing });
     button->addCallback([this]()
     {
         if (getStateCount() > 1)
@@ -136,7 +138,7 @@ void MenuMainState::buildMenu()
 
     button = xy::UI::create<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
     button->setText("Particle Editor");
-    button->setPosition({ 0.f, currentSpacing });
+    button->setPosition({ buttonMargin, currentSpacing });
     button->addCallback([this]()
     {
         if (getStateCount() > 1)
@@ -150,7 +152,7 @@ void MenuMainState::buildMenu()
 
     button = xy::UI::create<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
     button->setText("Material Editor");
-    button->setPosition({ 0.f, currentSpacing });
+    button->setPosition({ buttonMargin, currentSpacing });
     button->addCallback([this]()
     {
         if (getStateCount() > 1)
@@ -164,7 +166,7 @@ void MenuMainState::buildMenu()
 
     button = xy::UI::create<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
     button->setText("Quit");
-    button->setPosition({ 0.f, currentSpacing });
+    button->setPosition({ buttonMargin, currentSpacing });
     button->addCallback([this]() 
     {
         getContext().renderWindow.close();
