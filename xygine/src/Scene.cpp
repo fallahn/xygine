@@ -69,16 +69,16 @@ Scene::~Scene()
 //public
 void Scene::update(float dt)
 {    
+    //used to set up quad trees for components which require it
     std::function<void(Entity::Ptr&)> setPartitioning = 
         [this](Entity::Ptr& p)
     {
-        if (QuadTreeComponent* qc = p->getComponent<QuadTreeComponent>())
-        {
-            m_quadTree.add(qc);
-        }
+        auto qtcs = p->getComponents<xy::QuadTreeComponent>();
+        for (const auto qc : qtcs) m_quadTree.add(qc);
 
         //if we find a light add it to its own quad tree
-        if (PointLight* pl = p->getComponent<PointLight>())
+        auto lights = p->getComponents<PointLight>();
+        for(const auto pl : lights)
         {
             const float rad = pl->getRadius();
             auto qtc = xy::Component::create<QuadTreeComponent>(m_messageBus, sf::FloatRect({ -rad, -rad }, { rad * 2.f, rad * 2.f}));
