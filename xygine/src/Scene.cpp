@@ -269,14 +269,18 @@ void Scene::setClearColour(const sf::Color& colour)
 void Scene::setSize(const sf::FloatRect& size)
 {
     m_quadTree.create(size);
+    m_lightTree.create(size);
+
     Command cmd;
     cmd.category = Command::All;
     cmd.action = [this](Entity& entity, float)
     {
-        if (auto qc = entity.getComponent<QuadTreeComponent>())
+        auto qcs = entity.getComponents<QuadTreeComponent>();
+        for(const auto qc : qcs) //PROBLEM! What if the qtc is actually to mark then entity as having a light?
         {
             m_quadTree.add(qc);
         }
+        //TODO identify light owning entities and add to corect tree
     };
     sendCommand(cmd);
 }
@@ -299,7 +303,8 @@ std::vector<PointLight*> Scene::getVisibleLights(const sf::FloatRect& area) cons
     
     for (auto i = 0u; i < result.size(); ++i)
     {
-        if (auto lc = result[i]->getEntity()->getComponent<PointLight>())
+        auto lcs = result[i]->getEntity()->getComponents<PointLight>();
+        for(auto lc : lcs)
         {
             retval.push_back(lc);
         }
