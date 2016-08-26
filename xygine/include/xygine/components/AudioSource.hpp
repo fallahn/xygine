@@ -62,7 +62,7 @@ namespace xy
         };
 
         AudioSource(MessageBus&, SoundResource&);
-        ~AudioSource() = default;
+        ~AudioSource();
 
         Component::Type type() const override { return Component::Type::Script; }
 
