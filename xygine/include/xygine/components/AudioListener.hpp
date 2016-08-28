@@ -77,6 +77,12 @@ namespace xy
         static float getListenerDepth();
 
         /*!
+        \brief Sets the master volume for all sounds heard.
+        The volume range is from 0 - 100
+        */
+        static void setMasterVolume(float);
+
+        /*!
         \brief Maximum allowed volume for any audio
         */
         static const float MaxVolume;

@@ -268,21 +268,34 @@ void Scene::setClearColour(const sf::Color& colour)
 
 void Scene::setSize(const sf::FloatRect& size)
 {
+    const auto& outsiders = m_quadTree.getOutsideRootSet();
+    const auto& nodes = m_quadTree.queryArea(m_quadTree.getRootArea());
+    LOG("Relocating " + std::to_string(outsiders.size() + nodes.size()) + " nodes to resized quad tree.", Logger::Type::Info);   
+    
     m_quadTree.create(size);
-    m_lightTree.create(size);
-
-    Command cmd;
-    cmd.category = Command::All;
-    cmd.action = [this](Entity& entity, float)
+    for (const auto& qc : outsiders)
     {
-        auto qcs = entity.getComponents<QuadTreeComponent>();
-        for(const auto qc : qcs) //PROBLEM! What if the qtc is actually to mark then entity as having a light?
-        {
-            m_quadTree.add(qc);
-        }
-        //TODO identify light owning entities and add to corect tree
-    };
-    sendCommand(cmd);
+        m_quadTree.add(qc);
+    }
+    for (const auto& qc : nodes)
+    {
+        m_quadTree.add(qc);
+    }
+
+
+    const auto& outlights = m_lightTree.getOutsideRootSet();
+    const auto& lightNodes = m_lightTree.queryArea(m_lightTree.getRootArea());
+    LOG("Relocating " + std::to_string(outlights.size() + lightNodes.size()) + " lights to new light tree", Logger::Type::Info);
+
+    m_lightTree.create(size);
+    for (const auto& qc : outlights)
+    {
+        m_lightTree.add(qc);
+    }
+    for (const auto& qc : lightNodes)
+    {
+        m_lightTree.add(qc);
+    }
 }
 
 void Scene::sendCommand(const Command& cmd)

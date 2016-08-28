@@ -74,6 +74,12 @@ float AudioListener::getListenerDepth()
     return listenerDepth;
 }
 
+void AudioListener::setMasterVolume(float vol)
+{
+    XY_ASSERT(vol > 0 && vol < MaxVolume, "Invalid audio value");
+    sf::Listener::setGlobalVolume(vol);
+}
+
 //private
 void AudioListener::addDyingSound(const sf::Sound& sound)
 {
