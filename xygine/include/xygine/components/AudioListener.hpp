@@ -38,6 +38,7 @@ source distribution.
 #include <xygine/components/Component.hpp>
 
 #include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 
 #include <list>
 
@@ -90,6 +91,8 @@ namespace xy
 
         std::list<sf::Sound> m_dyingSounds;
         static void addDyingSound(const sf::Sound&);
+
+        sf::SoundBuffer dummyBuffer;//kludge to keep the AL device valid
     };
 }
 

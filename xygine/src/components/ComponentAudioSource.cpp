@@ -59,6 +59,12 @@ AudioSource::AudioSource(MessageBus& mb, SoundResource& sr)
 
 }
 
+AudioSource::~AudioSource()
+{
+    m_sound.stop();
+    m_music.stop();
+}
+
 //public
 void AudioSource::entityUpdate(Entity& entity, float dt)
 {
