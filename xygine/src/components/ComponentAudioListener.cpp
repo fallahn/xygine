@@ -49,10 +49,6 @@ AudioListener::AudioListener(MessageBus& mb)
         instance->destroy();
     }
     instance = this;
-
-    //flaps.
-    char buns[] = { 0,0,0,0 };
-    dummyBuffer.loadFromMemory((void*)buns, 4);
 }
 
 AudioListener::~AudioListener()

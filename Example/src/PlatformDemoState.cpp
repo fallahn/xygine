@@ -108,7 +108,7 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     m_scene.getSkyLight().setSpecularColour({ 120, 255, 58 });
     m_scene.getSkyLight().setDirection({ 0.2f, 0.4f, -0.1f });
 
-    //m_meshRenderer.setView(context.defaultView);
+    m_meshRenderer.setView(context.defaultView);
 
     cacheMeshes();
     buildTerrain();
@@ -117,10 +117,10 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     addItems();
     addPlayer();
 
-    auto e = xy::Entity::create(m_messageBus);
+    /*auto e = xy::Entity::create(m_messageBus);
     auto md = m_meshRenderer.createDrawable(m_messageBus);
     e->addComponent(md);
-    m_scene.addEntity(e, xy::Scene::Layer::FrontFront);
+    m_scene.addEntity(e, xy::Scene::Layer::FrontFront);*/
 
     REPORT("Q", "Show Debug");
     xy::App::setMouseCursorVisible(true);
@@ -176,7 +176,7 @@ void PlatformDemoState::draw()
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);    
 
-    //rw.draw(m_meshRenderer);
+    rw.draw(m_meshRenderer);
 
     if (showDebug)
     {

@@ -185,6 +185,7 @@
     <ClCompile Include="src\mesh\RenderQuad.cpp" />
     <ClCompile Include="src\mesh\Skeleton.cpp" />
     <ClCompile Include="src\mesh\SkeletonAnimation.cpp" />
+    <ClCompile Include="src\mesh\SphereBuilder.cpp" />
     <ClCompile Include="src\mesh\SubMesh.cpp" />
     <ClCompile Include="src\mesh\UniformBuffer.cpp" />
     <ClCompile Include="src\mesh\VertexAttribBinding.cpp" />
@@ -304,6 +305,7 @@
     <ClInclude Include="include\xygine\mesh\shaders\LightBlur.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\SSAO.hpp" />
     <ClInclude Include="include\xygine\mesh\Skeleton.hpp" />
+    <ClInclude Include="include\xygine\mesh\SphereBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\StaticConsts.hpp" />
     <ClInclude Include="include\xygine\mesh\SubMesh.hpp" />
     <ClInclude Include="include\xygine\mesh\UniformBuffer.hpp" />
