@@ -92,12 +92,17 @@ void SphereBuilder::build()
                 if (i % (m_resolution + 1) == (m_resolution))
                 {
                     //end of the line
-                    tan = glm::normalize(positions[i - 1] - positions[i]) * rotation;
+                    glm::vec3 a = glm::normalize(positions[i - 1]);
+                    glm::vec3 b = glm::normalize(positions[i]);
+
+                    tan = glm::normalize(a - b) * rotation;
                     tan = glm::reflect(tan, vert);
                 }
                 else
                 {
-                    tan = glm::normalize(positions[i + 1] - positions[i]) * rotation;
+                    glm::vec3 a = glm::normalize(positions[i + 1]);
+                    glm::vec3 b = glm::normalize(positions[i]);
+                    tan = glm::normalize(a - b) * rotation;
                 }
                 glm::vec3 bitan = glm::cross(tan, vert);
 

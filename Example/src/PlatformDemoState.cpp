@@ -55,6 +55,7 @@ source distribution.
 #include <xygine/mesh/CubeBuilder.hpp>
 #include <xygine/mesh/IQMBuilder.hpp>
 #include <xygine/mesh/QuadBuilder.hpp>
+#include <xygine/mesh/SphereBuilder.hpp>
 
 #include <xygine/shaders/NormalMapped.hpp>
 
@@ -288,7 +289,7 @@ void PlatformDemoState::handleMessage(const xy::Message& msg)
         {
         default: break;
         case xy::Message::UIEvent::ResizedWindow:
-            //m_meshRenderer.setView(getContext().defaultView);
+            m_meshRenderer.setView(getContext().defaultView);
             //m_scene.setView(getContext().defaultView);
         {
             auto v = playerCamera->getView();
@@ -317,6 +318,9 @@ void PlatformDemoState::cacheMeshes()
 
     xy::QuadBuilder qb({ 500.f, 550.f });
     m_meshRenderer.loadModel(MeshID::Quad, qb);
+
+    xy::SphereBuilder sb(34.f, 6u);
+    m_meshRenderer.loadModel(MeshID::Sphere, sb);
 
     m_shaderResource.preload(PlatformShaderId::SpecularBumped3D, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
     m_shaderResource.preload(PlatformShaderId::TexturedSkinned, DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
@@ -370,6 +374,16 @@ void PlatformDemoState::cacheMeshes()
     catMat.addProperty({ "u_maskMap", tex3 });
     catMat.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::ShadowSkinned));
     catMat.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
+
+
+    m_textureResource.setFallbackColour(sf::Color(230, 120, 0));
+    auto& sphereMat = m_materialResource.add(MatId::SphereTest, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
+    sphereMat.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    sphereMat.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/sphere_test.png") });
+    sphereMat.addProperty({ "u_normalMap", m_textureResource.get("assets/images/sphere_normal.png") });
+    sphereMat.addProperty({ "u_maskMap", m_textureResource.get("I don't want a mask texture!!") });
+    sphereMat.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::Shadow));
+    sphereMat.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
 
     auto& lightMaterial = m_materialResource.add(MatId::LightSource, m_shaderResource.get(PlatformShaderId::SpecularSmooth3D));
     lightMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
@@ -623,10 +637,34 @@ void PlatformDemoState::addItems()
         m_scene.addEntity(ent, xy::Scene::BackFront);
     };
 
-    for (auto i = 0u; i < 8u; ++i)
+
+    std::function<void(const sf::Vector2f&)> createBall = 
+        [this](const sf::Vector2f& position)
+    {
+        auto body = xy::Component::create<xy::Physics::RigidBody>(m_messageBus, xy::Physics::BodyType::Dynamic);
+        xy::Physics::CollisionCircleShape cs(34.f);
+        cs.setDensity(4.f);
+        cs.setFriction(0.2f);
+        cs.setRestitution(0.8f);
+        body->addCollisionShape(cs);
+
+        auto model = m_meshRenderer.createModel(MeshID::Sphere, m_messageBus);
+        model->setBaseMaterial(m_materialResource.get(MatId::SphereTest));
+
+        auto ent = xy::Entity::create(m_messageBus);
+        ent->setPosition(position);
+        ent->addComponent(body);
+        ent->addComponent(model);
+
+        m_scene.addEntity(ent, xy::Scene::BackFront);
+    };
+
+    for (auto i = 0u; i < 5u; ++i)
     {
         createBox({ xy::Util::Random::value(20.f, 2500.f), 20.f });
+        createBall({ xy::Util::Random::value(20.f, 2500.f), 20.f });
     }
+
 }
 
 void PlatformDemoState::addPlayer()

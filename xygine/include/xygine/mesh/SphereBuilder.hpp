@@ -48,7 +48,7 @@ namespace xy
         \brief Constructor.
         \param radius Size in world units for the radius of the sphere
         \param resolution Number of quads per side. Defaults to 4 which
-        is 4*4 per side, 6 sides = 96 verts for 90 triangles. Higher
+        is 4*4 per side, 6 sides = 96 quads for 192 triangles. Higher
         numbers result in a smoother mesh but increased triangle count.
         \param backface If this is true the 6th, rear-facing face is built.
         If a sphere is not likely to be rotated in a scene it can be optimised

@@ -79,7 +79,8 @@ private:
         Fixit,
         Platform,
         Batcat,
-        Quad
+        Quad,
+        Sphere
     };
 
     enum MatId
@@ -90,7 +91,8 @@ private:
         LightSource,
         Platform01,
         Platform04,
-        BatcatMat
+        BatcatMat,
+        SphereTest
     };
     xy::MaterialResource m_materialResource;
 
