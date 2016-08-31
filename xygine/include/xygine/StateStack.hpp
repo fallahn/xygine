@@ -136,8 +136,12 @@ namespace xy
         void handleMessage(const Message&);
         /*!
         \brief Push a new instance of a state with the given ID to the stack
+        \param id Integer representing the ID of t he state to push on the stack
+        \param bool If true suspends any existing state on the top of the stack
+        temporarily removing it from the stack. The suspended state is automatically
+        resumed when the pushed state is popped.
         */
-        void pushState(StateID id);
+        void pushState(StateID id, bool = false);
         /*!
         \brief Pops the top most state from the stack
         */
@@ -186,12 +190,14 @@ namespace xy
 
         struct Pendingchange
         {
-            explicit Pendingchange(Action, StateID id = 0);
+            explicit Pendingchange(Action, StateID id = 0, bool = false);
             Action action;
-            StateID id;
+            StateID id = 0;
+            bool suspendPrevious = false;
         };
 
         std::vector<State::Ptr> m_stack;
+        std::vector<State::Ptr> m_suspended;
         std::vector<Pendingchange> m_pendingChanges;
         State::Context m_context;
         std::map<StateID, std::function<State::Ptr()>> m_factories;

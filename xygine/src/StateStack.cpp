@@ -82,11 +82,11 @@ void StateStack::handleMessage(const Message& msg)
     for (auto& s : m_stack) s->handleMessage(msg);
 }
 
-void StateStack::pushState(StateID id)
+void StateStack::pushState(StateID id, bool suspendPrevious)
 {
     if (empty() || m_stack.back()->stateID() != id)
     {
-        m_pendingChanges.emplace_back(Action::Push, id);
+        m_pendingChanges.emplace_back(Action::Push, id, suspendPrevious);
     }
 }
 
@@ -145,14 +145,31 @@ void StateStack::applyPendingChanges()
         switch (change.action)
         {
         case Action::Push:
+            if (change.suspendPrevious && !m_stack.empty())
+            {
+                m_suspended.push_back(std::move(m_stack.back()));
+                m_stack.pop_back();
+            }
+
             m_stack.emplace_back(createState(change.id));
             m_stack.emplace_back(std::make_unique<BufferState>(*this, m_context));
             break;
         case Action::Pop:
+        {
+            auto id = m_stack.back()->stateID();
             m_stack.pop_back();
+            if (!m_suspended.empty() && id != bufferID)
+            {
+                //restore suspended state
+                m_stack.push_back(std::move(m_suspended.back()));
+                m_suspended.pop_back();
+                m_stack.emplace_back(std::make_unique<BufferState>(*this, m_context));
+            }
+        }
             break;
         case Action::Clear:
             m_stack.clear();
+            m_suspended.clear();
             break;
         default: break;
         }
@@ -162,9 +179,10 @@ void StateStack::applyPendingChanges()
 
 //---------------------------------------
 
-StateStack::Pendingchange::Pendingchange(Action a, StateID i)
-    : action    (a),
-    id          (i)
+StateStack::Pendingchange::Pendingchange(Action a, StateID i, bool suspend)
+    : action        (a),
+    id              (i),
+    suspendPrevious (suspend)
 {
 
 }

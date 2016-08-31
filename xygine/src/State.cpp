@@ -62,9 +62,9 @@ void State::setContext(Context c)
 }
 
 //protected
-void State::requestStackPush(StateID id)
+void State::requestStackPush(StateID id, bool suspend)
 {
-    m_stateStack.pushState(id);
+    m_stateStack.pushState(id, suspend);
 }
 
 void State::requestStackPop()
@@ -93,7 +93,9 @@ void State::launchLoadingScreen()
 void State::quitLoadingScreen()
 {
     m_threadRunning = false;
+    LOG("Quitting thread...", Logger::Type::Info);
     m_loadingThread.wait();
+    LOG("Thread quit.", Logger::Type::Info);
     m_context.appInstance.resume();
 }
 

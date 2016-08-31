@@ -270,7 +270,7 @@ void MenuOptionState::buildMenu(const sf::Font& font)
     backButton->addCallback([this]()
     {
         close();
-        requestStackPush(States::ID::MenuMain);
+        //main menu is suspended so no need to push on another
     });
     m_window.addControl(backButton);
 }
