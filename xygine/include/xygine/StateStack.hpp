@@ -181,7 +181,7 @@ namespace xy
             BufferState(StateStack& s, Context c) : State(s, c) {}
             ~BufferState() = default;
 
-            bool update(float) override { requestStackPop(); return true; }
+            bool update(float) override { requestStackPop(); return false; }
             bool handleEvent(const sf::Event&) override { return false; }
             void handleMessage(const Message&) override{}
             void draw() override {}

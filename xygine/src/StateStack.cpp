@@ -164,10 +164,10 @@ void StateStack::applyPendingChanges()
                 //restore suspended state
                 m_stack.push_back(std::move(m_suspended.back().second));
                 m_suspended.pop_back();
-            }
-            if (id != bufferID)
-            {
-                m_stack.emplace_back(std::make_unique<BufferState>(*this, m_context));
+                if (id != bufferID)
+                {
+                    m_stack.emplace_back(std::make_unique<BufferState>(*this, m_context));
+                }
             }
         }
             break;
