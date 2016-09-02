@@ -181,7 +181,7 @@ namespace xy
             BufferState(StateStack& s, Context c) : State(s, c) {}
             ~BufferState() = default;
 
-            bool update(float) override { requestStackPop(); return false; }
+            bool update(float) override { requestStackPop(); return true; }
             bool handleEvent(const sf::Event&) override { return false; }
             void handleMessage(const Message&) override{}
             void draw() override {}
@@ -197,7 +197,7 @@ namespace xy
         };
 
         std::vector<State::Ptr> m_stack;
-        std::vector<State::Ptr> m_suspended;
+        std::vector<std::pair<StateID, State::Ptr>> m_suspended;
         std::vector<Pendingchange> m_pendingChanges;
         State::Context m_context;
         std::map<StateID, std::function<State::Ptr()>> m_factories;

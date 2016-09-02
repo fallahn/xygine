@@ -281,6 +281,7 @@ bool DeferredDemoState::handleEvent(const sf::Event& evt)
         case 0:
 
             break;
+        default: break;
         }
         break;
     case sf::Event::JoystickButtonReleased:
@@ -296,6 +297,7 @@ bool DeferredDemoState::handleEvent(const sf::Event& evt)
         default: break;
         }
         break;
+    default: break;
     }
 
     return true;

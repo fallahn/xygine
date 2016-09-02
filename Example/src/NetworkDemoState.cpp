@@ -143,6 +143,7 @@ bool NetworkDemoState::handleEvent(const sf::Event& evt)
             break;
         default:break;
         }
+    default: break;
     }
     
     m_menu.handleEvent(evt, getContext().appInstance.getMouseWorldPosition());

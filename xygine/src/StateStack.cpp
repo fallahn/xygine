@@ -147,7 +147,7 @@ void StateStack::applyPendingChanges()
         case Action::Push:
             if (change.suspendPrevious && !m_stack.empty())
             {
-                m_suspended.push_back(std::move(m_stack.back()));
+                m_suspended.push_back(std::make_pair(change.id, std::move(m_stack.back())));
                 m_stack.pop_back();
             }
 
@@ -158,11 +158,15 @@ void StateStack::applyPendingChanges()
         {
             auto id = m_stack.back()->stateID();
             m_stack.pop_back();
-            if (!m_suspended.empty() && id != bufferID)
+            
+            if (!m_suspended.empty() && m_suspended.back().first == id)
             {
                 //restore suspended state
-                m_stack.push_back(std::move(m_suspended.back()));
+                m_stack.push_back(std::move(m_suspended.back().second));
                 m_suspended.pop_back();
+            }
+            if (id != bufferID)
+            {
                 m_stack.emplace_back(std::make_unique<BufferState>(*this, m_context));
             }
         }
