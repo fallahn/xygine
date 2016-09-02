@@ -192,8 +192,8 @@ bool PlatformDemoState::handleEvent(const sf::Event& evt)
     {
     case sf::Event::MouseButtonReleased:
     {
-        const auto& rw = getContext().renderWindow;
-        auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
+        //const auto& rw = getContext().renderWindow;
+        //auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
         
     }
         break;

@@ -109,8 +109,8 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
 
 bool PhysicsDemoState::update(float dt)
 {
-    const auto& rw = getContext().renderWindow;
-    auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
+    //const auto& rw = getContext().renderWindow;
+    //auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
     
     m_scene.update(dt);
     
