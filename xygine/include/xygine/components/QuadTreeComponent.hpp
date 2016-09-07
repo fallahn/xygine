@@ -50,7 +50,7 @@ namespace xy
     returned as part of a quad tree query via the scene. Quad tree
     query results contain a list of quad tree components found in the
     queried area - the parent entities can then be retrieved from the
-    resulting omponents.
+    resulting components.
     \see Scene
     */
     class XY_EXPORT_API QuadTreeComponent final : public Component

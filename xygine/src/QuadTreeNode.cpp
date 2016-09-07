@@ -237,7 +237,7 @@ void QuadTreeNode::getSubComponents()
 
         if (currentNode->m_hasChildren)
         {
-            for (const auto& c : m_children)
+            for (const auto& c : currentNode->m_children)
             {
                 nodeList.push_back(c.get());
             }
