@@ -394,3 +394,8 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
 
     return 0;
 }
+
+void Console::kill()
+{
+    visible = false;
+}

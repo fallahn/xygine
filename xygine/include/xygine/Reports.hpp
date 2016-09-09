@@ -125,6 +125,7 @@ namespace xy
         sf::Mutex m_mutex;
 
         static void draw();
+        static void kill();
     };
 }
 #endif //XY_REPORTS_HPP_

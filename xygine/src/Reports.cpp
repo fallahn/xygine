@@ -157,3 +157,8 @@ void StatsReporter::draw()
 
     //nim::ShowTestWindow(&visible);
 }
+
+void StatsReporter::kill()
+{
+    visible = false;
+}

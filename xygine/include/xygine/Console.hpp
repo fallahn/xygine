@@ -53,8 +53,7 @@ namespace xy
         static void print(const std::string&);
 
         /*!
-        \brief Draws ths console.
-        This must be called every frame you wish the console to be visible
+        \brief Toggles console visibility
         */
         static void show();
 
@@ -96,7 +95,7 @@ namespace xy
     private:
         static void draw(App*);
         static void registerDefaultCommands(App*);
-        
+        static void kill();
     };
 }
 

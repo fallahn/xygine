@@ -76,11 +76,13 @@ namespace
         std::function<void()> draw;
     };
     std::vector<UserWindow> uiWindows;
+
+    bool running = false;
 }
 
 App::App(sf::ContextSettings contextSettings)
     : m_videoSettings   (),
-    m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, contextSettings)/*,
+    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, contextSettings)/*,
     m_pendingDifficulty (Difficulty::Easy)*/
 {
     loadSettings();
@@ -130,8 +132,9 @@ void App::run()
 
     initialise();
 
+    running = true;
     frameClock.restart();
-    while (m_renderWindow.isOpen())
+    while (running)
     {
         float elapsedTime = frameClock.restart().asSeconds();
         timeSinceLastUpdate += elapsedTime;
@@ -159,6 +162,8 @@ void App::run()
         nim::Render(); //if this throws on closing use App::quit() rather than closing window directly
         m_renderWindow.display();
     }
+
+    m_renderWindow.close();
     m_messageBus.disable(); //prevents spamming with loads of entity quit messages
 
     saveSettings();
@@ -285,7 +290,10 @@ void App::quit()
 {
     XY_ASSERT(renderWindow, "no valid window instance");
     uiWindows.clear();
-    renderWindow->close();
+    Console::kill();
+    StatsReporter::kill();
+    //renderWindow->close();
+    running = false;
 }
 
 //protected
@@ -404,8 +412,7 @@ void App::handleEvents()
             eventHandler = std::bind(&App::handleEvent, this, _1);
             continue;
         case sf::Event::Closed:
-            uiWindows.clear();
-            m_renderWindow.close();
+            quit();
             return;
         default: break;
         }
@@ -416,8 +423,7 @@ void App::handleEvents()
             switch (evt.key.code)
             {
             case sf::Keyboard::Escape:
-                uiWindows.clear();
-                m_renderWindow.close();
+                quit();
                 break;
             default: break;
             }
