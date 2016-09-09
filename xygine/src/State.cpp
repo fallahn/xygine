@@ -51,7 +51,7 @@ State::State(StateStack& stateStack, Context context)
     m_threadRunning (false),
     m_loadingThread (&State::loadingScreenThread, this),
     m_loadingIcon   ({iconSize, iconSize})
-{
+{    
     m_loadingIcon.setOrigin(iconSize / 2.f, iconSize / 2.f);
     m_loadingIcon.setPosition(iconSize, iconSize);
 }
@@ -62,9 +62,9 @@ void State::setContext(Context c)
 }
 
 //protected
-void State::requestStackPush(StateID id, bool suspend)
+void State::requestStackPush(StateID id)
 {
-    m_stateStack.pushState(id, suspend);
+    m_stateStack.pushState(id);
 }
 
 void State::requestStackPop()

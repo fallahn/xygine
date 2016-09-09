@@ -137,11 +137,8 @@ namespace xy
         /*!
         \brief Push a new instance of a state with the given ID to the stack
         \param id Integer representing the ID of t he state to push on the stack
-        \param bool If true suspends any existing state on the top of the stack
-        temporarily removing it from the stack. The suspended state is automatically
-        resumed when the pushed state is popped.
         */
-        void pushState(StateID id, bool = false);
+        void pushState(StateID id);
         /*!
         \brief Pops the top most state from the stack
         */

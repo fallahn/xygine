@@ -33,7 +33,7 @@ namespace xy
     enum class Difficulty
     {
         Easy,
-        Medium,
+        Normal,
         Hard
     };
 }

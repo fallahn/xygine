@@ -81,6 +81,8 @@ namespace xy
         std::vector<Item> m_easyScores;
         std::vector<Item> m_mediumScores;
         std::vector<Item> m_hardScores;
+
+        void createFallBack();
     };
 }
 #endif //XY_SCORES_HPP_

@@ -141,11 +141,8 @@ namespace xy
         \brief Request a new instance of a state with the given ID
         be pushed on top of the state stack to which this state belongs.
         \param id StateID of state to be pushed on to the stack
-        \bool Suspend the previous state and remove it temporarily from
-        the stack. Suspended states are automatically resumed when the
-        current state is popped from the stack.
         */
-        void requestStackPush(StateID id, bool suspend = false);
+        void requestStackPush(StateID id);
         /*!
         \brief Request that the state on top of the stack to which this
         state belongs is popped (and therefore destroyed)

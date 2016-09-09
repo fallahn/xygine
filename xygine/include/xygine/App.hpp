@@ -111,8 +111,8 @@ namespace xy
         */
         struct GameSettings final
         {
-            Difficulty difficulty = Difficulty::Easy;
-            bool controllerEnabled = true;
+            Difficulty difficulty = Difficulty::Normal;
+            bool controllerEnabled = false;
             std::array<char, 3u> playerInitials;
             GameSettings() : playerInitials({ { '-', '-', '-' } }){}
         };

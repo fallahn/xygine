@@ -218,7 +218,7 @@ void MenuOptionState::buildMenu(const sf::Font& font)
     auto difficultySelection = std::make_shared<xy::UI::Selection>(font, m_textureResource.get("assets/images/ui/scroll_arrow.png"), 375.f);
     difficultySelection->setPosition(152.f, 434.f);
     difficultySelection->addItem("Easy", static_cast<int>(xy::Difficulty::Easy));
-    difficultySelection->addItem("Medium", static_cast<int>(xy::Difficulty::Medium));
+    difficultySelection->addItem("Normal", static_cast<int>(xy::Difficulty::Normal));
     difficultySelection->addItem("Hard", static_cast<int>(xy::Difficulty::Hard));
     difficultySelection->selectItem(0);
     difficultySelection->setCallback([this](const xy::UI::Selection* s)
@@ -270,7 +270,7 @@ void MenuOptionState::buildMenu(const sf::Font& font)
     backButton->addCallback([this]()
     {
         close();
-        //main menu is suspended so no need to push on another
+        requestStackPush(States::ID::MenuMain);
     });
     m_window.addControl(backButton);
 }

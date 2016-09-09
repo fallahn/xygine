@@ -82,11 +82,11 @@ void StateStack::handleMessage(const Message& msg)
     for (auto& s : m_stack) s->handleMessage(msg);
 }
 
-void StateStack::pushState(StateID id, bool suspendPrevious)
+void StateStack::pushState(StateID id)
 {
     if (empty() || m_stack.back()->stateID() != id)
     {
-        m_pendingChanges.emplace_back(Action::Push, id, suspendPrevious);
+        m_pendingChanges.emplace_back(Action::Push, id, false);
     }
 }
 

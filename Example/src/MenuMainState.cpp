@@ -162,8 +162,8 @@ void MenuMainState::buildMenu()
     button->setPosition(960.f, 775.f);
     button->addCallback([this]()
     {
-        //close(); //don't need to close, we'll just suspend the state
-        requestStackPush(States::ID::MenuOptions, true);
+        close();
+        requestStackPush(States::ID::MenuOptions);
     });
     m_uiContainer.addControl(button);
 

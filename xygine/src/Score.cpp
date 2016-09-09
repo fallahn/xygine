@@ -27,6 +27,7 @@ source distribution.
 
 #include <xygine/Score.hpp>
 #include <xygine/Log.hpp>
+#include <xygine/util/Random.hpp>
 
 #include <string>
 #include <fstream>
@@ -40,6 +41,20 @@ namespace
     const int version = 5;
     const std::string scoreFile = "scores.dat";
     const std::size_t maxScores = 100;
+
+    const std::vector<std::string> fallbackNames = 
+    {
+        "Jeff",
+        "Spider",
+        "Hannah",
+        "Harry P.",
+        "Martin",
+        "Joanne",
+        "Naomi",
+        "Jim Beef",
+        "Tony 'The Blank' Neals",
+        "Steffi"
+    };
 }
 
 using namespace xy;
@@ -52,6 +67,7 @@ void Scores::load()
         Logger::log("failed to open score data for reading", Logger::Type::Warning, Logger::Output::All);
         Logger::log("file probably missing - new file will be created", Logger::Type::Warning, Logger::Output::All);
         file.close();
+        createFallBack();
         return;
     }
 
@@ -126,7 +142,7 @@ int Scores::add(const std::string& name, int value, Difficulty difficulty)
     case Difficulty::Easy:
         scores = &m_easyScores;
         break;
-    case Difficulty::Medium:
+    case Difficulty::Normal:
         scores = &m_mediumScores;
         break;
     case Difficulty::Hard:
@@ -168,9 +184,20 @@ const std::vector<Scores::Item>& Scores::getScores(Difficulty difficulty) const
     default:
     case Difficulty::Easy:
         return m_easyScores;
-    case Difficulty::Medium:
+    case Difficulty::Normal:
         return m_mediumScores;
     case Difficulty::Hard:
         return m_hardScores;
+    }
+}
+
+//private
+void Scores::createFallBack()
+{
+    for (const auto& n : fallbackNames)
+    {
+        add(n, xy::Util::Random::value(184, 2249), Difficulty::Easy);
+        add(n, xy::Util::Random::value(365, 2864), Difficulty::Normal);
+        add(n, xy::Util::Random::value(253, 2843), Difficulty::Hard);
     }
 }

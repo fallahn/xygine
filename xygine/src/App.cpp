@@ -156,7 +156,7 @@ void App::run()
 
         m_renderWindow.clear();
         draw();
-        nim::Render();
+        nim::Render(); //if this throws on closing use App::quit() rather than closing window directly
         m_renderWindow.display();
     }
     m_messageBus.disable(); //prevents spamming with loads of entity quit messages
@@ -284,6 +284,7 @@ void App::setMouseCursorVisible(bool visible)
 void App::quit()
 {
     XY_ASSERT(renderWindow, "no valid window instance");
+    uiWindows.clear();
     renderWindow->close();
 }
 
