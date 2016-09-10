@@ -196,6 +196,7 @@ namespace xy
         std::vector<State::Ptr> m_stack;
         std::vector<std::pair<StateID, State::Ptr>> m_suspended;
         std::vector<Pendingchange> m_pendingChanges;
+        std::vector<Pendingchange> m_activeChanges;
         State::Context m_context;
         std::map<StateID, std::function<State::Ptr()>> m_factories;
         State::Ptr createState(StateID id);

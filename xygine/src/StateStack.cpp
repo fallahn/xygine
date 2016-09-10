@@ -140,7 +140,8 @@ State::Ptr StateStack::createState(StateID id)
 
 void StateStack::applyPendingChanges()
 {
-    for (auto& change : m_pendingChanges)
+    m_activeChanges.swap(m_pendingChanges);
+    for (auto& change : m_activeChanges)
     {
         switch (change.action)
         {
@@ -178,7 +179,7 @@ void StateStack::applyPendingChanges()
         default: break;
         }
     }
-    m_pendingChanges.clear();
+    m_activeChanges.clear();
 }
 
 //---------------------------------------
