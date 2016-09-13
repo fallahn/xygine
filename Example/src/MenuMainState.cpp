@@ -173,7 +173,7 @@ void MenuMainState::buildMenu()
     button->setPosition(960.f, 875.f);
     button->addCallback([this]()
     {
-        getContext().renderWindow.close();
+        xy::App::quit();
     });
     m_uiContainer.addControl(button);
 }

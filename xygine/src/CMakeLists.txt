@@ -6,6 +6,7 @@ set(XY_SRC
   ${XY_DIR}/FileSystem.cpp
   ${XY_DIR}/FontResource.cpp
   ${XY_DIR}/GLExtensions.cpp
+  ${XY_DIR}/KeyBinds.cpp
   ${XY_DIR}/MessageBus.cpp
   ${XY_DIR}/MultiRenderTexture.cpp
   ${XY_DIR}/Music.cpp

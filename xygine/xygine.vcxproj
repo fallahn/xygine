@@ -171,6 +171,7 @@
     <ClCompile Include="src\imgui\imgui.cpp" />
     <ClCompile Include="src\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\KeyBinds.cpp" />
     <ClCompile Include="src\mesh\BoundingBox.cpp" />
     <ClCompile Include="src\mesh\CubeBuilder.cpp" />
     <ClCompile Include="src\mesh\DepthRenderTexture.cpp" />
@@ -284,6 +285,7 @@
     <ClInclude Include="include\xygine\imgui\stb_rect_pack.h" />
     <ClInclude Include="include\xygine\imgui\stb_textedit.h" />
     <ClInclude Include="include\xygine\imgui\stb_truetype.h" />
+    <ClInclude Include="include\xygine\KeyBinds.hpp" />
     <ClInclude Include="include\xygine\mesh\BoundingBox.hpp" />
     <ClInclude Include="include\xygine\mesh\CubeBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\DepthRenderTexture.hpp" />
