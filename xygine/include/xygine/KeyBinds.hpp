@@ -33,6 +33,7 @@ source distribution.
 #include <SFML/Config.hpp>
 
 #include <vector>
+#include <string>
 
 namespace xy
 {
