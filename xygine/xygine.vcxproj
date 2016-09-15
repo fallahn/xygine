@@ -90,7 +90,7 @@
       <AdditionalDependencies>opengl32.lib;sfml-audio-d.lib;sfml-graphics-d.lib;sfml-network-d.lib;sfml-system-d.lib;sfml-window-d.lib;Box2D-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)Debug\$(TargetName).dll"</Command>
+      <Command>xcopy /y /d "$(TargetDir)$(TargetName).dll" "$(SolutionDir)Debug\$(TargetName).dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
@@ -126,7 +126,7 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(TargetDir)$(TargetName).dll" "$(SolutionDir)Release\$(TargetName).dll"</Command>
+      <Command>xcopy /y /d "$(TargetDir)$(TargetName).dll" "$(SolutionDir)Release\$(TargetName).dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">
@@ -258,6 +258,7 @@
     <ClCompile Include="src\ui\UIComboBox.cpp" />
     <ClCompile Include="src\ui\UIContainer.cpp" />
     <ClCompile Include="src\ui\UIControl.cpp" />
+    <ClCompile Include="src\ui\UIKeyBinds.cpp" />
     <ClCompile Include="src\ui\UILabel.cpp" />
     <ClCompile Include="src\ui\UIScoreList.cpp" />
     <ClCompile Include="src\ui\UISelection.cpp" />
@@ -411,6 +412,7 @@
     <ClInclude Include="include\xygine\ui\ComboBox.hpp" />
     <ClInclude Include="include\xygine\ui\Container.hpp" />
     <ClInclude Include="include\xygine\ui\Control.hpp" />
+    <ClInclude Include="include\xygine\ui\KeyBinds.hpp" />
     <ClInclude Include="include\xygine\ui\Label.hpp" />
     <ClInclude Include="include\xygine\ui\ScoreList.hpp" />
     <ClInclude Include="include\xygine\ui\Selection.hpp" />

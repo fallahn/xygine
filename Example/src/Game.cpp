@@ -36,6 +36,8 @@ source distribution.
 #include <PlatformDemoState.hpp>
 #include <TilemapDemoState.hpp>
 
+#include <xygine/KeyBinds.hpp>
+
 #include <SFML/Window/Event.hpp>
 
 Game::Game()
@@ -97,6 +99,8 @@ void Game::initialise()
     m_stateStack.pushState(States::ID::MenuMain);
 
     getRenderWindow().setKeyRepeatEnabled(false);
+
+    if (!xy::Input::load()) xy::Input::save();
 }
 
 void Game::finalise()

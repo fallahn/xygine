@@ -136,7 +136,7 @@ namespace xy
             \brief Returns true if the Control bounds contains the given
             mouse position in UI space coordinates.
 
-            This can be optionallay overriden for controls composed of
+            This can be optionally overriden for controls composed of
             complex shapes.
             */
             virtual bool contains(const sf::Vector2f& mousePos) const;

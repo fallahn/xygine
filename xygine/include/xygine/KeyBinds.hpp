@@ -35,6 +35,11 @@ source distribution.
 #include <vector>
 #include <string>
 
+namespace
+{
+    const std::string defaultPath = "input.kbd";
+}
+
 namespace xy
 {
     /*!
@@ -161,13 +166,13 @@ namespace xy
         /*!
         \brief Saves the current keybinds to a file with the given name
         */
-        static void save(const std::string& path);
+        static void save(const std::string& path = defaultPath);
 
         /*!
         \brief Attempts to load keybinds from the given file path.
         \returns false if loading failed
         */
-        static bool load(const std::string&);
+        static bool load(const std::string& path = defaultPath);
 
     private:
 

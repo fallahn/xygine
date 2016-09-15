@@ -33,7 +33,6 @@ source distribution.
 #include <xygine/State.hpp>
 #include <xygine/Resource.hpp>
 #include <xygine/ui/Container.hpp>
-#include <xygine/ui/Window.hpp>
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -65,9 +64,12 @@ private:
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
 
-    xy::UI::Window m_window;
+    xy::UI::Container m_optionContainer;
+    xy::UI::Container m_inputContainer;
+    xy::UI::Container* m_activeContainer;
 
-    void buildMenu(const sf::Font&);
+    void buildOptionsMenu(const sf::Font&);
+    void buildControlMenu(const sf::Font&);
     void close();
 };
 #endif //MENU_OPTION_STATE_HPP_

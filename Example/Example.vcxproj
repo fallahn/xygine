@@ -52,6 +52,10 @@
       <AdditionalLibraryDirectories>../xygine/extlibs/lib/box2d-2.3.2;../xygine/extlibs/lib/sfml;../DebugShared</AdditionalLibraryDirectories>
       <AdditionalDependencies>xygine-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;Box2D-d.lib;sfml-audio-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(SolutionDir)xygine\extlibs\lib\sfml\*-d-2.dll" "$(SolutionDir)Debug\"
+xcopy /y /d "$(SolutionDir)xygine\extlibs\lib\sfml\openal32.dll" "$(SolutionDir)Debug\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -70,6 +74,14 @@
       <AdditionalLibraryDirectories>../xygine/extlibs/lib/box2d-2.3.2;../xygine/extlibs/lib/sfml;../ReleaseShared</AdditionalLibraryDirectories>
       <AdditionalDependencies>xygine.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;sfml-audio.lib;sfml-network.lib;Box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(SolutionDir)xygine\extlibs\lib\sfml\sfml-audio-2.dll" "$(SolutionDir)Release\"
+xcopy /y /d "$(SolutionDir)xygine\extlibs\lib\sfml\sfml-graphics-2.dll" "$(SolutionDir)Release\"
+xcopy /y /d "$(SolutionDir)xygine\extlibs\lib\sfml\sfml-network-2.dll" "$(SolutionDir)Release\"
+xcopy /y /d "$(SolutionDir)xygine\extlibs\lib\sfml\sfml-system-2.dll" "$(SolutionDir)Release\"
+xcopy /y /d "$(SolutionDir)xygine\extlibs\lib\sfml\sfml-window-2.dll" "$(SolutionDir)Release\"
+xcopy /y /d "$(SolutionDir)xygine\extlibs\lib\sfml\openal32.dll" "$(SolutionDir)Release\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\CaveDemoDrawable.hpp" />
