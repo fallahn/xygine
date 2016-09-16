@@ -121,7 +121,10 @@ namespace xy
         given action, or xy::Input::Unbound if it is unbound.
         */
         static sf::Int32 getJoyButton(sf::Int32 action);
-
+        /*!
+        \brief Returns a string representation of the given sf::Keyboard::Key enum value
+        */
+        static std::string getKeyAsString(sf::Int32);
 
         /*!
         \brief Extends the number of keybinds availble.

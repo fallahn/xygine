@@ -48,7 +48,9 @@ namespace xy
             explicit KeyBinds(const sf::Font&);
             ~KeyBinds() = default;
 
-            bool selectable() const override { return false; }
+            bool selectable() const override { return true; }
+
+            bool contains(const sf::Vector2f&) const override;
 
             void handleEvent(const sf::Event&, const sf::Vector2f&) override;
 
@@ -70,13 +72,16 @@ namespace xy
                 Item();
                 ~Item() = default;
 
-                void setValue(const std::string&, const std::string&, const std::string&);
+                void setLabel(const std::string&);
+                void setValues(const std::string&, const std::string&);
                 void setFont(const sf::Font&);
 
-                ItemInput onInput(const sf::Vector2f&) const;
+                ItemInput onClick(const sf::Vector2f&);
+                void clearSelection();
+
+                sf::FloatRect getLocalBounds() const;
 
             private:
-                ItemInput m_activeInput;
                 std::pair<sf::FloatRect, sf::FloatRect> m_boundingBoxes;
                 std::array<sf::Vertex, 12u> m_vertices;
                 std::array<sf::Text, 4u> m_texts;
@@ -84,6 +89,10 @@ namespace xy
             };
 
             std::array<Item, xy::Input::KeyCount> m_items;
+            sf::Int32 m_selectedIndex;
+            ItemInput m_selectedInput;
+
+            sf::FloatRect m_bounds;
 
             void updateLayout();
             void draw(sf::RenderTarget&, sf::RenderStates) const override;

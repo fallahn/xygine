@@ -36,6 +36,19 @@ source distribution.
 
 using namespace xy;
 
+namespace
+{
+    const std::vector<std::string> keyStrings =
+    {
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+        "Num0", "Num1", "Num2", "Num3", "Num4", "Num5", "Num6", "Num7", "Num8", "Num9", "Escape", "LControl", "LShift", "LAlt", "LSystem",
+        "RControl", "RShift", "RAlt", "RSystem", "Menu", "[", "]", ";", ",", ".", "'", "/", "\\", "~", "=", "-", "Space", "Return", "BackSpace",
+        "Tab", "PgUp", "PgDn", "End", "Home", "Insert", "Delete", "+", "-", "*", "/", "Left", "Right", "Up", "Down",
+        "NumPad0", "NumPad1", "NumPad2", "NumPad3", "NumPad4", "NumPad5", "NumPad6", "NumPad7", "NumPad8", "NumPad9",
+        "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "F13", "F14", "F15", "Pause"
+    };
+}
+
 std::vector<std::pair<sf::Int32, sf::Int32>> Input::keybinds = 
 {
     std::make_pair(sf::Keyboard::W, sf::Keyboard::Up),
@@ -118,6 +131,12 @@ sf::Int32 Input::getJoyButton(sf::Int32 action)
 {
     XY_ASSERT(action >= ButtonA && action < joybinds.size(), "Invalid joystick action");
     return joybinds[action];
+}
+
+std::string Input::getKeyAsString(sf::Int32 key)
+{
+    XY_ASSERT(keyStrings.size() == sf::Keyboard::KeyCount, "String representation missing...");
+    return (key >= 0) ? keyStrings[key] : "";
 }
 
 void Input::extendKeyBinds(sf::Int32 newSize)

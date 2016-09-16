@@ -37,6 +37,7 @@ source distribution.
 #include <xygine/ui/Button.hpp>
 #include <xygine/ui/TextBox.hpp>
 #include <xygine/ui/KeyBinds.hpp>
+#include <xygine/Reports.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -50,7 +51,7 @@ MenuOptionState::MenuOptionState(xy::StateStack& stateStack, Context context)
     m_messageBus        (context.appInstance.getMessageBus()),
     m_optionContainer   (m_messageBus),
     m_inputContainer    (m_messageBus),
-    m_activeContainer   (&m_inputContainer)
+    m_activeContainer   (&m_optionContainer)
 {
     //m_menuSprite.setTexture(context.appInstance.getTexture("assets/images/main_menu.png"));
     //m_menuSprite.setPosition(context.defaultView.getCenter());
@@ -100,9 +101,6 @@ bool MenuOptionState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         case sf::Keyboard::Tab:
-
-            return false;
-        case sf::Keyboard::Space:
 
             return false;
         default: break;
@@ -282,7 +280,7 @@ void MenuOptionState::buildOptionsMenu(const sf::Font& font)
 void MenuOptionState::buildControlMenu(const sf::Font& font)
 {
     auto inputs = xy::UI::create<xy::UI::KeyBinds>(font);
-    inputs->setPosition(500.f, 120.f);
+    inputs->setPosition(400.f, 120.f);
     m_inputContainer.addControl(inputs);
     
     auto optionButton = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
