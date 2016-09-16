@@ -51,8 +51,9 @@ namespace xy
         /*!
         \brief Constructor
         \param Path to IQM file to load
+        \param bool true to re-calculate tangent normals while loading the model
         */
-        explicit IQMBuilder(const std::string&);
+        explicit IQMBuilder(const std::string&, bool = false);
         ~IQMBuilder() = default;
 
         void build() override;
@@ -68,6 +69,7 @@ namespace xy
         BoundingBox m_boundingBox;
         std::string m_filePath;
         std::size_t m_vertexCount;
+        bool m_buildTangents;
 
         void loadVertexData(const Iqm::Header&, char*, const std::string&);
         void loadAnimationData(const Iqm::Header&, char*, const std::string&);

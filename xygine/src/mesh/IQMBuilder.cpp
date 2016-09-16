@@ -207,11 +207,45 @@ namespace
 
         return glm::transpose(retVal);
     }
+
+    //used in normal calcs
+    glm::vec2 vec2FromArray(std::uint32_t index, const std::vector<float>& arr)
+    {
+        auto offset = index * 2u;
+        return glm::vec2(arr[offset], arr[offset + 1u]);
+    }
+
+    glm::vec3 vec3FromArray(std::uint32_t index, const std::vector<float>& arr)
+    {
+        auto offset = index * 3u;
+        return glm::vec3(arr[offset], arr[offset + 1u], arr[offset + 2u]);
+    }
+
+    void addVecToArray(std::uint32_t index, std::vector<float>& arr, const glm::vec3& v)
+    {
+        auto offset = index * 3u;
+        arr[offset] += v.x;
+        arr[offset + 1u] += v.y;
+        arr[offset + 2u] += v.z;
+    }
+
+    void normaliseVec3Array(std::vector<float>& arr)
+    {
+        for (auto i = 0u; i < arr.size(); i += 3u)
+        {
+            glm::vec3 vec(arr[i], arr[i + 1u], arr[i + 2u]);
+            vec = glm::normalize(vec);
+            arr[i] = vec.x;
+            arr[i + 1u] = vec.y;
+            arr[i + 2u] = vec.z;
+        }
+    }
 }
 
-IQMBuilder::IQMBuilder(const std::string& path)
+IQMBuilder::IQMBuilder(const std::string& path, bool createTangents)
     : m_filePath    (path),
-    m_vertexCount   (0)
+    m_vertexCount   (0),
+    m_buildTangents(createTangents)
 {
 
 }
@@ -362,6 +396,7 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
     //load index arrays for sub meshes
     //do this first as we need to store triangle data if we create tangent data from UVs/faces
     std::vector<Iqm::Triangle> triangles;
+    if (tangents.empty()) m_buildTangents = true;
 
     char* meshBytesIter = headerBytes + header.meshOffset;
     for (auto i = 0u; i < header.meshCount; ++i)
@@ -384,10 +419,10 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
             indices.push_back(triangle.vertex[1]);
             indices.push_back(triangle.vertex[0]);
 
-            //if (createTanNormals) //cache triangles as we'll need them
-            /*{
-            triangles.push_back(triangle);
-            }*/
+            if (m_buildTangents) //cache triangles as we'll need them
+            {
+                triangles.push_back(triangle);
+            }
         }
 
         m_indexArrays.push_back(indices);
@@ -404,7 +439,7 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
     //calc bitans
     std::vector<float> pureTangents; //tangents with 4th component removed
     std::vector<float> bitangents;
-    //if (!createTanNormals) //use loaded data from model
+    if (!m_buildTangents) //use loaded data from model
     {
         for (auto i = 0u, j = 0u; i < normals.size(); i += normalSize, j += (normalSize + 1))
         {
@@ -421,67 +456,65 @@ void IQMBuilder::loadVertexData(const Iqm::Header& header, char* headerBytes, co
             bitangents.push_back(bitan.z);
         }
     }
-    //else
-    //{
-    //    //do manual calc from UVs (remember we haven't swapped coords yet!)
-    //    pureTangents.resize(normals.size());
-    //    std::memset(&pureTangents[0], 0, pureTangents.size());
-    //    bitangents.resize(normals.size());
-    //    std::memset(&bitangents[0], 0, bitangents.size());
+    else
+    {
+        //do manual calc from UVs
+        LOG("Recalculating tangents for " + m_filePath, xy::Logger::Type::Info);
+        pureTangents.resize(normals.size());
+        std::memset(&pureTangents[0], 0, pureTangents.size());
+        bitangents.resize(normals.size());
+        std::memset(&bitangents[0], 0, bitangents.size());
 
-    //    normals.clear();
-    //    normals.resize(pureTangents.size());
-    //    std::memset(&normals[0], 0, normals.size());
+        normals.clear();
+        normals.resize(pureTangents.size());
+        std::memset(&normals[0], 0, normals.size());
 
-    //    for (const auto& t : triangles)
-    //    {
-    //        //calc face normal from vertex positions
-    //        std::vector<glm::vec3> facePositions =
-    //        {
-    //            vec3FromArray(t.vertex[0], positions),
-    //            vec3FromArray(t.vertex[1], positions),
-    //            vec3FromArray(t.vertex[2], positions)
-    //        };
+        for (const auto& t : triangles)
+        {
+            //calc face normal from vertex positions
+            std::vector<glm::vec3> facePositions =
+            {
+                vec3FromArray(t.vertex[0], positions),
+                vec3FromArray(t.vertex[1], positions),
+                vec3FromArray(t.vertex[2], positions)
+            };
 
-    //        glm::vec3 deltaPos1 = facePositions[1] - facePositions[0];
-    //        glm::vec3 deltaPos2 = facePositions[2] - facePositions[0];
-    //        glm::vec3 faceNormal = -glm::cross(deltaPos1, deltaPos2);
+            glm::vec3 deltaPos1 = facePositions[1] - facePositions[0];
+            glm::vec3 deltaPos2 = facePositions[2] - facePositions[0];
+            glm::vec3 faceNormal = -glm::cross(deltaPos1, deltaPos2);
 
-    //        addVecToArray(t.vertex[0], normals, faceNormal);
-    //        addVecToArray(t.vertex[1], normals, faceNormal);
-    //        addVecToArray(t.vertex[2], normals, faceNormal);
+            addVecToArray(t.vertex[0], normals, faceNormal);
+            addVecToArray(t.vertex[1], normals, faceNormal);
+            addVecToArray(t.vertex[2], normals, faceNormal);
 
-    //        //and tan / bitan from UV
-    //        std::vector<glm::vec2> faceUVs =
-    //        {
-    //            vec2FromArray(t.vertex[0], texCoords),
-    //            vec2FromArray(t.vertex[1], texCoords),
-    //            vec2FromArray(t.vertex[2], texCoords)
-    //        };
+            //and tan / bitan from UV
+            std::vector<glm::vec2> faceUVs =
+            {
+                vec2FromArray(t.vertex[0], texCoords),
+                vec2FromArray(t.vertex[1], texCoords),
+                vec2FromArray(t.vertex[2], texCoords)
+            };
 
-    //        glm::vec2 deltaUV1 = faceUVs[1] - faceUVs[0];
-    //        glm::vec2 deltaUV2 = faceUVs[2] - faceUVs[0];
+            glm::vec2 deltaUV1 = faceUVs[1] - faceUVs[0];
+            glm::vec2 deltaUV2 = faceUVs[2] - faceUVs[0];
 
-    //        float sign = 1.f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-    //        glm::vec3 faceTan = (deltaPos1 * deltaUV2.y - deltaPos2 *deltaUV1.y) * sign;
-    //        glm::vec3 faceBitan = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * sign;
+            float sign = 1.f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+            glm::vec3 faceTan = (deltaPos1 * deltaUV2.y - deltaPos2 *deltaUV1.y) * sign;
+            glm::vec3 faceBitan = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * sign;
 
-    //        swapZY(faceTan);
-    //        swapZY(faceBitan);
+            addVecToArray(t.vertex[0], pureTangents, faceTan);
+            addVecToArray(t.vertex[1], pureTangents, faceTan);
+            addVecToArray(t.vertex[2], pureTangents, faceTan);
 
-    //        addVecToArray(t.vertex[0], pureTangents, faceTan);
-    //        addVecToArray(t.vertex[1], pureTangents, faceTan);
-    //        addVecToArray(t.vertex[2], pureTangents, faceTan);
+            addVecToArray(t.vertex[0], bitangents, faceBitan);
+            addVecToArray(t.vertex[1], bitangents, faceBitan);
+            addVecToArray(t.vertex[2], bitangents, faceBitan);
+        }
 
-    //        addVecToArray(t.vertex[0], bitangents, faceBitan);
-    //        addVecToArray(t.vertex[1], bitangents, faceBitan);
-    //        addVecToArray(t.vertex[2], bitangents, faceBitan);
-    //    }
-
-    /*normaliseVec3Array(normals);
-    normaliseVec3Array(pureTangents);
-    normaliseVec3Array(bitangents);
-    }*/
+        normaliseVec3Array(normals);
+        normaliseVec3Array(pureTangents);
+        normaliseVec3Array(bitangents);
+    }
 
     //interleave data
     std::uint32_t posIndex = 0u;

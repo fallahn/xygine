@@ -151,7 +151,7 @@ void MenuMainState::buildMenu()
     currentSpacing += buttonSpacing;
 
     button = xy::UI::create<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
-    button->setText("Material Editor");
+    button->setText("Model Viewer");
     button->setPosition({ buttonMargin, currentSpacing });
     button->addCallback([this]()
     {
@@ -169,7 +169,7 @@ void MenuMainState::buildMenu()
     button->setPosition({ buttonMargin, currentSpacing });
     button->addCallback([this]() 
     {
-        getContext().renderWindow.close();
+        xy::App::quit();
     });
     m_uiContainer.addControl(button);
     currentSpacing += buttonSpacing;

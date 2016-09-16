@@ -180,6 +180,7 @@ void MaterialEditorState::loadMaterials()
     m_shaderResource.preload(ShaderID::VertColoured, DEFERRED_VERTCOLOURED_VERTEX, DEFERRED_VERTCOLOURED_FRAGMENT);
     m_shaderResource.preload(ShaderID::Shadow, SHADOW_VERTEX, xy::Shader::Mesh::ShadowFragment);
     m_shaderResource.preload(ShaderID::Textured, DEFERRED_TEXTURED_VERTEX, DEFERRED_TEXTURED_FRAGMENT);
+    m_shaderResource.preload(ShaderID::TexturedBumped, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
 
     auto& defaultMaterial = m_materialResource.add(MaterialID::Default, m_shaderResource.get(ShaderID::Coloured));
     defaultMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
