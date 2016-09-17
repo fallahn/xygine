@@ -90,6 +90,14 @@ namespace xy
         There are a maximum of 16 different channels.
         */
         void setChannelVolume(sf::Uint8 channel, float);
+
+        /*!
+        \brief Mutes or unmutes a given channel
+        \param channel Channel to mute or unmute
+        \param bool true to mute else false to unmute
+        */
+        void setChannelMuted(sf::Uint8 channel, bool mute);
+
     private:
         xy::SoundResource& m_soundResource;
         struct Buffer final
@@ -103,7 +111,7 @@ namespace xy
         std::list<sf::Sound> m_sounds;
         float m_volume;
 
-        std::array<float, 16u> m_channelVolumes;
+        std::array<std::pair<float, float>, 16u> m_channelVolumes;
     };
 }
 

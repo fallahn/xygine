@@ -43,7 +43,10 @@ SoundPlayer::SoundPlayer(xy::MessageBus& mb, xy::SoundResource& sr)
     m_soundResource (sr),
     m_volume        (0.f)
 {
-    for (auto& v : m_channelVolumes) v = 1.f;
+    for (auto& v : m_channelVolumes)
+    {
+        v.first = v.second = 1.f;
+    }
 }
 
 //public
@@ -65,7 +68,7 @@ void SoundPlayer::playSound(ResourceID id, float x, float y, float pitch)
     auto& sound = m_sounds.back();
 
     sound.setPosition({ x, y, 0.f });
-    sound.setVolume(m_volume * m_channelVolumes[m_buffers[id].channel]);
+    sound.setVolume(m_volume * m_channelVolumes[m_buffers[id].channel].first * m_channelVolumes[m_buffers[id].channel].second);
     sound.setAttenuation(0.f);
     sound.setPitch(pitch);
     sound.play();
@@ -80,5 +83,10 @@ void SoundPlayer::setMasterVolume(float vol)
 void SoundPlayer::setChannelVolume(sf::Uint8 channel, float vol)
 {
     XY_ASSERT(channel < MaxChannels, "index must be less than " + std::to_string(MaxChannels));
-    m_channelVolumes[channel] = xy::Util::Math::clamp(vol, 0.f, 1.f);
+    m_channelVolumes[channel].first = xy::Util::Math::clamp(vol, 0.f, 1.f);
+}
+
+void SoundPlayer::setChannelMuted(sf::Uint8 channel, bool mute)
+{
+    m_channelVolumes[channel].second = mute ? 0.f : 1.f;
 }
