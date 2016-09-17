@@ -55,7 +55,7 @@ using namespace xy;
 namespace
 {
     const float fov = 30.f * xy::Util::Const::degToRad;
-    const float nearPlane = 0.1f;
+    //const float nearPlane = 0.1f;
     const unsigned MAX_LIGHTS = 8;
     const unsigned DepthTextureUnit = 10u; //only used in a single shader which we know won't have this many textures
     const unsigned shadowmapSize = 1024u;
@@ -66,7 +66,9 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_matrixBlockBuffer     ("u_matrixBlock"),
     m_lightingBlockBuffer   ("u_lightBlock"),
     m_doLightBlur           (true),
-    m_lightingBlockID       (-1)
+    m_lightingBlockID       (-1),
+    m_nearRatio             (0.8f),
+    m_farRatio              (1.2f)
 {
     auto width = size.x;
     auto height = size.y;
@@ -256,6 +258,16 @@ void MeshRenderer::enableGlowPass(bool enable)
     }
 }
 
+void MeshRenderer::setNearFarRatios(float n, float f)
+{
+    XY_ASSERT(n > 0 && n < 1.f, "Near ratio must be between 0 and 1");
+    XY_ASSERT(f > 1 && f < 1000.f, "Far ratio must be greater than 1");
+
+    m_nearRatio = n;
+    m_farRatio = f;
+    updateView();
+}
+
 //private
 void MeshRenderer::createNoiseTexture()
 {
@@ -443,7 +455,7 @@ void MeshRenderer::updateView()
     const float angle = std::tan(fov / 2.f);
     m_cameraZ = ((viewSize.y / 2.f) / angle);
 
-    m_projectionMatrix = glm::perspective(fov, viewSize.x / viewSize.y, m_cameraZ * 0.8f, m_cameraZ * 1.2f);
+    m_projectionMatrix = glm::perspective(fov, viewSize.x / viewSize.y, m_cameraZ * m_nearRatio, m_cameraZ * m_farRatio);
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16);
 
     //m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));

@@ -170,6 +170,15 @@ namespace xy
         */
         void setView(const sf::View& v) { m_view = v; }
 
+        /*
+        \brief Sets the multipliers used to calculate the near and far plane.
+        The near and far planes ar calculated as a ratio of the virtual camera depth and
+        must be between 0-1 for the near plane and greater than 1 for the far plane.
+        The default is set to the optimal 0.8 and 1.2 respectively, these values should
+        generally only be changed when loading models which appear in the far background.
+        */
+        void setNearFarRatios(float n, float f);
+
     private:
         struct Lock final {};
 
@@ -272,6 +281,9 @@ namespace xy
         sf::Sprite m_dummySprite;
         std::unique_ptr<RenderQuad> m_outputQuad;
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
+
+        float m_nearRatio;
+        float m_farRatio;
 
         void updateView();
         void updateLights(const glm::vec3&);     
