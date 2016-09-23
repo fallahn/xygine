@@ -918,4 +918,9 @@
       <Filter>Header Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="include\xygine\mesh\shaders\Water.inl">
+      <Filter>Header Files\mesh\shaders</Filter>
+    </None>
+  </ItemGroup>
 </Project>

@@ -429,6 +429,9 @@
     <ClInclude Include="include\xygine\util\Vector.hpp" />
     <ClInclude Include="include\xygine\util\Wavetable.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="include\xygine\mesh\shaders\Water.inl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
