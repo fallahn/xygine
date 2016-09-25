@@ -179,6 +179,13 @@ namespace xy
         */
         void setNearFarRatios(float n, float f);
 
+        /*!
+        \brief Sets the field of view used by the 3D camera.
+        \param float Field of view of the camera in degrees.
+        The FOV is 10 degrees to 180 degrees
+        */
+        void setFOV(float);
+
     private:
         struct Lock final {};
 
@@ -284,6 +291,7 @@ namespace xy
 
         float m_nearRatio;
         float m_farRatio;
+        float m_fov;
 
         void updateView();
         void updateLights(const glm::vec3&);     

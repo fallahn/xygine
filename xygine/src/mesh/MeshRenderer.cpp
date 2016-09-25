@@ -54,8 +54,6 @@ using namespace xy;
 
 namespace
 {
-    const float fov = 30.f * xy::Util::Const::degToRad;
-    //const float nearPlane = 0.1f;
     const unsigned MAX_LIGHTS = 8;
     const unsigned DepthTextureUnit = 10u; //only used in a single shader which we know won't have this many textures
     const unsigned shadowmapSize = 1024u;
@@ -68,7 +66,8 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     m_doLightBlur           (true),
     m_lightingBlockID       (-1),
     m_nearRatio             (0.8f),
-    m_farRatio              (1.2f)
+    m_farRatio              (1.2f),
+    m_fov                   (30.f)
 {
     auto width = size.x;
     auto height = size.y;
@@ -261,10 +260,17 @@ void MeshRenderer::enableGlowPass(bool enable)
 void MeshRenderer::setNearFarRatios(float n, float f)
 {
     XY_ASSERT(n > 0 && n < 1.f, "Near ratio must be between 0 and 1");
-    XY_ASSERT(f > 1 && f < 1000.f, "Far ratio must be greater than 1");
+    XY_ASSERT(f > 1 && f < 100.f, "Far ratio must be greater than 1");
 
     m_nearRatio = n;
     m_farRatio = f;
+    updateView();
+}
+
+void MeshRenderer::setFOV(float fov)
+{
+    XY_ASSERT(fov >= 10 && fov <= 180, "FOV out of range");
+    m_fov = fov;
     updateView();
 }
 
@@ -452,11 +458,14 @@ void MeshRenderer::updateView()
 
     //calc how far away from the scene the camera would be
     //assuming the 2D world is drawn at 0 depth
+    const float fov = m_fov * xy::Util::Const::degToRad;
     const float angle = std::tan(fov / 2.f);
     m_cameraZ = ((viewSize.y / 2.f) / angle);
 
     m_projectionMatrix = glm::perspective(fov, viewSize.x / viewSize.y, m_cameraZ * m_nearRatio, m_cameraZ * m_farRatio);
-    std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16);
+    std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16 * sizeof(float));
+
+    REPORT("FOV", std::to_string(m_fov));
 
     //m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
     //m_defaultShader.setUniform("u_farPlane", m_cameraZ * 2.f);
@@ -827,13 +836,30 @@ void MeshRenderer::setupConCommands()
             Console::print("Switched output to default");
         }
     }, this);
+
+    //updates the FOV
+    Console::addCommand("r_fov", 
+        [this](const std::string& params)
+    {
+        try
+        {
+            float fov = std::stof(params.c_str());
+            fov = std::min(180.f, std::max(10.f, fov));
+            setFOV(fov);
+            Console::print("Field of View set to " + std::to_string(fov) + " degrees");
+        }
+        catch (...)
+        {
+            Console::print(params + " invalid value. Range is 10 to 180 degrees");
+        }
+    });
 }
 
 void MeshRenderer::addDebugMenus()
 {
     std::function<void()> debugWindow = [this]()
     {
-        nim::SetNextWindowSize({ 200.f, 300.f });
+        nim::SetNextWindowSize({ 240.f, 300.f });
         nim::Begin("Switch Output");
         static int selected = 0;
         static int lastSelected = selected;
@@ -848,6 +874,15 @@ void MeshRenderer::addDebugMenus()
         static int mapIndex = 0;
         static int lastMapIndex = mapIndex;
         nim::SliderInt("Depth", &mapIndex, 0, 8);
+        static auto lastValue = m_fov;
+        nim::SliderFloat("FOV", &m_fov, 10.f, 180.f);
+        if (lastValue != m_fov) updateView();
+        lastValue = m_nearRatio;
+        nim::SliderFloat("NP Ratio", &m_nearRatio, 0.1f, 0.9f);
+        if (lastValue != m_nearRatio) updateView();
+        lastValue = m_farRatio;
+        nim::SliderFloat("FP Ratio", &m_farRatio, 1.1f, 99.9f);
+        if (lastValue != m_farRatio) updateView();
         nim::End();
 
         if (selected != lastSelected)
@@ -896,7 +931,7 @@ void MeshRenderer::addDebugMenus()
         {
             m_depthShader.setUniform("u_texIndex", static_cast<float>(mapIndex));
         }
-        lastMapIndex = mapIndex;
+        lastMapIndex = mapIndex;       
     };
     App::addUserWindow(debugWindow, this);
 }
