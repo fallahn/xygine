@@ -36,7 +36,7 @@ namespace xy
     {
         namespace Mesh
         {
-            const std::string WaterFragment =
+            static const std::string WaterFragment =
                 "#version 120\n"
 
                 "uniform sampler2D u_diffuseMap;\n"
@@ -76,14 +76,22 @@ namespace xy
                 "        float t = (u_waterLevel - position.y) / eyeVec.y;\n"
                 "        vec3 surfacePoint = u_cameraWorldPosition - eyeVec * t;\n"
                 "        vec2 texCoord = (surfacePoint.xz + eyeVec.xz * 0.1) * 0.002;\n"
-                "        //colour.rgb = texture2D(u_surfaceMap, texCoord).rgb;\n"
+                "        vec3 surface = texture2D(u_surfaceMap, texCoord).rgb;\n"
 
                 "        float depth = clamp(surfacePoint.y - position.y, 0.0, 1.0);\n"
                 "        texCoord = gl_TexCoord[0].xy;\n"
-                "        texCoord += sin(abs(position.y * 3.0) + u_time) * (0.001 * depth);\n"
+                "        texCoord += sin((texCoord.y * 50.0 + u_time)) * (0.001 * depth);\n"
 
-                "        vec4 colour = texture2D(u_diffuseMap, texCoord);\n"
-                "        colour.rgb *= vec3(0.7, 0.8, 1.0) * (1.0 - position.a) * depth;\n"
+                "        vec4 refractPosition = texture2D(u_positionMap, vec2(texCoord.x, 1.0 - texCoord.y));\n"
+                "        vec4 refraction = texture2D(u_diffuseMap, texCoord);\n"
+                "        refraction.rgb *= vec3(0.6, 0.7, 0.9) * (1.0 - refractPosition.a) * depth;\n"
+
+
+                "        vec4 colour = refraction;\n"
+                "        if(gl_TexCoord[0].y > 0.2)\n"
+                "        {\n"
+                "            colour = vec4(mix(refraction.rgb, surface, 0.5), refraction.a);\n"
+                "        }\n"
 
                 "        gl_FragColor = colour;\n"
                 "    }\n"
