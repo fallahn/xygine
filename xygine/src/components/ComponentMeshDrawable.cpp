@@ -41,7 +41,7 @@ MeshDrawable::MeshDrawable(MessageBus& mb, MeshRenderer& mr, const MeshRenderer:
     m_sprite.setTexture(m_renderTexture.getTexture());
     m_sprite.setOrigin(sf::Vector2f(size) / 2.f);
     m_sprite.setScale(xy::DefaultSceneSize.x / size.x, xy::DefaultSceneSize.y / size.y);
-    mr.setView(m_renderTexture.getDefaultView());
+    mr.setView(sf::View({}, xy::DefaultSceneSize));
 
     xy::Component::MessageHandler mh;
     mh.id = xy::Message::UIMessage;
@@ -66,8 +66,8 @@ MeshDrawable::MeshDrawable(MessageBus& mb, MeshRenderer& mr, const MeshRenderer:
                 width = (height / 9) * 16;
             }
             m_renderTexture.create(static_cast<unsigned>(width), static_cast<unsigned>(height));
-            mr.setView(m_renderTexture.getDefaultView());
-
+            //remember to reset the sprite's sub-rect!
+            m_sprite.setTexture(m_renderTexture.getTexture(), true);
             m_sprite.setOrigin(width / 2.f, height / 2.f);
             m_sprite.setScale(xy::DefaultSceneSize.x / width, xy::DefaultSceneSize.y / height);
         }
