@@ -118,10 +118,10 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     addItems();
     addPlayer();
 
-    /*auto e = xy::Entity::create(m_messageBus);
+    auto e = xy::Entity::create(m_messageBus);
     auto md = m_meshRenderer.createDrawable(m_messageBus);
     e->addComponent(md);
-    m_scene.addEntity(e, xy::Scene::Layer::FrontFront);*/
+    m_scene.addEntity(e, xy::Scene::Layer::FrontFront);
 
     REPORT("Q", "Show Debug");
     xy::App::setMouseCursorVisible(true);
@@ -177,7 +177,7 @@ void PlatformDemoState::draw()
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);    
 
-    rw.draw(m_meshRenderer);
+    //rw.draw(m_meshRenderer);
 
     if (showDebug)
     {
@@ -291,7 +291,7 @@ void PlatformDemoState::handleMessage(const xy::Message& msg)
         {
         default: break;
         case xy::Message::UIEvent::ResizedWindow:
-            m_meshRenderer.setView(getContext().defaultView);
+            //m_meshRenderer.setView(getContext().defaultView);
             //m_scene.setView(getContext().defaultView);
         {
             auto v = playerCamera->getView();

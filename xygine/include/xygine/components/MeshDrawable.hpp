@@ -62,7 +62,6 @@ namespace xy
 
         mutable sf::RenderTexture m_renderTexture;
         sf::Sprite m_sprite;
-        sf::Vector2f m_offset;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     };

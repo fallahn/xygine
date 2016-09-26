@@ -35,16 +35,52 @@ MeshDrawable::MeshDrawable(MessageBus& mb, MeshRenderer& mr, const MeshRenderer:
     : Component     (mb, this),
     m_meshRenderer  (mr)
 {
-    m_renderTexture.create(static_cast<sf::Uint32>(xy::DefaultSceneSize.x), static_cast<sf::Uint32>(xy::DefaultSceneSize.y));
+    auto size = mr.m_gBuffer.getSize();
+
+    m_renderTexture.create(size.x, size.y);
     m_sprite.setTexture(m_renderTexture.getTexture());
-    m_offset = xy::DefaultSceneSize / 2.f;
+    m_sprite.setOrigin(sf::Vector2f(size) / 2.f);
+    m_sprite.setScale(xy::DefaultSceneSize.x / size.x, xy::DefaultSceneSize.y / size.y);
     mr.setView(m_renderTexture.getDefaultView());
+
+    xy::Component::MessageHandler mh;
+    mh.id = xy::Message::UIMessage;
+    mh.action = [this, &mr](xy::Component*, const xy::Message& msg)
+    {
+        const auto& data = msg.getData<xy::Message::UIEvent>();
+        switch (data.type)
+        {
+        default: break;
+        case xy::Message::UIEvent::ResizedWindow:
+        {
+            std::int32_t resolution = static_cast<std::int32_t>(data.value);
+            auto width = resolution >> 16;
+            auto height = resolution & 0xffff;
+
+            if (width > height)
+            {
+                height = (width / 16) * 9;
+            }
+            else
+            {
+                width = (height / 9) * 16;
+            }
+            m_renderTexture.create(static_cast<unsigned>(width), static_cast<unsigned>(height));
+            mr.setView(m_renderTexture.getDefaultView());
+
+            m_sprite.setOrigin(width / 2.f, height / 2.f);
+            m_sprite.setScale(xy::DefaultSceneSize.x / width, xy::DefaultSceneSize.y / height);
+        }
+            break;
+        }
+    };
+    addMessageHandler(mh);
 }
 
 //public
 void MeshDrawable::entityUpdate(Entity& e, float)
 {
-    m_sprite.setPosition(e.getScene()->getView().getCenter() - m_offset);
+    m_sprite.setPosition(e.getScene()->getView().getCenter());
 }
 
 //private
