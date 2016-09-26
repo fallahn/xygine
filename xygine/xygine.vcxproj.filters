@@ -917,6 +917,9 @@
     <ClInclude Include="include\xygine\ui\KeyBinds.hpp">
       <Filter>Header Files\ui</Filter>
     </ClInclude>
+    <ClInclude Include="include\xygine\mesh\shaders\SSWater.hpp">
+      <Filter>Header Files\mesh\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xygine\mesh\shaders\Water.inl">

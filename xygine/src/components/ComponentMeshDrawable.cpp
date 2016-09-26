@@ -33,7 +33,8 @@ using namespace xy;
 
 MeshDrawable::MeshDrawable(MessageBus& mb, MeshRenderer& mr, const MeshRenderer::Lock&)
     : Component     (mb, this),
-    m_meshRenderer  (mr)
+    m_meshRenderer  (mr),
+    m_waterShader   (nullptr)
 {
     auto size = mr.m_gBuffer.getSize();
 
@@ -83,12 +84,30 @@ void MeshDrawable::entityUpdate(Entity& e, float)
     m_sprite.setPosition(e.getScene()->getView().getCenter());
 }
 
+void MeshDrawable::enableWater(bool enabled)
+{
+    m_waterShader = (enabled) ? &m_meshRenderer.m_waterShader : nullptr;
+
+    if (enabled) //TODO check if we need to reapply this if resizing RT
+    {
+        m_waterShader->setUniform("u_diffuseMap", m_renderTexture.getTexture());
+    }
+}
+
+void MeshDrawable::setWaterLevel(float level)
+{
+    enableWater(true);
+    m_waterShader->setUniform("u_waterLevel", level);
+}
+
 //private
 void MeshDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     m_renderTexture.clear(sf::Color::Transparent);
     m_renderTexture.draw(m_meshRenderer);
     m_renderTexture.display();
+
+    states.shader = m_waterShader;
 
     rt.draw(m_sprite, states);
 }

@@ -42,6 +42,7 @@ source distribution.
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/System/Clock.hpp>
 
 #include <glm/mat4x4.hpp>
 
@@ -191,7 +192,7 @@ namespace xy
 
         MeshResource m_meshResource;
         MaterialResource m_materialResource;
-        ShaderResource m_shaderResource;
+        //ShaderResource m_shaderResource;
 
         struct AnimationData
         {
@@ -279,12 +280,16 @@ namespace xy
         sf::Shader m_depthShader;
         void drawDepth() const;
 
+        sf::Shader m_waterShader;
+        sf::Texture m_surfaceTexture;
+        sf::Clock m_shaderClock;
+
         mutable std::vector<Model*> m_models;
         mutable xy::MultiRenderTexture m_gBuffer;
         void drawScene() const;
 
         sf::Shader m_debugShader;
-        sf::Texture m_dummyTetxure;
+        sf::Texture m_dummyTexture;
         sf::Sprite m_dummySprite;
         std::unique_ptr<RenderQuad> m_outputQuad;
         void draw(sf::RenderTarget&, sf::RenderStates) const override;

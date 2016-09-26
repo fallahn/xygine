@@ -120,6 +120,7 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
 
     auto e = xy::Entity::create(m_messageBus);
     auto md = m_meshRenderer.createDrawable(m_messageBus);
+    md->enableWater(true);
     e->addComponent(md);
     m_scene.addEntity(e, xy::Scene::Layer::FrontFront);
 

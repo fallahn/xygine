@@ -30,6 +30,7 @@ source distribution.
 #include <xygine/mesh/shaders/DeferredRenderer.hpp>
 #include <xygine/mesh/shaders/SSAO.hpp>
 #include <xygine/mesh/shaders/LightBlur.hpp>
+#include <xygine/mesh/shaders/SSWater.hpp>
 #include <xygine/shaders/PostGaussianBlur.hpp>
 #include <xygine/components/Model.hpp>
 #include <xygine/components/MeshDrawable.hpp>
@@ -103,11 +104,23 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     //prepare the lighting shader for the output
     initOutput();
 
-    //we need this for the output kludge in draw()
+    if (!m_waterShader.loadFromMemory(Shader::Mesh::WaterFragment, sf::Shader::Fragment))
+    {
+        XY_ASSERT(false, "Failed loading water shader");
+    }
     sf::Image img;
+    img.create(128, 128, sf::Color::Red);
+    //m_surfaceTexture.loadFromImage(img);
+    m_surfaceTexture.loadFromFile("assets/images/diffuse_test.png");
+    m_surfaceTexture.setRepeated(true);
+    m_waterShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
+    m_waterShader.setUniform("u_surfaceMap", m_surfaceTexture);
+
+    //we need this for the output kludge in draw()
+    //sf::Image img;
     img.create(2, 2, sf::Color::Transparent);
-    m_dummyTetxure.loadFromImage(img);
-    m_dummySprite.setTexture(m_dummyTetxure);
+    m_dummyTexture.loadFromImage(img);
+    m_dummySprite.setTexture(m_dummyTexture);
 
     //inits console commands which affect renderer
     setupConCommands();
@@ -191,6 +204,8 @@ void MeshRenderer::update()
     auto camPos = view.getCenter();
     auto rotation = view.getRotation() * xy::Util::Const::degToRad;
     glm::vec3 camWorldPosition(camPos.x, camPos.y, m_cameraZ);
+    m_waterShader.setUniform("u_cameraWorldPosition", sf::Glsl::Vec3(camPos.x, camPos.y, m_cameraZ));
+    m_waterShader.setUniform("u_time", m_shaderClock.getElapsedTime().asSeconds() * 10.f);
 
     //update UBO with scene lighting / cam pos
     updateLights(camWorldPosition);

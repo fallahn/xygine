@@ -307,6 +307,7 @@
     <ClInclude Include="include\xygine\mesh\shaders\GeomVis.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\LightBlur.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\SSAO.hpp" />
+    <ClInclude Include="include\xygine\mesh\shaders\SSWater.hpp" />
     <ClInclude Include="include\xygine\mesh\Skeleton.hpp" />
     <ClInclude Include="include\xygine\mesh\SphereBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\StaticConsts.hpp" />
