@@ -210,7 +210,7 @@ namespace xy
                 "    return texture(u_reflectMap, coord).rgb;\n"
                 "}\n"
 
-#include "Water.inl"
+//#include "Water.inl"
 
                 "void main()\n"
                 "{\n"

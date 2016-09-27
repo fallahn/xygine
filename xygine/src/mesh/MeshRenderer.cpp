@@ -58,6 +58,26 @@ namespace
     const unsigned MAX_LIGHTS = 8;
     const unsigned DepthTextureUnit = 10u; //only used in a single shader which we know won't have this many textures
     const unsigned shadowmapSize = 1024u;
+
+    void createWaves(float freqX, float freqY, sf::Image& dst)
+    {       
+        static constexpr sf::Uint32 size = 256;
+        std::array<sf::Uint8, size * size * 4> data;
+        std::memset(data.data(), 0, data.size());
+
+        for (auto y = 0u; y < size; ++y)
+        {
+            for (auto x = 0u; x < size; ++x)
+            {
+                auto idx = (y * size + x) * 4;
+                data[idx] = static_cast<sf::Uint8>(std::sin(((static_cast<float>(x) / size) * xy::Util::Const::TAU) * freqX) * 128.f + 127.f);
+                data[idx] += static_cast<sf::Uint8>(std::sin(((static_cast<float>(y) / size) * xy::Util::Const::TAU) * freqY) * 128.f + 127.f);
+                data[idx] /= 2;
+            }
+        }
+
+        dst.create(size, size, data.data());
+    }
 }
 
 MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
@@ -108,16 +128,15 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     {
         XY_ASSERT(false, "Failed loading water shader");
     }
+
     sf::Image img;
-    img.create(128, 128, sf::Color::Red);
-    //m_surfaceTexture.loadFromImage(img);
-    m_surfaceTexture.loadFromFile("assets/images/diffuse_test.png");
+    createWaves(4.f, 4.f, img);
+    m_surfaceTexture.loadFromImage(img);
     m_surfaceTexture.setRepeated(true);
     m_waterShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
     m_waterShader.setUniform("u_surfaceMap", m_surfaceTexture);
 
     //we need this for the output kludge in draw()
-    //sf::Image img;
     img.create(2, 2, sf::Color::Transparent);
     m_dummyTexture.loadFromImage(img);
     m_dummySprite.setTexture(m_dummyTexture);

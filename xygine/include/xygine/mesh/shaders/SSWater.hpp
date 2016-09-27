@@ -54,11 +54,11 @@ namespace xy
 
                 /*this is a kludge because of the inverted Y coord*/
                 "const float sceneHeight = 1080.0;\n"
+                "const float tau = 6.2831;\n"
                 "void main()\n"
                 "{\n"
                 "    float waterLevel = sceneHeight - u_waterLevel;\n"
-                "    //vec4 colour = texture2D(u_diffuseMap, gl_TexCoord[0].xy);\n"
-                "    //vec3 position = (u_invViewMatrix * vec4(texture2D(u_positionMap, vec2(gl_TexCoord[0].x, 1.0 - gl_TexCoord[0].y)).rgb, 1.0)).xyz;\n"
+
                 "    vec4 position = texture2D(u_positionMap, vec2(gl_TexCoord[0].x, 1.0 - gl_TexCoord[0].y));\n"
 
                 "    if(u_cameraWorldPosition.y < u_waterLevel)\n"
@@ -71,26 +71,36 @@ namespace xy
                 /*remember SFML Y coord is inverted!*/
                 "    if(position.y > waterLevel)\n"
                 "    {\n"
-
                 "        vec3 eyeVec = normalize(position.xyz - u_cameraWorldPosition);\n"
                 "        float t = (u_waterLevel - position.y) / eyeVec.y;\n"
                 "        vec3 surfacePoint = u_cameraWorldPosition - eyeVec * t;\n"
-                "        vec2 texCoord = (surfacePoint.xz + eyeVec.xz * 0.1) * 0.002;\n"
-                "        vec3 surface = texture2D(u_surfaceMap, texCoord).rgb;\n"
+                "        vec2 texCoord = (surfacePoint.xz + eyeVec.xz * 0.1) * 0.001;\n"
+
+                "        float cycle = texture2D(u_surfaceMap, texCoord).r * tau;\n"
+                "        cycle = sin((0.75 * u_time) + cycle) * 0.5 + 0.5;\n"
+                "        vec3 surface = vec3(cycle);\n"
 
                 "        float depth = clamp(surfacePoint.y - position.y, 0.0, 1.0);\n"
-                "        texCoord = gl_TexCoord[0].xy;\n"
-                "        texCoord += sin((texCoord.y * 50.0 + u_time)) * (0.001 * depth);\n"
+                "        float refractOffset = sin((gl_TexCoord[0].y * 50.0 + u_time)) * (0.001 * depth);\n"
+                "        texCoord = gl_TexCoord[0].xy + refractOffset;\n"
 
                 "        vec4 refractPosition = texture2D(u_positionMap, vec2(texCoord.x, 1.0 - texCoord.y));\n"
                 "        vec4 refraction = texture2D(u_diffuseMap, texCoord);\n"
                 "        refraction.rgb *= vec3(0.6, 0.7, 0.9) * (1.0 - refractPosition.a) * depth;\n"
 
+                /*the camera is fixed along the z-axis so we can save time by flipping the buffer vertically*/
+                "        float reflectionOffset = ((waterLevel - u_waterLevel) / sceneHeight);\n"
+                "        vec3 reflectPosition = texture2D(u_positionMap, vec2(gl_TexCoord[0].x, gl_TexCoord[0].y + reflectionOffset)).rgb;\n"
+                "        vec4 reflection = vec4(0.0);\n"
+                "        if(reflectPosition.y <= waterLevel - 4.0)\n"
+                "        {\n"
+                "            reflection = texture2D(u_diffuseMap, vec2(gl_TexCoord[0].x, 1.0 - (gl_TexCoord[0].y + reflectionOffset)));\n"
+                "        }\n"
 
                 "        vec4 colour = refraction;\n"
                 "        if(gl_TexCoord[0].y > 0.2)\n"
                 "        {\n"
-                "            colour = vec4(mix(refraction.rgb, surface, 0.5), refraction.a);\n"
+                "            colour.rgb = mix(refraction.rgb, reflection.rgb, (1.0 - refractPosition.a));\n"
                 "        }\n"
 
                 "        gl_FragColor = colour;\n"
