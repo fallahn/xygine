@@ -69,10 +69,12 @@ namespace
         {
             for (auto x = 0u; x < size; ++x)
             {
+                float value = std::sin(((static_cast<float>(x) / size) * xy::Util::Const::TAU) * freqX) * 128.f + 127.f;
+                value += std::sin(((static_cast<float>(y) / size) * xy::Util::Const::TAU) * freqY) * 128.f + 127.f;
+                value = std::max(0.f, std::min(255.f, value / 2.f));
+                
                 auto idx = (y * size + x) * 4;
-                data[idx] = static_cast<sf::Uint8>(std::sin(((static_cast<float>(x) / size) * xy::Util::Const::TAU) * freqX) * 128.f + 127.f);
-                data[idx] += static_cast<sf::Uint8>(std::sin(((static_cast<float>(y) / size) * xy::Util::Const::TAU) * freqY) * 128.f + 127.f);
-                data[idx] /= 2;
+                data[idx] = static_cast<sf::Uint8>(value);
             }
         }
 
@@ -130,7 +132,7 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
     }
 
     sf::Image img;
-    createWaves(4.f, 4.f, img);
+    createWaves(2.f, 4.f, img);
     m_surfaceTexture.loadFromImage(img);
     m_surfaceTexture.setRepeated(true);
     m_waterShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
@@ -576,18 +578,21 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
     m_lightingBlock.u_skyLight.direction[1] = direction.y;
     m_lightingBlock.u_skyLight.direction[2] = direction.z;
     m_lightingBlock.u_skyLight.intensity = skylight.getIntensity();
+    m_waterShader.setUniform("u_lightDirection", direction);
 
     const auto& diffuse = skylight.getDiffuseColour();
     m_lightingBlock.u_skyLight.diffuseColour[0] = static_cast<float>(diffuse.r) / 255.f;
     m_lightingBlock.u_skyLight.diffuseColour[1] = static_cast<float>(diffuse.g) / 255.f;
     m_lightingBlock.u_skyLight.diffuseColour[2] = static_cast<float>(diffuse.b) / 255.f;
     m_lightingBlock.u_skyLight.diffuseColour[3] = static_cast<float>(diffuse.a) / 255.f;
+    m_waterShader.setUniform("u_lightDiffuse", sf::Glsl::Vec4(diffuse)); //TODO multiply by intensity
 
     const auto& specular = skylight.getSpecularColour();
     m_lightingBlock.u_skyLight.specularColour[0] = static_cast<float>(specular.r) / 255.f;
     m_lightingBlock.u_skyLight.specularColour[1] = static_cast<float>(specular.g) / 255.f;
     m_lightingBlock.u_skyLight.specularColour[2] = static_cast<float>(specular.b) / 255.f;
     m_lightingBlock.u_skyLight.specularColour[3] = static_cast<float>(specular.a) / 255.f;
+    m_waterShader.setUniform("u_lightSpecular", sf::Glsl::Vec4(specular)); //TODO multiply by intensity
 
     m_lightingShader.setUniform("u_lightCount", int(std::min(std::size_t(MAX_LIGHTS), lights.size())));
     m_lightingBlockBuffer.update(m_lightingBlock);

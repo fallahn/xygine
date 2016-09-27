@@ -45,20 +45,43 @@ namespace xy
                 "uniform sampler2D u_surfaceMap;\n"
 
                 "uniform float u_time;\n"
-
+                "uniform float u_nearPlane = 0.86;\n"
                 "uniform float u_waterLevel = 250.0;\n"
-                "//uniform float u_nearPlane = 50.0;\n"
+                "uniform float u_surfaceStrength = 0.15;\n"
+                "uniform vec4 u_waterColour = vec4(0.1, 0.4, 0.9, 1.0);\n"
 
                 "uniform vec3 u_cameraWorldPosition;\n"
-                "//uniform mat4 u_invViewMatrix;\n"
+
+                "uniform vec4 u_lightDiffuse = vec4(1.0);\n"
+                "uniform vec4 u_lightSpecular = vec4(1.0);\n"
+                "uniform vec3 u_lightDirection = vec3(0.0, 1.0, 0.0);\n"
 
                 /*this is a kludge because of the inverted Y coord*/
                 "const float sceneHeight = 1080.0;\n"
                 "const float tau = 6.2831;\n"
+                "const float waveFrequency = 0.5;\n"
+
+                "vec3 calcSurfaceNormal(vec2 texCoord)\n"
+                "{\n"
+                "        float n1 = texture2D(u_surfaceMap, texCoord + (vec2(-1.0, 0.0) / 256.0)).r * tau;\n"
+                "        n1 = sin((waveFrequency * u_time) + n1) * 0.5 + 0.5;\n"
+
+                "        float n2 = texture2D(u_surfaceMap, texCoord + (vec2(1.0, 0.0) / 256.0)).r * tau;\n"
+                "        n2 = sin((waveFrequency * u_time) + n2) * 0.5 + 0.5;\n"
+
+                "        float n3 = texture2D(u_surfaceMap, texCoord + (vec2(0.0, -1.0) / 256.0)).r * tau;\n"
+                "        n3 = sin((waveFrequency * u_time) + n3) * 0.5 + 0.5;\n"
+
+                "        float n4 = texture2D(u_surfaceMap, texCoord + (vec2(0.0, 1.0) / 256.0)).r * tau;\n"
+                "        n4 = sin((waveFrequency * u_time) + n4) * 0.5 + 0.5;\n"
+
+                "        return normalize(vec3(n1 - n2, -1.0, n3 - n4));\n"
+                "}\n"
+
+
                 "void main()\n"
                 "{\n"
                 "    float waterLevel = sceneHeight - u_waterLevel;\n"
-
                 "    vec4 position = texture2D(u_positionMap, vec2(gl_TexCoord[0].x, 1.0 - gl_TexCoord[0].y));\n"
 
                 "    if(u_cameraWorldPosition.y < u_waterLevel)\n"
@@ -71,22 +94,32 @@ namespace xy
                 /*remember SFML Y coord is inverted!*/
                 "    if(position.y > waterLevel)\n"
                 "    {\n"
+
+                "        float reflectionCutoff = (u_waterLevel / sceneHeight) * u_nearPlane;\n"
+
                 "        vec3 eyeVec = normalize(position.xyz - u_cameraWorldPosition);\n"
                 "        float t = (u_waterLevel - position.y) / eyeVec.y;\n"
                 "        vec3 surfacePoint = u_cameraWorldPosition - eyeVec * t;\n"
+                "        eyeVec = normalize(u_cameraWorldPosition - surfacePoint);\n"
                 "        vec2 texCoord = (surfacePoint.xz + eyeVec.xz * 0.1) * 0.001;\n"
-
-                "        float cycle = texture2D(u_surfaceMap, texCoord).r * tau;\n"
-                "        cycle = sin((0.75 * u_time) + cycle) * 0.5 + 0.5;\n"
-                "        vec3 surface = vec3(cycle);\n"
+                "        vec3 surface = calcSurfaceNormal(texCoord);\n"
 
                 "        float depth = clamp(surfacePoint.y - position.y, 0.0, 1.0);\n"
                 "        float refractOffset = sin((gl_TexCoord[0].y * 50.0 + u_time)) * (0.001 * depth);\n"
-                "        texCoord = gl_TexCoord[0].xy + refractOffset;\n"
 
+                "        if(gl_TexCoord[0].y > reflectionCutoff)\n"
+                "        {\n"
+                "            texCoord = gl_TexCoord[0].xy + (surface.xz * u_surfaceStrength);\n"
+                "        }\n"
+                "        else\n"
+                "        {\n"
+                "            texCoord = gl_TexCoord[0].xy + refractOffset;\n"
+                "        }\n"
                 "        vec4 refractPosition = texture2D(u_positionMap, vec2(texCoord.x, 1.0 - texCoord.y));\n"
                 "        vec4 refraction = texture2D(u_diffuseMap, texCoord);\n"
-                "        refraction.rgb *= vec3(0.6, 0.7, 0.9) * (1.0 - refractPosition.a) * depth;\n"
+                "        refraction.rgb *= u_waterColour.rgb * (1.0 - refractPosition.a) * depth;\n"
+                /*TODO diminish the amount of light with distance*/
+                "        refraction.rgb *= u_lightDiffuse.rgb;\n"
 
                 /*the camera is fixed along the z-axis so we can save time by flipping the buffer vertically*/
                 "        float reflectionOffset = ((waterLevel - u_waterLevel) / sceneHeight);\n"
@@ -98,11 +131,15 @@ namespace xy
                 "        }\n"
 
                 "        vec4 colour = refraction;\n"
-                "        if(gl_TexCoord[0].y > 0.2)\n"
+                "        vec3 halfVec = normalize(eyeVec - u_lightDirection);\n"
+                "        float specularAngle = clamp(dot(surface, halfVec), 0.0, 1.0) * 2.0;\n"
+                "        vec3 specColour = vec3(u_lightSpecular.rgb * vec3(pow(specularAngle, 250.0)));\n"
+
+                "        if(gl_TexCoord[0].y > reflectionCutoff)\n"
                 "        {\n"
                 "            colour.rgb = mix(refraction.rgb, reflection.rgb, (1.0 - refractPosition.a));\n"
+                "            colour.rgb += specColour;\n"
                 "        }\n"
-
                 "        gl_FragColor = colour;\n"
                 "    }\n"
                 "    else\n"
