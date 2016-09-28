@@ -45,7 +45,7 @@ namespace xy
                 "uniform sampler2D u_surfaceMap;\n"
 
                 "uniform float u_time;\n"
-                "uniform float u_nearPlane = 0.86;\n"
+                "uniform float u_nearPlane = 0.46;\n"
                 "uniform float u_waterLevel = 250.0;\n"
                 "uniform float u_surfaceStrength = 0.15;\n"
                 "uniform vec4 u_waterColour = vec4(0.1, 0.4, 0.9, 1.0);\n"
@@ -78,7 +78,6 @@ namespace xy
                 "        return normalize(vec3(n1 - n2, -1.0, n3 - n4));\n"
                 "}\n"
 
-
                 "void main()\n"
                 "{\n"
                 "    float waterLevel = sceneHeight - u_waterLevel;\n"
@@ -86,16 +85,70 @@ namespace xy
 
                 "    if(u_cameraWorldPosition.y < u_waterLevel)\n"
                 "    {\n"
-                "        //TODO distance based fogging, and rendering surface as seen from below\n"
-                "        gl_FragColor = texture2D(u_diffuseMap, gl_TexCoord[0].xy);\n"
+                "        if(position.y > waterLevel)\n"
+                "        {\n"
+                "            float refractOffset = sin((gl_TexCoord[0].y * 50.0 + u_time)) * 0.001;\n"
+                "            vec2 texCoord = gl_TexCoord[0].xy + refractOffset;\n"
+                "            vec4 refractPosition = texture2D(u_positionMap, vec2(texCoord.x, 1.0 - texCoord.y));\n"
+                "            vec4 refraction = texture2D(u_diffuseMap, texCoord);\n"
+                "            refraction.rgb *= u_waterColour.rgb * (1.0 - refractPosition.a);\n"
+                "            refraction.rgb *= u_lightDiffuse.rgb * (1.0 - refractPosition.a);\n"
+
+                "            gl_FragColor = refraction;\n"
+                "        }\n"
+                "        else\n"
+                "        {\n"
+                "            float camLevel = (u_waterLevel - u_cameraWorldPosition.y) / u_cameraWorldPosition.y;\n"
+                "            float waterCoord = u_waterLevel / sceneHeight;\n"
+                "            float reflectionCutoff = waterCoord * u_nearPlane;\n"
+                "            reflectionCutoff = waterCoord + ((waterCoord - reflectionCutoff) *camLevel);\n"
+                "            if(gl_TexCoord[0].y < reflectionCutoff)\n"
+                "            {\n"
+                "                vec3 eyeVec = normalize(position.xyz - u_cameraWorldPosition);\n"
+                "                float t = (u_waterLevel - position.y) / eyeVec.y;\n"
+                "                vec3 surfacePoint = u_cameraWorldPosition - eyeVec * t;\n"
+                "                eyeVec = normalize(u_cameraWorldPosition - surfacePoint);\n"
+
+                "                vec2 texCoord = (surfacePoint.xz + eyeVec.xz * 0.1) * 0.001;\n"
+                "                vec3 surface = calcSurfaceNormal(texCoord);\n"
+                "                texCoord = gl_TexCoord[0].xy + (surface.xz * u_surfaceStrength);\n"
+
+                "                vec4 surfaceColour = texture2D(u_diffuseMap, texCoord);\n"
+                "                vec4 surfacePosition = texture2D(u_positionMap, vec2(texCoord.x, 1.0 - texCoord.y));\n"
+                "                surfaceColour.rgb *= u_waterColour.rgb * (1.0 - surfacePosition.a);\n"
+                "                surfaceColour.rgb *= u_lightDiffuse.rgb * (1.0 - surfacePosition.a);\n"
+
+                "                float reflectionOffset = ((waterLevel - u_waterLevel) / sceneHeight);\n"
+                "                vec4 reflectPosition = texture2D(u_positionMap, vec2(gl_TexCoord[0].x, gl_TexCoord[0].y + reflectionOffset));\n"
+                "                vec4 reflection = vec4(0.0);\n"
+                "                if(reflectPosition.y > waterLevel)\n"
+                "                {\n"
+                "                     reflection = texture2D(u_diffuseMap, vec2(gl_TexCoord[0].x, 1.0 - (gl_TexCoord[0].y + reflectionOffset)));\n"
+                "                }\n"
+                "                surfaceColour.rgb = mix(surfaceColour.rgb, reflection.rgb, (1.0 - surfacePosition.a) * 0.1);\n"
+
+                "                vec3 halfVec = normalize(eyeVec - u_lightDirection);\n"
+                "                float specularAngle = clamp(dot(surface, halfVec), 0.0, 1.0);\n"
+                "                vec3 specColour = u_lightSpecular.rgb * clamp(pow(specularAngle, 5.0) * 4.0, 0.0, 1.0);\n"
+                "                surfaceColour.rgb += specColour;\n"
+
+                "                gl_FragColor = clamp(surfaceColour * 8.0 * (1.0 - surfacePosition.a), 0.0, 1.0);\n"
+                "            }\n"
+                "            else\n"
+                "            {\n"
+                "                gl_FragColor = texture2D(u_diffuseMap, gl_TexCoord[0].xy);"
+                "            }\n"
+                "        }\n"
                 "        return;\n"
                 "    }\n"
 
                 /*remember SFML Y coord is inverted!*/
                 "    if(position.y > waterLevel)\n"
                 "    {\n"
-
-                "        float reflectionCutoff = (u_waterLevel / sceneHeight) * u_nearPlane;\n"
+                "        float camLevel = (u_cameraWorldPosition.y - u_waterLevel) / u_cameraWorldPosition.y;\n"
+                "        float waterCoord = u_waterLevel / sceneHeight;\n"
+                "        float reflectionCutoff = (waterCoord - (waterCoord * u_nearPlane)) * camLevel;\n"
+                "        reflectionCutoff = waterCoord - reflectionCutoff;\n"
 
                 "        vec3 eyeVec = normalize(position.xyz - u_cameraWorldPosition);\n"
                 "        float t = (u_waterLevel - position.y) / eyeVec.y;\n"
@@ -105,7 +158,7 @@ namespace xy
                 "        vec3 surface = calcSurfaceNormal(texCoord);\n"
 
                 "        float depth = clamp(surfacePoint.y - position.y, 0.0, 1.0);\n"
-                "        float refractOffset = sin((gl_TexCoord[0].y * 50.0 + u_time)) * (0.001 * depth);\n"
+                "        float refractOffset = sin((gl_TexCoord[0].y * 50.0 + u_time)) * (0.001);\n"
 
                 "        if(gl_TexCoord[0].y > reflectionCutoff)\n"
                 "        {\n"
@@ -118,26 +171,26 @@ namespace xy
                 "        vec4 refractPosition = texture2D(u_positionMap, vec2(texCoord.x, 1.0 - texCoord.y));\n"
                 "        vec4 refraction = texture2D(u_diffuseMap, texCoord);\n"
                 "        refraction.rgb *= u_waterColour.rgb * (1.0 - refractPosition.a) * depth;\n"
-                /*TODO diminish the amount of light with distance*/
-                "        refraction.rgb *= u_lightDiffuse.rgb;\n"
+                "        refraction.rgb *= u_lightDiffuse.rgb * (1.0 - refractPosition.a) * depth;\n"
 
                 /*the camera is fixed along the z-axis so we can save time by flipping the buffer vertically*/
                 "        float reflectionOffset = ((waterLevel - u_waterLevel) / sceneHeight);\n"
-                "        vec3 reflectPosition = texture2D(u_positionMap, vec2(gl_TexCoord[0].x, gl_TexCoord[0].y + reflectionOffset)).rgb;\n"
+                "        vec4 reflectPosition = texture2D(u_positionMap, vec2(gl_TexCoord[0].x, gl_TexCoord[0].y + reflectionOffset));\n"
                 "        vec4 reflection = vec4(0.0);\n"
-                "        if(reflectPosition.y <= waterLevel - 4.0)\n"
+                "        if(reflectPosition.y < waterLevel)\n"
                 "        {\n"
                 "            reflection = texture2D(u_diffuseMap, vec2(gl_TexCoord[0].x, 1.0 - (gl_TexCoord[0].y + reflectionOffset)));\n"
                 "        }\n"
 
                 "        vec4 colour = refraction;\n"
+
                 "        vec3 halfVec = normalize(eyeVec - u_lightDirection);\n"
-                "        float specularAngle = clamp(dot(surface, halfVec), 0.0, 1.0) * 2.0;\n"
-                "        vec3 specColour = vec3(u_lightSpecular.rgb * vec3(pow(specularAngle, 250.0)));\n"
+                "        float specularAngle = clamp(dot(surface, halfVec), 0.0, 1.0);\n"
+                "        vec3 specColour = u_lightSpecular.rgb * clamp(pow(specularAngle, 5.0) * 4.0, 0.0, 1.0);\n"
 
                 "        if(gl_TexCoord[0].y > reflectionCutoff)\n"
                 "        {\n"
-                "            colour.rgb = mix(refraction.rgb, reflection.rgb, (1.0 - refractPosition.a));\n"
+                "            colour.rgb = mix(refraction.rgb, reflection.rgb, (1.0 - refractPosition.a) * 0.5);\n"
                 "            colour.rgb += specColour;\n"
                 "        }\n"
                 "        gl_FragColor = colour;\n"

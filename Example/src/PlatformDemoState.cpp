@@ -104,7 +104,7 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
 
     m_scene.setView(context.defaultView);
     m_scene.setAmbientColour({ 76, 70, 72 });
-    m_scene.getSkyLight().setIntensity(0.4f);
+    m_scene.getSkyLight().setIntensity(0.5f);
     m_scene.getSkyLight().setDiffuseColour({ 255, 255, 200 });
     m_scene.getSkyLight().setSpecularColour({ 120, 255, 58 });
     m_scene.getSkyLight().setDirection({ 0.2f, 0.4f, -0.4f });
@@ -359,10 +359,12 @@ void PlatformDemoState::cacheMeshes()
     auto& platformMaterial01 = m_materialResource.add(MatId::Platform01, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
     platformMaterial01.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     platformMaterial01.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_01.png") });
+    platformMaterial01.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::Shadow));
 
     auto& platformMaterial04 = m_materialResource.add(MatId::Platform04, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
     platformMaterial04.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     platformMaterial04.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_04.png") });
+    platformMaterial01.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::Shadow));
 
     auto& catMat = m_materialResource.add(MatId::BatcatMat, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
     catMat.addUniformBuffer(m_meshRenderer.getMatrixUniforms());

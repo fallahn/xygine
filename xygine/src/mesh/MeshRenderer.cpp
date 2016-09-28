@@ -585,14 +585,24 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
     m_lightingBlock.u_skyLight.diffuseColour[1] = static_cast<float>(diffuse.g) / 255.f;
     m_lightingBlock.u_skyLight.diffuseColour[2] = static_cast<float>(diffuse.b) / 255.f;
     m_lightingBlock.u_skyLight.diffuseColour[3] = static_cast<float>(diffuse.a) / 255.f;
-    m_waterShader.setUniform("u_lightDiffuse", sf::Glsl::Vec4(diffuse)); //TODO multiply by intensity
+    m_waterShader.setUniform("u_lightDiffuse", sf::Glsl::Vec4(
+        m_lightingBlock.u_skyLight.diffuseColour[0] * m_lightingBlock.u_skyLight.intensity,
+        m_lightingBlock.u_skyLight.diffuseColour[1] * m_lightingBlock.u_skyLight.intensity,
+        m_lightingBlock.u_skyLight.diffuseColour[2] * m_lightingBlock.u_skyLight.intensity,
+        m_lightingBlock.u_skyLight.diffuseColour[3] * m_lightingBlock.u_skyLight.intensity
+    )); 
 
     const auto& specular = skylight.getSpecularColour();
     m_lightingBlock.u_skyLight.specularColour[0] = static_cast<float>(specular.r) / 255.f;
     m_lightingBlock.u_skyLight.specularColour[1] = static_cast<float>(specular.g) / 255.f;
     m_lightingBlock.u_skyLight.specularColour[2] = static_cast<float>(specular.b) / 255.f;
     m_lightingBlock.u_skyLight.specularColour[3] = static_cast<float>(specular.a) / 255.f;
-    m_waterShader.setUniform("u_lightSpecular", sf::Glsl::Vec4(specular)); //TODO multiply by intensity
+    m_waterShader.setUniform("u_lightSpecular", sf::Glsl::Vec4(
+        m_lightingBlock.u_skyLight.specularColour[0] * m_lightingBlock.u_skyLight.intensity,
+        m_lightingBlock.u_skyLight.specularColour[1] * m_lightingBlock.u_skyLight.intensity,
+        m_lightingBlock.u_skyLight.specularColour[2] * m_lightingBlock.u_skyLight.intensity,
+        m_lightingBlock.u_skyLight.specularColour[3] * m_lightingBlock.u_skyLight.intensity
+    ));
 
     m_lightingShader.setUniform("u_lightCount", int(std::min(std::size_t(MAX_LIGHTS), lights.size())));
     m_lightingBlockBuffer.update(m_lightingBlock);
@@ -898,7 +908,7 @@ void MeshRenderer::addDebugMenus()
 {
     std::function<void()> debugWindow = [this]()
     {
-        nim::SetNextWindowSize({ 240.f, 300.f });
+        nim::SetNextWindowSize({ 240.f, 320.f });
         nim::Begin("Switch Output");
         static int selected = 0;
         static int lastSelected = selected;
@@ -922,6 +932,9 @@ void MeshRenderer::addDebugMenus()
         lastValue = m_farRatio;
         nim::SliderFloat("FP Ratio", &m_farRatio, 1.1f, 99.9f);
         if (lastValue != m_farRatio) updateView();
+        static float waterLevel = 125.f;
+        nim::SliderFloat("Water Level", &waterLevel, 125.f, 800.f);
+        m_waterShader.setUniform("u_waterLevel", waterLevel);
         nim::End();
 
         if (selected != lastSelected)
