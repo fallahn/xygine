@@ -59,6 +59,7 @@ namespace xy
 
         void enableWater(bool);
         void setWaterLevel(float);
+        void setWaterColour(const sf::Color&);
 
     private:
         MeshRenderer& m_meshRenderer;

@@ -88,7 +88,7 @@ void MeshDrawable::enableWater(bool enabled)
 {
     m_waterShader = (enabled) ? &m_meshRenderer.m_waterShader : nullptr;
 
-    if (enabled) //TODO check if we need to reapply this if resizing RT
+    if (enabled)
     {
         m_waterShader->setUniform("u_diffuseMap", m_renderTexture.getTexture());
     }
@@ -98,6 +98,12 @@ void MeshDrawable::setWaterLevel(float level)
 {
     enableWater(true);
     m_waterShader->setUniform("u_waterLevel", level);
+}
+
+void MeshDrawable::setWaterColour(const sf::Color& colour)
+{
+    enableWater(true);
+    m_waterShader->setUniform("u_waterColour", sf::Glsl::Vec4(colour));
 }
 
 //private
