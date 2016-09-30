@@ -57,9 +57,27 @@ namespace xy
         void entityUpdate(Entity&, float) override;
         sf::FloatRect globalBounds() const override { return m_sprite.getGlobalBounds(); }
 
+        /*!
+        \brief Enables rendering water via a post process.
+        Water is viewed side on and generally not suitable for top-down views
+        */
         void enableWater(bool);
+        /*!
+        \brief Sets the apparent level of the water, meausred from the bottom of the scene.
+        Setting the water level automatically enables water rendering
+        */
         void setWaterLevel(float);
+        /*!
+        \brief Sets the colour of the rendered water.
+        Setting the water colour automatically enables water rendering
+        */
         void setWaterColour(const sf::Color&);
+        /*!
+        \brief A value between 0.0 and 1.0 which dictates how much of the Scene's
+        skylight affects the colour of the water.
+        Setting this value automatically enables water rendering.
+        */
+        void setWaterLightInfluence(float);
 
     private:
         MeshRenderer& m_meshRenderer;

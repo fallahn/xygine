@@ -908,7 +908,7 @@ void MeshRenderer::addDebugMenus()
 {
     std::function<void()> debugWindow = [this]()
     {
-        nim::SetNextWindowSize({ 240.f, 348.f });
+        nim::SetNextWindowSize({ 240.f, 368.f });
         nim::Begin("Switch Output");
         static int selected = 0;
         static int lastSelected = selected;
@@ -932,6 +932,10 @@ void MeshRenderer::addDebugMenus()
         lastValue = m_farRatio;
         nim::SliderFloat("FP Ratio", &m_farRatio, 1.1f, 99.9f);
         if (lastValue != m_farRatio) updateView();
+        static float lightInfluence = 1.f;
+        float influence = lightInfluence;
+        nim::SliderFloat("Light Mix", &lightInfluence, 0.f, 1.f);
+        if (influence != lightInfluence) m_waterShader.setUniform("u_lightInfluence", lightInfluence);
 
         static bool overrideLevel = false;
         nim::Checkbox("Set Water Level", &overrideLevel);

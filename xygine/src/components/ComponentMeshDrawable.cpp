@@ -106,6 +106,13 @@ void MeshDrawable::setWaterColour(const sf::Color& colour)
     m_waterShader->setUniform("u_waterColour", sf::Glsl::Vec4(colour));
 }
 
+void MeshDrawable::setWaterLightInfluence(float amount)
+{
+    XY_ASSERT(amount >= 0.f && amount <= 1.f, "value must be 0.0 - 1.0");
+    enableWater(true);
+    m_waterShader->setUniform("u_lightInfluence", amount);
+}
+
 //private
 void MeshDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {

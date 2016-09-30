@@ -49,6 +49,7 @@ namespace xy
                 "uniform float u_waterLevel = 250.0;\n"
                 "uniform float u_surfaceStrength = 0.15;\n"
                 "uniform vec4 u_waterColour = vec4(0.1, 0.4, 0.9, 1.0);\n"
+                "uniform float u_lightInfluence = 1.0;\n"
 
                 "uniform vec3 u_cameraWorldPosition;\n"
 
@@ -92,7 +93,8 @@ namespace xy
                 "            vec4 refractPosition = texture2D(u_positionMap, vec2(texCoord.x, 1.0 - texCoord.y));\n"
                 "            vec4 refraction = texture2D(u_diffuseMap, texCoord);\n"
                 "            refraction.rgb *= u_waterColour.rgb * (1.0 - refractPosition.a);\n"
-                "            refraction.rgb *= u_lightDiffuse.rgb * (1.0 - refractPosition.a);\n"
+                "            vec3 lightInfluence = refraction.rgb * (u_lightDiffuse.rgb * (1.0 - refractPosition.a));\n"
+                "            refraction.rgb = mix(refraction.rgb, lightInfluence, clamp(u_lightInfluence, 0.0, 1.0));\n"
 
                 "            gl_FragColor = refraction;\n"
                 "        }\n"
@@ -116,7 +118,7 @@ namespace xy
                 "                vec4 surfaceColour = texture2D(u_diffuseMap, texCoord);\n"
                 "                vec4 surfacePosition = texture2D(u_positionMap, vec2(texCoord.x, 1.0 - texCoord.y));\n"
                 "                surfaceColour.rgb *= u_waterColour.rgb * (1.0 - surfacePosition.a);\n"
-                "                surfaceColour.rgb *= u_lightDiffuse.rgb * (1.0 - surfacePosition.a);\n"
+                "                surfaceColour.rgb = mix(surfaceColour.rgb, u_lightDiffuse.rgb * (1.0 - surfacePosition.a), u_lightInfluence);\n"
 
                 "                float reflectionOffset = ((waterLevel - u_waterLevel) / sceneHeight);\n"
                 "                vec4 reflectPosition = texture2D(u_positionMap, vec2(gl_TexCoord[0].x, gl_TexCoord[0].y + reflectionOffset));\n"
@@ -170,8 +172,9 @@ namespace xy
                 "        }\n"
                 "        vec4 refractPosition = texture2D(u_positionMap, vec2(texCoord.x, 1.0 - texCoord.y));\n"
                 "        vec4 refraction = texture2D(u_diffuseMap, texCoord);\n"
-                "        refraction.rgb *= u_waterColour.rgb * (1.0 - refractPosition.a) * depth;\n"
-                "        refraction.rgb *= u_lightDiffuse.rgb * (1.0 - refractPosition.a) * depth;\n"
+                "        refraction.rgb *= u_waterColour.rgb * (1.0 - refractPosition.a);\n"
+                "        vec3 lightInfluence = refraction.rgb * (u_lightDiffuse.rgb * (1.0 - refractPosition.a));\n"
+                "        refraction.rgb = mix(refraction.rgb, lightInfluence, clamp(u_lightInfluence, 0.0, 1.0));\n"
 
                 /*the camera is fixed along the z-axis so we can save time by flipping the buffer vertically*/
                 "        float reflectionOffset = ((waterLevel - u_waterLevel) / sceneHeight);\n"
