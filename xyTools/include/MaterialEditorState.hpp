@@ -75,10 +75,13 @@ private:
             Vertex,
             Textured
         }shaderType = Coloured;
-        std::array<char, 4> colour;
+        std::array<sf::Uint8, 4> colour = {255, 255, 255, 255};
         std::array<std::string, 3> textures;
         bool castShadows = false;
-    }m_materialData;
+        std::string name= "Untitled";
+    };
+    std::vector<Material> m_materials;
+    Material* m_materialData;
 
     std::array<sf::Texture, 3> m_textures;
     void clearTexture(std::size_t, const sf::Color&);

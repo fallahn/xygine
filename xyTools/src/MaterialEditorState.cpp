@@ -64,7 +64,9 @@ MaterialEditorState::MaterialEditorState(xy::StateStack& stack, Context context)
     :xy::State      (stack, context),
     m_messageBus    (context.appInstance.getMessageBus()),
     m_scene         (m_messageBus),
-    m_meshRenderer  ({ context.appInstance.getVideoSettings().VideoMode.width, context.appInstance.getVideoSettings().VideoMode.height }, m_scene)
+    m_meshRenderer  ({ context.appInstance.getVideoSettings().VideoMode.width, context.appInstance.getVideoSettings().VideoMode.height }, m_scene),
+    m_materials     (1),
+    m_materialData  (&m_materials[0])
 {
     launchLoadingScreen();
     loadMaterials();
@@ -180,7 +182,7 @@ void MaterialEditorState::clearTexture(std::size_t idx, const sf::Color& colour)
     sf::Image img;
     img.create(2, 2, colour);
     m_textures[idx].loadFromImage(img);
-    m_materialData.textures[idx].clear();
+    m_materialData->textures[idx].clear();
 }
 
 void MaterialEditorState::loadMaterials()
@@ -302,6 +304,14 @@ void MaterialEditorState::buildMenu()
             //attempt to load material
         }
 
+        selectedFile.clear();
+        nim::SameLine();
+        if (nim::fileBrowseDialogue("Save as...", selectedFile, nim::Button("Save Material"))
+            && !selectedFile.empty())
+        {
+            //attempt to save material
+        }
+
         //toggle debug draw
         bool debug = drawDebug;
         nim::Checkbox("Show Debug Output", &debug);
@@ -313,7 +323,7 @@ void MaterialEditorState::buildMenu()
 
         //TODO loading / previewing animations
 
-
+        nim::Separator();
         //model controls
         nim::SliderFloat("Scale", &scale, 1.f, 50.f);
         nim::SliderAngle("Rotation X", &rotX);
@@ -339,59 +349,115 @@ void MaterialEditorState::buildMenu()
             std::string txt("Bounding Box: " + std::to_string(bb.width) + ", " + std::to_string(bb.height));
             nim::Text(txt.c_str());
         }
-
+        nim::Separator();
 
         //material list
+        static int subMeshIndex = 0;
+
         nim::NewLine();
         nim::Text("Materials");
         nim::SameLine();
         if (nim::Button("Add"))
         {
             //add sub material
+            m_materials.emplace_back();
+            m_materialData = &m_materials.back();
         }
         nim::SameLine();
-        if (nim::Button("Remove"))
+        if (nim::Button("Remove") && m_materials.size() > 1u)
         {
-            //remove selected material
+            //remove selected material            
+            m_materials.erase(m_materials.begin() + subMeshIndex);
+            m_materialData = &m_materials[subMeshIndex];
         }
 
-        static int selectedMaterial = 0;
-        const char* items[] = { "Base" };
-        nim::ListBox("", &selectedMaterial, items, 1);
+        nim::BeginChild("ScrollRegion", {0.f, 100.f}, false, ImGuiWindowFlags_HorizontalScrollbar);
+        for (auto i = 0u; i < m_materials.size(); ++i)
+        {
+            std::string label = m_materials[i].name + "##" + std::to_string(i);
+            if (nim::Selectable(label.c_str(), (i == subMeshIndex)))
+            {
+                m_materialData = &m_materials[i];
+                subMeshIndex = i;
+            }
+        }
+        nim::EndChild();
 
         //material properties
         nim::NewLine();
         nim::Text("Properties:");
+        char materialName[20] = "";
+        std::memcpy(materialName, m_materialData->name.c_str(), m_materialData->name.size());
+        materialName[m_materialData->name.size()] = '\0';
+        if (nim::InputText("Material Name", materialName, 20, ImGuiInputTextFlags_EnterReturnsTrue))
+        {
+            m_materialData->name = materialName;
+        }
+
         const char* shaders = "Coloured\0Vertex Coloured\0Textured\0";
-        static int selectedShader = 0;
+        int selectedShader = m_materialData->shaderType;
         int lastShader = selectedShader;
         nim::Combo("Shader", &selectedShader, shaders);
         if (lastShader != selectedShader)
         {
-            //TODO set sub material based on active index
-            //shader changed, update material
+            //set sub material based on active index
+            int subMeshCount = 0;
+            if (modelEntity)
+            {
+                subMeshCount = modelEntity->getComponent<xy::Model>()->getMesh().getSubMeshCount();
+            }
             switch (selectedShader)
             {
             default:
             case 0:
-                m_materialData.shaderType = m_materialData.Coloured;
-                if(modelEntity) modelEntity->getComponent<xy::Model>()->setBaseMaterial(m_materialResource.get(MaterialID::Default));
+                m_materialData->shaderType = m_materialData->Coloured;
+                if (modelEntity)
+                {
+                    if (subMeshIndex > 0 && subMeshIndex < subMeshCount)
+                    {
+                        modelEntity->getComponent<xy::Model>()->setSubMaterial(m_materialResource.get(MaterialID::Default), subMeshIndex);
+                    }
+                    else
+                    {
+                        modelEntity->getComponent<xy::Model>()->setBaseMaterial(m_materialResource.get(MaterialID::Default));
+                    }
+                }
                 break;
             case 1:
-                m_materialData.shaderType = m_materialData.Vertex;
-                if (modelEntity) modelEntity->getComponent<xy::Model>()->setBaseMaterial(m_materialResource.get(MaterialID::VertexColoured));
+                m_materialData->shaderType = m_materialData->Vertex;
+                if (modelEntity)
+                {
+                    if (subMeshIndex > 0 && subMeshIndex < subMeshCount)
+                    {
+                        modelEntity->getComponent<xy::Model>()->setSubMaterial(m_materialResource.get(MaterialID::VertexColoured), subMeshIndex);
+                    }
+                    else
+                    {
+                        modelEntity->getComponent<xy::Model>()->setBaseMaterial(m_materialResource.get(MaterialID::VertexColoured));
+                    }
+                }
                 break;
             case 2:
-                m_materialData.shaderType = m_materialData.Textured;
-                if (modelEntity) modelEntity->getComponent<xy::Model>()->setBaseMaterial(m_materialResource.get(MaterialID::Textured));
+                m_materialData->shaderType = m_materialData->Textured;
+                if (modelEntity)
+                {
+                    if (subMeshIndex > 0 && subMeshIndex < subMeshCount)
+                    {
+                        modelEntity->getComponent<xy::Model>()->setSubMaterial(m_materialResource.get(MaterialID::Textured), subMeshIndex);
+                    }
+                    else
+                    {
+                        modelEntity->getComponent<xy::Model>()->setBaseMaterial(m_materialResource.get(MaterialID::Textured));
+                    }
+                }
                 break;
             }
         }
         //TODO if model loaded use submesh count
         //to create index selection for material
-        bool castShadows = m_materialData.castShadows;
-        nim::Checkbox("Cast Shadows", &m_materialData.castShadows);
-        if (castShadows != m_materialData.castShadows)
+        bool castShadows = m_materialData->castShadows;
+        nim::Checkbox("Cast Shadows", &m_materialData->castShadows);
+        if (castShadows != m_materialData->castShadows)
         {
             /*if (castShadows)
             {
@@ -410,6 +476,17 @@ void MaterialEditorState::buildMenu()
         if (selectedShader == 0)
         {
             //show colour picker
+            float c[] = { m_materialData->colour[0] / 255.f, m_materialData->colour[1] / 255.f, m_materialData->colour[2] / 255.f };
+            nim::ColorEdit3("Colour", c);
+            m_materialData->colour[0] = static_cast<sf::Uint8>(c[0] * 255.f);
+            m_materialData->colour[1] = static_cast<sf::Uint8>(c[1] * 255.f);
+            m_materialData->colour[2] = static_cast<sf::Uint8>(c[2] * 255.f);
+            m_materialData->colour[3] = 255;
+
+            if (xy::MaterialProperty* mp = m_materialResource.get(MaterialID::Default).getProperty("u_colour"))
+            {
+                mp->setValue(sf::Color(m_materialData->colour[0], m_materialData->colour[1], m_materialData->colour[2]));
+            }
         }
         else if (selectedShader == 2)
         {            
@@ -419,12 +496,12 @@ void MaterialEditorState::buildMenu()
             
             //show texture list
             //DIFFUSE
-            if (nim::fileBrowseDialogue("Select Diffuse Texture", m_materialData.textures[0], nim::Button("Diffuse Texture", { 120.f, 20.f })))
+            if (nim::fileBrowseDialogue("Select Diffuse Texture", m_materialData->textures[0], nim::Button("Diffuse Texture", { 120.f, 20.f })))
             {
-                if (m_textures[0].loadFromFile(m_materialData.textures[0]))
+                if (m_textures[0].loadFromFile(m_materialData->textures[0]))
                 {
                     m_materialResource.get(MaterialID::Textured).getProperty("u_diffuseMap")->setValue(m_textures[0]);
-                    diffuseName = xy::FileSystem::getFileName(m_materialData.textures[0]);
+                    diffuseName = xy::FileSystem::getFileName(m_materialData->textures[0]);
                 }
             }
             nim::SameLine();
@@ -437,12 +514,12 @@ void MaterialEditorState::buildMenu()
             nim::Text(diffuseName.c_str());
 
             //MASK
-            if (nim::fileBrowseDialogue("Select Mask Texture", m_materialData.textures[1], nim::Button("Mask Texture", { 120.f, 20.f })))
+            if (nim::fileBrowseDialogue("Select Mask Texture", m_materialData->textures[1], nim::Button("Mask Texture", { 120.f, 20.f })))
             {
-                if (m_textures[1].loadFromFile(m_materialData.textures[1]))
+                if (m_textures[1].loadFromFile(m_materialData->textures[1]))
                 {
                     m_materialResource.get(MaterialID::Textured).getProperty("u_maskMap")->setValue(m_textures[1]);
-                    maskName = xy::FileSystem::getFileName(m_materialData.textures[1]);
+                    maskName = xy::FileSystem::getFileName(m_materialData->textures[1]);
                 }
             }
             nim::SameLine();
@@ -455,12 +532,12 @@ void MaterialEditorState::buildMenu()
             nim::Text(maskName.c_str());
 
             //NORMAL
-            if (nim::fileBrowseDialogue("Select Normal Texture", m_materialData.textures[2], nim::Button("Normal Texture", { 120.f, 20.f })))
+            if (nim::fileBrowseDialogue("Select Normal Texture", m_materialData->textures[2], nim::Button("Normal Texture", { 120.f, 20.f })))
             {
-                if (m_textures[2].loadFromFile(m_materialData.textures[2]))
+                if (m_textures[2].loadFromFile(m_materialData->textures[2]))
                 {
                     m_materialResource.get(MaterialID::Textured).getProperty("u_normalMap")->setValue(m_textures[2]);
-                    normalName = xy::FileSystem::getFileName(m_materialData.textures[2]);
+                    normalName = xy::FileSystem::getFileName(m_materialData->textures[2]);
                 }
             }
             nim::SameLine();
@@ -504,7 +581,7 @@ void MaterialEditorState::loadModel(const std::string& path)
 
     auto model = m_meshRenderer.createModel(meshID++, m_messageBus);
  
-    switch (m_materialData.shaderType)
+    switch (m_materialData->shaderType)
     {
     default:
     case 0:

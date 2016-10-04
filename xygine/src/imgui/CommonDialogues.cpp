@@ -68,11 +68,17 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
                 refresh = true;
             }
         }
+
+        static char fileName[50] = "";
+        
         for (const auto& file : files)
         {
             //set output 
             if (nim::Selectable(file.c_str(), false, ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowDoubleClick))
             {
+                std::memcpy(fileName, file.data(), file.size());
+                fileName[file.size()] = '\0';
+
                 if (nim::IsMouseDoubleClicked(0))
                 {
                     output = currentDir + "/" + file;
@@ -89,15 +95,27 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
             directories = xy::FileSystem::listDirectories(currentDir);
             files = xy::FileSystem::listFiles(currentDir);
         }
-
         nim::EndChild();
 
+        nim::InputText("", fileName, 50);
+        nim::SameLine();
+
+        if (nim::Button("Select"))
+        {
+            output = currentDir + "/" + fileName;
+            fileName[0] = '\0';
+            nim::CloseCurrentPopup();
+            nim::EndPopup();
+            return true;
+        }
+        nim::SameLine();
         if (nim::Button("Close"))
         {
             nim::CloseCurrentPopup();
+            fileName[0] = '\0';
         }
         nim::EndPopup();
-        return false;
+        return false;        
     }
     return false;
 }
