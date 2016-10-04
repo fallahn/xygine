@@ -75,7 +75,7 @@ private:
             Vertex,
             Textured
         }shaderType = Coloured;
-        std::array<sf::Uint8, 4> colour = {255, 255, 255, 255};
+        std::array<sf::Uint8, 4> colour = {{255, 255, 255, 255}};
         std::array<std::string, 3> textures;
         bool castShadows = false;
         std::string name= "Untitled";
