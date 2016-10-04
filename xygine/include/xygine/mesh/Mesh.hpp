@@ -31,6 +31,7 @@ source distribution.
 #include <xygine/mesh/VertexLayout.hpp>
 #include <xygine/mesh/BoundingBox.hpp>
 #include <xygine/detail/GLExtensions.hpp>
+#include <xygine/detail/Aliases.hpp>
 
 #include <vector>
 #include <memory>

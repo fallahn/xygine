@@ -30,6 +30,8 @@ source distribution.
 
 #include <xygine/Config.hpp>
 #include <xygine/detail/GLCheck.hpp>
+#include <xygine/detail/Aliases.hpp>
+#include <xygine/detail/GLExtensions.hpp>
 #include <xygine/Assert.hpp>
 
 #include <string>

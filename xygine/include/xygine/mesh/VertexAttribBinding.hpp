@@ -29,6 +29,8 @@ source distribution.
 #define XY_VERT_ATTRIB_HPP_
 
 #include <xygine/Config.hpp>
+#include <xygine/detail/Aliases.hpp>
+#include <xygine/detail/GLExtensions.hpp>
 
 #include <unordered_map>
 #include <string>

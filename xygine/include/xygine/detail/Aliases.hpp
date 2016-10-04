@@ -25,35 +25,18 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/detail/GLExtensions.hpp>
-#include <xygine/ShaderResource.hpp>
-#include <xygine/detail/GLCheck.hpp>
+#ifndef XY_ALIASES_HPP_
+#define XY_ALIASES_HPP_
 
-#include <SFML/Graphics/Shader.hpp>
-
-#include <xygine/Assert.hpp>
-
-using namespace xy;
-
-ShaderResource::ShaderResource(){}
-
-//public
-sf::Shader& ShaderResource::get(ShaderResource::ID type)
+namespace xy
 {
-    auto result = m_shaders.find(type);
-    XY_ASSERT(result != m_shaders.end(), "shader not loaded - did you forget to preload this shader?");
-
-    return *result->second;
+    using VertexBufferID = unsigned int;
+    using IndexBufferID = unsigned int;
+    using VertexAttribID = int;
+    using UniformBufferID = unsigned int;
+    using UniformBlockID = unsigned int;
+    using UniformID = int;
+    using ShaderID = unsigned int;
 }
 
-void ShaderResource::preload(ShaderResource::ID type, const std::string& vertShader, const std::string& fragShader)
-{
-    auto shader = std::make_unique<sf::Shader>();
-#ifndef _DEBUG_
-    shader->loadFromMemory(vertShader, fragShader);
-#else
-    XY_ASSERT(shader->loadFromMemory(vertShader, fragShader), "failed to create shader");
-#endif //_DEBUG_
-
-    m_shaders.insert(std::make_pair(type, std::move(shader)));
-}
+#endif //XY_ALIASES_HPP_

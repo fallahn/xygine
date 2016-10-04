@@ -920,6 +920,9 @@
     <ClInclude Include="include\xygine\mesh\shaders\SSWater.hpp">
       <Filter>Header Files\mesh\shaders</Filter>
     </ClInclude>
+    <ClInclude Include="include\xygine\detail\Aliases.hpp">
+      <Filter>Header Files\detail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xygine\mesh\shaders\Water.inl">

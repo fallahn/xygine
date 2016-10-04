@@ -29,6 +29,7 @@ source distribution.
 #define XY_MATERIAL_HPP_
 
 #include <xygine/mesh/RenderPass.hpp>
+#include <xygine/detail/Aliases.hpp>
 
 #include <SFML/Graphics/Glsl.hpp>
 
@@ -70,7 +71,7 @@ namespace xy
         Material& operator = (const Material&) = delete;
 
         /*
-        !\brief Adds a new pass which ues the given shader, mapped to the given ID
+        !\brief Adds a new pass which uses the given shader, mapped to the given ID
         */
         void addRenderPass(RenderPass::ID, sf::Shader&);
 
@@ -79,6 +80,11 @@ namespace xy
         \returns nullptr if RenderPass doesn't exist
         */
         RenderPass* getRenderPass(RenderPass::ID);
+
+        /*!
+        \brief Removes the RenderPass with the given ID if it exists
+        */
+        void removeRenderPass(RenderPass::ID);
 
         /*!
         \brief Sets the current active RenderPass.

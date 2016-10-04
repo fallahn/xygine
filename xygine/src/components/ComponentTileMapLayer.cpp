@@ -25,17 +25,18 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#include <xygine/detail/GLExtensions.hpp>
+#include <xygine/detail/GLCheck.hpp>
+
+#include <xygine/ShaderResource.hpp>
 #include <xygine/components/TileMapLayer.hpp>
 #include <xygine/Entity.hpp>
 #include <xygine/Scene.hpp>
 #include <xygine/Reports.hpp>
 #include <xygine/Resource.hpp>
-#include <xygine/ShaderResource.hpp>
+
 #include <xygine/shaders/Default.hpp>
 #include <xygine/shaders/Tilemap.hpp>
-
-#include <xygine/detail/GLCheck.hpp>
-#include <xygine/detail/GLExtensions.hpp>
 
 #include <xygine/tilemap/TileLayer.hpp>
 #include <xygine/tilemap/ImageLayer.hpp>

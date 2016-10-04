@@ -29,6 +29,8 @@ source distribution.
 #define XY_DEPTH_RENDER_TEXTURE_HPP_
 
 #include <xygine/Config.hpp>
+#include <xygine/detail/Aliases.hpp>
+#include <xygine/detail/GLExtensions.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 

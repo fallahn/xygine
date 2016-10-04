@@ -37,6 +37,10 @@ source distribution.
 #include <xygine/mesh/MeshRenderer.hpp>
 #include <xygine/Scene.hpp>
 
+#include <SFML/Graphics/Texture.hpp>
+
+#include <array>
+
 namespace xy
 {
     class MessageBus;
@@ -62,6 +66,22 @@ private:
     xy::MaterialResource m_materialResource;
     xy::Scene m_scene;
     xy::MeshRenderer m_meshRenderer;
+
+    struct Material
+    {
+        enum
+        {
+            Coloured,
+            Vertex,
+            Textured
+        }shaderType = Coloured;
+        std::array<char, 4> colour;
+        std::array<std::string, 3> textures;
+        bool castShadows = false;
+    }m_materialData;
+
+    std::array<sf::Texture, 3> m_textures;
+    void clearTexture(std::size_t, const sf::Color&);
 
     void loadMaterials();
     void buildMenu();

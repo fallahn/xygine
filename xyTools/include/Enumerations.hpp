@@ -30,28 +30,36 @@ source distribution.
 #ifndef XYT_ENUMS_HPP_
 #define XYT_ENUMS_HPP_
 
-enum MaterialID
+namespace MaterialID
 {
-    Default,
-    DefaultSkinned,
-    VertexColoured,
-    VertexColouredSkinned,
-    Box,
-    count
-};
+    enum
+    {
+        Default,
+        DefaultSkinned,
+        VertexColoured,
+        VertexColouredSkinned,
+        Textured,
+        TexturedSkinned,
+        Box,
+        count
+    };
+}
 
-enum ShaderID
+namespace ShaderID
 {
-    Coloured,
-    ColouredSkinned,
-    Textured,
-    TexturedSkinned,
-    TexturedBumped,
-    TexturedBumpedSkinned,
-    VertColoured,
-    VertColouredSkinned,
-    Shadow,
-    ShadowSkinned
-};
+    enum
+    {
+        Coloured,
+        ColouredSkinned,
+        Textured,
+        TexturedSkinned,
+        TexturedBumped,
+        TexturedBumpedSkinned,
+        VertColoured,
+        VertColouredSkinned,
+        Shadow,
+        ShadowSkinned
+    };
+}
 
 #endif //XYT_ENUMS_HPP_

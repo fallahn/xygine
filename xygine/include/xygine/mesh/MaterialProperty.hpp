@@ -29,6 +29,8 @@ source distribution.
 #define XY_MATERIAL_PROPERTY_HPP_
 
 #include <xygine/Config.hpp>
+#include <xygine/detail/Aliases.hpp>
+#include <xygine/detail/GLExtensions.hpp>
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>

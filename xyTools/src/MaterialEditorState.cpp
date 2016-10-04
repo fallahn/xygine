@@ -31,6 +31,7 @@ source distribution.
 #include <xygine/App.hpp>
 #include <xygine/imgui/imgui.h>
 #include <xygine/imgui/CommonDialogues.hpp>
+#include <xygine/imgui/imgui_sfml.h>
 #include <xygine/Reports.hpp>
 #include <xygine/util/Math.hpp>
 #include <xygine/components/PointLight.hpp>
@@ -174,6 +175,14 @@ void MaterialEditorState::handleMessage(const xy::Message& msg)
 }
 
 //private
+void MaterialEditorState::clearTexture(std::size_t idx, const sf::Color& colour)
+{
+    sf::Image img;
+    img.create(2, 2, colour);
+    m_textures[idx].loadFromImage(img);
+    m_materialData.textures[idx].clear();
+}
+
 void MaterialEditorState::loadMaterials()
 {
     m_shaderResource.preload(ShaderID::Coloured, DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
@@ -192,6 +201,21 @@ void MaterialEditorState::loadMaterials()
     vertColouredMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     vertColouredMaterial.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(ShaderID::Shadow));
     vertColouredMaterial.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
+
+
+    for (auto& t : m_textures)t.setRepeated(true);
+
+    clearTexture(0, sf::Color::White);
+    clearTexture(1, sf::Color::Black);
+    clearTexture(2, { 127, 127, 255 });
+
+    auto& texturedMaterial = m_materialResource.add(MaterialID::Textured, m_shaderResource.get(ShaderID::TexturedBumped));
+    texturedMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    texturedMaterial.addProperty({ "u_diffuseMap", m_textures[0] });
+    texturedMaterial.addProperty({ "u_maskMap", m_textures[1] });
+    texturedMaterial.addProperty({ "u_normalMap", m_textures[2] });
+    texturedMaterial.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(ShaderID::Shadow));
+    texturedMaterial.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
 
     auto& boxMaterial = m_materialResource.add(MaterialID::Box, m_shaderResource.get(ShaderID::Textured));
     boxMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
@@ -256,7 +280,7 @@ void MaterialEditorState::buildMenu()
         //load model / material
         static std::string selectedFile;
         
-        nim::SetNextWindowSizeConstraints({ 200.f, 500.f }, { 800.f, 600.f });
+        nim::SetNextWindowSizeConstraints({ 200.f, 500.f }, { 800.f, 720.f });
         if (!nim::Begin("Model Viewer and Material Editor", nullptr, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_ShowBorders))
         {
             nim::End();
@@ -287,8 +311,6 @@ void MaterialEditorState::buildMenu()
         }
         drawDebug = debug;
 
-
-        //TODO loading images, saving materials
         //TODO loading / previewing animations
 
 
@@ -316,6 +338,139 @@ void MaterialEditorState::buildMenu()
             auto bb = modelEntity->getComponent<xy::Model>()->getMesh().getBoundingBox().asFloatRect();
             std::string txt("Bounding Box: " + std::to_string(bb.width) + ", " + std::to_string(bb.height));
             nim::Text(txt.c_str());
+        }
+
+
+        //material list
+        nim::NewLine();
+        nim::Text("Materials");
+        nim::SameLine();
+        if (nim::Button("Add"))
+        {
+            //add sub material
+        }
+        nim::SameLine();
+        if (nim::Button("Remove"))
+        {
+            //remove selected material
+        }
+
+        static int selectedMaterial = 0;
+        const char* items[] = { "Base" };
+        nim::ListBox("", &selectedMaterial, items, 1);
+
+        //material properties
+        nim::NewLine();
+        nim::Text("Properties:");
+        const char* shaders = "Coloured\0Vertex Coloured\0Textured\0";
+        static int selectedShader = 0;
+        int lastShader = selectedShader;
+        nim::Combo("Shader", &selectedShader, shaders);
+        if (lastShader != selectedShader)
+        {
+            //TODO set sub material based on active index
+            //shader changed, update material
+            switch (selectedShader)
+            {
+            default:
+            case 0:
+                m_materialData.shaderType = m_materialData.Coloured;
+                if(modelEntity) modelEntity->getComponent<xy::Model>()->setBaseMaterial(m_materialResource.get(MaterialID::Default));
+                break;
+            case 1:
+                m_materialData.shaderType = m_materialData.Vertex;
+                if (modelEntity) modelEntity->getComponent<xy::Model>()->setBaseMaterial(m_materialResource.get(MaterialID::VertexColoured));
+                break;
+            case 2:
+                m_materialData.shaderType = m_materialData.Textured;
+                if (modelEntity) modelEntity->getComponent<xy::Model>()->setBaseMaterial(m_materialResource.get(MaterialID::Textured));
+                break;
+            }
+        }
+        //TODO if model loaded use submesh count
+        //to create index selection for material
+        bool castShadows = m_materialData.castShadows;
+        nim::Checkbox("Cast Shadows", &m_materialData.castShadows);
+        if (castShadows != m_materialData.castShadows)
+        {
+            /*if (castShadows)
+            {
+                m_materialResource.get(MaterialID::Default).addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(ShaderID::Shadow));
+                m_materialResource.get(MaterialID::VertexColoured).addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(ShaderID::Shadow));
+                m_materialResource.get(MaterialID::Textured).addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(ShaderID::Shadow));
+            }
+            else
+            {
+                m_materialResource.get(MaterialID::Default).removeRenderPass(xy::RenderPass::ID::ShadowMap);
+                m_materialResource.get(MaterialID::VertexColoured).removeRenderPass(xy::RenderPass::ID::ShadowMap);
+                m_materialResource.get(MaterialID::Textured).removeRenderPass(xy::RenderPass::ID::ShadowMap);
+            }*/
+        }
+
+        if (selectedShader == 0)
+        {
+            //show colour picker
+        }
+        else if (selectedShader == 2)
+        {            
+            static std::string diffuseName;
+            static std::string maskName;
+            static std::string normalName;
+            
+            //show texture list
+            //DIFFUSE
+            if (nim::fileBrowseDialogue("Select Diffuse Texture", m_materialData.textures[0], nim::Button("Diffuse Texture", { 120.f, 20.f })))
+            {
+                if (m_textures[0].loadFromFile(m_materialData.textures[0]))
+                {
+                    m_materialResource.get(MaterialID::Textured).getProperty("u_diffuseMap")->setValue(m_textures[0]);
+                    diffuseName = xy::FileSystem::getFileName(m_materialData.textures[0]);
+                }
+            }
+            nim::SameLine();
+            if (nim::Button("Clear"))
+            {
+                clearTexture(0, sf::Color::White);
+                diffuseName.clear();
+            }
+            nim::Image(m_textures[0], { 50.f, 50.f });          
+            nim::Text(diffuseName.c_str());
+
+            //MASK
+            if (nim::fileBrowseDialogue("Select Mask Texture", m_materialData.textures[1], nim::Button("Mask Texture", { 120.f, 20.f })))
+            {
+                if (m_textures[1].loadFromFile(m_materialData.textures[1]))
+                {
+                    m_materialResource.get(MaterialID::Textured).getProperty("u_maskMap")->setValue(m_textures[1]);
+                    maskName = xy::FileSystem::getFileName(m_materialData.textures[1]);
+                }
+            }
+            nim::SameLine();
+            if (nim::Button("Clear##M"))
+            {
+                clearTexture(1, sf::Color::Black);
+                maskName.clear();
+            }
+            nim::Image(m_textures[1], { 50.f, 50.f });
+            nim::Text(maskName.c_str());
+
+            //NORMAL
+            if (nim::fileBrowseDialogue("Select Normal Texture", m_materialData.textures[2], nim::Button("Normal Texture", { 120.f, 20.f })))
+            {
+                if (m_textures[2].loadFromFile(m_materialData.textures[2]))
+                {
+                    m_materialResource.get(MaterialID::Textured).getProperty("u_normalMap")->setValue(m_textures[2]);
+                    normalName = xy::FileSystem::getFileName(m_materialData.textures[2]);
+                }
+            }
+            nim::SameLine();
+            if (nim::Button("Clear##N"))
+            {
+                clearTexture(2, { 127, 127, 255 });
+                normalName.clear();
+            }
+            nim::Image(m_textures[2], { 50.f, 50.f });
+            nim::Text(normalName.c_str());
         }
 
         nim::End();
@@ -348,16 +503,20 @@ void MaterialEditorState::loadModel(const std::string& path)
     getContext().renderWindow.setTitle(xy::FileSystem::getFileName(path));
 
     auto model = m_meshRenderer.createModel(meshID++, m_messageBus);
-
-    auto isVertexColoured = model->getMesh().getVertexLayout().getElementIndex(xy::VertexLayout::Element::Type::Colour);
-    if (isVertexColoured == -1) //TODO check if we need skinned equivalent
+ 
+    switch (m_materialData.shaderType)
     {
+    default:
+    case 0:
         model->setBaseMaterial(m_materialResource.get(MaterialID::Default));
-    }
-    else
-    {
+        break;
+    case 1:
         model->setBaseMaterial(m_materialResource.get(MaterialID::VertexColoured));
-    }   
+        break;
+    case 2:
+        model->setBaseMaterial(m_materialResource.get(MaterialID::Textured));
+        break;
+    }
 
     modelEntity->addComponent(model);
 

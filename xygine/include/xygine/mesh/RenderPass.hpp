@@ -29,6 +29,8 @@ source distribution.
 #define XY_RENDER_PASS_HPP_
 
 #include <xygine/Config.hpp>
+#include <xygine/detail/Aliases.hpp>
+#include <xygine/detail/GLExtensions.hpp>
 #include <xygine/mesh/MaterialProperty.hpp>
 
 #include <SFML/Graphics/Shader.hpp>

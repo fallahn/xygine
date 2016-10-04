@@ -24,10 +24,9 @@ and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any
 source distribution.
 *********************************************************************/
-
+#include <xygine/detail/GLExtensions.hpp>
 #include <xygine/mesh/UniformBuffer.hpp>
 #include <xygine/detail/GLCheck.hpp>
-#include <xygine/detail/GLExtensions.hpp>
 #include <xygine/Log.hpp>
 
 using namespace xy;

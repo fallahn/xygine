@@ -76,6 +76,12 @@ RenderPass* Material::getRenderPass(RenderPass::ID id)
     return nullptr;
 }
 
+void Material::removeRenderPass(RenderPass::ID id)
+{
+    //m_passes.erase(id);
+    //NOT that simple. This won't update the VAOs bound in the material
+}
+
 bool Material::setActivePass(RenderPass::ID id) const
 {
     auto result = m_passes.find(id);
