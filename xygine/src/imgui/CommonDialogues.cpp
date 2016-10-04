@@ -29,6 +29,8 @@ source distribution.
 #include <xygine/imgui/imgui.h>
 #include <xygine/FileSystem.hpp>
 
+#include <cstring>
+
 bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool open)
 {
     static std::string currentDir = xy::FileSystem::getCurrentDirectory();
