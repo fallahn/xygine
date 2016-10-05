@@ -176,6 +176,7 @@
     <ClCompile Include="src\mesh\CubeBuilder.cpp" />
     <ClCompile Include="src\mesh\DepthRenderTexture.cpp" />
     <ClCompile Include="src\mesh\IQMBuilder.cpp" />
+    <ClCompile Include="src\mesh\MaterialDefinition.cpp" />
     <ClCompile Include="src\mesh\MaterialProperty.cpp" />
     <ClCompile Include="src\mesh\MaterialResource.cpp" />
     <ClCompile Include="src\mesh\Mesh.cpp" />
@@ -293,6 +294,7 @@
     <ClInclude Include="include\xygine\mesh\DepthRenderTexture.hpp" />
     <ClInclude Include="include\xygine\mesh\IQMBuilder.hpp" />
     <ClInclude Include="include\xygine\mesh\Material.hpp" />
+    <ClInclude Include="include\xygine\mesh\MaterialDefinition.hpp" />
     <ClInclude Include="include\xygine\mesh\MaterialProperty.hpp" />
     <ClInclude Include="include\xygine\mesh\MaterialResource.hpp" />
     <ClInclude Include="include\xygine\mesh\Mesh.hpp" />

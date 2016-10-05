@@ -67,6 +67,9 @@ source distribution.
 namespace ImGui {}
 namespace nim = ImGui;
 
+namespace picojson {}
+namespace pj = picojson;
+
 //xygine-wide consts
 #include <SFML/System/Vector2.hpp>
 namespace xy

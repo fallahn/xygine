@@ -432,6 +432,9 @@
     <ClCompile Include="src\ui\UIKeyBinds.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="src\mesh\MaterialDefinition.cpp">
+      <Filter>Source Files\mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -922,6 +925,9 @@
     </ClInclude>
     <ClInclude Include="include\xygine\detail\Aliases.hpp">
       <Filter>Header Files\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\mesh\MaterialDefinition.hpp">
+      <Filter>Header Files\mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

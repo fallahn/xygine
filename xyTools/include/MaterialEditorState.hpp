@@ -35,6 +35,7 @@ source distribution.
 #include <xygine/ShaderResource.hpp>
 #include <xygine/mesh/MaterialResource.hpp>
 #include <xygine/mesh/MeshRenderer.hpp>
+#include <xygine/mesh/MaterialDefinition.hpp>
 #include <xygine/Scene.hpp>
 
 #include <SFML/Graphics/Texture.hpp>
@@ -67,21 +68,8 @@ private:
     xy::Scene m_scene;
     xy::MeshRenderer m_meshRenderer;
 
-    struct Material
-    {
-        enum
-        {
-            Coloured,
-            Vertex,
-            Textured
-        }shaderType = Coloured;
-        std::array<sf::Uint8, 4> colour = {{255, 255, 255, 255}};
-        std::array<std::string, 3> textures;
-        bool castShadows = false;
-        std::string name= "Untitled";
-    };
-    std::vector<Material> m_materials;
-    Material* m_materialData;
+    std::vector<xy::MaterialDefinition> m_materials;
+    xy::MaterialDefinition* m_materialData;
 
     std::array<sf::Texture, 3> m_textures;
     void clearTexture(std::size_t, const sf::Color&);

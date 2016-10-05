@@ -34,6 +34,7 @@ source distribution.
 bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool open)
 {
     static std::string currentDir = xy::FileSystem::getCurrentDirectory();
+    static const std::string rootDir = currentDir;
     static auto directories = xy::FileSystem::listDirectories(currentDir);
     static auto files = xy::FileSystem::listFiles(currentDir);
     
@@ -63,11 +64,14 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
         bool refresh = false;
         for (const auto& dir : directories)
         {
-            //move to selected dir on click
-            if (nim::Selectable(dir.c_str()))
+            //move to selected dir on double click
+            if (nim::Selectable(dir.c_str(), false, ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowDoubleClick))
             {
-                currentDir += "/" + dir;
-                refresh = true;
+                if (nim::IsMouseDoubleClicked(0))
+                {
+                    currentDir += "/" + dir;
+                    refresh = true;
+                }
             }
         }
 
@@ -83,7 +87,8 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
 
                 if (nim::IsMouseDoubleClicked(0))
                 {
-                    output = currentDir + "/" + file;
+                    output = xy::FileSystem::getRelativePath(currentDir + "/" + file, rootDir);
+
                     nim::EndChild();
                     nim::CloseCurrentPopup();
                     nim::EndPopup();
@@ -104,7 +109,8 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
 
         if (nim::Button("Select"))
         {
-            output = currentDir + "/" + fileName;
+            output = xy::FileSystem::getRelativePath(currentDir + "/" + fileName, rootDir);
+
             fileName[0] = '\0';
             nim::CloseCurrentPopup();
             nim::EndPopup();

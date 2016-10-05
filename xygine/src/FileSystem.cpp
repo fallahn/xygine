@@ -344,3 +344,36 @@ std::string FileSystem::getCurrentDirectory()
     return{ output };
 #endif //_WIN32
 }
+
+std::string FileSystem::getRelativePath(std::string& path, const std::string& root)
+{
+    auto currentPath = root;
+    std::replace(std::begin(path), std::end(path), '\\', '/');
+    std::replace(std::begin(currentPath), std::end(currentPath), '\\', '/');
+    
+    int i = -1;
+    auto pos = std::string::npos;
+    auto length = 0;
+    auto currentPos = std::string::npos;
+
+    do
+    {
+        pos = path.find(currentPath);
+        length = currentPath.size();
+
+        currentPos = currentPath.find_last_of('/');
+        if (currentPos != std::string::npos)
+        {
+            currentPath = currentPath.substr(0, currentPos);
+        }
+        i++;
+    } while (pos == std::string::npos && currentPos != std::string::npos);
+
+    std::string retVal;
+    while (i-- > 0)
+    {
+        retVal += "../";
+    }
+    retVal += path.substr(pos + length + 1); //extra 1 for trailing '/'
+    return std::move(retVal);
+}

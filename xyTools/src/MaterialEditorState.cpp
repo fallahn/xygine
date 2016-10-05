@@ -302,6 +302,43 @@ void MaterialEditorState::buildMenu()
             && !selectedFile.empty())
         {
             //attempt to load material
+            m_materials = xy::MaterialDefinition::loadFile(selectedFile);
+            if (!m_materials.empty())
+            {
+                m_materialData = &m_materials[0];
+                for (auto i = 0u; i < m_textures.size(); ++i)
+                {
+                    if (!m_materialData->textures[i].empty())
+                    {
+                        m_textures[i].loadFromFile(m_materialData->textures[i]);
+                    }
+                    else
+                    {
+                        sf::Color c;
+                        switch (i)
+                        {
+                        case 0:
+                        default:
+                            c = sf::Color::White;
+                            break;
+                        case 1:
+                            c = sf::Color::Black;
+                            break;
+                        case 2:
+                            c = sf::Color(127, 127, 255);
+                            break;
+                        }
+                        clearTexture(i, c);
+                    }
+                }
+            }
+            else
+            {
+                m_materials.emplace_back();
+                clearTexture(0, sf::Color::White);
+                clearTexture(1, sf::Color::Black);
+                clearTexture(2, sf::Color(127, 127, 255));
+            }
         }
 
         selectedFile.clear();
@@ -310,6 +347,8 @@ void MaterialEditorState::buildMenu()
             && !selectedFile.empty())
         {
             //attempt to save material
+            //TODO confirmation dialogue
+            xy::MaterialDefinition::writeFile(m_materials, selectedFile);
         }
 
         //toggle debug draw
@@ -424,7 +463,7 @@ void MaterialEditorState::buildMenu()
                 }
                 break;
             case 1:
-                m_materialData->shaderType = m_materialData->Vertex;
+                m_materialData->shaderType = m_materialData->VertexColoured;
                 if (modelEntity)
                 {
                     if (subMeshIndex > 0 && subMeshIndex < subMeshCount)
@@ -581,6 +620,8 @@ void MaterialEditorState::loadModel(const std::string& path)
 
     auto model = m_meshRenderer.createModel(meshID++, m_messageBus);
  
+    //TODO attempt to load material file, or reset if one not found
+
     switch (m_materialData->shaderType)
     {
     default:
