@@ -87,7 +87,8 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
 
                 if (nim::IsMouseDoubleClicked(0))
                 {
-                    output = xy::FileSystem::getRelativePath(currentDir + "/" + file, rootDir);
+                    std::string filepath = currentDir + "/" + file;
+                    output = xy::FileSystem::getRelativePath(filepath, rootDir);
 
                     nim::EndChild();
                     nim::CloseCurrentPopup();
@@ -109,7 +110,8 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
 
         if (nim::Button("Select"))
         {
-            output = xy::FileSystem::getRelativePath(currentDir + "/" + fileName, rootDir);
+            std::string filepath = currentDir + "/" + fileName;
+            output = xy::FileSystem::getRelativePath(filepath, rootDir);
 
             fileName[0] = '\0';
             nim::CloseCurrentPopup();

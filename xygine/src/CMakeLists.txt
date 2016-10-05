@@ -52,6 +52,7 @@ set(XY_SRC
   ${XY_DIR}/mesh/DepthRenderTexture.cpp
   ${XY_DIR}/mesh/IQMBuilder.cpp
   ${XY_DIR}/mesh/Material.cpp
+  ${XY_DIR}/mesh/MaterialDefinition.cpp
   ${XY_DIR}/mesh/MaterialProperty.cpp
   ${XY_DIR}/mesh/MaterialResource.cpp
   ${XY_DIR}/mesh/Mesh.cpp
