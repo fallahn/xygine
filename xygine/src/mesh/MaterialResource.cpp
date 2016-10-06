@@ -63,3 +63,8 @@ Material& MaterialResource::get(ID id)
     LOG("Material with ID " + std::to_string(id) + " not found", xy::Logger::Type::Warning);
     return *m_materials.find(DefaultID::Static)->second;
 }
+
+bool MaterialResource::hasMaterial(ID id) const
+{
+    return (m_materials.find(id) != m_materials.end());
+}

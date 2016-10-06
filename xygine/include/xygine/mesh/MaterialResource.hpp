@@ -75,6 +75,11 @@ namespace xy
         */
         Material& get(ID);
 
+        /*!
+        \brief Returns true if a material with given ID already exists
+        */
+        bool hasMaterial(ID) const;
+
         enum DefaultID
         {
             Skinned = 0xffff,
