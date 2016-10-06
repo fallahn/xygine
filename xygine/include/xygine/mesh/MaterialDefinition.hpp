@@ -58,7 +58,7 @@ namespace xy
         \brief Returns a unique ID for the definition, which can be used when caching
         materials with the MaterialResource.
         */
-        std::int32_t uid()
+        std::int32_t uid() const
         {
             auto hash = std::hash<std::string>();
             return 
