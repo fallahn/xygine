@@ -42,8 +42,9 @@ namespace ImGui
     \param std::string Title of the window
     \param std::string Result of selected file
     \param bool Show the window or not
+    \param bool Set to true if the returned file path should be relative to the current directory
     */
-    XY_EXPORT_API bool fileBrowseDialogue(const std::string&, std::string&, bool);
+    XY_EXPORT_API bool fileBrowseDialogue(const std::string&, std::string&, bool, bool = true);
 
     /*!
     \brief Shows a message box window.

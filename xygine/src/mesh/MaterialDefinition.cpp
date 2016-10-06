@@ -181,12 +181,14 @@ void MaterialDefinition::writeFile(const std::vector<MaterialDefinition>& matDef
         colour["a"] = pj::value(static_cast<double>(def.colour[3]));
         matObject["colour"] = pj::value(colour);
 
-        pj::object textures;
-        textures["diffuse"] = pj::value(def.textures[0]);
-        textures["mask"] = pj::value(def.textures[1]);
-        textures["normal"] = pj::value(def.textures[2]);
-        matObject["textures"] = pj::value(textures);
-
+        if (def.shaderType == MaterialDefinition::Textured)
+        {
+            pj::object textures;
+            textures["diffuse"] = pj::value(def.textures[0]);
+            textures["mask"] = pj::value(def.textures[1]);
+            textures["normal"] = pj::value(def.textures[2]);
+            matObject["textures"] = pj::value(textures);
+        }
         matObject["castShadows"] = pj::value(def.castShadows);
         matObject["name"] = pj::value(def.name);
 

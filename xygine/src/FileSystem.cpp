@@ -345,7 +345,7 @@ std::string FileSystem::getCurrentDirectory()
 #endif //_WIN32
 }
 
-std::string FileSystem::getRelativePath(std::string& path, const std::string& root)
+std::string FileSystem::getRelativePath(std::string path, const std::string& root)
 {
     auto currentPath = root;
     std::replace(std::begin(path), std::end(path), '\\', '/');

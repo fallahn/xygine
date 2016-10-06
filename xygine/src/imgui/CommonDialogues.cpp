@@ -31,7 +31,7 @@ source distribution.
 
 #include <cstring>
 
-bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool open)
+bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool open, bool returnRelative)
 {
     static std::string currentDir = xy::FileSystem::getCurrentDirectory();
     static const std::string rootDir = currentDir;
@@ -88,8 +88,14 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
                 if (nim::IsMouseDoubleClicked(0))
                 {
                     std::string filepath = currentDir + "/" + file;
-                    output = xy::FileSystem::getRelativePath(filepath, rootDir);
-
+                    if (returnRelative)
+                    {
+                        output = xy::FileSystem::getRelativePath(filepath, rootDir);
+                    }
+                    else
+                    {
+                        output = filepath;
+                    }
                     nim::EndChild();
                     nim::CloseCurrentPopup();
                     nim::EndPopup();
@@ -111,8 +117,14 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
         if (nim::Button("Select"))
         {
             std::string filepath = currentDir + "/" + fileName;
-            output = xy::FileSystem::getRelativePath(filepath, rootDir);
-
+            if (returnRelative)
+            {
+                output = xy::FileSystem::getRelativePath(filepath, rootDir);
+            }
+            else
+            {
+                output = filepath;
+            }
             fileName[0] = '\0';
             nim::CloseCurrentPopup();
             nim::EndPopup();

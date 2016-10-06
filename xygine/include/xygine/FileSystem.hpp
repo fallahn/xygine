@@ -90,7 +90,7 @@ namespace xy
         \param path Absolute path to convert
         \param root Absolute path to root directory to which the result should be relative
         */
-        static std::string getRelativePath(std::string& path, const std::string& root);
+        static std::string getRelativePath(std::string path, const std::string& root);
     private:
 
     };
