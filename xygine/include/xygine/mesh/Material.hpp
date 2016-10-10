@@ -82,11 +82,6 @@ namespace xy
         RenderPass* getRenderPass(RenderPass::ID);
 
         /*!
-        \brief Removes the RenderPass with the given ID if it exists
-        */
-        void removeRenderPass(RenderPass::ID);
-
-        /*!
         \brief Sets the current active RenderPass.
         All materials have a Default pass created with the shader supplied on 
         construction. Subsequent passes need to be activated before drawing in

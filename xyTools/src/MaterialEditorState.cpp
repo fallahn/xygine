@@ -57,6 +57,8 @@ namespace
     float rotZ = 0.f;
 
     sf::Vector2f lastMousePos;
+
+    xy::CullFace shadowFace = xy::CullFace::Front;
 }
 
 
@@ -197,12 +199,12 @@ void MaterialEditorState::loadMaterials()
     defaultMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     defaultMaterial.addProperty({ "u_colour", sf::Color::White });
     defaultMaterial.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(ShaderID::Shadow));
-    defaultMaterial.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
+    defaultMaterial.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::FrontAndBack);
 
     auto& vertColouredMaterial = m_materialResource.add(MaterialID::VertexColoured, m_shaderResource.get(ShaderID::VertColoured));
     vertColouredMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
     vertColouredMaterial.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(ShaderID::Shadow));
-    vertColouredMaterial.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
+    vertColouredMaterial.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::FrontAndBack);
 
 
     for (auto& t : m_textures)t.setRepeated(true);
@@ -217,7 +219,7 @@ void MaterialEditorState::loadMaterials()
     texturedMaterial.addProperty({ "u_maskMap", m_textures[1] });
     texturedMaterial.addProperty({ "u_normalMap", m_textures[2] });
     texturedMaterial.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(ShaderID::Shadow));
-    texturedMaterial.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
+    texturedMaterial.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::FrontAndBack);
 
     auto& boxMaterial = m_materialResource.add(MaterialID::Box, m_shaderResource.get(ShaderID::Textured));
     boxMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
@@ -498,18 +500,34 @@ void MaterialEditorState::buildMenu()
         nim::Checkbox("Cast Shadows", &m_materialData->castShadows);
         if (castShadows != m_materialData->castShadows)
         {
-            /*if (castShadows)
+            if (m_materialData->castShadows)
             {
-                m_materialResource.get(MaterialID::Default).addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(ShaderID::Shadow));
-                m_materialResource.get(MaterialID::VertexColoured).addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(ShaderID::Shadow));
-                m_materialResource.get(MaterialID::Textured).addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(ShaderID::Shadow));
+                m_materialResource.get(MaterialID::Default).getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(shadowFace);
+                m_materialResource.get(MaterialID::VertexColoured).getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(shadowFace);
+                m_materialResource.get(MaterialID::Textured).getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(shadowFace);
             }
             else
             {
-                m_materialResource.get(MaterialID::Default).removeRenderPass(xy::RenderPass::ID::ShadowMap);
-                m_materialResource.get(MaterialID::VertexColoured).removeRenderPass(xy::RenderPass::ID::ShadowMap);
-                m_materialResource.get(MaterialID::Textured).removeRenderPass(xy::RenderPass::ID::ShadowMap);
-            }*/
+                m_materialResource.get(MaterialID::Default).getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::FrontAndBack);
+                m_materialResource.get(MaterialID::VertexColoured).getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::FrontAndBack);
+                m_materialResource.get(MaterialID::Textured).getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::FrontAndBack);
+            }
+        }
+        nim::SameLine();
+        static int cullIndex = 0;
+        int currentIndex = cullIndex;
+        nim::PushItemWidth(78.f);
+        nim::Combo("Cull", &cullIndex, "Front\0Back\0");
+        nim::PopItemWidth();
+        if (currentIndex != cullIndex)
+        {
+            shadowFace = (cullIndex == 0) ? xy::CullFace::Front : xy::CullFace::Back;
+            if (m_materialData->castShadows)
+            {
+                m_materialResource.get(MaterialID::Default).getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(shadowFace);
+                m_materialResource.get(MaterialID::VertexColoured).getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(shadowFace);
+                m_materialResource.get(MaterialID::Textured).getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(shadowFace);
+            }
         }
 
         if (selectedShader == 0)

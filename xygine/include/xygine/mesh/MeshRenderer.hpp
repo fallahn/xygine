@@ -187,6 +187,11 @@ namespace xy
         */
         void setFOV(float);
 
+        /*!
+        \brief Returns the current scen FOV
+        */
+        float getFOV() const { return m_fov; }
+
     private:
         struct Lock final {};
 

@@ -59,9 +59,31 @@ bool nim::fileBrowseDialogue(const std::string& title, std::string& output, bool
                 files = xy::FileSystem::listFiles(currentDir);
             }
         }
-
-        nim::BeginChild("ScrollRegion", ImVec2(0, -nim::GetItemsLineHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
         bool refresh = false;
+        //nim::SameLine(); //can't popup inside a popup :/
+        //if (nim::Button("Create Directory"))
+        //{
+        //    nim::OpenPopup("Create:");
+        //    if (nim::BeginPopupModal("Create:", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+        //    {
+        //        static char dirName[40] = "\0";
+        //        nim::InputText("Directory Name", dirName, 40);
+        //        if (nim::Button("OK", { 80.f, 0.f }))
+        //        {
+        //            //TODO create dir
+        //            refresh = true;
+        //            nim::CloseCurrentPopup();
+        //        }
+        //        nim::SameLine();
+        //        if (nim::Button("Cancel", { 80.f, 0.f }))
+        //        {
+        //            nim::CloseCurrentPopup();
+        //        }
+        //        nim::EndPopup();
+        //    }
+        //}
+
+        nim::BeginChild("ScrollRegion", ImVec2(0, -nim::GetItemsLineHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);        
         for (const auto& dir : directories)
         {
             //move to selected dir on double click

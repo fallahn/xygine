@@ -148,15 +148,36 @@ MeshRenderer::MeshRenderer(const sf::Vector2u& size, const Scene& scene)
 
 #ifdef _DEBUG_
     addDebugMenus();
+#else
+    //create con command to enable debug menu
+    static bool enabled = false;
+    Console::addCommand("mesh_debug_menu",
+        [this](const std::string& params)
+    {
+        if (params == "true" && !enabled)
+        {
+            enabled = true;
+            addDebugMenus();
+        }
+        else if (params == "false")
+        {
+            enabled = false;
+            App::removeUserWindows(this);
+        }
+        else
+        {
+            Console::print(params + ": invalid value. Options are true or false");
+        }
+    });
 #endif
 }
 
 MeshRenderer::~MeshRenderer()
 {
     Console::unregisterCommands(this);
-#ifdef _DEBUG_
+//#ifdef _DEBUG_
     App::removeUserWindows(this);
-#endif
+//#endif
 }
 
 //public
