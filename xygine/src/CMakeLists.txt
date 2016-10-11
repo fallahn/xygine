@@ -15,6 +15,7 @@ set(XY_SRC
   ${XY_DIR}/PostBloom.cpp
   ${XY_DIR}/PostBlur.cpp
   ${XY_DIR}/PostChromeAb.cpp
+  ${XY_DIR}/PostOldSchool.cpp
   ${XY_DIR}/PostProcess.cpp
   ${XY_DIR}/QuadTree.cpp
   ${XY_DIR}/QuadTreeNode.cpp

@@ -435,6 +435,9 @@
     <ClCompile Include="src\mesh\MaterialDefinition.cpp">
       <Filter>Source Files\mesh</Filter>
     </ClCompile>
+    <ClCompile Include="src\PostOldSchool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -928,6 +931,12 @@
     </ClInclude>
     <ClInclude Include="include\xygine\mesh\MaterialDefinition.hpp">
       <Filter>Header Files\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\shaders\PostOldSchool.hpp">
+      <Filter>Header Files\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\PostOldSchool.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
