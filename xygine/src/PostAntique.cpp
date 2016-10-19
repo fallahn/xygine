@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/PostAntique.hpp>
+#include <xygine/postprocess/Antique.hpp>
 #include <xygine/App.hpp>
 #include <xygine/imgui/imgui.h>
 

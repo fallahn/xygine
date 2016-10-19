@@ -31,7 +31,7 @@ source distribution.
 #define XY_SCENE_HPP_
 
 #include <xygine/Entity.hpp>
-#include <xygine/PostProcess.hpp>
+#include <xygine/postprocess/PostProcess.hpp>
 #include <xygine/Command.hpp>
 #include <xygine/QuadTree.hpp>
 #include <xygine/components/Camera.hpp>

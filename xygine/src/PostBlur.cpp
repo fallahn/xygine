@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/PostBlur.hpp>
+#include <xygine/postprocess/Blur.hpp>
 #include <xygine/shaders/PostGaussianBlur.hpp>
 #include <xygine/shaders/PostDownSample.hpp>
 #include <xygine/Assert.hpp>

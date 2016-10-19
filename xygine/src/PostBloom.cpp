@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/PostBloom.hpp>
+#include <xygine/postprocess/Bloom.hpp>
 #include <xygine/shaders/PostAdditiveBlend.hpp>
 #include <xygine/shaders/PostBrightness.hpp>
 #include <xygine/shaders/PostDownSample.hpp>

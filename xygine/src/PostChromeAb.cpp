@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/PostChromeAb.hpp>
+#include <xygine/postprocess/ChromeAb.hpp>
 #include <xygine/shaders/PostChromeAb.hpp>
 
 #include <SFML/Graphics/Shader.hpp>

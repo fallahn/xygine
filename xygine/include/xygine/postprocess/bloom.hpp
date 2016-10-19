@@ -30,7 +30,7 @@ source distribution.
 #ifndef XY_POST_BLOOM_HPP_
 #define XY_POST_BLOOM_HPP_
 
-#include <xygine/PostProcess.hpp>
+#include <xygine/postprocess/PostProcess.hpp>
 #include <xygine/ShaderResource.hpp>
 
 #include <SFML/Graphics/RenderTexture.hpp>

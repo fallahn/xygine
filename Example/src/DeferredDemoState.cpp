@@ -37,8 +37,8 @@ source distribution.
 #include <xygine/util/Position.hpp>
 #include <xygine/util/Const.hpp>
 
-#include <xygine/PostBloom.hpp>
-#include <xygine/PostChromeAb.hpp>
+#include <xygine/postprocess/Bloom.hpp>
+#include <xygine/postprocess/ChromeAb.hpp>
 #include <xygine/shaders/NormalMapped.hpp>
 
 #include <xygine/components/AnimatedDrawable.hpp>

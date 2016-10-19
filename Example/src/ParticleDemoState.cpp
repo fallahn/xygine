@@ -42,8 +42,8 @@ source distribution.
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/physics/CollisionCircleShape.hpp>
 #include <xygine/physics/CollisionEdgeShape.hpp>
-#include <xygine/PostBloom.hpp>
-#include <xygine/PostChromeAb.hpp>
+#include <xygine/postprocess/Bloom.hpp>
+#include <xygine/postprocess/ChromeAb.hpp>
 #include <xygine/shaders/NormalMapped.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>

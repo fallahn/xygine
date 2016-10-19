@@ -45,7 +45,7 @@ source distribution.
 
 #include <xygine/shaders/NormalMapped.hpp>
 #include <xygine/shaders/Misc.hpp>
-#include <xygine/PostChromeAb.hpp>
+#include <xygine/postprocess/ChromeAb.hpp>
 
 #include <xygine/physics/RigidBody.hpp>
 #include <xygine/physics/CollisionCircleShape.hpp>

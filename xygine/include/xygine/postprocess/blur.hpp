@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_POST_BLUR_HPP_
 #define XY_POST_BLUR_HPP_
 
-#include <xygine/PostProcess.hpp>
+#include <xygine/postprocess/PostProcess.hpp>
 
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>

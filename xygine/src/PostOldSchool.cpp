@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xygine/PostOldSchool.hpp>
+#include <xygine/postprocess/OldSchool.hpp>
 #include <xygine/shaders/PostOldSchool.hpp>
 
 using namespace xy;

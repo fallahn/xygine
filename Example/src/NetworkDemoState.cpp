@@ -37,7 +37,7 @@ source distribution.
 #include <xygine/ui/TextBox.hpp>
 #include <xygine/ui/Label.hpp>
 #include <xygine/components/SfDrawableComponent.hpp>
-#include <xygine/PostChromeAb.hpp>
+#include <xygine/postprocess/ChromeAb.hpp>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/System/Sleep.hpp>

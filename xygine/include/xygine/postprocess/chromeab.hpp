@@ -30,7 +30,7 @@ source distribution.
 #ifndef XY_POST_CHROMEAB_HPP_
 #define XY_POST_CHROMEAB_HPP_
 
-#include <xygine/PostProcess.hpp>
+#include <xygine/postprocess/PostProcess.hpp>
 #include <xygine/ShaderResource.hpp>
 
 namespace xy

@@ -82,6 +82,12 @@
     <Filter Include="Source Files\tilemap">
       <UniqueIdentifier>{fa1d85ee-4f6a-4d40-9436-72894538a160}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\post effects">
+      <UniqueIdentifier>{549fd8e4-fd80-45be-9e9d-208320773371}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\post effects">
+      <UniqueIdentifier>{70f5d56d-2b75-4042-9740-14d32da05f33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -103,15 +109,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Music.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PostBloom.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PostChromeAb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PostProcess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\QuadTree.cpp">
@@ -306,9 +303,6 @@
     <ClCompile Include="src\GLExtensions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\PostBlur.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\mesh\VertexLayout.cpp">
       <Filter>Source Files\mesh</Filter>
     </ClCompile>
@@ -435,11 +429,23 @@
     <ClCompile Include="src\mesh\MaterialDefinition.cpp">
       <Filter>Source Files\mesh</Filter>
     </ClCompile>
-    <ClCompile Include="src\PostOldSchool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\PostAntique.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\post effects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PostBloom.cpp">
+      <Filter>Source Files\post effects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PostBlur.cpp">
+      <Filter>Source Files\post effects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PostChromeAb.cpp">
+      <Filter>Source Files\post effects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PostOldSchool.cpp">
+      <Filter>Source Files\post effects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PostProcess.cpp">
+      <Filter>Source Files\post effects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -465,15 +471,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\Particle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\PostBloom.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\PostChromeAb.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\PostProcess.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\QuadTree.hpp">
@@ -758,9 +755,6 @@
     <ClInclude Include="include\xygine\detail\GLCheck.hpp">
       <Filter>Header Files\detail</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\PostBlur.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\xygine\mesh\VertexLayout.hpp">
       <Filter>Header Files\mesh</Filter>
     </ClInclude>
@@ -938,11 +932,23 @@
     <ClInclude Include="include\xygine\shaders\PostOldSchool.hpp">
       <Filter>Header Files\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\PostOldSchool.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\xygine\postprocess\Antique.hpp">
+      <Filter>Header Files\post effects</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\PostAntique.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\xygine\postprocess\Bloom.hpp">
+      <Filter>Header Files\post effects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\postprocess\Blur.hpp">
+      <Filter>Header Files\post effects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\postprocess\Chromeab.hpp">
+      <Filter>Header Files\post effects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\postprocess\OldSchool.hpp">
+      <Filter>Header Files\post effects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\postprocess\PostProcess.hpp">
+      <Filter>Header Files\post effects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
