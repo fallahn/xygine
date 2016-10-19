@@ -25,34 +25,27 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_POST_OS_HPP_
-#define XY_POST_OS_HPP_
+#ifndef XY_POST_ANTIQUE_HPP_
+#define XY_POST_ANTIQUE_HPP_
 
 #include <xygine/PostProcess.hpp>
 
 #include <SFML/Graphics/Shader.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
 
 namespace xy
 {
-    /*!
-    \brief Applies a colour dithering / degredation effect to 
-    emulate the appearance of older 16 or 8 bit graphics modes
-    */
-    class XY_EXPORT_API PostOldSchool final : public PostProcess
+    class XY_EXPORT_API PostAntique final : public xy::PostProcess
     {
     public:
-        PostOldSchool();
-        ~PostOldSchool() = default;
+        PostAntique();
+        ~PostAntique();
 
         void apply(const sf::RenderTexture&, sf::RenderTarget&) override;
+        void update(float) override;
 
     private:
-        sf::Shader m_fxShader;
-        sf::Shader m_passThroughShader;
-
-        sf::RenderTexture m_buffer;
+        sf::Shader m_shader;
     };
 }
 
-#endif //XY_POST_OS_HPP_
+#endif //XY_POST_ANTIQUE_HPP_

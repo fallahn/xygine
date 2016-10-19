@@ -438,6 +438,9 @@
     <ClCompile Include="src\PostOldSchool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\PostAntique.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -936,6 +939,9 @@
       <Filter>Header Files\shaders</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\PostOldSchool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\PostAntique.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

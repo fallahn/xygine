@@ -85,6 +85,22 @@ namespace xy
         */
         void preload(ID, const std::string&, const std::string&);
 
+        /*!
+        \brief Preloads a shader.
+
+        Shaders need to be loaded and compiled before they can be used which
+        can be a time consuming action. Preloading shaders when other resources
+        are loaded allows shaders to be returned more efficiently at run time.
+
+        \param ID A unique 32 bit integer to identify the loaded shader
+        \param string A string containing the source for a vertex or fragment shader.
+        The string can either be a constant stored within a source file, or loaded
+        from an external file at run time.
+        \param sf::Shader::Type Shader type describing whether the source is a vertex
+        or fragment shader.
+        */
+        void preload(ID, const std::string&, sf::Shader::Type);
+
     private:
         std::map<ID, std::unique_ptr<sf::Shader>> m_shaders;
     };

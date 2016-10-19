@@ -32,31 +32,36 @@ using namespace xy;
 
 namespace
 {
-    const float divisor = 2.f;
+    const float divisor = 4.f;
+
+    const std::string passThrough =
+        "#version 120\n"
+        "uniform sampler2D u_texture;\n"
+        "void main()\n"
+        "{\n"
+        "    gl_FragColor = texture2D(u_texture, gl_TexCoord[0].xy);\n"
+        "}";
 }
 
 PostOldSchool::PostOldSchool()
 {
-    if (!m_shader.loadFromMemory(xy::Shader::PostOldSchool::fragment, sf::Shader::Fragment))
+    if (!m_fxShader.loadFromMemory(xy::Shader::PostOldSchool::fragment, sf::Shader::Fragment)
+        || !m_passThroughShader.loadFromMemory(passThrough, sf::Shader::Fragment))
     {
         xy::Logger::log("Failed creating shader for Old School Post Process", xy::Logger::Type::Error, xy::Logger::Output::All);
     }
 
     sf::Vector2u size(xy::DefaultSceneSize / divisor);
     m_buffer.create(size.x, size.y);
-
-    m_quad[1] = { sf::Vector2f(xy::DefaultSceneSize.x, 0.f), sf::Vector2f(xy::DefaultSceneSize.x / divisor, 0.f) };
-    m_quad[2] = { xy::DefaultSceneSize, xy::DefaultSceneSize / divisor };
-    m_quad[3] = { sf::Vector2f(0.f, xy::DefaultSceneSize.y), sf::Vector2f(0.f, xy::DefaultSceneSize.y / divisor) };
+    m_passThroughShader.setUniform("u_texture", m_buffer.getTexture());
 }
 
 void PostOldSchool::apply(const sf::RenderTexture& src, sf::RenderTarget& dst)
 {
-    m_shader.setUniform("u_sourceTexture", src.getTexture());
-    applyShader(m_shader, dst);
-    //m_buffer.display();
+    m_fxShader.setUniform("u_sourceTexture", src.getTexture());
+    
+    applyShader(m_fxShader, m_buffer);
+    m_buffer.display();
 
-    //sf::RenderStates states;
-    //states.texture = &m_buffer.getTexture();
-    //dst.draw(m_quad.data(), m_quad.size(), sf::Quads, states);
+    applyShader(m_passThroughShader, dst);
 }

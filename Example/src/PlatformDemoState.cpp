@@ -62,6 +62,7 @@ source distribution.
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 
+
 namespace
 {
     const sf::Keyboard::Key upKey = sf::Keyboard::W;

@@ -12,6 +12,7 @@ set(XY_SRC
   ${XY_DIR}/Music.cpp
   ${XY_DIR}/ParticleAffectors.cpp
   ${XY_DIR}/PolyBatch.cpp
+  ${XY_DIR}/PostAntique.cpp
   ${XY_DIR}/PostBloom.cpp
   ${XY_DIR}/PostBlur.cpp
   ${XY_DIR}/PostChromeAb.cpp
