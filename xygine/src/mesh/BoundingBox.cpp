@@ -32,6 +32,14 @@ source distribution.
 
 using namespace xy;
 
+BoundingBox::BoundingBox(const glm::vec3& min, const glm::vec3& max)
+    : m_min(min),
+    m_max(max),
+    m_depthScale(1.f)
+{
+    updateFloatRect();
+}
+
 void BoundingBox::transform(const glm::mat4& matrix)
 {
     //calc corners.
@@ -87,10 +95,30 @@ void BoundingBox::transform(const glm::mat4& matrix)
     }
     m_min = newMin;
     m_max = newMax;
+
+    updateFloatRect();
 }
 
 BoundingBox& BoundingBox::operator*= (const glm::mat4& matrix)
 {
     transform(matrix);
     return *this;
+}
+
+void BoundingBox::setDepthScale(float s)
+{
+    XY_ASSERT(s > 0, "Must be greater than 0");
+    m_depthScale = s;
+    updateFloatRect();
+}
+
+//private
+void BoundingBox::updateFloatRect()
+{
+    m_floatRect = { m_min.x, m_min.y, m_max.x - m_min.x, m_max.y - m_min.y };
+    m_floatRect.left *= m_depthScale;
+    m_floatRect.top *= m_depthScale;
+
+    m_floatRect.width *= m_depthScale;
+    m_floatRect.height *= m_depthScale;
 }

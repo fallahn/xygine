@@ -29,6 +29,7 @@ source distribution.
 #define XY_BOUNDINGBOX_HPP_
 
 #include <xygine/Config.hpp>
+#include <xygine/Assert.hpp>
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -44,8 +45,7 @@ namespace xy
     class XY_EXPORT_API BoundingBox final
     {
     public:
-        BoundingBox(glm::vec3 min = glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3 max = glm::vec3(0.5f, 0.5f, 0.5f))
-            : m_min(min), m_max(max) {}
+        BoundingBox(const glm::vec3& min = glm::vec3(-0.5f, -0.5f, -0.5f), const glm::vec3& max = glm::vec3(0.5f, 0.5f, 0.5f));
         ~BoundingBox() = default;
         BoundingBox(BoundingBox&&) noexcept = default;
         BoundingBox& operator = (BoundingBox&&) = default;
@@ -58,7 +58,7 @@ namespace xy
         */
         sf::FloatRect asFloatRect() const
         {
-            return{ m_min.x, m_min.y, m_max.x - m_min.x, m_max.y - m_min.y };
+            return m_floatRect;
         }
 
         /*!
@@ -68,9 +68,20 @@ namespace xy
 
         BoundingBox& operator *= (const glm::mat4&);
 
+        /*!
+        \brief Sets the relative scale of the bounding box
+        when a model has a non-zero depth value
+        */
+        void setDepthScale(float);
+
     private:
         glm::vec3 m_min;
         glm::vec3 m_max;
+
+        sf::FloatRect m_floatRect;
+        float m_depthScale;
+
+        void updateFloatRect();
     };
 }
 

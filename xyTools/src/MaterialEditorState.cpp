@@ -56,6 +56,8 @@ namespace
     float rotY = 0.f;
     float rotZ = 0.f;
 
+    float depthZ = 0.f;
+
     sf::Vector2f lastMousePos;
 
     xy::CullFace shadowFace = xy::CullFace::Front;
@@ -105,6 +107,7 @@ bool MaterialEditorState::update(float dt)
         auto model = modelEntity->getComponent<xy::Model>();
         model->setScale({ scale, scale, scale });
         model->setRotation({ rotX, rotY, rotZ });
+        model->setPosition({ 0.f, 0.f, depthZ });
     }
 
     return true;
@@ -370,6 +373,7 @@ void MaterialEditorState::buildMenu()
         nim::SliderAngle("Rotation X", &rotX);
         nim::SliderAngle("Rotation Y", &rotY);
         nim::SliderAngle("Rotation Z", &rotZ);
+        nim::SliderFloat("Z Depth", &depthZ, -500.f, 500.f);
         if (nim::Button("Reset Transform"))
         {
             scale = 1.f;

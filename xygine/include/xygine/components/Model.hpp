@@ -80,7 +80,7 @@ namespace xy
         \brief Returns the 2D globally transformed AABB of the model based
         on the 3D AABB of the model's mesh.
         */
-        sf::FloatRect globalBounds() const override { return m_boundingBox.asFloatRect(); }
+        sf::FloatRect globalBounds() const override { return m_globalBounds; }
 
         /*!
         \brief Sets the base material used but the model.
@@ -196,17 +196,24 @@ namespace xy
         */
         const Mesh& getMesh() const { return m_mesh; }
     private:
+        
+        MeshRenderer* m_meshRenderer;
+        
         glm::vec3 m_translation;
         glm::quat m_rotation;
         glm::vec3 m_scale;
         glm::mat4 m_preTransform;
         bool m_needsUpdate;
         void updateTransform();
+        float m_depthScale;
+        void update2DScale();
+        
 
         glm::mat4 m_worldMatrix;
         const Mesh& m_mesh;
         BoundingBox m_boundingBox;
-        sf::FloatRect m_worldBounds;
+        sf::FloatRect m_globalBounds; //<entity global bounds including depth scaling
+        sf::FloatRect m_worldBounds; //<globalBounds transformed by entity world position
         mutable bool m_visible;
 
         const Material* m_material;

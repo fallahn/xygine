@@ -223,6 +223,7 @@ std::unique_ptr<Model> MeshRenderer::createModel(const Mesh& mesh, MessageBus& m
 
     //set default material
     model->setBaseMaterial(m_materialResource.get(MaterialResource::Static));
+    model->m_meshRenderer = this;
 
     return std::move(model);
 }
@@ -329,6 +330,13 @@ void MeshRenderer::setFOV(float fov)
     XY_ASSERT(fov >= 10 && fov <= 180, "FOV out of range");
     m_fov = fov;
     updateView();
+    for (auto m : m_models)
+    {
+        //if (!m->destroyed())
+        {
+            m->update2DScale();
+        }
+    }
 }
 
 //private

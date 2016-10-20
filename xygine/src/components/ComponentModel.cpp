@@ -32,6 +32,7 @@ source distribution.
 #include <xygine/Entity.hpp>
 #include <xygine/util/Const.hpp>
 #include <xygine/Reports.hpp>
+#include <xygine/Scene.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
@@ -43,8 +44,10 @@ using namespace xy;
 
 Model::Model(MessageBus& mb, const Mesh& mesh, const MeshRenderer::Lock&)
     : Component         (mb, this),
+    m_meshRenderer      (nullptr),
     m_scale             (1.f, 1.f, 1.f),
     m_needsUpdate       (false),
+    m_depthScale        (1.f),
     m_mesh              (mesh),
     m_visible           (false),
     m_material          (nullptr),
@@ -75,8 +78,19 @@ void Model::entityUpdate(Entity& entity, float dt)
     if (m_needsUpdate) updateTransform();
     m_worldMatrix *= m_preTransform;
 
-    m_worldBounds = entity.getWorldTransform().transformRect(m_boundingBox.asFloatRect());
+    //update the bounds of the model depending on its depth
+    m_globalBounds = m_boundingBox.asFloatRect();
+    //find distance from camera position, scale and add scale difference to global bounds
+    auto distFromCam = position - m_meshRenderer->m_scene.getView().getCenter();
+    auto scaledDist = distFromCam * m_depthScale;
+    scaledDist -= distFromCam;
+    m_globalBounds.left += scaledDist.x;
+    m_globalBounds.top += scaledDist.y;
 
+    m_worldBounds = entity.getWorldTransform().transformRect(m_globalBounds);
+    //-----------------------------------------------------
+
+    //animate if exists and visible on screen
     if (!m_animations.empty() && m_visible)
     {
         if (m_nextAnimation == -1)
@@ -308,7 +322,20 @@ void Model::updateTransform()
     m_boundingBox = m_mesh.getBoundingBox();
     m_boundingBox.transform(m_preTransform);
 
+    update2DScale();
+
     m_needsUpdate = false;
+}
+
+void Model::update2DScale()
+{
+    float depth = m_meshRenderer->m_cameraZ - m_translation.z;
+    float angle = (m_meshRenderer->m_fov * xy::Util::Const::degToRad) / 2.f;
+    float relHeight = std::tan(angle) * depth;
+
+    auto sceneViewSize = m_meshRenderer->m_scene.getView().getSize();
+    m_depthScale = (sceneViewSize.y / 2.f) / relHeight;
+    m_boundingBox.setDepthScale(m_depthScale);
 }
 
 std::size_t Model::draw(const glm::mat4& viewMatrix, const sf::FloatRect& visibleArea, RenderPass::ID pass) const
