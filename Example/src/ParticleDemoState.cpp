@@ -97,9 +97,9 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
 
     m_scene.setView(context.defaultView);
 
-    xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostBloom>();
+    //xy::PostProcess::Ptr pp = xy::PostProcess::create<xy::PostBloom>();
     //m_scene.addPostProcess(pp);
-    pp = xy::PostProcess::create<xy::PostChromeAb>(false);
+    auto pp = xy::PostProcess::create<xy::PostChromeAb>(/*true*/);
     m_scene.addPostProcess(pp);
     m_scene.setClearColour({ 0u, 0u, 20u });
 

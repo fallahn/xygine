@@ -31,7 +31,7 @@ source distribution.
 #include <xygine/shaders/Default.hpp>
 
 #define CHRAB_NO_DISTORT "#version 120\n" + xy::Shader::PostChromeAb::fragment
-#define CHRAB_DISTORT "#version 120\n#define DISTORTION\n" + xy::Shader::PostChromeAb::fragment
+#define CHRAB_DISTORT "#version 130\n#define DISTORTION\n" + xy::Shader::PostChromeAb::fragment
 
 namespace xy
 {
@@ -45,6 +45,9 @@ namespace xy
                 "uniform sampler2D u_sourceTexture;\n" \
                 "uniform float u_time;\n" \
                 "uniform float u_lineCount = 6000.0;\n" \
+                "#if defined(DISTORTION)\n" \
+                "uniform float u_distortStrength = 0.01;\n" \
+                "#endif\n" \
 
                 "const float noiseStrength = 0.7;\n" \
 
@@ -75,11 +78,12 @@ namespace xy
 
                 "void main()\n" \
                 "{\n" \
-                "    vec2 distortOffset = vec2(0.01, 0.01);\n" \
                 "    vec2 texCoord = gl_TexCoord[0].xy;\n" \
                 "#if defined(DISTORTION)\n" \
-                "    float distSquared = distanceSquared(0.5 - texCoord);\n" \
-                "    if(distSquared > centreDistanceSquared) texCoord += ((vec2(0.5, 0.5) - texCoord) * (centreDistanceSquared - distSquared)) * 0.12;\n" \
+                "    //float distSquared = distanceSquared(0.5 - texCoord);\n" \
+                "    //if(distSquared > centreDistanceSquared) texCoord += ((vec2(0.5, 0.5) - texCoord) * (centreDistanceSquared - distSquared)) * 0.12;\n" \
+                "    float distortAmount = 1.0 - smoothstep(0.0, 1.0, length(texCoord - vec2(0.5)));\n"
+                "    texCoord -= normalize(texCoord - vec2(0.5)) * u_distortStrength * distortAmount;\n"
                 "#endif\n" \
                 "    vec2 offset = vec2((maxOffset / 2.0) - (texCoord.x * maxOffset), (maxOffset / 2.0) - (texCoord.y * maxOffset));\n"
                 "    vec3 colour = vec3(0.0);\n" \

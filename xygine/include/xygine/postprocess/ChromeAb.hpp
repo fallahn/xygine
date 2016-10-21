@@ -52,6 +52,7 @@ namespace xy
         CRT style bowed distortion around the edge of the screen
         */
         PostChromeAb(bool distort = false);
+        ~PostChromeAb();
         /*!
         \see PostProcess
         */

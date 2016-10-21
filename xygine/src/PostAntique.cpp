@@ -37,7 +37,7 @@ namespace
 {
     //TODO add contrast control?
     const std::string fragment =
-        "#version 120\n"
+        "#version 130\n"
 
         "uniform sampler2D u_srcTexture;\n"
         "uniform float u_time = 0.0;\n"

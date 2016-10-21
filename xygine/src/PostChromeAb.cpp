@@ -27,6 +27,8 @@ source distribution.
 
 #include <xygine/postprocess/ChromeAb.hpp>
 #include <xygine/shaders/PostChromeAb.hpp>
+#include <xygine/App.hpp>
+#include <xygine/imgui/imgui.h>
 
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
@@ -35,6 +37,8 @@ namespace
 {
     float accumulatedTime = 0.f;
     const float scanlineCount = 500.f;
+
+    float distortionAmount = 0.01f;
 }
 
 using namespace xy;
@@ -49,6 +53,23 @@ PostChromeAb::PostChromeAb(bool distort)
     {
         m_shaderResource.preload(Shader::Type::ChromeAb, Shader::Default::vertex, CHRAB_NO_DISTORT);
     }
+
+#ifdef _DEBUG_
+
+    xy::App::addUserWindow(
+        [this]()
+    {
+        nim::Begin("Abberation Params");
+        nim::SliderFloat("Distortion", &distortionAmount, 0.f, 0.1f);
+        nim::End();
+    }, this);
+
+#endif //_DEBUG_
+}
+
+PostChromeAb::~PostChromeAb()
+{
+    xy::App::removeUserWindows(this);
 }
 
 //public
@@ -67,4 +88,8 @@ void PostChromeAb::apply(const sf::RenderTexture& src, sf::RenderTarget& dst)
 void PostChromeAb::update(float dt)
 {
     accumulatedTime += dt;
+
+#ifdef _DEBUG_
+    m_shaderResource.get(Shader::Type::ChromeAb).setUniform("u_distortStrength", distortionAmount);
+#endif //_DEBUG_
 }
