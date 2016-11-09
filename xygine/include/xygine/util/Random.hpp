@@ -30,6 +30,8 @@ source distribution.
 
 #include <xygine/Assert.hpp>
 
+#include <SFML/Graphics/Rect.hpp>
+
 #include <random>
 #include <ctime>
 
@@ -42,7 +44,7 @@ namespace xy
         */
         namespace Random
         {
-            static std::default_random_engine rndEngine(static_cast<unsigned long>(std::time(nullptr)));
+            static std::mt19937 rndEngine(static_cast<unsigned long>(std::time(nullptr)));
 
             /*!
             \brief Returns a pseudo random floating point value
@@ -66,6 +68,13 @@ namespace xy
                 std::uniform_int_distribution<int> dist(begin, end);
                 return dist(rndEngine);
             }
+            /*!
+            \brief Returns a poission disc sampled distribution of points within a given area
+            \param area sf::FloatRect within which the points are distributed
+            \param minDist minimum distance between points
+            \param maxPoints maximum number of points to try generating
+            */
+            XY_EXPORT_API std::vector<sf::Vector2f> poissonDiscDistribution(const sf::FloatRect& area, float minDist, std::size_t maxPoints);
         }
     }
 }

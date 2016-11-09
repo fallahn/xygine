@@ -36,7 +36,7 @@ namespace xy
 {
     namespace Shader
     {
-        namespace tsx
+        namespace tmx
         {
             static const std::string vertex =
                 "#version 120\n"
@@ -118,7 +118,7 @@ namespace xy
                 "    }\n"
                 "    colour *= v_colour;\n"
                 "}";
-        } //namespace tsx
+        } //namespace tmx
     } //namespace Shader
 } //namespace xy
 

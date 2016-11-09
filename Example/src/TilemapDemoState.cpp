@@ -81,7 +81,8 @@ TilemapDemoState::TilemapDemoState(xy::StateStack& stateStack, Context context)
 {
     launchLoadingScreen();
     m_scene.setView(context.defaultView);
-    m_shaderResource.preload(xy::Shader::Tilemap, xy::Shader::tsx::vertex, xy::Shader::tsx::fragment);
+    m_shaderResource.preload(xy::Shader::Tilemap, xy::Shader::tmx::vertex, xy::Shader::tmx::fragment);
+    m_physWorld.setGravity({ 0.f, 980.f });
 
     buildScene();
 

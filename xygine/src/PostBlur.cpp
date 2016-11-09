@@ -38,14 +38,15 @@ using namespace xy;
 namespace
 {
     const std::string fragShader =
-        "#version 120\n"
-        "\n"
-        "uniform sampler2D u_srcTexture;\n"
+        R"(
+        #version 120
+        
+        uniform sampler2D u_srcTexture;
 
-        "void main()\n"
-        "{\n"
-        "    gl_FragColor = texture2D(u_srcTexture, gl_TexCoord[0].xy);\n"
-        "}\n";
+        void main()
+        {
+            gl_FragColor = texture2D(u_srcTexture, gl_TexCoord[0].xy);
+        })";
 }
 
 PostBlur::PostBlur()

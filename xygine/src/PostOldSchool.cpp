@@ -35,12 +35,13 @@ namespace
     const float divisor = 4.f;
 
     const std::string passThrough =
-        "#version 120\n"
-        "uniform sampler2D u_texture;\n"
-        "void main()\n"
-        "{\n"
-        "    gl_FragColor = texture2D(u_texture, gl_TexCoord[0].xy);\n"
-        "}";
+        R"(
+        #version 120
+        uniform sampler2D u_texture;
+        void main()
+        {\n"
+            gl_FragColor = texture2D(u_texture, gl_TexCoord[0].xy);
+        })";
 }
 
 PostOldSchool::PostOldSchool()

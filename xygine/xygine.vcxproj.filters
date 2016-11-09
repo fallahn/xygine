@@ -88,6 +88,9 @@
     <Filter Include="Header Files\post effects">
       <UniqueIdentifier>{70f5d56d-2b75-4042-9740-14d32da05f33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{6a2de24b-c9e0-44b0-af1e-02497975073a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -446,6 +449,9 @@
     </ClCompile>
     <ClCompile Include="src\PostProcess.cpp">
       <Filter>Source Files\post effects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\Random.cpp">
+      <Filter>Source Files\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

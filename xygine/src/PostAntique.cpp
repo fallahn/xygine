@@ -37,54 +37,55 @@ namespace
 {
     //TODO add contrast control?
     const std::string fragment =
-        "#version 130\n"
+        R"(
+        #version 130
 
-        "uniform sampler2D u_srcTexture;\n"
-        "uniform float u_time = 0.0;\n"
+        uniform sampler2D u_srcTexture;
+        uniform float u_time = 0.0;
 
-        "uniform vec3 u_tone = vec3(1.0, 0.9, 0.65);\n"
-        "uniform float u_toneMix = 0.95;\n"
+        uniform vec3 u_tone = vec3(1.0, 0.9, 0.65);
+        uniform float u_toneMix = 0.95;
 
-        "uniform float u_vignetteRadius = 0.5;\n"
-        "uniform float u_vignetteSoftness = 0.45;\n"
-        "uniform float u_vignetteAmount = 0.5;\n"
+        uniform float u_vignetteRadius = 0.5;
+        uniform float u_vignetteSoftness = 0.45;
+        uniform float u_vignetteAmount = 0.5;
 
-        "uniform float u_flickerAmount = 0.05;\n"
-        "uniform float u_jitterAmount = 0.01;\n"
-        "uniform float u_noiseAmount = 1.0;\n"
+        uniform float u_flickerAmount = 0.05;
+        uniform float u_jitterAmount = 0.01;
+        uniform float u_noiseAmount = 1.0;
 
-        "float rnd(vec2 seed)\n"
-        "{\n"
-        "    return fract(sin(dot(seed.xy ,vec2(12.9898,78.233))) * 43758.5453);"
-        "}\n"
+        float rnd(vec2 seed)
+        {
+            return fract(sin(dot(seed.xy ,vec2(12.9898,78.233))) * 43758.5453);
+        }
 
-        "void main()\n"
-        "{\n"
-        "    float random = rnd(vec2(u_time));\n"
-        "    vec2 jitter = clamp(vec2(random), 0.0, u_jitterAmount);\n"
+        void main()
+        {
+            float random = rnd(vec2(u_time));
+            vec2 jitter = clamp(vec2(random), 0.0, u_jitterAmount);
 
-        "    vec3 colour = texture2D(u_srcTexture, gl_TexCoord[0].xy + jitter).rgb;\n"
+            vec3 colour = texture2D(u_srcTexture, gl_TexCoord[0].xy + jitter).rgb;
 
-        "    float x = (gl_TexCoord[0].x + 4.0) * gl_TexCoord[0].y * u_time * 10.0;\n" \
-        "    x = mod(x, 13.0) * mod(x, 123.0);\n" \
-        "    float grain = mod(x, 0.01) - 0.005;\n" \
-        "    colour += vec3(clamp(grain * 100.0, 0.0, 0.07)) * u_noiseAmount;\n" \
+            float x = (gl_TexCoord[0].x + 4.0) * gl_TexCoord[0].y * u_time * 10.0;
+            x = mod(x, 13.0) * mod(x, 123.0);
+            float grain = mod(x, 0.01) - 0.005;
+            colour += vec3(clamp(grain * 100.0, 0.0, 0.07)) * u_noiseAmount;
 
-        "    float grey = dot(colour, vec3(0.299, 0.587, 0.114));\n"
-        "    vec3 graded = vec3(grey) * u_tone;\n"
-        "    graded = mix(colour, graded, u_toneMix);\n"
+            float grey = dot(colour, vec3(0.299, 0.587, 0.114));
+            vec3 graded = vec3(grey) * u_tone;
+            graded = mix(colour, graded, u_toneMix);
 
-        "    float linePos = fract(gl_TexCoord[0].x * 0.2);\n"
-        "    if(linePos > 0.9) graded *= 0.0;\n"
+            float linePos = fract(gl_TexCoord[0].x * 0.2);
+            if(linePos > 0.9) graded *= 0.0;
 
-        "    float len = length(gl_TexCoord[0].xy - vec2(0.5));\n"
-        "    vec3 vignette = vec3(smoothstep(u_vignetteRadius, u_vignetteRadius - u_vignetteSoftness, len));\n"
-        "    graded = mix(graded, graded * vignette, u_vignetteAmount);\n"
+            float len = length(gl_TexCoord[0].xy - vec2(0.5));
+            vec3 vignette = vec3(smoothstep(u_vignetteRadius, u_vignetteRadius - u_vignetteSoftness, len));
+            graded = mix(graded, graded * vignette, u_vignetteAmount);
 
-        "    graded = clamp(graded + (vec3(random) * u_flickerAmount), 0.0, 1.0);\n"
+            graded = clamp(graded + (vec3(random) * u_flickerAmount), 0.0, 1.0);
 
-        "    gl_FragColor.rgb = graded;\n"
-        "}";
+            gl_FragColor.rgb = graded;
+        })";
 
     float elapsedTime = 0.f;
 

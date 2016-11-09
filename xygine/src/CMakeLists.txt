@@ -126,4 +126,6 @@ set(XY_SRC
   ${XY_DIR}/ui/UISelection.cpp
   ${XY_DIR}/ui/UISlider.cpp
   ${XY_DIR}/ui/UITextBox.cpp
-  ${XY_DIR}/ui/UIWindow.cpp)
+  ${XY_DIR}/ui/UIWindow.cpp
+
+  ${XY_DIR}/util/Random.cpp)
