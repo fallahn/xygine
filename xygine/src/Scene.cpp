@@ -422,6 +422,7 @@ void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     m_reflectionTexture.display();
 
     m_currentRenderPath(rt, states);
+    rt.setView(m_activeCamera->getView());
 }
 
 void Scene::defaultRenderPath(sf::RenderTarget& rt, sf::RenderStates states) const
