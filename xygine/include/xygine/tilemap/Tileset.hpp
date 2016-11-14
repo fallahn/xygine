@@ -33,7 +33,6 @@ source distribution.
 #include <xygine/tilemap/ObjectGroup.hpp>
 
 #include <SFML/Config.hpp>
-#include <SFML/Graphics/Texture.hpp>
 
 #include <string>
 #include <vector>
@@ -46,8 +45,6 @@ namespace pugi
 
 namespace xy
 {
-    class TextureResource;
-
     namespace tmx
     {
         /*!
@@ -155,7 +152,7 @@ namespace xy
             \brief Returns the colour used by the tile map image to represent transparency.
             By default this is a transparent colour (0, 0, 0, 0)
             */
-            const sf::Color getTransparencyColour() const { return m_transparencyColour; }
+            const sf::Color& getTransparencyColour() const { return m_transparencyColour; }
             /*!
             \brief Returns true if the image used by this tileset specifically requests
             a colour to use as transparency.

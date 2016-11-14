@@ -30,11 +30,10 @@ source distribution.
 
 #include <xygine/tilemap/Layer.hpp>
 
-#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Color.hpp>
 
 namespace xy
 {
-    class TextureResource;
     namespace tmx
     {
         /*!
@@ -57,10 +56,10 @@ namespace xy
             */
             const std::string& getImagePath() const { return m_filePath; }
             /*!
-            \brief Returns the colour userd by the image to represent transparent
+            \brief Returns the colour used by the image to represent transparent
             pixels. By default this is (0, 0, 0, 0)
             */
-            const sf::Color getTransparencyColour() const { return m_transparencyColour; }
+            const sf::Color& getTransparencyColour() const { return m_transparencyColour; }
             /*!
             \brief Returns true if the image used by this layer specifically states a 
             colour to use as transparency

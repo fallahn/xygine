@@ -45,6 +45,7 @@ namespace xy
 {
     class TileMapLayer;
     class ShaderResource;
+    class TextureResource;
     namespace tmx
     {
         struct XY_EXPORT_API Version
