@@ -192,32 +192,29 @@ bool Map::load(const std::string& path)
     }
 
     attribString = mapNode.attribute("renderorder").as_string();
-    if (attribString.empty())
+    if (!attribString.empty())
     {
-        Logger::log("missing render-order attribute, map not loaded.", Logger::Type::Error);
-        return reset();
-    }
-
-    if (attribString == "right-down")
-    {
-        m_renderOrder = RenderOrder::RightDown;
-    }
-    else if (attribString == "right-up")
-    {
-        m_renderOrder = RenderOrder::RightUp;
-    }
-    else if (attribString == "left-down")
-    {
-        m_renderOrder = RenderOrder::LeftDown;
-    }
-    else if (attribString == "left-up")
-    {
-        m_renderOrder = RenderOrder::LeftUp;
-    }
-    else
-    {
-        Logger::log(attribString + ": invalid render order. Map not loaded.", Logger::Type::Error);
-        return reset();
+        if (attribString == "right-down")
+        {
+            m_renderOrder = RenderOrder::RightDown;
+        }
+        else if (attribString == "right-up")
+        {
+            m_renderOrder = RenderOrder::RightUp;
+        }
+        else if (attribString == "left-down")
+        {
+            m_renderOrder = RenderOrder::LeftDown;
+        }
+        else if (attribString == "left-up")
+        {
+            m_renderOrder = RenderOrder::LeftUp;
+        }
+        else
+        {
+            Logger::log(attribString + ": invalid render order. Map not loaded.", Logger::Type::Error);
+            return reset();
+        }
     }
 
     unsigned width = mapNode.attribute("width").as_int();
@@ -359,8 +356,9 @@ std::unique_ptr<TileMapLayer> Map::getDrawable(xy::MessageBus& mb, const Layer& 
 
     //calculate chunk size based on map's tile size (ie so it fits tiles perfectly)
     sf::Vector2u chunkSize(1024u, 1024u);
-    while (chunkSize.x % getTileSize().x != 0) { chunkSize.x--; }
-    while (chunkSize.y % getTileSize().y != 0) { chunkSize.y--; }
+    auto tileSize = getTileSize();
+    while (chunkSize.x % tileSize.x != 0) { chunkSize.x--; }
+    while (chunkSize.y % tileSize.y != 0) { chunkSize.y--; }
     LOG("Set chunk size to " + std::to_string(chunkSize.x), Logger::Type::Info);
 
     auto tml = xy::Component::create<TileMapLayer>(mb, Key(), chunkSize);

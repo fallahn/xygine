@@ -129,12 +129,16 @@ void TileMapLayer::setTileData(const tmx::TileLayer* layer, const std::vector<tm
             chunk.bounds = { x * floatRes.x, y * floatRes.y, floatRes.x, floatRes.y };
             chunk.bounds.left += layer->getOffset().x;
             chunk.bounds.top += layer->getOffset().y;
+
+            float right = std::min(chunk.bounds.left + floatRes.x, map.getBounds().width + map.getBounds().left);
+            float bottom = std::min(chunk.bounds.top + floatRes.y, map.getBounds().height + map.getBounds().top);
+
             chunk.vertices =
             {
                 sf::Vertex(sf::Vector2f(chunk.bounds.left, chunk.bounds.top), sf::Vector2f()),
-                sf::Vertex(sf::Vector2f(chunk.bounds.left + floatRes.x, chunk.bounds.top), sf::Vector2f(floatRes.x, 0.f)),
-                sf::Vertex(sf::Vector2f(chunk.bounds.left + floatRes.x, chunk.bounds.top + floatRes.y), floatRes),
-                sf::Vertex(sf::Vector2f(chunk.bounds.left, chunk.bounds.top + floatRes.y), sf::Vector2f(0.f, floatRes.y))
+                sf::Vertex(sf::Vector2f(right, chunk.bounds.top), sf::Vector2f(right - chunk.bounds.left, 0.f)),
+                sf::Vertex(sf::Vector2f(right, bottom), { right - chunk.bounds.left, bottom - chunk.bounds.top }),
+                sf::Vertex(sf::Vector2f(chunk.bounds.left, bottom), sf::Vector2f(0.f, bottom - chunk.bounds.top))
             };
             
             //check each used tileset, and if it's used by this chunk create a lookup texture
