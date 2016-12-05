@@ -102,6 +102,7 @@ void ParticleController::fire(SystemID id, const sf::Vector2f& position)
         //if no inactive systems add a new one from the definition
         auto entity = Entity::create(getMessageBus());
         auto ps = definition.createSystem(getMessageBus());
+        ps->followParent(true); //assumes these systems will not move while active, to fix emission of particles in previous position
         entity->addComponent<ParticleSystem>(ps);
         entity->setWorldPosition(position);
         entity->getComponent<ParticleSystem>()->start(definition.releaseCount, definition.delay, definition.duration);

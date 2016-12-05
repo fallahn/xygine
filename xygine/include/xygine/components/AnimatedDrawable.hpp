@@ -43,8 +43,8 @@ namespace xy
     struct XY_EXPORT_API Animation
     {
         friend class AnimatedDrawable;
-        Animation(const std::string& name, sf::Int16 begin, sf::Int16 end, bool loop = true)
-            : m_name(name), m_startFrame(begin), m_endFrame(end), m_loop(loop){}
+        Animation(const std::string& name, sf::Int16 begin, sf::Int16 end, bool loop = true, float frameRate = 0.f)
+            : m_name(name), m_startFrame(begin), m_endFrame(end), m_loop(loop), m_frameRate(frameRate){}
 
         /*!
         \brief Gets the name of the animation
@@ -61,6 +61,7 @@ namespace xy
         sf::Int16 m_startFrame;
         sf::Int16 m_endFrame;
         bool m_loop;
+        float m_frameRate;
     };
 
     /*!

@@ -44,7 +44,7 @@ namespace xy
     setEnabled() or via message callbacks. Blur amount is animated when
     enabling or disabling for a smoother transition.
     */
-    class PostBlur final : public PostProcess
+    class XY_EXPORT_API PostBlur final : public PostProcess
     {
     public:
         PostBlur();
@@ -59,7 +59,7 @@ namespace xy
         */
         void setEnabled(bool);
         /*!
-        \brief Sets the speed of the transition when enableing or disabling
+        \brief Sets the speed of the transition when enabling or disabling
         the effect.
         \param Value must be 1 or greater
         */

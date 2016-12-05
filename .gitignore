@@ -9,3 +9,5 @@ ReleaseStatic
 
 # OSX #
 *.DS_Store
+ReleaseShared
+packages

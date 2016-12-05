@@ -221,6 +221,7 @@ void AnimatedDrawable::play(sf::Int16 start, sf::Int16 end, sf::Int16 offset)
 void AnimatedDrawable::play(Animation animation, sf::Int16 offset)
 {
     setLooped(animation.m_loop);
+    if(animation.m_frameRate > 0) setFrameRate(animation.m_frameRate);
     play(animation.m_startFrame, animation.m_endFrame, offset);
 }
 
@@ -303,7 +304,8 @@ void AnimatedDrawable::loadAnimationData(const std::string& path)
                 sf::Int16 start = (a.get("Start").is<double>()) ? static_cast<sf::Int16>(a.get("Start").get<double>()) : 0;
                 sf::Int16 end = (a.get("End").is<double>()) ? static_cast<sf::Int16>(a.get("End").get<double>()) : 0;
                 bool loop = (a.get("Loop").is<bool>()) ? a.get("Loop").get<bool>() : false;
-                m_animations.emplace_back(name, start, end, loop);
+                float framerate = (a.get("Framerate").is<double>()) ? static_cast<float>(a.get("Framerate").get<double>()) : 0.f;
+                m_animations.emplace_back(name, start, end, loop, framerate);
             }
         }
     
