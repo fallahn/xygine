@@ -68,15 +68,14 @@ namespace xy
         \param count Number of textures to create. Currently the max supported is 4
         \param depthbuffer Set to true if you want to create a depth buffer with the
         target. This is false by default as it is the most common use case.
-        \param floatingPoint Set to true to use 32 bit floating point textures. This is
-        usually the case when you which to write positional or normal data to texture
-        when using the MRT as a g-buffer for deferred rendering
+        \param depthTexture If this is true a depth texture is created (assuming depthbuffer
+        is also true) which can be used for rendering depth values.
         \return True if creation is successful
         */
-        bool create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 count, bool depthbuffer = false);
+        bool create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 count, bool depthbuffer = false, bool depthTexture = false);
         /*!\brief Prevents implicitly converting bool to int when inadvertantly missing out the count parameter*/
         template <typename T>
-        bool create(sf::Uint32 width, sf::Uint32 height, T count, bool depthbuffer = false) = delete;
+        bool create(sf::Uint32 width, sf::Uint32 height, T count, bool depthbuffer = false, bool depthTexture = false) = delete;
 
         /*!
         \brief Enables or disables texture smoothing. This is false by default.
@@ -126,12 +125,17 @@ namespace xy
         */
         const sf::Texture& getTexture(std::size_t index) const;
 
+        /*!
+        \brief returns the depth texture if this MRT was created with one
+        */
+        const sf::Texture& getDepthTexture() const { return m_depthTexture; }
     private:
         std::size_t m_textureCount;
 
         std::unique_ptr<sf::Context> m_context;
         unsigned int m_fbo;
         unsigned int m_depthbuffer;
+        sf::Texture m_depthTexture;
 
         //TODO define a const for max textures
         std::array<sf::Texture, 4u> m_textures;

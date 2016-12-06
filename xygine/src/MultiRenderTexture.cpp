@@ -42,9 +42,9 @@ namespace
 }
 
 MultiRenderTexture::MultiRenderTexture()
-    : m_textureCount(0u),
-    m_fbo           (0u),
-    m_depthbuffer   (0u)
+    : m_textureCount    (0u),
+    m_fbo               (0u),
+    m_depthbuffer       (0u)
 {
 
 }
@@ -67,7 +67,7 @@ MultiRenderTexture::~MultiRenderTexture()
 }
 
 //public
-bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 count, bool depthBuffer)
+bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 count, bool depthBuffer, bool depthTexture)
 {    
     if (!glGenFramebuffers)
     {
@@ -103,19 +103,34 @@ bool MultiRenderTexture::create(sf::Uint32 width, sf::Uint32 height, sf::Uint32 
         }
         glCheck(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo));
 
-        if (depthBuffer)
+        if (depthBuffer) //TODO buffers are a bit faster so we could make the texture an option
         {
-            GLuint depth = 0;
-            glCheck(glGenRenderbuffers(1, &depth));
-            m_depthbuffer = static_cast<unsigned int>(depth);
-            if (m_depthbuffer == 0)
+            if (!depthTexture)
             {
-                Logger::log("Failed creating depth buffer for MRT", Logger::Type::Error, Logger::Output::All);
-                return false;
+                GLuint depth = 0;
+                glCheck(glGenRenderbuffers(1, &depth));
+                m_depthbuffer = static_cast<unsigned int>(depth);
+                if (m_depthbuffer == 0)
+                {
+                    Logger::log("Failed creating depth buffer for MRT", Logger::Type::Error, Logger::Output::All);
+                    return false;
+                }
+                glCheck(glBindRenderbuffer(GL_RENDERBUFFER, m_depthbuffer));
+                glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
+                glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer));
             }
-            glCheck(glBindRenderbuffer(GL_RENDERBUFFER, m_depthbuffer));
-            glCheck(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
-            glCheck(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer));
+            else
+            {
+                m_depthTexture.create(width, height);
+                glCheck(glBindTexture(GL_TEXTURE_2D, m_depthTexture.getNativeHandle()));
+                glCheck(glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0));
+                glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+                glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+                glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+                glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+
+                glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depthTexture.getNativeHandle(), 0);
+            }
         }
         //attach textures
         for (auto i = 0u; i < count; ++i)

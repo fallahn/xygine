@@ -54,6 +54,8 @@ RenderQuad::RenderQuad(const sf::Vector2f& size, sf::Shader& shader)
     };
     m_mesh.setVertexData(vertData.data());
     m_mesh.setPrimitiveType(xy::Mesh::PrimitiveType::TriangleStrip);
+
+    m_material.getRenderPass(RenderPass::ID::Default)->setDepthFunc(DepthFunc::Always);
 }
 
 //public

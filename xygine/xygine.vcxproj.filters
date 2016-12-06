@@ -956,6 +956,9 @@
     <ClInclude Include="include\xygine\postprocess\PostProcess.hpp">
       <Filter>Header Files\post effects</Filter>
     </ClInclude>
+    <ClInclude Include="include\xygine\mesh\shaders\ForwardLighting.hpp">
+      <Filter>Header Files\mesh\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xygine\mesh\shaders\Water.inl">

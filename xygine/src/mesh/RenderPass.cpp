@@ -38,7 +38,8 @@ RenderPass::RenderPass(sf::Shader& shader)
     m_depthFunc     (DepthFunc::LEqual),
     m_winding       (Winding::CounterClockwise),
     m_cullface      (CullFace::Back),
-    m_skinID        (-1)
+    m_skinID        (-1),
+    m_enabled       (true)
 {
     XY_ASSERT(shader.getNativeHandle(), "Must compile shader first!");
 

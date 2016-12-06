@@ -38,7 +38,7 @@ MeshDrawable::MeshDrawable(MessageBus& mb, MeshRenderer& mr, const MeshRenderer:
 {
     auto size = mr.m_gBuffer.getSize();
 
-    m_renderTexture.create(size.x, size.y);
+    m_renderTexture.create(size.x, size.y, true);
     m_sprite.setTexture(m_renderTexture.getTexture());
     m_sprite.setOrigin(sf::Vector2f(size) / 2.f);
     m_sprite.setScale(xy::DefaultSceneSize.x / size.x, xy::DefaultSceneSize.y / size.y);
@@ -66,7 +66,7 @@ MeshDrawable::MeshDrawable(MessageBus& mb, MeshRenderer& mr, const MeshRenderer:
             {
                 width = (height / 9) * 16;
             }
-            m_renderTexture.create(static_cast<unsigned>(width), static_cast<unsigned>(height));
+            m_renderTexture.create(static_cast<unsigned>(width), static_cast<unsigned>(height), true);
             //remember to reset the sprite's sub-rect!
             m_sprite.setTexture(m_renderTexture.getTexture(), true);
             m_sprite.setOrigin(width / 2.f, height / 2.f);

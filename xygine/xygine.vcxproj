@@ -310,6 +310,7 @@
     <ClInclude Include="include\xygine\mesh\shaders\Default.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\DeferredLighting.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\DeferredRenderer.hpp" />
+    <ClInclude Include="include\xygine\mesh\shaders\ForwardLighting.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\GeomVis.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\LightBlur.hpp" />
     <ClInclude Include="include\xygine\mesh\shaders\SSAO.hpp" />

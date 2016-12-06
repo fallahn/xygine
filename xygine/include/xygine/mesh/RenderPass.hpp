@@ -94,6 +94,7 @@ namespace xy
             Default = 0,
             ShadowMap,
             Debug,
+            AlphaBlend,
             Count
         };
         /*!
@@ -184,6 +185,16 @@ namespace xy
         \brief Returns a reference to this pass's properties
         */
         const std::vector<MaterialProperty>& getProperties() const { return m_properties; }
+
+        /*!
+        \brief Enables or disables this pass for rendering
+        */
+        void setEnabled(bool b) { m_enabled = b; }
+
+        /*!
+        \brief Returns whether or not this pass is enabled
+        */
+        bool enabled() const { return m_enabled; }
     private:
         sf::Shader& m_shader;
 
@@ -199,6 +210,8 @@ namespace xy
         CullFace m_cullface;
 
         UniformID m_skinID;
+
+        bool m_enabled;
     };
 }
 

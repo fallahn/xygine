@@ -359,9 +359,9 @@ void MeshRenderer::createNoiseTexture()
     glCheck(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-void MeshRenderer::drawDepth() const
+void MeshRenderer::drawDepth(const sf::FloatRect& visibleArea) const
 {
-    auto visibleArea = m_scene.getVisibleArea();
+    //auto visibleArea = m_scene.getVisibleArea();
     std::size_t drawCount = 0;
     //get light count
     auto lightCount = m_scene.getVisibleLights(visibleArea).size();
@@ -439,11 +439,8 @@ void MeshRenderer::drawDepth() const
     REPORT("Shadow draw count", std::to_string(drawCount));
 }
 
-void MeshRenderer::drawScene() const
+void MeshRenderer::drawScene(const sf::FloatRect& visibleArea) const
 {
-    auto visibleArea = m_scene.getVisibleArea();
-    std::size_t drawCount = 0;
-
     m_gBuffer.setActive(true);
     auto viewPort = m_gBuffer.getView().getViewport();
     auto size = m_gBuffer.getSize();
@@ -458,7 +455,8 @@ void MeshRenderer::drawScene() const
     glCheck(glEnable(GL_CULL_FACE));
     glCheck(glEnable(GL_DEPTH_TEST));
     glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-    drawCount = 0;
+    
+    std::size_t drawCount = 0;
     for (const auto& m : m_models)
     {
         drawCount += m->draw(m_viewMatrix, visibleArea, RenderPass::Default);
@@ -470,13 +468,35 @@ void MeshRenderer::drawScene() const
     REPORT("Draw Count", std::to_string(drawCount));
 }
 
+void MeshRenderer::drawAlphaBlended(const sf::FloatRect& visibleArea) const
+{
+    //ugh, SFMLs flipped Y coord...
+    std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_flippedProjectionMatrix), 16 * sizeof(float));
+    m_matrixBlockBuffer.update(m_matrixBlock);
+
+    //glCheck(glEnable(GL_CULL_FACE));
+    //glCheck(glEnable(GL_DEPTH_TEST));
+    //glCheck(glDepthMask(GL_FALSE));
+    for (const auto& m : m_models)
+    {
+        m->draw(m_viewMatrix, visibleArea, RenderPass::AlphaBlend);
+    }
+    //glCheck(glDepthMask(GL_TRUE));
+    //glCheck(glDisable(GL_DEPTH_TEST));
+    //glCheck(glDisable(GL_CULL_FACE));
+
+    std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16 * sizeof(float));
+    m_matrixBlockBuffer.update(m_matrixBlock);
+}
+
 void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     auto oldView = rt.getView();
     rt.setView(m_view);
     
-    drawDepth();
-    drawScene();
+    auto visibleArea = m_scene.getVisibleArea();
+    drawDepth(visibleArea);
+    drawScene(visibleArea);
 
     /*m_ssaoTexture.clear(sf::Color::Transparent);
     m_ssaoTexture.draw(m_ssaoSprite, &m_ssaoShader);
@@ -512,7 +532,11 @@ void MeshRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     glCheck(glActiveTexture(GL_TEXTURE0 + DepthTextureUnit));
     glCheck(glBindTexture(GL_TEXTURE_2D_ARRAY, m_depthTexture.getNativeHandle()));
 
+    glCheck(glEnable(GL_DEPTH_TEST)); //MUST be enabled before writing quad
     rt.draw(*m_outputQuad);
+    drawAlphaBlended(visibleArea); //forward rendering pass
+    glCheck(glDisable(GL_DEPTH_TEST));
+
     rt.resetGLStates();
     rt.setView(oldView);
 }
@@ -528,6 +552,7 @@ void MeshRenderer::updateView()
     m_cameraZ = ((viewSize.y / 2.f) / angle);
 
     m_projectionMatrix = glm::perspective(fov, viewSize.x / viewSize.y, m_cameraZ * m_nearRatio, m_cameraZ * m_farRatio);
+    m_flippedProjectionMatrix = glm::scale(m_projectionMatrix, { 1.f, -1.f, 1.f });
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16 * sizeof(float));
 
     REPORT("FOV", std::to_string(m_fov));
@@ -640,7 +665,7 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
 void MeshRenderer::resizeGBuffer(sf::Uint32 x, sf::Uint32 y)
 {
     //create the render buffer
-    m_gBuffer.create(x, y, 4u, true);
+    m_gBuffer.create(x, y, 4u, true, true);
 
     //use floating point textures for position and normals
     std::function<void(int)> useFloatingpoint = [x, y, this](int id)
@@ -715,6 +740,7 @@ void MeshRenderer::initOutput()
             m_lightingShader.setUniform("u_normalMap", m_gBuffer.getTexture(MaterialChannel::Normal));
             m_lightingShader.setUniform("u_maskMap", m_gBuffer.getTexture(MaterialChannel::Mask));
             m_lightingShader.setUniform("u_positionMap", m_gBuffer.getTexture(MaterialChannel::Position));
+            m_lightingShader.setUniform("u_depthBuffer", m_gBuffer.getDepthTexture());
             //m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
             m_lightingShader.setUniform("u_illuminationMap", m_lightDownsampleTexture.getTexture());
             m_lightingShader.setUniform("u_reflectMap", m_scene.getReflection());
@@ -723,7 +749,7 @@ void MeshRenderer::initOutput()
             //assumption based on the above to get the correct texture unit. BEAR THIS IN MIND
             sf::Shader::bind(&m_lightingShader);
             auto loc = glGetUniformLocation(m_lightingShader.getNativeHandle(), "u_depthMaps");
-            glCheck(glUniform1i(loc, DepthTextureUnit));
+            glCheck(glUniform1i(loc, DepthTextureUnit)); //depth maps for lights
         }
     }
     else

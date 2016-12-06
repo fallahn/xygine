@@ -118,6 +118,7 @@ namespace xy
                 "uniform sampler2D u_reflectMap;\n"
                 "uniform int u_lightCount = MAX_POINT_LIGHTS;\n"
                 "uniform sampler2DArray u_depthMaps;\n"
+                "uniform sampler2D u_depthBuffer;\n"
 
                 "in vec2 v_texCoord;\n"
 
@@ -210,28 +211,28 @@ namespace xy
                 "    return texture(u_reflectMap, coord).rgb;\n"
                 "}\n"
 
-//#include "Water.inl"
+                //#include "Water.inl"
 
                 "void main()\n"
                 "{\n"
-                "    vec3 fragPosition = texture(u_positionMap, v_texCoord).xyz;\n"
+                "    vec4 fragPosition = texture(u_positionMap, v_texCoord);\n"
                 "    mask = texture(u_maskMap, v_texCoord);\n"
                 "    vec3 normal = texture(u_normalMap, v_texCoord).rgb;\n"
                 "    vec4 diffuse = texture(u_diffuseMap, v_texCoord);\n"
                 "    diffuseColour = diffuse.rgb;\n"
                 "    vec3 blendedColour = diffuse.rgb * u_ambientColour.rgb;\n"
-                "    eyeDirection = normalize(u_cameraWorldPosition - fragPosition);\n"
+                "    eyeDirection = normalize(u_cameraWorldPosition - fragPosition.xyz);\n"
 
                 "    if(u_skyLight.intensity > 0.0)\n"
                 "    {\n"
                 "         vec3 lighting = calcLighting(normal, normalize(-u_skyLight.direction), u_skyLight.diffuseColour.rgb, u_skyLight.specularColour.rgb, 1.0) * u_skyLight.intensity;\n"
-                "         lighting *= calcShadow(MAX_POINT_LIGHTS, u_skyLight.vpMatrix * vec4(fragPosition, 1.0));\n"
+                "         lighting *= calcShadow(MAX_POINT_LIGHTS, u_skyLight.vpMatrix * vec4(fragPosition.xyz, 1.0));\n"
                 "         blendedColour += lighting;\n"
                 "    }\n"
 
                 "    for (int i = 0; i < u_lightCount && i < MAX_POINT_LIGHTS; ++i)\n"
                 "    {\n"
-                "        vec3 pointLightDirection = (u_pointLights[i].position - fragPosition);\n"
+                "        vec3 pointLightDirection = (u_pointLights[i].position - fragPosition.xyz);\n"
                 "        float range = u_pointLights[i].range * u_pointLights[i].range;\n"
                 "        float distance = lenSqr(pointLightDirection);\n"
                 "        if(distance > range) continue;//fragment not in light range\n"
@@ -240,9 +241,9 @@ namespace xy
                 "        float falloff = clamp(1.0 - sqrt(dot(pointLightDirection, pointLightDirection)), 0.0, 1.0);\n"
                 "        pointLightDirection = normalize(pointLightDirection);\n"
                 "        vec3 lighting = calcLighting(normal, pointLightDirection, u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;\n" \
-                "        if(u_pointLights[i].castShadows) lighting *= (calcShadow(i, u_pointLights[i].vpMatrix * vec4(fragPosition, 1.0)) * (distance / range));\n"
+                "        if(u_pointLights[i].castShadows) lighting *= (calcShadow(i, u_pointLights[i].vpMatrix * vec4(fragPosition.xyz, 1.0)) * (distance / range));\n"
                 "        blendedColour += lighting;\n"
-                "        //blendedColour *= calcShadow(i, max(0.05 * (1.0 - dot(normal, pointLightDirection)), 0.005), u_pointLights[i].vpMatrix * vec4(fragPosition, 1.0));\n"
+                "        //blendedColour *= calcShadow(i, max(0.05 * (1.0 - dot(normal, pointLightDirection)), 0.005), u_pointLights[i].vpMatrix * vec4(fragPosition.xyz, 1.0));\n"
                 "    }\n"
 
 
@@ -259,9 +260,9 @@ namespace xy
 
                 "    blendedColour += texture(u_illuminationMap, v_texCoord).rgb * (2.0 - u_skyLight.intensity);\n"
                 "#if defined (WATER)\n"
-                "    blendedColour = calcWater(blendedColour, fragPosition);\n"
+                "    blendedColour = calcWater(blendedColour, fragPosition.xyz);\n"
                 "#endif\n"
-
+                "    gl_FragDepth = texture(u_depthBuffer, v_texCoord).r;\n"
                 "    fragOut = vec4(blendedColour, diffuse.a);//vec4(vec3(texture(u_depthMaps, vec3(v_texCoord, 1.0)).r), 1.0);//\n"
                 "}";
         }

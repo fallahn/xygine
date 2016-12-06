@@ -211,6 +211,7 @@ namespace xy
         const Scene& m_scene;
         glm::mat4 m_viewMatrix;
         glm::mat4 m_projectionMatrix;
+        glm::mat4 m_flippedProjectionMatrix;
         float m_cameraZ;
         sf::View m_view;
 
@@ -283,7 +284,7 @@ namespace xy
 
         mutable DepthRenderTexture m_depthTexture;
         sf::Shader m_depthShader;
-        void drawDepth() const;
+        void drawDepth(const sf::FloatRect&) const;
 
         sf::Shader m_waterShader;
         sf::Texture m_surfaceTexture;
@@ -291,7 +292,8 @@ namespace xy
 
         mutable std::vector<Model*> m_models;
         mutable xy::MultiRenderTexture m_gBuffer;
-        void drawScene() const;
+        void drawScene(const sf::FloatRect&) const;
+        void drawAlphaBlended(const sf::FloatRect&) const;
 
         sf::Shader m_debugShader;
         sf::Texture m_dummyTexture;

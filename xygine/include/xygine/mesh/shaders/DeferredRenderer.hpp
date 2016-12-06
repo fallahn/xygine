@@ -258,7 +258,7 @@ namespace xy
                     "    fragOut[2] = u_maskColour;\n"
                     "#endif\n"
                     "    fragOut[3].rgb = v_worldPosition;\n" \
-                    "    fragOut[3].a = lineariseDepth(gl_FragCoord.z);\n" \
+                    "    fragOut[3].a = /*lineariseDepth*/(gl_FragCoord.z);\n" \
                 "}";
         }
     }
@@ -288,5 +288,10 @@ namespace xy
 
 #define DEFERRED_VERTCOLOURED_SKINNED_VERTEX "#version 150\n#define VERTEX_COLOUR\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex
 
+#define ALPHABLEND_COLOURED_VERTEX DEFERRED_COLOURED_VERTEX
+#define ALPHABLEND_COLOURED_BUMPED_VERTEX DEFERRED_COLOURED_BUMPED_VERTEX
+#define ALPHABLEND_TEXTURED_VERTEX DEFERRED_TEXTURED_VERTEX
+#define ALPHABLEND_TEXTURED_BUMPED_VERTEX DEFERRED_TEXTURED_BUMPED_VERTEX
+#define ALPHABLEND_TEXTURED_BUMPED_SKINNED_VERTEX DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX
 
 #endif //XY_MESH_DEFERRED_HPP_

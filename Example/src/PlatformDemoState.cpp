@@ -50,7 +50,7 @@ source distribution.
 
 #include <xygine/components/MeshDrawable.hpp>
 #include <xygine/components/Model.hpp>
-#include <xygine/mesh/shaders/DeferredRenderer.hpp>
+#include <xygine/mesh/shaders/ForwardLighting.hpp>
 #include <xygine/mesh/SubMesh.hpp>
 #include <xygine/mesh/CubeBuilder.hpp>
 #include <xygine/mesh/IQMBuilder.hpp>
@@ -82,7 +82,8 @@ namespace
         TexturedSmooth3D,
         TexturedSkinned,
         Shadow,
-        ShadowSkinned
+        ShadowSkinned,
+        AlphaBlend
     };
 
     Plat::PlayerController* playerController = nullptr;
@@ -121,7 +122,7 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
 
     auto e = xy::Entity::create(m_messageBus);
     auto md = m_meshRenderer.createDrawable(m_messageBus);
-    md->enableWater(true);
+    //md->enableWater(true);
     e->addComponent(md);
     m_scene.addEntity(e, xy::Scene::Layer::FrontFront);
 
@@ -332,14 +333,17 @@ void PlatformDemoState::cacheMeshes()
     m_shaderResource.preload(PlatformShaderId::SpecularSmooth3D, DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
     m_shaderResource.preload(PlatformShaderId::ShadowSkinned, SHADOW_VERTEX_SKINNED, xy::Shader::Mesh::ShadowFragment);
     m_shaderResource.preload(PlatformShaderId::Shadow, SHADOW_VERTEX, xy::Shader::Mesh::ShadowFragment);
+    m_shaderResource.preload(PlatformShaderId::AlphaBlend, ALPHABLEND_TEXTURED_VERTEX, ALPHABLEND_TEST_FRAG);
 
     auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/cube_diffuse.png") });
+    demoMaterial.addUniformBuffer(m_meshRenderer.getLightingUniforms());
+    demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/transparent.png") });
     demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/platform/cube_normal.png") });
     demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/platform/cube_mask.png") });
     demoMaterial.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::Shadow));
     demoMaterial.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
+    demoMaterial.addRenderPass(xy::RenderPass::ID::AlphaBlend, m_shaderResource.get(PlatformShaderId::AlphaBlend));
   
     auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
     fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());

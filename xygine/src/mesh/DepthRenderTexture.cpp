@@ -54,6 +54,7 @@ DepthRenderTexture::~DepthRenderTexture()
     {
         GLuint fbo = static_cast<GLuint>(m_fbo);
         glCheck(glDeleteFramebuffers(1, &fbo));
+        glCheck(glDeleteTextures(1, &m_textureID));
     }
 }
 

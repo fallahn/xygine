@@ -59,6 +59,14 @@ void Material::addRenderPass(RenderPass::ID id, sf::Shader& shader)
         {
             pass->second.addUniformBuffer(*u);
         }
+
+        //disable this material in deferred rendering
+        if (id == RenderPass::ID::AlphaBlend)
+        {
+            getRenderPass(RenderPass::ID::Default)->setEnabled(false);
+            //pass->second.setWinding(xy::Winding::Clockwise);
+            pass->second.setCullFace(xy::CullFace::Front);
+        }
     }
     else
     {
@@ -79,7 +87,7 @@ RenderPass* Material::getRenderPass(RenderPass::ID id)
 bool Material::setActivePass(RenderPass::ID id) const
 {
     auto result = m_passes.find(id);
-    if (result != m_passes.end())
+    if (result != m_passes.end() && result->second.enabled())
     {
         //godverdomme. sort this out.
         m_activePass = const_cast<RenderPass*>(&result->second);
@@ -114,7 +122,7 @@ void Material::addUniformBuffer(const UniformBuffer& ubo)
     {
         p.second.addUniformBuffer(ubo);
     }
-    //storee this to apply to any new passes added later
+    //store this to apply to any new passes added later
     m_uniformBuffers.push_back(&ubo);
     //return false;
 }
