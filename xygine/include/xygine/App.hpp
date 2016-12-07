@@ -126,7 +126,7 @@ namespace xy
         (or other 3D features) a context with OpenGL version 3.2 or 
         higher is needed, as well as a depth buffer.
         */
-        App(sf::ContextSettings = sf::ContextSettings(24, 8));
+        App(sf::ContextSettings = sf::ContextSettings());
         virtual ~App() = default;
         App(const App&) = delete;
         const App& operator = (const App&) = delete;

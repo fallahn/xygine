@@ -82,8 +82,7 @@ namespace
         TexturedSmooth3D,
         TexturedSkinned,
         Shadow,
-        ShadowSkinned,
-        AlphaBlend
+        ShadowSkinned
     };
 
     Plat::PlayerController* playerController = nullptr;
@@ -321,7 +320,7 @@ void PlatformDemoState::cacheMeshes()
     xy::IQMBuilder ib3("assets/models/batcat.iqm");
     m_meshRenderer.loadModel(MeshID::Batcat, ib3);
 
-    xy::QuadBuilder qb({ 500.f, 550.f });
+    xy::QuadBuilder qb({ 1500.f, 550.f });
     m_meshRenderer.loadModel(MeshID::Quad, qb);
 
     xy::SphereBuilder sb(34.f, 6u);
@@ -333,18 +332,15 @@ void PlatformDemoState::cacheMeshes()
     m_shaderResource.preload(PlatformShaderId::SpecularSmooth3D, DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
     m_shaderResource.preload(PlatformShaderId::ShadowSkinned, SHADOW_VERTEX_SKINNED, xy::Shader::Mesh::ShadowFragment);
     m_shaderResource.preload(PlatformShaderId::Shadow, SHADOW_VERTEX, xy::Shader::Mesh::ShadowFragment);
-    m_shaderResource.preload(PlatformShaderId::AlphaBlend, ALPHABLEND_TEXTURED_VERTEX, ALPHABLEND_TEXTURED_FRAGMENT);
-    m_shaderResource.get(PlatformShaderId::AlphaBlend).setUniform("u_depthMaps", m_meshRenderer.getShadowMapIndex());
 
     auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
     demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    demoMaterial.addUniformBuffer(m_meshRenderer.getLightingUniforms());
     demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/cube_diffuse.png") });
     demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/platform/cube_normal.png") });
     demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/platform/cube_mask.png") });
     demoMaterial.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::Shadow));
     demoMaterial.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
-    //demoMaterial.addRenderPass(xy::RenderPass::ID::AlphaBlend, m_shaderResource.get(PlatformShaderId::AlphaBlend));
+    //m_meshRenderer.enableTransparency(demoMaterial, xy::Material::TexturedBumped);
   
     auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
     fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
@@ -364,17 +360,15 @@ void PlatformDemoState::cacheMeshes()
 
     auto& platformMaterial01 = m_materialResource.add(MatId::Platform01, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
     platformMaterial01.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    platformMaterial01.addUniformBuffer(m_meshRenderer.getLightingUniforms());
     platformMaterial01.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_01.png") });
     platformMaterial01.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::Shadow));
-    platformMaterial01.addRenderPass(xy::RenderPass::ID::AlphaBlend, m_shaderResource.get(PlatformShaderId::AlphaBlend));
+    m_meshRenderer.enableTransparency(platformMaterial01, xy::Material::Textured);
 
     auto& platformMaterial04 = m_materialResource.add(MatId::Platform04, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
     platformMaterial04.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
-    platformMaterial04.addUniformBuffer(m_meshRenderer.getLightingUniforms());
     platformMaterial04.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_04.png") });
     platformMaterial04.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::Shadow));
-    platformMaterial04.addRenderPass(xy::RenderPass::ID::AlphaBlend, m_shaderResource.get(PlatformShaderId::AlphaBlend));
+    m_meshRenderer.enableTransparency(platformMaterial04, xy::Material::Textured);
 
     auto& catMat = m_materialResource.add(MatId::BatcatMat, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
     catMat.addUniformBuffer(m_meshRenderer.getMatrixUniforms());

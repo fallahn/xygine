@@ -101,6 +101,10 @@ namespace xy
         */
         void preload(ID, const std::string&, sf::Shader::Type);
 
+        /*!
+        \brief Returns true if the given ID is already in use
+        */
+        bool exists(ID id) { return m_shaders.find(id) != m_shaders.end(); }
     private:
         std::map<ID, std::unique_ptr<sf::Shader>> m_shaders;
     };

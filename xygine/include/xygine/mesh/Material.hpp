@@ -62,6 +62,27 @@ namespace xy
     {
     public:
         /*!
+        \brief Used to describe the appearance of Materials,
+        useful for selecting the correct shader in multipass
+        Materials
+        */
+        enum Description
+        {
+            Coloured = 0,
+            ColouredBumped,
+            ColouredSkinned,
+            ColouredSkinnedBumped,
+            Textured,
+            TexturedBumped,
+            TexturedSkinned,
+            TexturedSkinnedBumped,
+            VertexColoured,
+            VertexColouredBumped,
+            VertexColouredSkinned,
+            VertexColouredSkinnedBumped
+        };
+
+        /*!
         \brief Constructor.
         \param Shader used to create the default render pass for this material
         */

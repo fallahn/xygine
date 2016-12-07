@@ -193,16 +193,21 @@ namespace xy
         float getFOV() const { return m_fov; }
 
         /*!
-        \brief kludge to retrieve shadow map texture index.
+        \brief Makes a material 'transparent' based on the
+        diffuse colour's alpha channel.
+        \param Material to render transparently
+        \param enum representing description of this material's use
+        Note transparent materials currently only work with MeshDrawable
+        components, and are not affected by screen space water effects.
         */
-        int getShadowMapIndex() const;
+        void enableTransparency(Material&, Material::Description);
 
     private:
         struct Lock final {};
 
         MeshResource m_meshResource;
         MaterialResource m_materialResource;
-        //ShaderResource m_shaderResource;
+        ShaderResource m_shaderResource;
 
         struct AnimationData
         {

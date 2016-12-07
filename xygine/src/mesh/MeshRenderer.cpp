@@ -28,6 +28,7 @@ source distribution.
 #include <xygine/mesh/MeshRenderer.hpp>
 #include <xygine/mesh/shaders/DeferredLighting.hpp>
 #include <xygine/mesh/shaders/DeferredRenderer.hpp>
+#include <xygine/mesh/shaders/ForwardLighting.hpp>
 #include <xygine/mesh/shaders/SSAO.hpp>
 #include <xygine/mesh/shaders/LightBlur.hpp>
 #include <xygine/mesh/shaders/SSWater.hpp>
@@ -339,9 +340,78 @@ void MeshRenderer::setFOV(float fov)
     }
 }
 
-int MeshRenderer::getShadowMapIndex() const
+void MeshRenderer::enableTransparency(Material& mat, Material::Description description)
 {
-    return DepthTextureUnit;
+    if (!m_shaderResource.exists(description))
+    {
+        switch (description)
+        {
+        default: break;
+        case Material::Coloured:
+            m_shaderResource.preload(description, 
+                ALPHABLEND_COLOURED_VERTEX, ALPHABLEND_COLOURED_FRAGMENT);
+            break;
+        case Material::ColouredBumped:
+            m_shaderResource.preload(description,
+                ALPHABLEND_COLOURED_BUMPED_VERTEX, ALPHABLEND_COLOURED_BUMPED_FRAGMENT);
+            break;
+        case Material::ColouredSkinned:
+            m_shaderResource.preload(description, 
+                "#version 150\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define SKINNED\n" + xy::Shader::Mesh::ForwardFragment);
+            break;
+        case Material::ColouredSkinnedBumped:
+            m_shaderResource.preload(description, 
+                "#version 150\n#define SKINNED\n#define BUMP\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define SKINNED\n#define BUMP\n" + xy::Shader::Mesh::ForwardFragment);
+            break;
+        case Material::Textured:
+            m_shaderResource.preload(description, 
+                "#version 150\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define TEXTURED\n" + xy::Shader::Mesh::ForwardFragment);
+            break;
+        case Material::TexturedBumped:
+            m_shaderResource.preload(description, 
+                "#version 150\n#define TEXTURED\n#define BUMP\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define TEXTURED\n#define BUMP\n" + xy::Shader::Mesh::ForwardFragment);
+            break;
+        case Material::TexturedSkinned:
+            m_shaderResource.preload(description, 
+                "#version 150\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::ForwardFragment);
+            break;
+        case Material::TexturedSkinnedBumped:
+            m_shaderResource.preload(description, 
+                "#version 150\n#define TEXTURED\n#define BUMP\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define TEXTURED\n#define BUMP\n#define SKINNED\n" + xy::Shader::Mesh::ForwardFragment);
+            break;
+        case Material::VertexColoured:
+            m_shaderResource.preload(description, 
+                "#version 150\n#define VERTEX_COLOUR\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define VERTEX_COLOUR\n" + xy::Shader::Mesh::ForwardFragment);
+            break;
+        case Material::VertexColouredBumped:
+            m_shaderResource.preload(description, 
+                "#version 150\n#define VERTEX_COLOUR\n#define BUMP\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define VERTEX_COLOUR\n#define BUMP\n" + xy::Shader::Mesh::ForwardFragment);
+            break;
+        case Material::VertexColouredSkinned:
+            m_shaderResource.preload(description, 
+                "#version 150\n#define VERTEX_COLOUR\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define VERTEX_COLOUR\n#define SKINNED\n" + xy::Shader::Mesh::ForwardFragment);
+            break;
+        case Material::VertexColouredSkinnedBumped:
+            m_shaderResource.preload(description, 
+                "#version 150\n#define VERTEX_COLOUR\n#define BUMP\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define VERTEX_COLOUR\n#define BUMP\n#define SKINNED\n" + xy::Shader::Mesh::ForwardFragment);
+            break;
+        }
+    }
+    
+    auto& shader = m_shaderResource.get(description);
+    shader.setUniform("u_depthMaps", static_cast<int>(DepthTextureUnit));
+    mat.addRenderPass(RenderPass::AlphaBlend, shader);
+    mat.addUniformBuffer(getLightingUniforms());
 }
 
 //private
