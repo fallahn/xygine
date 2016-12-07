@@ -60,6 +60,11 @@ namespace
     const unsigned DepthTextureUnit = 10u; //only used in a single shader which we know won't have this many textures
     const unsigned shadowmapSize = 1024u;
 
+    //used to offset the enum values of shader IDs
+    const std::uint32_t shadowShaderOffset = 5000u;
+    const std::uint32_t materialShaderOffset = 10000u;
+
+
     void createWaves(float freqX, float freqY, sf::Image& dst)
     {       
         static constexpr sf::Uint32 size = 256;
@@ -340,7 +345,7 @@ void MeshRenderer::setFOV(float fov)
     }
 }
 
-void MeshRenderer::enableTransparency(Material& mat, Material::Description description)
+void MeshRenderer::enableTransparency(Material& mat, Material::Description description) const
 {
     if (!m_shaderResource.exists(description))
     {
@@ -412,6 +417,116 @@ void MeshRenderer::enableTransparency(Material& mat, Material::Description descr
     shader.setUniform("u_depthMaps", static_cast<int>(DepthTextureUnit));
     mat.addRenderPass(RenderPass::AlphaBlend, shader);
     mat.addUniformBuffer(getLightingUniforms());
+}
+
+xy::Material& MeshRenderer::addMaterial(std::uint32_t id, Material::Description description, bool castShadows, bool useAlphaBlending)
+{   
+    auto shaderID = description + materialShaderOffset;
+    if (!m_shaderResource.exists(shaderID))
+    {
+        //create the shader
+        switch (description)
+        {
+        default: break;
+        case Material::Coloured:
+            m_shaderResource.preload(shaderID,
+                DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
+            break;
+        case Material::ColouredBumped:
+            m_shaderResource.preload(shaderID,
+                DEFERRED_COLOURED_BUMPED_VERTEX, DEFERRED_COLOURED_BUMPED_FRAGMENT);
+            break;
+        case Material::ColouredSkinned:
+            m_shaderResource.preload(shaderID,
+                "#version 150\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define SKINNED\n" + xy::Shader::Mesh::DeferredFragment);
+            break;
+        case Material::ColouredSkinnedBumped:
+            m_shaderResource.preload(shaderID,
+                "#version 150\n#define SKINNED\n#define BUMP\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define SKINNED\n#define BUMP\n" + xy::Shader::Mesh::DeferredFragment);
+            break;
+        case Material::Textured:
+            m_shaderResource.preload(shaderID,
+                "#version 150\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredFragment);
+            break;
+        case Material::TexturedBumped:
+            m_shaderResource.preload(shaderID,
+                "#version 150\n#define TEXTURED\n#define BUMP\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define TEXTURED\n#define BUMP\n" + xy::Shader::Mesh::DeferredFragment);
+            break;
+        case Material::TexturedSkinned:
+            m_shaderResource.preload(shaderID,
+                "#version 150\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::DeferredFragment);
+            break;
+        case Material::TexturedSkinnedBumped:
+            m_shaderResource.preload(shaderID,
+                "#version 150\n#define TEXTURED\n#define BUMP\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define TEXTURED\n#define BUMP\n#define SKINNED\n" + xy::Shader::Mesh::DeferredFragment);
+            break;
+        case Material::VertexColoured:
+            m_shaderResource.preload(shaderID,
+                "#version 150\n#define VERTEX_COLOUR\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define VERTEX_COLOUR\n" + xy::Shader::Mesh::DeferredFragment);
+            break;
+        case Material::VertexColouredBumped:
+            m_shaderResource.preload(shaderID,
+                "#version 150\n#define VERTEX_COLOUR\n#define BUMP\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define VERTEX_COLOUR\n#define BUMP\n" + xy::Shader::Mesh::DeferredFragment);
+            break;
+        case Material::VertexColouredSkinned:
+            m_shaderResource.preload(shaderID,
+                "#version 150\n#define VERTEX_COLOUR\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define VERTEX_COLOUR\n#define SKINNED\n" + xy::Shader::Mesh::DeferredFragment);
+            break;
+        case Material::VertexColouredSkinnedBumped:
+            m_shaderResource.preload(shaderID,
+                "#version 150\n#define VERTEX_COLOUR\n#define BUMP\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
+                "#version 150\n#define VERTEX_COLOUR\n#define BUMP\n#define SKINNED\n" + xy::Shader::Mesh::DeferredFragment);
+            break;
+        }
+    }
+
+    auto& material = m_materialResource.add(id, m_shaderResource.get(shaderID));
+    material.addUniformBuffer(getMatrixUniforms());
+
+    if (castShadows)
+    {
+        auto shadowID = shadowShaderOffset;
+        switch (description)
+        {
+        default: break;
+        case Material::ColouredSkinned:
+        case Material::ColouredSkinnedBumped:
+        case Material::TexturedSkinned:
+        case Material::TexturedSkinnedBumped:
+        case Material::VertexColouredSkinned:
+        case Material::VertexColouredSkinnedBumped:
+            shadowID++;          
+            break;
+        }
+
+        if (!m_shaderResource.exists(shadowID))
+        {
+            shadowID == shadowShaderOffset ? m_shaderResource.preload(shadowID, SHADOW_VERTEX, SHADOW_FRAGMENT)
+                : m_shaderResource.preload(shadowID, SHADOW_VERTEX_SKINNED, SHADOW_FRAGMENT);
+        }
+        material.addRenderPass(RenderPass::ID::ShadowMap, m_shaderResource.get(shadowID));
+    }
+
+    if (useAlphaBlending)
+    {
+        enableTransparency(material, description);
+    }
+
+    return material;
+}
+
+xy::Material& MeshRenderer::getMaterial(std::uint32_t id) const
+{
+    return m_materialResource.get(id);
 }
 
 //private

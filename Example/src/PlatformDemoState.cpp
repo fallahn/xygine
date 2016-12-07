@@ -76,13 +76,7 @@ namespace
 
     enum PlatformShaderId
     {
-        SpecularSmooth2D,
-        SpecularBumped3D,
-        SpecularSmooth3D,
-        TexturedSmooth3D,
-        TexturedSkinned,
-        Shadow,
-        ShadowSkinned
+        SpecularSmooth2D
     };
 
     Plat::PlayerController* playerController = nullptr;
@@ -326,52 +320,32 @@ void PlatformDemoState::cacheMeshes()
     xy::SphereBuilder sb(34.f, 6u);
     m_meshRenderer.loadModel(MeshID::Sphere, sb);
 
-    m_shaderResource.preload(PlatformShaderId::SpecularBumped3D, DEFERRED_TEXTURED_BUMPED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
-    m_shaderResource.preload(PlatformShaderId::TexturedSkinned, DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX, DEFERRED_TEXTURED_BUMPED_FRAGMENT);
-    m_shaderResource.preload(PlatformShaderId::TexturedSmooth3D, DEFERRED_TEXTURED_VERTEX, DEFERRED_TEXTURED_FRAGMENT);
-    m_shaderResource.preload(PlatformShaderId::SpecularSmooth3D, DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
-    m_shaderResource.preload(PlatformShaderId::ShadowSkinned, SHADOW_VERTEX_SKINNED, xy::Shader::Mesh::ShadowFragment);
-    m_shaderResource.preload(PlatformShaderId::Shadow, SHADOW_VERTEX, xy::Shader::Mesh::ShadowFragment);
-
-    auto& demoMaterial = m_materialResource.add(MatId::Demo, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
-    demoMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    auto& demoMaterial = m_meshRenderer.addMaterial(MatId::Demo, xy::Material::TexturedBumped, true);
     demoMaterial.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/cube_diffuse.png") });
     demoMaterial.addProperty({ "u_normalMap", m_textureResource.get("assets/images/platform/cube_normal.png") });
     demoMaterial.addProperty({ "u_maskMap", m_textureResource.get("assets/images/platform/cube_mask.png") });
-    demoMaterial.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::Shadow));
     demoMaterial.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
-    //m_meshRenderer.enableTransparency(demoMaterial, xy::Material::TexturedBumped);
   
-    auto& fixitMaterialBody = m_materialResource.add(MatId::MrFixitBody, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
-    fixitMaterialBody.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    auto& fixitMaterialBody = m_meshRenderer.addMaterial(MatId::MrFixitBody, xy::Material::TexturedSkinnedBumped, true);
     fixitMaterialBody.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitBody.png") });
     fixitMaterialBody.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitBody_normal.png") });
     fixitMaterialBody.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitBody_mask.tga") });
-    fixitMaterialBody.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::ShadowSkinned));
     fixitMaterialBody.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
 
-    auto& fixitMaterialHead = m_materialResource.add(MatId::MrFixitHead, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
-    fixitMaterialHead.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    auto& fixitMaterialHead = m_meshRenderer.addMaterial(MatId::MrFixitHead, xy::Material::TexturedSkinnedBumped, true);
     fixitMaterialHead.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/fixit/fixitHead.png") });
     fixitMaterialHead.addProperty({ "u_normalMap", m_textureResource.get("assets/images/fixit/fixitHead_normal.png") });
     fixitMaterialHead.addProperty({ "u_maskMap", m_textureResource.get("assets/images/fixit/fixitHead_mask.png") });
-    fixitMaterialHead.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::ShadowSkinned));
     fixitMaterialHead.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
 
-    auto& platformMaterial01 = m_materialResource.add(MatId::Platform01, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
-    platformMaterial01.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    auto& platformMaterial01 = m_meshRenderer.addMaterial(MatId::Platform01, xy::Material::Textured, true, true);
     platformMaterial01.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_01.png") });
-    platformMaterial01.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::Shadow));
-    m_meshRenderer.enableTransparency(platformMaterial01, xy::Material::Textured);
 
-    auto& platformMaterial04 = m_materialResource.add(MatId::Platform04, m_shaderResource.get(PlatformShaderId::TexturedSmooth3D));
-    platformMaterial04.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+
+    auto& platformMaterial04 = m_meshRenderer.addMaterial(MatId::Platform04, xy::Material::Textured, true, true);
     platformMaterial04.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_04.png") });
-    platformMaterial04.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::Shadow));
-    m_meshRenderer.enableTransparency(platformMaterial04, xy::Material::Textured);
 
-    auto& catMat = m_materialResource.add(MatId::BatcatMat, m_shaderResource.get(PlatformShaderId::TexturedSkinned));
-    catMat.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    auto& catMat = m_meshRenderer.addMaterial(MatId::BatcatMat, xy::Material::TexturedSkinnedBumped, true);
     auto& tex = m_textureResource.get("assets/images/platform/batcat_diffuse.png");
     tex.setRepeated(true);
     catMat.addProperty({ "u_diffuseMap", tex });
@@ -381,21 +355,17 @@ void PlatformDemoState::cacheMeshes()
     auto& tex3 = m_textureResource.get("assets/images/platform/batcat_mask.png");
     tex3.setRepeated(true);
     catMat.addProperty({ "u_maskMap", tex3 });
-    catMat.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::ShadowSkinned));
     catMat.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
 
 
     m_textureResource.setFallbackColour(sf::Color(230, 120, 0));
-    auto& sphereMat = m_materialResource.add(MatId::SphereTest, m_shaderResource.get(PlatformShaderId::SpecularBumped3D));
-    sphereMat.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    auto& sphereMat = m_meshRenderer.addMaterial(MatId::SphereTest, xy::Material::TexturedBumped, true);
     sphereMat.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/sphere_test.png") });
     sphereMat.addProperty({ "u_normalMap", m_textureResource.get("assets/images/sphere_normal.png") });
     sphereMat.addProperty({ "u_maskMap", m_textureResource.get("I don't want a mask texture!!") });
-    sphereMat.addRenderPass(xy::RenderPass::ID::ShadowMap, m_shaderResource.get(PlatformShaderId::Shadow));
     sphereMat.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
 
-    auto& lightMaterial = m_materialResource.add(MatId::LightSource, m_shaderResource.get(PlatformShaderId::SpecularSmooth3D));
-    lightMaterial.addUniformBuffer(m_meshRenderer.getMatrixUniforms());
+    auto& lightMaterial = m_meshRenderer.addMaterial(MatId::LightSource, xy::Material::Coloured);
     lightMaterial.addProperty({ "u_colour", sf::Color(135, 135, 80) });
     lightMaterial.addProperty({ "u_maskColour", sf::Color::Blue });
 
@@ -503,7 +473,7 @@ void PlatformDemoState::buildTerrain()
     model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, 180.f);
     model->setPosition({ 384.f, 158.f, 0.f });
-    model->setBaseMaterial(m_materialResource.get(MatId::Platform01));
+    model->setBaseMaterial(m_meshRenderer.getMaterial(MatId::Platform01));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(400.f, 700.f);
@@ -538,7 +508,7 @@ void PlatformDemoState::buildTerrain()
     model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, 180.f);
     model->setPosition({ 384.f, 158.f, 0.f });
-    model->setBaseMaterial(m_materialResource.get(MatId::Platform04));
+    model->setBaseMaterial(m_meshRenderer.getMaterial(MatId::Platform04));
 
     entity = xy::Entity::create(m_messageBus);
     entity->setPosition(1210.f, 600.f);
@@ -636,7 +606,7 @@ void PlatformDemoState::addItems()
         body->addCollisionShape(cs);
 
         auto model = m_meshRenderer.createModel(MeshID::Cube, m_messageBus);
-        model->setBaseMaterial(m_materialResource.get(MatId::Demo));
+        model->setBaseMaterial(m_meshRenderer.getMaterial(MatId::Demo));
 
         auto ent = xy::Entity::create(m_messageBus);
         ent->setPosition(position);
@@ -658,7 +628,7 @@ void PlatformDemoState::addItems()
         body->addCollisionShape(cs);
 
         auto model = m_meshRenderer.createModel(MeshID::Sphere, m_messageBus);
-        model->setBaseMaterial(m_materialResource.get(MatId::SphereTest));
+        model->setBaseMaterial(m_meshRenderer.getMaterial(MatId::SphereTest));
 
         auto ent = xy::Entity::create(m_messageBus);
         ent->setPosition(position);
@@ -693,7 +663,7 @@ void PlatformDemoState::addPlayer()
     camera->lockBounds({ 0.f,0.f, 2816.f, 1080.f });
 
     auto model = m_meshRenderer.createModel(MeshID::Batcat, m_messageBus);
-    model->setBaseMaterial(m_materialResource.get(MatId::BatcatMat));
+    model->setBaseMaterial(m_meshRenderer.getMaterial(MatId::BatcatMat));
     model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, -90.f);
     model->setPosition({ 60.f, 240.f, 0.f });
@@ -716,8 +686,8 @@ void PlatformDemoState::addPlayer()
     body->addCollisionShape(cs);
 
     model = m_meshRenderer.createModel(MeshID::Fixit, m_messageBus);
-    model->setSubMaterial(m_materialResource.get(MatId::MrFixitBody), 0);
-    model->setSubMaterial(m_materialResource.get(MatId::MrFixitHead), 1);
+    model->setSubMaterial(m_meshRenderer.getMaterial(MatId::MrFixitBody), 0);
+    model->setSubMaterial(m_meshRenderer.getMaterial(MatId::MrFixitHead), 1);
     model->rotate(xy::Model::Axis::X, 90.f);
     model->rotate(xy::Model::Axis::Z, 90.f);
     model->setScale({ 50.f, 50.f, 50.f });

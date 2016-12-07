@@ -94,7 +94,6 @@ private:
         BatcatMat,
         SphereTest
     };
-    xy::MaterialResource m_materialResource;
 
     void cacheMeshes();
     void buildTerrain();

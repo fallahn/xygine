@@ -200,14 +200,30 @@ namespace xy
         Note transparent materials currently only work with MeshDrawable
         components, and are not affected by screen space water effects.
         */
-        void enableTransparency(Material&, Material::Description);
+        void enableTransparency(Material&, Material::Description) const;
 
+        /*!
+        \brief Adds a material to the MeshRenderer's material cache.
+        \param std::uint32_t ID Unique ID to assign to the material
+        \param Material::Description used to hint to the MeshRenderer which shader paramters should be set
+        \param bool castShadows Set to true if this material should cast shadows
+        \param bool useAlphaBlend Set to true to enable blending this material via the diffuse
+        colour's alpha value. \see enableTransparency()
+        \returns Reference to the newly added material
+        */
+        xy::Material& addMaterial(std::uint32_t, Material::Description, bool = false, bool = false);
+
+        /*!
+        \brief returns a pointer to the material with the given ID if it exists, else returns 
+        the default material.
+        */
+        xy::Material& getMaterial(std::uint32_t) const;
     private:
         struct Lock final {};
 
         MeshResource m_meshResource;
-        MaterialResource m_materialResource;
-        ShaderResource m_shaderResource;
+        mutable MaterialResource m_materialResource;
+        mutable ShaderResource m_shaderResource;
 
         struct AnimationData
         {
