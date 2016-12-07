@@ -36,69 +36,77 @@ namespace xy
     {
         namespace Mesh
         {
-            const static std::string ShadowVertex =
-                "in vec3 a_position;\n"
+            const static std::string ShadowVertex = R"(
+                in vec3 a_position;
+                in vec2 a_texCoord0;
 
-                "#if defined(SKINNED)\n"
-                "in vec4 a_boneIndices;\n"
-                "in vec4 a_boneWeights;\n"
-                "uniform mat4[80] u_boneMatrices;\n"
-                "#endif\n"
+                #if defined(SKINNED)
+                in vec4 a_boneIndices;
+                in vec4 a_boneWeights;
+                uniform mat4[80] u_boneMatrices;
+                #endif
 
-                "uniform mat4 u_worldMatrix;\n"
+                out vec2 v_texCoord;
 
-                "layout (std140) uniform u_matrixBlock\n"
-                "{\n" \
-                "    mat4 u_viewMatrix;\n"
-                "    mat4 u_projectionMatrix;\n"
-                "    mat4 u_lightViewProjectionMatrix;\n"
-                "};\n"
+                uniform mat4 u_worldMatrix;
 
-                "out vec4 v_position;\n"
+                layout (std140) uniform u_matrixBlock
+                {
+                    mat4 u_viewMatrix;
+                    mat4 u_projectionMatrix;
+                    mat4 u_lightViewProjectionMatrix;
+                };
 
-                "void main()\n"
-                "{\n"
-                "    vec3 position = a_position;\n"
+                out vec4 v_position;
 
-                "#if defined(SKINNED)\n"
-                "	mat4 skinMatrix = u_boneMatrices[int(a_boneIndices.x)] * a_boneWeights.x;\n"
-                "	skinMatrix += u_boneMatrices[int(a_boneIndices.y)] * a_boneWeights.y;\n"
-                "	skinMatrix += u_boneMatrices[int(a_boneIndices.z)] * a_boneWeights.z;\n"
-                "	skinMatrix += u_boneMatrices[int(a_boneIndices.w)] * a_boneWeights.w;\n"
-                "	position = (skinMatrix * vec4(position, 1.0)).xyz;\n"
-                "#endif\n" \
-                "    //gl_Position = u_projectionMatrix * u_worldViewMatrix * vec4(position, 1.0);\n"
-                "    gl_Position = u_lightViewProjectionMatrix * u_worldMatrix * vec4(position, 1.0);\n"
-                "    v_position = gl_Position;\n"
-                "}";
+                void main()
+                {
+                    vec3 position = a_position;
 
-            const static std::string ShadowFragment =
-                "#version 150\n"
-                "//out vec4 fragOut;\n"
-                "void main()\n"
-                "{\n"
-                "    //fragOut = vec4(vec3(gl_FragCoord.z), 1.0);\n"
-                "}";
+                #if defined(SKINNED)
+                	mat4 skinMatrix = u_boneMatrices[int(a_boneIndices.x)] * a_boneWeights.x;
+                	skinMatrix += u_boneMatrices[int(a_boneIndices.y)] * a_boneWeights.y;
+                	skinMatrix += u_boneMatrices[int(a_boneIndices.z)] * a_boneWeights.z;
+                	skinMatrix += u_boneMatrices[int(a_boneIndices.w)] * a_boneWeights.w;
+                	position = (skinMatrix * vec4(position, 1.0)).xyz;
+                #endif
+                    //gl_Position = u_projectionMatrix * u_worldViewMatrix * vec4(position, 1.0);
+                    gl_Position = u_lightViewProjectionMatrix * u_worldMatrix * vec4(position, 1.0);
+                    v_position = gl_Position;
 
-            const static std::string ShadowFragmentVSM =
-                "#version 150\n"
-                "in vec4 v_position;\n"
-                "out vec4 fragOut;\n"
+                    v_texCoord = a_texCoord0;
+                })";
 
-                "void main()\n"
-                "{\n"
-                "    float depth = v_position.z / v_position.w;\n"
-                "    depth = depth * 0.5 + 0.5;\n"
+            const static std::string ShadowFragment = R"(
+                #version 150
+                uniform sampler2D u_diffuseMap;
+                in vec2 v_texCoord;
+                //out vec4 fragOut;
+                void main()
+                {
+                    if(texture(u_diffuseMap, v_texCoord).a < 0.5) discard;
+                    //fragOut = vec4(vec3(gl_FragCoord.z), 1.0);
+                })";
 
-                "    float moment1 = depth;\n"
-                "    float moment2 = depth * depth;\n"
+            const static std::string ShadowFragmentVSM = R"(
+                #version 150
+                in vec4 v_position;
+                out vec4 fragOut;
 
-                "    float dx = dFdx(depth);\n"
-                "    float dy = dFdy(depth);\n"
-                "    moment2 += 0.25*(dx*dx + dy*dy);\n"
+                void main()
+                {
+                    float depth = v_position.z / v_position.w;
+                    depth = depth * 0.5 + 0.5;
 
-                "    fragOut = vec4(moment1, moment2, 0.0, 0.0);\n"
-                "}";
+                    float moment1 = depth;
+                    float moment2 = depth * depth;
+
+                    float dx = dFdx(depth);
+                    float dy = dFdy(depth);
+                    moment2 += 0.25*(dx*dx + dy*dy);
+
+                    fragOut = vec4(moment1, moment2, 0.0, 0.0);
+                })";
 
             const static std::string DeferredVertex =
                 "in vec3 a_position;\n" \
@@ -287,11 +295,5 @@ namespace xy
 #define DEFERRED_VERTCOLOURED_FRAGMENT "#version 150\n#define VERTEX_COLOUR\n" + xy::Shader::Mesh::DeferredFragment
 
 #define DEFERRED_VERTCOLOURED_SKINNED_VERTEX "#version 150\n#define VERTEX_COLOUR\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex
-
-#define ALPHABLEND_COLOURED_VERTEX DEFERRED_COLOURED_VERTEX
-#define ALPHABLEND_COLOURED_BUMPED_VERTEX DEFERRED_COLOURED_BUMPED_VERTEX
-#define ALPHABLEND_TEXTURED_VERTEX DEFERRED_TEXTURED_VERTEX
-#define ALPHABLEND_TEXTURED_BUMPED_VERTEX DEFERRED_TEXTURED_BUMPED_VERTEX
-#define ALPHABLEND_TEXTURED_BUMPED_SKINNED_VERTEX DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX
 
 #endif //XY_MESH_DEFERRED_HPP_

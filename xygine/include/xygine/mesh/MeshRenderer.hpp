@@ -192,6 +192,11 @@ namespace xy
         */
         float getFOV() const { return m_fov; }
 
+        /*!
+        \brief kludge to retrieve shadow map texture index.
+        */
+        int getShadowMapIndex() const;
+
     private:
         struct Lock final {};
 

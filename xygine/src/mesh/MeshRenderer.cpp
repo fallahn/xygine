@@ -339,6 +339,11 @@ void MeshRenderer::setFOV(float fov)
     }
 }
 
+int MeshRenderer::getShadowMapIndex() const
+{
+    return DepthTextureUnit;
+}
+
 //private
 void MeshRenderer::createNoiseTexture()
 {
@@ -475,14 +480,12 @@ void MeshRenderer::drawAlphaBlended(const sf::FloatRect& visibleArea) const
     m_matrixBlockBuffer.update(m_matrixBlock);
 
     //glCheck(glEnable(GL_CULL_FACE));
-    //glCheck(glEnable(GL_DEPTH_TEST));
-    //glCheck(glDepthMask(GL_FALSE));
+    //glCheck(glDepthMask(GL_FALSE)); //to enable this we need to ensure depth sorting of faces
     for (const auto& m : m_models)
     {
         m->draw(m_viewMatrix, visibleArea, RenderPass::AlphaBlend);
     }
     //glCheck(glDepthMask(GL_TRUE));
-    //glCheck(glDisable(GL_DEPTH_TEST));
     //glCheck(glDisable(GL_CULL_FACE));
 
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16 * sizeof(float));

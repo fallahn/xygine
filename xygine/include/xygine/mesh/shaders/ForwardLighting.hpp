@@ -36,7 +36,7 @@ namespace xy
     {
         namespace Mesh
         {
-            static const std::string ForwardFrag = R"(
+            static const std::string ForwardFragment = R"(
                 #define MAX_POINT_LIGHTS 8
 
                 struct PointLight
@@ -44,6 +44,7 @@ namespace xy
                     vec4 diffuseColour;
                     vec4 specularColour;
                     float inverseRange;
+                    float range;
                     float intensity;
                     bool castShadows;
                     vec3 position;
@@ -73,15 +74,15 @@ namespace xy
                 #if defined(TEXTURED)
                 uniform sampler2D u_diffuseMap;
                 uniform sampler2D u_maskMap;
-                #if defined(BUMPED)
+                #if defined(BUMP)
                 uniform sampler2D u_normalMap;
                 #endif
                 #endif
                 uniform sampler2D u_depthMap;
-                uniform int u_lightCount = MAX_POINT_LIGHTS;
+                uniform int u_lightcount = MAX_POINT_LIGHTS;
                 uniform sampler2DArray u_depthMaps;
 
-                #if !defined(BUMPED)
+                #if !defined(BUMP)
                 in vec3 v_normalVector;
                 #else
                 in vec3 v_tbn[3];
@@ -115,6 +116,44 @@ namespace xy
                     return mixedColour + (specularColour * mask.g);
                 }
 
+                const vec2 kernel[16] = vec2[](
+                    vec2(-0.94201624, -0.39906216),
+                    vec2(0.94558609, -0.76890725),
+                    vec2(-0.094184101, -0.92938870),
+                    vec2(0.34495938, 0.29387760),
+                    vec2(-0.91588581, 0.45771432),
+                    vec2(-0.81544232, -0.87912464),
+                    vec2(-0.38277543, 0.27676845),
+                    vec2(0.97484398, 0.75648379),
+                    vec2(0.44323325, -0.97511554),
+                    vec2(0.53742981, -0.47373420),
+                    vec2(-0.26496911, -0.41893023),
+                    vec2(0.79197514, 0.19090188),
+                    vec2(-0.24188840, 0.99706507),
+                    vec2(-0.81409955, 0.91437590),
+                    vec2(0.19984126, 0.78641367),
+                    vec2(0.14383161, -0.14100790)
+                );
+                const int filterSize = 3;
+                float calcShadow(int layer, vec4 position)
+                {
+                    float bias = 0.001;
+                    vec3 projectionCoords = position.xyz / position.w;
+                    projectionCoords = projectionCoords * 0.5 + 0.5;
+                    if(projectionCoords.z > 1.0) return 1.0;
+                    float shadow = 0.0;
+                    vec2 texelSize = 1.0 / textureSize(u_depthMaps, 0).xy;
+                    for(int x = 0; x < filterSize; ++x)
+                    {
+                        for(int y = 0; y < filterSize; ++y)
+                        {
+                            float pcfDepth = texture(u_depthMaps, vec3(projectionCoords.xy + kernel[y * filterSize + x] * texelSize, float(layer))).r;
+                            shadow += (projectionCoords.z - bias) > pcfDepth ? 1.0 : 0.0;
+                        }
+                    }
+                    return 1.0 - (shadow / 9.0);
+                }
+
                 float lenSqr(vec3 vector)
                 {
                     return dot(vector, vector);
@@ -124,10 +163,11 @@ namespace xy
                 {
                     vec3 fragPosition = v_worldPosition;
                     mask = texture(u_maskMap, v_texCoord);
-                #if !defined(BUMPED)
+                #if !defined(BUMP)
                     vec3 normal = normalize(v_normalVector);
                 #else
-                    vec3 normal = normalize(v_tbn[0] * normal.x + v_tbn[1] * normal.y + v_tbn[2] * normal.z).rgb; //TODO move to vertex shader?
+                    vec3 texNormal = texture(u_normalMap, v_texCoord).rgb * 2.0 - 1.0;
+                    vec3 normal = normalize(v_tbn[0] * texNormal.x + v_tbn[1] * texNormal.y + v_tbn[2] * texNormal.z).rgb;
                 #endif
                     vec4 diffuse = texture(u_diffuseMap, v_texCoord);
                     diffuseColour = diffuse.rgb;
@@ -136,9 +176,27 @@ namespace xy
 
                     if(u_skyLight.intensity > 0.0)
                     {
-                        blendedColour += calcLighting(normal, normalize(-u_skyLight.direction), u_skyLight.diffuseColour.rgb, u_skyLight.specularColour.rgb, 1.0) * u_skyLight.intensity;
+                        vec3 lighting = calcLighting(normal, normalize(-u_skyLight.direction), u_skyLight.diffuseColour.rgb, u_skyLight.specularColour.rgb, 1.0) * u_skyLight.intensity;
+                        lighting *= calcShadow(MAX_POINT_LIGHTS, u_skyLight.vpMatrix * vec4(fragPosition, 1.0));
+                        blendedColour += lighting;
                     }
                     
+                    for(int i = 0; i < u_lightcount && i < MAX_POINT_LIGHTS; ++i)
+                    {
+                        vec3 pointLightDirection = (u_pointLights[i].position - fragPosition);
+                        float range = u_pointLights[i].range * u_pointLights[i].range;
+                        float distance = lenSqr(pointLightDirection);
+                        if(distance > range) continue;
+
+                        pointLightDirection *= u_pointLights[i].inverseRange;
+                        float falloff = clamp(1.0 - sqrt(lenSqr(pointLightDirection)), 0.0, 1.0);
+                        pointLightDirection = normalize(pointLightDirection);
+                        
+                        vec3 lighting = calcLighting(normal, pointLightDirection, u_pointLights[i].diffuseColour.rgb, u_pointLights[i].specularColour.rgb, falloff) * u_pointLights[i].intensity;
+                        if(u_pointLights[i].castShadows) lighting *= (calcShadow(i, u_pointLights[i].vpMatrix * vec4(fragPosition.xyz, 1.0)) * (distance / range));                        
+                        blendedColour += lighting;
+                    }       
+
                     blendedColour = mix(blendedColour.rgb, diffuse.rgb, mask.b);
                     fragOut = vec4(blendedColour.rgb, diffuse.a);
                 })";
@@ -146,6 +204,16 @@ namespace xy
     }
 }
 
-#define ALPHABLEND_TEST_FRAG "#version 150\n#define TEXTURED\n" + xy::Shader::Mesh::ForwardFrag
+
+#define ALPHABLEND_COLOURED_VERTEX DEFERRED_COLOURED_VERTEX
+#define ALPHABLEND_COLOURED_BUMPED_VERTEX DEFERRED_COLOURED_BUMPED_VERTEX
+#define ALPHABLEND_TEXTURED_VERTEX DEFERRED_TEXTURED_VERTEX
+#define ALPHABLEND_TEXTURED_BUMPED_VERTEX DEFERRED_TEXTURED_BUMPED_VERTEX
+#define ALPHABLEND_TEXTURED_BUMPED_SKINNED_VERTEX DEFERRED_TEXTURED_BUMPED_SKINNED_VERTEX
+
+#define ALPHABLEND_COLOURED_FRAGMENT "#version 150\n" + xy::Shader::Mesh::ForwardFragment
+#define ALPHABLEND_COLOURED_BUMPED_FRAGMENT "#version 150\n#define BUMP\n" + xy::Shader::Mesh::ForwardFragment
+#define ALPHABLEND_TEXTURED_FRAGMENT "#version 150\n#define TEXTURED\n" + xy::Shader::Mesh::ForwardFragment
+#define ALPHABLEND_TEXTURED_BUMPED_FRAGMENT "#version 150\n#define BUMP\n#define TEXTURED\n" + xy::Shader::Mesh::ForwardFragment
 
 #endif //XY_MESH_FORWARD_HPP_
