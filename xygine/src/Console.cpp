@@ -275,7 +275,7 @@ void Console::registerDefaultCommands(App* app)
     }
     
     //list all available commands to the console
-    addCommand("list_all",
+    addCommand("help",
         [](const std::string&)
     {
         Console::print("Available Commands:");
@@ -344,7 +344,7 @@ void Console::registerDefaultCommands(App* app)
         file.close();
     });
 
-    print("type list_all to see a list of available commands");
+    print("type help to see a list of available commands");
 }
 
 int textEditCallback(ImGuiTextEditCallbackData* data)

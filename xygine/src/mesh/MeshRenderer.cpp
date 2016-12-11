@@ -792,8 +792,8 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
         //alternately we could try looking down the z-axis always and use a 180 degree FOV
         //of the viewable area, with a max depth of the light range
         //TODO cache as much of this as possible
-        auto lightPerspectiveMatrix = glm::perspective(90.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, position.z / 3.f, m_cameraZ);
-        auto lightViewMatrix = glm::lookAt(glm::vec3(position.x, position.y, position.z), glm::vec3(camWorldPosition.x, camWorldPosition.y, 0.f), glm::vec3(0.f, 1.f,0.f));
+        auto lightPerspectiveMatrix = glm::perspective(180.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, position.z / 3.f, m_cameraZ);
+        auto lightViewMatrix = glm::lookAt(glm::vec3(position.x, position.y, position.z), glm::vec3(/*camWorldPosition.x, camWorldPosition.y, 0.f*/position.x, position.y, position.z - (lights[i]->getRange())), glm::vec3(0.f, 1.f,0.f));
         std::memcpy(m_lightingBlock.u_pointLights[i].vpMatrix, glm::value_ptr(lightPerspectiveMatrix * lightViewMatrix), 16 * sizeof(float));
 
         m_lightingBlock.u_pointLights[i].castShadow = lights[i]->castShadows();
