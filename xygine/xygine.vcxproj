@@ -257,6 +257,7 @@ echo F|xcopy /y /d "$(TargetDir)$(TargetName).lib" "$(SolutionDir)lib\Release\$(
     <ClCompile Include="src\spriter\SpriterModel.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
+    <ClCompile Include="src\SysTime.cpp" />
     <ClCompile Include="src\tilemap\FreeFuncs.cpp" />
     <ClCompile Include="src\tilemap\ImageLayer.cpp" />
     <ClCompile Include="src\tilemap\Map.cpp" />
@@ -419,6 +420,7 @@ echo F|xcopy /y /d "$(TargetDir)$(TargetName).lib" "$(SolutionDir)lib\Release\$(
     <ClInclude Include="include\xygine\spriter\Model.hpp" />
     <ClInclude Include="include\xygine\State.hpp" />
     <ClInclude Include="include\xygine\StateStack.hpp" />
+    <ClInclude Include="include\xygine\SysTime.hpp" />
     <ClInclude Include="include\xygine\tilemap\FreeFuncs.hpp" />
     <ClInclude Include="include\xygine\tilemap\ImageLayer.hpp" />
     <ClInclude Include="include\xygine\tilemap\Layer.hpp" />

@@ -453,6 +453,9 @@
     <ClCompile Include="src\util\Random.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="src\SysTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -958,6 +961,9 @@
     </ClInclude>
     <ClInclude Include="include\xygine\mesh\shaders\ForwardLighting.hpp">
       <Filter>Header Files\mesh\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\SysTime.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

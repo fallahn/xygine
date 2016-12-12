@@ -55,6 +55,7 @@ MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
 bool MenuMainState::update(float dt)
 {
     m_uiContainer.update(dt);
+
     return false;
 }
 

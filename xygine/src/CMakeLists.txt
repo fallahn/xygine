@@ -26,6 +26,7 @@ set(XY_SRC
   ${XY_DIR}/ShaderResource.cpp
   ${XY_DIR}/State.cpp
   ${XY_DIR}/StateStack.cpp
+  ${XY_DIR}/SysTime.cpp
 
   ${XY_DIR}/components/Component.cpp
   ${XY_DIR}/components/ComponentAnimatedDrawable.cpp

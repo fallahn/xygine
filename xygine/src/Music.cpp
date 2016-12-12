@@ -71,7 +71,7 @@ bool MusicPlayer::playing() const
 
 void MusicPlayer::setVolume(float volume)
 {
-    XY_ASSERT(volume >= 0.f && volume <= 100.f, "volume value out of range 0 -100");
+    XY_ASSERT(volume >= 0.f && volume <= 100.f, "volume value out of range 0 - 100");
 
     m_volume = volume;
     if(m_music.getStatus() == sf::Music::Playing)
