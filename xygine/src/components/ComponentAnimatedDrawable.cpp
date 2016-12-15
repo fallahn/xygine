@@ -113,8 +113,12 @@ void AnimatedDrawable::entityUpdate(Entity&, float dt)
             if (!m_loop)
             {
                 m_playing = false;
+                setFrame(m_lastFrame);
             }
-            setFrame(m_firstFrame);
+            else
+            {
+                setFrame(m_firstFrame);
+            }
         }
 
         m_sprite.setTextureRect(m_subRect);
