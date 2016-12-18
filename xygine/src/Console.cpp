@@ -30,6 +30,7 @@ source distribution.
 #include <xygine/Assert.hpp>
 #include <xygine/Log.hpp>
 #include <xygine/App.hpp>
+#include <xygine/SysTime.hpp>
 
 #include <list>
 #include <unordered_map>
@@ -56,7 +57,7 @@ namespace
     constexpr std::size_t MAX_INPUT_CHARS = 400;
     char input[MAX_INPUT_CHARS];
     std::list<std::string> buffer;
-    const std::size_t MAX_BUFFER = 100;
+    const std::size_t MAX_BUFFER = 50;
 
     std::list<std::string> history;
     const std::size_t MAX_HISTORY = 10;
@@ -71,7 +72,9 @@ int textEditCallback(ImGuiTextEditCallbackData* data);
 
 void Console::print(const std::string& line)
 {
-    buffer.push_back(line);
+    std::string timestamp("<" + SysTime::timeString() + "> ");
+    
+    buffer.push_back(timestamp + line);
     if (buffer.size() > MAX_BUFFER)
     {
         buffer.pop_front();
@@ -80,7 +83,6 @@ void Console::print(const std::string& line)
     output.clear();
     for (const auto& str : buffer)
     {
-        //TODO prepend timestamp?
         output.append(str);
         output.append("\n");
     }

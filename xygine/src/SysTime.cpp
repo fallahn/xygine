@@ -29,6 +29,7 @@ source distribution.
 
 #include <ctime>
 #include <sstream>
+#include <iomanip>
 
 using namespace xy;
 
@@ -108,7 +109,9 @@ std::string SysTime::timeString()
 {
     Data data;
     std::stringstream ss;
-    ss << data.hours() << ":" << data.minutes() << ":" << data.seconds();
+    ss << std::setw(2) << std::setfill('0') << data.hours() << ":"
+        << std::setw(2) << std::setfill('0') << data.minutes() << ":"
+        << std::setw(2) << std::setfill('0') << data.seconds();
 
     return ss.str();
 }
