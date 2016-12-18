@@ -562,26 +562,25 @@ void MeshRenderer::drawDepth(const sf::FloatRect& visibleArea) const
     auto viewPort = m_depthTexture.getView().getViewport();
     auto size = m_depthTexture.getSize();
 
-    //glCheck(glClearDepth(0.f));
+    m_depthTexture.setActive(true);
+    glCheck(glViewport(
+        static_cast<GLuint>(viewPort.left * size.x),
+        static_cast<GLuint>(viewPort.top * size.y),
+        static_cast<GLuint>(viewPort.width * size.x),
+        static_cast<GLuint>(viewPort.height * size.y)));
+
     for (auto i = 0u; i < lightCount; ++i)
     {
-        if (m_lightingBlock.u_pointLights[i].castShadow)
+        if (m_lightingBlock.u_pointLights[i].castShadow
+            && m_lightingBlock.u_pointLights[i].intensity > 0.01f)
         {
             //set projection to current light
             std::memcpy(m_matrixBlock.u_lightViewProjectionMatrix, m_lightingBlock.u_pointLights[i].vpMatrix, sizeof(float) * 16);
             m_matrixBlockBuffer.update(m_matrixBlock);
 
             //set active texture layer
-            m_depthTexture.setActive(true);
             m_depthTexture.setLayerActive(i);
 
-            glViewport(
-                static_cast<GLuint>(viewPort.left * size.x),
-                static_cast<GLuint>(viewPort.top * size.y),
-                static_cast<GLuint>(viewPort.width * size.x),
-                static_cast<GLuint>(viewPort.height * size.y));
-
-            glCheck(glClearColor(1.f, 1.f, 1.f, 1.f));
             glCheck(glEnable(GL_DEPTH_TEST));
             glCheck(glEnable(GL_CULL_FACE));
             glCheck(glClear(GL_DEPTH_BUFFER_BIT));
@@ -604,16 +603,8 @@ void MeshRenderer::drawDepth(const sf::FloatRect& visibleArea) const
         m_matrixBlockBuffer.update(m_matrixBlock);
 
         //set active texture layer
-        m_depthTexture.setActive(true);
         m_depthTexture.setLayerActive(m_depthTexture.getLayerCount() - 1);
 
-        glViewport(
-            static_cast<GLuint>(viewPort.left * size.x),
-            static_cast<GLuint>(viewPort.top * size.y),
-            static_cast<GLuint>(viewPort.width * size.x),
-            static_cast<GLuint>(viewPort.height * size.y));
-
-        glCheck(glClearColor(1.f, 1.f, 1.f, 1.f));
         glCheck(glEnable(GL_DEPTH_TEST));
         glCheck(glEnable(GL_CULL_FACE));
         glCheck(glClear(GL_DEPTH_BUFFER_BIT));
@@ -634,11 +625,11 @@ void MeshRenderer::drawScene(const sf::FloatRect& visibleArea) const
     m_gBuffer.setActive(true);
     auto viewPort = m_gBuffer.getView().getViewport();
     auto size = m_gBuffer.getSize();
-    glViewport(
+    glCheck(glViewport(
     static_cast<GLuint>(viewPort.left * size.x),
     static_cast<GLuint>(viewPort.top * size.y),
     static_cast<GLuint>(viewPort.width * size.x),
-    static_cast<GLuint>(viewPort.height * size.y));
+    static_cast<GLuint>(viewPort.height * size.y)));
 
     glCheck(glClearColor(1.f, 1.f, 1.f, 0.f));
         
@@ -743,6 +734,8 @@ void MeshRenderer::updateView()
     m_flippedProjectionMatrix = glm::scale(m_projectionMatrix, { 1.f, -1.f, 1.f });
     std::memcpy(m_matrixBlock.u_projectionMatrix, glm::value_ptr(m_projectionMatrix), 16 * sizeof(float));
 
+    m_lightProjectionMatrix = glm::perspective(180.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, 10.f, m_cameraZ);
+
     REPORT("FOV", std::to_string(m_fov));
 
     //m_ssaoShader.setUniform("u_projectionMatrix", sf::Glsl::Mat4(glm::value_ptr(m_projectionMatrix)));
@@ -787,14 +780,11 @@ void MeshRenderer::updateLights(const glm::vec3& camWorldPosition)
         m_lightingBlock.u_pointLights[i].position[1] = position.y;
         m_lightingBlock.u_pointLights[i].position[2] = position.z;
 
-        //use this to render a depth map with the light pointing to the centre
-        //TODO ths could be a problem with locked cameras and objects moving out of the FOV
-        //alternately we could try looking down the z-axis always and use a 180 degree FOV
-        //of the viewable area, with a max depth of the light range
-        //TODO cache as much of this as possible
-        auto lightPerspectiveMatrix = glm::perspective(180.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, position.z / 3.f, m_cameraZ);
-        auto lightViewMatrix = glm::lookAt(glm::vec3(position.x, position.y, position.z), glm::vec3(/*camWorldPosition.x, camWorldPosition.y, 0.f*/position.x, position.y, position.z - (lights[i]->getRange())), glm::vec3(0.f, 1.f,0.f));
-        std::memcpy(m_lightingBlock.u_pointLights[i].vpMatrix, glm::value_ptr(lightPerspectiveMatrix * lightViewMatrix), 16 * sizeof(float));
+        //rather than use a shadow cube map we tak advantage of the fixed camera
+        //and and use a single map per light with a 180 degree FOV
+        //auto lightPerspectiveMatrix = glm::perspective(180.f, xy::DefaultSceneSize.x / xy::DefaultSceneSize.y, position.z / 3.f, m_cameraZ);
+        auto lightViewMatrix = glm::lookAt(glm::vec3(position.x, position.y, position.z), glm::vec3(position.x, position.y, position.z - (lights[i]->getRange())), glm::vec3(0.f, 1.f,0.f));
+        std::memcpy(m_lightingBlock.u_pointLights[i].vpMatrix, glm::value_ptr(m_lightProjectionMatrix * lightViewMatrix), 16 * sizeof(float));
 
         m_lightingBlock.u_pointLights[i].castShadow = lights[i]->castShadows();
     }

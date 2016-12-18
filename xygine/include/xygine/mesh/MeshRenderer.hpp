@@ -308,6 +308,7 @@ namespace xy
         sf::Shader m_lightingShader;
         UniformBlockID m_lightingBlockID;
 
+        glm::mat4 m_lightProjectionMatrix;
         mutable DepthRenderTexture m_depthTexture;
         sf::Shader m_depthShader;
         void drawDepth(const sf::FloatRect&) const;
