@@ -179,6 +179,14 @@ std::string FileSystem::getFilePath(const std::string& path)
     return searchFunc('/', path);
 }
 
+bool FileSystem::fileExists(const std::string& path)
+{
+    std::ifstream file(path);
+    bool exists = (file.is_open() && file.good());
+    file.close();
+    return exists;
+}
+
 bool FileSystem::createDirectory(const std::string& path)
 {
     //TODO regex this or at least check for illegal chars

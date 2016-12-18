@@ -63,6 +63,10 @@ namespace xy
         */
         static std::string getFilePath(const std::string& path);
         /*!
+        \brief Returns true if a file exists with the name at the given path
+        */
+        static bool fileExists(const std::string&);
+        /*!
         \brief Tries to create a directory relative to the executable
         or via an absolute path.
         \returns false if creation fails and attempts to log the reason,

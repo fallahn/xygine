@@ -100,7 +100,9 @@ std::string SysTime::dateString()
 {
     Data data;
     std::stringstream ss;
-    ss << data.days() << "/" << data.months() << "/" << data.year();
+    ss << std::setw(2) << std::setfill('0') << data.days() << "/"
+        << std::setw(2) << std::setfill('0') << data.months() << "/"
+        << data.year();
     
     return ss.str();
 }
