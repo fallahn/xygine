@@ -237,6 +237,11 @@ void Selection::setCallback(Callback callback)
     m_selectionChanged = std::move(callback);
 }
 
+void Selection::setTextColour(sf::Color colour)
+{
+    m_selectedText.setFillColor(colour);
+}
+
 //private
 void Selection::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {

@@ -123,6 +123,11 @@ namespace xy
             \brief Set the callback to be executed when selected item is changed
             */
             void setCallback(Callback);
+            /*!
+            \brief Sets the colour of the text used by the control
+            \param colour Colour to set the text fill colour to
+            */
+            void setTextColour(sf::Color colour);
 
         private:
             enum State
