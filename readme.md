@@ -12,10 +12,11 @@ particular purpose, even those for which it was specifically written...
 
 
 Details of xygine features are available on the [xygine wiki](https://github.com/fallahn/xygine/wiki) or for a
-detailed example of xygine take a look at [Lunar Mooner](https://github.com/fallahn/LunarMooner) or [Pseuthe](https://github.com/fallahn/pseuthe) (which was built
+practical example of xygine take a look at [Lunar Mooner](https://github.com/fallahn/LunarMooner) or [Pseuthe](https://github.com/fallahn/pseuthe) (which was built
 using an earlier version of xygine). The repository also contains an
-[example](https://github.com/fallahn/xygine/tree/master/Example) application containing various demos, and is
-documented with doxygen, which can be generated via the included [doxy](https://github.com/fallahn/xygine/tree/master/xygine/documentation)
+[example](https://github.com/fallahn/xygine/tree/master/Example) application containing various demos, and 
+further examples can be found in the [experimental repository](https://github.com/fallahn/xyExperimental).
+The API is [documented with doxygen](https://fallahn.github.io/xyDocs/), which can be generated via the included [doxy](https://github.com/fallahn/xygine/tree/master/xygine/documentation)
 file.
 
 
