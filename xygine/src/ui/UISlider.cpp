@@ -327,6 +327,12 @@ void Slider::addCallback(const Slider::Callback& c, Event e)
     }
 }
 
+void Slider::setBarColour(sf::Color inner, sf::Color outer)
+{
+    m_slotShape.setFillColor(inner);
+    m_slotShape.setFillColor(outer);
+}
+
 //private
 void Slider::draw(sf::RenderTarget& rt, sf::RenderStates states)const
 {

@@ -77,7 +77,10 @@ namespace xy
                 #if defined(BUMP)
                 uniform sampler2D u_normalMap;
                 #endif
+                #else
+                uniform vec4 u_maskColour = vec4(vec3(0.0), 1.0);
                 #endif
+                uniform vec4 u_colour = vec4(1.0);
                 uniform sampler2D u_depthMap;
                 uniform int u_lightcount = MAX_POINT_LIGHTS;
                 uniform sampler2DArray u_depthMaps;
@@ -88,14 +91,14 @@ namespace xy
                 in vec3 v_tbn[3];
                 #endif
 
-                #if defined (TEXTURED)
+                #if defined (TEXTURED) || defined (BUMP)
                 in vec2 v_texCoord;
                 #endif
 
                 in vec3 v_worldPosition;
 
                 #if defined(VERTEX_COLOUR)
-                in vec3 v_colour;
+                in vec4 v_colour;
                 #endif
 
                 out vec4 fragOut;
@@ -162,14 +165,23 @@ namespace xy
                 void main()
                 {
                     vec3 fragPosition = v_worldPosition;
-                    mask = texture(u_maskMap, v_texCoord);
+                    
                 #if !defined(BUMP)
                     vec3 normal = normalize(v_normalVector);
                 #else
                     vec3 texNormal = texture(u_normalMap, v_texCoord).rgb * 2.0 - 1.0;
                     vec3 normal = normalize(v_tbn[0] * texNormal.x + v_tbn[1] * texNormal.y + v_tbn[2] * texNormal.z).rgb;
                 #endif
-                    vec4 diffuse = texture(u_diffuseMap, v_texCoord);
+                #if defined(TEXTURED)
+                    vec4 diffuse = texture(u_diffuseMap, v_texCoord) * u_colour;
+                    mask = texture(u_maskMap, v_texCoord);
+                #else
+                    vec4 diffuse = u_colour;
+                    mask = u_maskColour;
+                #endif
+                #if defined(VERTEX_COLOUR)
+                    diffuse *= v_colour;
+                #endif
                     diffuseColour = diffuse.rgb;
                     vec3 blendedColour = diffuse.rgb * u_ambientColour.rgb;
                     eyeDirection = normalize(u_cameraWorldPosition - fragPosition);

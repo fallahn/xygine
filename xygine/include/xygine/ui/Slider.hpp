@@ -155,6 +155,12 @@ namespace xy
             \see Slider::Event
             */
             void addCallback(const Callback& c, Event e);
+            /*!
+            \brief Sets the colour of the slider bar
+            \param inner Inner colours of the bar
+            \param outer Outer colour of the bar
+            */
+            void setBarColour(sf::Color inner, sf::Color outer = sf::Color::Transparent);
 
         private:
             enum State
