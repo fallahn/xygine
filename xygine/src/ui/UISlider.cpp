@@ -330,7 +330,7 @@ void Slider::addCallback(const Slider::Callback& c, Event e)
 void Slider::setBarColour(sf::Color inner, sf::Color outer)
 {
     m_slotShape.setFillColor(inner);
-    m_slotShape.setFillColor(outer);
+    m_slotShape.setOutlineColor(outer);
 }
 
 //private
