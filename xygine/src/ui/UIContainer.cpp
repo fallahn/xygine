@@ -89,6 +89,9 @@ void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
             if (hasSelection())
             {
                 m_controls[m_selectedIndex]->activate();
+
+                auto msg = m_messageBus.post<Message::UIEvent>(Message::UIMessage);
+                msg->type = Message::UIEvent::SelectionActivated;
             }
         }
     }
@@ -127,6 +130,9 @@ void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
             if (hasSelection())
             {
                 m_controls[m_selectedIndex]->activate();
+
+                auto msg = m_messageBus.post<Message::UIEvent>(Message::UIMessage);
+                msg->type = Message::UIEvent::SelectionActivated;
             }
         }
     }
@@ -169,6 +175,9 @@ void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
             if (m_controls[m_selectedIndex]->contains(mousePos))
             {
                 m_controls[m_selectedIndex]->activate();
+
+                auto msg = m_messageBus.post<Message::UIEvent>(Message::UIMessage);
+                msg->type = Message::UIEvent::SelectionActivated;
             }
         }
     }

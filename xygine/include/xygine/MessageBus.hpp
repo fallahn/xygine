@@ -156,7 +156,7 @@ namespace xy
                 RequestControllerEnable,
                 RequestControllerDisable,
                 ResizedWindow,
-                ButtonPressed,
+                SelectionActivated,
                 SelectionChanged
             }type;
             float value = 0.f;
