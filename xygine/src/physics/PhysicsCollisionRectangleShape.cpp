@@ -40,6 +40,12 @@ CollisionRectangleShape::CollisionRectangleShape(const sf::Vector2f& size, const
     setShape(m_rectangleShape);
 }
 
+xy::Physics::CollisionRectangleShape::CollisionRectangleShape(const sf::FloatRect & size)
+{
+	setRect(size);
+	setShape(m_rectangleShape);
+}
+
 CollisionRectangleShape::CollisionRectangleShape(const CollisionRectangleShape& other)
     : CollisionShape(other)
 {
