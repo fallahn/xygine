@@ -104,7 +104,7 @@ void MenuMainState::buildMenu()
     const auto& font = m_fontResource.get("assets/fonts/VeraMono.ttf");
     
     auto button = xy::UI::create<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
-    button->setText("Settings");
+    button->setString("Settings");
     button->setPosition({ buttonMargin, buttonMargin });
     button->addCallback([this]()
     {
@@ -123,7 +123,7 @@ void MenuMainState::buildMenu()
 
     float currentSpacing = buttonSpacing + buttonMargin;
     button = xy::UI::create<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
-    button->setText("Sprite Editor");
+    button->setString("Sprite Editor");
     button->setPosition({ buttonMargin, currentSpacing });
     button->addCallback([this]()
     {
@@ -137,7 +137,7 @@ void MenuMainState::buildMenu()
     currentSpacing += buttonSpacing;
 
     button = xy::UI::create<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
-    button->setText("Particle Editor");
+    button->setString("Particle Editor");
     button->setPosition({ buttonMargin, currentSpacing });
     button->addCallback([this]()
     {
@@ -151,7 +151,7 @@ void MenuMainState::buildMenu()
     currentSpacing += buttonSpacing;
 
     button = xy::UI::create<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
-    button->setText("Model Viewer");
+    button->setString("Model Viewer");
     button->setPosition({ buttonMargin, currentSpacing });
     button->addCallback([this]()
     {
@@ -165,7 +165,7 @@ void MenuMainState::buildMenu()
     currentSpacing += buttonSpacing;
 
     button = xy::UI::create<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
-    button->setText("Quit");
+    button->setString("Quit");
     button->setPosition({ buttonMargin, currentSpacing });
     button->addCallback([this]() 
     {
