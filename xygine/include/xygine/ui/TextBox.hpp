@@ -104,7 +104,7 @@ namespace xy
             */
             void setTexture(const sf::Texture& text);
             /*!
-            \brief Show or hid the border
+            \brief Show or hide the border
             \param show True to show the border, false to hide it
             */
             void showBorder(bool show = true);
@@ -115,7 +115,7 @@ namespace xy
             /*!
             \brief Set the string of the textbox text.
             */
-            void setText(const std::string& text);
+            void setString(const std::string& text);
             /*!
             \brief Set the string for the textbox label text
             */

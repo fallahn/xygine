@@ -122,6 +122,8 @@ PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context
     REPORT("Q", "Show Debug");
     xy::App::setMouseCursorVisible(true);
 
+    context.renderWindow.setTitle("xygine Mesh Rendering Demo");
+
     quitLoadingScreen();
 }
 

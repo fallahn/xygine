@@ -101,6 +101,8 @@ PhysicsDemoState::PhysicsDemoState(xy::StateStack& stateStack, Context context)
     createBodies();
     addLights();
 
+    context.renderWindow.setTitle("xygine Physics Demo");
+
     xy::App::setMouseCursorVisible(true);
     quitLoadingScreen();
 
@@ -491,7 +493,7 @@ namespace
                     msgData.contact->getCollisionShapeB()->getRigidBody()->getLinearVelocity();
 
                 const float len = xy::Util::Vector::lengthSquared(vel);
-                const float vol = 100.f * xy::Util::Math::clamp(len / maxVelocity, 0.1f, 1.f);
+                const float vol = xy::Util::Math::clamp(len / maxVelocity, 0.1f, 1.f);
                 as->setVolume(vol);
                 as->play();
             }
@@ -518,7 +520,7 @@ namespace
             {
                 //get velocity and set sound volume
                 const auto vel = xy::Util::Vector::lengthSquared(msgData.contact->getCollisionShapeA()->getRigidBody()->getLinearVelocity());
-                const float vol = 100.f * xy::Util::Math::clamp(vel / maxVelocity, 0.1f, 1.f);
+                const float vol = xy::Util::Math::clamp(vel / maxVelocity, 0.1f, 1.f);
                 as->setVolume(vol);
                 as->play();
             }

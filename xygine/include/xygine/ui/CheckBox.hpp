@@ -104,7 +104,7 @@ namespace xy
             /*!
             \brief Set the text for the checkbox's label
             */
-            void setText(const std::string& text);
+            void setString(const std::string& text);
             /*!
             \brief Set the colour of the text of the checkbox's label
             */

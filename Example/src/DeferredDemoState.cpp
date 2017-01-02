@@ -156,6 +156,8 @@ DeferredDemoState::DeferredDemoState(xy::StateStack& stateStack, Context context
 
     buildScene();
 
+    context.renderWindow.setTitle("xygine Deferred Rendering");
+
     quitLoadingScreen();
 }
 

@@ -144,7 +144,7 @@ namespace xy
         /*!
         \brief Sets the maximum volume for this sound source
 
-        \param float new maximum volume. Must be between 0 and 100
+        \param float new maximum volume. Must be between 0 and 1
         */
         void setVolume(float);
         /*!

@@ -74,6 +74,8 @@ NetworkDemoState::NetworkDemoState(xy::StateStack& stack, Context context)
 
     m_server.setDebugView(context.defaultView);
 
+    context.renderWindow.setTitle("xygine Networking Demo");
+
     quitLoadingScreen();
 }
 
@@ -184,12 +186,12 @@ void NetworkDemoState::buildMenu()
     textbox->setLabelText("IP Address:");
     textbox->setPosition(960.f, 500.f);
     textbox->setAlignment(xy::UI::Alignment::Centre);
-    textbox->setText("127.0.0.1");
+    textbox->setString("127.0.0.1");
     m_menu.addControl(textbox);
 
 
     auto button = xy::UI::create<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
-    button->setText("Connect");
+    button->setString("Connect");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 600.f);
     button->addCallback([textbox, this]()

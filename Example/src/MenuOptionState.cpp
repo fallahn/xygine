@@ -70,6 +70,8 @@ MenuOptionState::MenuOptionState(xy::StateStack& stateStack, Context context)
     msg->stateID = States::ID::MenuOptions;
 
     xy::App::setMouseCursorVisible(false);
+
+    context.renderWindow.setTitle("xygine Examples - Options");
 }
 
 //public
@@ -152,7 +154,7 @@ void MenuOptionState::buildOptionsMenu(const sf::Font& font)
 {
     auto soundSlider = std::make_shared<xy::UI::Slider>(font, m_textureResource.get("assets/images/ui/slider_handle.png"), 375.f);
     soundSlider->setPosition(640.f, 314.f);
-    soundSlider->setText("Volume");
+    soundSlider->setString("Volume");
     soundSlider->setMaxValue(1.f);
     soundSlider->addCallback([this](const xy::UI::Slider* slider)
     {
@@ -167,7 +169,7 @@ void MenuOptionState::buildOptionsMenu(const sf::Font& font)
 
     auto muteCheckbox = std::make_shared<xy::UI::CheckBox>(font, m_textureResource.get("assets/images/ui/checkbox.png"));
     muteCheckbox->setPosition(1110.f, 274.f);
-    muteCheckbox->setText("Mute");
+    muteCheckbox->setString("Mute");
     muteCheckbox->addCallback([this](const xy::UI::CheckBox* checkBox)
     {
         auto msg = m_messageBus.post<xy::Message::UIEvent>(xy::Message::UIMessage);
@@ -199,7 +201,7 @@ void MenuOptionState::buildOptionsMenu(const sf::Font& font)
 
     auto fullscreenCheckbox = std::make_shared<xy::UI::CheckBox>(font, m_textureResource.get("assets/images/ui/checkbox.png"));
     fullscreenCheckbox->setPosition(1110.f, 354.f);
-    fullscreenCheckbox->setText("Full Screen");
+    fullscreenCheckbox->setString("Full Screen");
     fullscreenCheckbox->addCallback([this](const xy::UI::CheckBox*)
     {
 
@@ -225,7 +227,7 @@ void MenuOptionState::buildOptionsMenu(const sf::Font& font)
 
     auto controllerCheckbox = std::make_shared<xy::UI::CheckBox>(font, m_textureResource.get("assets/images/ui/checkbox.png"));
     controllerCheckbox->setPosition(1110.f, 434.f);
-    controllerCheckbox->setText("Enable Controller");
+    controllerCheckbox->setString("Enable Controller");
     controllerCheckbox->addCallback([this](const xy::UI::CheckBox* checkBox)
     {
         auto msg = m_messageBus.post<xy::Message::UIEvent>(xy::Message::UIMessage);
@@ -236,7 +238,7 @@ void MenuOptionState::buildOptionsMenu(const sf::Font& font)
     m_optionContainer.addControl(controllerCheckbox);
 
     auto applyButton = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
-    applyButton->setText("Apply");
+    applyButton->setString("Apply");
     applyButton->setAlignment(xy::UI::Alignment::Centre);
     applyButton->setPosition(xy::DefaultSceneSize.x / 2.f, 580.f);
     applyButton->addCallback([fullscreenCheckbox, resolutionBox, this]()
@@ -256,7 +258,7 @@ void MenuOptionState::buildOptionsMenu(const sf::Font& font)
     m_optionContainer.addControl(applyButton);
 
     auto controlButton = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
-    controlButton->setText("Controls");
+    controlButton->setString("Controls");
     controlButton->setAlignment(xy::UI::Alignment::Centre);
     controlButton->setPosition(840.f, 770.f);
     controlButton->addCallback([this]()
@@ -266,7 +268,7 @@ void MenuOptionState::buildOptionsMenu(const sf::Font& font)
     m_optionContainer.addControl(controlButton);
 
     auto backButton = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
-    backButton->setText("Back");
+    backButton->setString("Back");
     backButton->setAlignment(xy::UI::Alignment::Centre);
     backButton->setPosition(1080, 770.f);
     backButton->addCallback([this]()
@@ -284,7 +286,7 @@ void MenuOptionState::buildControlMenu(const sf::Font& font)
     m_inputContainer.addControl(inputs);
     
     auto optionButton = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
-    optionButton->setText("Options");
+    optionButton->setString("Options");
     optionButton->setAlignment(xy::UI::Alignment::Centre);
     optionButton->setPosition(840.f, 770.f);
     optionButton->addCallback([this]()
@@ -294,7 +296,7 @@ void MenuOptionState::buildControlMenu(const sf::Font& font)
     m_inputContainer.addControl(optionButton);
 
     auto backButton = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/button.png"));
-    backButton->setText("Back");
+    backButton->setString("Back");
     backButton->setAlignment(xy::UI::Alignment::Centre);
     backButton->setPosition(1080, 770.f);
     backButton->addCallback([this]()

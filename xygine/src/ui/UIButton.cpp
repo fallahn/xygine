@@ -141,7 +141,7 @@ void Button::addCallback(const Callback& cb)
     m_callbacks.push_back(cb);
 }
 
-void Button::setText(const std::string& text)
+void Button::setString(const std::string& text)
 {
     m_text.setString(text);
     Util::Position::centreOrigin(m_text);

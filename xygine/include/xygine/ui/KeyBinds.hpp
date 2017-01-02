@@ -40,20 +40,40 @@ namespace xy
 {
     namespace UI
     {
+        /*!
+        \brief UI control for displaying the currently stored keybinds
+        and updating them - such as via an options or pause menu
+        */
         class XY_EXPORT_API KeyBinds final : public Control
         {
         public:
             using Ptr = std::shared_ptr<KeyBinds>;
 
+            /*!
+            \brief Constructor
+            \param sf::Font font with which to draw this control's text
+            */
             explicit KeyBinds(const sf::Font&);
             ~KeyBinds() = default;
 
+            /*!
+            \see UI::Control
+            */
             bool selectable() const override { return true; }
-
+            
+            /*!
+            \see UI::Control
+            */
             bool contains(const sf::Vector2f&) const override;
 
+            /*!
+            \see UI::Control
+            */
             void handleEvent(const sf::Event&, const sf::Vector2f&) override;
 
+            /*!
+            \see UI::Control
+            */
             void setAlignment(Alignment) override;
 
 

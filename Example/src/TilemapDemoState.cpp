@@ -89,6 +89,8 @@ TilemapDemoState::TilemapDemoState(xy::StateStack& stateStack, Context context)
     REPORT("Q", "Show Debug");
     //xy::StatsReporter::show();
 
+    context.renderWindow.setTitle("xygine TMX Tiled Map Loader Demo");
+
     quitLoadingScreen();
 }
 

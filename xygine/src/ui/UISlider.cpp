@@ -293,7 +293,7 @@ float Slider::getLength() const
     return m_length;
 }
 
-void Slider::setText(const std::string& text)
+void Slider::setString(const std::string& text)
 {
     m_text.setString(text);
     updateText();

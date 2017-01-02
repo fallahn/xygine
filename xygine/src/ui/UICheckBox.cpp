@@ -137,7 +137,7 @@ bool CheckBox::contains(const sf::Vector2f& mousePos) const
     return getTransform().transformRect(m_sprite.getGlobalBounds()).contains(mousePos);
 }
 
-void CheckBox::setText(const std::string& text)
+void CheckBox::setString(const std::string& text)
 {
     m_text.setString(text);
     setAlignment(m_alignment);

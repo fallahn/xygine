@@ -240,8 +240,11 @@ float AudioSource::getDuration() const
 
 void AudioSource::setVolume(float volume)
 {
-    XY_ASSERT(volume >= 0 && volume <= 100.f, "volume must be 0-100");
+    XY_ASSERT(volume >= 0 && volume <= 1.f, "volume must be 0-100");
     
+    //sfml uses 0-100 range
+    volume *= 100.f;
+
     if (m_maxVolume > volume)
     {
         m_currentSource->setVolume(volume);

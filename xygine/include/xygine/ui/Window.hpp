@@ -58,6 +58,10 @@ namespace xy
         Windows are not strictly UI Controls, but have their own Container
         to which Controls can be added. Unlike containers windows can be moved
         and resized by the user
+
+        WARNING this is extremely experimental and its use is not recommended
+        If windowing is required currently the best choice is to use the imGUI controls
+        found within the nim namespace
         */
         class XY_EXPORT_API Window final : public sf::Drawable, public sf::Transformable
         {
@@ -68,10 +72,10 @@ namespace xy
             */
             struct Palette
             {
-                sf::Color borderNormal;
-                sf::Color borderActive;
-                sf::Color background;
-                sf::Color font;
+                sf::Color borderNormal; //! Colour of the window border in its normal state
+                sf::Color borderActive; //! Colour of the window border in its active state
+                sf::Color background; //! Colour of the window background
+                sf::Color font; //! Colour of the window's font
                 Palette()
                 : borderNormal  (120u, 120u, 120u),
                 borderActive    (190u, 190u, 190u),

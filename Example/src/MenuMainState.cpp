@@ -49,6 +49,8 @@ MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
     msg->stateID = States::ID::MenuMain;
 
     xy::App::setMouseCursorVisible(false);
+
+    context.renderWindow.setTitle("xygine Examples");
 }
 
 //public
@@ -90,7 +92,7 @@ void MenuMainState::buildMenu()
     const auto& font = m_fontResource.get("assets/fonts/VeraMono.ttf");
     
     auto button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
-    button->setText("Platform Demo");
+    button->setString("Platform Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 175.f);
     button->addCallback([this]()
@@ -101,7 +103,7 @@ void MenuMainState::buildMenu()
     m_uiContainer.addControl(button);
 
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
-    button->setText("Particle Demo");
+    button->setString("Particle Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 275.f);
     button->addCallback([this]()
@@ -112,7 +114,7 @@ void MenuMainState::buildMenu()
     m_uiContainer.addControl(button);
 
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
-    button->setText("Physics Demo");
+    button->setString("Physics Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 375.f);
     button->addCallback([this]()
@@ -123,7 +125,7 @@ void MenuMainState::buildMenu()
     m_uiContainer.addControl(button);
 
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
-    button->setText("Network Demo");
+    button->setString("Network Demo");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 475.f);
     button->addCallback([this]()
@@ -134,7 +136,7 @@ void MenuMainState::buildMenu()
     m_uiContainer.addControl(button);
 
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
-    button->setText("Deferred Rendering");
+    button->setString("Deferred Rendering");
     button->setFontSize(26u);
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 575.f);
@@ -146,7 +148,7 @@ void MenuMainState::buildMenu()
     m_uiContainer.addControl(button);
 
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
-    button->setText("2D Tilemap");
+    button->setString("2D Tilemap");
     button->setFontSize(26u);
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 675.f);
@@ -158,7 +160,7 @@ void MenuMainState::buildMenu()
     m_uiContainer.addControl(button);
 
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
-    button->setText("Options");
+    button->setString("Options");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 775.f);
     button->addCallback([this]()
@@ -169,7 +171,7 @@ void MenuMainState::buildMenu()
     m_uiContainer.addControl(button);
 
     button = std::make_shared<xy::UI::Button>(font, m_textureResource.get("assets/images/ui/start_button.png"));
-    button->setText("Quit");
+    button->setString("Quit");
     button->setAlignment(xy::UI::Alignment::Centre);
     button->setPosition(960.f, 875.f);
     button->addCallback([this]()

@@ -139,7 +139,7 @@ namespace xy
             /*!
             \brief Set the text string of the slider
             */
-            void setText(const std::string& text);
+            void setString(const std::string& text);
             /*!
             \brief Set the colour of the slider text
             */

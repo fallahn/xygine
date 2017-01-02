@@ -234,7 +234,7 @@ void TextBox::setSize(const sf::Vector2f& size)
     setAlignment(m_currentAlignment);
 }
 
-void TextBox::setText(const std::string& text)
+void TextBox::setString(const std::string& text)
 {
     m_string = text;
     m_text.setString(m_string);

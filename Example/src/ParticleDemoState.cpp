@@ -122,6 +122,8 @@ ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context
 
     xy::App::setMouseCursorVisible(true);
 
+    context.renderWindow.setTitle("xygine Particle Demo");
+
     quitLoadingScreen();
 }
 

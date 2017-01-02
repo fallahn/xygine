@@ -147,8 +147,9 @@ namespace xy
 
         /*!
         \brief Returns the model's translation relative to its parent entity
+        as set with setPosition()
         */
-        sf::Vector3f getTranslation() const { return{ m_translation.x, m_translation.y, m_translation.z }; }
+        sf::Vector3f getPosition() const { return{ m_translation.x, m_translation.y, m_translation.z }; }
 
         /*!
         \brief Returns the model's scale, relative to its own origin
