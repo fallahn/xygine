@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014 - 2016
+Matt Marchant 2014 - 2017
 http://trederia.blogspot.com
 
 xygine - Zlib license.
@@ -65,7 +65,8 @@ namespace xy
             \param sf::FloatRect an sf::FloatRect representing the size and position of the
             */
             CollisionRectangleShape(const sf::FloatRect& size);
-			~CollisionRectangleShape() = default;
+
+            ~CollisionRectangleShape() = default;
             CollisionRectangleShape(const CollisionRectangleShape&);
             const CollisionRectangleShape& operator = (const CollisionRectangleShape&) = delete;
 
