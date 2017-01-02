@@ -185,6 +185,12 @@ sf::Vector2f RigidBody::getLinearVelocity() const
     return (m_body) ? World::boxToSfVec(m_body->GetLinearVelocity()) : World::boxToSfVec(m_bodyDef.linearVelocity);
 }
 
+sf::Vector2f xy::Physics::RigidBody::getWorldVector(const sf::Vector2f & vec) const
+{
+    XY_ASSERT(m_body, "Body not yet added to world");
+    return World::boxToSfVec(m_body->GetWorldVector(World::sfToBoxVec(vec)));
+}
+
 float RigidBody::getAngularVelocity() const
 {
     return (m_body) ? m_body->GetAngularVelocity() : m_bodyDef.angularVelocity;

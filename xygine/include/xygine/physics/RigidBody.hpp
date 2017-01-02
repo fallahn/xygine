@@ -212,6 +212,10 @@ namespace xy
             */
             sf::Vector2f getLinearVelocity() const;
             /*!
+            \brief Get the world coordinates of a vector given the local coordinates.
+            */
+            sf::Vector2f getWorldVector(const sf::Vector2f&) const;
+            /*!
             \brief Get the angular velocity of this body
             */
             float getAngularVelocity() const;
