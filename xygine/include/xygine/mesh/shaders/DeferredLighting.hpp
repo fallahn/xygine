@@ -115,7 +115,7 @@ namespace xy
                 "uniform sampler2D u_positionMap;\n"
                 "//uniform sampler2D u_aoMap;\n"
                 "uniform sampler2D u_illuminationMap;\n"
-                "uniform sampler2D u_reflectMap;\n"
+                "//uniform sampler2D u_reflectMap;\n"
                 "uniform int u_lightCount = MAX_POINT_LIGHTS;\n"
                 "uniform sampler2DArray u_depthMaps;\n"
                 "uniform sampler2D u_depthBuffer;\n"
@@ -204,12 +204,12 @@ namespace xy
                 "        return (base < 0.5) ? (2.0 * base * blend) : (1.0 - 2.0 * (1.0 - base) * (1.0 - blend));\n"
                 "    }\n"*/
 
-                "vec3 getReflection(vec3 normal)\n"
+                /*"vec3 getReflection(vec3 normal)\n"
                 "{\n"
                 "    vec3 reflection = reflect(normal, eyeDirection);\n"
                 "    vec2 coord = vec2(reflection.x, reflection.y);\n"
                 "    return texture(u_reflectMap, coord).rgb;\n"
-                "}\n"
+                "}\n"*/
 
                 //#include "Water.inl"
 
@@ -250,7 +250,7 @@ namespace xy
                 "    //blendedColour *= texture(u_aoMap, v_texCoord).rgb;\n"
                 "    blendedColour = mix(blendedColour, diffuse.rgb, mask.b);\n"
                 "    //blendedColour = mix(getReflection(normal), blendedColour, mask.a);\n"
-                "    blendedColour += getReflection(normal) * (1.0 - mask.a);\n"
+                "    //blendedColour += getReflection(normal) * (1.0 - mask.a);\n"
 
                 /*"    vec3 illumination  = texture(u_illuminationMap, v_texCoord).rgb;\n"
                 "    illumination.r = blendOverlay(blendedColour.r, illumination.r);\n"

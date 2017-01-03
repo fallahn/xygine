@@ -921,7 +921,7 @@ void MeshRenderer::initOutput()
             m_lightingShader.setUniform("u_depthBuffer", m_gBuffer.getDepthTexture());
             //m_lightingShader.setUniform("u_aoMap", m_ssaoTexture.getTexture());
             m_lightingShader.setUniform("u_illuminationMap", m_lightDownsampleTexture.getTexture());
-            m_lightingShader.setUniform("u_reflectMap", m_scene.getReflection());
+            //m_lightingShader.setUniform("u_reflectMap", m_scene.getReflection());
 
             //we can't directly access the shader's texture count so we have to make this
             //assumption based on the above to get the correct texture unit. BEAR THIS IN MIND
@@ -1054,7 +1054,7 @@ void MeshRenderer::setupConCommands()
         }
     });
 
-    Console::addCommand("r_showReflectMap",
+    /*Console::addCommand("r_showReflectMap",
         [this](const std::string& params)
     {
         if (params.find_first_of('0') == 0 ||
@@ -1076,7 +1076,7 @@ void MeshRenderer::setupConCommands()
         {
             Console::print("r_showReflectMap: valid parameters are 0, 1, false or true");
         }
-    });
+    });*/
 
     //shows the selected depth map
     Console::addCommand("r_showDepthMap", 
@@ -1209,8 +1209,8 @@ void MeshRenderer::addDebugMenus()
                 m_debugShader.setUniform("u_texture", m_lightDownsampleTexture.getTexture());
                 break;
             case 6:
-                m_outputQuad->setActivePass(RenderPass::Debug);
-                m_debugShader.setUniform("u_texture", m_scene.getReflection());
+                //m_outputQuad->setActivePass(RenderPass::Debug);
+                //m_debugShader.setUniform("u_texture", m_scene.getReflection());
                 break;
             case 7:
                 m_outputQuad->setActivePass(RenderPass::ShadowMap);

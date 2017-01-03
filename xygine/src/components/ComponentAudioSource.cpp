@@ -148,7 +148,7 @@ void AudioSource::destroy()
     }
 }
 
-void AudioSource::setSound(const std::string& path, Mode mode)
+bool AudioSource::setSound(const std::string& path, Mode mode)
 {
     m_mode = mode;
 
@@ -158,13 +158,15 @@ void AudioSource::setSound(const std::string& path, Mode mode)
 
         m_sound.setBuffer(m_soundResource.get(path));
         m_duration = m_sound.getBuffer()->getDuration().asSeconds();
+        return true;//technically not always but the sound is still avlid
     }
     else
     {
         m_currentSource = &m_music;
 
-        m_music.openFromFile(path);
+        auto result = m_music.openFromFile(path);
         m_duration = m_music.getDuration().asSeconds();
+        return result;
     }
 }
 

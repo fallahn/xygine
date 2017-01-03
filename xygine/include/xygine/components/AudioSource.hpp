@@ -74,8 +74,9 @@ namespace xy
         \param path relative path to the sound file on disk
         \param mode should reflect whether or not the sound should be
         streamed from disk or loaded into memory
+        \returns true if the file was loaded successfully (or a placeholder was found)
         */
-        void setSound(const std::string& path, Mode = Mode::Cached);
+        bool setSound(const std::string& path, Mode = Mode::Cached);
         /*!
         \brief Sets the SoundBuffer for Cached mode sounds.
         Has no effect on streaming sounds. When creating a lot
