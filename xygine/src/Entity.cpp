@@ -338,35 +338,35 @@ void Entity::getVertices(std::vector<sf::Vertex>& verts)
 sf::FloatRect Entity::globalBounds() const
 {
     sf::FloatRect bounds({}, {1.f, 1.f});
-    //find corner
-    for (const auto& c : m_components)
+
+    //function to check and extend bounds if necessary
+    auto compareBounds = [&](const Component::Ptr& c)
     {
+        //only check Drawable or Mesh components
         if (c->type() != Component::Type::Drawable
-            && c->type() != Component::Type::Mesh) continue;
+            && c->type() != Component::Type::Mesh) return;
+
+        //get the bounds
         auto componentBounds = c->globalBounds();
+
+        //Find the top left corner
         if (componentBounds.left < bounds.left) bounds.left = componentBounds.left;
         if (componentBounds.top < bounds.top) bounds.top = componentBounds.top;
-    }
 
-    //find size
-    for (const auto& c : m_components)
-    {
-        if (c->type() != Component::Type::Drawable
-            && c->type() != Component::Type::Mesh) continue;
-        auto componentBounds = c->globalBounds();
+        //Find the size, one way or another
 
         /*auto right = bounds.left + bounds.width;
         auto componentRight = componentBounds.left + componentBounds.width;
         if (componentRight > right)
         {
-            bounds.width = componentRight - bounds.left;
+        bounds.width = componentRight - bounds.left;
         }
 
         auto bottom = bounds.top + bounds.height;
         auto componentBottom = componentBounds.top + componentBounds.height;
         if (componentBottom > bottom)
         {
-            bounds.height = componentBottom - bounds.top;
+        bounds.height = componentBottom - bounds.top;
         }*/
 
         auto width = componentBounds.width + componentBounds.left;
@@ -374,6 +374,18 @@ sf::FloatRect Entity::globalBounds() const
 
         auto height = componentBounds.height + componentBounds.top;
         if (height - bounds.top > bounds.height) bounds.height = height - bounds.top;
+    };
+
+    //check all components
+    for (const auto& c : m_components)
+    {
+        compareBounds(c);
+    }
+
+    //also check all pending components which may have just been added
+    for (const auto& c : m_pendingComponents)
+    {
+        compareBounds(c);
     }
     return getWorldTransform().transformRect(bounds);
 }
