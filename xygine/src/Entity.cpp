@@ -340,7 +340,7 @@ sf::FloatRect Entity::globalBounds() const
     sf::FloatRect bounds({}, {1.f, 1.f});
 
     //function to check and extend bounds if necessary
-    auto compareBounds = [&](const std::unique_ptr<xy::Component>& c)
+    auto compareBounds = [&](const Component::Ptr& c)
     {
         //only check Drawable or Mesh components
         if (c->type() != Component::Type::Drawable
