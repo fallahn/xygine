@@ -250,11 +250,6 @@ echo F|xcopy /y /d "$(TargetDir)$(TargetName).lib" "$(SolutionDir)lib\Release\$(
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Score.cpp" />
     <ClCompile Include="src\ShaderResource.cpp" />
-    <ClCompile Include="src\spriter\SpriterDocument.cpp" />
-    <ClCompile Include="src\spriter\SpriterDocumentAttribute.cpp" />
-    <ClCompile Include="src\spriter\SpriterDocumentElement.cpp" />
-    <ClCompile Include="src\spriter\SpriterHelpers.cpp" />
-    <ClCompile Include="src\spriter\SpriterModel.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
     <ClCompile Include="src\SysTime.cpp" />
@@ -413,11 +408,6 @@ echo F|xcopy /y /d "$(TargetDir)$(TargetName).lib" "$(SolutionDir)lib\Release\$(
     <ClInclude Include="include\xygine\shaders\PostGaussianBlur.hpp" />
     <ClInclude Include="include\xygine\shaders\PostOldSchool.hpp" />
     <ClInclude Include="include\xygine\shaders\Tilemap.hpp" />
-    <ClInclude Include="include\xygine\spriter\Document.hpp" />
-    <ClInclude Include="include\xygine\spriter\DocumentAttribute.hpp" />
-    <ClInclude Include="include\xygine\spriter\DocumentElement.hpp" />
-    <ClInclude Include="include\xygine\spriter\Helpers.hpp" />
-    <ClInclude Include="include\xygine\spriter\Model.hpp" />
     <ClInclude Include="include\xygine\State.hpp" />
     <ClInclude Include="include\xygine\StateStack.hpp" />
     <ClInclude Include="include\xygine\SysTime.hpp" />

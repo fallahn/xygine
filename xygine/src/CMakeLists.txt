@@ -100,12 +100,6 @@ set(XY_SRC
   ${XY_DIR}/physics/PhysicsRigidBody.cpp
   ${XY_DIR}/physics/PhysicsWorld.cpp
 
-  ${XY_DIR}/spriter/SpriterDocument.cpp
-  ${XY_DIR}/spriter/SpriterDocumentAttribute.cpp
-  ${XY_DIR}/spriter/SpriterDocumentElement.cpp
-  ${XY_DIR}/spriter/SpriterHelpers.cpp
-  ${XY_DIR}/spriter/SpriterModel.cpp
-
   ${XY_DIR}/tilemap/FreeFuncs.cpp
   ${XY_DIR}/tilemap/ImageLayer.cpp
   ${XY_DIR}/tilemap/Map.cpp

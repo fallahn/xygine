@@ -46,14 +46,8 @@
     <Filter Include="Header Files\parsers">
       <UniqueIdentifier>{98d2e353-e3dd-4f84-8cd1-60ed31b33dba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\spriter">
-      <UniqueIdentifier>{f3f3ed94-4ee8-4853-8843-f05f9f42b0a7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\parsers">
       <UniqueIdentifier>{43c96375-3db5-4ad1-9f29-c251827dc62c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\spriter">
-      <UniqueIdentifier>{074fd524-c923-4ac7-a7c1-cf7769c7f1d4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\network">
       <UniqueIdentifier>{675ebe06-6d25-40c4-a851-5eb969f3399f}</UniqueIdentifier>
@@ -269,21 +263,6 @@
     </ClCompile>
     <ClCompile Include="src\components\QuadTreeComponent.cpp">
       <Filter>Source Files\components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\spriter\SpriterDocument.cpp">
-      <Filter>Source Files\spriter</Filter>
-    </ClCompile>
-    <ClCompile Include="src\spriter\SpriterDocumentElement.cpp">
-      <Filter>Source Files\spriter</Filter>
-    </ClCompile>
-    <ClCompile Include="src\spriter\SpriterDocumentAttribute.cpp">
-      <Filter>Source Files\spriter</Filter>
-    </ClCompile>
-    <ClCompile Include="src\spriter\SpriterModel.cpp">
-      <Filter>Source Files\spriter</Filter>
-    </ClCompile>
-    <ClCompile Include="src\spriter\SpriterHelpers.cpp">
-      <Filter>Source Files\spriter</Filter>
     </ClCompile>
     <ClCompile Include="src\network\AckSystem.cpp">
       <Filter>Source Files\network</Filter>
@@ -721,21 +700,6 @@
     </ClInclude>
     <ClInclude Include="include\xygine\parsers\pugixml.hpp">
       <Filter>Header Files\parsers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\spriter\DocumentElement.hpp">
-      <Filter>Header Files\spriter</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\spriter\Document.hpp">
-      <Filter>Header Files\spriter</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\spriter\DocumentAttribute.hpp">
-      <Filter>Header Files\spriter</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\spriter\Model.hpp">
-      <Filter>Header Files\spriter</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xygine\spriter\Helpers.hpp">
-      <Filter>Header Files\spriter</Filter>
     </ClInclude>
     <ClInclude Include="include\xygine\Config.hpp">
       <Filter>Header Files</Filter>
