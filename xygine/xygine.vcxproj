@@ -274,6 +274,7 @@ echo F|xcopy /y /d "$(TargetDir)$(TargetName).lib" "$(SolutionDir)lib\Release\$(
     <ClCompile Include="src\ui\UISlider.cpp" />
     <ClCompile Include="src\ui\UITextBox.cpp" />
     <ClCompile Include="src\ui\UIWindow.cpp" />
+    <ClCompile Include="src\util\ConfigFile.cpp" />
     <ClCompile Include="src\util\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -432,6 +433,7 @@ echo F|xcopy /y /d "$(TargetDir)$(TargetName).lib" "$(SolutionDir)lib\Release\$(
     <ClInclude Include="include\xygine\ui\Slider.hpp" />
     <ClInclude Include="include\xygine\ui\TextBox.hpp" />
     <ClInclude Include="include\xygine\ui\Window.hpp" />
+    <ClInclude Include="include\xygine\util\ConfigFile.hpp" />
     <ClInclude Include="include\xygine\util\Json.hpp" />
     <ClInclude Include="include\xygine\util\Const.hpp" />
     <ClInclude Include="include\xygine\util\Math.hpp" />
