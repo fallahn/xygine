@@ -157,6 +157,12 @@ void Entity::update(float dt)
 
                 if (r != m_drawables.end()) m_drawables.erase(r);
             }
+
+            m_boundedComponents.erase(std::remove_if(m_boundedComponents.begin(), m_boundedComponents.end(),
+                [&p](const Component* c)
+            {
+                return p.get() == c;
+            }), m_boundedComponents.end());
             return true;
         }
         return false;
@@ -252,6 +258,11 @@ void Entity::handleMessage(const Message& msg)
                 {
                     return msgData.ptr == (Component*)p;
                 }), m_drawables.end());
+                m_boundedComponents.erase(std::remove_if(m_boundedComponents.begin(), m_boundedComponents.end(),
+                    [&msgData](const Component* p)
+                {
+                    return msgData.ptr == p;
+                }), m_boundedComponents.end());
                 break;
             default: break;
             }
@@ -339,13 +350,9 @@ sf::FloatRect Entity::globalBounds() const
 {
     sf::FloatRect bounds({}, {1.f, 1.f});
 
-    //function to check and extend bounds if necessary
-    auto compareBounds = [&](const Component::Ptr& c)
+    //check and extend bounds if necessary
+    for(const auto c : m_boundedComponents)
     {
-        //only check Drawable or Mesh components
-        if (c->type() != Component::Type::Drawable
-            && c->type() != Component::Type::Mesh) return;
-
         //get the bounds
         auto componentBounds = c->globalBounds();
 
@@ -374,19 +381,8 @@ sf::FloatRect Entity::globalBounds() const
 
         auto height = componentBounds.height + componentBounds.top;
         if (height - bounds.top > bounds.height) bounds.height = height - bounds.top;
-    };
-
-    //check all components
-    for (const auto& c : m_components)
-    {
-        compareBounds(c);
     }
 
-    //also check all pending components which may have just been added
-    for (const auto& c : m_pendingComponents)
-    {
-        compareBounds(c);
-    }
     return getWorldTransform().transformRect(bounds);
 }
 

@@ -41,7 +41,7 @@ namespace
     const std::size_t maxStrLen = 50;
     std::string snakify(const std::string& str)
     {
-        auto ret = str;
+        auto ret = xy::Util::String::toLower(str);
         std::replace(ret.begin(), ret.end(), ' ', '_');
         return std::move(ret.substr(0, maxStrLen));
     }
