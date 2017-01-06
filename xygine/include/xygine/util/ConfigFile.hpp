@@ -49,10 +49,10 @@ namespace xy
             ConfigValue(const std::string& v = std::string())
                 :m_value(v) {}
 
-            const std::string& asString() const; //! fetch the value as a string
-            int asInt() const; //! fetch the value as an int if it is valid, else returns 0
-            float asFloat() const; //! fetch the value as a float if it is valid else returns 0
-            bool asBool() const; //! fetch the value as a boolean. Returns false if not a valid value
+            const std::string& asString() const; //!< fetch the value as a string
+            int asInt() const; //!< fetch the value as an int if it is valid, else returns 0
+            float asFloat() const; //!< fetch the value as a float if it is valid else returns 0
+            bool asBool() const; //!< fetch the value as a boolean. Returns false if not a valid value
 
             ConfigValue& operator=(const std::string&);
             ConfigValue& operator=(const char*);

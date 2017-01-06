@@ -62,7 +62,7 @@ namespace xy
 
         /*!
         \brief Returns a reference to a struct containing
-        the current system dat and time information
+        the current system date and time information
         */
         static const Data& now();
 

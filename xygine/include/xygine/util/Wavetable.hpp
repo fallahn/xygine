@@ -41,7 +41,7 @@ namespace xy
             \brief Creates a vector containing a series of floating point values
             representing a single cycle of a sine wave.
 
-            \param frequency Frency of generated sine wave
+            \param frequency Frequency of generated sine wave
             \param amplitude Amplitude of generated sine wave
             \param updateRate Rate at which the wave table is likely to be stepped through, normally
             the same rate at which the framework is updated (60hz)
