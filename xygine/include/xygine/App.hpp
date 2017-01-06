@@ -253,6 +253,12 @@ namespace xy
         */
         static void quit();
 
+        /*!
+        \brief Sets the clear colour for the render window.
+        Defaults to sf::Color::Black
+        */
+        static void setClearColour(sf::Color);
+
     protected:
         /*!
         \brief Returns a reference to the current render window

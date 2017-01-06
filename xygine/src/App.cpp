@@ -78,6 +78,8 @@ namespace
     std::vector<UserWindow> uiWindows;
 
     bool running = false;
+
+    sf::Color clearColour(0, 0, 0, 255);
 }
 
 App::App(sf::ContextSettings contextSettings)
@@ -157,7 +159,7 @@ void App::run()
         //by registering objects when they are destroyed.
         for (const auto& w : uiWindows) w.draw();
 
-        m_renderWindow.clear();
+        m_renderWindow.clear(clearColour);
         draw();
         nim::Render(); //if this throws on closing use App::quit() rather than closing window directly
         m_renderWindow.display();
@@ -294,6 +296,11 @@ void App::quit()
     StatsReporter::kill();
     //renderWindow->close();
     running = false;
+}
+
+void App::setClearColour(sf::Color colour)
+{
+    clearColour = colour;
 }
 
 //protected
