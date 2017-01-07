@@ -259,6 +259,11 @@ namespace xy
         */
         static void setClearColour(sf::Color);
 
+        /*!
+        \brief Gets the current clear colour of the app render window
+        */
+        static sf::Color getClearColour();
+
     protected:
         /*!
         \brief Returns a reference to the current render window

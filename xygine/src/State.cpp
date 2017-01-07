@@ -113,7 +113,7 @@ void State::loadingScreenThread()
         //consume events
         //while (m_context.renderWindow.pollEvent(evt)) {}
 
-        m_context.renderWindow.clear();
+        m_context.renderWindow.clear(App::getClearColour());
         updateLoadingScreen(m_threadClock.restart().asSeconds(), m_context.renderWindow);
         m_context.renderWindow.display();
     }

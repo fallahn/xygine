@@ -303,6 +303,11 @@ void App::setClearColour(sf::Color colour)
     clearColour = colour;
 }
 
+sf::Color App::getClearColour()
+{
+    return clearColour;
+}
+
 //protected
 sf::RenderWindow& App::getRenderWindow()
 {
