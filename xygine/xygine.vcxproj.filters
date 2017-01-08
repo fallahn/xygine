@@ -438,6 +438,9 @@
     <ClCompile Include="src\util\ConfigFile.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="src\ui\UIMarquee.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -934,6 +937,9 @@
     </ClInclude>
     <ClInclude Include="include\xygine\util\ConfigFile.hpp">
       <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\ui\Marquee.hpp">
+      <Filter>Header Files\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

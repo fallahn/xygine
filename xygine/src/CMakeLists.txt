@@ -117,6 +117,7 @@ set(XY_SRC
   ${XY_DIR}/ui/UIControl.cpp
   ${XY_DIR}/ui/UIKeyBinds.cpp
   ${XY_DIR}/ui/UILabel.cpp
+  ${XY_DIR}/ui/UIMarquee.cpp
   ${XY_DIR}/ui/UIScoreList.cpp
   ${XY_DIR}/ui/UISelection.cpp
   ${XY_DIR}/ui/UISlider.cpp

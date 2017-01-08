@@ -29,6 +29,7 @@ source distribution.
 
 #include <xygine/App.hpp>
 #include <xygine/ui/Button.hpp>
+#include <xygine/ui/Marquee.hpp>
 #include <xygine/util/Random.hpp>
 
 #include <SFML/Window/Mouse.hpp>
@@ -179,6 +180,13 @@ void MenuMainState::buildMenu()
         xy::App::quit();
     });
     m_uiContainer.addControl(button);
+
+    auto marquee = xy::UI::create<xy::UI::Marquee>(font, sf::Vector2u(1000, 50));
+    marquee->setAlignment(xy::UI::Alignment::Centre);
+    marquee->addString("Hello and welcome to the xygine Example program!");
+    marquee->addString("Special thanks go to all the SFML community - check us on #sfml @ irc.boxbox.org!");
+    marquee->setPosition(xy::DefaultSceneSize.x / 2.f, 1000.f);
+    m_uiContainer.addControl(marquee);
 }
 
 void MenuMainState::close()

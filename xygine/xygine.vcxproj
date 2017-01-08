@@ -269,6 +269,7 @@ echo F|xcopy /y /d "$(TargetDir)$(TargetName).lib" "$(SolutionDir)lib\Release\$(
     <ClCompile Include="src\ui\UIControl.cpp" />
     <ClCompile Include="src\ui\UIKeyBinds.cpp" />
     <ClCompile Include="src\ui\UILabel.cpp" />
+    <ClCompile Include="src\ui\UIMarquee.cpp" />
     <ClCompile Include="src\ui\UIScoreList.cpp" />
     <ClCompile Include="src\ui\UISelection.cpp" />
     <ClCompile Include="src\ui\UISlider.cpp" />
@@ -428,6 +429,7 @@ echo F|xcopy /y /d "$(TargetDir)$(TargetName).lib" "$(SolutionDir)lib\Release\$(
     <ClInclude Include="include\xygine\ui\Control.hpp" />
     <ClInclude Include="include\xygine\ui\KeyBinds.hpp" />
     <ClInclude Include="include\xygine\ui\Label.hpp" />
+    <ClInclude Include="include\xygine\ui\Marquee.hpp" />
     <ClInclude Include="include\xygine\ui\ScoreList.hpp" />
     <ClInclude Include="include\xygine\ui\Selection.hpp" />
     <ClInclude Include="include\xygine\ui\Slider.hpp" />
