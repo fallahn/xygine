@@ -54,9 +54,9 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
 #ifndef _DEBUG_
-    const std::string windowTitle("xygine game (Release Build) - F1: console F2: Stats");
+    std::string windowTitle("xygine game (Release Build) - F1: console F2: Stats");
 #else
-    const std::string windowTitle("xygine game (Debug Build) - F1: console F2: Stats");
+    std::string windowTitle("xygine game (Debug Build) - F1: console F2: Stats");
 #endif //_DEBUG_
     const std::string settingsFile("settings.set");
 
@@ -220,7 +220,11 @@ void App::applyVideoSettings(const VideoSettings& settings)
     m_videoSettings = settings;
     m_videoSettings.AvailableVideoModes = availableModes;
 
-    //m_renderWindow.setIcon(icon_width, icon_height, icon_arr);
+    if (m_windowIcon.getPixelsPtr())
+    {
+        auto size = m_windowIcon.getSize();
+        m_renderWindow.setIcon(size.x, size.y, m_windowIcon.getPixelsPtr());
+    }
 
     auto msg = m_messageBus.post<Message::UIEvent>(Message::UIMessage);
     msg->type = Message::UIEvent::ResizedWindow;
@@ -306,6 +310,26 @@ void App::setClearColour(sf::Color colour)
 sf::Color App::getClearColour()
 {
     return clearColour;
+}
+
+void App::setWindowTitle(const std::string& title)
+{
+    windowTitle = title;
+    m_renderWindow.setTitle(title);
+}
+
+void App::setWindowIcon(const std::string& path)
+{
+    if (m_windowIcon.loadFromFile(path))
+    {
+        auto size = m_windowIcon.getSize();
+        XY_ASSERT(size.x == 16 && size.y == 16, "window icon must be 16x16 pixels");
+        m_renderWindow.setIcon(size.x, size.y, m_windowIcon.getPixelsPtr());
+    }
+    else
+    {
+        xy::Logger::log("failed to open " + path, xy::Logger::Type::Error);
+    }
 }
 
 //protected

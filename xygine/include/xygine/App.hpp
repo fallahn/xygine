@@ -264,6 +264,21 @@ namespace xy
         */
         static sf::Color getClearColour();
 
+        /*!
+        \brief Sets the window title.
+        Prefer this when setting the window title over setting it directly
+        as it will ensure the title is maintained when switching video modes
+        */
+        void setWindowTitle(const std::string&);
+
+        /*!
+        \brief Sets the window icon.
+        This should be a path to a 16x16px image. Prefer this to
+        setting the icon directly on the window object, as it will
+        make sure to maintain the icon when video modes are modified
+        */
+        void setWindowIcon(const std::string&);
+
     protected:
         /*!
         \brief Returns a reference to the current render window
@@ -346,6 +361,7 @@ namespace xy
 
         VideoSettings m_videoSettings;
         sf::RenderWindow m_renderWindow;
+        sf::Image m_windowIcon;
 
         MessageBus m_messageBus;
 
