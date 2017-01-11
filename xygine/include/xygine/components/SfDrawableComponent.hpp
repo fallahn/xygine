@@ -61,7 +61,7 @@ namespace xy
         explicit SfDrawableComponent(MessageBus& mb)
             : Component(mb, this), m_blendMode(sf::BlendAlpha)
         {
-            static_assert(std::is_base_of<sf::Drawable, T>::value && std::is_base_of<sf::Transformable, T>::value, "must be sfml drawable and transformable");
+            static_assert(std::is_base_of<sf::Drawable, T>::value, "must be sfml drawable");
         }
         ~SfDrawableComponent() = default;
 
@@ -79,7 +79,14 @@ namespace xy
         */
         T& getDrawable() { return m_drawable; }
 
-        sf::FloatRect globalBounds() const override
+        template<class Q = T>
+        typename std::enable_if<std::is_same<Q, sf::VertexArray>::value, sf::FloatRect>::type globalBounds() const
+        {
+            return m_drawable.getBounds;
+        }
+
+        template<class Q = T>
+        typename std::enable_if<!std::is_same<Q, sf::VertexArray>::value, sf::FloatRect>::type globalBounds() const
         {
             return m_drawable.getGlobalBounds();
         }
