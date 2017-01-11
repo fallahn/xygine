@@ -61,7 +61,7 @@ namespace xy
         explicit SfDrawableComponent(MessageBus& mb)
             : Component(mb, this), m_blendMode(sf::BlendAlpha)
         {
-            static_assert(std::is_base_of<sf::Drawable, T>::value && std::is_base_of<sf::Transformable, T>::value, "must be sfml drawable and transformable");
+            static_assert(std::is_base_of<sf::Drawable, T>::value, "must be sfml drawable");
         }
         ~SfDrawableComponent() = default;
 
@@ -79,6 +79,9 @@ namespace xy
         */
         T& getDrawable() { return m_drawable; }
 
+        /*!
+        \brief Returns an sf::Floatrect representing the global bounds of the underlying drawable
+        */
         sf::FloatRect globalBounds() const override
         {
             return m_drawable.getGlobalBounds();
@@ -101,5 +104,13 @@ namespace xy
             rt.draw(m_drawable, states);
         }
     };
+
+    /*!
+    \brief Specialisation for sf::VertexArray
+    */
+    sf::FloatRect SfDrawableComponent<sf::VertexArray>::globalBounds() const
+    {
+        return m_drawable.getBounds();
+    }
 }
 #endif //XY_SF_DRAWABLE_COMPONENT_HPP_
