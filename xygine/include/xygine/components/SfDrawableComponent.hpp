@@ -79,14 +79,10 @@ namespace xy
         */
         T& getDrawable() { return m_drawable; }
 
-        template<class Q = T>
-        typename std::enable_if<std::is_same<Q, sf::VertexArray>::value, sf::FloatRect>::type globalBounds() const
-        {
-            return m_drawable.getBounds;
-        }
-
-        template<class Q = T>
-        typename std::enable_if<!std::is_same<Q, sf::VertexArray>::value, sf::FloatRect>::type globalBounds() const
+        /*!
+        \brief Returns an sf::Floatrect representing the global bounds of the underlying drawable
+        */
+        sf::FloatRect globalBounds() const override
         {
             return m_drawable.getGlobalBounds();
         }
@@ -108,5 +104,13 @@ namespace xy
             rt.draw(m_drawable, states);
         }
     };
+
+    /*!
+    \brief Specialisation for sf::VertexArray
+    */
+    sf::FloatRect SfDrawableComponent<sf::VertexArray>::globalBounds() const
+    {
+        return m_drawable.getBounds();
+    }
 }
 #endif //XY_SF_DRAWABLE_COMPONENT_HPP_
