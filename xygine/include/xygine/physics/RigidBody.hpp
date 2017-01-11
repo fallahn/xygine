@@ -301,6 +301,16 @@ namespace xy
             void applyAngularImpulse(float, bool wake = true);
 
             /*!
+            \brief Manually sets the transofrm of the RigidBody.
+            WARNING: this may not have the desired effect as this
+            will be interfering with the physics simulation. Most
+            useful on Kinematic type RigidBodies.
+            \param position World position to transform body to
+            \param angle Angle in degrees to which to rotate the body
+            */
+            void setTransform(sf::Vector2f position, float angle);
+
+            /*!
             \brief Returns a vector of CollisionShapes attached to his body
             */
             const std::vector<CollisionShape::Ptr>& getCollisionShapes() const;

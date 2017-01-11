@@ -286,6 +286,12 @@ void RigidBody::applyAngularImpulse(float impulse, bool wake)
     m_body->ApplyAngularImpulse(impulse, wake);
 }
 
+void RigidBody::setTransform(sf::Vector2f position, float angle)
+{
+    XY_ASSERT(m_body, "Body not yet added to world");
+    m_body->SetTransform(World::sfToBoxVec(position), World::sfToBoxAngle(angle));
+}
+
 const std::vector<CollisionShape::Ptr>& RigidBody::getCollisionShapes() const
 {
     return m_collisionShapes;
