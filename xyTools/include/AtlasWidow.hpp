@@ -25,39 +25,40 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XYT_SPRITE_EDITOR_STATE_HPP_
-#define XYT_SPRITE_EDITOR_STATE_HPP_
+#ifndef XYT_ATLAS_HPP_
+#define XYT_ATLAS_HPP_
 
-#include <StateIds.hpp>
+#include <xygine/components/Component.hpp>
 
-#include <xygine/State.hpp>
-#include <xygine/Resource.hpp>
-#include <xygine/Scene.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 namespace xy
 {
-    class MessageBus;
+    class TextureResource;
 }
-class SpriteEditorState final : public xy::State
+
+class AtlasWindow final : public xy::Component, public sf::Drawable
 {
 public:
-    SpriteEditorState(xy::StateStack&, Context);
-    ~SpriteEditorState();
+    AtlasWindow(xy::MessageBus&, xy::TextureResource&);
+    ~AtlasWindow() = default;
 
-    bool update(float) override;
-    void draw() override;
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    xy::StateID stateID() const override
-    {
-        return States::ID::SpriteEditor;
-    }
+    xy::Component::Type type() const override { return xy::Component::Type::Drawable; }
+    void entityUpdate(xy::Entity&, float) override;
+
+    void setSpriteSheet(const std::string&);
+
+    const sf::Texture& getTexture() const { return m_renderTexture.getTexture(); }
+
 private:
-    xy::MessageBus& m_messageBus;
-    xy::TextureResource m_textureResource;
-    xy::Scene m_scene;
+    xy::TextureResource& m_textureResource;
 
-    void buildScene();
-    void buildMenu();
+    sf::RenderTexture m_renderTexture;
+    sf::Sprite m_previewSprite;
+    
+    void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };
-#endif //XYT_SPRITE_EDITOR_STATE_HPP_
+
+#endif //XYT_ATLAS_HPP_

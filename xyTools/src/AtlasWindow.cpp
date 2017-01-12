@@ -25,39 +25,47 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XYT_SPRITE_EDITOR_STATE_HPP_
-#define XYT_SPRITE_EDITOR_STATE_HPP_
+#include <AtlasWidow.hpp>
 
-#include <StateIds.hpp>
-
-#include <xygine/State.hpp>
 #include <xygine/Resource.hpp>
-#include <xygine/Scene.hpp>
+#include <xygine/Log.hpp>
 
-namespace xy
+#include <SFML/Graphics/RenderTarget.hpp>
+
+AtlasWindow::AtlasWindow(xy::MessageBus& mb, xy::TextureResource& tr)
+    : xy::Component(mb, this),
+    m_textureResource(tr)
 {
-    class MessageBus;
+
 }
-class SpriteEditorState final : public xy::State
+
+//public
+void AtlasWindow::entityUpdate(xy::Entity&, float)
 {
-public:
-    SpriteEditorState(xy::StateStack&, Context);
-    ~SpriteEditorState();
 
-    bool update(float) override;
-    void draw() override;
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    xy::StateID stateID() const override
+}
+
+void AtlasWindow::setSpriteSheet(const std::string& path)
+{
+    sf::Texture t;
+    if (t.loadFromFile(path))
     {
-        return States::ID::SpriteEditor;
-    }
-private:
-    xy::MessageBus& m_messageBus;
-    xy::TextureResource m_textureResource;
-    xy::Scene m_scene;
+        sf::Sprite spr(t);
+        m_renderTexture.create(t.getSize().x, t.getSize().y);
+        m_renderTexture.clear(sf::Color::Transparent);
+        m_renderTexture.draw(spr);
+        m_renderTexture.display();
 
-    void buildScene();
-    void buildMenu();
-};
-#endif //XYT_SPRITE_EDITOR_STATE_HPP_
+        m_previewSprite.setTexture(m_renderTexture.getTexture());
+    }
+    else
+    {
+        xy::Logger::log("failed opening " + path, xy::Logger::Type::Error);
+    }
+}
+
+//private
+void AtlasWindow::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    rt.draw(m_previewSprite, states);
+}

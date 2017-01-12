@@ -50,13 +50,13 @@ ParticleEditorState::ParticleEditorState(xy::StateStack& stack, Context context)
     launchLoadingScreen();
     setupScene();
     buildMenu();
+    context.appInstance.setWindowTitle("Particle Editor");
     quitLoadingScreen();
 }
 
 ParticleEditorState::~ParticleEditorState()
 {
     xy::App::removeUserWindows(this);
-    getContext().renderWindow.setTitle("xy tools");
 }
 
 //public

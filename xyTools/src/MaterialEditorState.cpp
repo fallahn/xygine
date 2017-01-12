@@ -85,6 +85,7 @@ MaterialEditorState::MaterialEditorState(xy::StateStack& stack, Context context)
     m_scene.getSkyLight().setDirection({ 0.1f, 0.75f, -0.45f });
 
     lastMousePos = xy::App::getMouseWorldPosition();
+    context.appInstance.setWindowTitle("Material Editor");
 
     quitLoadingScreen();
 }
@@ -92,8 +93,6 @@ MaterialEditorState::MaterialEditorState(xy::StateStack& stack, Context context)
 MaterialEditorState::~MaterialEditorState()
 {
     xy::App::removeUserWindows(this);
-
-    getContext().renderWindow.setTitle("xy tools");
 }
 
 //public

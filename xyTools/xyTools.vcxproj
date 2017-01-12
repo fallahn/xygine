@@ -133,6 +133,7 @@ xcopy /y /d "$(SolutionDir)xygine\extlibs\lib\sfml\openal32.dll" "$(SolutionDir)
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\AtlasWindow.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MaterialEditorState.cpp" />
@@ -141,6 +142,7 @@ xcopy /y /d "$(SolutionDir)xygine\extlibs\lib\sfml\openal32.dll" "$(SolutionDir)
     <ClCompile Include="src\SpriteEditorState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\AtlasWidow.hpp" />
     <ClInclude Include="include\Enumerations.hpp" />
     <ClInclude Include="include\Game.hpp" />
     <ClInclude Include="include\MaterialEditorState.hpp" />
