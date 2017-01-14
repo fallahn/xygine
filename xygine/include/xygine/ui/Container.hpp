@@ -84,14 +84,14 @@ namespace xy
             virtual void setAlignment(Alignment a) override{} //TODO flow layout
             /*!
             \brief Set the background colour of the container
-
-            This is overriden if a background texture is set.
             */
             void setBackgroundColour(const sf::Color&);
             /*!
-            \brief Set he texture to be drawn in the background of the container
+            \brief Set the texture to be drawn in the background of the container
+            \param sf::Texture Texture to use
+            \param centre True to centre the background, false to leave origin at top left
             */
-            void setBackgroundTexture(const sf::Texture&);
+            void setBackgroundTexture(const sf::Texture&, bool centre = false);
         private:
             xy::MessageBus& m_messageBus;
 

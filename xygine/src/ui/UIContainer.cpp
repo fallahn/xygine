@@ -27,9 +27,11 @@ source distribution.
 
 #include <xygine/ui/Container.hpp>
 #include <xygine/MessageBus.hpp>
+#include <xygine/util/Position.hpp>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 using namespace xy;
 using namespace UI;
@@ -65,10 +67,12 @@ void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
 {
     if (!visible()) return;
     
+    auto mPos = getTransform().getInverse().transformPoint(mousePos);
+
     //pass event to selected control
     if (hasSelection() && m_controls[m_selectedIndex]->active())
     {
-        m_controls[m_selectedIndex]->handleEvent(e, mousePos);
+        m_controls[m_selectedIndex]->handleEvent(e, mPos);
     }
     //keyboard input
     else if (e.type == sf::Event::KeyReleased)
@@ -141,7 +145,7 @@ void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
     {
         for (auto i = 0u; i < m_controls.size(); ++i)
         {
-            if (m_controls[i]->contains(mousePos))
+            if (m_controls[i]->contains(mPos))
             {
                 if (m_selectedIndex != i && m_controls[i]->selectable())
                 {
@@ -172,7 +176,7 @@ void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
     {
         if (hasSelection())
         {
-            if (m_controls[m_selectedIndex]->contains(mousePos))
+            if (m_controls[m_selectedIndex]->contains(mPos))
             {
                 m_controls[m_selectedIndex]->activate();
 
@@ -194,9 +198,17 @@ void Container::setBackgroundColour(const sf::Color& colour)
     m_background.setFillColor(colour);
 }
 
-void Container::setBackgroundTexture(const sf::Texture& t)
+void Container::setBackgroundTexture(const sf::Texture& t, bool centre)
 {
     m_background.setTexture(&t);
+    m_background.setFillColor(sf::Color::White);
+    auto size = sf::Vector2f(t.getSize());
+    m_background.setSize(size);
+
+    if (centre)
+    {
+        xy::Util::Position::centreOrigin(m_background);
+    }
 }
 
 //private
