@@ -82,9 +82,9 @@ namespace
     sf::Color clearColour(0, 0, 0, 255);
 }
 
-App::App(sf::ContextSettings contextSettings)
+App::App()
     : m_videoSettings   (),
-    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, contextSettings)/*,
+    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings)/*,
     m_pendingDifficulty (Difficulty::Easy)*/
 {
     loadSettings();
@@ -207,17 +207,27 @@ const App::GameSettings& App::getGameSettings() const
     return m_gameSettings;
 }
 
-void App::applyVideoSettings(const VideoSettings& settings)
+void App::applyVideoSettings(const VideoSettings& settings) 
 {
     if (m_videoSettings == settings) return;
 
     auto availableModes = m_videoSettings.AvailableVideoModes;
 
-    m_renderWindow.create(settings.VideoMode, windowTitle, settings.WindowStyle);
+    auto oldAA = settings.ContextSettings.antialiasingLevel;
+    m_renderWindow.create(settings.VideoMode, windowTitle, settings.WindowStyle, settings.ContextSettings);
+
+    //check if the AA level is the same as requested
+    auto newAA = m_renderWindow.getSettings().antialiasingLevel;
+    if (oldAA != newAA)
+    {
+        Logger::log("Requested Anti-aliasing level too high, using level: " + std::to_string(newAA), Logger::Type::Warning, Logger::Output::All);
+    }
+
     m_renderWindow.setVerticalSyncEnabled(settings.VSync);
     //m_renderWindow.setMouseCursorVisible(false);
     //TODO test validity and restore old settings if possible
     m_videoSettings = settings;
+    m_videoSettings.ContextSettings.antialiasingLevel = newAA; //so it's correct if requested
     m_videoSettings.AvailableVideoModes = availableModes;
 
     if (m_windowIcon.getPixelsPtr())
@@ -378,6 +388,7 @@ void App::loadSettings()
 
     VideoSettings  newVideoSettings;
     newVideoSettings.VideoMode = settings.videoMode;
+    newVideoSettings.ContextSettings = settings.contextSettings;
     newVideoSettings.WindowStyle = settings.windowStyle;
 
     m_audioSettings = settings.audioSettings;
@@ -402,6 +413,7 @@ void App::saveSettings()
     settings.ident = settingsIdent;
     settings.version = settingsVersion;
     settings.videoMode = m_videoSettings.VideoMode;
+    settings.contextSettings = m_videoSettings.ContextSettings;
     settings.windowStyle = m_videoSettings.WindowStyle;
 
     settings.audioSettings = m_audioSettings;
