@@ -45,6 +45,7 @@ namespace
     bool fullScreen = false;
 
     std::vector<sf::VideoMode> modes;
+    int currentAALevel = 0;
     int currentResolution = 0;
     char resolutionNames[300];
     
@@ -193,6 +194,9 @@ void Console::draw(App* app)
                         break;
                     }
                 }
+
+                //and correct AA level
+                currentAALevel = app->getVideoSettings().ContextSettings.antialiasingLevel;
             }
             nim::EndMenu();
         }
@@ -232,10 +236,19 @@ void Console::draw(App* app)
     //draw options window if visible
     if (!showVideoOptions) return;
 
-    nim::SetNextWindowSize({ 300.f, 100.f });
+    nim::SetNextWindowSize({ 305.f, 200.f });
     nim::Begin("Video Options", &showVideoOptions, ImGuiWindowFlags_ShowBorders);
 
     nim::Combo("Resolution", &currentResolution, resolutionNames);
+    nim::InputInt("Anti-aliasing", &currentAALevel);
+    if (nim::IsItemHovered())
+    {
+        nim::BeginTooltip();
+        nim::PushTextWrapPos(150.f);
+        nim::TextUnformatted("Anti-aliasing is only applicable when not using a post-process");
+        nim::PopTextWrapPos();
+        nim::EndTooltip();
+    }
 
     nim::Checkbox("Full Screen", &fullScreen);
     if (nim::Button("Apply", { 50.f, 20.f }))
@@ -244,7 +257,11 @@ void Console::draw(App* app)
         xy::App::VideoSettings settings;
         settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
         settings.VideoMode = modes[currentResolution];
+        settings.ContextSettings.antialiasingLevel = currentAALevel;
         app->applyVideoSettings(settings);
+        
+        //update in case selected AA level was too high
+        currentAALevel = app->getVideoSettings().ContextSettings.antialiasingLevel;
     }
     nim::End();
 }
