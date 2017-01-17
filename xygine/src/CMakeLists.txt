@@ -1,5 +1,6 @@
 set(XY_SRC
   ${XY_DIR}/App.cpp
+  ${XY_DIR}/BitmapFont.cpp
   ${XY_DIR}/CommandQueue.cpp 
   ${XY_DIR}/Console.cpp 
   ${XY_DIR}/Entity.cpp

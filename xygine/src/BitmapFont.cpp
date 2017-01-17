@@ -25,51 +25,32 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main menu state
-
-#ifndef MENU_MAIN_STATE_HPP_
-#define MENU_MAIN_STATE_HPP_
-
-#include <StateIds.hpp>
-
-#include <xygine/State.hpp>
-#include <xygine/Resource.hpp>
-#include <xygine/ui/Container.hpp>
-
 #include <xygine/BitmapFont.hpp>
-#include <xygine/BitmapText.hpp>
+#include <xygine/Assert.hpp>
 
-#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
-namespace xy
+using namespace xy;
+
+BitmapFont::BitmapFont(const sf::Texture& texture, sf::Vector2f glyphSize)
+    :m_texture  (texture),
+    m_glyphSize (glyphSize)
 {
-    class MessageBus;
+    XY_ASSERT(glyphSize.x > 0 && glyphSize.y > 0, "must have positive glyph size");
+
+    auto size = static_cast<sf::Vector2f>(texture.getSize());
+    m_glyphCount.x = size.x / glyphSize.x;
+    m_glyphCount.y = size.y / glyphSize.y;
 }
-class MenuMainState final : public xy::State
+
+//public
+sf::FloatRect BitmapFont::getGlyph(char c) const
 {
-public:
-    MenuMainState(xy::StateStack&, Context);
-    ~MenuMainState() = default;
+    XY_ASSERT(c > 31, "character not supported");
+    c -= 32; //starts with SPACE char
 
-    bool update(float) override;
-    void draw() override;
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    xy::StateID stateID() const override
-    {
-        return States::ID::MenuMain;
-    }
-private:
-    xy::MessageBus& m_messageBus;
-    xy::UI::Container m_uiContainer;
-    sf::Sprite m_cursorSprite;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
+    auto posX = std::floor(c / m_glyphCount.x);
+    auto posY = static_cast<float>(c % static_cast<char>(m_glyphCount.x));
 
-    xy::BitmapFont m_bfont;
-    xy::BitmapText m_btext;
-
-    void buildMenu();
-    void close();
-};
-#endif //MENU_MAIN_STATE_HPP_
+    return{ posX * m_glyphSize.x, posY * m_glyphSize.y, m_glyphSize.x, m_glyphSize.y };
+}

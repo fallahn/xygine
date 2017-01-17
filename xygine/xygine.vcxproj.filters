@@ -441,6 +441,12 @@
     <ClCompile Include="src\ui\UIMarquee.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="src\BitmapFont.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BitmapText.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xygine\App.hpp">
@@ -940,6 +946,12 @@
     </ClInclude>
     <ClInclude Include="include\xygine\ui\Marquee.hpp">
       <Filter>Header Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\BitmapFont.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xygine\BitmapText.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

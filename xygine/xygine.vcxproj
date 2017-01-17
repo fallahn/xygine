@@ -159,6 +159,8 @@ echo F|xcopy /y /d "$(TargetDir)$(TargetName).lib" "$(SolutionDir)lib\Release\$(
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\BitmapFont.cpp" />
+    <ClCompile Include="src\BitmapText.cpp" />
     <ClCompile Include="src\components\Component.cpp" />
     <ClCompile Include="src\components\ComponentAnimatedDrawable.cpp" />
     <ClCompile Include="src\components\ComponentAnimationController.cpp" />
@@ -279,6 +281,8 @@ echo F|xcopy /y /d "$(TargetDir)$(TargetName).lib" "$(SolutionDir)lib\Release\$(
     <ClCompile Include="src\util\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\xygine\BitmapFont.hpp" />
+    <ClInclude Include="include\xygine\BitmapText.hpp" />
     <ClInclude Include="include\xygine\components\CallbackProvider.hpp" />
     <ClInclude Include="include\xygine\components\MeshDrawable.hpp" />
     <ClInclude Include="include\xygine\components\Model.hpp" />
