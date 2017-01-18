@@ -37,8 +37,7 @@ source distribution.
 MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
     : State         (stack, context),
     m_messageBus    (context.appInstance.getMessageBus()),
-    m_uiContainer   (m_messageBus),
-    m_bfont(m_textureResource.get("assets/fonts/charset.png"), {16.f, 16.f})
+    m_uiContainer   (m_messageBus)
 {
     m_cursorSprite.setTexture(m_textureResource.get("assets/images/ui/cursor.png"));
     m_cursorSprite.setPosition(context.renderWindow.mapPixelToCoords(sf::Mouse::getPosition(context.renderWindow)));
@@ -53,9 +52,6 @@ MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
     xy::App::setMouseCursorVisible(false);
 
     context.appInstance.setWindowTitle("xygine Examples");
-
-    m_btext.setFont(m_bfont);
-    m_btext.setString("Hello World!");
 }
 
 //public
@@ -70,8 +66,6 @@ void MenuMainState::draw()
 {
     auto& rw = getContext().renderWindow;
     rw.setView(getContext().defaultView);
-
-    rw.draw(m_btext);
 
     rw.draw(m_uiContainer);
     rw.draw(m_cursorSprite);

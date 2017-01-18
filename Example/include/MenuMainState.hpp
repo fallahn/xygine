@@ -36,9 +36,6 @@ source distribution.
 #include <xygine/Resource.hpp>
 #include <xygine/ui/Container.hpp>
 
-#include <xygine/BitmapFont.hpp>
-#include <xygine/BitmapText.hpp>
-
 #include <SFML/Graphics/Sprite.hpp>
 
 namespace xy
@@ -65,9 +62,6 @@ private:
     sf::Sprite m_cursorSprite;
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
-
-    xy::BitmapFont m_bfont;
-    xy::BitmapText m_btext;
 
     void buildMenu();
     void close();

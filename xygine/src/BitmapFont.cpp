@@ -46,11 +46,11 @@ BitmapFont::BitmapFont(const sf::Texture& texture, sf::Vector2f glyphSize)
 //public
 sf::FloatRect BitmapFont::getGlyph(char c) const
 {
-    XY_ASSERT(c > 31, "character not supported");
-    c -= 32; //starts with SPACE char
+    //XY_ASSERT(c > 31, "character not supported");
+    c = (c > 31) ? c - 32 : 0; //starts with SPACE char
 
-    auto posX = std::floor(c / m_glyphCount.x);
-    auto posY = static_cast<float>(c % static_cast<char>(m_glyphCount.x));
+    auto posX = static_cast<float>(c % static_cast<char>(m_glyphCount.x));
+    auto posY = std::floor(c / m_glyphCount.x);
 
     return{ posX * m_glyphSize.x, posY * m_glyphSize.y, m_glyphSize.x, m_glyphSize.y };
 }
