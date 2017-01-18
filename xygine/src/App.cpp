@@ -224,7 +224,7 @@ void App::applyVideoSettings(const VideoSettings& settings)
     auto newAA = m_renderWindow.getSettings().antialiasingLevel;
     if (oldAA != newAA)
     {
-        Logger::log("Requested Anti-aliasing level too high, using level: " + std::to_string(newAA), Logger::Type::Warning, Logger::Output::All);
+        Logger::log("Requested Anti-aliasing level not available, using level: " + std::to_string(newAA), Logger::Type::Warning, Logger::Output::All);
     }
 
     m_renderWindow.setVerticalSyncEnabled(settings.VSync);

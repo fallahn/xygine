@@ -240,7 +240,7 @@ void Console::draw(App* app)
     nim::Begin("Video Options", &showVideoOptions, ImGuiWindowFlags_ShowBorders);
 
     nim::Combo("Resolution", &currentResolution, resolutionNames);
-    nim::InputInt("Anti-aliasing", &currentAALevel);
+    nim::SliderInt("Anti-aliasing", &currentAALevel, 0, 32);
     if (nim::IsItemHovered())
     {
         nim::BeginTooltip();
