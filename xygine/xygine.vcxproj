@@ -292,6 +292,7 @@ echo F|xcopy /y /d "$(TargetDir)$(TargetName).lib" "$(SolutionDir)lib\Release\$(
     <ClInclude Include="include\xygine\components\TileMapLayer.hpp" />
     <ClInclude Include="include\xygine\Config.hpp" />
     <ClInclude Include="include\xygine\Console.hpp" />
+    <ClInclude Include="include\xygine\DefaultIcon.hpp" />
     <ClInclude Include="include\xygine\detail\Aliases.hpp" />
     <ClInclude Include="include\xygine\detail\GLCheck.hpp" />
     <ClInclude Include="include\xygine\detail\GLExtensions.hpp" />

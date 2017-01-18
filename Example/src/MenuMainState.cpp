@@ -34,6 +34,8 @@ source distribution.
 
 #include <SFML/Window/Mouse.hpp>
 
+#include <fstream>
+
 MenuMainState::MenuMainState(xy::StateStack& stack, Context context)
     : State         (stack, context),
     m_messageBus    (context.appInstance.getMessageBus()),

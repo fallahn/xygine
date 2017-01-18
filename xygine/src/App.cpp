@@ -80,6 +80,8 @@ namespace
     bool running = false;
 
     sf::Color clearColour(0, 0, 0, 255);
+
+#include "DefaultIcon.inl"
 }
 
 App::App()
@@ -87,6 +89,8 @@ App::App()
     m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings)/*,
     m_pendingDifficulty (Difficulty::Easy)*/
 {
+    m_windowIcon.create(16u, 16u, defaultIcon);
+    
     loadSettings();
     m_scores.load();
     registerConCommands();
