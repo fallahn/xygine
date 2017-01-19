@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014 - 2017
+© Matt Marchant 2014 - 2017
 http://trederia.blogspot.com
 
 xygine - Zlib license.
@@ -66,7 +66,7 @@ namespace xy
             struct Tile final
             {
                 sf::Uint32 ID = 0;
-                std::array<std::int32_t, 4u> terrainIndices;
+                std::array<std::int32_t, 4u> terrainIndices{};
                 sf::Uint32 probability = 100;
 
                 struct Animation final
@@ -81,6 +81,7 @@ namespace xy
                 std::vector<Property> properties;
                 ObjectGroup objectGroup;
                 std::string imagePath;
+                sf::Vector2u imageSize;
             };
             
             /*!

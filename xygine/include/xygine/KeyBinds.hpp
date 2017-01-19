@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014 - 2017
+© Matt Marchant 2014 - 2017
 http://trederia.blogspot.com
 
 xygine - Zlib license.

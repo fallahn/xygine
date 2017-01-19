@@ -953,9 +953,6 @@
     <ClInclude Include="include\xygine\BitmapText.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\xygine\DefaultIcon.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xygine\mesh\shaders\Water.inl">
