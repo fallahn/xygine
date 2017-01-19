@@ -469,19 +469,6 @@ void App::handleEvents()
         default: break;
         }
 
-#ifdef _DEBUG_
-        if (evt.type == sf::Event::KeyPressed)
-        {
-            switch (evt.key.code)
-            {
-            case sf::Keyboard::Escape:
-                quit();
-                break;
-            default: break;
-            }
-        }
-#endif //_DEBUG_
-
         if (evt.type == sf::Event::KeyReleased)
         {
             switch (evt.key.code)
