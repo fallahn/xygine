@@ -108,7 +108,8 @@ namespace xy
     /*!
     \brief Specialisation for sf::VertexArray
     */
-    sf::FloatRect SfDrawableComponent<sf::VertexArray>::globalBounds() const
+    template<>
+    inline sf::FloatRect SfDrawableComponent<sf::VertexArray>::globalBounds() const
     {
         return m_drawable.getBounds();
     }
