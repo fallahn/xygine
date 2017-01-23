@@ -38,9 +38,10 @@ using namespace std::placeholders;
 
 CollisionShape::CollisionShape()
     : m_fixture         (nullptr),
-    m_removeCallbacks   (false)
+    m_removeCallbacks   (false),
+    m_userID            (-1)
 {
-
+    
 }
 
 CollisionShape::~CollisionShape()
@@ -149,6 +150,12 @@ void CollisionShape::destroy()
 RigidBody* CollisionShape::getRigidBody() const
 {
     return (m_fixture) ? static_cast<RigidBody*>(m_fixture->GetBody()->GetUserData()) : nullptr;
+}
+
+bool CollisionShape::contains(sf::Vector2f point) const
+{
+    XY_ASSERT(m_fixture, "Shape not yet initialised");
+    return m_fixture->TestPoint(World::sfToBoxVec(point));
 }
 
 void CollisionShape::addAffector(const ConstantForceAffector& fa)

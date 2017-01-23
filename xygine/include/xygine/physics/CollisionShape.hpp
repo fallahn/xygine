@@ -132,6 +132,13 @@ namespace xy
             RigidBody* getRigidBody() const;
 
             /*!
+            \brief Tests if the given point is within the bounds of the shape.
+            \param point sf::Vector2f representing the point in world space
+            \returns true if point is within the shape, else false
+            */
+            bool contains(sf::Vector2f point) const;
+
+            /*!
             \brief Adds an affector
             \see ConstantForceAffector
             */
@@ -150,6 +157,17 @@ namespace xy
             \brief Removes all affectors assigned to this CollisionShape
             */
             void clearAffectors();
+
+            /*!
+            \brief Sets the UserID of this shape to a custom value
+            */
+            void setUserID(std::uint32_t id) { m_userID = id; }
+
+            /*!
+            \brief Returns the current UserID value for this shape.
+            The default value is -1
+            */
+            std::uint32_t getUserID() const { return m_userID; }
 
         protected:
             const b2FixtureDef getFixtureDef() const
@@ -193,7 +211,7 @@ namespace xy
 
             std::function<void(const CollisionShape*)> destructionCallback;
 
-
+            std::int32_t m_userID;
         };
     }
 }
