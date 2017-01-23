@@ -161,13 +161,13 @@ namespace xy
             /*!
             \brief Sets the UserID of this shape to a custom value
             */
-            void setUserID(std::uint32_t id) { m_userID = id; }
+            void setUserID(std::int32_t id) { m_userID = id; }
 
             /*!
             \brief Returns the current UserID value for this shape.
             The default value is -1
             */
-            std::uint32_t getUserID() const { return m_userID; }
+            std::int32_t getUserID() const { return m_userID; }
 
         protected:
             const b2FixtureDef getFixtureDef() const
