@@ -347,6 +347,11 @@ namespace xy
         given categories.
         */
         bool hasCommandCategories(sf::Int32);
+        /*!
+        \brief Removes the given command categories if the entity currently
+        belongs to them by ANDing the inverse value with the category flags
+        */
+        void removeCommandCategories(sf::Int32);
 
         /*!
         \brief Returns the total number of entities parented to this

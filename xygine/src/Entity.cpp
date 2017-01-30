@@ -323,6 +323,11 @@ bool Entity::hasCommandCategories(sf::Int32 categories)
     return ((m_commandCategories & categories) != 0);
 }
 
+void Entity::removeCommandCategories(sf::Int32 mask)
+{
+    m_commandCategories &= ~mask;
+}
+
 sf::Uint32 Entity::size() const
 {
     sf::Int32 size = 1;
