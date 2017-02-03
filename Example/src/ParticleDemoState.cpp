@@ -87,8 +87,8 @@ namespace
 ParticleDemoState::ParticleDemoState(xy::StateStack& stateStack, Context context)
     : State         (stateStack, context),
     m_messageBus    (context.appInstance.getMessageBus()),
-    m_scene         (m_messageBus),
-    m_physWorld     (m_messageBus)
+    m_physWorld     (m_messageBus),
+    m_scene         (m_messageBus)    
 {
     launchLoadingScreen();
     xy::Stats::clear();

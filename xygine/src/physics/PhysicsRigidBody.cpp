@@ -46,6 +46,17 @@ RigidBody::RigidBody(MessageBus& mb, BodyType type)
     addMessageHandler(mh);
 }
 
+RigidBody::~RigidBody()
+{
+    if (m_body)
+    {
+        //Got an error here? Make sure the scene is torn down
+        //before the physics world is destroyed.
+        m_body->GetWorld()->DestroyBody(m_body);
+        m_body = nullptr;
+    }
+}
+
 //public
 void RigidBody::entityUpdate(Entity& entity, float dt)
 {    

@@ -207,6 +207,12 @@ void Entity::destroy()
         c->destroy();
     }
 
+    for (auto& pc : m_pendingComponents)
+    {
+        pc->onParentDestroyed(*this);
+        pc->destroyed();
+    }
+
     for (auto& c : m_children)
         c->destroy();
 

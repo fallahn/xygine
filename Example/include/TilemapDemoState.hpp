@@ -60,9 +60,9 @@ public:
 private:
 
     xy::MessageBus& m_messageBus;
+    xy::Physics::World m_physWorld; //must live longer than scene
     xy::Scene m_scene;
-    xy::Physics::World m_physWorld;
-
+    
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
     xy::ShaderResource m_shaderResource;

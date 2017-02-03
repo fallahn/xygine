@@ -58,13 +58,13 @@ public:
 private:
 
     xy::MessageBus& m_messageBus;
+    xy::Physics::World m_physWorld;
     xy::Scene m_scene;
 
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
     xy::ShaderResource m_shaderResource;
 
-    xy::Physics::World m_physWorld;
     xy::ParticleSystem::Definition m_particleDef;
 
     void setupParticles();

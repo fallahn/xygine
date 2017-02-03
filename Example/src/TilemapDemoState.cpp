@@ -76,8 +76,8 @@ namespace
 TilemapDemoState::TilemapDemoState(xy::StateStack& stateStack, Context context)
     : State     (stateStack, context),
     m_messageBus(context.appInstance.getMessageBus()),
-    m_scene     (m_messageBus),
-    m_physWorld (m_messageBus)
+    m_physWorld (m_messageBus),
+    m_scene     (m_messageBus)    
 {
     launchLoadingScreen();
     m_scene.setView(context.defaultView);

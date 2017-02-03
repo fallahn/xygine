@@ -82,7 +82,7 @@ namespace xy
             using Ptr = std::unique_ptr<RigidBody>;
 
             RigidBody(MessageBus&, BodyType);
-            ~RigidBody() = default;
+            ~RigidBody();
 
             RigidBody(const RigidBody&) = delete;
             const RigidBody& operator = (const RigidBody&) = delete;

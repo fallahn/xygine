@@ -88,8 +88,8 @@ namespace
 PlatformDemoState::PlatformDemoState(xy::StateStack& stateStack, Context context)
     : State         (stateStack, context),
     m_messageBus    (context.appInstance.getMessageBus()),
-    m_scene         (m_messageBus),
     m_physWorld     (m_messageBus),
+    m_scene         (m_messageBus),
     m_meshRenderer  ({ context.appInstance.getVideoSettings().VideoMode.width, context.appInstance.getVideoSettings().VideoMode.height }, m_scene)
 {
     launchLoadingScreen();

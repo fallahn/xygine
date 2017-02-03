@@ -63,13 +63,12 @@ public:
 private:
 
     xy::MessageBus& m_messageBus;
+    xy::Physics::World m_physWorld; //this must live longer than the scene
     xy::Scene m_scene;
 
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
     xy::ShaderResource m_shaderResource;
-
-    xy::Physics::World m_physWorld;
 
     xy::MeshRenderer m_meshRenderer;
 
