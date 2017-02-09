@@ -91,7 +91,7 @@ namespace xy
             \brief Returns the offset from the top left corner
             of the layer, in pixels
             */
-            const sf::Vector2u& getOffset() const { return m_offset; }
+            const sf::Vector2i& getOffset() const { return m_offset; }
             /*!
             \brief Returns the list of properties of this layer
             */
@@ -102,14 +102,14 @@ namespace xy
             void setName(const std::string& name) { m_name = name; }
             void setOpacity(float opacity) { m_opacity = opacity; }
             void setVisible(bool visible) { m_visible = visible; }
-            void setOffset(sf::Uint32 x, sf::Uint32 y) { m_offset = sf::Vector2u(x, y); }
+            void setOffset(sf::Int32 x, sf::Int32 y) { m_offset = sf::Vector2i(x, y); }
             void addProperty(const pugi::xml_node& node) { m_properties.emplace_back(); m_properties.back().parse(node); }
 
         private:
             std::string m_name;
             float m_opacity;
             bool m_visible;
-            sf::Vector2u m_offset;
+            sf::Vector2i m_offset;
 
             std::vector<Property> m_properties;
         };
