@@ -220,6 +220,9 @@ bool PlatformDemoState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         case sf::Keyboard::Escape:
+#ifdef _DEBUG_
+            getContext().appInstance.quit();
+#endif
         case sf::Keyboard::BackSpace:
             requestStackPop();
             requestStackPush(States::ID::MenuMain);
@@ -342,7 +345,7 @@ void PlatformDemoState::cacheMeshes()
 
     auto& platformMaterial01 = m_meshRenderer.addMaterial(MatId::Platform01, xy::Material::Textured, true, true);
     platformMaterial01.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_01.png") });
-
+    platformMaterial01.addProperty({ "u_maskMap", m_textureResource.get("none") });
 
     auto& platformMaterial04 = m_meshRenderer.addMaterial(MatId::Platform04, xy::Material::Textured, true, true);
     platformMaterial04.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/platform/plat_04.png") });
@@ -364,7 +367,7 @@ void PlatformDemoState::cacheMeshes()
     auto& sphereMat = m_meshRenderer.addMaterial(MatId::SphereTest, xy::Material::TexturedBumped, true);
     sphereMat.addProperty({ "u_diffuseMap", m_textureResource.get("assets/images/sphere_test.png") });
     sphereMat.addProperty({ "u_normalMap", m_textureResource.get("assets/images/sphere_normal.png") });
-    sphereMat.addProperty({ "u_maskMap", m_textureResource.get("I don't want a mask texture!!") });
+    sphereMat.addProperty({ "u_maskMap", m_textureResource.get("none") });
     sphereMat.getRenderPass(xy::RenderPass::ID::ShadowMap)->setCullFace(xy::CullFace::Front);
 
     auto& lightMaterial = m_meshRenderer.addMaterial(MatId::LightSource, xy::Material::Coloured);
@@ -403,6 +406,8 @@ void PlatformDemoState::cacheMeshes()
     entity->addComponent(light);
     entity->addComponent(model);
     m_scene.addEntity(entity, xy::Scene::Layer::FrontFront);
+
+    m_meshRenderer.setReflectionMap(m_textureResource.get("assets/images/reflection.png"));
 }
 
 void PlatformDemoState::buildTerrain()

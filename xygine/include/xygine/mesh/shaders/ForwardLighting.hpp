@@ -74,6 +74,7 @@ namespace xy
                 #if defined(TEXTURED)
                 uniform sampler2D u_diffuseMap;
                 uniform sampler2D u_maskMap;
+                uniform sampler2D u_reflectMap;
                 #if defined(BUMP)
                 uniform sampler2D u_normalMap;
                 #endif
@@ -210,7 +211,8 @@ namespace xy
                     }       
 
                     blendedColour = mix(blendedColour.rgb, diffuse.rgb, mask.b);
-                    fragOut = vec4(blendedColour.rgb, diffuse.a);
+                    blendedColour = mix(texture(u_reflectMap, normal.xy + 1.0 * 0.5).rgb, blendedColour, mask.a);
+                    fragOut = vec4(blendedColour, diffuse.a);
                 })";
         }
     }

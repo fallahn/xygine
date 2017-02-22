@@ -529,6 +529,12 @@ xy::Material& MeshRenderer::getMaterial(std::uint32_t id) const
     return m_materialResource.get(id);
 }
 
+void MeshRenderer::setReflectionMap(const sf::Texture& texture)
+{
+    m_lightingShader.setUniform("u_reflectMap", texture);
+    //TODO update reflectmap property of all alphablended materials in resource
+}
+
 //private
 void MeshRenderer::createNoiseTexture()
 {
