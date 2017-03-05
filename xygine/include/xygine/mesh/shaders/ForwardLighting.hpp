@@ -210,7 +210,7 @@ namespace xy
                         blendedColour += lighting;
                     }       
 
-                    blendedColour = mix(blendedColour.rgb, diffuse.rgb, mask.b);
+                    blendedColour = mix(blendedColour, diffuse.rgb, mask.b);
                     blendedColour = mix(texture(u_reflectMap, normal.xy + 1.0 * 0.5).rgb, blendedColour, mask.a);
                     fragOut = vec4(blendedColour, diffuse.a);
                 })";

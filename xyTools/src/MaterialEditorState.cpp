@@ -87,6 +87,9 @@ MaterialEditorState::MaterialEditorState(xy::StateStack& stack, Context context)
     lastMousePos = xy::App::getMouseWorldPosition();
     context.appInstance.setWindowTitle("Material Editor");
 
+    m_meshRenderer.setReflectionMap(m_textureResource.get("assets/images/reflection.png"));
+    m_textureResource.get("assets/images/reflection.png").setRepeated(true);
+
     quitLoadingScreen();
 }
 
