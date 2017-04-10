@@ -20,14 +20,14 @@ The API is [documented with doxygen](https://fallahn.github.io/xyDocs/), which c
 file.
 
 
-######Why xygine?
+###### Why xygine?
 
 The name is simply derived from the fact that this is a 2D framework -
 hence xy, followed by the gine part of engine (although technically
 xygine isn't really an engine).
 
 
-######Contributions
+###### Contributions
 Contributions should be acknowledged and are gratefully accepted from:  
 Jonny Paton  
 Jean-Sebastien Fauteux (OS X Testing)  
@@ -35,7 +35,7 @@ Josh Mercier for the awesome Batcat model
 
 -----------------------------------------------------------------------
 
-Matt Marchant 2014 - 2016  
+Matt Marchant 2014 - 2017  
 http://trederia.blogspot.com  
 
 xygine - Zlib license.  
