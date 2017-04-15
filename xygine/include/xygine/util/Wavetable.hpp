@@ -31,6 +31,8 @@ source distribution.
 #include <xygine/util/Const.hpp>
 #include <xygine/Assert.hpp>
 
+#include <cmath>
+
 namespace xy
 {
     namespace Util
