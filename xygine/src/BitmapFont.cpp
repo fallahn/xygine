@@ -30,6 +30,8 @@ source distribution.
 
 #include <SFML/Graphics/Texture.hpp>
 
+#include <cmath>
+
 using namespace xy;
 
 BitmapFont::BitmapFont(const sf::Texture& texture, sf::Vector2f glyphSize)

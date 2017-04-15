@@ -31,6 +31,8 @@ source distribution.
 #include <xygine/Entity.hpp>
 #include <xygine/Assert.hpp>
 
+#include <cmath>
+
 using namespace xy;
 
 namespace

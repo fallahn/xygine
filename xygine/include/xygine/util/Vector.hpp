@@ -34,6 +34,8 @@ source distribution.
 
 #include <SFML/System/Vector2.hpp>
 
+#include <cmath>
+
 namespace xy
 {
     namespace Util
