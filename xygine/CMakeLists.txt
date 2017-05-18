@@ -44,7 +44,7 @@ else()
 endif()
 
 if(UNIX)
-  find_package(X11 REQUIRED)
+  #find_package(X11 REQUIRED) # On modern versions of Mac (at least as of 10.8) X11 is not installed automatically - and probably not needed?
 endif()
 
 SET(BOX2D_MIN_VERSION "2.3.2")
