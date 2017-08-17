@@ -78,7 +78,7 @@ namespace xy
 
             VideoSettings()
                 : WindowStyle(sf::Style::Close /*sf::Style::Fullscreen*/),
-                VideoMode(1024, 768),
+                VideoMode(800, 600),
                 ContextSettings(),
                 VSync(true){}
 

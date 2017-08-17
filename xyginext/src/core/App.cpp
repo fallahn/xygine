@@ -46,9 +46,9 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
 #ifndef _DEBUG_
-    std::string windowTitle("xyginext game (Release Build) - F1: console F2: Stats");
+    std::string windowTitle("xyginext game (Release Build)");
 #else
-    std::string windowTitle("xyginext game (Debug Build) - F1: console F2: Stats");
+    std::string windowTitle("xyginext game (Debug Build)");
 #endif //_DEBUG_
 
     sf::Clock frameClock;
@@ -69,9 +69,7 @@ App::App()
     m_windowIcon.create(16u, 16u, defaultIcon);
 
     renderWindow = &m_renderWindow;
-
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
-    //m_renderWindow.setIcon(icon_width, icon_height, icon_arr);
 
     //store available modes and remove unusable
     m_videoSettings.AvailableVideoModes = sf::VideoMode::getFullscreenModes();
