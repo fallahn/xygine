@@ -19,6 +19,12 @@
     <Filter Include="Header Files\core">
       <UniqueIdentifier>{117ea9e9-af18-470b-9c7f-561da58f62bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ecs">
+      <UniqueIdentifier>{f9f4e383-d50a-4ff7-b887-924e79e7d007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ecs">
+      <UniqueIdentifier>{f48ad9f7-9ce1-4163-b82e-10ea85d29815}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\App.cpp">
@@ -41,6 +47,30 @@
     </ClCompile>
     <ClCompile Include="src\core\SysTime.cpp">
       <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\Component.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\Director.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\Entity.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\EntityManager.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\Renderable.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\Scene.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\System.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\SystemManager.cpp">
+      <Filter>Source Files\ecs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -74,5 +104,46 @@
     <ClInclude Include="include\xyginext\core\Command.hpp">
       <Filter>Header Files\core</Filter>
     </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\Component.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\ComponentPool.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\Director.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\Entity.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\Renderable.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\Scene.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\System.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\Message.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\xyginext\ecs\Entity.inl">
+      <Filter>Header Files\ecs</Filter>
+    </None>
+    <None Include="include\xyginext\ecs\EntityManager.inl">
+      <Filter>Header Files\ecs</Filter>
+    </None>
+    <None Include="include\xyginext\ecs\Scene.inl">
+      <Filter>Header Files\ecs</Filter>
+    </None>
+    <None Include="include\xyginext\ecs\System.inl">
+      <Filter>Header Files\ecs</Filter>
+    </None>
+    <None Include="include\xyginext\ecs\SystemManager.inl">
+      <Filter>Header Files\ecs</Filter>
+    </None>
   </ItemGroup>
 </Project>

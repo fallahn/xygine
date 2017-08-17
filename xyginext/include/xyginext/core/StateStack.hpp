@@ -30,11 +30,11 @@ source distribution.
 #ifndef XY_STATESTACK_HPP_
 #define XY_STATESTACK_HPP_
 
-#include <xyginext/core/State.hpp>
-
 #include <map>
 #include <functional>
 #include <vector>
+
+#include <xyginext/core/State.hpp>
 
 namespace sf
 {

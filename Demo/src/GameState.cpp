@@ -25,65 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "Game.hpp"
 #include "GameState.hpp"
 
-#include <SFML/Window/Event.hpp>
+#include <xyginext/core/App.hpp>
 
-Game::Game()
-    : xy::App   (/*sf::ContextSettings(0, 0, 0, 3, 2, sf::ContextSettings::Core)*/),
-    m_stateStack({ getRenderWindow(), *this })
+GameState::GameState(xy::StateStack& stack, xy::State::Context ctx)
+    : xy::State(stack, ctx)
+{
+    xy::App::setClearColour(sf::Color::Red);
+}
+
+//public
+bool GameState::handleEvent(const sf::Event& evt)
+{
+    return false;
+}
+
+void GameState::handleMessage(const xy::Message& msg)
 {
 
 }
 
-//private
-void Game::handleEvent(const sf::Event& evt)
-{    
-    if (evt.type == sf::Event::KeyPressed)
-    {
-        switch(evt.key.code)
-        {
-            default: break;
-            case sf::Keyboard::Escape:
-                xy::App::quit();
-                break;
-        }
-    }
-
-    m_stateStack.handleEvent(evt);
-}
-
-void Game::handleMessage(const xy::Message& msg)
-{    
-    m_stateStack.handleMessage(msg);
-}
-
-void Game::updateApp(float dt)
+bool GameState::update(float dt)
 {
-    m_stateStack.update(dt);
+    return false;
 }
 
-void Game::draw()
+void GameState::draw()
 {
-    m_stateStack.draw();
-}
 
-void Game::initialise()
-{
-    registerStates();
-    m_stateStack.pushState(StateID::Game);
-
-    getRenderWindow().setKeyRepeatEnabled(false);
-}
-
-void Game::finalise()
-{
-    m_stateStack.clearStates();
-    m_stateStack.applyPendingChanges();
-}
-
-void Game::registerStates()
-{
-    m_stateStack.registerState<GameState>(StateID::Game);
 }

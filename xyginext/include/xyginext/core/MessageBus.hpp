@@ -30,79 +30,15 @@ source distribution.
 #ifndef XY_MESSAGE_BUS_HPP_
 #define XY_MESSAGE_BUS_HPP_
 
-#define TEMPLATE_GUARD template <typename T>//, typename std::enable_if<std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value>::type...>
-#ifdef __GNUC__ //GCC < 5 doesn't support these type traits
-#if __GNUC__ < 5
-#undef TEMPLATE_GUARD
-#define TEMPLATE_GUARD template <typename T>
-#endif //__GNUC__ ver
-#endif //__GNUC__
-
 #include <xyginext/core/State.hpp>
 #include <xyginext/core/Assert.hpp>
-
-#include <SFML/Config.hpp>
+#include <xyginext/core/Message.hpp>
 
 #include <vector>
 #include <type_traits>
 
-
-using UIControlID = sf::Int32;
-
 namespace xy
 {
-    /*!
-    \brief Message class
-
-    The message class contains an ID used to identify
-    the type of data contained in the message, and the
-    message data itself. xygine uses some internal messaging
-    types, so custom messages should have their IDs start at
-    Message::Type::Count
-    \see MessageBus
-    */
-    class XY_EXPORT_API Message final
-    {
-        friend class MessageBus;
-    public:
-        using ID = sf::Int32;
-        enum Type
-        {
-            Count
-        };
-
-        ID id = -1;
-
-        /*!
-        \brief Returns the actual data containend in the message
-
-        Using the ID of the message to determine the data type of the
-        message, this function will return a reference to that data.
-        It is important to request the correct type of data from the
-        message else behaviour will be undefined.
-
-        if(msg.id == Type::PhysicsMessage)
-        {
-            const PhysicsEvent& data = msg.getData<PhysicsEvent>();
-            //do stuff with data
-        }
-
-
-        */
-        TEMPLATE_GUARD
-        const T& getData() const
-        {
-            //this isn't working on MSVC
-            //static_assert(std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value, "");
-            XY_ASSERT(sizeof(T) == m_dataSize, "size of supplied type is not equal to data size");
-            return *static_cast<T*>(m_data);
-        }
-
-    private:
-        void* m_data;
-        std::size_t m_dataSize;
-    };
-
     /*!
     \brief System wide message bus for custom event messaging
 
@@ -146,7 +82,7 @@ namespace xy
         \param id Unique ID for this message type
         \returns Pointer to an empty message of given type.
         */
-        TEMPLATE_GUARD
+        template <typename T>
         T* post(Message::ID id)
         {
             if (!m_enabled) return static_cast<T*>((void*)m_pendingBuffer.data());

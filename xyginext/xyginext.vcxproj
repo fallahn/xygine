@@ -130,6 +130,14 @@
     <ClCompile Include="src\core\State.cpp" />
     <ClCompile Include="src\core\StateStack.cpp" />
     <ClCompile Include="src\core\SysTime.cpp" />
+    <ClCompile Include="src\ecs\Component.cpp" />
+    <ClCompile Include="src\ecs\Director.cpp" />
+    <ClCompile Include="src\ecs\Entity.cpp" />
+    <ClCompile Include="src\ecs\EntityManager.cpp" />
+    <ClCompile Include="src\ecs\Renderable.cpp" />
+    <ClCompile Include="src\ecs\Scene.cpp" />
+    <ClCompile Include="src\ecs\System.cpp" />
+    <ClCompile Include="src\ecs\SystemManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp" />
@@ -138,10 +146,25 @@
     <ClInclude Include="include\xyginext\core\Command.hpp" />
     <ClInclude Include="include\xyginext\core\FileSystem.hpp" />
     <ClInclude Include="include\xyginext\core\Log.hpp" />
+    <ClInclude Include="include\xyginext\core\Message.hpp" />
     <ClInclude Include="include\xyginext\core\MessageBus.hpp" />
     <ClInclude Include="include\xyginext\core\State.hpp" />
     <ClInclude Include="include\xyginext\core\StateStack.hpp" />
     <ClInclude Include="include\xyginext\core\SysTime.hpp" />
+    <ClInclude Include="include\xyginext\ecs\Component.hpp" />
+    <ClInclude Include="include\xyginext\ecs\ComponentPool.hpp" />
+    <ClInclude Include="include\xyginext\ecs\Director.hpp" />
+    <ClInclude Include="include\xyginext\ecs\Entity.hpp" />
+    <ClInclude Include="include\xyginext\ecs\Renderable.hpp" />
+    <ClInclude Include="include\xyginext\ecs\Scene.hpp" />
+    <ClInclude Include="include\xyginext\ecs\System.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\xyginext\ecs\Entity.inl" />
+    <None Include="include\xyginext\ecs\EntityManager.inl" />
+    <None Include="include\xyginext\ecs\Scene.inl" />
+    <None Include="include\xyginext\ecs\System.inl" />
+    <None Include="include\xyginext\ecs\SystemManager.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
