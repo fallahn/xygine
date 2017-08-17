@@ -42,7 +42,7 @@ endif()
 find_package(XYGINEXT REQUIRED)
 
 include_directories(
-  ${XY_INCLUDE_DIR}
+  ${XYXT_INCLUDE_DIR}
   ${SFML_INCLUDE_DIR} 
   ${CMAKE_SOURCE_DIR}/include)
 
@@ -63,7 +63,7 @@ endif()
 target_link_libraries(${PROJECT_NAME}
   ${SFML_LIBRARIES}
   ${SFML_DEPENDENCIES}
-  ${XY_LIBRARIES})
+  ${XYXT_LIBRARIES})
 
 if(UNIX)
   target_link_libraries(${PROJECT_NAME}
