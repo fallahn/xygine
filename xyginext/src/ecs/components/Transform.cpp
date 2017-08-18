@@ -131,7 +131,7 @@ sf::Transform Transform::getWorldTransform() const
 {
     if (m_parent)
     {
-        return getTransform() * m_parent->getWorldTransform();
+        return m_parent->getWorldTransform() * getTransform();
     }
     return getTransform();
 }

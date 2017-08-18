@@ -28,15 +28,18 @@ source distribution.
 #include "GameState.hpp"
 
 #include <xyginext/core/App.hpp>
+
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/components/Text.hpp>
+
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
+#include <xyginext/ecs/systems/TextRenderer.hpp>
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx)
     : xy::State (stack, ctx),
     m_scene     (ctx.appInstance.getMessageBus())
 {
-    xy::App::setClearColour(sf::Color::Red);
     loadAssets();
 }
 
@@ -71,10 +74,17 @@ void GameState::loadAssets()
     auto& mb = getContext().appInstance.getMessageBus();
 
     m_scene.addSystem<xy::SpriteRenderer>(mb);
+    m_scene.addSystem<xy::TextRenderer>(mb);
     
-    
+  
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>();
-    entity.getComponent<xy::Transform>().setPosition(50.f, 50.f);
+    entity.getComponent<xy::Transform>().setPosition(230.f, 0.f);
+    entity.getComponent<xy::Transform>().setScale({ 0.2f, 0.2f });
+    entity.getComponent<xy::Transform>().setRotation(122.f);
     entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/sphere_test.png"));
+
+    entity = m_scene.createEntity();
+    entity.addComponent<xy::Transform>().setPosition(200.f, 410.f);
+    entity.addComponent<xy::Text>(m_fontResource.get()).setString("Bunnage!");
 }

@@ -17,7 +17,11 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/SystemManager.cpp
 
   ${PROJECT_DIR}/ecs/components/Sprite.cpp
+  ${PROJECT_DIR}/ecs/components/Text.cpp
   ${PROJECT_DIR}/ecs/components/Transform.cpp
+
+  ${PROJECT_DIR}/ecs/systems/SpriteRenderer.cpp
+  ${PROJECT_DIR}/ecs/systems/TextRenderer.cpp
 
   ${PROJECT_DIR}/resources/FontResource.cpp
   ${PROJECT_DIR}/resources/ShaderResource.cpp)

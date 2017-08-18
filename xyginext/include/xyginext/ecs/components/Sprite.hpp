@@ -85,6 +85,11 @@ namespace xy
         void setShader(sf::Shader*);
 
         /*!
+        \brief Sets the blend mode used when rendering this sprite
+        */
+        void setBlendMode(sf::BlendMode);
+
+        /*!
         \brief Returns a pointer to the sprite's active texture
         */
         const sf::Texture* getTexture() const;
@@ -103,6 +108,11 @@ namespace xy
         \brief Returns a pointer to the active shader, if any
         */
         const sf::Shader* getShader() const;
+
+        /*!
+        \brief Returns the sprite's current blend mode
+        */
+        sf::BlendMode getBlendMode() const { return m_states.blendMode; }
 
         /*!
         \brief Returns the local (pre transform) bounds

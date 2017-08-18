@@ -25,68 +25,31 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/components/Sprite.hpp>
+#ifndef XY_TEXT_RENDERER_HPP_
+#define XY_TEXT_RENDERER_HPP_
 
-#include <SFML/Graphics/Texture.hpp>
+#include <xyginext/ecs/System.hpp>
 
-using namespace xy;
+#include <SFML/Graphics/Drawable.hpp>
 
-Sprite::Sprite()
-    : m_dirty(true)
+namespace xy
 {
-
-}
-
-Sprite::Sprite(const sf::Texture& texture)
-    : m_dirty(true)
-{
-    setTexture(texture);
-}
-
-//public
-void Sprite::setTexture(const sf::Texture& texture)
-{
-    m_states.texture = &texture;
-    auto size = static_cast<sf::Vector2f>(texture.getSize());
-    setTextureRect({ sf::Vector2f(), size });
-}
-
-void Sprite::setTextureRect(sf::FloatRect rect)
-{
-    m_textureRect = rect;
-    m_dirty = true;
-}
-
-void Sprite::setColour(sf::Color c)
-{
-    for (auto& v : m_vertices)
+    /*!
+    \brief System for rendering text objects.
+    Usually this would be added last to the Scene after
+    existing drawable systems, as the text ought to be rendered on top of everything else
+    */
+    class XY_EXPORT_API TextRenderer final : public xy::System, public sf::Drawable
     {
-        v.color = c;
-    }
+    public:
+        explicit TextRenderer(MessageBus&);
+
+        void process(float) override;
+
+    private:
+
+        void draw(sf::RenderTarget&, sf::RenderStates) const override;
+    };
 }
 
-void Sprite::setShader(sf::Shader* shader)
-{
-    m_states.shader = shader;
-}
-
-void Sprite::setBlendMode(sf::BlendMode mode)
-{
-    m_states.blendMode = mode;
-}
-
-const sf::Texture* Sprite::getTexture() const
-{
-    return m_states.texture;
-}
-
-sf::Color Sprite::getColour() const
-{
-    return m_vertices[0].color;
-}
-
-const sf::Shader* Sprite::getShader() const
-{
-    return m_states.shader;
-}
-
+#endif //XY_TEXT_RENDERER_HPP_

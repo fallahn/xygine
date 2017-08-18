@@ -25,68 +25,99 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/components/Sprite.hpp>
-
-#include <SFML/Graphics/Texture.hpp>
+#include <xyginext/ecs/components/Text.hpp>
 
 using namespace xy;
 
-Sprite::Sprite()
-    : m_dirty(true)
+Text::Text()
+    : m_font    (nullptr),
+    m_charSize  (30),
+    m_fillColour(sf::Color::White),
+    m_dirty     (true)
 {
 
 }
 
-Sprite::Sprite(const sf::Texture& texture)
-    : m_dirty(true)
+Text::Text(const sf::Font& font)
+    : m_font    (nullptr),
+    m_charSize  (30),
+    m_fillColour(sf::Color::White),
+    m_dirty     (true)
 {
-    setTexture(texture);
+    setFont(font);
 }
 
 //public
-void Sprite::setTexture(const sf::Texture& texture)
+void Text::setFont(const sf::Font& font)
 {
-    m_states.texture = &texture;
-    auto size = static_cast<sf::Vector2f>(texture.getSize());
-    setTextureRect({ sf::Vector2f(), size });
-}
-
-void Sprite::setTextureRect(sf::FloatRect rect)
-{
-    m_textureRect = rect;
+    m_font = &font;
     m_dirty = true;
 }
 
-void Sprite::setColour(sf::Color c)
+void Text::setCharacterSize(sf::Uint32 size)
 {
-    for (auto& v : m_vertices)
+    m_charSize = size;
+    m_dirty = true;
+}
+
+void Text::setString(const sf::String& str)
+{
+    m_string = str;
+    m_dirty = true;
+}
+
+void Text::setFillColour(sf::Color colour)
+{
+    m_fillColour = colour;
+    if (!m_dirty)
     {
-        v.color = c;
+        for (auto& v : m_vertices)
+        {
+            v.color = colour;
+        }
+        return;
     }
 }
 
-void Sprite::setShader(sf::Shader* shader)
+void Text::setShader(sf::Shader* shader)
 {
     m_states.shader = shader;
 }
 
-void Sprite::setBlendMode(sf::BlendMode mode)
+void Text::setBlendMode(sf::BlendMode mode)
 {
     m_states.blendMode = mode;
 }
 
-const sf::Texture* Sprite::getTexture() const
+const sf::Font* Text::getFont() const
 {
-    return m_states.texture;
+    return m_font;
 }
 
-sf::Color Sprite::getColour() const
+sf::Uint32 Text::getCharacterSize() const
 {
-    return m_vertices[0].color;
+    return m_charSize;
 }
 
-const sf::Shader* Sprite::getShader() const
+const sf::String& Text::getString() const
+{
+    return m_string;
+}
+
+sf::Color Text::getFillColour() const
+{
+    return m_fillColour;
+}
+
+const sf::Shader* Text::getShader() const
 {
     return m_states.shader;
 }
+
+sf::BlendMode Text::getBlendMode() const
+{
+    return m_states.blendMode;
+}
+
+//private
 
