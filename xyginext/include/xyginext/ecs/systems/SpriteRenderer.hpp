@@ -25,48 +25,27 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_RENDERABLE_HPP_
-#define XY_RENDERABLE_HPP_
+#ifndef XY_SPRITE_RENDERER_HPP_
+#define XY_SPRITE_RENDERER_HPP_
 
-#include <xyginext/Config.hpp>
-
-#include <SFML/Config.hpp>
-#include <SFML/Graphics/View.hpp>
-#include <SFML/Graphics/Drawable.hpp>
-
-#include <array>
+#include <xyginext/ecs/System.hpp>
 
 namespace xy
 {
-    class Entity;
     /*!
-    \brief Renderable interface for systems which draw parts of the scene.
-    Systems which implement this will be drawn by any scene to which they are added.
+    \brief System for renderering sprites
     */
-    class XY_EXPORT_API Renderable : public sf::Drawable
+    class XY_EXPORT_API SpriteRenderer final : public xy::System, public sf::Drawable
     {
     public:
-        Renderable() = default;
-        virtual ~Renderable() = default;
+        explicit SpriteRenderer(MessageBus&);
 
-    protected:
-        /*!
-        \brief Applies the given view.
-        Use this to set the viewport for the given camera component when rendering.
-        Usually one would restore the existing viewport when done rendering, for consistency.
-        */
-        void applyView(sf::View);
-
-        /*!
-        \brief Restores the previously active view after a call to applyView()
-        */
-        void restorePreviousView();
-
-        virtual void draw(sf::RenderTarget&, sf::RenderStates) const override = 0;
+        void process(float) override;
 
     private:
-        sf::View m_previousView;
+
+        void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }
 
-#endif //XY_RENDERABLE_HPP_
+#endif //XY_SPRITE_RENDERER_HPP_

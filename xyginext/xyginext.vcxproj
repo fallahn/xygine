@@ -131,13 +131,17 @@
     <ClCompile Include="src\core\StateStack.cpp" />
     <ClCompile Include="src\core\SysTime.cpp" />
     <ClCompile Include="src\ecs\Component.cpp" />
+    <ClCompile Include="src\ecs\components\Sprite.cpp" />
+    <ClCompile Include="src\ecs\components\Transform.cpp" />
     <ClCompile Include="src\ecs\Director.cpp" />
     <ClCompile Include="src\ecs\Entity.cpp" />
     <ClCompile Include="src\ecs\EntityManager.cpp" />
-    <ClCompile Include="src\ecs\Renderable.cpp" />
     <ClCompile Include="src\ecs\Scene.cpp" />
     <ClCompile Include="src\ecs\System.cpp" />
     <ClCompile Include="src\ecs\SystemManager.cpp" />
+    <ClCompile Include="src\ecs\systems\SpriteRenderer.cpp" />
+    <ClCompile Include="src\resources\FontResource.cpp" />
+    <ClCompile Include="src\resources\ShaderResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp" />
@@ -153,11 +157,15 @@
     <ClInclude Include="include\xyginext\core\SysTime.hpp" />
     <ClInclude Include="include\xyginext\ecs\Component.hpp" />
     <ClInclude Include="include\xyginext\ecs\ComponentPool.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\Sprite.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\Transform.hpp" />
     <ClInclude Include="include\xyginext\ecs\Director.hpp" />
     <ClInclude Include="include\xyginext\ecs\Entity.hpp" />
-    <ClInclude Include="include\xyginext\ecs\Renderable.hpp" />
     <ClInclude Include="include\xyginext\ecs\Scene.hpp" />
     <ClInclude Include="include\xyginext\ecs\System.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\SpriteRenderer.hpp" />
+    <ClInclude Include="include\xyginext\resources\Resource.hpp" />
+    <ClInclude Include="include\xyginext\resources\ShaderResource.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl" />

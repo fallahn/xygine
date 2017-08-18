@@ -25,33 +25,63 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#include <xyginext/ecs/components/Sprite.hpp>
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
-#include "StateIDs.hpp"
+using namespace xy;
 
-class GameState final : public xy::State
+Sprite::Sprite()
+    : m_dirty(true)
 {
-public:
-    GameState(xy::StateStack&, xy::State::Context);
 
-    xy::StateID stateID() const override { return StateID::Game; }
+}
 
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+Sprite::Sprite(const sf::Texture& texture)
+    : m_dirty(true)
+{
+    setTexture(texture);
+}
 
-private:
+//public
+void Sprite::setTexture(const sf::Texture& texture)
+{
+    m_states.texture = &texture;
+    auto size = static_cast<sf::Vector2f>(texture.getSize());
+    setTextureRect({ sf::Vector2f(), size });
+}
 
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
+void Sprite::setTextureRect(sf::FloatRect rect)
+{
+    m_textureRect = rect;
+    m_dirty = true;
+}
 
-    void loadAssets();
-};
+void Sprite::setColour(sf::Color c)
+{
+    for (auto& v : m_vertices)
+    {
+        v.color = c;
+    }
+}
 
-#endif //DEMO_GAME_STATE_HPP_
+void Sprite::setShader(sf::Shader* shader)
+{
+    m_states.shader = shader;
+}
+
+const sf::Texture* Sprite::getTexture() const
+{
+    return m_states.texture;
+}
+
+sf::Color Sprite::getColour() const
+{
+    return m_vertices[0].color;
+}
+
+const sf::Shader* Sprite::getShader() const
+{
+    return m_states.shader;
+}
+

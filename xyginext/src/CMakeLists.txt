@@ -12,7 +12,12 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/Director.cpp
   ${PROJECT_DIR}/ecs/Entity.cpp
   ${PROJECT_DIR}/ecs/EntityManager.cpp
-  ${PROJECT_DIR}/ecs/Renderable.cpp
   ${PROJECT_DIR}/ecs/Scene.cpp
   ${PROJECT_DIR}/ecs/System.cpp
-  ${PROJECT_DIR}/ecs/SystemManager.cpp)
+  ${PROJECT_DIR}/ecs/SystemManager.cpp
+
+  ${PROJECT_DIR}/ecs/components/Sprite.cpp
+  ${PROJECT_DIR}/ecs/components/Transform.cpp
+
+  ${PROJECT_DIR}/resources/FontResource.cpp
+  ${PROJECT_DIR}/resources/ShaderResource.cpp)

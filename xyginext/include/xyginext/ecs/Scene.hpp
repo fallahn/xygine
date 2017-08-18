@@ -36,6 +36,7 @@ source distribution.
 #include <xyginext/ecs/Director.hpp>
 
 #include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Drawable.hpp>
 
 #include <functional>
 
@@ -55,7 +56,7 @@ namespace xy
     entities else existing entities will not be processed by new systems.
     */
 
-    class XY_EXPORT_API Scene final
+    class XY_EXPORT_API Scene final : public sf::Drawable
     {
     public:
         explicit Scene(MessageBus&);
@@ -172,11 +173,6 @@ namespace xy
         */
         void forwardMessage(const Message&);
 
-        /*!
-        \brief Draws any renderable systems in this scene, in the order in which they were addeded
-        */
-        void render();
-
     private:
         MessageBus& m_messageBus;
         Entity::ID m_defaultCamera;
@@ -191,16 +187,18 @@ namespace xy
 
         std::vector<std::unique_ptr<Director>> m_directors;
 
-        std::vector<Renderable*> m_renderables;
+        std::vector<sf::Drawable*> m_drawables;
 
         sf::RenderTexture m_sceneBuffer;
         //std::array<sf::RenderTexture, 2u> m_postBuffers;
         //std::vector<std::unique_ptr<PostProcess>> m_postEffects;
 
         void postRenderPath();
-        std::function<void()> currentRenderPath;
+        std::function<void(sf::RenderTarget&, sf::RenderStates)> currentRenderPath;
 
         void updateFrustum();
+
+        void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 
 #include "Scene.inl"

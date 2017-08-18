@@ -33,21 +33,12 @@ source distribution.
 using namespace xy;
 
 //protected
-sf::IntRect Renderable::applyViewport(sf::FloatRect vp)
+void Renderable::applyView(sf::View vp)
 {
-    //glm::vec2 size(App::getWindow().getSize());
 
-    //glCheck(glGetIntegerv(GL_VIEWPORT, m_previousViewport.data()));
-    //IntRect rect(static_cast<int32>(size.x * vp.left), static_cast<int32>(size.y * vp.bottom),
-    //            static_cast<int32>(size.x * vp.width), static_cast<int32>(size.y * vp.height));
-    //glViewport(rect.left, rect.bottom, rect.width, rect.height);
-
-    //return rect;
-
-    return {};
 }
 
-void Renderable::restorePreviousViewport()
+void Renderable::restorePreviousView()
 {
-    //glViewport(m_previousViewport[0], m_previousViewport[1], m_previousViewport[2], m_previousViewport[3]);
+    
 }

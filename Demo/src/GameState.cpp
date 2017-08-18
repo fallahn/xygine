@@ -28,30 +28,53 @@ source distribution.
 #include "GameState.hpp"
 
 #include <xyginext/core/App.hpp>
+#include <xyginext/ecs/components/Sprite.hpp>
+#include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/systems/SpriteRenderer.hpp>
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx)
-    : xy::State(stack, ctx)
+    : xy::State (stack, ctx),
+    m_scene     (ctx.appInstance.getMessageBus())
 {
     xy::App::setClearColour(sf::Color::Red);
+    loadAssets();
 }
 
 //public
 bool GameState::handleEvent(const sf::Event& evt)
 {
+    m_scene.forwardEvent(evt);
+
     return false;
 }
 
 void GameState::handleMessage(const xy::Message& msg)
 {
-
+    m_scene.forwardMessage(msg);
 }
 
 bool GameState::update(float dt)
 {
+    m_scene.update(dt);
     return false;
 }
 
 void GameState::draw()
 {
+    auto& rw = getContext().renderWindow;
+    rw.draw(m_scene);
+}
 
+//private
+void GameState::loadAssets()
+{
+    auto& mb = getContext().appInstance.getMessageBus();
+
+    m_scene.addSystem<xy::SpriteRenderer>(mb);
+    
+    
+    auto entity = m_scene.createEntity();
+    entity.addComponent<xy::Transform>();
+    entity.getComponent<xy::Transform>().setPosition(50.f, 50.f);
+    entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/sphere_test.png"));
 }

@@ -52,10 +52,12 @@ Scene::Scene(MessageBus& mb)
     //m_activeCamera = m_defaultCamera;
     //m_activeListener = m_defaultCamera;
 
-    currentRenderPath = [this]()
+    currentRenderPath = [this](sf::RenderTarget& rt, sf::RenderStates states)
     {
-        auto camera = m_entityManager.getEntity(m_activeCamera);
-        for (auto r : m_renderables) r->render(camera);
+        for (auto r : m_drawables)
+        {
+            rt.draw(*r, states);
+        }
     };
 }
 
@@ -117,8 +119,10 @@ Entity Scene::getEntity(Entity::ID id) const
 //    {       
 //        currentRenderPath = [this]()
 //        {
-//            auto camera = m_entityManager.getEntity(m_activeCamera);
-//            for (auto& r : m_renderables) r->render(camera);
+            //for (auto r : m_drawables)
+            //{
+            //    rt.draw(*r, states);
+            //}
 //        };
 //    }
 //}
@@ -198,11 +202,6 @@ void Scene::forwardMessage(const Message& msg)
     //        }
     //    }
     //}
-}
-
-void Scene::render()
-{
-    currentRenderPath();
 }
 
 //private
@@ -294,4 +293,9 @@ void Scene::updateFrustum()
     //    p.z *= factor;
     //    p.w *= factor;
     //}
+}
+
+void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    currentRenderPath(rt, states);
 }

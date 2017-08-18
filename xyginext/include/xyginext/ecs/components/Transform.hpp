@@ -25,48 +25,48 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_RENDERABLE_HPP_
-#define XY_RENDERABLE_HPP_
+#ifndef XY_TRANSFORM_HPP_
+#define XY_TRANSFORM_HPP_
 
 #include <xyginext/Config.hpp>
 
-#include <SFML/Config.hpp>
-#include <SFML/Graphics/View.hpp>
-#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 
-#include <array>
+#include <vector>
 
 namespace xy
 {
-    class Entity;
     /*!
-    \brief Renderable interface for systems which draw parts of the scene.
-    Systems which implement this will be drawn by any scene to which they are added.
+    \brief Wraps the SFML transformable class in a component
+    friendly format, parentable to other transforms in a scene graph hierachy.
+    Transforms are non-copyable, but are moveable
     */
-    class XY_EXPORT_API Renderable : public sf::Drawable
+    class XY_EXPORT_API Transform final : public sf::Transformable
     {
     public:
-        Renderable() = default;
-        virtual ~Renderable() = default;
+        Transform();
+        ~Transform();
 
-    protected:
-        /*!
-        \brief Applies the given view.
-        Use this to set the viewport for the given camera component when rendering.
-        Usually one would restore the existing viewport when done rendering, for consistency.
-        */
-        void applyView(sf::View);
+        Transform(const Transform&) = delete;
+        Transform(Transform&&);
+        Transform& operator = (const Transform&) = delete;
+        Transform& operator = (Transform&&);
 
         /*!
-        \brief Restores the previously active view after a call to applyView()
+        \brief Adds a child transform to this one
         */
-        void restorePreviousView();
+        void addChild(Transform&);
 
-        virtual void draw(sf::RenderTarget&, sf::RenderStates) const override = 0;
+        /*!
+        \brief Returns the world position of this transform by
+        multiplying it with any parent transforms it may have
+        */
+        sf::Transform getWorldTransform() const;
 
     private:
-        sf::View m_previousView;
+        Transform* m_parent;
+        std::vector<Transform*> m_children;
     };
 }
 
-#endif //XY_RENDERABLE_HPP_
+#endif //XY_TRANSFORM_HPP_
