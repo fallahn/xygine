@@ -27,6 +27,7 @@ source distribution.
 
 #include <xyginext/resources/ShaderResource.hpp>
 #include <xyginext/core/Assert.hpp>
+
 #include <SFML/Graphics/Shader.hpp>
 
 using namespace xy;
