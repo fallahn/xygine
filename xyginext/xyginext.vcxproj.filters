@@ -48,9 +48,6 @@
     <ClCompile Include="src\core\App.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\CommandQueue.cpp">
-      <Filter>Source Files\core</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\FileSystem.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
@@ -108,6 +105,9 @@
     <ClCompile Include="src\ecs\systems\TextRenderer.cpp">
       <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\systems\CommandSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -135,9 +135,6 @@
       <Filter>Header Files\core</Filter>
     </ClInclude>
     <ClInclude Include="include\xyginext\core\SysTime.hpp">
-      <Filter>Header Files\core</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xyginext\core\Command.hpp">
       <Filter>Header Files\core</Filter>
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\Component.hpp">
@@ -181,6 +178,12 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\systems\TextRenderer.hpp">
       <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\CommandSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\CommandTarget.hpp">
+      <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

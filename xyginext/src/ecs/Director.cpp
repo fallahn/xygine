@@ -28,7 +28,7 @@ source distribution.
 -----------------------------------------------------------------------*/
 
 #include <xyginext/ecs/Director.hpp>
-//#include <xyginext/ecs/systems/CommandSystem.hpp>
+#include <xyginext/ecs/systems/CommandSystem.hpp>
 
 using namespace xy;
 
@@ -40,7 +40,7 @@ Director::Director()
 void Director::sendCommand(const Command& cmd)
 {
     XY_ASSERT(m_commandSystem, "Missing command system!");
-    //m_commandSystem->sendCommand(cmd);
+    m_commandSystem->sendCommand(cmd);
 }
 
 Scene& Director::getScene()

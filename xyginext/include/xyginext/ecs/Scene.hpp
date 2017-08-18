@@ -32,7 +32,7 @@ source distribution.
 #include <xyginext/core/App.hpp>
 #include <xyginext/ecs/Entity.hpp>
 #include <xyginext/ecs/System.hpp>
-//#include <xyginext/ecs/systems/CommandSystem.hpp>
+#include <xyginext/ecs/systems/CommandSystem.hpp>
 #include <xyginext/ecs/Director.hpp>
 
 #include <SFML/Graphics/RenderTexture.hpp>
@@ -52,7 +52,7 @@ namespace xy
     can exist at one time, for instance one to draw the game world, and another to draw
     the HUD. Everything is rendered through renderable systems which, in turn, require
     an ECS - therefore every state which wishes to draw something requires at least a scene,
-    right down to menus. All systems should be created before attempting to create any
+    right down to menus. All systems should be added before attempting to create any
     entities else existing entities will not be processed by new systems.
     */
 
