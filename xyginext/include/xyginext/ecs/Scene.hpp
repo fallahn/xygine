@@ -134,11 +134,8 @@ namespace xy
 
         /*!
         \brief Sets the active camera used when rendering.
-        This camera will be used for the entire scene. This means that
-        a scene should be constructed entirely as a 3D or 2D scene, but not both.
-        Rendering overlays such as a UI or menu is usually done by constructing
-        a specific scene, which is then rendered after any 3D scenes, using a 2D
-        (orthographic) camera. A single scene may also be rendered multiple times
+        This camera will be used to render the entire visible scene.
+        A single scene may also be rendered multiple times
         with different cameras, for example when rendering split screen.
         \returns Entity used as the previous camera for the scene
         */

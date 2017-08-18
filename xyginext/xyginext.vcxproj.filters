@@ -185,6 +185,9 @@
     <ClInclude Include="include\xyginext\ecs\components\CommandTarget.hpp">
       <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\Camera.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl">

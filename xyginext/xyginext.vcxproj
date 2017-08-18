@@ -158,6 +158,7 @@
     <ClInclude Include="include\xyginext\core\SysTime.hpp" />
     <ClInclude Include="include\xyginext\ecs\Component.hpp" />
     <ClInclude Include="include\xyginext\ecs\ComponentPool.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\Camera.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\CommandTarget.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\Sprite.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\Text.hpp" />
