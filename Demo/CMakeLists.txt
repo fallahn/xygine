@@ -1,11 +1,9 @@
 #rename your project here
-project(xt_demo_project)
-SET(PROJECT_NAME xy_demo_project)
+project(xy_demo)
+SET(PROJECT_NAME xy_demo)
 cmake_minimum_required(VERSION 2.8)
 
-if(NOT CMAKE_BUILD_TYPE)
-  SET(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
-endif()
+SET(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
 
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 SET(PROJECT_STATIC_SFML FALSE CACHE BOOL "Choose whether SFML is linked statically or not.")

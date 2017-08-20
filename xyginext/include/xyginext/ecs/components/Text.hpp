@@ -128,6 +128,18 @@ namespace xy
         */
         sf::FloatRect getLocalBounds() const { return m_localBounds; }
 
+        /*!
+        \brief Set an area to which to crop the text.
+        The given rectangle should be in local coordinates, relative to
+        the text.
+        */
+        void setCroppingArea(sf::FloatRect);
+
+        /*!
+        \brief Returns the current cropping area
+        */
+        sf::FloatRect getCroppingArea() const { return m_croppingArea; }
+
     private:
 
         sf::String m_string;
@@ -136,8 +148,13 @@ namespace xy
         sf::Color m_fillColour;
         std::vector<sf::Vertex> m_vertices;
         sf::FloatRect m_localBounds;
+        sf::FloatRect m_globalBounds;
         bool m_dirty;
         sf::RenderStates m_states;
+
+        sf::FloatRect m_croppingArea;
+        sf::FloatRect m_croppingWorldArea;
+        bool m_cropped;
 
         friend class TextRenderer;
     };

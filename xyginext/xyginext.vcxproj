@@ -89,7 +89,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)extlibs\bin\msvc_x64\sfml\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-audio-d.lib;sfml-system-d.lib;sfml-graphics-d.lib;sfml-window-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-audio-d.lib;sfml-system-d.lib;sfml-graphics-d.lib;sfml-window-d.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -119,7 +119,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)extlibs\bin\msvc_x64\sfml\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-audio.lib;sfml-system.lib;sfml-graphics.lib;sfml-window.lib;sfml-main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-audio.lib;sfml-system.lib;sfml-graphics.lib;sfml-window.lib;sfml-main.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -144,6 +144,8 @@
     <ClCompile Include="src\ecs\systems\TextRenderer.cpp" />
     <ClCompile Include="src\resources\FontResource.cpp" />
     <ClCompile Include="src\resources\ShaderResource.cpp" />
+    <ClCompile Include="src\util\ConfigFile.cpp" />
+    <ClCompile Include="src\util\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp" />
@@ -172,6 +174,15 @@
     <ClInclude Include="include\xyginext\ecs\systems\TextRenderer.hpp" />
     <ClInclude Include="include\xyginext\resources\Resource.hpp" />
     <ClInclude Include="include\xyginext\resources\ShaderResource.hpp" />
+    <ClInclude Include="include\xyginext\util\ConfigFile.hpp" />
+    <ClInclude Include="include\xyginext\util\Const.hpp" />
+    <ClInclude Include="include\xyginext\util\Math.hpp" />
+    <ClInclude Include="include\xyginext\util\Position.hpp" />
+    <ClInclude Include="include\xyginext\util\Random.hpp" />
+    <ClInclude Include="include\xyginext\util\Rectangle.hpp" />
+    <ClInclude Include="include\xyginext\util\String.hpp" />
+    <ClInclude Include="include\xyginext\util\Vector.hpp" />
+    <ClInclude Include="include\xyginext\util\Wavetable.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl" />

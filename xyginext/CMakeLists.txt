@@ -31,7 +31,7 @@ endif()
 if(UNIX)
   find_package(X11 REQUIRED)
 endif()
-
+find_package(OpenGL REQUIRED)
 
 include_directories(
   ${SFML_INCLUDE_DIR}  
@@ -50,7 +50,8 @@ endif()
 
 target_link_libraries(${PROJECT_NAME}
   ${SFML_LIBRARIES}
-  ${SFML_DEPENDENCIES})
+  ${SFML_DEPENDENCIES}
+  ${OPENGL_LIBRARIES})
 
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

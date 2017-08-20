@@ -30,19 +30,23 @@ source distribution.
 using namespace xy;
 
 Text::Text()
-    : m_font    (nullptr),
-    m_charSize  (30),
-    m_fillColour(sf::Color::White),
-    m_dirty     (true)
+    : m_font        (nullptr),
+    m_charSize      (30),
+    m_fillColour    (sf::Color::White),
+    m_dirty         (true),
+    m_croppingArea  (sf::Vector2f(), DefaultSceneSize),
+    m_cropped       (false)
 {
 
 }
 
 Text::Text(const sf::Font& font)
-    : m_font    (nullptr),
-    m_charSize  (30),
-    m_fillColour(sf::Color::White),
-    m_dirty     (true)
+    : m_font        (nullptr),
+    m_charSize      (30),
+    m_fillColour    (sf::Color::White),
+    m_dirty         (true),
+    m_croppingArea  (sf::Vector2f(), DefaultSceneSize),
+    m_cropped       (false)
 {
     setFont(font);
 }
@@ -117,6 +121,12 @@ const sf::Shader* Text::getShader() const
 sf::BlendMode Text::getBlendMode() const
 {
     return m_states.blendMode;
+}
+
+void Text::setCroppingArea(sf::FloatRect area)
+{
+    m_croppingArea = area;
+    m_dirty = true;
 }
 
 //private

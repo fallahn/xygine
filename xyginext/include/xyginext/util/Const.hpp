@@ -25,34 +25,22 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_TEXT_RENDERER_HPP_
-#define XY_TEXT_RENDERER_HPP_
-
-#include <xyginext/ecs/System.hpp>
-
-#include <SFML/Graphics/Drawable.hpp>
+#ifndef XY_UTIL_CONST_HPP_
+#define XY_UTIL_CONST_HPP_
 
 namespace xy
 {
-    /*!
-    \brief System for rendering text objects.
-    Usually this would be added last to the Scene after
-    existing drawable systems, as the text ought to be rendered on top of everything else
-    */
-    class XY_EXPORT_API TextRenderer final : public xy::System, public sf::Drawable
+    namespace Util
     {
-    public:
-        explicit TextRenderer(MessageBus&);
+        namespace Const
+        {
+            static const float PI = 3.1412f;
+            static const float degToRad = PI / 180.f;
+            static const float radToDeg = 180.f / PI;
+            static const float TAU = PI * 2.f;
+            static const float E = 2.71828f;
+        } //Const
+    }//Util
+}//xy
 
-        void process(float) override;
-
-    private:
-
-        std::vector<Entity> m_texts;
-        std::vector<Entity> m_croppedTexts;
-
-        void draw(sf::RenderTarget&, sf::RenderStates) const override;
-    };
-}
-
-#endif //XY_TEXT_RENDERER_HPP_
+#endif //XY_UTIL_CONST_HPP_

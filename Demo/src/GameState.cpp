@@ -86,5 +86,6 @@ void GameState::loadAssets()
 
     entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(200.f, 410.f);
-    entity.addComponent<xy::Text>(m_fontResource.get()).setString("Bunnage!");
+    entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/VeraMono.ttf")).setString("Bunnage!");
+    entity.getComponent<xy::Text>().setCroppingArea({ 0.f, 0.f, 90.f, 24.f });
 }

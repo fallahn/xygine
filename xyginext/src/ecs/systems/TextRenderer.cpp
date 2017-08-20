@@ -28,10 +28,12 @@ source distribution.
 #include <xyginext/ecs/systems/TextRenderer.hpp>
 #include <xyginext/ecs/components/Text.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/util/Rectangle.hpp>
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/OpenGL.hpp>
 
 using namespace xy;
 
@@ -67,10 +69,13 @@ void TextRenderer::process(float)
         vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + top), colour, sf::Vector2f(u2, v1)));
         vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + bottom), colour, sf::Vector2f(u2, v2)));
     };
-    
-    
-    //TODO screen culling
+
     auto& entities = getEntities();
+    m_texts.clear();
+    m_texts.reserve(entities.size());
+    m_croppedTexts.clear();
+    m_croppedTexts.reserve(entities.size());
+
     for (auto& entity : entities)
     {
         auto& text = entity.getComponent<Text>();
@@ -156,20 +161,69 @@ void TextRenderer::process(float)
             text.m_localBounds.top = minY;
             text.m_localBounds.width = maxX - minX;
             text.m_localBounds.height = maxY - minY;
+
+            //use the local bounds to see if we want cropping or not
+            text.m_cropped = !Util::Rectangle::contains(text.m_croppingArea, text.m_localBounds);
         }
+
+        const auto& xForm = entity.getComponent<Transform>().getWorldTransform();
+
+        //update world positions
+        text.m_croppingWorldArea = xForm.transformRect(text.m_croppingArea);
+        text.m_croppingWorldArea.top += text.m_croppingWorldArea.height;
+        text.m_croppingWorldArea.height = -text.m_croppingWorldArea.height;
+
+        text.m_globalBounds = xForm.transformRect(text.m_localBounds);
+
+        //assign to relevant array
+        (text.m_cropped) ? m_croppedTexts.push_back(entity) : m_texts.push_back(entity);
     }
 }
 
 void TextRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    const auto& entities = getEntities();
-    for (const auto& entity : entities)
+    auto viewSize = rt.getView().getSize();
+    sf::FloatRect viewable(rt.getView().getCenter() - (viewSize / 2.f), viewSize);
+
+    for (const auto& entity : m_texts)
     {
         const auto& text = entity.getComponent<Text>();
-        states = text.m_states;
-        states.texture = &text.m_font->getTexture(text.m_charSize);
-        states.transform = entity.getComponent<Transform>().getWorldTransform();
 
-        rt.draw(text.m_vertices.data(), text.m_vertices.size(), sf::Triangles, states);
+        if (text.m_globalBounds.intersects(viewable))
+        {
+            states = text.m_states;
+            states.texture = &text.m_font->getTexture(text.m_charSize);
+            states.transform = entity.getComponent<Transform>().getWorldTransform();
+
+            rt.draw(text.m_vertices.data(), text.m_vertices.size(), sf::Triangles, states);
+        }
     }
+
+    glEnable(GL_SCISSOR_TEST);
+    for (const auto& entity : m_croppedTexts)
+    {
+        const auto& text = entity.getComponent<Text>();
+
+        if (text.m_globalBounds.intersects(viewable))
+        {
+            states = text.m_states;
+            states.texture = &text.m_font->getTexture(text.m_charSize);
+            states.transform = entity.getComponent<Transform>().getWorldTransform();
+
+            //convert cropping area to target coords (remember this might not be a window!)
+            sf::Vector2f start(text.m_croppingWorldArea.left, text.m_croppingWorldArea.top);
+            sf::Vector2f end(start.x + text.m_croppingWorldArea.width, start.y + text.m_croppingWorldArea.height);
+
+            auto scissorStart = rt.mapCoordsToPixel(start);
+            auto scissorEnd = rt.mapCoordsToPixel(end);
+            //Y coords are flipped...
+            auto rtHeight = rt.getSize().y;
+            scissorStart.y = rtHeight - scissorStart.y;
+            scissorEnd.y = rtHeight - scissorEnd.y;
+
+            glScissor(scissorStart.x, scissorStart.y, scissorEnd.x - scissorStart.x, scissorEnd.y - scissorStart.y);
+            rt.draw(text.m_vertices.data(), text.m_vertices.size(), sf::Triangles, states);
+        }
+    }
+    glDisable(GL_SCISSOR_TEST);
 }

@@ -24,4 +24,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/systems/TextRenderer.cpp
 
   ${PROJECT_DIR}/resources/FontResource.cpp
-  ${PROJECT_DIR}/resources/ShaderResource.cpp)
+  ${PROJECT_DIR}/resources/ShaderResource.cpp
+  
+  ${PROJECT_DIR}/util/ConfigFile.cpp
+  ${PROJECT_DIR}/util/Random.cpp)

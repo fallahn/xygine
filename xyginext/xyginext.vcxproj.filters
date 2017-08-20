@@ -43,6 +43,12 @@
     <Filter Include="Source Files\ecs\systems">
       <UniqueIdentifier>{7eb7ad46-7768-4acf-98d2-21f593cbdebb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{cdbbbf91-4d10-4558-8732-cf669efa8beb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{788267a9-9f83-4365-aea4-4d6dd08a8d20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\App.cpp">
@@ -107,6 +113,12 @@
     </ClCompile>
     <ClCompile Include="src\ecs\systems\CommandSystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\ConfigFile.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\Random.cpp">
+      <Filter>Source Files\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +199,33 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\components\Camera.hpp">
       <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\ConfigFile.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Const.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Math.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Position.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Random.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Rectangle.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\String.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Vector.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Wavetable.hpp">
+      <Filter>Header Files\util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
