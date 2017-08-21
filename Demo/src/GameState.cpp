@@ -41,6 +41,8 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx)
     m_scene     (ctx.appInstance.getMessageBus())
 {
     loadAssets();
+
+    m_host.start("", 40003, 2, 2);
 }
 
 //public

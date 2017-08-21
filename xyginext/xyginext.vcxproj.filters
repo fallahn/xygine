@@ -49,6 +49,12 @@
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{788267a9-9f83-4365-aea4-4d6dd08a8d20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\network">
+      <UniqueIdentifier>{15c9599d-6c51-4453-970c-cab9d5654ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\network">
+      <UniqueIdentifier>{9ab3d63c-1723-4262-ac9c-d512bc59df8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\App.cpp">
@@ -125,6 +131,12 @@
     </ClCompile>
     <ClCompile Include="src\ecs\systems\CameraSystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\NetConf.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\NetHost.cpp">
+      <Filter>Source Files\network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -235,6 +247,12 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\systems\CameraSystem.hpp">
       <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\Config.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\network\NetHost.hpp">
+      <Filter>Header Files\network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -25,37 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#include "Config.hpp"
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
-#include <xyginext/network/NetHost.hpp>
+#include <xyginext/core/Log.hpp>
 
-#include "StateIDs.hpp"
+#include <enet/enet.h>
 
-class GameState final : public xy::State
+using namespace xy;
+
+std::unique_ptr<NetConf> NetConf::instance;
+
+NetConf::NetConf()
+    : m_initOK(false)
 {
-public:
-    GameState(xy::StateStack&, xy::State::Context);
+    if (enet_initialize() == 0)
+    {
+        m_initOK = true;
+    }
+    else
+    {
+        Logger::log("Failed initialising network subsystem", Logger::Type::Error);
+    }
+}
 
-    xy::StateID stateID() const override { return StateID::Game; }
-
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
-
-private:
-
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
-
-    xy::NetHost m_host;
-
-    void loadAssets();
-};
-
-#endif //DEMO_GAME_STATE_HPP_
+NetConf::~NetConf()
+{
+    if (m_initOK)
+    {
+        enet_deinitialize();
+    }
+}
