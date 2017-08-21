@@ -25,11 +25,15 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+//this should always be included first on windows, to ensure it is
+//included before windows.h (in this case by Log.hpp)
+#include <enet/enet.h> 
+
 #include "Config.hpp"
 #include <xyginext/network/NetHost.hpp>
 #include <xyginext/core/Log.hpp>
 
-#include <enet/enet.h>
+
 
 using namespace xy;
 

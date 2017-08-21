@@ -33,7 +33,7 @@ source distribution.
 
 #include <string>
 
-struct ENetHost;
+struct _ENetHost;
 
 namespace xy
 {
@@ -75,7 +75,7 @@ namespace xy
 
     private:
 
-        ENetHost* m_host;
+        _ENetHost* m_host;
     };
 }
 

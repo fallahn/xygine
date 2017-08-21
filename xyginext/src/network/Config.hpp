@@ -34,11 +34,13 @@ namespace xy
 {
     class NetConf final
     {
-        friend class NetHost;
-        friend class NetClient;
-
+    public:
         NetConf();
         ~NetConf();
+
+    private:
+        friend class NetHost;
+        friend class NetClient;
 
         static std::unique_ptr<NetConf> instance;
 

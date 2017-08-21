@@ -27,9 +27,8 @@ source distribution.
 
 #include "Config.hpp"
 
-#include <xyginext/core/Log.hpp>
-
 #include <enet/enet.h>
+#include <xyginext/core/Log.hpp>
 
 using namespace xy;
 
