@@ -53,7 +53,7 @@ endif()
 target_link_libraries(${PROJECT_NAME}
   ${SFML_LIBRARIES}
   ${SFML_DEPENDENCIES}
-  ${ENET_LIBRARY}
+  ${ENET_LIBRARIES}
   ${OPENGL_LIBRARIES})
 
 
