@@ -140,6 +140,7 @@
     <ClCompile Include="src\ecs\Scene.cpp" />
     <ClCompile Include="src\ecs\System.cpp" />
     <ClCompile Include="src\ecs\SystemManager.cpp" />
+    <ClCompile Include="src\ecs\systems\CameraSystem.cpp" />
     <ClCompile Include="src\ecs\systems\CommandSystem.cpp" />
     <ClCompile Include="src\ecs\systems\SpriteRenderer.cpp" />
     <ClCompile Include="src\ecs\systems\TextRenderer.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="include\xyginext\ecs\Entity.hpp" />
     <ClInclude Include="include\xyginext\ecs\Scene.hpp" />
     <ClInclude Include="include\xyginext\ecs\System.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\CameraSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\CommandSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\SpriteRenderer.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\TextRenderer.hpp" />

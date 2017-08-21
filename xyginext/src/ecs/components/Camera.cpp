@@ -28,6 +28,8 @@ source distribution.
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/core/Assert.hpp>
 
+#include <limits>
+
 using namespace xy;
 
 Camera::Camera()
@@ -38,6 +40,9 @@ Camera::Camera()
 {
     m_view.setSize(DefaultSceneSize);
     m_view.setCenter(DefaultSceneSize / 2.f);
+
+    auto maxFloat = std::numeric_limits<float>::max() / 2.f;
+    m_bounds = { -maxFloat, -maxFloat, maxFloat, maxFloat };
 }
 
 //public
@@ -60,6 +65,11 @@ void Camera::lockAxis(Axis axis, float position)
 void Camera::lockRotation(bool lock)
 {
     m_lockRotation = lock;
+}
+
+void Camera::setBounds(sf::FloatRect bounds)
+{
+    m_bounds = bounds;
 }
 
 void Camera::setZoom(float zoom)

@@ -123,6 +123,9 @@
     <ClCompile Include="src\ecs\components\Camera.cpp">
       <Filter>Source Files\ecs\components</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\systems\CameraSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\util\Wavetable.hpp">
       <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\CameraSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

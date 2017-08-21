@@ -197,18 +197,18 @@ void Scene::forwardMessage(const Message& msg)
             //resizes the post effect buffer if it is in use
             /*if (m_sceneBuffer.available())
             {
-                m_sceneBuffer.create(data.data0, data.data1);
-                for (auto& p : m_postEffects) p->resizeBuffer(data.data0, data.data1);
+                m_sceneBuffer.create(data.width, data.height);
+                for (auto& p : m_postEffects) p->resizeBuffer(data.width, data.height);
             }
 
             if (m_postBuffers[0].available())
             {
-                m_postBuffers[0].create(data.data0, data.data1, false);
+                m_postBuffers[0].create(data.width, data.height, false);
             }
 
             if (m_postBuffers[1].available())
             {
-                m_postBuffers[1].create(data.data0, data.data1, false);
+                m_postBuffers[1].create(data.width, data.height, false);
             }*/
 
             //updates the view of the default camera

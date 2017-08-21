@@ -82,6 +82,13 @@ namespace xy
         void lockRotation(bool);
 
         /*!
+        \brief Locks the camera movement within the given bounds.
+        For example if this is set to the size of the game map the camera
+        will stop at the edges preventing the 'outside' from being visible
+        */
+        void setBounds(sf::FloatRect);
+
+        /*!
         \brief Sets the zoom level.
         Contrary to default SFML views a value of 2 will make the scene
         appear 2x larger, and a value of less than 1 will zoom out.
@@ -111,6 +118,11 @@ namespace xy
         bool rotationLocked() const;
 
         /*!
+        \brief Returns the current bounds of the camera
+        */
+        sf::FloatRect getBounds() const { return m_bounds; }
+
+        /*!
         \brief Returns the current zoom level
         */
         float getZoom() const { return m_zoom; }
@@ -122,6 +134,7 @@ namespace xy
         float m_axisValue;
         bool m_lockRotation;
         float m_zoom;
+        sf::FloatRect m_bounds;
 
         friend class Scene;
         friend class CameraSystem;
