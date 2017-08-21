@@ -27,24 +27,41 @@ source distribution.
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/ecs/Scene.hpp>
-//#include <xyginext/ecs/components/Camera.hpp>
-//#include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/components/Camera.hpp>
+#include <xyginext/ecs/components/Transform.hpp>
 //#include <xyginext/ecs/components/AudioListener.hpp>
 
 using namespace xy;
+
+namespace
+{
+    sf::FloatRect getDefaultViewport()
+    {
+        auto winSize = sf::Vector2f(App::getRenderWindow().getSize());
+
+        float windowRatio = winSize.x / winSize.y;
+        float viewRatio = DefaultSceneSize.x / DefaultSceneSize.y;
+
+        float sizeY = windowRatio / viewRatio;
+        float top = (1.f - sizeY) / 2.f;
+
+        return { { 0.f, top },{ 1.f, sizeY } };
+    }
+}
 
 Scene::Scene(MessageBus& mb)
     : m_messageBus      (mb),
     m_entityManager     (mb),
     m_systemManager     (*this)
 {
-    //auto defaultCamera = createEntity();
-    //defaultCamera.addComponent<Transform>();
-    //defaultCamera.addComponent<Camera>();
+    auto defaultCamera = createEntity();
+    defaultCamera.addComponent<Transform>();
+    defaultCamera.addComponent<Camera>();
+    defaultCamera.getComponent<Camera>().setViewport(getDefaultViewport());
     //defaultCamera.addComponent<AudioListener>();
 
-    //m_defaultCamera = defaultCamera.getIndex();
-    //m_activeCamera = m_defaultCamera;
+    m_defaultCamera = defaultCamera.getIndex();
+    m_activeCamera = m_defaultCamera;
     //m_activeListener = m_defaultCamera;
 
     currentRenderPath = [this](sf::RenderTarget& rt, sf::RenderStates states)
@@ -78,8 +95,6 @@ void Scene::update(float dt)
     }
     m_destroyedEntities.clear();
 
-
-    updateFrustum();
 
     m_systemManager.process(dt);
     //for (auto& p : m_postEffects) p->process(dt);
@@ -129,13 +144,13 @@ Entity Scene::getDefaultCamera() const
 
 Entity Scene::setActiveCamera(Entity entity)
 {
-    //CRO_ASSERT(entity.hasComponent<Transform>() && entity.hasComponent<Camera>(), "Entity requires at least a transform and a camera component");
-    //CRO_ASSERT(m_entityManager.owns(entity), "This entity must belong to this scene!");
-    //auto oldCam = m_entityManager.getEntity(m_activeCamera);
-    //m_activeCamera = entity.getIndex();
-    //updateFrustum();
-    //return oldCam;
-    return m_entityManager.getEntity(m_defaultCamera);
+    XY_ASSERT(entity.hasComponent<Transform>() && entity.hasComponent<Camera>(), "Entity requires at least a transform and a camera component");
+    XY_ASSERT(m_entityManager.owns(entity), "This entity must belong to this scene!");
+    auto oldCam = m_entityManager.getEntity(m_activeCamera);
+    m_activeCamera = entity.getIndex();
+
+    return oldCam;
+    //return m_entityManager.getEntity(m_defaultCamera);
 }
 
 Entity Scene::setActiveListener(Entity entity)
@@ -174,29 +189,32 @@ void Scene::forwardMessage(const Message& msg)
         d->handleMessage(msg);
     }
 
-    //if (msg.id == Message::WindowMessage)
-    //{
-    //    const auto& data = msg.getData<Message::WindowEvent>();
-    //    if (data.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-    //    {
-    //        //resizes the post effect buffer if it is in use
-    //        if (m_sceneBuffer.available())
-    //        {
-    //            m_sceneBuffer.create(data.data0, data.data1);
-    //            for (auto& p : m_postEffects) p->resizeBuffer(data.data0, data.data1);
-    //        }
+    if (msg.id == Message::WindowMessage)
+    {
+        const auto& data = msg.getData<Message::WindowEvent>();
+        if (data.type == Message::WindowEvent::Resized)
+        {
+            //resizes the post effect buffer if it is in use
+            /*if (m_sceneBuffer.available())
+            {
+                m_sceneBuffer.create(data.data0, data.data1);
+                for (auto& p : m_postEffects) p->resizeBuffer(data.data0, data.data1);
+            }
 
-    //        if (m_postBuffers[0].available())
-    //        {
-    //            m_postBuffers[0].create(data.data0, data.data1, false);
-    //        }
+            if (m_postBuffers[0].available())
+            {
+                m_postBuffers[0].create(data.data0, data.data1, false);
+            }
 
-    //        if (m_postBuffers[1].available())
-    //        {
-    //            m_postBuffers[1].create(data.data0, data.data1, false);
-    //        }
-    //    }
-    //}
+            if (m_postBuffers[1].available())
+            {
+                m_postBuffers[1].create(data.data0, data.data1, false);
+            }*/
+
+            //updates the view of the default camera
+            getEntity(m_defaultCamera).getComponent<Camera>().setViewport(getDefaultViewport());
+        }
+    }
 }
 
 //private
@@ -226,71 +244,8 @@ void Scene::postRenderPath()
     m_postEffects.back()->apply(*inTex);*/
 }
 
-void Scene::updateFrustum()
-{
-    //auto activeCamera = getActiveCamera();
-    //auto& camComponent = activeCamera.getComponent<Camera>();
-    //auto viewProj = camComponent.projection
-    //    * glm::inverse(activeCamera.getComponent<Transform>().getWorldTransform());
-
-    //camComponent.m_frustum =
-    //{
-    //    { Plane //left
-    //    (
-    //        viewProj[0][3] + viewProj[0][0],
-    //        viewProj[1][3] + viewProj[1][0],
-    //        viewProj[2][3] + viewProj[2][0],
-    //        viewProj[3][3] + viewProj[3][0]
-    //    ),
-    //    Plane //right
-    //    (
-    //        viewProj[0][3] - viewProj[0][0],
-    //        viewProj[1][3] - viewProj[1][0],
-    //        viewProj[2][3] - viewProj[2][0],
-    //        viewProj[3][3] - viewProj[3][0]
-    //    ),
-    //    Plane //bottom
-    //    (
-    //        viewProj[0][3] + viewProj[0][1],
-    //        viewProj[1][3] + viewProj[1][1],
-    //        viewProj[2][3] + viewProj[2][1],
-    //        viewProj[3][3] + viewProj[3][1]
-    //    ),
-    //    Plane //top
-    //    (
-    //        viewProj[0][3] - viewProj[0][1],
-    //        viewProj[1][3] - viewProj[1][1],
-    //        viewProj[2][3] - viewProj[2][1],
-    //        viewProj[3][3] - viewProj[3][1]
-    //    ),
-    //    Plane //near
-    //    (
-    //        viewProj[0][3] + viewProj[0][2],
-    //        viewProj[1][3] + viewProj[1][2],
-    //        viewProj[2][3] + viewProj[2][2],
-    //        viewProj[3][3] + viewProj[3][2]
-    //    ),
-    //    Plane //far
-    //    (
-    //        viewProj[0][3] - viewProj[0][2],
-    //        viewProj[1][3] - viewProj[1][2],
-    //        viewProj[2][3] - viewProj[2][2],
-    //        viewProj[3][3] - viewProj[3][2]
-    //    ) }
-    //};
-
-    ////normalise the planes
-    //for (auto& p : camComponent.m_frustum)
-    //{
-    //    const float factor = 1.f / std::sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
-    //    p.x *= factor;
-    //    p.y *= factor;
-    //    p.z *= factor;
-    //    p.w *= factor;
-    //}
-}
-
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    rt.setView(getEntity(m_activeCamera).getComponent<Camera>().m_view);
     currentRenderPath(rt, states);
 }

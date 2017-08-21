@@ -130,6 +130,7 @@
     <ClCompile Include="src\core\StateStack.cpp" />
     <ClCompile Include="src\core\SysTime.cpp" />
     <ClCompile Include="src\ecs\Component.cpp" />
+    <ClCompile Include="src\ecs\components\Camera.cpp" />
     <ClCompile Include="src\ecs\components\Sprite.cpp" />
     <ClCompile Include="src\ecs\components\Text.cpp" />
     <ClCompile Include="src\ecs\components\Transform.cpp" />

@@ -156,7 +156,7 @@ namespace xy
         the resolution of the render window.
 
         The stack then correctly calculates the letterboxing and aspect ratio
-        before updating the context of existing states  to reflect the change
+        before updating the context of existing states to reflect the change
         */
         sf::View updateView();
         /*!

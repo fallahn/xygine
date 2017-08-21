@@ -193,8 +193,6 @@ namespace xy
         void postRenderPath();
         std::function<void(sf::RenderTarget&, sf::RenderStates)> currentRenderPath;
 
-        void updateFrustum();
-
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 

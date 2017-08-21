@@ -195,11 +195,12 @@ namespace xy
         */
         void setWindowIcon(const std::string&);
 
-    protected:
         /*!
         \brief Returns a reference to the current render window
         */
-        sf::RenderWindow& getRenderWindow();
+        static sf::RenderWindow& getRenderWindow();
+
+    protected:
         /*!
         \brief Function for despatching all window events
 

@@ -120,6 +120,9 @@
     <ClCompile Include="src\util\Random.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\components\Camera.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">

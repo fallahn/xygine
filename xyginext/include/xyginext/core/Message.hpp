@@ -59,6 +59,18 @@ namespace xy
 
         ID id = -1;
 
+        struct WindowEvent final
+        {
+            enum
+            {
+                Resized,
+                LostFocus,
+                GainedFocus
+            }type;
+
+            sf::Uint32 width, height;
+        };
+
         struct SceneEvent final
         {
             enum

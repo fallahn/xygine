@@ -48,6 +48,7 @@ namespace xy
             X, Y, None
         };
 
+        Camera();
 
         /*!
         \brief Sets the visible area, in world units, of the camera.
@@ -61,21 +62,32 @@ namespace xy
         which is rendered to.
         \see sf::View::setViewport()
         */
-        void setViewPort(sf::FloatRect);
+        void setViewport(sf::FloatRect);
 
         /*!
         \brief Locks the camera movement along a certain axis.
         For example locking the Y axis will allow the camera to follow a
         character as it travels left and right, but will not move vertically
         when the character jumps.
+        \param axis Which axis to lock, or None to unlock
+        \param float Value at which to lock the given axis. EG lockAxis(Y, 100.f)
+        will lock the camera's vertical postion to 100 world units.
         */
-        void lockAxis(Axis);
+        void lockAxis(Axis, float);
 
         /*
         \brief Locks the rotation of the camera, so that the view does
         not rotate, even if the parent entity does.
         */
         void lockRotation(bool);
+
+        /*!
+        \brief Sets the zoom level.
+        Contrary to default SFML views a value of 2 will make the scene
+        appear 2x larger, and a value of less than 1 will zoom out.
+        Values must be greater than 0
+        */
+        void setZoom(float);
 
         /*!
         \brief Returns the current view of the camera, in world units
@@ -98,11 +110,21 @@ namespace xy
         */
         bool rotationLocked() const;
 
+        /*!
+        \brief Returns the current zoom level
+        */
+        float getZoom() const { return m_zoom; }
+
     private:
 
         sf::View m_view;
         Axis m_lockAxis;
+        float m_axisValue;
         bool m_lockRotation;
+        float m_zoom;
+
+        friend class Scene;
+        friend class CameraSystem;
     };
 }
 

@@ -224,12 +224,13 @@ void App::setWindowIcon(const std::string& path)
     }
 }
 
-//protected
 sf::RenderWindow& App::getRenderWindow()
 {
-    return m_renderWindow;
+    XY_ASSERT(renderWindow, "Window not created");
+    return *renderWindow;
 }
 
+//protected
 void App::initialise() {}
 
 void App::finalise() {}
@@ -265,13 +266,36 @@ void App::handleEvents()
         {
         case sf::Event::LostFocus:
             eventHandler = [](const sf::Event&) {};
+
+            {
+                auto* msg = m_messageBus.post<Message::WindowEvent>(Message::WindowMessage);
+                msg->type = Message::WindowEvent::LostFocus;
+                msg->width = m_renderWindow.getSize().x;
+                msg->height = m_renderWindow.getSize().y;
+            }
             continue;
         case sf::Event::GainedFocus:
             eventHandler = std::bind(&App::handleEvent, this, _1);
+
+            {
+                auto* msg = m_messageBus.post<Message::WindowEvent>(Message::WindowMessage);
+                msg->type = Message::WindowEvent::GainedFocus;
+                msg->width = m_renderWindow.getSize().x;
+                msg->height = m_renderWindow.getSize().y;
+            }
+
             continue;
         case sf::Event::Closed:
             quit();
             return;
+        case sf::Event::Resized:
+        {
+            auto* msg = m_messageBus.post<Message::WindowEvent>(Message::WindowMessage);
+            msg->type = Message::WindowEvent::Resized;
+            msg->width = m_renderWindow.getSize().x;
+            msg->height = m_renderWindow.getSize().y;
+        }
+            break;
         default: break;
         }
 
