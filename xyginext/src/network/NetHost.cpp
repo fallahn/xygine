@@ -49,10 +49,7 @@ NetHost::NetHost()
 
 NetHost::~NetHost()
 {
-    if (m_host)
-    {
-        enet_host_destroy(m_host);
-    }
+    stop();
 }
 
 //public
@@ -102,10 +99,40 @@ bool NetHost::start(const std::string& address, sf::Uint16 port, std::size_t max
 
 void NetHost::stop()
 {
-    //TODO forcefully remove clients
-
     if (m_host)
     {
+        if (m_host->peerCount > 0)
+        {
+            for (auto i = 0; i < m_host->peerCount; ++i)
+            {
+                auto peer = &m_host->peers[i];
+                
+                ENetEvent evt;
+                enet_peer_disconnect(peer, 0);
+
+                //wait 3 seconds for a response
+                while (enet_host_service(m_host, &evt, 3000) > 0)
+                {
+                    switch (evt.type)
+                    {
+                    default:break;
+                    case ENET_EVENT_TYPE_RECEIVE:
+                        //clear rx'd packets from buffer by destroying them
+                        enet_packet_destroy(evt.packet);
+                        break;
+                    case ENET_EVENT_TYPE_DISCONNECT:
+                        peer = nullptr;
+                        LOG("Disconnected client", Logger::Type::Info);
+                        return;
+                    }
+                }
+
+                //timed out so force disconnect
+                LOG("Server disconnect timed out", Logger::Type::Info);
+                enet_peer_reset(peer);
+            }
+        }
+
         enet_host_destroy(m_host);
         m_host = nullptr;
     }
@@ -118,7 +145,6 @@ bool NetHost::pollEvent(NetEvent& evt)
     ENetEvent hostEvt;
     if (enet_host_service(m_host, &hostEvt, 0) > 0)
     {
-        LOG("Buns", Logger::Type::Info);
         switch (hostEvt.type)
         {
         default: 

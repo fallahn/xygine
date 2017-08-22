@@ -78,10 +78,10 @@ namespace xy
         /*!
         \brief Polls the connection for events.
         This must be called at least once per frame to make sure all
-        received packets are parsed. Any data available is placed in
-        the given event object. Make sure this happens on both ends of the
-        connect (Host and Client) - this is the most common reason 
-        communication fails.
+        received packets are parsed and pending data is sent. Any data
+        received is placed in the given event object. Make sure this
+        happens on both ends of the connection (NetHost and NetClient)
+        - this is the most common reason communication fails.
         \returns true if there is incoming data in the buffer, else false
         */
         bool pollEvent(NetEvent&);

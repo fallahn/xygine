@@ -65,6 +65,9 @@ bool GameState::handleEvent(const sf::Event& evt)
         case sf::Keyboard::S:
             m_client.disconnect();
             break;
+        case sf::Keyboard::D:
+            m_client.sendPacket();
+            break;
         }
     }
 

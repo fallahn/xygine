@@ -48,6 +48,11 @@ NetClient::NetClient()
 
 NetClient::~NetClient()
 {
+    if (m_peer)
+    {
+        disconnect();
+    }
+    
     if (m_client)
     {
         enet_host_destroy(m_client);
@@ -168,7 +173,6 @@ bool NetClient::pollEvent(NetEvent& evt)
     ENetEvent hostEvt;
     if (enet_host_service(m_client, &hostEvt, 0) > 0)
     {
-        LOG("Buns", Logger::Type::Info);
         switch (hostEvt.type)
         {
         default:
@@ -189,4 +193,13 @@ bool NetClient::pollEvent(NetEvent& evt)
         return true;
     }
     return false;
+}
+
+void NetClient::sendPacket()
+{
+    if (m_peer)
+    {
+        ENetPacket * packet = enet_packet_create("packet", strlen("packet") + 1, ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(m_peer, 0, packet);
+    }
 }
