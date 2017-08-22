@@ -138,6 +138,9 @@
     <ClCompile Include="src\network\NetHost.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
+    <ClCompile Include="src\network\NetClient.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -248,10 +251,16 @@
     <ClInclude Include="include\xyginext\ecs\systems\CameraSystem.hpp">
       <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
-    <ClInclude Include="src\network\Config.hpp">
+    <ClInclude Include="include\xyginext\network\NetHost.hpp">
       <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="include\xyginext\network\NetHost.hpp">
+    <ClInclude Include="src\network\NetConf.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\network\NetClient.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\network\NetData.hpp">
       <Filter>Header Files\network</Filter>
     </ClInclude>
   </ItemGroup>

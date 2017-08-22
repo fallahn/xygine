@@ -144,6 +144,7 @@
     <ClCompile Include="src\ecs\systems\CommandSystem.cpp" />
     <ClCompile Include="src\ecs\systems\SpriteRenderer.cpp" />
     <ClCompile Include="src\ecs\systems\TextRenderer.cpp" />
+    <ClCompile Include="src\network\NetClient.cpp" />
     <ClCompile Include="src\network\NetConf.cpp" />
     <ClCompile Include="src\network\NetHost.cpp" />
     <ClCompile Include="src\resources\FontResource.cpp" />
@@ -177,6 +178,8 @@
     <ClInclude Include="include\xyginext\ecs\systems\CommandSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\SpriteRenderer.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\TextRenderer.hpp" />
+    <ClInclude Include="include\xyginext\network\NetClient.hpp" />
+    <ClInclude Include="include\xyginext\network\NetData.hpp" />
     <ClInclude Include="include\xyginext\network\NetHost.hpp" />
     <ClInclude Include="include\xyginext\resources\Resource.hpp" />
     <ClInclude Include="include\xyginext\resources\ShaderResource.hpp" />
@@ -189,7 +192,7 @@
     <ClInclude Include="include\xyginext\util\String.hpp" />
     <ClInclude Include="include\xyginext\util\Vector.hpp" />
     <ClInclude Include="include\xyginext\util\Wavetable.hpp" />
-    <ClInclude Include="src\network\Config.hpp" />
+    <ClInclude Include="src\network\NetConf.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl" />

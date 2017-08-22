@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "Config.hpp"
+#include "NetConf.hpp"
 
 #include <enet/enet.h>
 #include <xyginext/core/Log.hpp>

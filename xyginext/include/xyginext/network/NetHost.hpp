@@ -37,6 +37,8 @@ struct _ENetHost;
 
 namespace xy
 {
+    struct NetEvent;
+    
     /*!
     \brief Creates a network host.
     Network hosts, or servers, can have multiple clients connected
@@ -54,7 +56,7 @@ namespace xy
         NetHost& operator = (NetHost&&) = delete;
 
         /*!
-        \brief Starts a host listening on the given address and port
+        \brief Creates a host listening on the given address and port
         \param address String representing an IPv4 address in the form "x.x.x.x".
         This may be left empty to listen on any available address.
         \param port An unsigned short representing the port on which to listen
@@ -72,6 +74,17 @@ namespace xy
         \brief Stops the host, if it is running
         */
         void stop();
+
+        /*!
+        \brief Polls the connection for events.
+        This must be called at least once per frame to make sure all
+        received packets are parsed. Any data available is placed in
+        the given event object. Make sure this happens on both ends of the
+        connect (Host and Client) - this is the most common reason 
+        communication fails.
+        \returns true if there is incoming data in the buffer, else false
+        */
+        bool pollEvent(NetEvent&);
 
     private:
 

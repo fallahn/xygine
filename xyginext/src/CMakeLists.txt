@@ -25,6 +25,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/systems/SpriteRenderer.cpp
   ${PROJECT_DIR}/ecs/systems/TextRenderer.cpp
 
+  ${PROJECT_DIR}/network/NetClient.cpp
   ${PROJECT_DIR}/network/NetConf.cpp
   ${PROJECT_DIR}/network/NetHost.cpp
 

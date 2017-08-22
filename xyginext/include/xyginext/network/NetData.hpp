@@ -25,38 +25,30 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#ifndef XY_NET_DATA_HPP_
+#define XY_NET_DATA_HPP_
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+#include <xyginext/Config.hpp>
+#include <SFML/Config.hpp>
 
-#include <xyginext/network/NetClient.hpp>
-
-#include "StateIDs.hpp"
-
-class GameState final : public xy::State
+namespace xy
 {
-public:
-    GameState(xy::StateStack&, xy::State::Context);
+    /*!
+    \brief Network event.
+    These are used to poll NetHost and NetClient objects
+    for network activity
+    */
+    struct XY_EXPORT_API NetEvent final
+    {
+        sf::Uint8 channel = 0; //! <channel event was received on
+        enum
+        {
+            None,
+            ClientConnect,
+            ClientDisconnect,
+            PacketReceived
+        }type = None;
+    };
+}
 
-    xy::StateID stateID() const override { return StateID::Game; }
-
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
-
-private:
-
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
-
-    xy::NetClient m_client;
-
-    void loadAssets();
-};
-
-#endif //DEMO_GAME_STATE_HPP_
+#endif //XY_NET_DATA_HPP_

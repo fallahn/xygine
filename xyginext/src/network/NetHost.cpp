@@ -29,10 +29,11 @@ source distribution.
 //included before windows.h (in this case by Log.hpp)
 #include <enet/enet.h> 
 
-#include "Config.hpp"
+#include "NetConf.hpp"
 #include <xyginext/network/NetHost.hpp>
+#include <xyginext/network/NetData.hpp>
 #include <xyginext/core/Log.hpp>
-
+#include <xyginext/core/Assert.hpp>
 
 
 using namespace xy;
@@ -57,13 +58,21 @@ NetHost::~NetHost()
 //public
 bool NetHost::start(const std::string& address, sf::Uint16 port, std::size_t maxClients, std::size_t maxChannels, sf::Uint32 incoming, sf::Uint32 outgoing)
 {
+    if (m_host)
+    {
+        Logger::log("Host already exists!", Logger::Type::Error);
+        return false;
+    }
+    
     if (!NetConf::instance->m_initOK)
     {
         Logger::log("Network subsystem not initialised, creating host failed", Logger::Type::Error);
         return false;
     }
 
-    //TODO ASSERT parameters
+    XY_ASSERT(port > 0, "Invalid port value");
+    XY_ASSERT(maxChannels > 0, "Invalid channel count");
+    XY_ASSERT(maxClients > 0, "Invalid client count");
 
     ENetAddress add;
     if (address.empty())
@@ -72,18 +81,22 @@ bool NetHost::start(const std::string& address, sf::Uint16 port, std::size_t max
     }
     else
     {
-        enet_address_set_host(&add, address.c_str());
+        if (!enet_address_set_host(&add, address.c_str()) == 0)
+        {
+            Logger::log("Failed setting host listen address", Logger::Type::Error);
+            return false;
+        }
     }
     add.port = port;
 
     m_host = enet_host_create(&add, maxClients, maxChannels, incoming, outgoing);
     if (!m_host)
     {
-        Logger::log("There was an error creating the host", Logger::Type::Error);
+        Logger::log("There was an error creating the server host", Logger::Type::Error);
         return false;
     }
 
-    LOG("Created host on port " + std::to_string(port), Logger::Type::Info);
+    LOG("Created server host on port " + std::to_string(port), Logger::Type::Info);
     return true;
 }
 
@@ -94,5 +107,36 @@ void NetHost::stop()
     if (m_host)
     {
         enet_host_destroy(m_host);
+        m_host = nullptr;
     }
+}
+
+bool NetHost::pollEvent(NetEvent& evt)
+{
+    if (!m_host) return false;
+
+    ENetEvent hostEvt;
+    if (enet_host_service(m_host, &hostEvt, 0) > 0)
+    {
+        LOG("Buns", Logger::Type::Info);
+        switch (hostEvt.type)
+        {
+        default: 
+            evt.type = NetEvent::None;
+            break;
+        case ENET_EVENT_TYPE_CONNECT:
+            evt.type = NetEvent::ClientConnect;
+            break;
+        case ENET_EVENT_TYPE_DISCONNECT:
+            evt.type = NetEvent::ClientDisconnect;
+            break;
+        case ENET_EVENT_TYPE_RECEIVE:
+            evt.type = NetEvent::PacketReceived;
+            //TODO process this packet data first
+            enet_packet_destroy(hostEvt.packet);
+            break;
+        }
+        return true;
+    }
+    return false;
 }

@@ -36,19 +36,37 @@ source distribution.
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
 
+#include <xyginext/network/NetData.hpp>
+
+#include <SFML/Window/Event.hpp>
+
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx)
     : xy::State (stack, ctx),
     m_scene     (ctx.appInstance.getMessageBus())
 {
     loadAssets();
 
-    m_host.start("", 40003, 2, 2);
+    m_client.create(2);
 }
 
 //public
 bool GameState::handleEvent(const sf::Event& evt)
 {
     m_scene.forwardEvent(evt);
+
+    if (evt.type == sf::Event::KeyReleased)
+    {
+        switch (evt.key.code)
+        {
+        default: break;
+        case sf::Keyboard::A:
+            m_client.connect("localhost", 40003);
+            break;
+        case sf::Keyboard::S:
+            m_client.disconnect();
+            break;
+        }
+    }
 
     return false;
 }
@@ -60,6 +78,9 @@ void GameState::handleMessage(const xy::Message& msg)
 
 bool GameState::update(float dt)
 {
+    xy::NetEvent evt;
+    while (m_client.pollEvent(evt));
+    
     m_scene.update(dt);
     return false;
 }
