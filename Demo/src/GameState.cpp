@@ -40,6 +40,11 @@ source distribution.
 
 #include <SFML/Window/Event.hpp>
 
+namespace
+{
+
+}
+
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx)
     : xy::State (stack, ctx),
     m_scene     (ctx.appInstance.getMessageBus())
@@ -66,7 +71,7 @@ bool GameState::handleEvent(const sf::Event& evt)
             m_client.disconnect();
             break;
         case sf::Keyboard::D:
-            m_client.sendPacket();
+
             break;
         }
     }
@@ -82,7 +87,13 @@ void GameState::handleMessage(const xy::Message& msg)
 bool GameState::update(float dt)
 {
     xy::NetEvent evt;
-    while (m_client.pollEvent(evt));
+    while (m_client.pollEvent(evt))
+    {
+        if (evt.type == xy::NetEvent::PacketReceived)
+        {
+
+        }
+    }
     
     m_scene.update(dt);
     return false;

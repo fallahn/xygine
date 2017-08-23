@@ -30,6 +30,7 @@ source distribution.
 
 #include <xyginext/Config.hpp>
 #include <SFML/Config.hpp>
+#include <xyginext/network/NetData.hpp>
 
 #include <string>
 
@@ -86,10 +87,39 @@ namespace xy
         */
         bool pollEvent(NetEvent&);
 
+        /*!
+        \brief Broadcasts a packet to all connected clients.
+        Note that all packets are queued until the next time pollEvent() is called.
+        \param id unique ID for this packet
+        \param data Struct of simple data to send. Structs are serialised
+        and sent out as an array of bytes - thus members such as pointers
+        are effectively useless, as the pointers themselves will be sent,
+        and not the data pointed to.
+        \param flags Used to denote reliability of packet sending
+        \see NetFlag
+        \param channel Stream channel on which to send the data
+        */
+        template <typename T>
+        void broadcastPacket(sf::Uint32 id, const T& data, NetFlag flags, sf::Uint8 channel = 0);
+
+        /*!
+        \brief Broadcasts the given stream of bytes to all connected clients
+        Use this for pre-serialised data.
+        \param id Unique ID for this packet
+        \param data Pointer to the data to send
+        \param size Size of the data, in bytes
+        \param flags Used to indicated the requested reliability of packet sent
+        \see NetFlag
+        \param channel Stream channel over which to send the data
+        */
+        void broadcastPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel = 0);
+
     private:
 
         _ENetHost* m_host;
     };
+
+#include "NetHost.inl"
 }
 
 #endif //XY_NETHOST_HPP_

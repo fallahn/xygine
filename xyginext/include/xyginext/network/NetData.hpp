@@ -29,7 +29,12 @@ source distribution.
 #define XY_NET_DATA_HPP_
 
 #include <xyginext/Config.hpp>
+#include <xyginext/core/Assert.hpp>
 #include <SFML/Config.hpp>
+
+#include <cstring>
+
+struct _ENetPacket;
 
 namespace xy
 {
@@ -48,6 +53,65 @@ namespace xy
             ClientDisconnect,
             PacketReceived
         }type = None;
+
+        /*!
+        \brief Event packet.
+        Contains packet data recieved by PacketRecieved event.
+        Not valid for other event types.
+        */
+        struct XY_EXPORT_API Packet final
+        {
+            Packet();
+            ~Packet();
+
+            Packet(const Packet&) = delete;
+            Packet(Packet&&) = delete;
+            Packet& operator = (const Packet&) = delete;
+            Packet& operator = (Packet&&) = delete;
+
+            /*!
+            \brief The unique ID this packet was tegged with when sent
+            */
+            sf::Uint32 ID() const;
+
+            /*!
+            \brief Used to retreive the data as a specific type.
+            Trying to read data as an incorrect type will lead to
+            undefined behaviour.
+            */
+            template <typename T>
+            T as() const;
+
+            /*!
+            \brief Returns a pointer to the raw packet data
+            */
+            const void* data() const;
+            /*!
+            \brief Returns the size of the data, in bytes
+            */
+            std::size_t size() const;
+
+        private:
+            _ENetPacket* m_packet;
+            sf::Uint32 m_id;
+            void setPacketData(_ENetPacket*);
+
+            friend class NetClient;
+            friend class NetHost;
+        }packet;        
+    };
+
+#include "NetData.inl"
+
+    /*!
+    \brief Reliability enum.
+    These are used to flag sent packets with a requested reliability.
+    */
+    enum class NetFlag
+    {
+        Reliable = 0x1, //! <packet must be received by the remote connection, and resend attemps are made until delivered
+        Unsequenced = 0x2, //! <packet will not be sequenced with other packets. Not supported on reliable packets
+        Unreliable = 0x4 //! <packet will be fragments and sent unreliably if it exceeds MTU
     };
 }
 

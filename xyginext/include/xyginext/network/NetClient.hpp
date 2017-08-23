@@ -31,6 +31,8 @@ source distribution.
 #include <xyginext/Config.hpp>
 #include <SFML/Config.hpp>
 
+#include <xyginext/network/NetData.hpp>
+
 #include <string>
 
 struct _ENetHost;
@@ -38,8 +40,6 @@ struct _ENetPeer;
 
 namespace xy
 {
-    struct NetEvent;
-
     /*!
     \brief Creates a clientside host which can be used to create
     a peer connected to a NetHost server.
@@ -108,14 +108,38 @@ namespace xy
         established, else does nothing. NOTE: Packets are actually
         queued and not sent over the connection until the next time
         pollEvent() is called.
+        \param id unique ID for this packet
+        \param data Struct of simple data to send. Structs are serialised
+        and sent out as an array of bytes - thus members such as pointers
+        are effectively useless, as the pointers themselves will be sent,
+        and not the data pointed to.
+        \param flags Used to denote reliability of packet sending
+        \see NetFlag
+        \param channel Stream channel on which to send the data
         */
-        void sendPacket();
+        template <typename T>
+        void sendPacket(sf::Uint32 id, const T& data, NetFlag flags, sf::Uint8 channel = 0);
+
+        /*!
+        \brief Sends the given array of bytes out over the connection if it
+        is active, else does nothing.
+        Use this for pre-serialised data.
+        \param id Unique ID for this packet
+        \param data Pointer to the data to send
+        \param size Size of the data, in bytes
+        \param flags Used to indicated the requested reliability of packet sent
+        \see NetFlag
+        \param channel Stream channel over which to send the data
+        */
+        void sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel = 0);
 
     private:
 
         _ENetHost* m_client;
         _ENetPeer* m_peer;
     };
+
+#include "NetClient.inl"
 }
 
 #endif //XY_NET_CLIENT_HPP_

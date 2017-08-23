@@ -35,6 +35,14 @@ source distribution.
 #include <iostream>
 #include <string>
 
+struct TestStruct final
+{
+    sf::Uint8 b = 0;
+    sf::Uint32 i = 0;
+    float f = 0.f;
+    char w[6];
+};
+
 void threadFunc(const bool* running)
 {
     xy::NetHost host;
@@ -56,6 +64,18 @@ void threadFunc(const bool* running)
                 break;
             case xy::NetEvent::PacketReceived:
                 std::cout << "Packet received" << std::endl;
+                {
+                    /*auto packet = evt.packet.as<TestStruct>();
+                    std::cout << "ID:" << evt.packet.ID() << ", B: " << packet.b << ", I: " << packet.i << ", F: " << packet.f << std::endl;
+                    std::cout << packet.w << std::endl;
+
+                    packet.w[0] = 'f';
+                    packet.w[1] = 'l';
+                    packet.w[2] = 'a';
+                    packet.w[3] = 'p';
+                    packet.w[4] = 's';
+                    host.broadcastPacket(5, packet, xy::NetFlag::Reliable);*/
+                }
                 break;
             }
         }

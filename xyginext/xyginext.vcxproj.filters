@@ -141,6 +141,9 @@
     <ClCompile Include="src\network\NetClient.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
+    <ClCompile Include="src\network\NetEvent.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -279,6 +282,15 @@
     </None>
     <None Include="include\xyginext\ecs\SystemManager.inl">
       <Filter>Header Files\ecs</Filter>
+    </None>
+    <None Include="include\xyginext\network\NetClient.inl">
+      <Filter>Header Files\network</Filter>
+    </None>
+    <None Include="include\xyginext\network\NetData.inl">
+      <Filter>Header Files\network</Filter>
+    </None>
+    <None Include="include\xyginext\network\NetHost.inl">
+      <Filter>Header Files\network</Filter>
     </None>
   </ItemGroup>
 </Project>

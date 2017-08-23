@@ -31,7 +31,6 @@ source distribution.
 
 #include "NetConf.hpp"
 #include <xyginext/network/NetHost.hpp>
-#include <xyginext/network/NetData.hpp>
 #include <xyginext/core/Log.hpp>
 #include <xyginext/core/Assert.hpp>
 
@@ -158,11 +157,39 @@ bool NetHost::pollEvent(NetEvent& evt)
             break;
         case ENET_EVENT_TYPE_RECEIVE:
             evt.type = NetEvent::PacketReceived;
-            //TODO process this packet data first
-            enet_packet_destroy(hostEvt.packet);
+            evt.packet.setPacketData(hostEvt.packet);
+
+            //our event takes ownership and promises to clean up the packet
+            //enet_packet_destroy(hostEvt.packet);
             break;
         }
         return true;
     }
     return false;
+}
+
+void NetHost::broadcastPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
+{
+    if (m_host)
+    {
+        sf::Int32 packetFlags = 0;
+        if (flags == NetFlag::Reliable)
+        {
+            packetFlags |= ENET_PACKET_FLAG_RELIABLE;
+        }
+        else if (flags == NetFlag::Unreliable)
+        {
+            packetFlags |= ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT;
+        }
+        else if (flags == NetFlag::Unsequenced)
+        {
+            packetFlags |= ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT | ENET_PACKET_FLAG_UNSEQUENCED;
+        }
+
+        ENetPacket* packet = enet_packet_create(&id, sizeof(sf::Uint32), packetFlags);
+        enet_packet_resize(packet, sizeof(sf::Uint32) + size);
+        std::memcpy(&packet->data[sizeof(sf::Uint32)], data, size);
+
+        enet_host_broadcast(m_host, channel, packet);
+    }
 }

@@ -30,9 +30,10 @@ source distribution.
 #include "NetConf.hpp"
 
 #include <xyginext/network/NetClient.hpp>
-#include <xyginext/network/NetData.hpp>
 #include <xyginext/core/Log.hpp>
 #include <xyginext/core/Assert.hpp>
+
+#include <cstring>
 
 using namespace xy;
 
@@ -182,12 +183,14 @@ bool NetClient::pollEvent(NetEvent& evt)
             evt.type = NetEvent::ClientConnect;
             break;
         case ENET_EVENT_TYPE_DISCONNECT:
-            evt.type = NetEvent::ClientDisconnect;
+            evt.type = NetEvent::ClientDisconnect;            
             break;
         case ENET_EVENT_TYPE_RECEIVE:
             evt.type = NetEvent::PacketReceived;
-            //TODO process this packet data first
-            enet_packet_destroy(hostEvt.packet);
+            evt.packet.setPacketData(hostEvt.packet);
+
+            //our event takes ownership
+            //enet_packet_destroy(hostEvt.packet);
             break;
         }
         return true;
@@ -195,11 +198,28 @@ bool NetClient::pollEvent(NetEvent& evt)
     return false;
 }
 
-void NetClient::sendPacket()
+void NetClient::sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
     if (m_peer)
     {
-        ENetPacket * packet = enet_packet_create("packet", strlen("packet") + 1, ENET_PACKET_FLAG_RELIABLE);
-        enet_peer_send(m_peer, 0, packet);
+        sf::Int32 packetFlags = 0;
+        if (flags == NetFlag::Reliable)
+        {
+            packetFlags |= ENET_PACKET_FLAG_RELIABLE;
+        }
+        else if (flags == NetFlag::Unreliable)
+        {
+            packetFlags |= ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT;
+        }
+        else if (flags == NetFlag::Unsequenced)
+        {
+            packetFlags |= ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT | ENET_PACKET_FLAG_UNSEQUENCED;
+        }
+        
+        ENetPacket* packet = enet_packet_create(&id, sizeof(sf::Uint32), packetFlags);
+        enet_packet_resize(packet, sizeof(sf::Uint32) + size);
+        std::memcpy(&packet->data[sizeof(sf::Uint32)], data, size);
+
+        enet_peer_send(m_peer, channel, packet);
     }
 }

@@ -146,6 +146,7 @@
     <ClCompile Include="src\ecs\systems\TextRenderer.cpp" />
     <ClCompile Include="src\network\NetClient.cpp" />
     <ClCompile Include="src\network\NetConf.cpp" />
+    <ClCompile Include="src\network\NetEvent.cpp" />
     <ClCompile Include="src\network\NetHost.cpp" />
     <ClCompile Include="src\resources\FontResource.cpp" />
     <ClCompile Include="src\resources\ShaderResource.cpp" />
@@ -200,6 +201,9 @@
     <None Include="include\xyginext\ecs\Scene.inl" />
     <None Include="include\xyginext\ecs\System.inl" />
     <None Include="include\xyginext\ecs\SystemManager.inl" />
+    <None Include="include\xyginext\network\NetClient.inl" />
+    <None Include="include\xyginext\network\NetData.inl" />
+    <None Include="include\xyginext\network\NetHost.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
