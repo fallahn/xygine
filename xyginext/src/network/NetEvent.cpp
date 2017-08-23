@@ -32,8 +32,8 @@ source distribution.
 using namespace xy;
 
 NetEvent::Packet::Packet()
-    : m_id(0),
-    m_packet(nullptr)
+    : m_packet(nullptr),
+    m_id(0)
 {
 
 }
