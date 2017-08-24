@@ -109,6 +109,7 @@ void GameServer::update()
                 case xy::NetEvent::PacketReceived:
                     handlePacket(evt);
                     break;
+                default: break;
                 }
             }
 

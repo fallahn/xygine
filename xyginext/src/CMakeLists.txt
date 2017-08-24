@@ -20,10 +20,16 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/components/Text.cpp
   ${PROJECT_DIR}/ecs/components/Transform.cpp
 
+  ${PROJECT_DIR}/ecs/systems/CallbackSystem.cpp
   ${PROJECT_DIR}/ecs/systems/CameraSystem.cpp
   ${PROJECT_DIR}/ecs/systems/CommandSystem.cpp
   ${PROJECT_DIR}/ecs/systems/SpriteRenderer.cpp
   ${PROJECT_DIR}/ecs/systems/TextRenderer.cpp
+
+  ${PROJECT_DIR}/imgui/imgui.cpp
+  ${PROJECT_DIR}/imgui/imgui_demo.cpp
+  ${PROJECT_DIR}/imgui/imgui_draw.cpp
+  ${PROJECT_DIR}/imgui/imgui_sfml.cpp
 
   ${PROJECT_DIR}/network/NetClient.cpp
   ${PROJECT_DIR}/network/NetConf.cpp
