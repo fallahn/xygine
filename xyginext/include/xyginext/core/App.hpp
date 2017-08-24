@@ -28,7 +28,7 @@ source distribution.
 /*!
 \mainpage XYGINEXT
 
-A 2D Game Engine Framework built around SFML, xygine implements a scene graph along with an Entity Component System.
+A 2D Game Engine Framework built around SFML, xygineXT implements a scene graph along with an Entity Component System.
 The source for xygineXT is released under the zlib license in the hope that it may be useful for other people - 
 but offers no warranty that it is fit for any particular purpose, even those for which it was specifically written...
 
@@ -44,6 +44,12 @@ but offers no warranty that it is fit for any particular purpose, even those for
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include <functional>
+
+#ifdef _DEBUG_
+#define DPRINT(x, y) xy::App::printStat(x,y)
+#else
+define DPRINT(x,y)
+#endif //_DEBUG_
 
 /*!
 \brief Main xyginext namespace
@@ -200,6 +206,11 @@ namespace xy
         */
         static sf::RenderWindow& getRenderWindow();
 
+        /*!
+        \brief Prints the name/value pair to the stats window
+        */
+        static void printStat(const std::string&, const std::string&);
+
     protected:
         /*!
         \brief Function for despatching all window events
@@ -288,6 +299,10 @@ namespace xy
 
         void handleEvents();
         void handleMessages();
+
+        bool m_showStats;
+        std::vector<std::string> m_debugLines;
+        void doImgui();
     };
 }
 #endif //XY_APP_HPP_

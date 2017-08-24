@@ -41,10 +41,10 @@ namespace xy
 {
     struct XY_EXPORT_API NetPeer final
     {
-        std::string address() const; //! <String containing the IPv4 address
-        sf::Uint16 port() const; //! <Port number
-        sf::Uint32 ID() const; //! <Unique ID
-        sf::Uint32 roundTripTime() const; //! <Mean round trip time in milliseconds of a reliable packet
+        std::string getAddress() const; //! <String containing the IPv4 address
+        sf::Uint16 getPort() const; //! <Port number
+        sf::Uint32 getID() const; //! <Unique ID
+        sf::Uint32 getRoundTripTime() const; //! <Mean round trip time in milliseconds of a reliable packet
 
         enum class State
         {
@@ -59,7 +59,7 @@ namespace xy
             AcknowledingDisconnect,
             Zombie
         };
-        State state() const; //! <Current state of the peer
+        State getState() const; //! <Current state of the peer
 
     private:
         _ENetPeer* m_peer = nullptr;

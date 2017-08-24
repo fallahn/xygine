@@ -28,6 +28,10 @@ source distribution.
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/Log.hpp>
 
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_sfml.h"
+#include "../imgui/imgui_internal.h"
+
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -46,9 +50,9 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
 #ifndef _DEBUG_
-    std::string windowTitle("xyginext game (Release Build)");
+    std::string windowTitle("xyginext game (Release Build) - F2: Show stats");
 #else
-    std::string windowTitle("xyginext game (Debug Build)");
+    std::string windowTitle("xyginext game (Debug Build) - F2: Show stats");
 #endif //_DEBUG_
 
     sf::Clock frameClock;
@@ -59,12 +63,15 @@ namespace
 
     sf::Color clearColour(0, 0, 0, 255);
 
+    App* appInstance = nullptr;
+
 #include "DefaultIcon.inl"
 }
 
 App::App()
     : m_videoSettings   (),
-    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings)
+    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
+    m_showStats         (false)
 {
     m_windowIcon.create(16u, 16u, defaultIcon);
 
@@ -85,6 +92,8 @@ App::App()
         updateApp(dt);
     };
     eventHandler = std::bind(&App::handleEvent, this, _1);
+
+    appInstance = this;
 }
 
 //public
@@ -96,6 +105,8 @@ void App::run()
         return;
     }
 
+    ImGui::SFML::Init(m_renderWindow);
+
     initialise();
 
     running = true;
@@ -105,6 +116,8 @@ void App::run()
         float elapsedTime = frameClock.restart().asSeconds();
         timeSinceLastUpdate += elapsedTime;
         
+        doImgui();
+
         while (timeSinceLastUpdate > timePerFrame)
         {
             timeSinceLastUpdate -= timePerFrame;
@@ -117,6 +130,7 @@ void App::run()
 
         m_renderWindow.clear(clearColour);
         draw();
+        ImGui::Render();
         m_renderWindow.display();
     }
 
@@ -124,6 +138,8 @@ void App::run()
     m_messageBus.disable(); //prevents spamming with loads of entity quit messages
 
     finalise();
+
+    ImGui::SFML::Shutdown();
 }
 
 void App::pause()
@@ -230,6 +246,12 @@ sf::RenderWindow& App::getRenderWindow()
     return *renderWindow;
 }
 
+void App::printStat(const std::string& name, const std::string& value)
+{
+    XY_ASSERT(appInstance, "hm");
+    appInstance->m_debugLines.push_back(name + ":" + value);
+}
+
 //protected
 void App::initialise() {}
 
@@ -262,6 +284,8 @@ void App::handleEvents()
 
     while (m_renderWindow.pollEvent(evt))
     {        
+        auto imguiConsumed = ImGui::SFML::ProcessEvent(evt);
+
         switch (evt.type)
         {
         case sf::Event::LostFocus:
@@ -303,13 +327,17 @@ void App::handleEvents()
         {
             switch (evt.key.code)
             {
+            case sf::Keyboard::F2:
+                m_showStats = !m_showStats;
+                break;
             case sf::Keyboard::F5:
                 saveScreenshot();
                 break;
             default:break;
             }           
         }
-        eventHandler(evt);
+        
+        if(!imguiConsumed) eventHandler(evt);
     }   
 }
 
@@ -321,4 +349,38 @@ void App::handleMessages()
 
         handleMessage(msg);
     } 
+}
+
+void App::doImgui()
+{
+    ImGui::SFML::Update(false);
+
+    //Console::draw();
+
+    //for (auto& f : m_guiWindows) f.first();
+
+    if (m_showStats)
+    {
+        ImGui::SetNextWindowSizeConstraints({ 360.f, 200.f }, { 400.f, 1000.f });
+        ImGui::Begin("Stats:", &m_showStats);
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::NewLine();
+
+        //display any registered controls
+        /*for (const auto& func : m_statusControls)
+        {
+            func.first();
+        }*/
+
+        //print any debug lines       
+        for (const auto& p : m_debugLines)
+        {
+            ImGui::Text(p.c_str());
+        }
+
+        ImGui::End();
+    }
+    m_debugLines.clear();
+    m_debugLines.reserve(10);
 }

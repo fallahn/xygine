@@ -75,8 +75,9 @@ bool GameState::handleEvent(const sf::Event& evt)
             m_client.disconnect();
             break;
         case sf::Keyboard::D:
-            m_client.sendPacket(3, TestPacket(), xy::NetFlag::Reliable);
+            
             break;
+
         }
     }
 
@@ -90,15 +91,22 @@ void GameState::handleMessage(const xy::Message& msg)
 
 bool GameState::update(float dt)
 {
+    //if (m_client.getPeer().getState() == xy::NetPeer::State::Connected)
+    //{
+    //    xy::App::printStat("Ping", std::to_string(m_client.getPeer().getRoundTripTime()));
+    //}    
     xy::NetEvent evt;
     while (m_client.pollEvent(evt))
     {
         if (evt.type == xy::NetEvent::PacketReceived)
         {
-            std::cout << "Packet Received" << std::endl;
+            
         }
     }
     
+
+
+
     m_scene.update(dt);
     return false;
 }

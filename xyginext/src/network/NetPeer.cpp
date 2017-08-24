@@ -31,7 +31,7 @@ source distribution.
 
 using namespace xy;
 
-std::string NetPeer::address() const
+std::string NetPeer::getAddress() const
 {
     XY_ASSERT(m_peer, "Not a valid peer");
 
@@ -44,30 +44,33 @@ std::string NetPeer::address() const
     return ret;
 }
 
-sf::Uint16 NetPeer::port() const
+sf::Uint16 NetPeer::getPort() const
 {
     XY_ASSERT(m_peer, "Not a valid peer");
 
     return m_peer->address.port;
 }
 
-sf::Uint32 NetPeer::ID() const
+sf::Uint32 NetPeer::getID() const
 {
     XY_ASSERT(m_peer, "Not a valid peer");
 
     return m_peer->connectID;
 }
 
-sf::Uint32 NetPeer::roundTripTime()const
+sf::Uint32 NetPeer::getRoundTripTime()const
 {
     XY_ASSERT(m_peer, "Not a valid peer");
 
     return m_peer->roundTripTime;
 }
 
-NetPeer::State NetPeer::state() const
+NetPeer::State NetPeer::getState() const
 {
-    XY_ASSERT(m_peer, "Not a valid peer");
+    if (!m_peer)
+    {
+        return State::Disconnected;
+    }
 
     switch (m_peer->state)
     {
