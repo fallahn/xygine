@@ -34,8 +34,33 @@ source distribution.
 #include <xyginext/core/Log.hpp>
 #include <xyginext/core/Assert.hpp>
 
-
 using namespace xy;
+
+namespace
+{
+    ENetPacket* createPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags)
+    {
+        sf::Int32 packetFlags = 0;
+        if (flags == NetFlag::Reliable)
+        {
+            packetFlags |= ENET_PACKET_FLAG_RELIABLE;
+        }
+        else if (flags == NetFlag::Unreliable)
+        {
+            packetFlags |= ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT;
+        }
+        else if (flags == NetFlag::Unsequenced)
+        {
+            packetFlags |= ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT | ENET_PACKET_FLAG_UNSEQUENCED;
+        }
+
+        ENetPacket* packet = enet_packet_create(&id, sizeof(sf::Uint32), packetFlags);
+        enet_packet_resize(packet, sizeof(sf::Uint32) + size);
+        std::memcpy(&packet->data[sizeof(sf::Uint32)], data, size);
+
+        return packet;
+    }
+}
 
 NetHost::NetHost()
     : m_host    (nullptr)
@@ -158,7 +183,7 @@ bool NetHost::pollEvent(NetEvent& evt)
         case ENET_EVENT_TYPE_RECEIVE:
             evt.type = NetEvent::PacketReceived;
             evt.packet.setPacketData(hostEvt.packet);
-
+            evt.peer.m_peer = hostEvt.peer;
             //our event takes ownership and promises to clean up the packet
             //enet_packet_destroy(hostEvt.packet);
             break;
@@ -172,24 +197,14 @@ void NetHost::broadcastPacket(sf::Uint32 id, void* data, std::size_t size, NetFl
 {
     if (m_host)
     {
-        sf::Int32 packetFlags = 0;
-        if (flags == NetFlag::Reliable)
-        {
-            packetFlags |= ENET_PACKET_FLAG_RELIABLE;
-        }
-        else if (flags == NetFlag::Unreliable)
-        {
-            packetFlags |= ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT;
-        }
-        else if (flags == NetFlag::Unsequenced)
-        {
-            packetFlags |= ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT | ENET_PACKET_FLAG_UNSEQUENCED;
-        }
+        enet_host_broadcast(m_host, channel, createPacket(id, data, size, flags));
+    }
+}
 
-        ENetPacket* packet = enet_packet_create(&id, sizeof(sf::Uint32), packetFlags);
-        enet_packet_resize(packet, sizeof(sf::Uint32) + size);
-        std::memcpy(&packet->data[sizeof(sf::Uint32)], data, size);
-
-        enet_host_broadcast(m_host, channel, packet);
+void NetHost::sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
+{
+    if (peer.m_peer)
+    {
+        enet_peer_send(peer.m_peer, channel, createPacket(id, data, size, flags));
     }
 }

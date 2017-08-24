@@ -75,6 +75,7 @@ void threadFunc(const bool* running)
                     packet.w[3] = 'p';
                     packet.w[4] = 's';
                     host.broadcastPacket(5, packet, xy::NetFlag::Reliable);*/
+                    host.sendPacket(evt.peer, 1, TestStruct(), xy::NetFlag::Unreliable);
                 }
                 break;
             }

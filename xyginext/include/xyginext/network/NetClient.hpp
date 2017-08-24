@@ -36,7 +36,6 @@ source distribution.
 #include <string>
 
 struct _ENetHost;
-struct _ENetPeer;
 
 namespace xy
 {
@@ -133,10 +132,17 @@ namespace xy
         */
         void sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel = 0);
 
+        /*!
+        \brief Returns a reference to the client's peer.
+        Peers are only valid when connected to a server.
+        \see NetPeer
+        */
+        const NetPeer& getPeer() const { return m_peer; }
+
     private:
 
         _ENetHost* m_client;
-        _ENetPeer* m_peer;
+        NetPeer m_peer;
     };
 
 #include "NetClient.inl"

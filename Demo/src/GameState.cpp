@@ -42,7 +42,11 @@ source distribution.
 
 namespace
 {
-
+    struct TestPacket
+    {
+        int a = 2;
+        float z = 54.f;
+    };
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx)
@@ -71,7 +75,7 @@ bool GameState::handleEvent(const sf::Event& evt)
             m_client.disconnect();
             break;
         case sf::Keyboard::D:
-
+            m_client.sendPacket(3, TestPacket(), xy::NetFlag::Reliable);
             break;
         }
     }
@@ -91,7 +95,7 @@ bool GameState::update(float dt)
     {
         if (evt.type == xy::NetEvent::PacketReceived)
         {
-
+            std::cout << "Packet Received" << std::endl;
         }
     }
     

@@ -148,6 +148,7 @@
     <ClCompile Include="src\network\NetConf.cpp" />
     <ClCompile Include="src\network\NetEvent.cpp" />
     <ClCompile Include="src\network\NetHost.cpp" />
+    <ClCompile Include="src\network\NetPeer.cpp" />
     <ClCompile Include="src\resources\FontResource.cpp" />
     <ClCompile Include="src\resources\ShaderResource.cpp" />
     <ClCompile Include="src\util\ConfigFile.cpp" />

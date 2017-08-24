@@ -38,8 +38,7 @@ source distribution.
 using namespace xy;
 
 NetClient::NetClient()
-    : m_client  (nullptr),
-    m_peer      (nullptr)
+    : m_client  (nullptr)
 {
     if (!NetConf::instance)
     {
@@ -49,7 +48,7 @@ NetClient::NetClient()
 
 NetClient::~NetClient()
 {
-    if (m_peer)
+    if (m_peer.m_peer)
     {
         disconnect();
     }
@@ -95,7 +94,7 @@ bool NetClient::connect(const std::string& address, sf::Uint16 port, sf::Uint32 
     XY_ASSERT(port > 0, "Invalid port number");
     XY_ASSERT(!address.empty(), "Invalid address string");
 
-    if (m_peer)
+    if (m_peer.m_peer)
     {
         disconnect();
     }
@@ -115,8 +114,8 @@ bool NetClient::connect(const std::string& address, sf::Uint16 port, sf::Uint32 
     }
     add.port = port;
 
-    m_peer = enet_host_connect(m_client, &add, m_client->channelLimit, 0);
-    if (!m_peer)
+    m_peer.m_peer = enet_host_connect(m_client, &add, m_client->channelLimit, 0);
+    if (!m_peer.m_peer)
     {
         Logger::log("Failed assigning peer connection to host", Logger::Type::Error);
         return false;
@@ -130,18 +129,18 @@ bool NetClient::connect(const std::string& address, sf::Uint16 port, sf::Uint32 
         return true;
     }
 
-    enet_peer_reset(m_peer);
-    m_peer = nullptr;
+    enet_peer_reset(m_peer.m_peer);
+    m_peer.m_peer = nullptr;
     Logger::log("Connection attempt timed out after " + std::to_string(timeout) + " milliseconds.", Logger::Type::Error);
     return false;
 }
 
 void NetClient::disconnect()
 {
-    if (m_peer)
+    if (m_peer.m_peer)
     {
         ENetEvent evt;
-        enet_peer_disconnect(m_peer, 0);
+        enet_peer_disconnect(m_peer.m_peer, 0);
 
         //wait 3 seconds for a response
         while (enet_host_service(m_client, &evt, 3000) > 0)
@@ -154,7 +153,7 @@ void NetClient::disconnect()
                 enet_packet_destroy(evt.packet);
                 break;
             case ENET_EVENT_TYPE_DISCONNECT: //um what if this is another peer disconnecting at the same time?
-                m_peer = nullptr;
+                m_peer.m_peer = nullptr;
                 LOG("Disconnected from server", Logger::Type::Info);
                 return;
             }
@@ -162,8 +161,8 @@ void NetClient::disconnect()
 
         //timed out so force disconnect
         LOG("Disconnect timed out", Logger::Type::Info);
-        enet_peer_reset(m_peer);
-        m_peer = nullptr;
+        enet_peer_reset(m_peer.m_peer);
+        m_peer.m_peer = nullptr;
     }
 }
 
@@ -188,6 +187,7 @@ bool NetClient::pollEvent(NetEvent& evt)
         case ENET_EVENT_TYPE_RECEIVE:
             evt.type = NetEvent::PacketReceived;
             evt.packet.setPacketData(hostEvt.packet);
+            evt.peer.m_peer = hostEvt.peer;
 
             //our event takes ownership
             //enet_packet_destroy(hostEvt.packet);
@@ -200,7 +200,7 @@ bool NetClient::pollEvent(NetEvent& evt)
 
 void NetClient::sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
-    if (m_peer)
+    if (m_peer.m_peer)
     {
         sf::Int32 packetFlags = 0;
         if (flags == NetFlag::Reliable)
@@ -220,6 +220,6 @@ void NetClient::sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag 
         enet_packet_resize(packet, sizeof(sf::Uint32) + size);
         std::memcpy(&packet->data[sizeof(sf::Uint32)], data, size);
 
-        enet_peer_send(m_peer, channel, packet);
+        enet_peer_send(m_peer.m_peer, channel, packet);
     }
 }

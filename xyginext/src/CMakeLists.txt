@@ -29,6 +29,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/network/NetConf.cpp
   ${PROJECT_DIR}/network/NetEvent.cpp
   ${PROJECT_DIR}/network/NetHost.cpp
+  ${PROJECT_DIR}/network/NetPeer.cpp
 
   ${PROJECT_DIR}/resources/FontResource.cpp
   ${PROJECT_DIR}/resources/ShaderResource.cpp

@@ -30,3 +30,9 @@ void NetHost::broadcastPacket(sf::Uint32 id, const T& data, NetFlag flags, sf::U
 {
     broadcastPacket(id, (void*)&data, sizeof(T), flags, channel);
 }
+
+template <typename T>
+void NetHost::sendPacket(const NetPeer& peer, sf::Uint32 id, const T& data, NetFlag flags, sf::Uint8 channel)
+{
+    sendPacket(peer, id, (void*)&data, sizeof(T), flags, channel);
+}

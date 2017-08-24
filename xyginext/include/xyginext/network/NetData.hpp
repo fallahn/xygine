@@ -35,9 +35,39 @@ source distribution.
 #include <cstring>
 
 struct _ENetPacket;
+struct _ENetPeer;
 
 namespace xy
 {
+    struct XY_EXPORT_API NetPeer final
+    {
+        std::string address() const; //! <String containing the IPv4 address
+        sf::Uint16 port() const; //! <Port number
+        sf::Uint32 ID() const; //! <Unique ID
+        sf::Uint32 roundTripTime() const; //! <Mean round trip time in milliseconds of a reliable packet
+
+        enum class State
+        {
+            Disconnected,
+            Connecting,
+            AcknowledingConnect,
+            PendingConnect,
+            Succeeded,
+            Connected,
+            DisconnectLater,
+            Disconnecting,
+            AcknowledingDisconnect,
+            Zombie
+        };
+        State state() const; //! <Current state of the peer
+
+    private:
+        _ENetPeer* m_peer = nullptr;
+
+        friend class NetClient;
+        friend class NetHost;
+    };
+
     /*!
     \brief Network event.
     These are used to poll NetHost and NetClient objects
@@ -98,7 +128,12 @@ namespace xy
 
             friend class NetClient;
             friend class NetHost;
-        }packet;        
+        }packet;
+
+        /*!
+        \brief Contains the peer from which this event was transmitted
+        */
+        NetPeer peer;
     };
 
 #include "NetData.inl"

@@ -39,6 +39,7 @@ struct _ENetHost;
 namespace xy
 {
     struct NetEvent;
+    struct NetPeer;
     
     /*!
     \brief Creates a network host.
@@ -113,6 +114,39 @@ namespace xy
         \param channel Stream channel over which to send the data
         */
         void broadcastPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel = 0);
+
+        /*!
+        \brief Sends a packet to the given peer if a connection is
+        established, else does nothing. NOTE: Packets are actually
+        queued and not sent over the connection until the next time
+        pollEvent() is called.
+        \param peer The peer over which to send the packet.
+        \param id unique ID for this packet
+        \param data Struct of simple data to send. Structs are serialised
+        and sent out as an array of bytes - thus members such as pointers
+        are effectively useless, as the pointers themselves will be sent,
+        and not the data pointed to.
+        \param flags Used to denote reliability of packet sending
+        \see NetFlag
+        \param channel Stream channel on which to send the data
+        */
+        template <typename T>
+        void sendPacket(const NetPeer& peer, sf::Uint32 id, const T& data, NetFlag flags, sf::Uint8 channel = 0);
+
+        /*!
+        \brief Sends the given array of bytes out over the given peer if it
+        is active, else does nothing.
+        Use this for pre-serialised data.
+        \param peer The peer over which to send the packet.
+        \param id Unique ID for this packet
+        \param data Pointer to the data to send
+        \param size Size of the data, in bytes
+        \param flags Used to indicated the requested reliability of packet sent
+        \see NetFlag
+        \param channel Stream channel over which to send the data
+        */
+        void sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel = 0);
+
 
     private:
 
