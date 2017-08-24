@@ -102,7 +102,7 @@ namespace xy
             /*!
             \brief The unique ID this packet was tegged with when sent
             */
-            sf::Uint32 ID() const;
+            sf::Uint32 getID() const;
 
             /*!
             \brief Used to retreive the data as a specific type.
@@ -115,11 +115,11 @@ namespace xy
             /*!
             \brief Returns a pointer to the raw packet data
             */
-            const void* data() const;
+            const void* getData() const;
             /*!
             \brief Returns the size of the data, in bytes
             */
-            std::size_t size() const;
+            std::size_t getSize() const;
 
         private:
             _ENetPacket* m_packet;

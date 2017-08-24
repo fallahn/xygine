@@ -162,6 +162,9 @@
     <ClCompile Include="src\imgui\imgui_sfml.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\systems\CallbackSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -283,6 +286,12 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\network\NetData.hpp">
       <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\CallbackSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\Callback.hpp">
+      <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -47,19 +47,19 @@ NetEvent::Packet::~Packet()
 }
 
 //public
-sf::Uint32 NetEvent::Packet::ID() const
+sf::Uint32 NetEvent::Packet::getID() const
 {
     XY_ASSERT(m_packet, "Not a valid packet instance");
     return m_id;
 }
 
-const void* NetEvent::Packet::data() const
+const void* NetEvent::Packet::getData() const
 {
     XY_ASSERT(m_packet, "Not a valid packet instance");
     return &m_packet->data[sizeof(sf::Uint32)];
 }
 
-std::size_t NetEvent::Packet::size() const
+std::size_t NetEvent::Packet::getSize() const
 {
     XY_ASSERT(m_packet, "Not a valid packet instance");
     return m_packet->dataLength - sizeof(sf::Uint32);

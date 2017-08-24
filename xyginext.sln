@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
+VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xyginext", "xyginext\xyginext.vcxproj", "{33E0B54E-2EFA-4060-8E87-B854753C326D}"
 EndProject
@@ -40,11 +40,9 @@ Global
 		{A27B06A1-8A42-4F1E-BBAA-6A9DF8FA3484}.Release|x86.ActiveCfg = Release|Win32
 		{A27B06A1-8A42-4F1E-BBAA-6A9DF8FA3484}.Release|x86.Build.0 = Release|Win32
 		{0D0676E2-520A-4C0F-8F72-E947827D7959}.Debug|x64.ActiveCfg = Debug|x64
-		{0D0676E2-520A-4C0F-8F72-E947827D7959}.Debug|x64.Build.0 = Debug|x64
 		{0D0676E2-520A-4C0F-8F72-E947827D7959}.Debug|x86.ActiveCfg = Debug|Win32
 		{0D0676E2-520A-4C0F-8F72-E947827D7959}.Debug|x86.Build.0 = Debug|Win32
 		{0D0676E2-520A-4C0F-8F72-E947827D7959}.Release|x64.ActiveCfg = Release|x64
-		{0D0676E2-520A-4C0F-8F72-E947827D7959}.Release|x64.Build.0 = Release|x64
 		{0D0676E2-520A-4C0F-8F72-E947827D7959}.Release|x86.ActiveCfg = Release|Win32
 		{0D0676E2-520A-4C0F-8F72-E947827D7959}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection

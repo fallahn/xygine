@@ -114,7 +114,8 @@ namespace xy
         and not the data pointed to.
         \param flags Used to denote reliability of packet sending
         \see NetFlag
-        \param channel Stream channel on which to send the data
+        \param channel Stream channel on which to send the data. Lower number
+        channels have higher priority, with 0 being highest.
         */
         template <typename T>
         void sendPacket(sf::Uint32 id, const T& data, NetFlag flags, sf::Uint8 channel = 0);
@@ -128,7 +129,8 @@ namespace xy
         \param size Size of the data, in bytes
         \param flags Used to indicated the requested reliability of packet sent
         \see NetFlag
-        \param channel Stream channel over which to send the data
+        \param channel Stream channel over which to send the data. Lower number
+        channels have higher priority, with 0 being highest.
         */
         void sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel = 0);
 

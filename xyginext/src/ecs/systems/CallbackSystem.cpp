@@ -25,41 +25,26 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#include <xyginext/ecs/systems/CallbackSystem.hpp>
+#include <xyginext/ecs/components/Callback.hpp>
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+using namespace xy;
 
-#include <xyginext/network/NetClient.hpp>
-
-#include "StateIDs.hpp"
-#include "Server.hpp"
-
-class GameState final : public xy::State
+CallbackSystem::CallbackSystem(MessageBus& mb)
+    : System(mb, typeid(CallbackSystem))
 {
-public:
-    GameState(xy::StateStack&, xy::State::Context);
+    requireComponent<Callback>();
+}
 
-    xy::StateID stateID() const override { return StateID::Game; }
-
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
-
-private:
-
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
-
-    xy::NetClient m_client;
-    GameServer m_server;
-
-    void loadAssets();
-    void handlePacket(const xy::NetEvent&);
-};
-
-#endif //DEMO_GAME_STATE_HPP_
+void CallbackSystem::process(float dt)
+{
+    auto& entities = getEntities();
+    for (auto& entity : entities)
+    {
+        auto& cb = entity.getComponent<Callback>();
+        if (cb.active)
+        {
+            cb.function(entity, dt);
+        }
+    }
+}

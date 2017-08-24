@@ -25,41 +25,53 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#ifndef GAME_DEMO_SERVER_HPP_
+#define GAME_DEMO_SERVER_HPP_
 
-#include <xyginext/core/State.hpp>
+#include "MapData.hpp"
+
+#include <xyginext/network/NetHost.hpp>
+#include <xyginext/core/MessageBus.hpp>
 #include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
 
-#include <xyginext/network/NetClient.hpp>
+#include <SFML/System/Thread.hpp>
 
-#include "StateIDs.hpp"
-#include "Server.hpp"
+#include <atomic>
 
-class GameState final : public xy::State
+class GameServer final
 {
 public:
-    GameState(xy::StateStack&, xy::State::Context);
+    GameServer();
+    ~GameServer();
+    GameServer(const GameServer&) = delete;
+    GameServer(GameServer&&) = delete;
+    GameServer& operator = (const GameServer&) = delete;
+    GameServer& operator = (GameServer&&) = delete;
 
-    xy::StateID stateID() const override { return StateID::Game; }
+    void start();
+    void stop();
 
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+    bool ready() { return m_ready; }
 
 private:
+    xy::NetHost m_host;
+    std::atomic<bool> m_ready;
 
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
+    std::atomic<bool> m_running;
+    sf::Thread m_thread;
+    void update();
 
-    xy::NetClient m_client;
-    GameServer m_server;
+    void handleConnect(const xy::NetEvent&);
+    void handleDisconnect(const xy::NetEvent&);
 
-    void loadAssets();
     void handlePacket(const xy::NetEvent&);
+
+    xy::MessageBus m_messageBus;
+    xy::Scene m_scene;
+    MapData m_mapData;
+
+    void initScene();
+    void loadMap();
 };
 
-#endif //DEMO_GAME_STATE_HPP_
+#endif //GAME_DEMO_SERVER_HPP_

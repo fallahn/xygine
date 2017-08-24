@@ -25,41 +25,56 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#ifndef DEMO_GAME_MAP_DATA_HPP_
+#define DEMO_GAME_MAP_DATA_HPP_
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+#include <SFML/Config.hpp>
 
-#include <xyginext/network/NetClient.hpp>
-
-#include "StateIDs.hpp"
-#include "Server.hpp"
-
-class GameState final : public xy::State
+namespace ActorID
 {
-public:
-    GameState(xy::StateStack&, xy::State::Context);
+    enum
+    {
+        PlayerOne,
+        PlayerTwo,
+        NPC0, NPC1,
+        BubbleOne,
+        BubbleTwo
+    };
+}
 
-    xy::StateID stateID() const override { return StateID::Game; }
-
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
-
-private:
-
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
-
-    xy::NetClient m_client;
-    GameServer m_server;
-
-    void loadAssets();
-    void handlePacket(const xy::NetEvent&);
+struct Velocity final
+{
+    float x = 0.f;
+    float y = 0.f;
 };
 
-#endif //DEMO_GAME_STATE_HPP_
+//entities such as players or NPC
+//projectiles and bonuses
+struct Actor final
+{
+    sf::Int8 type = -1;
+    sf::Int8 id = -1;
+};
+
+//trying to align this to 32 bits as best as possible
+//this is sent to a client when it has connected successfully
+struct MapData final
+{
+    static constexpr sf::Uint8 MaxChars = 11;
+    static constexpr sf::Uint8 MaxActors = 12;
+    char mapName[MaxChars]{};
+    Actor actors[MaxActors]{};
+    sf::Uint8 actorCount = 0;
+};
+
+//actor and its position
+//sent as part of an update, or containing initial positions
+struct ActorState final
+{
+    float x = 0.f;
+    float y = 0.f;
+    Actor actor;
+    sf::Uint16 padding = 0;
+};
+
+#endif //DEMO_GAME_MAP_DATA_HPP_

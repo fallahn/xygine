@@ -61,7 +61,7 @@ void SystemManager::removeSystem()
 template <typename T>
 T& SystemManager::getSystem()
 {
-    CRO_ASSERT(hasSystem<T>(), "System index out of range");
+    XY_ASSERT(hasSystem<T>(), "System index out of range");
 
     UniqueType type(typeid(T));
     auto result = std::find_if(std::begin(m_systems), std::end(m_systems),

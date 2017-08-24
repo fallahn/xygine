@@ -26,6 +26,8 @@ source distribution.
 *********************************************************************/
 
 #include "GameState.hpp"
+#include "PacketIDs.hpp"
+#include "MapData.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -53,9 +55,11 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx)
     : xy::State (stack, ctx),
     m_scene     (ctx.appInstance.getMessageBus())
 {
+    launchLoadingScreen();
     loadAssets();
-
+    m_server.start();
     m_client.create(2);
+    quitLoadingScreen();
 }
 
 //public
@@ -69,7 +73,10 @@ bool GameState::handleEvent(const sf::Event& evt)
         {
         default: break;
         case sf::Keyboard::A:
-            m_client.connect("localhost", 40003);
+            if (m_server.ready())
+            {
+                m_client.connect("localhost", 40003);
+            }
             break;
         case sf::Keyboard::S:
             m_client.disconnect();
@@ -77,7 +84,6 @@ bool GameState::handleEvent(const sf::Event& evt)
         case sf::Keyboard::D:
             
             break;
-
         }
     }
 
@@ -90,23 +96,16 @@ void GameState::handleMessage(const xy::Message& msg)
 }
 
 bool GameState::update(float dt)
-{
-    //if (m_client.getPeer().getState() == xy::NetPeer::State::Connected)
-    //{
-    //    xy::App::printStat("Ping", std::to_string(m_client.getPeer().getRoundTripTime()));
-    //}    
+{   
     xy::NetEvent evt;
     while (m_client.pollEvent(evt))
     {
         if (evt.type == xy::NetEvent::PacketReceived)
         {
-            
+            handlePacket(evt);
         }
     }
     
-
-
-
     m_scene.update(dt);
     return false;
 }
@@ -125,16 +124,39 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     
-  
-    auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Transform>();
-    entity.getComponent<xy::Transform>().setPosition(230.f, 0.f);
-    entity.getComponent<xy::Transform>().setScale({ 0.2f, 0.2f });
-    entity.getComponent<xy::Transform>().setRotation(122.f);
-    entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/sphere_test.png"));
+    //preload textures
+    m_textureResource.get("assets/images/bubble.png");
+}
 
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Transform>().setPosition(200.f, 410.f);
-    entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/VeraMono.ttf")).setString("Bunnage!");
-    entity.getComponent<xy::Text>().setCroppingArea({ 0.f, 0.f, 90.f, 24.f });
+void GameState::handlePacket(const xy::NetEvent& evt)
+{
+    switch (evt.packet.getID())
+    {
+    default: break;
+    case PacketID::ActorAbsolute:
+        //set absolute state of actor
+    {
+        const auto& state = evt.packet.as<ActorState>();
+        std::cout << "Actor at: " << state.x << ", " << state.y << std::endl;
+    }
+        break;
+    case PacketID::ActorUpdate:
+        //do actor interpolation
+    {
+        const auto& state = evt.packet.as<ActorState>();
+        xy::App::printStat("Actor " + std::to_string(state.actor.id), std::to_string(state.x) + ", " + std::to_string(state.y));
+    }
+        break;
+    case PacketID::MapData:
+    {
+        MapData data = evt.packet.as<MapData>();
+        std::cout << data.mapName << ", " << (int)data.actorCount << std::endl;
+    }
+        //TODO load map (and clear old actors)
+        //TODO load new actors
+
+        //send ready signal
+        m_client.sendPacket(PacketID::ClientReady, 0, xy::NetFlag::Reliable, 1);
+        break;
+    }
 }

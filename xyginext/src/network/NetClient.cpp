@@ -187,12 +187,11 @@ bool NetClient::pollEvent(NetEvent& evt)
         case ENET_EVENT_TYPE_RECEIVE:
             evt.type = NetEvent::PacketReceived;
             evt.packet.setPacketData(hostEvt.packet);
-            evt.peer.m_peer = hostEvt.peer;
-
             //our event takes ownership
             //enet_packet_destroy(hostEvt.packet);
             break;
         }
+        evt.peer.m_peer = hostEvt.peer;
         return true;
     }
     return false;

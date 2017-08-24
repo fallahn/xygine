@@ -25,41 +25,27 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#ifndef XY_CALLBACK_HPP_
+#define XY_CALLBACK_HPP_
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+#include <xyginext/Config.hpp>
 
-#include <xyginext/network/NetClient.hpp>
+#include <functional>
 
-#include "StateIDs.hpp"
-#include "Server.hpp"
-
-class GameState final : public xy::State
+namespace xy
 {
-public:
-    GameState(xy::StateStack&, xy::State::Context);
+    class Entity;
 
-    xy::StateID stateID() const override { return StateID::Game; }
+    using CallbackFunction = std::function<void(Entity, float)>;
+    /*!
+    \brief Allows attaching a callback function to an entity.
+    \see CallbackSystem
+    */
+    struct XY_EXPORT_API Callback final
+    {
+        bool active = false; //!< disabling callbacks when not in use can avoid unnecessary cache misses looking up callback functions
+        CallbackFunction function;
+    };
+}
 
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
-
-private:
-
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
-
-    xy::NetClient m_client;
-    GameServer m_server;
-
-    void loadAssets();
-    void handlePacket(const xy::NetEvent&);
-};
-
-#endif //DEMO_GAME_STATE_HPP_
+#endif //XY_CALLBACK_HPP_

@@ -93,9 +93,9 @@ void State::launchLoadingScreen()
 void State::quitLoadingScreen()
 {
     m_threadRunning = false;
-    LOG("Quitting thread...", Logger::Type::Info);
+    //LOG("Quitting thread...", Logger::Type::Info);
     m_loadingThread.wait();
-    LOG("Thread quit.", Logger::Type::Info);
+    //LOG("Thread quit.", Logger::Type::Info);
     m_context.appInstance.resume();
 }
 

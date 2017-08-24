@@ -125,10 +125,15 @@
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Server.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ActorSystem.hpp" />
     <ClInclude Include="src\Game.hpp" />
     <ClInclude Include="src\GameState.hpp" />
+    <ClInclude Include="src\MapData.hpp" />
+    <ClInclude Include="src\PacketIDs.hpp" />
+    <ClInclude Include="src\Server.hpp" />
     <ClInclude Include="src\StateIDs.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

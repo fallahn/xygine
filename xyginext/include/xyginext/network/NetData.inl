@@ -29,10 +29,10 @@ template <typename T>
 T NetEvent::Packet::as() const
 {
     XY_ASSERT(m_packet, "Not a valid packet instance");
-    XY_ASSERT(sizeof(T) == size(), "This type's size does not match data size");
+    XY_ASSERT(sizeof(T) == getSize(), "This type's size does not match data size");
 
     T returnData;
-    std::memcpy(&returnData, data(), size());
+    std::memcpy(&returnData, getData(), getSize());
 
     return returnData;
 }
