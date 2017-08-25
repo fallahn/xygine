@@ -117,7 +117,7 @@ namespace xy
         /*!
         \brief Returns the local (pre transform) bounds
         */
-        sf::FloatRect getLocalBounds() const { return m_localBounds; }
+        sf::FloatRect getLocalBounds() const { return m_textureRect; }
 
         /*!
         \brief Returns the size of the sprite
@@ -129,7 +129,6 @@ namespace xy
         sf::FloatRect m_textureRect;
         sf::RenderStates m_states;
         std::array<sf::Vertex, 4u> m_vertices;
-        sf::FloatRect m_localBounds;
         bool m_dirty;
 
         friend class SpriteRenderer;

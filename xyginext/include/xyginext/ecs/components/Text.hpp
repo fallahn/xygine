@@ -126,7 +126,7 @@ namespace xy
         /*!
         \brief Returns the local (pre-transform) AABB of the text
         */
-        sf::FloatRect getLocalBounds() const { return m_localBounds; }
+        sf::FloatRect getLocalBounds() const;
 
         /*!
         \brief Set an area to which to crop the text.
@@ -147,7 +147,7 @@ namespace xy
         sf::Uint32 m_charSize;
         sf::Color m_fillColour;
         std::vector<sf::Vertex> m_vertices;
-        sf::FloatRect m_localBounds;
+        mutable sf::FloatRect m_localBounds;
         sf::FloatRect m_globalBounds;
         bool m_dirty;
         sf::RenderStates m_states;

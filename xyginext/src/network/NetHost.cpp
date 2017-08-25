@@ -125,9 +125,9 @@ void NetHost::stop()
 {
     if (m_host)
     {
-        if (m_host->peerCount > 0)
+        if (m_host->connectedPeers > 0)
         {
-            for (auto i = 0u; i < m_host->peerCount; ++i)
+            for (auto i = 0u; i < m_host->connectedPeers; ++i)
             {
                 auto peer = &m_host->peers[i];
                 

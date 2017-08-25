@@ -65,10 +65,6 @@ void SpriteRenderer::process(float dt)
                 v.texCoords = v.position;
             }
 
-            //update local bounds
-            sprite.m_localBounds.width = sprite.m_textureRect.width;
-            sprite.m_localBounds.height = sprite.m_textureRect.height;
-
             sprite.m_dirty = false;
         }
     }

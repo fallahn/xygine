@@ -123,6 +123,16 @@ sf::BlendMode Text::getBlendMode() const
     return m_states.blendMode;
 }
 
+sf::FloatRect Text::getLocalBounds() const
+{
+    if (m_dirty)
+    {
+
+    }
+
+    return m_localBounds;
+}
+
 void Text::setCroppingArea(sf::FloatRect area)
 {
     m_croppingArea = area;

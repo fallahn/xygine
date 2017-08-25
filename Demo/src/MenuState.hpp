@@ -25,13 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_STATE_IDS_HPP_
-#define DEMO_STATE_IDS_HPP_
+#ifndef DEMO_GAME_MENU_STATE_HPP_
+#define DEMO_GAME_MENU_STATE_HPP_
 
-enum StateID
+#include <xyginext/core/State.hpp>
+#include <xyginext/ecs/Scene.hpp>
+#include <xyginext/resources/Resource.hpp>
+
+#include "StateIDs.hpp"
+
+class MenuState final : public xy::State
 {
-    MainMenu,
-    Game
+public:
+    MenuState(xy::StateStack&, xy::State::Context);
+
+    xy::StateID stateID() const override { return StateID::MainMenu; }
+
+    bool handleEvent(const sf::Event&) override;
+    void handleMessage(const xy::Message&) override;
+    bool update(float) override;
+    void draw() override;
+
+private:
+    xy::Scene m_scene;
+    xy::FontResource m_fontResource;
+    xy::TextureResource m_textureResource;
+
+    void createMenu();
 };
 
-#endif //DEMO_STATE_IDS_HPP_
+#endif //DEMO_GAME_MENU_STATE_HPP_

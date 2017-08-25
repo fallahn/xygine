@@ -27,6 +27,7 @@ source distribution.
 
 #include "Game.hpp"
 #include "GameState.hpp"
+#include "MenuState.hpp"
 
 #include <SFML/Window/Event.hpp>
 
@@ -72,7 +73,7 @@ void Game::draw()
 void Game::initialise()
 {
     registerStates();
-    m_stateStack.pushState(StateID::Game);
+    m_stateStack.pushState(StateID::MainMenu);
 
     getRenderWindow().setKeyRepeatEnabled(false);
 }
@@ -86,4 +87,5 @@ void Game::finalise()
 void Game::registerStates()
 {
     m_stateStack.registerState<GameState>(StateID::Game);
+    m_stateStack.registerState<MenuState>(StateID::MainMenu);
 }

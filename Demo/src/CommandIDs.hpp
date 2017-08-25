@@ -32,7 +32,8 @@ namespace CommandID
 {
     enum
     {
-        NetActor = 0x1
+        NetActor = 0x1,
+        MenuText = 0x2
     };
 }
 
