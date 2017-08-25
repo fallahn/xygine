@@ -35,6 +35,7 @@ source distribution.
 
 #include <SFML/Window/Event.hpp>
 
+
 using namespace xy;
 
 UISystem::UISystem(MessageBus& mb)

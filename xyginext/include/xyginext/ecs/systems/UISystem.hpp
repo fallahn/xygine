@@ -31,7 +31,7 @@ source distribution.
 #include <xyginext/ecs/System.hpp>
 
 #include <SFML/Config.hpp>
-#include <SFML/graphics/Rect.hpp>
+#include <SFML/Graphics/Rect.hpp>
 
 #include <functional>
 
