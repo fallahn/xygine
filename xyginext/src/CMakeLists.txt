@@ -24,6 +24,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/systems/CallbackSystem.cpp
   ${PROJECT_DIR}/ecs/systems/CameraSystem.cpp
   ${PROJECT_DIR}/ecs/systems/CommandSystem.cpp
+  ${PROJECT_DIR}/ecs/systems/InterpolationSystem.cpp
   ${PROJECT_DIR}/ecs/systems/SpriteRenderer.cpp
   ${PROJECT_DIR}/ecs/systems/TextRenderer.cpp
 
