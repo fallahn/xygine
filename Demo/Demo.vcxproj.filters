@@ -50,5 +50,8 @@
     <ClInclude Include="src\ActorSystem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\CommandIDs.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

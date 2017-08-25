@@ -16,6 +16,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/SystemManager.cpp
 
   ${PROJECT_DIR}/ecs/components/Camera.cpp
+  ${PROJECT_DIR}/ecs/components/NetInterpolation.cpp
   ${PROJECT_DIR}/ecs/components/Sprite.cpp
   ${PROJECT_DIR}/ecs/components/Text.cpp
   ${PROJECT_DIR}/ecs/components/Transform.cpp

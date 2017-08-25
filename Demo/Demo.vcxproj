@@ -129,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ActorSystem.hpp" />
+    <ClInclude Include="src\CommandIDs.hpp" />
     <ClInclude Include="src\Game.hpp" />
     <ClInclude Include="src\GameState.hpp" />
     <ClInclude Include="src\MapData.hpp" />

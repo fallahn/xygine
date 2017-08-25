@@ -25,42 +25,26 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#include <xyginext/ecs/components/NetInterpolation.hpp>
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+using namespace xy;
 
-#include <xyginext/network/NetClient.hpp>
-
-#include "StateIDs.hpp"
-#include "Server.hpp"
-
-class GameState final : public xy::State
+NetInterpolate::NetInterpolate()
+    : m_targetTimestamp (0.f),
+    m_elapsedTime       (0.f),
+    m_timeDifference    (0.f),
+    m_previousTimestamp (0.f)
 {
-public:
-    GameState(xy::StateStack&, xy::State::Context);
 
-    xy::StateID stateID() const override { return StateID::Game; }
+}
 
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
-
-private:
-
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
-
-    xy::NetClient m_client;
-    GameServer m_server;
-
-    void loadAssets();
-    void loadScene(const MapData&);
-    void handlePacket(const xy::NetEvent&);
-};
-
-#endif //DEMO_GAME_STATE_HPP_
+//public
+void NetInterpolate::setTarget(sf::Vector2f targetPosition, sf::Int32 timestamp)
+{
+    m_previousTimestamp = m_targetTimestamp;
+    m_previousPosition = m_targetPosition;
+    m_elapsedTime = 0.f;
+    m_targetTimestamp = static_cast<float>(timestamp) / 1000.f;
+    m_timeDifference = m_targetTimestamp - m_previousTimestamp;
+    m_targetPosition = targetPosition;
+}

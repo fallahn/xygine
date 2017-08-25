@@ -165,6 +165,12 @@
     <ClCompile Include="src\ecs\systems\CallbackSystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\components\NetInterpolation.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\InterpolationSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -292,6 +298,12 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\components\Callback.hpp">
       <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\NetInterpolation.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\InterpolationSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

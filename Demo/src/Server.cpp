@@ -44,7 +44,7 @@ source distribution.
 
 namespace
 {
-    const float tickRate = 1.f / 30.f;
+    const float tickRate = 1.f / 25.f;
 }
 
 GameServer::GameServer()
@@ -128,6 +128,7 @@ void GameServer::update()
                 state.actor.type = actorComponent.type;
                 state.x = tx.x;
                 state.y = tx.y;
+                state.timestamp = m_serverTime.getElapsedTime().asMilliseconds();
 
                 m_host.broadcastPacket(PacketID::ActorUpdate, state, xy::NetFlag::Unreliable);
             }
@@ -190,7 +191,7 @@ void GameServer::initScene()
 
 void GameServer::loadMap()
 {
-    m_mapData.actorCount = 5;
+    m_mapData.actorCount = MapData::MaxActors;
     std::strcpy(m_mapData.mapName, "Flaps");
 
     //do actor loading
@@ -200,8 +201,8 @@ void GameServer::loadMap()
         entity.addComponent<xy::Transform>().setPosition(xy::Util::Random::value(0.f, xy::DefaultSceneSize.x), xy::Util::Random::value(0.f, xy::DefaultSceneSize.y));
         entity.addComponent<Actor>().id = entity.getIndex();
         entity.getComponent<Actor>().type = ActorID::BubbleOne;
-        entity.addComponent<Velocity>().x = xy::Util::Random::value(-10.f, 10.f);
-        entity.getComponent<Velocity>().y = xy::Util::Random::value(-10.f, 10.f);
+        entity.addComponent<Velocity>().x = xy::Util::Random::value(-10.f, 10.f) * 50.f;
+        entity.getComponent<Velocity>().y = xy::Util::Random::value(-10.f, 10.f) * 50.f;
 
         entity.addComponent<xy::Callback>().function = 
             [](xy::Entity e, float dt)
@@ -241,5 +242,10 @@ void GameServer::loadMap()
             }
         };
         entity.getComponent<xy::Callback>().active = true;
+
+        //update map data
+        m_mapData.actors[i] = entity.getComponent<Actor>();
     }
+
+    m_serverTime.restart();
 }

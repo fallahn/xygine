@@ -52,11 +52,10 @@ struct Velocity final
 //projectiles and bonuses
 struct Actor final
 {
-    sf::Int8 type = -1;
-    sf::Int8 id = -1;
+    sf::Int16 type = -1;
+    sf::Int16 id = -1;
 };
 
-//trying to align this to 32 bits as best as possible
 //this is sent to a client when it has connected successfully
 struct MapData final
 {
@@ -74,7 +73,7 @@ struct ActorState final
     float x = 0.f;
     float y = 0.f;
     Actor actor;
-    sf::Uint16 padding = 0;
+    sf::Int32 timestamp = 0;
 };
 
 #endif //DEMO_GAME_MAP_DATA_HPP_

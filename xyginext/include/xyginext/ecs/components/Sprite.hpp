@@ -119,6 +119,11 @@ namespace xy
         */
         sf::FloatRect getLocalBounds() const { return m_localBounds; }
 
+        /*!
+        \brief Returns the size of the sprite
+        */
+        sf::Vector2f getSize() const { return { m_textureRect.width, m_textureRect.height }; }
+
     private:
 
         sf::FloatRect m_textureRect;

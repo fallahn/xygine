@@ -61,6 +61,8 @@ private:
     sf::Thread m_thread;
     void update();
 
+    sf::Clock m_serverTime;
+
     void handleConnect(const xy::NetEvent&);
     void handleDisconnect(const xy::NetEvent&);
 
