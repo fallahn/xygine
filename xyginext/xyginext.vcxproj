@@ -147,6 +147,7 @@
     <ClCompile Include="src\ecs\systems\InterpolationSystem.cpp" />
     <ClCompile Include="src\ecs\systems\SpriteRenderer.cpp" />
     <ClCompile Include="src\ecs\systems\TextRenderer.cpp" />
+    <ClCompile Include="src\ecs\systems\UISystem.cpp" />
     <ClCompile Include="src\imgui\imgui.cpp" />
     <ClCompile Include="src\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\imgui\imgui_draw.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="include\xyginext\ecs\components\Sprite.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\Text.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\Transform.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\UIHitBox.hpp" />
     <ClInclude Include="include\xyginext\ecs\Director.hpp" />
     <ClInclude Include="include\xyginext\ecs\Entity.hpp" />
     <ClInclude Include="include\xyginext\ecs\Scene.hpp" />
@@ -191,6 +193,7 @@
     <ClInclude Include="include\xyginext\ecs\systems\InterpolationSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\SpriteRenderer.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\TextRenderer.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\UISystem.hpp" />
     <ClInclude Include="include\xyginext\network\NetClient.hpp" />
     <ClInclude Include="include\xyginext\network\NetData.hpp" />
     <ClInclude Include="include\xyginext\network\NetHost.hpp" />

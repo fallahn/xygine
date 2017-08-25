@@ -171,6 +171,9 @@
     <ClCompile Include="src\ecs\systems\InterpolationSystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\systems\UISystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -303,6 +306,12 @@
       <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\systems\InterpolationSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\UIHitBox.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\UISystem.hpp">
       <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
   </ItemGroup>

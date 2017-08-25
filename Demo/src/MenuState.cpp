@@ -33,9 +33,11 @@ source distribution.
 #include <xyginext/ecs/components/Text.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
+#include <xyginext/ecs/components/UIHitBox.hpp>
 
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
+#include <xyginext/ecs/systems/UISystem.hpp>
 
 MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx)
     : xy::State(stack, ctx),
@@ -49,6 +51,8 @@ MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx)
 //public
 bool MenuState::handleEvent(const sf::Event& evt)
 {
+    m_scene.getSystem<xy::UISystem>().handleEvent(evt);
+    
     m_scene.forwardEvent(evt);
     return true;
 }
@@ -74,6 +78,7 @@ void MenuState::draw()
 void MenuState::createMenu()
 {
     auto& mb = getContext().appInstance.getMessageBus();
+    m_scene.addSystem<xy::UISystem>(mb);
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
 

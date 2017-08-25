@@ -27,6 +27,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/systems/InterpolationSystem.cpp
   ${PROJECT_DIR}/ecs/systems/SpriteRenderer.cpp
   ${PROJECT_DIR}/ecs/systems/TextRenderer.cpp
+  ${PROJECT_DIR}/ecs/systems/UISystem.cpp
 
   ${PROJECT_DIR}/imgui/imgui.cpp
   ${PROJECT_DIR}/imgui/imgui_demo.cpp
