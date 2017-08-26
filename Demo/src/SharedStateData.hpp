@@ -37,7 +37,7 @@ struct SharedStateData
         Host,
         Client
     }hostState = Client;
-    std::string remoteIP = "127.000.000.001";
+    std::string remoteIP = "127.0.0.1";
 };
 
 #endif //DEMO_GAME_SHARED_STATE_DATA_HPP_

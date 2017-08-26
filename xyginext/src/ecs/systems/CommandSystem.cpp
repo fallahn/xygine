@@ -47,10 +47,12 @@ CommandSystem::CommandSystem(MessageBus& mb)
 //public
 void CommandSystem::sendCommand(const Command& cmd)
 {
+    if (m_currentCommand == m_commands.end()) return;
+
     *m_currentCommand = cmd;
     m_currentCommand++;
     m_count++;
-    XY_ASSERT(m_currentCommand != m_commands.end(), "Exceeded max commands!");
+    //XY_ASSERT(m_currentCommand != m_commands.end(), "Exceeded max commands!");
 }
 
 void CommandSystem::process(float dt)

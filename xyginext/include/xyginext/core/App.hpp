@@ -48,7 +48,7 @@ but offers no warranty that it is fit for any particular purpose, even those for
 #ifdef _DEBUG_
 #define DPRINT(x, y) xy::App::printStat(x,y)
 #else
-define DPRINT(x,y)
+#define DPRINT(x,y)
 #endif //_DEBUG_
 
 /*!

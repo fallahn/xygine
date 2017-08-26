@@ -129,8 +129,10 @@ void MenuState::createMenu()
 
     //ip text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("127.000.000.001");
-    entity.getComponent<xy::Text>().setCharacterSize(70);
+    entity.addComponent<xy::Text>(font).setString("127.0.0.1");
+    entity.getComponent<xy::Text>().setCharacterSize(65);
+    bounds.width -= 48.f;
+    entity.getComponent<xy::Text>().setCroppingArea(bounds);
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MenuText;
     auto& tx3 = entity.addComponent<xy::Transform>();
     tx3.setPosition(24.f, 136.f);

@@ -29,6 +29,7 @@ source distribution.
 #include "CommandIDs.hpp"
 
 #include <xyginext/ecs/components/Text.hpp>
+#include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/systems/CommandSystem.hpp>
 
 #include <SFML/Window/Event.hpp>
@@ -53,7 +54,8 @@ void TextboxDirector::handleEvent(const sf::Event& evt)
         cmd.targetFlags = CommandID::MenuText;
         cmd.action = [&](xy::Entity entity, float)
         {
-            entity.getComponent<xy::Text>().setString(m_sharedData.remoteIP);
+            auto& text = entity.getComponent<xy::Text>();
+            text.setString(m_sharedData.remoteIP);
         };
         sendCommand(cmd);
     };
