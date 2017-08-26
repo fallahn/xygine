@@ -127,6 +127,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MenuState.cpp" />
     <ClCompile Include="src\Server.cpp" />
+    <ClCompile Include="src\TextboxDirector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ActorSystem.hpp" />
@@ -137,7 +138,9 @@
     <ClInclude Include="src\MenuState.hpp" />
     <ClInclude Include="src\PacketIDs.hpp" />
     <ClInclude Include="src\Server.hpp" />
+    <ClInclude Include="src\SharedStateData.hpp" />
     <ClInclude Include="src\StateIDs.hpp" />
+    <ClInclude Include="src\TextboxDirector.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

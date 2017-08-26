@@ -35,8 +35,15 @@ source distribution.
 
 #include <SFML/Window/Event.hpp>
 
-
 using namespace xy;
+
+namespace
+{
+    sf::Vector2f toWorldCoords(sf::Int32 x, sf::Int32 y)
+    {
+        return App::getRenderWindow().mapPixelToCoords({ x, y });
+    }
+}
 
 UISystem::UISystem(MessageBus& mb)
     : System    (mb, typeid(UISystem))
@@ -53,65 +60,44 @@ void UISystem::handleEvent(const sf::Event& evt)
     switch (evt.type)
     {
     default: break;
-    //case SDL_MOUSEMOTION:
-    //    m_eventPosition = toWorldCoords(evt.motion.x, evt.motion.y);
-    //    m_movementDelta = m_eventPosition - m_prevMousePosition;
-    //    m_prevMousePosition = m_eventPosition;
-    //    break;
-    //case SDL_MOUSEBUTTONDOWN:
-    //    m_eventPosition = toWorldCoords(evt.button.x, evt.button.y);
-    //    m_previousEventPosition = m_eventPosition;
-    //    switch (evt.button.button)
-    //    {
-    //    default: break;
-    //    case SDL_BUTTON_LEFT:
-    //        m_downEvents.push_back(LeftMouse);
-    //        break;
-    //    case SDL_BUTTON_RIGHT:
-    //        m_downEvents.push_back(RightMouse);
-    //        break;
-    //    case SDL_BUTTON_MIDDLE:
-    //        m_downEvents.push_back(MiddleMouse);
-    //        break;
-    //    }
-    //    break;
-    //case SDL_MOUSEBUTTONUP:
-    //    m_eventPosition = toWorldCoords(evt.button.x, evt.button.y);
-    //    switch (evt.button.button)
-    //    {
-    //    default: break;
-    //    case SDL_BUTTON_LEFT:
-    //        m_upEvents.push_back(Flags::LeftMouse);
-    //        break;
-    //    case SDL_BUTTON_RIGHT:
-    //        m_upEvents.push_back(Flags::RightMouse);
-    //        break;
-    //    case SDL_BUTTON_MIDDLE:
-    //        m_upEvents.push_back(Flags::MiddleMouse);
-    //        break;
-    //    }
-    //    break;
-    //    /*
-    //    NOTE!!!
-    //    SDL registers both touch AND mouse events for a single touch
-    //    on Android. Be warned this will execute the same callback twice!!
-    //    */
-
-    //case SDL_FINGERMOTION:
-    //    m_eventPosition = toWorldCoords(evt.tfinger.x, evt.tfinger.y);
-    //    //TODO check finger IDs for gestures etc
-    //    break;
-    //case SDL_FINGERDOWN:
-    //    m_eventPosition = toWorldCoords(evt.tfinger.x, evt.tfinger.y);
-    //    m_previousEventPosition = m_eventPosition;
-    //    //TODO check finger IDs for gestures etc
-    //    m_downEvents.push_back(Finger);
-    //    //Logger::log("Touch pos: " + std::to_string(m_eventPosition.x) + ", " + std::to_string(m_eventPosition.y), Logger::Type::Info);
-    //    break;
-    //case SDL_FINGERUP:
-    //    m_eventPosition = toWorldCoords(evt.tfinger.x, evt.tfinger.y);
-    //    m_upEvents.push_back(Finger);
-    //    break;
+    case sf::Event::MouseMoved:
+        m_eventPosition = toWorldCoords(evt.mouseMove.x, evt.mouseMove.y);
+        m_movementDelta = m_eventPosition - m_prevMousePosition;
+        m_prevMousePosition = m_eventPosition;
+        break;
+    case sf::Event::MouseButtonPressed:
+        m_eventPosition = toWorldCoords(evt.mouseButton.x, evt.mouseButton.y);
+        m_previousEventPosition = m_eventPosition;
+        switch (evt.mouseButton.button)
+        {
+        default: break;
+        case sf::Mouse::Left:
+            m_downEvents.push_back(LeftMouse);
+            break;
+        case sf::Mouse::Right:
+            m_downEvents.push_back(RightMouse);
+            break;
+        case sf::Mouse::Middle:
+            m_downEvents.push_back(MiddleMouse);
+            break;
+        }
+        break;
+    case sf::Event::MouseButtonReleased:
+        m_eventPosition = toWorldCoords(evt.mouseButton.x, evt.mouseButton.y);
+        switch (evt.mouseButton.button)
+        {
+        default: break;
+        case sf::Mouse::Left:
+            m_upEvents.push_back(Flags::LeftMouse);
+            break;
+        case sf::Mouse::Right:
+            m_upEvents.push_back(Flags::RightMouse);
+            break;
+        case sf::Mouse::Middle:
+            m_upEvents.push_back(Flags::MiddleMouse);
+            break;
+        }
+        break;
     }
 }
 
@@ -168,15 +154,7 @@ void UISystem::process(float dt)
 
 void UISystem::handleMessage(const Message& msg)
 {
-    //if (msg.id == Message::WindowMessage)
-    //{
-    //    const auto& data = msg.getData<Message::WindowEvent>();
-    //    if (data.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-    //    {
-    //        m_windowSize.x = data.data0;
-    //        m_windowSize.y = data.data1;
-    //    }
-    //}
+
 }
 
 sf::Uint32 UISystem::addCallback(const ButtonCallback& cb)

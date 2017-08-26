@@ -36,11 +36,12 @@ source distribution.
 
 #include "StateIDs.hpp"
 #include "Server.hpp"
+#include "SharedStateData.hpp"
 
 class GameState final : public xy::State
 {
 public:
-    GameState(xy::StateStack&, xy::State::Context);
+    GameState(xy::StateStack&, xy::State::Context, SharedStateData&);
 
     xy::StateID stateID() const override { return StateID::Game; }
 

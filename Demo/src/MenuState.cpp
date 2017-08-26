@@ -27,6 +27,8 @@ source distribution.
 
 #include "MenuState.hpp"
 #include "CommandIDs.hpp"
+#include "StateIDs.hpp"
+#include "TextboxDirector.hpp"
 
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -39,9 +41,10 @@ source distribution.
 #include <xyginext/ecs/systems/TextRenderer.hpp>
 #include <xyginext/ecs/systems/UISystem.hpp>
 
-MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx)
+MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
     : xy::State(stack, ctx),
-    m_scene(ctx.appInstance.getMessageBus())
+    m_scene             (ctx.appInstance.getMessageBus()),
+    m_sharedStateData   (sharedData)
 {
     launchLoadingScreen();
     createMenu();
@@ -81,6 +84,7 @@ void MenuState::createMenu()
     m_scene.addSystem<xy::UISystem>(mb);
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
+    m_scene.addDirector<TextboxDirector>(m_sharedStateData);
 
     //host text
     auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");
@@ -102,6 +106,18 @@ void MenuState::createMenu()
     entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
     entity.getComponent<xy::Transform>().move(0.f, -128.f);
     tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
+    bounds = entity.getComponent<xy::Sprite>().getLocalBounds(); //these have been updated by setTextureRect
+    entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] = 
+        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity entity, sf::Uint64 flags)
+    {
+        if (flags & xy::UISystem::LeftMouse)
+        {
+            m_sharedStateData.hostState = SharedStateData::Host;
+            requestStackClear();
+            requestStackPush(StateID::Game);
+        }
+    });
 
     //join text
     entity = m_scene.createEntity();
@@ -129,5 +145,15 @@ void MenuState::createMenu()
     entity.getComponent<xy::Transform>().move(0.f, 64.f);
     tx2.setPosition(entity.getComponent<xy::Transform>().getOrigin());
     tx2.move(0.f, -64.f);
-
+    entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
+        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity entity, sf::Uint64 flags)
+    {
+        if (flags & xy::UISystem::LeftMouse)
+        {
+            m_sharedStateData.hostState = SharedStateData::Client;
+            requestStackClear();
+            requestStackPush(StateID::Game);
+        }
+    });
 }

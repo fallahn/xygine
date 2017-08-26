@@ -25,36 +25,19 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_MENU_STATE_HPP_
-#define DEMO_GAME_MENU_STATE_HPP_
+#ifndef DEMO_GAME_SHARED_STATE_DATA_HPP_
+#define DEMO_GAME_SHARED_STATE_DATA_HPP_
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+#include <string>
 
-#include "StateIDs.hpp"
-#include "SharedStateData.hpp"
-
-class MenuState final : public xy::State
+struct SharedStateData
 {
-public:
-    MenuState(xy::StateStack&, xy::State::Context, SharedStateData&);
-
-    xy::StateID stateID() const override { return StateID::MainMenu; }
-
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
-
-private:
-    xy::Scene m_scene;
-    xy::FontResource m_fontResource;
-    xy::TextureResource m_textureResource;
-
-    SharedStateData& m_sharedStateData;
-
-    void createMenu();
+    enum
+    {
+        Host,
+        Client
+    }hostState = Client;
+    std::string remoteIP = "127.000.000.001";
 };
 
-#endif //DEMO_GAME_MENU_STATE_HPP_
+#endif //DEMO_GAME_SHARED_STATE_DATA_HPP_

@@ -31,6 +31,11 @@ source distribution.
 
 #include <SFML/Window/Event.hpp>
 
+namespace
+{
+    SharedStateData sharedData;
+}
+
 Game::Game()
     : xy::App   (/*sf::ContextSettings(0, 0, 0, 3, 2, sf::ContextSettings::Core)*/),
     m_stateStack({ getRenderWindow(), *this })
@@ -86,6 +91,6 @@ void Game::finalise()
 
 void Game::registerStates()
 {
-    m_stateStack.registerState<GameState>(StateID::Game);
-    m_stateStack.registerState<MenuState>(StateID::MainMenu);
+    m_stateStack.registerState<GameState>(StateID::Game, sharedData);
+    m_stateStack.registerState<MenuState>(StateID::MainMenu, sharedData);
 }

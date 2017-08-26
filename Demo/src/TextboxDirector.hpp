@@ -25,36 +25,26 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_MENU_STATE_HPP_
-#define DEMO_GAME_MENU_STATE_HPP_
+#ifndef DEMO_GAME_INPUT_DIRECTOR_HPP_
+#define DEMO_GAME_INPUT_DIRECTOR_HPP_
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+#include <xyginext/ecs/Director.hpp>
 
-#include "StateIDs.hpp"
 #include "SharedStateData.hpp"
 
-class MenuState final : public xy::State
+class TextboxDirector final : public xy::Director
 {
 public:
-    MenuState(xy::StateStack&, xy::State::Context, SharedStateData&);
+    explicit TextboxDirector(SharedStateData&);
 
-    xy::StateID stateID() const override { return StateID::MainMenu; }
+    void handleMessage(const xy::Message&) override {}
 
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+    void handleEvent(const sf::Event&) override;
+
+    void process(float) override;
 
 private:
-    xy::Scene m_scene;
-    xy::FontResource m_fontResource;
-    xy::TextureResource m_textureResource;
-
-    SharedStateData& m_sharedStateData;
-
-    void createMenu();
+    SharedStateData& m_sharedData;
 };
 
-#endif //DEMO_GAME_MENU_STATE_HPP_
+#endif //DEMO_GAME_INPUT_DIRECTOR_HPP_

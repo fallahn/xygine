@@ -56,14 +56,22 @@ namespace
     };
 }
 
-GameState::GameState(xy::StateStack& stack, xy::State::Context ctx)
+GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
     : xy::State (stack, ctx),
     m_scene     (ctx.appInstance.getMessageBus())
 {
     launchLoadingScreen();
     loadAssets();
-    m_server.start();
     m_client.create(2);
+    if (sharedData.hostState == SharedStateData::Host)
+    {
+        m_server.start();
+        m_client.connect("localhost", 40003);
+    }
+    else
+    {
+        m_client.connect(sharedData.remoteIP, 40003); //TODO use remote IP
+    }
     quitLoadingScreen();
 }
 
@@ -78,10 +86,10 @@ bool GameState::handleEvent(const sf::Event& evt)
         {
         default: break;
         case sf::Keyboard::A:
-            if (m_server.ready())
+            /*if (m_server.ready())
             {
                 m_client.connect("localhost", 40003);
-            }
+            }*/
             break;
         case sf::Keyboard::S:
             m_client.disconnect();
