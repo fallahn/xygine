@@ -48,12 +48,18 @@ namespace
 }
 
 GameServer::GameServer()
-    : m_ready   (false),
-    m_running   (false),
-    m_thread    (&GameServer::update, this),
-    m_scene     (m_messageBus)
+    : m_ready       (false),
+    m_running       (false),
+    m_thread        (&GameServer::update, this),
+    m_scene         (m_messageBus)
 {
+    m_clients[0].actor.type = ActorID::PlayerOne;
+    m_clients[0].spawnX = 20.f;
+    m_clients[0].spawnY = 1016.f;
 
+    m_clients[1].actor.type = ActorID::PlayerTwo;
+    m_clients[1].spawnX = 920.f;
+    m_clients[1].spawnY = 1016.f;
 }
 
 GameServer::~GameServer()
@@ -153,6 +159,8 @@ void GameServer::handleDisconnect(const xy::NetEvent& evt)
     LOG("Client dropped from server", xy::Logger::Type::Info);
 
     //TODO broadcast to clients
+
+    //TODO update the client array
 }
 
 void GameServer::handlePacket(const xy::NetEvent& evt)
@@ -163,6 +171,19 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         //if client loaded send initial positions
     case PacketID::ClientReady:
     {
+        std::size_t playerNumber = 0;
+        if (m_clients[0].actor.id != ActorID::None)
+        {
+            playerNumber = 1;
+        }
+        //add the player actor to the scene
+
+        //send the client info
+        m_clients[playerNumber].actor.id = -1; //TODO get entity ID
+        m_clients[playerNumber].peerID = evt.peer.getID();
+        m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber], xy::NetFlag::Reliable, 1);
+
+        //send initial position of existing actors
         const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
         for (const auto& actor : actors)
         {

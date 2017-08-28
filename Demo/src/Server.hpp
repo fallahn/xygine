@@ -37,6 +37,7 @@ source distribution.
 #include <SFML/System/Thread.hpp>
 
 #include <atomic>
+#include <array>
 
 class GameServer final
 {
@@ -74,6 +75,8 @@ private:
 
     void initScene();
     void loadMap();
+
+    std::array<ClientData, 2u> m_clients;
 };
 
 #endif //GAME_DEMO_SERVER_HPP_

@@ -33,11 +33,12 @@ namespace PacketID
     enum
     {
         MapData = 0,
+        ClientData, //this has been assigned by the server to the client
         ActorAbsolute, //applied to actors immediately rather than interpolated
         ActorUpdate, //interpolated position
         ActorEvent, //spawned, died, fire weapon etc
-        ClientReady,
-        ClientInput,
+        ClientReady, //notify the server we're connected, loaded and ready
+        ClientInput, //input from the client
         Count
     };
 }

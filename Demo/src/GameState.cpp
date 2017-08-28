@@ -44,6 +44,7 @@ source distribution.
 #include <xyginext/ecs/systems/InterpolationSystem.hpp>
 
 #include <xyginext/network/NetData.hpp>
+#include <xyginext/util/Random.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -141,6 +142,7 @@ void GameState::loadAssets()
     
     //preload textures
     m_textureResource.get("assets/images/bubble.png");
+    m_textureResource.get("assets/images/target.png");
 }
 
 void GameState::loadScene(const MapData& data)
@@ -151,6 +153,13 @@ void GameState::loadScene(const MapData& data)
         entity.addComponent<xy::Transform>();
         entity.addComponent<Actor>() = data.actors[i];
         entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/bubble.png"));
+        auto bounds = entity.getComponent<xy::Sprite>().getLocalBounds();
+        bounds.width /= 2.f;
+        if (xy::Util::Random::value(0, 1) == 1)
+        {
+            bounds.left += bounds.width;
+        }
+        entity.getComponent<xy::Sprite>().setTextureRect(bounds);
         entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
@@ -207,6 +216,19 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
         //send ready signal
         m_client.sendPacket(PacketID::ClientReady, 0, xy::NetFlag::Reliable, 1);
+    }
+        break;
+    case PacketID::ClientData:
+    {
+        ClientData data = evt.packet.as<ClientData>();
+        if (data.peerID == m_client.getPeer().getID())
+        {
+            //this is us, stash the info
+        }
+        else
+        {
+            //someone joined add their actor to the scene
+        }
     }
         break;
     }

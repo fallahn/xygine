@@ -34,6 +34,7 @@ namespace ActorID
 {
     enum
     {
+        None = -1,
         PlayerOne,
         PlayerTwo,
         NPC0, NPC1,
@@ -64,6 +65,16 @@ struct MapData final
     char mapName[MaxChars]{};
     Actor actors[MaxActors]{};
     sf::Uint8 actorCount = 0;
+};
+
+//the actor ID, spawn position and Player number
+//of a client, as assigned by the server
+struct ClientData final
+{
+    Actor actor;
+    float spawnX = 0.f;
+    float spawnY = 0.f;
+    sf::Uint32 peerID = 0;
 };
 
 //actor and its position
