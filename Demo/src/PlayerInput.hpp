@@ -28,13 +28,14 @@ source distribution.
 #ifndef DEMO_PLAYER_INPUT_HPP_
 #define DEMO_PLAYER_INPUT_HPP_
 
+#include <xyginext/ecs/Entity.hpp>
+
 #include <SFML/Config.hpp>
 #include <SFML/System/Clock.hpp>
 
 namespace xy
 {
     class NetClient;
-    class Entity;
 }
 
 namespace sf
@@ -54,7 +55,7 @@ public:
     void handleEvent(const sf::Event&);
     void update();
 
-    void setPlayerEntity(xy::Entity&);
+    void setPlayerEntity(xy::Entity);
     xy::Entity getPlayerEntity() const;
 
 private:
@@ -64,7 +65,7 @@ private:
     sf::Uint16 m_currentInput;
     sf::Clock m_clientTimer;
 
-    xy::Entity* m_playerEntity;
+    xy::Entity m_playerEntity;
 };
 
 #endif //DEMO_PLAYER_INPUT_HPP_

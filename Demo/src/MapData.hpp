@@ -87,4 +87,25 @@ struct ActorState final
     sf::Int32 timestamp = 0;
 };
 
+//update to the server from the client's input
+struct InputUpdate final
+{
+    sf::Uint16 input = 0; //input mask
+    sf::Int32 clientTime = 0; //client timestamp this input was received
+    sf::Uint8 playerNumber = 0; //player one or two
+};
+
+namespace InputFlag
+{
+    enum
+    {
+        Up = 0x1,
+        Down = 0x2,
+        Left = 0x4,
+        Right = 0x8,
+        Jump = 0x10,
+        Shoot = 0x20
+    };
+}
+
 #endif //DEMO_GAME_MAP_DATA_HPP_

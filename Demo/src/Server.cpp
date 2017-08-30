@@ -29,11 +29,15 @@ source distribution.
 #include "MapData.hpp"
 #include "PacketIDs.hpp"
 #include "ActorSystem.hpp"
+#include "PlayerSystem.hpp"
+#include "CommandIDs.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
+#include <xyginext/ecs/components/CommandTarget.hpp>
 
 #include <xyginext/ecs/systems/CallbackSystem.hpp>
+#include <xyginext/ecs/systems/CommandSystem.hpp>
 
 #include <xyginext/util/Random.hpp>
 #include <xyginext/util/Vector.hpp>
@@ -45,6 +49,7 @@ source distribution.
 namespace
 {
     const float tickRate = 1.f / 25.f;
+    const float updateRate = 1.f / 60.f;
 }
 
 GameServer::GameServer()
@@ -88,7 +93,8 @@ void GameServer::stop()
 void GameServer::update()
 {
     sf::Clock clock;
-    float accumulator = 0.f;
+    float tickAccumulator = 0.f;
+    float updateAccumulator = 0.f;
 
     initScene();
     loadMap();
@@ -96,10 +102,22 @@ void GameServer::update()
 
     while (m_running)
     {
-        accumulator += clock.restart().asSeconds();
-        while (accumulator > tickRate)
+        const float dt = clock.restart().asSeconds();
+        tickAccumulator += dt;
+        updateAccumulator += dt;
+
+        while (updateAccumulator > updateRate)
         {
-            accumulator -= tickRate;
+            updateAccumulator -= updateRate;
+
+            //update scene logic.
+            m_scene.update(updateRate);
+        }
+
+        //network updates are less frequent than logic updates
+        while (tickAccumulator > tickRate)
+        {
+            tickAccumulator -= tickRate;
 
             xy::NetEvent evt;
             while (m_host.pollEvent(evt))
@@ -118,9 +136,6 @@ void GameServer::update()
                 default: break;
                 }
             }
-
-            //update scene logic.
-            m_scene.update(tickRate);
 
             //broadcast scene state
             const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
@@ -200,14 +215,35 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         }
     }
         break;
-        //TODO handle client inputs
+    case PacketID::ClientInput:
+
+    {
+        auto ip = evt.packet.as<InputUpdate>();
+        xy::Command cmd;
+        cmd.targetFlags = (ip.playerNumber == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
+        cmd.action = [ip](xy::Entity entity, float)
+        {
+            auto& player = entity.getComponent<Player>();
+
+            player.input.mask = ip.input;
+            player.input.timestamp =ip.clientTime;
+
+            //update player input history
+            player.history[player.currentInput] = player.input;
+            player.currentInput = (player.currentInput + 1) % player.history.size();
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
+        break;
     }
 }
 
 void GameServer::initScene()
 {
     m_scene.addSystem<ActorSystem>(m_messageBus);
+    m_scene.addSystem<PlayerSystem>(m_messageBus);
     m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
+    m_scene.addSystem<xy::CommandSystem>(m_messageBus);
 }
 
 void GameServer::loadMap()
@@ -279,7 +315,9 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     m_clients[player].actor = entity.getComponent<Actor>();
     entity.addComponent<xy::Transform>().setPosition(m_clients[player].spawnX, m_clients[player].spawnY);
 
-    //TODO add client controller
+    //add client controller
+    entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);
+    entity.addComponent<xy::CommandTarget>().ID = (player == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
 
     return entity.getIndex();
 }

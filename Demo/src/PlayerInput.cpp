@@ -27,6 +27,8 @@ source distribution.
 
 #include "PlayerInput.hpp"
 #include "PlayerSystem.hpp"
+#include "MapData.hpp"
+#include "PacketIDs.hpp"
 
 #include <xyginext/ecs/Entity.hpp>
 #include <xyginext/network/NetClient.hpp>
@@ -37,7 +39,7 @@ source distribution.
 PlayerInput::PlayerInput(xy::NetClient& nc)
     : m_netClient   (nc),
     m_currentInput  (0),
-    m_playerEntity  (nullptr)
+    m_playerEntity  (0, 0)
 {
 
 }
@@ -46,14 +48,65 @@ PlayerInput::PlayerInput(xy::NetClient& nc)
 void PlayerInput::handleEvent(const sf::Event& evt)
 {
     //apply to input mask
+    if (evt.type == sf::Event::KeyPressed)
+    {
+        switch (evt.key.code)
+        {
+        default: break;
+        case sf::Keyboard::W:
+            m_currentInput |= InputFlag::Up;
+            break;
+        case sf::Keyboard::S:
+            m_currentInput |= InputFlag::Down;
+            break;
+        case sf::Keyboard::A:
+            m_currentInput |= InputFlag::Left;
+                break;
+        case sf::Keyboard::D:
+            m_currentInput |= InputFlag::Right;
+            break;
+        case sf::Keyboard::E:
+            m_currentInput |= InputFlag::Shoot;
+            break;
+        case sf::Keyboard::Space:
+            m_currentInput |= InputFlag::Jump;
+            break;
+        }
+
+    }
+    else if (evt.type == sf::Event::KeyReleased)
+    {
+        switch (evt.key.code)
+        {
+        default: break;
+        case sf::Keyboard::W:
+            m_currentInput &= ~InputFlag::Up;
+            break;
+        case sf::Keyboard::S:
+            m_currentInput &= ~InputFlag::Down;
+            break;
+        case sf::Keyboard::A:
+            m_currentInput &= ~InputFlag::Left;
+            break;
+        case sf::Keyboard::D:
+            m_currentInput &= ~InputFlag::Right;
+            break;
+        case sf::Keyboard::E:
+            m_currentInput &= ~InputFlag::Shoot;
+            break;
+        case sf::Keyboard::Space:
+            m_currentInput &= ~InputFlag::Jump;
+            break;
+        }
+    }
 }
 
 void PlayerInput::update()
 {
-    if (!m_playerEntity) return;
+    if (m_playerEntity.getIndex() == 0) return;
 
     //set local player input
-    auto& player = m_playerEntity->getComponent<Player>();
+    auto& player = m_playerEntity.getComponent<Player>();
     player.input.mask = m_currentInput;
     player.input.timestamp = m_clientTimer.getElapsedTime().asMilliseconds();
 
@@ -62,15 +115,21 @@ void PlayerInput::update()
     player.currentInput = (player.currentInput + 1) % player.history.size();
 
     //send input to server
+    InputUpdate iu;
+    iu.clientTime = player.input.timestamp;
+    iu.input = player.input.mask;
+    iu.playerNumber = player.playerNumber;
+
+    m_netClient.sendPacket<InputUpdate>(PacketID::ClientInput, iu, xy::NetFlag::Unreliable, 0);
 }
 
-void PlayerInput::setPlayerEntity(xy::Entity& entity)
+void PlayerInput::setPlayerEntity(xy::Entity entity)
 {
-    m_playerEntity = &entity;
+    m_playerEntity = entity;
     m_clientTimer.restart();
 }
 
 xy::Entity PlayerInput::getPlayerEntity() const
 {
-    return *m_playerEntity;
+    return m_playerEntity;
 }

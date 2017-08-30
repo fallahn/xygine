@@ -89,16 +89,10 @@ bool GameState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         default: break;
-        case sf::Keyboard::A:
-            /*if (m_server.ready())
-            {
-                m_client.connect("localhost", 40003);
-            }*/
-            break;
-        case sf::Keyboard::S:
+        case sf::Keyboard::Insert:
             m_client.disconnect();
             break;
-        case sf::Keyboard::D:
+        case sf::Keyboard::Home:
             m_server.stop();
             break;
         }
@@ -202,15 +196,18 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         cmd.targetFlags = CommandID::NetActor;
         cmd.action = [state, this](xy::Entity entity, float)
         {
-            if (entity.getComponent<Actor>().id == m_clientData.actor.id)
+            if (entity.getComponent<Actor>().id == state.actor.id)
             {
-                //reconcile - WAIT this is going to have the server timestamp NOT the client input
-                m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.timestamp, m_playerInput.getPlayerEntity());
-            }
-            else if (entity.getComponent<Actor>().id == state.actor.id)
-            {
-                entity.getComponent<xy::NetInterpolate>().setTarget({ state.x, state.y }, state.timestamp);
-                //DPRINT("Timestamp", std::to_string(state.timestamp));
+                if (state.actor.id == m_clientData.actor.id)
+                {
+                    //reconcile - WAIT this is going to have the server timestamp NOT the client input
+                    m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.timestamp, m_playerInput.getPlayerEntity());
+                }
+                else
+                {
+                    entity.getComponent<xy::NetInterpolate>().setTarget({ state.x, state.y }, state.timestamp);
+                    //DPRINT("Timestamp", std::to_string(state.timestamp));
+                }
             }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
@@ -256,7 +253,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
             //add a local controller
             entity.addComponent<Player>().playerNumber = (data.actor.type == ActorID::PlayerOne) ? 0 : 1;
-            //m_playerInput.setPlayerEntity(entity);
+            m_playerInput.setPlayerEntity(entity);
         }
         else
         {

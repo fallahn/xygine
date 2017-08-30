@@ -33,7 +33,9 @@ namespace CommandID
     enum
     {
         NetActor = 0x1,
-        MenuText = 0x2
+        MenuText = 0x2,
+        PlayerOne = 0x4,
+        PlayerTwo = 0x8
     };
 }
 

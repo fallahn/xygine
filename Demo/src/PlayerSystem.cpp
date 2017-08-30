@@ -26,8 +26,16 @@ source distribution.
 *********************************************************************/
 
 #include "PlayerSystem.hpp"
+#include "MapData.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/util/Vector.hpp>
+#include <xyginext/core/App.hpp>
+
+namespace
+{
+    const float speed = 1600.f;
+}
 
 PlayerSystem::PlayerSystem(xy::MessageBus& mb)
     : xy::System(mb, typeid(PlayerSystem))
@@ -39,10 +47,44 @@ PlayerSystem::PlayerSystem(xy::MessageBus& mb)
 //public
 void PlayerSystem::process(float dt)
 {
+    auto& entities = getEntities();
+    for (auto& entity : entities)
+    {
+        auto& player = entity.getComponent<Player>();
+        auto& tx = entity.getComponent<xy::Transform>();
 
+        sf::Vector2f motion;
+        if (player.input.mask & InputFlag::Up)
+        {
+            motion.y = -1.f;
+        }
+        if (player.input.mask & InputFlag::Down)
+        {
+            motion.y += 1.f;
+        }
+        if (player.input.mask & InputFlag::Left)
+        {
+            motion.x = -1.f;
+        }
+        if (player.input.mask & InputFlag::Right)
+        {
+            motion.x += 1.f;
+        }
+
+        //normalise if not along one axis
+        if (xy::Util::Vector::lengthSquared(motion) > 1)
+        {
+            motion = xy::Util::Vector::normalise(motion);
+        }
+
+        //create the delta time from timestamp input
+        auto prevInput = (player.currentInput + player.history.size() - 2) % player.history.size();
+        auto delta = player.input.timestamp - player.history[prevInput].timestamp;
+        tx.move(motion * speed * static_cast<float>(delta) / 1000.f);
+    }
 }
 
 void PlayerSystem::reconcile(float x, float y, sf::Int32 timestamp, xy::Entity player)
 {
-
+    //DPRINT("Reconcile to: ", std::to_string(x) + ", " + std::to_string(y));
 }

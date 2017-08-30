@@ -102,7 +102,7 @@ bool NetHost::start(const std::string& address, sf::Uint16 port, std::size_t max
     }
     else
     {
-        if (!enet_address_set_host(&add, address.c_str()) == 0)
+        if (enet_address_set_host(&add, address.c_str()) != 0)
         {
             Logger::log("Failed setting host listen address", Logger::Type::Error);
             return false;
