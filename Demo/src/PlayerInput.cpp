@@ -25,47 +25,52 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#include "PlayerInput.hpp"
+#include "PlayerSystem.hpp"
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
-
+#include <xyginext/ecs/entity.hpp>
 #include <xyginext/network/NetClient.hpp>
 
-#include "StateIDs.hpp"
-#include "Server.hpp"
-#include "SharedStateData.hpp"
-#include "PlayerInput.hpp"
+#include "SFML/Window/Event.hpp"
 
-class GameState final : public xy::State
+
+PlayerInput::PlayerInput(xy::NetClient& nc)
+    : m_netClient   (nc),
+    m_currentInput  (0),
+    m_playerEntity  (nullptr)
 {
-public:
-    GameState(xy::StateStack&, xy::State::Context, SharedStateData&);
 
-    xy::StateID stateID() const override { return StateID::Game; }
+}
 
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+//public
+void PlayerInput::handleEvent(const sf::Event& evt)
+{
+    //apply to input mask
+}
 
-private:
+void PlayerInput::update()
+{
+    if (!m_playerEntity) return;
 
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
+    //set local player input
+    auto& player = m_playerEntity->getComponent<Player>();
+    player.input.mask = m_currentInput;
+    player.input.timestamp = m_clientTimer.getElapsedTime().asMilliseconds();
 
-    xy::NetClient m_client;
-    GameServer m_server;
+    //update player input history
+    player.history[player.currentInput] = player.input;
+    player.currentInput = (player.currentInput + 1) % player.history.size();
 
-    ClientData m_clientData;
-    PlayerInput m_playerInput;
+    //send input to server
+}
 
-    void loadAssets();
-    void loadScene(const MapData&);
-    void handlePacket(const xy::NetEvent&);
-};
+void PlayerInput::setPlayerEntity(xy::Entity& entity)
+{
+    m_playerEntity = &entity;
+    m_clientTimer.restart();
+}
 
-#endif //DEMO_GAME_STATE_HPP_
+xy::Entity PlayerInput::getPlayerEntity() const
+{
+    return *m_playerEntity;
+}

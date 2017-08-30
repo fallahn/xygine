@@ -4,5 +4,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/GameState.cpp
   ${PROJECT_DIR}/main.cpp
   ${PROJECT_DIR}/MenuState.cpp
+  ${PROJECT_DIR}/PlayerInput.cpp
+  ${PROJECT_DIR}/PlayerSystem.cpp
   ${PROJECT_DIR}/Server.cpp
   ${PROJECT_DIR}/TextboxDirector.cpp)

@@ -76,6 +76,8 @@ private:
     void initScene();
     void loadMap();
 
+    sf::Int32 spawnPlayer(std::size_t);
+
     std::array<ClientData, 2u> m_clients;
 };
 

@@ -39,6 +39,10 @@ struct _ENetPeer;
 
 namespace xy
 {
+    /*!
+    \brief A peer represents a single, multichannel connection between
+    a client and a host.
+    */
     struct XY_EXPORT_API NetPeer final
     {
         std::string getAddress() const; //! <String containing the IPv4 address

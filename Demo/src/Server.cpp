@@ -177,9 +177,9 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
             playerNumber = 1;
         }
         //add the player actor to the scene
+        spawnPlayer(playerNumber);
 
         //send the client info
-        m_clients[playerNumber].actor.id = -1; //TODO get entity ID
         m_clients[playerNumber].peerID = evt.peer.getID();
         m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber], xy::NetFlag::Reliable, 1);
 
@@ -269,4 +269,17 @@ void GameServer::loadMap()
     }
 
     m_serverTime.restart();
+}
+
+sf::Int32 GameServer::spawnPlayer(std::size_t player)
+{
+    auto entity = m_scene.createEntity();
+    entity.addComponent<Actor>().type = (player == 0) ? ActorID::PlayerOne : ActorID::PlayerTwo;
+    entity.getComponent<Actor>().id = entity.getIndex();
+    m_clients[player].actor = entity.getComponent<Actor>();
+    entity.addComponent<xy::Transform>().setPosition(m_clients[player].spawnX, m_clients[player].spawnY);
+
+    //TODO add client controller
+
+    return entity.getIndex();
 }

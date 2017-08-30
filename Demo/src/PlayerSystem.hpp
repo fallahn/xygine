@@ -25,47 +25,39 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#ifndef DEMO_PLAYER_SYSTEM_HPP_
+#define DEMO_PLAYER_SYSTEM_HPP_
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+#include <xyginext/ecs/System.hpp>
 
-#include <xyginext/network/NetClient.hpp>
+#include <array>
 
-#include "StateIDs.hpp"
-#include "Server.hpp"
-#include "SharedStateData.hpp"
-#include "PlayerInput.hpp"
+struct Input final
+{
+    sf::Uint16 mask = 0;
+    sf::Int32 timestamp = 0;
+};
 
-class GameState final : public xy::State
+struct Player final
+{
+    Input input;
+    std::array<Input, 120u> history;
+    std::size_t currentInput = 0;
+    sf::Uint8 playerNumber = 0;
+};
+
+class PlayerSystem final : public xy::System
 {
 public:
-    GameState(xy::StateStack&, xy::State::Context, SharedStateData&);
+    explicit PlayerSystem(xy::MessageBus&);
 
-    xy::StateID stateID() const override { return StateID::Game; }
+    void process(float) override;
 
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+    void reconcile(float, float, sf::Int32, xy::Entity);
 
 private:
 
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
 
-    xy::NetClient m_client;
-    GameServer m_server;
-
-    ClientData m_clientData;
-    PlayerInput m_playerInput;
-
-    void loadAssets();
-    void loadScene(const MapData&);
-    void handlePacket(const xy::NetEvent&);
 };
 
-#endif //DEMO_GAME_STATE_HPP_
+#endif //DEMO_PLAYER_SYSTEM_HPP_

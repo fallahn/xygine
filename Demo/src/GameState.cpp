@@ -29,6 +29,7 @@ source distribution.
 #include "PacketIDs.hpp"
 #include "MapData.hpp"
 #include "CommandIDs.hpp"
+#include "PlayerSystem.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -58,8 +59,9 @@ namespace
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
-    : xy::State (stack, ctx),
-    m_scene     (ctx.appInstance.getMessageBus())
+    : xy::State     (stack, ctx),
+    m_scene         (ctx.appInstance.getMessageBus()),
+    m_playerInput   (m_client)
 {
     launchLoadingScreen();
     loadAssets();
@@ -71,7 +73,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     }
     else
     {
-        m_client.connect(sharedData.remoteIP, 40003); //TODO use remote IP
+        m_client.connect(sharedData.remoteIP, 40003);
     }
     quitLoadingScreen();
 }
@@ -79,6 +81,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 //public
 bool GameState::handleEvent(const sf::Event& evt)
 {
+    m_playerInput.handleEvent(evt);
     m_scene.forwardEvent(evt);
 
     if (evt.type == sf::Event::KeyReleased)
@@ -120,6 +123,7 @@ bool GameState::update(float dt)
         }
     }
     
+    m_playerInput.update();
     m_scene.update(dt);
     return false;
 }
@@ -135,6 +139,7 @@ void GameState::loadAssets()
 {
     auto& mb = getContext().appInstance.getMessageBus();
 
+    m_scene.addSystem<PlayerSystem>(mb);
     m_scene.addSystem<xy::InterpolationSystem>(mb);
     m_scene.addSystem<xy::CommandSystem>(mb);
     m_scene.addSystem<xy::SpriteRenderer>(mb);
@@ -195,9 +200,14 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
         xy::Command cmd;
         cmd.targetFlags = CommandID::NetActor;
-        cmd.action = [state](xy::Entity entity, float)
+        cmd.action = [state, this](xy::Entity entity, float)
         {
-            if (entity.getComponent<Actor>().id == state.actor.id)
+            if (entity.getComponent<Actor>().id == m_clientData.actor.id)
+            {
+                //reconcile - WAIT this is going to have the server timestamp NOT the client input
+                m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.timestamp, m_playerInput.getPlayerEntity());
+            }
+            else if (entity.getComponent<Actor>().id == state.actor.id)
             {
                 entity.getComponent<xy::NetInterpolate>().setTarget({ state.x, state.y }, state.timestamp);
                 //DPRINT("Timestamp", std::to_string(state.timestamp));
@@ -221,13 +231,37 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::ClientData:
     {
         ClientData data = evt.packet.as<ClientData>();
-        if (data.peerID == m_client.getPeer().getID())
+        
+        //create the local ent (all are net actors - then command decides if interp or reconcile)
+        //set sprite based on actor type (player one or two)
+        auto entity = m_scene.createEntity();
+        entity.addComponent<Actor>() = data.actor;
+        entity.addComponent<xy::Transform>().setPosition(data.spawnX, data.spawnY);
+        entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/target.png"));
+        if (data.actor.type == ActorID::PlayerOne)
         {
-            //this is us, stash the info
+            entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, 64.f, 64.f }); //TODO port the sprite sheet class
         }
         else
         {
-            //someone joined add their actor to the scene
+            entity.getComponent<xy::Sprite>().setTextureRect({ 64.f, 0.f, 64.f, 64.f });
+        }
+        entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+        entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
+
+        if (data.peerID == m_client.getPeer().getID())
+        {
+            //this is us, stash the info
+            m_clientData = data;
+
+            //add a local controller
+            entity.addComponent<Player>().playerNumber = (data.actor.type == ActorID::PlayerOne) ? 0 : 1;
+            //m_playerInput.setPlayerEntity(entity);
+        }
+        else
+        {
+            //add interp controller
+            entity.addComponent<xy::NetInterpolate>();
         }
     }
         break;

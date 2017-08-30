@@ -25,47 +25,24 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#include "PlayerSystem.hpp"
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+#include <xyginext/ecs/components/Transform.hpp>
 
-#include <xyginext/network/NetClient.hpp>
-
-#include "StateIDs.hpp"
-#include "Server.hpp"
-#include "SharedStateData.hpp"
-#include "PlayerInput.hpp"
-
-class GameState final : public xy::State
+PlayerSystem::PlayerSystem(xy::MessageBus& mb)
+    : xy::System(mb, typeid(PlayerSystem))
 {
-public:
-    GameState(xy::StateStack&, xy::State::Context, SharedStateData&);
+    requireComponent<Player>();
+    requireComponent<xy::Transform>();
+}
 
-    xy::StateID stateID() const override { return StateID::Game; }
+//public
+void PlayerSystem::process(float dt)
+{
 
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+}
 
-private:
+void PlayerSystem::reconcile(float x, float y, sf::Int32 timestamp, xy::Entity player)
+{
 
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
-
-    xy::NetClient m_client;
-    GameServer m_server;
-
-    ClientData m_clientData;
-    PlayerInput m_playerInput;
-
-    void loadAssets();
-    void loadScene(const MapData&);
-    void handlePacket(const xy::NetEvent&);
-};
-
-#endif //DEMO_GAME_STATE_HPP_
+}

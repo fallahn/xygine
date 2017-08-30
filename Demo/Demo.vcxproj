@@ -126,6 +126,8 @@
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MenuState.cpp" />
+    <ClCompile Include="src\PlayerInput.cpp" />
+    <ClCompile Include="src\PlayerSystem.cpp" />
     <ClCompile Include="src\Server.cpp" />
     <ClCompile Include="src\TextboxDirector.cpp" />
   </ItemGroup>
@@ -137,6 +139,8 @@
     <ClInclude Include="src\MapData.hpp" />
     <ClInclude Include="src\MenuState.hpp" />
     <ClInclude Include="src\PacketIDs.hpp" />
+    <ClInclude Include="src\PlayerInput.hpp" />
+    <ClInclude Include="src\PlayerSystem.hpp" />
     <ClInclude Include="src\Server.hpp" />
     <ClInclude Include="src\SharedStateData.hpp" />
     <ClInclude Include="src\StateIDs.hpp" />

@@ -25,47 +25,46 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#ifndef DEMO_PLAYER_INPUT_HPP_
+#define DEMO_PLAYER_INPUT_HPP_
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+#include <SFML/Config.hpp>
+#include <SFML/System/Clock.hpp>
 
-#include <xyginext/network/NetClient.hpp>
+namespace xy
+{
+    class NetClient;
+    class Entity;
+}
 
-#include "StateIDs.hpp"
-#include "Server.hpp"
-#include "SharedStateData.hpp"
-#include "PlayerInput.hpp"
+namespace sf
+{
+    class Event;
+}
 
-class GameState final : public xy::State
+/*!
+brief Updates the current input mask and applies it to the
+current player, along with the client timestamp.
+*/
+class PlayerInput final
 {
 public:
-    GameState(xy::StateStack&, xy::State::Context, SharedStateData&);
+    explicit PlayerInput(xy::NetClient&);
 
-    xy::StateID stateID() const override { return StateID::Game; }
+    void handleEvent(const sf::Event&);
+    void update();
 
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+    void setPlayerEntity(xy::Entity&);
+    xy::Entity getPlayerEntity() const;
 
 private:
 
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
+    xy::NetClient& m_netClient;
 
-    xy::NetClient m_client;
-    GameServer m_server;
+    sf::Uint16 m_currentInput;
+    sf::Clock m_clientTimer;
 
-    ClientData m_clientData;
-    PlayerInput m_playerInput;
-
-    void loadAssets();
-    void loadScene(const MapData&);
-    void handlePacket(const xy::NetEvent&);
+    xy::Entity* m_playerEntity;
 };
 
-#endif //DEMO_GAME_STATE_HPP_
+#endif //DEMO_PLAYER_INPUT_HPP_
