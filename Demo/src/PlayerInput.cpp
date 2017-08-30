@@ -28,7 +28,7 @@ source distribution.
 #include "PlayerInput.hpp"
 #include "PlayerSystem.hpp"
 
-#include <xyginext/ecs/entity.hpp>
+#include <xyginext/ecs/Entity.hpp>
 #include <xyginext/network/NetClient.hpp>
 
 #include "SFML/Window/Event.hpp"
