@@ -190,6 +190,8 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         if (m_clients[0].actor.id != ActorID::None)
         {
             playerNumber = 1;
+            //send existing client data
+            m_host.sendPacket(evt.peer, PacketID::ClientData, m_clients[0], xy::NetFlag::Reliable, 1);
         }
         //add the player actor to the scene
         spawnPlayer(playerNumber);

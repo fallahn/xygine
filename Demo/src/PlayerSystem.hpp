@@ -57,7 +57,7 @@ public:
 
 private:
 
-
+    sf::Vector2f parseInput(sf::Uint16);
 };
 
 #endif //DEMO_PLAYER_SYSTEM_HPP_
