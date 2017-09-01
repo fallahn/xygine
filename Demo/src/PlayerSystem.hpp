@@ -35,14 +35,17 @@ source distribution.
 struct Input final
 {
     sf::Uint16 mask = 0;
-    sf::Int32 timestamp = 0;
+    sf::Int64 timestamp = 0;
 };
+
+using History = std::array<Input, 120u>;
 
 struct Player final
 {
     Input input;
-    std::array<Input, 120u> history;
+    History history;
     std::size_t currentInput = 0;
+    std::size_t lastUpdatedInput = history.size() - 1;
     sf::Uint8 playerNumber = 0;
 };
 
@@ -53,11 +56,12 @@ public:
 
     void process(float) override;
 
-    void reconcile(float, float, sf::Int32, xy::Entity);
+    void reconcile(float, float, sf::Int64, xy::Entity);
 
 private:
 
     sf::Vector2f parseInput(sf::Uint16);
+    float getDelta(const History&, std::size_t);
 };
 
 #endif //DEMO_PLAYER_SYSTEM_HPP_

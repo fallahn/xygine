@@ -53,16 +53,19 @@ void PlayerSystem::process(float dt)
         auto& player = entity.getComponent<Player>();
         auto& tx = entity.getComponent<xy::Transform>();
 
-        auto motion = parseInput(player.input.mask);
+        //current input actually points to next empty slot.
+        std::size_t idx = (player.currentInput + player.history.size() - 1) % player.history.size();
 
-        //create the delta time from timestamp input
-        auto prevInput = (player.currentInput + player.history.size() - 2) % player.history.size();
-        auto delta = player.input.timestamp - player.history[prevInput].timestamp;
-        tx.move(motion * speed * static_cast<float>(delta) / 1000.f);
+        //parse any outstanding inputs
+        while (player.lastUpdatedInput != idx)
+        {   
+            tx.move(speed * parseInput(player.history[player.lastUpdatedInput].mask) * getDelta(player.history, player.lastUpdatedInput));
+            player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();  
+        }
     }
 }
 
-void PlayerSystem::reconcile(float x, float y, sf::Int32 timestamp, xy::Entity entity)
+void PlayerSystem::reconcile(float x, float y, sf::Int64 timestamp, xy::Entity entity)
 {
     //DPRINT("Reconcile to: ", std::to_string(x) + ", " + std::to_string(y));
 
@@ -72,24 +75,19 @@ void PlayerSystem::reconcile(float x, float y, sf::Int32 timestamp, xy::Entity e
     tx.setPosition(x, y);
 
     //find the oldest timestamp not used by server
-    auto ip = std::find_if(player.history.begin(), player.history.end(),
+    auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
         [timestamp](const Input& input)
     {
-        return (timestamp >= input.timestamp && timestamp < input.timestamp);
+        return (timestamp == input.timestamp);
     });
 
     //and reparse inputs
-    if (ip != player.history.end())
+    if (ip != player.history.rend())
     {
-        auto idx = std::distance(player.history.begin(), ip);
-        while (idx != player.currentInput)
+        auto idx = std::distance(player.history.rbegin(), ip);
+        while (idx != player.currentInput) //currentInput points to the next free slot in history
         {
-            auto motion = parseInput(player.history[idx].mask);
-
-            auto prevInput = (idx + player.history.size() - 2) % player.history.size();
-            auto delta = player.history[idx].timestamp - player.history[prevInput].timestamp;
-            tx.move(motion * speed * static_cast<float>(delta) / 1000.f);
-
+            tx.move(speed * parseInput(player.history[idx].mask) * getDelta(player.history, idx));
             idx = (idx + 1) % player.history.size();
         }
     }
@@ -123,4 +121,12 @@ sf::Vector2f PlayerSystem::parseInput(sf::Uint16 mask)
     }
 
     return motion;
+}
+
+float PlayerSystem::getDelta(const History& history, std::size_t idx)
+{
+    auto prevInput = (idx + history.size() - 1) % history.size();
+    auto delta = history[idx].timestamp - history[prevInput].timestamp;
+
+    return static_cast<float>(delta) / 1000000.f;
 }

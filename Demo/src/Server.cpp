@@ -137,6 +137,8 @@ void GameServer::update()
                 }
             }
 
+            //m_scene.update(tickRate);
+
             //broadcast scene state
             const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
             for (const auto& actor : actors)
@@ -149,7 +151,13 @@ void GameServer::update()
                 state.actor.type = actorComponent.type;
                 state.x = tx.x;
                 state.y = tx.y;
-                state.timestamp = m_serverTime.getElapsedTime().asMilliseconds();
+                state.serverTime = m_serverTime.getElapsedTime().asMilliseconds();
+
+                if (actorComponent.id == m_clients[0].actor.id)
+                {
+                    const auto& player = actor.getComponent<Player>();
+                    state.clientTime = player.input.timestamp;
+                }
 
                 m_host.broadcastPacket(PacketID::ActorUpdate, state, xy::NetFlag::Unreliable);
             }
@@ -218,20 +226,20 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
     }
         break;
     case PacketID::ClientInput:
-
-    {
+    {        
         auto ip = evt.packet.as<InputUpdate>();
         xy::Command cmd;
         cmd.targetFlags = (ip.playerNumber == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
         cmd.action = [ip](xy::Entity entity, float)
-        {
+        {            
             auto& player = entity.getComponent<Player>();
 
             player.input.mask = ip.input;
-            player.input.timestamp =ip.clientTime;
+            player.input.timestamp = ip.clientTime;
 
             //update player input history
-            player.history[player.currentInput] = player.input;
+            player.history[player.currentInput].mask = ip.input;
+            player.history[player.currentInput].timestamp = ip.clientTime;
             player.currentInput = (player.currentInput + 1) % player.history.size();
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);

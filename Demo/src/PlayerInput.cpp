@@ -32,6 +32,7 @@ source distribution.
 
 #include <xyginext/ecs/Entity.hpp>
 #include <xyginext/network/NetClient.hpp>
+#include <xyginext/core/App.hpp>
 
 #include "SFML/Window/Event.hpp"
 
@@ -107,20 +108,23 @@ void PlayerInput::update()
 
     //set local player input
     auto& player = m_playerEntity.getComponent<Player>();
-    player.input.mask = m_currentInput;
-    player.input.timestamp = m_clientTimer.getElapsedTime().asMilliseconds();
+
+    Input input;
+    input.mask = m_currentInput;
+    input.timestamp = m_clientTimer.getElapsedTime().asMicroseconds();
+    player.input = input;
 
     //update player input history
-    player.history[player.currentInput] = player.input;
+    player.history[player.currentInput] = input;
     player.currentInput = (player.currentInput + 1) % player.history.size();
 
     //send input to server
     InputUpdate iu;
-    iu.clientTime = player.input.timestamp;
-    iu.input = player.input.mask;
+    iu.clientTime = input.timestamp;
+    iu.input = input.mask;
     iu.playerNumber = player.playerNumber;
 
-    m_netClient.sendPacket<InputUpdate>(PacketID::ClientInput, iu, xy::NetFlag::Unreliable, 0);
+    m_netClient.sendPacket<InputUpdate>(PacketID::ClientInput, iu, xy::NetFlag::Reliable, 0);
 }
 
 void PlayerInput::setPlayerEntity(xy::Entity entity)

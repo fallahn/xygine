@@ -48,6 +48,7 @@ source distribution.
 #include <xyginext/util/Random.hpp>
 
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 
 namespace
 {
@@ -56,6 +57,8 @@ namespace
         int a = 2;
         float z = 54.f;
     };
+
+    sf::CircleShape testCircle;
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
@@ -76,6 +79,9 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
         m_client.connect(sharedData.remoteIP, 40003);
     }
     quitLoadingScreen();
+
+    testCircle.setRadius(10.f);
+    testCircle.setOrigin(10.f, 10.f);
 }
 
 //public
@@ -125,6 +131,7 @@ bool GameState::update(float dt)
 void GameState::draw()
 {
     auto& rw = getContext().renderWindow;
+    rw.draw(testCircle);
     rw.draw(m_scene);
 }
 
@@ -191,6 +198,12 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         //do actor interpolation
     {
         const auto& state = evt.packet.as<ActorState>();
+        testCircle.setPosition(state.x, state.y);
+        if (state.actor.id == m_clientData.actor.id)
+        {
+            //reconcile
+            //m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.clientTime, m_playerInput.getPlayerEntity());
+        }
 
         xy::Command cmd;
         cmd.targetFlags = CommandID::NetActor;
@@ -200,12 +213,12 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             {
                 if (state.actor.id == m_clientData.actor.id)
                 {
-                    //reconcile - WAIT this is going to have the server timestamp NOT the client input
-                    m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.timestamp, m_playerInput.getPlayerEntity());
+                    //reconcile
+                    //m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.clientTime, m_playerInput.getPlayerEntity());
                 }
                 else
                 {
-                    entity.getComponent<xy::NetInterpolate>().setTarget({ state.x, state.y }, state.timestamp);
+                    entity.getComponent<xy::NetInterpolate>().setTarget({ state.x, state.y }, state.serverTime);
                     //DPRINT("Timestamp", std::to_string(state.timestamp));
                 }
             }

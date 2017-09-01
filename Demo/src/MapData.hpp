@@ -84,14 +84,15 @@ struct ActorState final
     float x = 0.f;
     float y = 0.f;
     Actor actor;
-    sf::Int32 timestamp = 0;
+    sf::Int32 serverTime = 0;
+    sf::Int64 clientTime = 0;
 };
 
 //update to the server from the client's input
 struct InputUpdate final
 {
     sf::Uint16 input = 0; //input mask
-    sf::Int32 clientTime = 0; //client timestamp this input was received
+    sf::Int64 clientTime = 0; //client timestamp this input was received
     sf::Uint8 playerNumber = 0; //player one or two
 };
 
