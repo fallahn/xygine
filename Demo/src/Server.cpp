@@ -153,6 +153,7 @@ void GameServer::update()
                 state.y = tx.y;
                 state.serverTime = m_serverTime.getElapsedTime().asMilliseconds();
 
+                //TODO make sure all clients are updated
                 if (actorComponent.id == m_clients[0].actor.id)
                 {
                     const auto& player = actor.getComponent<Player>();

@@ -211,12 +211,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         {
             if (entity.getComponent<Actor>().id == state.actor.id)
             {
-                if (state.actor.id == m_clientData.actor.id)
-                {
-                    //reconcile
-                    //m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.clientTime, m_playerInput.getPlayerEntity());
-                }
-                else
+                if (state.actor.id != m_clientData.actor.id)
                 {
                     entity.getComponent<xy::NetInterpolate>().setTarget({ state.x, state.y }, state.serverTime);
                     //DPRINT("Timestamp", std::to_string(state.timestamp));
