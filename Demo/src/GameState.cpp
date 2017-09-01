@@ -245,11 +245,11 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/target.png"));
         if (data.actor.type == ActorID::PlayerOne)
         {
-            entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, 64.f, 64.f }); //TODO port the sprite sheet class
+            entity.getComponent<xy::Sprite>().setTextureRect({ 64.f, 0.f, 64.f, 64.f }); //TODO port the sprite sheet class
         }
         else
         {
-            entity.getComponent<xy::Sprite>().setTextureRect({ 64.f, 0.f, 64.f, 64.f });
+            entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, 64.f, 64.f });
         }
         entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;

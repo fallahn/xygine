@@ -54,16 +54,16 @@ void SpriteRenderer::process(float dt)
             //update vert positions
             const auto subRect = sprite.m_textureRect;
             auto& verts = sprite.m_vertices;
-            verts[0].position = { subRect.left, subRect.top };
-            verts[1].position = { subRect.left + subRect.width, subRect.top };
-            verts[2].position = { subRect.left + subRect.width, subRect.top + subRect.height };
-            verts[3].position = { subRect.left, subRect.top + subRect.height };
+            verts[0].position = { 0.f, 0.f };
+            verts[1].position = { subRect.width, 0.f };
+            verts[2].position = { subRect.width, subRect.height };
+            verts[3].position = { 0.f, subRect.height };
 
             //update vert coords
-            for (auto& v : verts)
-            {
-                v.texCoords = v.position;
-            }
+            verts[0].texCoords = { subRect.left, subRect.top };
+            verts[1].texCoords = { subRect.left + subRect.width, subRect.top };
+            verts[2].texCoords = { subRect.left + subRect.width, subRect.top + subRect.height };
+            verts[3].texCoords = { subRect.left, subRect.top + subRect.height };
 
             sprite.m_dirty = false;
         }

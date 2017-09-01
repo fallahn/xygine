@@ -157,7 +157,7 @@ void GameServer::update()
                 if (actorComponent.id == m_clients[0].actor.id)
                 {
                     const auto& player = actor.getComponent<Player>();
-                    state.clientTime = player.input.timestamp;
+                    state.clientTime = player.history[player.lastUpdatedInput].timestamp;
                 }
 
                 m_host.broadcastPacket(PacketID::ActorUpdate, state, xy::NetFlag::Unreliable);
@@ -234,9 +234,6 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         cmd.action = [ip](xy::Entity entity, float)
         {            
             auto& player = entity.getComponent<Player>();
-
-            player.input.mask = ip.input;
-            player.input.timestamp = ip.clientTime;
 
             //update player input history
             player.history[player.currentInput].mask = ip.input;

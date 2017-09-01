@@ -112,7 +112,6 @@ void PlayerInput::update()
     Input input;
     input.mask = m_currentInput;
     input.timestamp = m_clientTimer.getElapsedTime().asMicroseconds();
-    player.input = input;
 
     //update player input history
     player.history[player.currentInput] = input;

@@ -42,7 +42,6 @@ using History = std::array<Input, 120u>;
 
 struct Player final
 {
-    Input input;
     History history;
     std::size_t currentInput = 0;
     std::size_t lastUpdatedInput = history.size() - 1;

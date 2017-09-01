@@ -59,7 +59,6 @@ void PlayerSystem::process(float dt)
         //parse any outstanding inputs
         while (player.lastUpdatedInput != idx)
         {   
-            player.input = player.history[idx];
             tx.move(speed * parseInput(player.history[player.lastUpdatedInput].mask) * getDelta(player.history, player.lastUpdatedInput));
             player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();  
         }
