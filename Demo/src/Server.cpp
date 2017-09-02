@@ -58,13 +58,13 @@ GameServer::GameServer()
     m_thread        (&GameServer::update, this),
     m_scene         (m_messageBus)
 {
-    m_clients[0].actor.type = ActorID::PlayerOne;
-    m_clients[0].spawnX = 20.f;
-    m_clients[0].spawnY = 1016.f;
+    m_clients[0].data.actor.type = ActorID::PlayerOne;
+    m_clients[0].data.spawnX = 20.f;
+    m_clients[0].data.spawnY = 1016.f;
 
-    m_clients[1].actor.type = ActorID::PlayerTwo;
-    m_clients[1].spawnX = 920.f;
-    m_clients[1].spawnY = 1016.f;
+    m_clients[1].data.actor.type = ActorID::PlayerTwo;
+    m_clients[1].data.spawnX = 920.f;
+    m_clients[1].data.spawnY = 1016.f;
 }
 
 GameServer::~GameServer()
@@ -155,23 +155,23 @@ void GameServer::update()
                 m_host.broadcastPacket(PacketID::ActorUpdate, state, xy::NetFlag::Unreliable);
             }
 
-            //send client reconciliation - TODO ideally we only want to send this to the interested peer
+            //send client reconciliation
             for (const auto& c : m_clients)
             {
-                if (c.actor.id > -1)
+                if (c.data.actor.id > -1)
                 {
-                    auto ent = m_scene.getEntity(c.actor.id);
+                    auto ent = m_scene.getEntity(c.data.actor.id);
                     const auto& tx = ent.getComponent<xy::Transform>().getPosition();
                     const auto& player = ent.getComponent<Player>();
 
                     ActorState state;
-                    state.actor.id = c.actor.id;
-                    state.actor.type = c.actor.type;
+                    state.actor.id = c.data.actor.id;
+                    state.actor.type = c.data.actor.type;
                     state.x = tx.x;
                     state.y = tx.y;
                     state.clientTime = player.history[player.lastUpdatedInput].timestamp;
 
-                    m_host.broadcastPacket(PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
+                    m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
                 }
             }
         }
@@ -193,10 +193,27 @@ void GameServer::handleConnect(const xy::NetEvent& evt)
 void GameServer::handleDisconnect(const xy::NetEvent& evt)
 {
     LOG("Client dropped from server", xy::Logger::Type::Info);
+    const auto& peer = evt.peer;
 
-    //TODO broadcast to clients
+    auto client = std::find_if(m_clients.begin(), m_clients.end(),
+        [&peer](const Client& client)
+    {
+        return client.peer == peer;
+    });
 
-    //TODO update the client array
+    if (client != m_clients.end())
+    {
+        //broadcast to clients
+        m_host.broadcastPacket(PacketID::ClientDisconnected, client->data, xy::NetFlag::Reliable, 1);
+
+        //remove from scene
+        m_scene.destroyEntity(m_scene.getEntity(client->data.actor.id));
+
+        //update the client array
+        client->data.actor.id = -1;
+        client->data.peerID = 0;
+        client->peer = {};
+    }
 }
 
 void GameServer::handlePacket(const xy::NetEvent& evt)
@@ -208,18 +225,19 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
     case PacketID::ClientReady:
     {
         std::size_t playerNumber = 0;
-        if (m_clients[0].actor.id != ActorID::None)
+        if (m_clients[0].data.actor.id != ActorID::None)
         {
             playerNumber = 1;
             //send existing client data
-            m_host.sendPacket(evt.peer, PacketID::ClientData, m_clients[0], xy::NetFlag::Reliable, 1);
+            m_host.sendPacket(evt.peer, PacketID::ClientData, m_clients[0].data, xy::NetFlag::Reliable, 1);
         }
         //add the player actor to the scene
         spawnPlayer(playerNumber);
 
         //send the client info
-        m_clients[playerNumber].peerID = evt.peer.getID();
-        m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber], xy::NetFlag::Reliable, 1);
+        m_clients[playerNumber].data.peerID = evt.peer.getID();
+        m_clients[playerNumber].peer = evt.peer;
+        m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber].data, xy::NetFlag::Reliable, 1);
 
         //send initial position of existing actors
         const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
@@ -332,8 +350,8 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     auto entity = m_scene.createEntity();
     entity.addComponent<Actor>().type = (player == 0) ? ActorID::PlayerOne : ActorID::PlayerTwo;
     entity.getComponent<Actor>().id = entity.getIndex();
-    m_clients[player].actor = entity.getComponent<Actor>();
-    entity.addComponent<xy::Transform>().setPosition(m_clients[player].spawnX, m_clients[player].spawnY);
+    m_clients[player].data.actor = entity.getComponent<Actor>();
+    entity.addComponent<xy::Transform>().setPosition(m_clients[player].data.spawnX, m_clients[player].data.spawnY);
 
     //add client controller
     entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);

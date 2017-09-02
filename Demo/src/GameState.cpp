@@ -58,7 +58,7 @@ namespace
         float z = 54.f;
     };
 
-    sf::CircleShape testCircle;
+    const float clientTimeout = 20.f;
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
@@ -72,16 +72,18 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     if (sharedData.hostState == SharedStateData::Host)
     {
         m_server.start();
+        while (!m_server.ready()) {}
         m_client.connect("localhost", 40003);
     }
     else
     {
         m_client.connect(sharedData.remoteIP, 40003);
     }
-    quitLoadingScreen();
 
-    testCircle.setRadius(10.f);
-    testCircle.setOrigin(10.f, 10.f);
+    //TODO replace this
+    m_timeoutText.setFillColor(sf::Color::Red);
+    m_timeoutText.setFont(m_fontResource.get("buns"));
+    quitLoadingScreen();
 }
 
 //public
@@ -120,8 +122,10 @@ bool GameState::update(float dt)
         if (evt.type == xy::NetEvent::PacketReceived)
         {
             handlePacket(evt);
+            m_clientTimeout.restart();
         }
     }
+    handleTimeout();
     
     m_playerInput.update();
     m_scene.update(dt);
@@ -131,8 +135,8 @@ bool GameState::update(float dt)
 void GameState::draw()
 {
     auto& rw = getContext().renderWindow;
-    rw.draw(testCircle);
     rw.draw(m_scene);
+    rw.draw(m_timeoutText);
 }
 
 //private
@@ -227,13 +231,9 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::ClientUpdate:
     {
         const auto& state = evt.packet.as<ActorState>();
-        testCircle.setPosition(state.x, state.y);
-        if (state.actor.id == m_clientData.actor.id)
-        {
-            //reconcile
-            m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.clientTime, m_playerInput.getPlayerEntity());
-        }
 
+        //reconcile
+        m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.clientTime, m_playerInput.getPlayerEntity());
     }
         break;
     case PacketID::ClientData:
@@ -274,5 +274,41 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         }
     }
         break;
+    case PacketID::ClientDisconnected:
+    {
+        const auto& data = evt.packet.as<ClientData>();
+        auto actorID = data.actor.id;
+
+        //scrub the client from the scene
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::NetActor;
+        cmd.action = [&, actorID](xy::Entity entity, float)
+        {
+            const auto& actor = entity.getComponent<Actor>();
+            if (actor.id == actorID)
+            {
+                m_scene.destroyEntity(entity);
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
+        break;
+    }
+}
+
+void GameState::handleTimeout()
+{
+    float currTime = m_clientTimeout.getElapsedTime().asSeconds();
+    if (currTime > clientTimeout / 5.f)
+    {
+        m_timeoutText.setString("  BAD HOST CONNECTION... " + std::to_string(clientTimeout - currTime));
+    }
+    
+    if (currTime > clientTimeout)
+    {
+        //TODO push a message state
+
+        requestStackClear();
+        requestStackPush(StateID::MainMenu);
     }
 }

@@ -40,6 +40,7 @@ namespace PacketID
         ClientReady, //notify the server we're connected, loaded and ready
         ClientInput, //input from the client
         ClientUpdate, //server's authorative position of a client and input timestamp for reconciliation
+        ClientDisconnected, //copy of client data who disconnected
         Count
     };
 }

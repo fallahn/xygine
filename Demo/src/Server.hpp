@@ -78,7 +78,12 @@ private:
 
     sf::Int32 spawnPlayer(std::size_t);
 
-    std::array<ClientData, 2u> m_clients;
+    struct Client final
+    {
+        ClientData data;
+        xy::NetPeer peer;
+    };
+    std::array<Client, 2u> m_clients;
 };
 
 #endif //GAME_DEMO_SERVER_HPP_

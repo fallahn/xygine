@@ -65,6 +65,11 @@ namespace xy
         };
         State getState() const; //! <Current state of the peer
 
+        bool operator == (const NetPeer& other) const
+        {
+            return other.m_peer == this->m_peer;
+        }
+
     private:
         _ENetPeer* m_peer = nullptr;
 

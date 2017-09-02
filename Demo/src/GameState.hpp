@@ -34,6 +34,9 @@ source distribution.
 
 #include <xyginext/network/NetClient.hpp>
 
+#include <SFML/System/Clock.hpp>
+#include <SFML/Graphics/Text.hpp>
+
 #include "StateIDs.hpp"
 #include "Server.hpp"
 #include "SharedStateData.hpp"
@@ -59,13 +62,18 @@ private:
 
     xy::NetClient m_client;
     GameServer m_server;
+    sf::Clock m_clientTimeout;
 
     ClientData m_clientData;
     PlayerInput m_playerInput;
 
+    //TODO replace this with the scene UI
+    sf::Text m_timeoutText;
+
     void loadAssets();
     void loadScene(const MapData&);
     void handlePacket(const xy::NetEvent&);
+    void handleTimeout();
 };
 
 #endif //DEMO_GAME_STATE_HPP_
