@@ -39,6 +39,7 @@ namespace PacketID
         ActorEvent, //spawned, died, fire weapon etc
         ClientReady, //notify the server we're connected, loaded and ready
         ClientInput, //input from the client
+        ClientUpdate, //server's authorative position of a client and input timestamp for reconciliation
         Count
     };
 }

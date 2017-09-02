@@ -84,8 +84,10 @@ void PlayerSystem::reconcile(float x, float y, sf::Int64 timestamp, xy::Entity e
     //and reparse inputs
     if (ip != player.history.rend())
     {
-        auto idx = std::distance(player.history.rbegin(), ip);
-        while (idx != player.currentInput) //currentInput points to the next free slot in history
+        auto idx =  std::distance(player.history.begin(), ip.base()) - 1;
+        auto end = (player.currentInput + player.history.size() - 1) % player.history.size();
+
+        while (idx != end) //currentInput points to the next free slot in history
         {
             tx.move(speed * parseInput(player.history[idx].mask) * getDelta(player.history, idx));
             idx = (idx + 1) % player.history.size();

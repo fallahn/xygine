@@ -110,15 +110,7 @@ void GameServer::update()
         {
             updateAccumulator -= updateRate;
 
-            //update scene logic.
-            m_scene.update(updateRate);
-        }
-
-        //network updates are less frequent than logic updates
-        while (tickAccumulator > tickRate)
-        {
-            tickAccumulator -= tickRate;
-
+            //player inputs are broadcast at 60fps (ish) so we need to try to keep up
             xy::NetEvent evt;
             while (m_host.pollEvent(evt))
             {
@@ -137,9 +129,16 @@ void GameServer::update()
                 }
             }
 
-            //m_scene.update(tickRate);
+            //update scene logic.
+            m_scene.update(updateRate);
+        }
 
-            //broadcast scene state
+        //network updates are less frequent than logic updates
+        while (tickAccumulator > tickRate)
+        {
+            tickAccumulator -= tickRate;
+
+            //broadcast scene state - TODO assemble this into one large packet rather than many small?
             const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
             for (const auto& actor : actors)
             {
@@ -153,14 +152,27 @@ void GameServer::update()
                 state.y = tx.y;
                 state.serverTime = m_serverTime.getElapsedTime().asMilliseconds();
 
-                //TODO make sure all clients are updated
-                if (actorComponent.id == m_clients[0].actor.id)
-                {
-                    const auto& player = actor.getComponent<Player>();
-                    state.clientTime = player.history[player.lastUpdatedInput].timestamp;
-                }
-
                 m_host.broadcastPacket(PacketID::ActorUpdate, state, xy::NetFlag::Unreliable);
+            }
+
+            //send client reconciliation - TODO ideally we only want to send this to the interested peer
+            for (const auto& c : m_clients)
+            {
+                if (c.actor.id > -1)
+                {
+                    auto ent = m_scene.getEntity(c.actor.id);
+                    const auto& tx = ent.getComponent<xy::Transform>().getPosition();
+                    const auto& player = ent.getComponent<Player>();
+
+                    ActorState state;
+                    state.actor.id = c.actor.id;
+                    state.actor.type = c.actor.type;
+                    state.x = tx.x;
+                    state.y = tx.y;
+                    state.clientTime = player.history[player.lastUpdatedInput].timestamp;
+
+                    m_host.broadcastPacket(PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
+                }
             }
         }
     }

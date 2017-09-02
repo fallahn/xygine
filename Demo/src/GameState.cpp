@@ -198,12 +198,6 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         //do actor interpolation
     {
         const auto& state = evt.packet.as<ActorState>();
-        testCircle.setPosition(state.x, state.y);
-        if (state.actor.id == m_clientData.actor.id)
-        {
-            //reconcile
-            //m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.clientTime, m_playerInput.getPlayerEntity());
-        }
 
         xy::Command cmd;
         cmd.targetFlags = CommandID::NetActor;
@@ -211,11 +205,8 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         {
             if (entity.getComponent<Actor>().id == state.actor.id)
             {
-                if (state.actor.id != m_clientData.actor.id)
-                {
-                    entity.getComponent<xy::NetInterpolate>().setTarget({ state.x, state.y }, state.serverTime);
-                    //DPRINT("Timestamp", std::to_string(state.timestamp));
-                }
+                entity.getComponent<xy::NetInterpolate>().setTarget({ state.x, state.y }, state.serverTime);
+                //DPRINT("Timestamp", std::to_string(state.timestamp));
             }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
@@ -233,11 +224,23 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         m_client.sendPacket(PacketID::ClientReady, 0, xy::NetFlag::Reliable, 1);
     }
         break;
+    case PacketID::ClientUpdate:
+    {
+        const auto& state = evt.packet.as<ActorState>();
+        testCircle.setPosition(state.x, state.y);
+        if (state.actor.id == m_clientData.actor.id)
+        {
+            //reconcile
+            m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.clientTime, m_playerInput.getPlayerEntity());
+        }
+
+    }
+        break;
     case PacketID::ClientData:
     {
         ClientData data = evt.packet.as<ClientData>();
         
-        //create the local ent (all are net actors - then command decides if interp or reconcile)
+        //create the local ent
         //set sprite based on actor type (player one or two)
         auto entity = m_scene.createEntity();
         entity.addComponent<Actor>() = data.actor;
@@ -252,7 +255,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, 64.f, 64.f });
         }
         entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
-        entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
+        
 
         if (data.peerID == m_client.getPeer().getID())
         {
@@ -266,6 +269,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         else
         {
             //add interp controller
+            entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
             entity.addComponent<xy::NetInterpolate>();
         }
     }
