@@ -69,6 +69,14 @@ namespace xy
             }
 
             /*!
+            \brief Remove all isntances of c from line
+            */
+            static inline void removeChar(std::string& line, const char c)
+            {
+                line.erase(std::remove(line.begin(), line.end(), c), line.end());
+            }
+
+            /*!
             \brief Splits a string with a given token and returns a vector of results
             */
             static inline std::vector<std::string> tokenize(const std::string& str, char delim, bool keepEmpty = false)

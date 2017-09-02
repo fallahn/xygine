@@ -1,6 +1,7 @@
 #source files used by xyginext library
 set(PROJECT_SRC 
   ${PROJECT_DIR}/core/App.cpp
+  ${PROJECT_DIR}/core/ConfigFile.cpp  
   ${PROJECT_DIR}/core/FileSystem.cpp
   ${PROJECT_DIR}/core/MessageBus.cpp
   ${PROJECT_DIR}/core/State.cpp
@@ -29,6 +30,8 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/systems/TextRenderer.cpp
   ${PROJECT_DIR}/ecs/systems/UISystem.cpp
 
+  ${PROJECT_DIR}/graphics/SpriteSheet.cpp
+
   ${PROJECT_DIR}/imgui/imgui.cpp
   ${PROJECT_DIR}/imgui/imgui_demo.cpp
   ${PROJECT_DIR}/imgui/imgui_draw.cpp
@@ -43,5 +46,4 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/resources/FontResource.cpp
   ${PROJECT_DIR}/resources/ShaderResource.cpp
   
-  ${PROJECT_DIR}/util/ConfigFile.cpp
   ${PROJECT_DIR}/util/Random.cpp)

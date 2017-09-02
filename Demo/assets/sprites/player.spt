@@ -1,0 +1,15 @@
+sprite_sheet ui_menu
+{
+	src = "assets/images/target.png"
+	blendmode = alpha
+
+	sprite target_red
+	{
+		bounds = 0,0,64,64
+	}
+
+	sprite target_yellow
+	{
+		bounds = 64,0,64,64
+	}
+}

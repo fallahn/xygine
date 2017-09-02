@@ -58,6 +58,12 @@
     <Filter Include="Source Files\imgui">
       <UniqueIdentifier>{1f48ead6-dc67-47f4-98eb-280afc8c1aa6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\graphics">
+      <UniqueIdentifier>{9494ade3-7191-4af9-b5fd-ba6cdc933530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\graphics">
+      <UniqueIdentifier>{e497ab07-e71d-4e78-a31a-589e1863293f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\App.cpp">
@@ -123,9 +129,6 @@
     <ClCompile Include="src\ecs\systems\CommandSystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
-    <ClCompile Include="src\util\ConfigFile.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
     <ClCompile Include="src\util\Random.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
@@ -173,6 +176,12 @@
     </ClCompile>
     <ClCompile Include="src\ecs\systems\UISystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\SpriteSheet.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\ConfigFile.cpp">
+      <Filter>Source Files\core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -254,9 +263,6 @@
     <ClInclude Include="include\xyginext\ecs\components\Camera.hpp">
       <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
-    <ClInclude Include="include\xyginext\util\ConfigFile.hpp">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="include\xyginext\util\Const.hpp">
       <Filter>Header Files\util</Filter>
     </ClInclude>
@@ -314,6 +320,12 @@
     <ClInclude Include="include\xyginext\ecs\systems\UISystem.hpp">
       <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\SpriteSheet.hpp">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\ConfigFile.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl">
@@ -339,6 +351,9 @@
     </None>
     <None Include="include\xyginext\network\NetHost.inl">
       <Filter>Header Files\network</Filter>
+    </None>
+    <None Include="include\xyginext\core\ConfigFile.inl">
+      <Filter>Header Files\core</Filter>
     </None>
   </ItemGroup>
 </Project>

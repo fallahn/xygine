@@ -44,6 +44,8 @@ source distribution.
 #include <xyginext/ecs/systems/CommandSystem.hpp>
 #include <xyginext/ecs/systems/InterpolationSystem.hpp>
 
+#include <xyginext/graphics/SpriteSheet.hpp>
+
 #include <xyginext/network/NetData.hpp>
 #include <xyginext/util/Random.hpp>
 
@@ -245,14 +247,17 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         auto entity = m_scene.createEntity();
         entity.addComponent<Actor>() = data.actor;
         entity.addComponent<xy::Transform>().setPosition(data.spawnX, data.spawnY);
-        entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/target.png"));
+
+        xy::SpriteSheet spritesheet;
+        spritesheet.loadFromFile("assets/sprites/player.spt", m_textureResource);
+
         if (data.actor.type == ActorID::PlayerOne)
         {
-            entity.getComponent<xy::Sprite>().setTextureRect({ 64.f, 0.f, 64.f, 64.f }); //TODO port the sprite sheet class
+            entity.addComponent<xy::Sprite>() = spritesheet.getSprite("target_yellow");
         }
         else
         {
-            entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, 64.f, 64.f });
+            entity.addComponent<xy::Sprite>() = spritesheet.getSprite("target_red");
         }
         entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
         
