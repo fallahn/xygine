@@ -309,7 +309,7 @@ void GameState::handleTimeout()
     float currTime = m_clientTimeout.getElapsedTime().asSeconds();
     if (currTime > clientTimeout / 5.f)
     {
-        m_timeoutText.setString("  BAD HOST CONNECTION... " + std::to_string(clientTimeout - currTime));
+        m_timeoutText.setString("WARNING: Connection Problem\nAuto Disconnect in: " + std::to_string(clientTimeout - currTime));
     }
     
     if (currTime > clientTimeout)

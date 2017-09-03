@@ -64,6 +64,12 @@
     <Filter Include="Source Files\graphics">
       <UniqueIdentifier>{e497ab07-e71d-4e78-a31a-589e1863293f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\audio">
+      <UniqueIdentifier>{6bd0f523-b132-40d6-91be-a5cff80b7b5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\audio">
+      <UniqueIdentifier>{96d00a1c-b2dd-4b25-b48c-18e2b69f6a01}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\App.cpp">
@@ -185,6 +191,18 @@
     </ClCompile>
     <ClCompile Include="src\ecs\systems\SpriteAnimator.cpp">
       <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio\Mixer.cpp">
+      <Filter>Source Files\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\AudioSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\components\AudioEmitter.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio\AudioSourceImpl.cpp">
+      <Filter>Source Files\audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -334,6 +352,18 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\systems\SpriteAnimator.hpp">
       <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\AudioSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\audio\Mixer.hpp">
+      <Filter>Header Files\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\AudioEmitter.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\audio\AudioSourceImpl.hpp">
+      <Filter>Header Files\audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,8 @@
 #source files used by xyginext library
 set(PROJECT_SRC 
+  ${PROJECT_DIR}/audio/AudioSourceImpl.cpp
+  ${PROJECT_DIR}/audio/Mixer.cpp
+
   ${PROJECT_DIR}/core/App.cpp
   ${PROJECT_DIR}/core/ConfigFile.cpp  
   ${PROJECT_DIR}/core/FileSystem.cpp
@@ -16,12 +19,14 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/System.cpp
   ${PROJECT_DIR}/ecs/SystemManager.cpp
 
+  ${PROJECT_DIR}/ecs/components/AudioEmitter.cpp
   ${PROJECT_DIR}/ecs/components/Camera.cpp
   ${PROJECT_DIR}/ecs/components/NetInterpolation.cpp
   ${PROJECT_DIR}/ecs/components/Sprite.cpp
   ${PROJECT_DIR}/ecs/components/Text.cpp
   ${PROJECT_DIR}/ecs/components/Transform.cpp
 
+  ${PROJECT_DIR}/ecs/systems/AudioSystem.cpp
   ${PROJECT_DIR}/ecs/systems/CallbackSystem.cpp
   ${PROJECT_DIR}/ecs/systems/CameraSystem.cpp
   ${PROJECT_DIR}/ecs/systems/CommandSystem.cpp
