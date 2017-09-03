@@ -38,11 +38,13 @@ source distribution.
 #include <xyginext/ecs/components/Text.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/ecs/components/NetInterpolation.hpp>
+#include <xyginext/ecs/components/SpriteAnimation.hpp>
 
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
 #include <xyginext/ecs/systems/CommandSystem.hpp>
 #include <xyginext/ecs/systems/InterpolationSystem.hpp>
+#include <xyginext/ecs/systems/SpriteAnimator.hpp>
 
 #include <xyginext/graphics/SpriteSheet.hpp>
 
@@ -148,6 +150,7 @@ void GameState::loadAssets()
 
     m_scene.addSystem<PlayerSystem>(mb);
     m_scene.addSystem<xy::InterpolationSystem>(mb);
+    m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CommandSystem>(mb);
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
@@ -253,14 +256,14 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
         if (data.actor.type == ActorID::PlayerOne)
         {
-            entity.addComponent<xy::Sprite>() = spritesheet.getSprite("target_yellow");
+            entity.addComponent<xy::Sprite>() = spritesheet.getSprite("player_one");
         }
         else
         {
-            entity.addComponent<xy::Sprite>() = spritesheet.getSprite("target_red");
+            entity.addComponent<xy::Sprite>() = spritesheet.getSprite("player_two");
         }
         entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
-        
+        entity.addComponent<xy::SpriteAnimation>().play(0);
 
         if (data.peerID == m_client.getPeer().getID())
         {

@@ -117,7 +117,7 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
             const auto& spriteObjs = spr.getObjects();
             for (const auto& sprOb : spriteObjs)
             {
-                /*if (sprOb.getName() == "animation")
+                if (sprOb.getName() == "animation")
                 {
                     const auto& properties = sprOb.getProperties();
                     for (const auto& p : properties)
@@ -126,7 +126,7 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
                         if (name == "frame")
                         {
                             auto& anim = spriteComponent.m_animations[spriteComponent.m_animationCount];
-                            anim.frames[anim.frameCount++] = p.getValue<FloatRect>();
+                            anim.frames[anim.frameCount++] = p.getValue<sf::FloatRect>();
                         }
                         else if (name == "framerate")
                         {
@@ -138,7 +138,7 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
                         }
                     }
                     spriteComponent.m_animationCount++;
-                }*/
+                }
             }
 
             m_sprites.insert(std::make_pair(spriteName, spriteComponent));

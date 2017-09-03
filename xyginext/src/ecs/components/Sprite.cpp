@@ -32,13 +32,15 @@ source distribution.
 using namespace xy;
 
 Sprite::Sprite()
-    : m_dirty(true)
+    : m_dirty       (true),
+    m_animationCount(0)
 {
 
 }
 
 Sprite::Sprite(const sf::Texture& texture)
-    : m_dirty(true)
+    : m_dirty       (true),
+    m_animationCount(0)
 {
     setTexture(texture);
 }

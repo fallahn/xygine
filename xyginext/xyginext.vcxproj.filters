@@ -183,6 +183,9 @@
     <ClCompile Include="src\core\ConfigFile.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\systems\SpriteAnimator.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -325,6 +328,12 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\core\ConfigFile.hpp">
       <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\SpriteAnimation.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\SpriteAnimator.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
