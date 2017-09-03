@@ -29,10 +29,11 @@ source distribution.
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/AudioEmitter.hpp>
-
 #include <xyginext/ecs/Scene.hpp>
 
 #include <xyginext/audio/Mixer.hpp>
+
+#include <SFML/Audio/Listener.hpp>
 
 using namespace xy;
 
@@ -47,9 +48,22 @@ AudioSystem::AudioSystem(MessageBus& mb)
 void AudioSystem::process(float dt)
 {
     //set listener position to active camera
+    auto cam = getScene()->getActiveListener();
+    auto camPos = cam.getComponent<xy::Transform>().getWorldTransform().transformPoint({});
 
-    //update position of entities
+    sf::Listener::setPosition({ camPos.x, camPos.y, 0.f });
+    sf::Listener::setGlobalVolume(AudioMixer::getMasterVolume() * 100.f);
 
-    //update volume according to global mixer
-    //by multiplying with emitter volume and setting actual source volume
+    auto& entities = getEntities();
+    for (auto& entity : entities)
+    {
+        //update position of entities
+        const auto& tx = entity.getComponent<xy::Transform>();
+        auto& audio = entity.getComponent<xy::AudioEmitter>();
+
+        audio.setPosition(tx.getWorldTransform().transformPoint({}));
+
+        //update volume according to global mixer
+        audio.m_impl->setVolume(audio.m_volume * AudioMixer::m_channels[audio.m_mixerChannel]);
+    }
 }

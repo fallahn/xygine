@@ -134,6 +134,11 @@ AudioMusic::AudioMusic(const std::string& path)
     m_valid = m_music.openFromFile(path);
 }
 
+AudioMusic::~AudioMusic()
+{
+    m_music.stop();
+}
+
 void AudioMusic::play()
 {
     m_music.play();

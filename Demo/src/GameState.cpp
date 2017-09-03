@@ -39,12 +39,16 @@ source distribution.
 #include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/ecs/components/NetInterpolation.hpp>
 #include <xyginext/ecs/components/SpriteAnimation.hpp>
+#include <xyginext/ecs/components/AudioEmitter.hpp>
+#include <xyginext/ecs/components/Camera.hpp>
 
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
 #include <xyginext/ecs/systems/CommandSystem.hpp>
 #include <xyginext/ecs/systems/InterpolationSystem.hpp>
 #include <xyginext/ecs/systems/SpriteAnimator.hpp>
+#include <xyginext/ecs/systems/AudioSystem.hpp>
+#include <xyginext/ecs/systems/CameraSystem.hpp>
 
 #include <xyginext/graphics/SpriteSheet.hpp>
 
@@ -150,7 +154,9 @@ void GameState::loadAssets()
 
     m_scene.addSystem<PlayerSystem>(mb);
     m_scene.addSystem<xy::InterpolationSystem>(mb);
+    m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::SpriteAnimator>(mb);
+    //m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::CommandSystem>(mb);
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
@@ -158,6 +164,9 @@ void GameState::loadAssets()
     //preload textures
     m_textureResource.get("assets/images/bubble.png");
     m_textureResource.get("assets/images/target.png");
+
+    //audio
+    //m_soundResource.get("assets/boop_loop.wav");
 }
 
 void GameState::loadScene(const MapData& data)

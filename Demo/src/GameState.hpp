@@ -59,6 +59,7 @@ private:
     xy::Scene m_scene;
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
+    xy::SoundResource m_soundResource;
 
     xy::NetClient m_client;
     GameServer m_server;

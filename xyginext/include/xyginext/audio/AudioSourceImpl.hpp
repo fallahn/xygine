@@ -43,6 +43,8 @@ namespace xy
         class AudioSourceImpl
         {
         public:
+            virtual ~AudioSourceImpl() = default;
+
             virtual void play() = 0;
             virtual void pause() = 0;
             virtual void stop() = 0;
@@ -101,6 +103,7 @@ namespace xy
         {
         public:
             AudioMusic(const std::string&);
+            ~AudioMusic();
 
             void play() override;
             void pause() override;
