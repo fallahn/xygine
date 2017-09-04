@@ -45,6 +45,10 @@ namespace nim = ImGui;
 //this is a fallover from crogine - I'm keeping this in case I decide to implement it
 #define USE_IMGUI 1
 
+#ifndef APP_NAME
+#define APP_NAME "xygine_application"
+#endif
+
 namespace
 {
     bool showVideoOptions = false;
@@ -311,7 +315,10 @@ void Console::init()
     auto modes = sf::VideoMode::getFullscreenModes();
     for (const auto& mode : modes)
     {
-        resolutions.emplace_back(mode.width, mode.height);
+        if (mode.bitsPerPixel == 32)
+        {
+            resolutions.emplace_back(mode.width, mode.height);
+        }
     }
     
     std::reverse(std::begin(resolutions), std::end(resolutions));
@@ -421,13 +428,13 @@ void Console::init()
 
 
     //loads any convars which may have been saved
-    //convars.loadFromFile(App::getPreferencePath() + convarName);
+    convars.loadFromFile(FileSystem::getConfigDirectory(APP_NAME) + convarName);
     //TODO execute callback for each to make sure values are applied
 }
 
 void Console::finalise()
 {
-    //convars.save(App::getPreferencePath() + convarName);
+    convars.save(FileSystem::getConfigDirectory(APP_NAME) + convarName);
 }
 
 int textEditCallback(ImGuiTextEditCallbackData* data)

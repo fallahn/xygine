@@ -31,6 +31,8 @@ source distribution.
 #define XY_LOGGER_HPP_
 
 #include <xyginext/core/FileSystem.hpp>
+#include <xyginext/core/Console.hpp>
+#include <xyginext/core/SysTime.hpp>
 
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
@@ -102,6 +104,8 @@ namespace xy
                     :
                     std::cout << outstring << std::endl;
                 
+                Console::print(outstring);
+
                 const std::size_t maxBuffer = 30;
                 buffer().push_back(outstring);
                 if (buffer().size() > maxBuffer)buffer().pop_front(); //no majick here pl0x
@@ -118,12 +122,12 @@ namespace xy
                 std::ofstream file("output.log", std::ios::app);
                 if (file.good())
                 {
-                    std::time_t time = std::time(nullptr);
+                    /*std::time_t time = std::time(nullptr);
                     auto tm = *std::localtime(&time);
 
                     file.imbue(std::locale());
-                    file << std::put_time(&tm, "%d/%m/%y-%H:%M:%S: ");
-                    file << outstring << std::endl;
+                    file << std::put_time(&tm, "%d/%m/%y-%H:%M:%S: ");*/
+                    file << SysTime::dateString() << "-" << SysTime::timeString() << ": " << outstring << std::endl;
                     file.close();
                 }
                 else
