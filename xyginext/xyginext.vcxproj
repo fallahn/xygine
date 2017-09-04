@@ -154,6 +154,7 @@
     <ClCompile Include="src\ecs\systems\SpriteRenderer.cpp" />
     <ClCompile Include="src\ecs\systems\TextRenderer.cpp" />
     <ClCompile Include="src\ecs\systems\UISystem.cpp" />
+    <ClCompile Include="src\graphics\postprocess\PostProcess.cpp" />
     <ClCompile Include="src\graphics\SpriteSheet.cpp" />
     <ClCompile Include="src\imgui\imgui.cpp" />
     <ClCompile Include="src\imgui\imgui_demo.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="include\xyginext\ecs\systems\SpriteRenderer.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\TextRenderer.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\UISystem.hpp" />
+    <ClInclude Include="include\xyginext\graphics\postprocess\PostProcess.hpp" />
     <ClInclude Include="include\xyginext\graphics\SpriteSheet.hpp" />
     <ClInclude Include="include\xyginext\network\NetClient.hpp" />
     <ClInclude Include="include\xyginext\network\NetData.hpp" />

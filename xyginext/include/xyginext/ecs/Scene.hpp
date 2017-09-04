@@ -34,11 +34,13 @@ source distribution.
 #include <xyginext/ecs/System.hpp>
 #include <xyginext/ecs/systems/CommandSystem.hpp>
 #include <xyginext/ecs/Director.hpp>
+#include <xyginext/graphics/postprocess/PostProcess.hpp>
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 
 #include <functional>
+#include <array>
 
 namespace xy
 {
@@ -116,16 +118,16 @@ namespace xy
         /*!
         \brief Adds a post process effect to the scene.
         Any post processes added to the scene are performed on the *entire* output.
-        To add post processes to a portion of the scene such as only 3D parts then
+        To add post processes to a portion of the scene then
         a second scene should be created to draw overlays such as the UI
         */
-        //template <typename T, typename... Args>
-        //T& addPostProcess(Args&&... args);
+        template <typename T, typename... Args>
+        T& addPostProcess(Args&&... args);
 
         /*!
         \brief Enables or disables any added post processes added to the scene
         */
-        //void setPostEnabled(bool);
+        void setPostEnabled(bool);
 
         /*!
         \brief Returns a copy of the entity containing the default camera
@@ -187,10 +189,10 @@ namespace xy
         std::vector<sf::Drawable*> m_drawables;
 
         sf::RenderTexture m_sceneBuffer;
-        //std::array<sf::RenderTexture, 2u> m_postBuffers;
-        //std::vector<std::unique_ptr<PostProcess>> m_postEffects;
+        std::array<sf::RenderTexture, 2u> m_postBuffers;
+        std::vector<std::unique_ptr<PostProcess>> m_postEffects;
 
-        void postRenderPath();
+        void postRenderPath(sf::RenderTarget&, sf::RenderStates);
         std::function<void(sf::RenderTarget&, sf::RenderStates)> currentRenderPath;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;

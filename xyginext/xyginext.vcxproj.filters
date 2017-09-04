@@ -70,6 +70,12 @@
     <Filter Include="Source Files\audio">
       <UniqueIdentifier>{96d00a1c-b2dd-4b25-b48c-18e2b69f6a01}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\graphics\post process">
+      <UniqueIdentifier>{6126306e-9137-4f56-9088-1643633ace63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\graphics\post process">
+      <UniqueIdentifier>{408bc921-778a-4da3-8ca0-efc8305d6d29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\App.cpp">
@@ -203,6 +209,9 @@
     </ClCompile>
     <ClCompile Include="src\audio\AudioSourceImpl.cpp">
       <Filter>Source Files\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\postprocess\PostProcess.cpp">
+      <Filter>Source Files\graphics\post process</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -367,6 +376,9 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\components\AudioListener.hpp">
       <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\postprocess\PostProcess.hpp">
+      <Filter>Header Files\graphics\post process</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

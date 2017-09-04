@@ -116,26 +116,26 @@ Entity Scene::getEntity(Entity::ID id) const
     return m_entityManager.getEntity(id);
 }
 
-//void Scene::setPostEnabled(bool enabled)
-//{
-//    if (enabled && !m_postEffects.empty())
-//    {
-//        currentRenderPath = std::bind(&Scene::postRenderPath, this);
-//        auto size = App::getWindow().getSize();
-//        m_sceneBuffer.create(size.x, size.y, true);
-//        for (auto& p : m_postEffects) p->resizeBuffer(size.x, size.y);
-//    }
-//    else
-//    {       
-//        currentRenderPath = [this]()
-//        {
-            //for (auto r : m_drawables)
-            //{
-            //    rt.draw(*r, states);
-            //}
-//        };
-//    }
-//}
+void Scene::setPostEnabled(bool enabled)
+{
+    if (enabled && !m_postEffects.empty())
+    {
+        currentRenderPath = std::bind(&Scene::postRenderPath, this, std::placeholders::_1, std::placeholders::_2);
+        auto size = App::getRenderWindow().getSize();
+        m_sceneBuffer.create(size.x, size.y, true);
+        for (auto& p : m_postEffects) p->resizeBuffer(size.x, size.y);
+    }
+    else
+    {       
+        currentRenderPath = [this](sf::RenderTarget& rt, sf::RenderStates states)
+        {
+            for (auto r : m_drawables)
+            {
+                rt.draw(*r, states);
+            }
+        };
+    }
+}
 
 Entity Scene::getDefaultCamera() const
 {
@@ -217,30 +217,29 @@ void Scene::forwardMessage(const Message& msg)
 }
 
 //private
-void Scene::postRenderPath()
+void Scene::postRenderPath(sf::RenderTarget& rt, sf::RenderStates states)
 {
-    /*auto camera = m_entityManager.getEntity(m_activeCamera);
-    
+    m_sceneBuffer.setView(getEntity(m_activeCamera).getComponent<Camera>().m_view);
+
     m_sceneBuffer.clear();
-    for (auto r : m_renderables) r->render(camera);
+    for (auto r : m_drawables)
+    {
+        rt.draw(*r, states);
+    }
     m_sceneBuffer.display();
 
-    RenderTexture* inTex = &m_sceneBuffer;
-    RenderTexture* outTex = nullptr;
+    sf::RenderTexture* inTex = &m_sceneBuffer;
+    sf::RenderTexture* outTex = nullptr;
 
     for (auto i = 0u; i < m_postEffects.size() - 1; ++i)
     {
         outTex = &m_postBuffers[i % 2];
-        outTex->clear();
-        m_postEffects[i]->apply(*inTex);
-        outTex->display();
+        m_postEffects[i]->apply(*inTex, *outTex);
         inTex = outTex;
     }
 
-
-    auto vp = m_sceneBuffer.getDefaultViewport();
-    glViewport(vp.left, vp.bottom, vp.width, vp.height);
-    m_postEffects.back()->apply(*inTex);*/
+    rt.setView(m_sceneBuffer.getDefaultView());
+    m_postEffects.back()->apply(*inTex, rt);
 }
 
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
