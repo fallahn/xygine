@@ -156,7 +156,7 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::InterpolationSystem>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::SpriteAnimator>(mb);
-    //m_scene.addSystem<xy::CameraSystem>(mb);
+    m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::CommandSystem>(mb);
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);

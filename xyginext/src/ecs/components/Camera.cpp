@@ -41,8 +41,8 @@ Camera::Camera()
     m_view.setSize(DefaultSceneSize);
     m_view.setCenter(DefaultSceneSize / 2.f);
 
-    auto maxFloat = std::numeric_limits<float>::max() / 2.f;
-    m_bounds = { -maxFloat, -maxFloat, maxFloat, maxFloat };
+    auto maxFloat = std::numeric_limits<float>::max();
+    m_bounds = { -maxFloat / 2.f, -maxFloat / 2.f, maxFloat, maxFloat };
 }
 
 //public

@@ -30,6 +30,8 @@ source distribution.
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/util/Math.hpp>
 
+#include <xyginext/core/App.hpp>
+
 using namespace xy;
 
 CameraSystem::CameraSystem(MessageBus& mb)
@@ -47,7 +49,7 @@ void CameraSystem::process(float dt)
     {
         auto& cam = entity.getComponent<Camera>();
         const auto& xForm = entity.getComponent<Transform>();
-
+       
         auto position = xForm.getWorldTransform().transformPoint({});
 
         //check axis lock
@@ -66,7 +68,6 @@ void CameraSystem::process(float dt)
         position.y = Util::Math::clamp(position.y, cam.m_bounds.top + offset.y, (cam.m_bounds.top + cam.m_bounds.height) - offset.y);
 
         cam.m_view.setCenter(position);
-
 
         //check rotation lock
         if (!cam.m_lockRotation)

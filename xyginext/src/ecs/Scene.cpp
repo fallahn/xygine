@@ -55,7 +55,7 @@ Scene::Scene(MessageBus& mb)
     m_systemManager     (*this)
 {
     auto defaultCamera = createEntity();
-    defaultCamera.addComponent<Transform>();
+    defaultCamera.addComponent<Transform>().setPosition(xy::DefaultSceneSize / 2.f);
     defaultCamera.addComponent<Camera>();
     defaultCamera.getComponent<Camera>().setViewport(getDefaultViewport());
     //defaultCamera.addComponent<AudioListener>();
@@ -246,6 +246,9 @@ void Scene::postRenderPath()
 
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    rt.setView(getEntity(m_activeCamera).getComponent<Camera>().m_view);
+    auto view = getEntity(m_activeCamera).getComponent<Camera>().m_view;
+    DPRINT("View position", std::to_string(view.getCenter().x) + ", " + std::to_string(view.getCenter().y));
+    
+    rt.setView(view);
     currentRenderPath(rt, states);
 }
