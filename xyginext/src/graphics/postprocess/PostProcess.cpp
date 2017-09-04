@@ -29,6 +29,9 @@ source distribution.
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/Vertex.hpp>
+
+#include <vector>
 
 using namespace xy;
 
@@ -36,23 +39,16 @@ namespace
 {
     sf::Vector2f outputSize;
     sf::Vector2u lastSize;
-    sf::VertexArray vertexArray(sf::TrianglesStrip, 4);
+
+    std::vector<sf::Vertex> vertexArray(4);
     void updateQuad()
     {
-        auto newY = outputSize.x / 16.f * 9.f;
-        auto diff = (outputSize.y - newY) / 2.f;
-        outputSize.y = newY + diff;
-
-        vertexArray[0] = { { 0.f, diff },{ 0.f, 1.f } };
-        vertexArray[1] = { { outputSize.x, diff },{ 1.f, 1.f } };
-        vertexArray[2] = { { 0.f, outputSize.y }, sf::Vector2f() };
-        vertexArray[3] = { outputSize,{ 1.f, 0 } };
+        vertexArray[0] = { sf::Vector2f(), sf::Vector2f(0.f, 1.f) };
+        vertexArray[1] = { sf::Vector2f(outputSize.x, 0.f), sf::Vector2f(1.f, 1.f) };
+        vertexArray[2] = { outputSize, sf::Vector2f(1.f, 0.f) };
+        vertexArray[3] = { sf::Vector2f(0.f, outputSize.y), sf::Vector2f() };
     }
 }
-
-//PostProcess::PostProcess() {}
-
-//public
 
 //protected
 void PostProcess::applyShader(const sf::Shader& shader, sf::RenderTarget& dest)
@@ -70,7 +66,7 @@ void PostProcess::applyShader(const sf::Shader& shader, sf::RenderTarget& dest)
     states.shader = &shader;
     states.blendMode = sf::BlendNone;
 
-    dest.draw(vertexArray, states);
+    dest.draw(vertexArray.data(), vertexArray.size(), sf::Quads, states);
 }
 
 void PostProcess::resizeBuffer(sf::Int32 w, sf::Int32 h)

@@ -66,6 +66,7 @@ Scene::Scene(MessageBus& mb)
 
     currentRenderPath = [this](sf::RenderTarget& rt, sf::RenderStates states)
     {
+        rt.setView(getEntity(m_activeCamera).getComponent<Camera>().m_view);
         for (auto r : m_drawables)
         {
             rt.draw(*r, states);
@@ -129,6 +130,7 @@ void Scene::setPostEnabled(bool enabled)
     {       
         currentRenderPath = [this](sf::RenderTarget& rt, sf::RenderStates states)
         {
+            rt.setView(getEntity(m_activeCamera).getComponent<Camera>().m_view);
             for (auto r : m_drawables)
             {
                 rt.draw(*r, states);
@@ -224,7 +226,7 @@ void Scene::postRenderPath(sf::RenderTarget& rt, sf::RenderStates states)
     m_sceneBuffer.clear();
     for (auto r : m_drawables)
     {
-        rt.draw(*r, states);
+        m_sceneBuffer.draw(*r, states);
     }
     m_sceneBuffer.display();
 
@@ -234,16 +236,17 @@ void Scene::postRenderPath(sf::RenderTarget& rt, sf::RenderStates states)
     for (auto i = 0u; i < m_postEffects.size() - 1; ++i)
     {
         outTex = &m_postBuffers[i % 2];
+        outTex->clear();
         m_postEffects[i]->apply(*inTex, *outTex);
+        outTex->display();
         inTex = outTex;
     }
 
-    rt.setView(m_sceneBuffer.getDefaultView());
+    rt.setView(rt.getDefaultView());
     m_postEffects.back()->apply(*inTex, rt);
 }
 
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    rt.setView(getEntity(m_activeCamera).getComponent<Camera>().m_view);
     currentRenderPath(rt, states);
 }

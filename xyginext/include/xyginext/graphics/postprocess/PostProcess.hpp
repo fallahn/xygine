@@ -32,6 +32,9 @@ source distribution.
 
 #include <xyginext/Config.hpp>
 
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Config.hpp>
+
 #include <memory>
 #include <functional>
 
@@ -41,9 +44,6 @@ namespace sf
     class RenderTexture;
     class Shader;
 }
-
-#include <SFML/Graphics/VertexArray.hpp>
-#include <SFML/System/Vector2.hpp>
 
 namespace xy
 {

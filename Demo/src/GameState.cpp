@@ -51,6 +51,7 @@ source distribution.
 #include <xyginext/ecs/systems/CameraSystem.hpp>
 
 #include <xyginext/graphics/SpriteSheet.hpp>
+#include <xyginext/graphics/postprocess/ChromeAb.hpp>
 
 #include <xyginext/network/NetData.hpp>
 #include <xyginext/util/Random.hpp>
@@ -161,6 +162,8 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     
+    m_scene.addPostProcess<xy::PostChromeAb>(true);
+
     //preload textures
     m_textureResource.get("assets/images/bubble.png");
     m_textureResource.get("assets/images/target.png");
