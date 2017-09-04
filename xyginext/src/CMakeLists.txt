@@ -40,7 +40,7 @@ set(PROJECT_SRC
 
   ${PROJECT_DIR}/graphics/SpriteSheet.cpp
 
-  ${PROJECT_DIR}/graphics/postprocess/PostChromeAB.cpp
+  ${PROJECT_DIR}/graphics/postprocess/PostChromeAb.cpp
   ${PROJECT_DIR}/graphics/postprocess/PostProcess.cpp
 
   ${PROJECT_DIR}/imgui/imgui.cpp
