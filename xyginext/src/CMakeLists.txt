@@ -4,7 +4,9 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/audio/Mixer.cpp
 
   ${PROJECT_DIR}/core/App.cpp
-  ${PROJECT_DIR}/core/ConfigFile.cpp  
+  ${PROJECT_DIR}/core/ConfigFile.cpp
+  ${PROJECT_DIR}/core/Console.cpp
+  ${PROJECT_DIR}/core/ConsoleClient.cpp
   ${PROJECT_DIR}/core/FileSystem.cpp
   ${PROJECT_DIR}/core/MessageBus.cpp
   ${PROJECT_DIR}/core/State.cpp

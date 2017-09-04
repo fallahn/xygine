@@ -216,6 +216,12 @@
     <ClCompile Include="src\graphics\postprocess\PostChromeAb.cpp">
       <Filter>Source Files\graphics\post process</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\Console.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\ConsoleClient.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -386,6 +392,12 @@
     <ClInclude Include="include\xyginext\graphics\postprocess\ChromeAb.hpp">
       <Filter>Header Files\graphics\post process</Filter>
     </ClInclude>
+    <ClInclude Include="include\xyginext\core\Console.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\ConsoleClient.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl">
@@ -417,6 +429,9 @@
     </None>
     <None Include="src\graphics\postprocess\PostChromeAb.inl">
       <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="include\xyginext\core\Console.inl">
+      <Filter>Header Files\core</Filter>
     </None>
   </ItemGroup>
 </Project>

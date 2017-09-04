@@ -27,6 +27,7 @@ source distribution.
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/Log.hpp>
+#include <xyginext/core/Console.hpp>
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_sfml.h"
@@ -50,9 +51,9 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
 #ifndef _DEBUG_
-    std::string windowTitle("xyginext game (Release Build) - F2: Show stats");
+    std::string windowTitle("xyginext game (Release Build) - F1: Console, F2: Show stats");
 #else
-    std::string windowTitle("xyginext game (Debug Build) - F2: Show stats");
+    std::string windowTitle("xyginext game (Debug Build) - F1: Console, F2: Show stats");
 #endif //_DEBUG_
 
     sf::Clock frameClock;
@@ -106,7 +107,7 @@ void App::run()
     }
 
     ImGui::SFML::Init(m_renderWindow);
-
+    Console::init();
     initialise();
 
     running = true;
@@ -137,8 +138,8 @@ void App::run()
     m_renderWindow.close();
     m_messageBus.disable(); //prevents spamming with loads of entity quit messages
 
+    Console::finalise();
     finalise();
-
     ImGui::SFML::Shutdown();
 }
 
@@ -327,6 +328,9 @@ void App::handleEvents()
         {
             switch (evt.key.code)
             {
+            case sf::Keyboard::F1:
+                Console::show();
+                break;
             case sf::Keyboard::F2:
                 m_showStats = !m_showStats;
                 break;
@@ -355,7 +359,7 @@ void App::doImgui()
 {
     ImGui::SFML::Update(false);
 
-    //Console::draw();
+    Console::draw();
 
     //for (auto& f : m_guiWindows) f.first();
 

@@ -127,6 +127,8 @@
     <ClCompile Include="src\audio\Mixer.cpp" />
     <ClCompile Include="src\core\App.cpp" />
     <ClCompile Include="src\core\ConfigFile.cpp" />
+    <ClCompile Include="src\core\Console.cpp" />
+    <ClCompile Include="src\core\ConsoleClient.cpp" />
     <ClCompile Include="src\core\FileSystem.cpp" />
     <ClCompile Include="src\core\MessageBus.cpp" />
     <ClCompile Include="src\core\State.cpp" />
@@ -177,6 +179,8 @@
     <ClInclude Include="include\xyginext\core\App.hpp" />
     <ClInclude Include="include\xyginext\core\Assert.hpp" />
     <ClInclude Include="include\xyginext\core\ConfigFile.hpp" />
+    <ClInclude Include="include\xyginext\core\Console.hpp" />
+    <ClInclude Include="include\xyginext\core\ConsoleClient.hpp" />
     <ClInclude Include="include\xyginext\core\FileSystem.hpp" />
     <ClInclude Include="include\xyginext\core\Log.hpp" />
     <ClInclude Include="include\xyginext\core\Message.hpp" />
@@ -230,6 +234,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\core\ConfigFile.inl" />
+    <None Include="include\xyginext\core\Console.inl" />
     <None Include="include\xyginext\ecs\Entity.inl" />
     <None Include="include\xyginext\ecs\EntityManager.inl" />
     <None Include="include\xyginext\ecs\Scene.inl" />

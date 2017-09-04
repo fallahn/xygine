@@ -180,7 +180,7 @@ void Update(bool defaultCursor)
     ImGuiIO& io = ImGui::GetIO();
     io.DisplaySize = getDisplaySize();
     io.DeltaTime = s_deltaClock.restart().asSeconds(); // restart the clock and get delta
-    io.MouseDrawCursor = !defaultCursor && io.WantCaptureMouse;
+    io.MouseDrawCursor = false;// !defaultCursor && io.WantCaptureMouse;
 
     // update mouse
     assert(s_window);
