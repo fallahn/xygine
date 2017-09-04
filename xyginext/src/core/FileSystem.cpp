@@ -412,8 +412,10 @@ std::string FileSystem::getConfigDirectory(const std::string& appName)
     }
 
     static constexpr std::size_t maxlen = MAX_PATH;
-    char out[maxlen];
+    char outStr[maxlen];
     const char* appname = appName.c_str();
+
+    char* out = outStr;
 
 #ifdef __linux__
     const char *out_orig = out;
@@ -458,7 +460,7 @@ std::string FileSystem::getConfigDirectory(const std::string& appName)
     out += appname_len;
     /* Make the .config/appname folder if it doesn't already exist */
     *out = '\0';
-    _mkdir(out_orig, 0755);
+    mkdir(out_orig, 0755);
     *out = '/';
     out++;
     *out = 0;
