@@ -365,6 +365,9 @@
     <ClInclude Include="include\xyginext\audio\AudioSourceImpl.hpp">
       <Filter>Header Files\audio</Filter>
     </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\AudioListener.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl">

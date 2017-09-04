@@ -185,6 +185,7 @@
     <ClInclude Include="include\xyginext\ecs\Component.hpp" />
     <ClInclude Include="include\xyginext\ecs\ComponentPool.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\AudioEmitter.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\AudioListener.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\Callback.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\Camera.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\CommandTarget.hpp" />

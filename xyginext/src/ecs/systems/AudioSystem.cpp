@@ -29,6 +29,7 @@ source distribution.
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/AudioEmitter.hpp>
+#include <xyginext/ecs/components/AudioListener.hpp>
 #include <xyginext/ecs/Scene.hpp>
 
 #include <xyginext/audio/Mixer.hpp>
@@ -48,11 +49,11 @@ AudioSystem::AudioSystem(MessageBus& mb)
 void AudioSystem::process(float dt)
 {
     //set listener position to active camera
-    auto cam = getScene()->getActiveListener();
-    auto camPos = cam.getComponent<xy::Transform>().getWorldTransform().transformPoint({});
+    auto listener = getScene()->getActiveListener();
+    auto listenerPos = listener.getComponent<xy::Transform>().getWorldTransform().transformPoint({});
 
-    sf::Listener::setPosition({ camPos.x, camPos.y, 0.f });
-    sf::Listener::setGlobalVolume(AudioMixer::getMasterVolume() * 100.f);
+    sf::Listener::setPosition({ listenerPos.x, listenerPos.y, 0.f });
+    sf::Listener::setGlobalVolume(listener.getComponent<AudioListener>().m_volume * AudioMixer::getMasterVolume() * 100.f);
 
     auto& entities = getEntities();
     for (auto& entity : entities)

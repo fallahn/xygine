@@ -29,7 +29,7 @@ source distribution.
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
-//#include <xyginext/ecs/components/AudioListener.hpp>
+#include <xyginext/ecs/components/AudioListener.hpp>
 
 using namespace xy;
 
@@ -58,11 +58,11 @@ Scene::Scene(MessageBus& mb)
     defaultCamera.addComponent<Transform>().setPosition(xy::DefaultSceneSize / 2.f);
     defaultCamera.addComponent<Camera>();
     defaultCamera.getComponent<Camera>().setViewport(getDefaultViewport());
-    //defaultCamera.addComponent<AudioListener>();
+    defaultCamera.addComponent<AudioListener>();
 
     m_defaultCamera = defaultCamera.getIndex();
     m_activeCamera = m_defaultCamera;
-    //m_activeListener = m_defaultCamera;
+    m_activeListener = m_defaultCamera;
 
     currentRenderPath = [this](sf::RenderTarget& rt, sf::RenderStates states)
     {
@@ -155,12 +155,11 @@ Entity Scene::setActiveCamera(Entity entity)
 
 Entity Scene::setActiveListener(Entity entity)
 {
-    //CRO_ASSERT(entity.hasComponent<Transform>() && entity.hasComponent<AudioListener>(), "Entity requires at least a transform and a camera component");
-    //CRO_ASSERT(m_entityManager.owns(entity), "This entity must belong to this scene!");
-    //auto oldListener = m_entityManager.getEntity(m_activeListener);
-    //m_activeListener = entity.getIndex();
-    //return oldListener;
-    return m_entityManager.getEntity(m_activeListener);
+    XY_ASSERT(entity.hasComponent<Transform>() && entity.hasComponent<AudioListener>(), "Entity requires at least a transform and a camera component");
+    XY_ASSERT(m_entityManager.owns(entity), "This entity must belong to this scene!");
+    auto oldListener = m_entityManager.getEntity(m_activeListener);
+    m_activeListener = entity.getIndex();
+    return oldListener;
 }
 
 Entity Scene::getActiveListener() const
@@ -246,9 +245,6 @@ void Scene::postRenderPath()
 
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    auto view = getEntity(m_activeCamera).getComponent<Camera>().m_view;
-    DPRINT("View position", std::to_string(view.getCenter().x) + ", " + std::to_string(view.getCenter().y));
-    
-    rt.setView(view);
+    rt.setView(getEntity(m_activeCamera).getComponent<Camera>().m_view);
     currentRenderPath(rt, states);
 }
