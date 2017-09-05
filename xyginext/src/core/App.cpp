@@ -200,6 +200,11 @@ void App::applyVideoSettings(const VideoSettings& settings)
         m_renderWindow.setTitle(settings.Title);
     }
 
+    auto* msg = m_messageBus.post<Message::WindowEvent>(Message::WindowMessage);
+    msg->type = Message::WindowEvent::Resized;
+    msg->width = settings.VideoMode.width;
+    msg->height = settings.VideoMode.height;
+
     //check if the AA level is the same as requested
     auto newAA = m_renderWindow.getSettings().antialiasingLevel;
     if (oldAA != newAA)
@@ -346,8 +351,8 @@ void App::handleEvents()
         {
             auto* msg = m_messageBus.post<Message::WindowEvent>(Message::WindowMessage);
             msg->type = Message::WindowEvent::Resized;
-            msg->width = m_renderWindow.getSize().x;
-            msg->height = m_renderWindow.getSize().y;
+            msg->width = evt.size.width;
+            msg->height = evt.size.height;
         }
             break;
         default: break;

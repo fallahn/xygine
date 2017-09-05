@@ -28,10 +28,10 @@ source distribution.
 #include <xyginext/core/StateStack.hpp>
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/Log.hpp>
+#include <xyginext/core/Assert.hpp>
+#include <xyginext/core/Message.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
-
-#include <xyginext/core/Assert.hpp>
 
 using namespace xy;
 
@@ -62,12 +62,20 @@ void StateStack::handleEvent(const sf::Event& evt)
     {
         if (!(*i)->handleEvent(evt)) break;
     }
-    //applyPendingChanges();
 }
 
 void StateStack::handleMessage(const Message& msg)
 {   
     for (auto& s : m_stack) s->handleMessage(msg);
+
+    if (msg.id == Message::WindowMessage)
+    {
+        const auto& data = msg.getData<Message::WindowEvent>();
+        if (data.type == Message::WindowEvent::Resized)
+        {
+            updateView();
+        }
+    }
 }
 
 void StateStack::pushState(StateID id)

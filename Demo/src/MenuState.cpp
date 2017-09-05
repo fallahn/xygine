@@ -41,6 +41,8 @@ source distribution.
 #include <xyginext/ecs/systems/TextRenderer.hpp>
 #include <xyginext/ecs/systems/UISystem.hpp>
 
+#include <SFML/Window/Event.hpp>
+
 MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
     : xy::State(stack, ctx),
     m_scene             (ctx.appInstance.getMessageBus()),
@@ -55,8 +57,7 @@ MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 //public
 bool MenuState::handleEvent(const sf::Event& evt)
 {
-    m_scene.getSystem<xy::UISystem>().handleEvent(evt);
-    
+    m_scene.getSystem<xy::UISystem>().handleEvent(evt);   
     m_scene.forwardEvent(evt);
     return true;
 }
@@ -159,4 +160,10 @@ void MenuState::createMenu()
             requestStackPush(StateID::Game);
         }
     });
+
+    //apply the default view
+    auto view = getContext().defaultView;
+    auto& camera = m_scene.getActiveCamera().getComponent<xy::Camera>();
+    camera.setView(view.getSize());
+    camera.setViewport(view.getViewport());
 }

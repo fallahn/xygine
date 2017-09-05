@@ -89,6 +89,12 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
         m_client.connect(sharedData.remoteIP, 40003);
     }
 
+    //apply the default view
+    auto view = getContext().defaultView;
+    auto& camera = m_scene.getActiveCamera().getComponent<xy::Camera>();
+    camera.setView(view.getSize());
+    camera.setViewport(view.getViewport());
+
     //TODO replace this
     m_timeoutText.setFillColor(sf::Color::Red);
     m_timeoutText.setFont(m_fontResource.get("buns"));
@@ -114,7 +120,6 @@ bool GameState::handleEvent(const sf::Event& evt)
             break;
         }
     }
-
     return false;
 }
 
@@ -162,7 +167,7 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     
-    m_scene.addPostProcess<xy::PostChromeAb>(true);
+    //m_scene.addPostProcess<xy::PostChromeAb>(true);
 
     //preload textures
     m_textureResource.get("assets/images/bubble.png");

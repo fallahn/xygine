@@ -31,6 +31,8 @@ source distribution.
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/AudioListener.hpp>
 
+#include <SFML/Window/Event.hpp>
+
 using namespace xy;
 
 namespace
@@ -98,7 +100,7 @@ void Scene::update(float dt)
 
 
     m_systemManager.process(dt);
-    //for (auto& p : m_postEffects) p->process(dt);
+    for (auto& p : m_postEffects) p->update(dt);
 }
 
 Entity Scene::createEntity()
@@ -152,7 +154,6 @@ Entity Scene::setActiveCamera(Entity entity)
     m_activeCamera = entity.getIndex();
 
     return oldCam;
-    //return m_entityManager.getEntity(m_defaultCamera);
 }
 
 Entity Scene::setActiveListener(Entity entity)
@@ -195,27 +196,24 @@ void Scene::forwardMessage(const Message& msg)
         const auto& data = msg.getData<Message::WindowEvent>();
         if (data.type == Message::WindowEvent::Resized)
         {
-            //resizes the post effect buffer if it is in use
-            /*if (m_sceneBuffer.available())
+            //update post effect buffers if they exist
+            if (m_sceneBuffer.getTexture().getNativeHandle() > 0)
             {
                 m_sceneBuffer.create(data.width, data.height);
-                for (auto& p : m_postEffects) p->resizeBuffer(data.width, data.height);
+
+                for (auto& b : m_postBuffers)
+                {
+                    if (b.getTexture().getNativeHandle() > 0)
+                    {
+                        b.create(data.width, data.height);
+                    }
+                }
             }
-
-            if (m_postBuffers[0].available())
-            {
-                m_postBuffers[0].create(data.width, data.height, false);
-            }
-
-            if (m_postBuffers[1].available())
-            {
-                m_postBuffers[1].create(data.width, data.height, false);
-            }*/
-
             //updates the view of the default camera
             getEntity(m_defaultCamera).getComponent<Camera>().setViewport(getDefaultViewport());
         }
     }
+   
 }
 
 //private
@@ -242,7 +240,7 @@ void Scene::postRenderPath(sf::RenderTarget& rt, sf::RenderStates states)
         inTex = outTex;
     }
 
-    rt.setView(rt.getDefaultView());
+    rt.setView(inTex->getDefaultView());
     m_postEffects.back()->apply(*inTex, rt);
 }
 
