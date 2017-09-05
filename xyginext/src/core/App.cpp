@@ -28,6 +28,8 @@ source distribution.
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/Log.hpp>
 #include <xyginext/core/Console.hpp>
+#include <xyginext/core/ConfigFile.hpp>
+#include <xyginext/core/FileSystem.hpp>
 #include <xyginext/detail/Operators.hpp>
 
 #include "../imgui/imgui.h"
@@ -52,9 +54,9 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
 #ifndef _DEBUG_
-    std::string windowTitle("xyginext game (Release Build) - F1: Console, F2: Show stats");
+    const std::string windowTitle("xyginext game (Release Build) - F1: Console, F2: Show stats");
 #else
-    std::string windowTitle("xyginext game (Debug Build) - F1: Console, F2: Show stats");
+    const std::string windowTitle("xyginext game (Debug Build) - F1: Console, F2: Show stats");
 #endif //_DEBUG_
 
     sf::Clock frameClock;
@@ -67,6 +69,8 @@ namespace
 
     App* appInstance = nullptr;
 
+    const std::string settingsFile("settings.cfg");
+
 #include "DefaultIcon.inl"
 }
 
@@ -78,9 +82,6 @@ App::App()
     m_windowIcon.create(16u, 16u, defaultIcon);
 
     renderWindow = &m_renderWindow;
-
-    //TODO load video settings from file
-    //and apply instead
 
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
     m_renderWindow.setIcon(16, 16, m_windowIcon.getPixelsPtr());
@@ -95,6 +96,9 @@ App::App()
     std::reverse(m_videoSettings.AvailableVideoModes.begin(), m_videoSettings.AvailableVideoModes.end());
 
     m_videoSettings.Title = windowTitle;
+
+    //if we find a settings file apply those settings
+    loadSettings();
 
     update = [this](float dt)
     {
@@ -149,6 +153,8 @@ void App::run()
     Console::finalise();
     finalise();
     ImGui::SFML::Shutdown();
+
+    saveSettings();
 }
 
 void App::pause()
@@ -410,4 +416,58 @@ void App::doImgui()
     }
     m_debugLines.clear();
     m_debugLines.reserve(10);
+}
+
+void App::loadSettings()
+{
+    ConfigFile settings;
+    if (settings.loadFromFile(FileSystem::getConfigDirectory(APP_NAME) + settingsFile))
+    {
+        auto objects = settings.getObjects();
+        auto vObj = std::find_if(objects.begin(), objects.end(),
+            [](const ConfigObject& o)
+        {
+            return o.getName() == "video";
+        });
+
+        if (vObj != objects.end())
+        {
+            const auto& properties = vObj->getProperties();
+            VideoSettings vSettings;
+            for (const auto& p : properties)
+            {
+                if (p.getName() == "resolution")
+                {
+                    auto res = static_cast<sf::Vector2u>(p.getValue<sf::Vector2f>());
+                    vSettings.VideoMode.width = res.x;
+                    vSettings.VideoMode.height = res.y;
+                }
+                else if (p.getName() == "vsync")
+                {
+                    vSettings.VSync = p.getValue<bool>();
+                }
+                else if (p.getName() == "fullscreen")
+                {
+                    vSettings.WindowStyle = (p.getValue<bool>()) ? sf::Style::Fullscreen : sf::Style::Close;
+                }
+            }
+            applyVideoSettings(vSettings);
+        }
+
+        //TODO load audio settings and apply to mixer / master vol
+    }
+}
+
+void App::saveSettings()
+{
+    ConfigFile settings("settings");
+
+    auto* vObj = settings.addObject("video");
+    vObj->addProperty("resolution", std::to_string(m_videoSettings.VideoMode.width) + "," + std::to_string(m_videoSettings.VideoMode.height));
+    vObj->addProperty("vsync", m_videoSettings.VSync ? "true" : "false");
+    vObj->addProperty("fullscreen", (m_videoSettings.WindowStyle & sf::Style::Fullscreen) ? "true" : "false");
+    
+    //TODO save audio
+    
+    settings.save(FileSystem::getConfigDirectory(APP_NAME) + settingsFile);
 }

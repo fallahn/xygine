@@ -144,8 +144,10 @@ bool ConfigObject::loadFromFile(const std::string& path)
         std::getline(file, data);
         removeComment(data);
         sf::Int32 braceCount = 0;
+        
+        ConfigObject* currentObject = this;
 
-        if (data[0] == '{')
+        if (data == "{")
         {
             //we have our opening object
             auto objectName = getObjectName(lastLine);
@@ -159,14 +161,12 @@ bool ConfigObject::loadFromFile(const std::string& path)
             return false;
         }
 
-        ConfigObject* currentObject = this;
-
-        while (std::getline(file,data))
+        while (std::getline(file, data))
         {
             removeComment(data);
             if (!data.empty())
             {
-                if (data[0] == '}')
+                if (data == "}")
                 {
                     //close current object and move to parent
                     braceCount--;
@@ -197,13 +197,14 @@ bool ConfigObject::loadFromFile(const std::string& path)
                     //add a new object and make it current
                     std::string prevLine = data;
                     std::getline(file, data);
+
                     removeComment(data);
-                    if (data[0] == '{')
+                    if (data == "{")
                     {
                         braceCount++;
                         auto name = getObjectName(prevLine);
-                        //if (currentObject->findObjectWithId(name.second))
-                        //{
+                        if (currentObject->findObjectWithId(name.second))
+                        {
                         //    Logger::log("Object with ID \'" + name.second + "\' already exists, skipping...", Logger::Type::Warning);
                         //    //object with duplicate id already exists
                         //    while (data.find('}') == std::string::npos
@@ -212,9 +213,9 @@ bool ConfigObject::loadFromFile(const std::string& path)
                         //        //skip all the object properties before continuing
                         //        data = std::string(Util::String::rwgets(dest, DEST_SIZE, rr.file, &readTotal));
                         //    }
-                        //    braceCount--;
-                        //    continue;
-                        //}
+                            braceCount--;
+                            continue;
+                        }
 
                         currentObject = currentObject->addObject(name.first, name.second);
                     }
@@ -441,6 +442,12 @@ void ConfigObject::removeComment(std::string& line)
     
     //remove any tabs while we're at it
     Util::String::removeChar(line, '\t');
+
+    if (line.find('{') != std::string::npos
+        || line.find('}') != std::string::npos)
+    {
+        Util::String::removeChar(line, ' ');
+    }
 }
 
 bool ConfigObject::save(const std::string& path) const

@@ -52,6 +52,10 @@ but offers no warranty that it is fit for any particular purpose, even those for
 #define DPRINT(x,y)
 #endif //_DEBUG_
 
+#ifndef APP_NAME
+#define APP_NAME "xygine_application"
+#endif
+
 /*!
 \brief Main xyginext namespace
 */
@@ -280,17 +284,6 @@ namespace xy
 
     private:
 
-        struct SettingsFile final
-        {
-            int ident;
-            int version;
-
-            sf::VideoMode videoMode;
-            sf::ContextSettings contextSettings;
-            sf::Int32 windowStyle;
-            AudioSettings audioSettings;
-        };
-
         AudioSettings m_audioSettings;
 
         VideoSettings m_videoSettings;
@@ -310,6 +303,9 @@ namespace xy
         bool m_showStats;
         std::vector<std::string> m_debugLines;
         void doImgui();
+
+        void loadSettings();
+        void saveSettings();
     };
 }
 #endif //XY_APP_HPP_

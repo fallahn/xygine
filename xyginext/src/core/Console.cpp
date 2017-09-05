@@ -45,10 +45,6 @@ namespace nim = ImGui;
 //this is a fallover from crogine - I'm keeping this in case I decide to implement it
 #define USE_IMGUI 1
 
-#ifndef APP_NAME
-#define APP_NAME "xygine_application"
-#endif
-
 namespace
 {
     bool showVideoOptions = false;
