@@ -322,10 +322,11 @@ const std::vector<ConfigObject>& ConfigObject::getObjects() const
     return m_objects;
 }
 
-void ConfigObject::addProperty(const std::string& name, const std::string& value)
+ConfigProperty& ConfigObject::addProperty(const std::string& name, const std::string& value)
 {
     m_properties.emplace_back(name, value);
     m_properties.back().setParent(this);
+    return m_properties.back();
 }
 
 ConfigObject* ConfigObject::addObject(const std::string& name, const std::string& id)
@@ -366,29 +367,36 @@ ConfigObject ConfigObject::removeObject(const std::string& name)
     return {};
 }
 
-ConfigObject::NameValue ConfigObject::getObjectName(const std::string& line)
+ConfigObject::NameValue ConfigObject::getObjectName(std::string line)
 {
-    auto result = line.find_first_of(' ');
+    Util::String::removeChar(line, '\t');
+    auto start = line.find_first_not_of(' ');
+    
+    auto result = line.find_first_of(' ', start);
     if (result != std::string::npos)
     {
-        std::string first = line.substr(0, result);
+        std::string first = line.substr(start, result);
         std::string second = line.substr(result + 1);
-        //make sure id has no spaces by truncating it
-        result = second.find_first_of(' ');
-        if (result != std::string::npos)
-            second = second.substr(0, result);
+
+        //remove trailing spaces (may append on first when there is no second)
+        Util::String::removeChar(first, ' ');
+        Util::String::removeChar(second, ' ');
 
         return std::make_pair(first, second);
     }
     return std::make_pair(line, "");
 }
 
-ConfigObject::NameValue ConfigObject::getPropertyName(const std::string& line)
+ConfigObject::NameValue ConfigObject::getPropertyName(std::string line)
 {
+    //remove tabs and skip whitespace
+    Util::String::removeChar(line, '\t');
+    auto start = line.find_first_not_of(' ');
+    
     auto result = line.find_first_of('=');
     XY_ASSERT(result != std::string::npos, "");
 
-    std::string first = line.substr(0, result);
+    std::string first = line.substr(start, result - start);
     Util::String::removeChar(first, ' ');
     std::string second = line.substr(result + 1);
     

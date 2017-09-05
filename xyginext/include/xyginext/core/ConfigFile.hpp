@@ -76,7 +76,7 @@ namespace xy
     {
         friend class ConfigObject;
     public:
-        ConfigProperty(const std::string& name, const std::string& value);
+        ConfigProperty(const std::string& name, const std::string& value = "");
 
         /*!
         \brief Attempts to retrieve the value as the requested type.
@@ -158,7 +158,7 @@ namespace xy
         WARNING this will most likely invalidate any pointers retreived
         with findProperty()
         */
-        void addProperty(const std::string& name, const std::string& value);
+        ConfigProperty& addProperty(const std::string& name, const std::string& value = "");
 
         /*!
         \brief Adds an object with the given name and optional id to this object
@@ -195,8 +195,8 @@ namespace xy
         std::vector<ConfigProperty> m_properties;
         std::vector<ConfigObject> m_objects;
 
-        static NameValue getObjectName(const std::string& line);
-        static NameValue getPropertyName(const std::string& line);
+        static NameValue getObjectName(std::string line);
+        static NameValue getPropertyName(std::string line);
         static bool isProperty(const std::string& line);
         static void removeComment(std::string& line);
 

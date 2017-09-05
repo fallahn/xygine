@@ -451,8 +451,11 @@ void App::loadSettings()
                     vSettings.WindowStyle = (p.getValue<bool>()) ? sf::Style::Fullscreen : sf::Style::Close;
                 }
             }
+
+            vSettings.Title = windowTitle;
             applyVideoSettings(vSettings);
         }
+        
 
         //TODO load audio settings and apply to mixer / master vol
     }
