@@ -134,6 +134,7 @@
     <ClCompile Include="src\core\State.cpp" />
     <ClCompile Include="src\core\StateStack.cpp" />
     <ClCompile Include="src\core\SysTime.cpp" />
+    <ClCompile Include="src\detail\Operators.cpp" />
     <ClCompile Include="src\ecs\Component.cpp" />
     <ClCompile Include="src\ecs\components\AudioEmitter.cpp" />
     <ClCompile Include="src\ecs\components\Camera.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="include\xyginext\core\State.hpp" />
     <ClInclude Include="include\xyginext\core\StateStack.hpp" />
     <ClInclude Include="include\xyginext\core\SysTime.hpp" />
+    <ClInclude Include="include\xyginext\detail\Operators.hpp" />
     <ClInclude Include="include\xyginext\ecs\Component.hpp" />
     <ClInclude Include="include\xyginext\ecs\ComponentPool.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\AudioEmitter.hpp" />

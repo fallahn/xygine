@@ -40,6 +40,7 @@ but offers no warranty that it is fit for any particular purpose, even those for
 #include <xyginext/core/StateStack.hpp>
 #include <xyginext/core/MessageBus.hpp>
 #include <xyginext/Config.hpp>
+#include <xyginext/audio/Mixer.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -81,6 +82,7 @@ namespace xy
             sf::ContextSettings ContextSettings;
             bool VSync;
             std::vector<sf::VideoMode> AvailableVideoModes;
+            std::string Title;
 
             VideoSettings()
                 : WindowStyle(sf::Style::Close /*sf::Style::Fullscreen*/),
@@ -105,8 +107,8 @@ namespace xy
         */
         struct AudioSettings final
         {
-            bool muted = false;
             float volume = 1.f;
+            std::array<float, AudioMixer::MaxChannels> channelVolumes{1.f};
         };
 
 
@@ -159,7 +161,7 @@ namespace xy
         Video settings can be updated va the messaging system
         or by providing this function with a struct containing
         the desired settings. If requested settings are invalid
-        for any reason the settigns will not be applied and
+        for any reason the settings will not be applied and
         a message will be printed when in debug mode.
         */
         void applyVideoSettings(const VideoSettings&);
@@ -210,6 +212,11 @@ namespace xy
         \brief Prints the name/value pair to the stats window
         */
         static void printStat(const std::string&, const std::string&);
+
+        /*!
+        \brief Returns a reference to the active App instance
+        */
+        static App& getActiveInstance();
 
     protected:
         /*!

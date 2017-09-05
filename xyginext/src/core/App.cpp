@@ -28,6 +28,7 @@ source distribution.
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/Log.hpp>
 #include <xyginext/core/Console.hpp>
+#include <xyginext/detail/Operators.hpp>
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_sfml.h"
@@ -77,7 +78,12 @@ App::App()
     m_windowIcon.create(16u, 16u, defaultIcon);
 
     renderWindow = &m_renderWindow;
+
+    //TODO load video settings from file
+    //and apply instead
+
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
+    m_renderWindow.setIcon(16, 16, m_windowIcon.getPixelsPtr());
 
     //store available modes and remove unusable
     m_videoSettings.AvailableVideoModes = sf::VideoMode::getFullscreenModes();
@@ -87,6 +93,8 @@ App::App()
         return (!vm.isValid() || vm.bitsPerPixel != 32);
     }), m_videoSettings.AvailableVideoModes.end());
     std::reverse(m_videoSettings.AvailableVideoModes.begin(), m_videoSettings.AvailableVideoModes.end());
+
+    m_videoSettings.Title = windowTitle;
 
     update = [this](float dt)
     {
@@ -175,7 +183,16 @@ void App::applyVideoSettings(const VideoSettings& settings)
     auto availableModes = m_videoSettings.AvailableVideoModes;
 
     auto oldAA = settings.ContextSettings.antialiasingLevel;
-    m_renderWindow.create(settings.VideoMode, windowTitle, settings.WindowStyle, settings.ContextSettings);
+    if (settings.WindowStyle != m_videoSettings.WindowStyle
+        || settings.ContextSettings != m_videoSettings.ContextSettings)
+    {
+        m_renderWindow.create(settings.VideoMode, settings.Title, settings.WindowStyle, settings.ContextSettings);
+    }
+    else
+    {
+        m_renderWindow.setSize({ settings.VideoMode.width, settings.VideoMode.height });
+        m_renderWindow.setTitle(settings.Title);
+    }
 
     //check if the AA level is the same as requested
     auto newAA = m_renderWindow.getSettings().antialiasingLevel;
@@ -223,7 +240,7 @@ sf::Color App::getClearColour()
 
 void App::setWindowTitle(const std::string& title)
 {
-    windowTitle = title;
+    m_videoSettings.Title = title;
     m_renderWindow.setTitle(title);
 }
 
@@ -251,6 +268,12 @@ void App::printStat(const std::string& name, const std::string& value)
 {
     XY_ASSERT(appInstance, "hm");
     appInstance->m_debugLines.push_back(name + ":" + value);
+}
+
+App& App::getActiveInstance()
+{
+    XY_ASSERT(appInstance, "No active app inastance");
+    return *appInstance;
 }
 
 //protected

@@ -78,7 +78,6 @@ namespace
 }
 int textEditCallback(ImGuiTextEditCallbackData* data);
 
-
 //public
 void Console::print(const std::string& line)
 {
@@ -284,27 +283,23 @@ void Console::draw()
 
     nim::Combo("Resolution", &currentResolution, resolutionNames.data());
 
-    static bool vSync = true;
-    bool lastSync = vSync;
+    auto settings = App::getActiveInstance().getVideoSettings();
+    static bool vSync = settings.VSync;
     nim::Checkbox("V-Sync", &vSync);
-    if (lastSync != vSync)
-    {
-        App::getRenderWindow().setVerticalSyncEnabled(vSync);
-    }
+
     nim::SameLine();
-    static bool fullScreen = false;
-    bool lastScreen = fullScreen;
+    static bool fullScreen = (settings.WindowStyle & sf::Style::Fullscreen);
     nim::Checkbox("Full Screen", &fullScreen);
 
     if (nim::Button("Apply", { 50.f, 20.f }))
     {
-        //apply settings
-        App::getRenderWindow().setSize(resolutions[currentResolution]);
+        //apply settings       
+        settings.VideoMode.width = resolutions[currentResolution].x;
+        settings.VideoMode.height = resolutions[currentResolution].y;
+        settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
+        settings.VSync = vSync;
 
-        if (fullScreen != lastScreen)
-        {
-            //TODO recreate window
-        }
+        App::getActiveInstance().applyVideoSettings(settings);
     }
     nim::End();
 #endif //USE_IMGUI

@@ -76,6 +76,12 @@
     <Filter Include="Source Files\graphics\post process">
       <UniqueIdentifier>{408bc921-778a-4da3-8ca0-efc8305d6d29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\detail">
+      <UniqueIdentifier>{170ca44c-472f-42d5-87f9-18289fefba82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\detail">
+      <UniqueIdentifier>{e5b9a033-029c-452e-bad3-e220d3834fcf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\App.cpp">
@@ -221,6 +227,9 @@
     </ClCompile>
     <ClCompile Include="src\core\ConsoleClient.cpp">
       <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\detail\Operators.cpp">
+      <Filter>Source Files\detail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -397,6 +406,9 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\core\ConsoleClient.hpp">
       <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\detail\Operators.hpp">
+      <Filter>Header Files\detail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
