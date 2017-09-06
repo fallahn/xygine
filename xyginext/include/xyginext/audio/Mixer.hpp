@@ -32,6 +32,7 @@ source distribution.
 #include <SFML/Config.hpp>
 
 #include <array>
+#include <string>
 
 namespace xy
 {
@@ -80,10 +81,30 @@ namespace xy
         */
         static float getVolume(sf::Uint8);
 
+        /*!
+        \brief Sets a label for a channel.
+        For example you might want to set channel 0 to 'Effects'
+        and channel 1 to 'Music' for easy reference. Channel names
+        will appear in the console mixer window.
+        \param label String to use as channel label
+        \param channel To to which to apply the label
+        */
+        static void setLabel(const std::string& label, sf::Uint8 channel);
+
+        /*!
+        \brief Returns the current label assigned to the requested channel.
+        \param channel Number of the channel from which to retrieve the label
+        */
+        static const std::string& getLabel(sf::Uint8 channel);
+
+        /*!
+        \brief Maximum number of available channels.
+        Channel IDs start at 0 and run to MaxChannels - 1
+        */
         static constexpr std::size_t MaxChannels = 16;
 
     private:
-        
+        static std::array<std::string, MaxChannels> m_labels;
         static std::array<float, MaxChannels> m_channels;
         static float m_masterVol;
 

@@ -88,6 +88,8 @@ void MenuState::createMenu()
     m_scene.addSystem<xy::TextRenderer>(mb);
     m_scene.addDirector<TextboxDirector>(m_sharedStateData);
 
+    xy::AudioMixer::setLabel("Testy", 7);
+
     //host text
     auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");
     auto entity = m_scene.createEntity();

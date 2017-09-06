@@ -35,8 +35,29 @@ namespace
 {
     
 }
+std::array<std::string, AudioMixer::MaxChannels> AudioMixer::m_labels
+{ 
+    "Channel 0", 
+    "Channel 1", 
+    "Channel 2", 
+    "Channel 3", 
+    "Channel 4", 
+    "Channel 5", 
+    "Channel 6", 
+    "Channel 7", 
+    "Channel 8", 
+    "Channel 9", 
+    "Channel 10", 
+    "Channel 11", 
+    "Channel 12", 
+    "Channel 13", 
+    "Channel 14", 
+    "Channel 15"
+};
 
-std::array<float, AudioMixer::MaxChannels> AudioMixer::m_channels{ 1.f };
+std::array<float, AudioMixer::MaxChannels> AudioMixer::m_channels
+{ 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
+
 float AudioMixer::m_masterVol = 1.f;
 
 void AudioMixer::setMasterVolume(float vol)
@@ -59,4 +80,16 @@ float AudioMixer::getVolume(sf::Uint8 channel)
 {
     XY_ASSERT(channel < MaxChannels, "Channel index out of range");
     return AudioMixer::m_channels[channel];
+}
+
+void AudioMixer::setLabel(const std::string& label, sf::Uint8 channel)
+{
+    XY_ASSERT(channel < MaxChannels, "Channel index out of range");
+    m_labels[channel] = label;
+}
+
+const std::string& AudioMixer::getLabel(sf::Uint8 channel)
+{
+    XY_ASSERT(channel < MaxChannels, "Channel index out of range");
+    return m_labels[channel];
 }

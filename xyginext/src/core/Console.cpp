@@ -31,6 +31,7 @@ source distribution.
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/SysTime.hpp>
 #include <xyginext/core/Assert.hpp>
+#include <xyginext/audio/Mixer.hpp>
 
 #include "../imgui/imgui.h"
 
@@ -48,6 +49,7 @@ namespace nim = ImGui;
 namespace
 {
     bool showVideoOptions = false;
+    bool showAudioOptions = false;
 
     std::vector<sf::Vector2u> resolutions;
     //int currentAALevel = 0;
@@ -237,6 +239,8 @@ void Console::draw()
                 }
             }
 
+            nim::MenuItem("Audio", nullptr, &showAudioOptions);
+
             if (nim::MenuItem("Quit", nullptr))
             {
                 App::quit();
@@ -272,32 +276,55 @@ void Console::draw()
     nim::End();
 
     //draw options window if visible
-    if (!showVideoOptions) return;
-
-    nim::SetNextWindowSize({ 305.f, 100.f });
-    nim::Begin("Video Options", &showVideoOptions, ImGuiWindowFlags_ShowBorders);
-
-    nim::Combo("Resolution", &currentResolution, resolutionNames.data());
-
-    auto settings = App::getActiveInstance().getVideoSettings();
-    static bool vSync = settings.VSync;
-    nim::Checkbox("V-Sync", &vSync);
-
-    nim::SameLine();
-    static bool fullScreen = (settings.WindowStyle & sf::Style::Fullscreen);
-    nim::Checkbox("Full Screen", &fullScreen);
-
-    if (nim::Button("Apply", { 50.f, 20.f }))
+    if (showVideoOptions)
     {
-        //apply settings       
-        settings.VideoMode.width = resolutions[currentResolution].x;
-        settings.VideoMode.height = resolutions[currentResolution].y;
-        settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
-        settings.VSync = vSync;
+        nim::SetNextWindowSize({ 305.f, 100.f });
+        nim::Begin("Video Options", &showVideoOptions, ImGuiWindowFlags_ShowBorders);
 
-        App::getActiveInstance().applyVideoSettings(settings);
+        nim::Combo("Resolution", &currentResolution, resolutionNames.data());
+
+        auto settings = App::getActiveInstance().getVideoSettings();
+        static bool vSync = settings.VSync;
+        nim::Checkbox("V-Sync", &vSync);
+
+        nim::SameLine();
+        static bool fullScreen = (settings.WindowStyle & sf::Style::Fullscreen);
+        nim::Checkbox("Full Screen", &fullScreen);
+
+        if (nim::Button("Apply", { 50.f, 20.f }))
+        {
+            //apply settings       
+            settings.VideoMode.width = resolutions[currentResolution].x;
+            settings.VideoMode.height = resolutions[currentResolution].y;
+            settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
+            settings.VSync = vSync;
+
+            App::getActiveInstance().applyVideoSettings(settings);
+        }
+        nim::End();
     }
-    nim::End();
+
+    if (showAudioOptions)
+    {
+        nim::SetNextWindowSize({ 315.f, 440.f });
+        nim::Begin("Audio Mixer", &showAudioOptions, ImGuiWindowFlags_ShowBorders);
+
+        nim::Text("NOTE: only AudioSystem sounds are affected.");
+
+        static float maxVol = AudioMixer::getMasterVolume();
+        nim::SliderFloat("Master", &maxVol, 0.f, 1.f);
+        AudioMixer::setMasterVolume(maxVol);
+
+        static std::array<float, AudioMixer::MaxChannels> channelVol;
+        for (auto i = 0u; i < AudioMixer::MaxChannels; ++i)
+        {
+            channelVol[i] = AudioMixer::getVolume(i);
+            nim::SliderFloat(AudioMixer::getLabel(i).c_str(), &channelVol[i], 0.f, 1.f);
+            AudioMixer::setVolume(channelVol[i], i);
+        }
+
+        nim::End();
+    }
 #endif //USE_IMGUI
 }
 
