@@ -462,7 +462,42 @@ void App::loadSettings()
         }
         
 
-        //TODO load audio settings and apply to mixer / master vol
+        //load audio settings and apply to mixer / master vol
+        auto aObj = std::find_if(objects.begin(), objects.end(),
+            [](const ConfigObject& o)
+        {
+            return o.getName() == "audio";
+        });
+
+        if (aObj != objects.end())
+        {
+            const auto& properties = aObj->getProperties();
+            for (const auto& p : properties)
+            {
+                if (p.getName() == "master")
+                {
+                    AudioMixer::setMasterVolume(p.getValue<float>());
+                }
+                else
+                {
+                    auto name = p.getName();
+                    auto found = name.find("channel");
+                    if (found != std::string::npos)
+                    {
+                        auto ident = name.substr(found + 7);
+                        try
+                        {
+                            auto channel = std::stoi(ident);
+                            AudioMixer::setVolume(p.getValue<float>(), channel);
+                        }
+                        catch (...)
+                        {
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -475,7 +510,12 @@ void App::saveSettings()
     vObj->addProperty("vsync", m_videoSettings.VSync ? "true" : "false");
     vObj->addProperty("fullscreen", (m_videoSettings.WindowStyle & sf::Style::Fullscreen) ? "true" : "false");
     
-    //TODO save audio
+    auto* aObj = settings.addObject("audio");
+    aObj->addProperty("master", std::to_string(AudioMixer::getMasterVolume()));
+    for (auto i = 0u; i < AudioMixer::MaxChannels; ++i)
+    {
+        aObj->addProperty("channel" + std::to_string(i), std::to_string(AudioMixer::getVolume(i)));
+    }
     
     settings.save(FileSystem::getConfigDirectory(APP_NAME) + settingsFile);
 }
