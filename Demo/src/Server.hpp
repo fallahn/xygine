@@ -1,0 +1,89 @@
+/*********************************************************************
+(c) Matt Marchant 2017
+http://trederia.blogspot.com
+
+xygineXT - Zlib license.
+
+This software is provided 'as-is', without any express or
+implied warranty. In no event will the authors be held
+liable for any damages arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute
+it freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented;
+you must not claim that you wrote the original software.
+If you use this software in a product, an acknowledgment
+in the product documentation would be appreciated but
+is not required.
+
+2. Altered source versions must be plainly marked as such,
+and must not be misrepresented as being the original software.
+
+3. This notice may not be removed or altered from any
+source distribution.
+*********************************************************************/
+
+#ifndef GAME_DEMO_SERVER_HPP_
+#define GAME_DEMO_SERVER_HPP_
+
+#include "MapData.hpp"
+
+#include <xyginext/network/NetHost.hpp>
+#include <xyginext/core/MessageBus.hpp>
+#include <xyginext/ecs/Scene.hpp>
+
+#include <SFML/System/Thread.hpp>
+
+#include <atomic>
+#include <array>
+
+class GameServer final
+{
+public:
+    GameServer();
+    ~GameServer();
+    GameServer(const GameServer&) = delete;
+    GameServer(GameServer&&) = delete;
+    GameServer& operator = (const GameServer&) = delete;
+    GameServer& operator = (GameServer&&) = delete;
+
+    void start();
+    void stop();
+
+    bool ready() { return m_ready; }
+
+private:
+    xy::NetHost m_host;
+    std::atomic<bool> m_ready;
+
+    std::atomic<bool> m_running;
+    sf::Thread m_thread;
+    void update();
+
+    sf::Clock m_serverTime;
+
+    void handleConnect(const xy::NetEvent&);
+    void handleDisconnect(const xy::NetEvent&);
+
+    void handlePacket(const xy::NetEvent&);
+
+    xy::MessageBus m_messageBus;
+    xy::Scene m_scene;
+    MapData m_mapData;
+
+    void initScene();
+    void loadMap();
+
+    sf::Int32 spawnPlayer(std::size_t);
+
+    struct Client final
+    {
+        ClientData data;
+        xy::NetPeer peer;
+    };
+    std::array<Client, 2u> m_clients;
+};
+
+#endif //GAME_DEMO_SERVER_HPP_

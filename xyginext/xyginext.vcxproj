@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{33E0B54E-2EFA-4060-8E87-B854753C326D}</ProjectGuid>
+    <RootNamespace>xyginext</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)-d</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG_;_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)extlibs\bin\msvc_x64\sfml\Debug;%(AdditionalLibraryDirectories);$(SolutionDir)extlibs\bin\msvc_x64\enet</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-audio-d.lib;sfml-system-d.lib;sfml-graphics-d.lib;sfml-window-d.lib;opengl32.lib;enet-d.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)extlibs\bin\msvc_x64\sfml\Release;%(AdditionalLibraryDirectories);$(SolutionDir)extlibs\bin\msvc_x64\enet</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-audio.lib;sfml-system.lib;sfml-graphics.lib;sfml-window.lib;sfml-main.lib;opengl32.lib;enet.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\audio\AudioSourceImpl.cpp" />
+    <ClCompile Include="src\audio\Mixer.cpp" />
+    <ClCompile Include="src\core\App.cpp" />
+    <ClCompile Include="src\core\ConfigFile.cpp" />
+    <ClCompile Include="src\core\Console.cpp" />
+    <ClCompile Include="src\core\ConsoleClient.cpp" />
+    <ClCompile Include="src\core\FileSystem.cpp" />
+    <ClCompile Include="src\core\MessageBus.cpp" />
+    <ClCompile Include="src\core\State.cpp" />
+    <ClCompile Include="src\core\StateStack.cpp" />
+    <ClCompile Include="src\core\SysTime.cpp" />
+    <ClCompile Include="src\detail\Operators.cpp" />
+    <ClCompile Include="src\ecs\Component.cpp" />
+    <ClCompile Include="src\ecs\components\AudioEmitter.cpp" />
+    <ClCompile Include="src\ecs\components\Camera.cpp" />
+    <ClCompile Include="src\ecs\components\NetInterpolation.cpp" />
+    <ClCompile Include="src\ecs\components\Sprite.cpp" />
+    <ClCompile Include="src\ecs\components\Text.cpp" />
+    <ClCompile Include="src\ecs\components\Transform.cpp" />
+    <ClCompile Include="src\ecs\Director.cpp" />
+    <ClCompile Include="src\ecs\Entity.cpp" />
+    <ClCompile Include="src\ecs\EntityManager.cpp" />
+    <ClCompile Include="src\ecs\Scene.cpp" />
+    <ClCompile Include="src\ecs\System.cpp" />
+    <ClCompile Include="src\ecs\SystemManager.cpp" />
+    <ClCompile Include="src\ecs\systems\AudioSystem.cpp" />
+    <ClCompile Include="src\ecs\systems\CallbackSystem.cpp" />
+    <ClCompile Include="src\ecs\systems\CameraSystem.cpp" />
+    <ClCompile Include="src\ecs\systems\CommandSystem.cpp" />
+    <ClCompile Include="src\ecs\systems\InterpolationSystem.cpp" />
+    <ClCompile Include="src\ecs\systems\SpriteAnimator.cpp" />
+    <ClCompile Include="src\ecs\systems\SpriteRenderer.cpp" />
+    <ClCompile Include="src\ecs\systems\TextRenderer.cpp" />
+    <ClCompile Include="src\ecs\systems\UISystem.cpp" />
+    <ClCompile Include="src\graphics\postprocess\PostAntique.cpp" />
+    <ClCompile Include="src\graphics\postprocess\PostBloom.cpp" />
+    <ClCompile Include="src\graphics\postprocess\PostBlur.cpp" />
+    <ClCompile Include="src\graphics\postprocess\PostChromeAb.cpp" />
+    <ClCompile Include="src\graphics\postprocess\PostOldSchool.cpp" />
+    <ClCompile Include="src\graphics\postprocess\PostProcess.cpp" />
+    <ClCompile Include="src\graphics\SpriteSheet.cpp" />
+    <ClCompile Include="src\imgui\imgui.cpp" />
+    <ClCompile Include="src\imgui\imgui_demo.cpp" />
+    <ClCompile Include="src\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\imgui\imgui_sfml.cpp" />
+    <ClCompile Include="src\network\NetClient.cpp" />
+    <ClCompile Include="src\network\NetConf.cpp" />
+    <ClCompile Include="src\network\NetEvent.cpp" />
+    <ClCompile Include="src\network\NetHost.cpp" />
+    <ClCompile Include="src\network\NetPeer.cpp" />
+    <ClCompile Include="src\resources\FontResource.cpp" />
+    <ClCompile Include="src\resources\ShaderResource.cpp" />
+    <ClCompile Include="src\util\Random.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\xyginext\audio\AudioSourceImpl.hpp" />
+    <ClInclude Include="include\xyginext\audio\Mixer.hpp" />
+    <ClInclude Include="include\xyginext\Config.hpp" />
+    <ClInclude Include="include\xyginext\core\App.hpp" />
+    <ClInclude Include="include\xyginext\core\Assert.hpp" />
+    <ClInclude Include="include\xyginext\core\ConfigFile.hpp" />
+    <ClInclude Include="include\xyginext\core\Console.hpp" />
+    <ClInclude Include="include\xyginext\core\ConsoleClient.hpp" />
+    <ClInclude Include="include\xyginext\core\FileSystem.hpp" />
+    <ClInclude Include="include\xyginext\core\Log.hpp" />
+    <ClInclude Include="include\xyginext\core\Message.hpp" />
+    <ClInclude Include="include\xyginext\core\MessageBus.hpp" />
+    <ClInclude Include="include\xyginext\core\State.hpp" />
+    <ClInclude Include="include\xyginext\core\StateStack.hpp" />
+    <ClInclude Include="include\xyginext\core\SysTime.hpp" />
+    <ClInclude Include="include\xyginext\detail\Operators.hpp" />
+    <ClInclude Include="include\xyginext\ecs\Component.hpp" />
+    <ClInclude Include="include\xyginext\ecs\ComponentPool.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\AudioEmitter.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\AudioListener.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\Callback.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\Camera.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\CommandTarget.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\NetInterpolation.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\Sprite.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\SpriteAnimation.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\Text.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\Transform.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\UIHitBox.hpp" />
+    <ClInclude Include="include\xyginext\ecs\Director.hpp" />
+    <ClInclude Include="include\xyginext\ecs\Entity.hpp" />
+    <ClInclude Include="include\xyginext\ecs\Scene.hpp" />
+    <ClInclude Include="include\xyginext\ecs\System.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\AudioSystem.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\CallbackSystem.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\CameraSystem.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\CommandSystem.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\InterpolationSystem.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\SpriteAnimator.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\SpriteRenderer.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\TextRenderer.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\UISystem.hpp" />
+    <ClInclude Include="include\xyginext\graphics\postprocess\Antique.hpp" />
+    <ClInclude Include="include\xyginext\graphics\postprocess\Bloom.hpp" />
+    <ClInclude Include="include\xyginext\graphics\postprocess\Blur.hpp" />
+    <ClInclude Include="include\xyginext\graphics\postprocess\ChromeAb.hpp" />
+    <ClInclude Include="include\xyginext\graphics\postprocess\OldSchool.hpp" />
+    <ClInclude Include="include\xyginext\graphics\postprocess\PostProcess.hpp" />
+    <ClInclude Include="include\xyginext\graphics\SpriteSheet.hpp" />
+    <ClInclude Include="include\xyginext\network\NetClient.hpp" />
+    <ClInclude Include="include\xyginext\network\NetData.hpp" />
+    <ClInclude Include="include\xyginext\network\NetHost.hpp" />
+    <ClInclude Include="include\xyginext\resources\Resource.hpp" />
+    <ClInclude Include="include\xyginext\resources\ShaderResource.hpp" />
+    <ClInclude Include="include\xyginext\util\Const.hpp" />
+    <ClInclude Include="include\xyginext\util\Math.hpp" />
+    <ClInclude Include="include\xyginext\util\Position.hpp" />
+    <ClInclude Include="include\xyginext\util\Random.hpp" />
+    <ClInclude Include="include\xyginext\util\Rectangle.hpp" />
+    <ClInclude Include="include\xyginext\util\String.hpp" />
+    <ClInclude Include="include\xyginext\util\Vector.hpp" />
+    <ClInclude Include="include\xyginext\util\Wavetable.hpp" />
+    <ClInclude Include="src\network\NetConf.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\xyginext\core\ConfigFile.inl" />
+    <None Include="include\xyginext\core\Console.inl" />
+    <None Include="include\xyginext\ecs\Entity.inl" />
+    <None Include="include\xyginext\ecs\EntityManager.inl" />
+    <None Include="include\xyginext\ecs\Scene.inl" />
+    <None Include="include\xyginext\ecs\System.inl" />
+    <None Include="include\xyginext\ecs\SystemManager.inl" />
+    <None Include="include\xyginext\network\NetClient.inl" />
+    <None Include="include\xyginext\network\NetData.inl" />
+    <None Include="include\xyginext\network\NetHost.inl" />
+    <None Include="src\graphics\postprocess\DefaultVertex.inl" />
+    <None Include="src\graphics\postprocess\PostAdditiveBlend.inl" />
+    <None Include="src\graphics\postprocess\PostBrightness.inl" />
+    <None Include="src\graphics\postprocess\PostChromeAb.inl" />
+    <None Include="src\graphics\postprocess\PostDownSample.inl" />
+    <None Include="src\graphics\postprocess\PostGaussianBlur.inl" />
+    <None Include="src\graphics\postprocess\PostOldSchool.inl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

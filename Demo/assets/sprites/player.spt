@@ -1,0 +1,57 @@
+sprite_sheet player
+{
+	src = "assets/images/players.png"
+	blendmode = alpha
+
+	sprite player_one
+	{
+		bounds = 0,0,64,64
+
+		animation run
+		{
+			frame = 0,0,64,64
+			frame = 64,0,64,64
+			frame = 128,0,64,64
+			frame = 192,0,64,64
+			frame = 256,0,64,64
+
+			framerate = 12
+			loop = true
+		}
+
+		animation jump
+		{
+			frame = 448,0,64,64
+			frame = 352,0,64,64
+
+			framerate = 1
+			loop = false
+		}
+	}
+
+	sprite player_two
+	{
+		bounds = 0,64,64,64
+
+		animation run
+		{
+			frame = 0,64,64,64
+			frame = 64,64,64,64
+			frame = 128,64,64,64
+			frame = 192,64,64,64
+			frame = 256,64,64,64
+
+			framerate = 12
+			loop = true
+		}
+
+		animation jump
+		{
+			frame = 448,64,64,64
+			frame = 352,64,64,64
+			
+			framerate = 1
+			loop = false
+		}
+	}
+}

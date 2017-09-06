@@ -1,0 +1,491 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\core">
+      <UniqueIdentifier>{265ab03a-6e8b-42a9-b2e0-fbfa2b1f5fa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\core">
+      <UniqueIdentifier>{117ea9e9-af18-470b-9c7f-561da58f62bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ecs">
+      <UniqueIdentifier>{f9f4e383-d50a-4ff7-b887-924e79e7d007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ecs">
+      <UniqueIdentifier>{f48ad9f7-9ce1-4163-b82e-10ea85d29815}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\resources">
+      <UniqueIdentifier>{e61a765e-d5ab-4b6c-97ff-5fef84f78f7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\resources">
+      <UniqueIdentifier>{40c5d66b-5d2a-4d62-8953-b3f5d1a5547a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ecs\systems">
+      <UniqueIdentifier>{2ef4882b-e0ae-4135-91ac-507013fff4d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ecs\components">
+      <UniqueIdentifier>{4cd6ba28-0af8-4320-9413-2ddd8722ab7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ecs\components">
+      <UniqueIdentifier>{62741d5a-2d52-4c7c-b152-83a5a2d8d023}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ecs\systems">
+      <UniqueIdentifier>{7eb7ad46-7768-4acf-98d2-21f593cbdebb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{cdbbbf91-4d10-4558-8732-cf669efa8beb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{788267a9-9f83-4365-aea4-4d6dd08a8d20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\network">
+      <UniqueIdentifier>{15c9599d-6c51-4453-970c-cab9d5654ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\network">
+      <UniqueIdentifier>{9ab3d63c-1723-4262-ac9c-d512bc59df8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imgui">
+      <UniqueIdentifier>{1f48ead6-dc67-47f4-98eb-280afc8c1aa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\graphics">
+      <UniqueIdentifier>{9494ade3-7191-4af9-b5fd-ba6cdc933530}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\graphics">
+      <UniqueIdentifier>{e497ab07-e71d-4e78-a31a-589e1863293f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\audio">
+      <UniqueIdentifier>{6bd0f523-b132-40d6-91be-a5cff80b7b5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\audio">
+      <UniqueIdentifier>{96d00a1c-b2dd-4b25-b48c-18e2b69f6a01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\graphics\post process">
+      <UniqueIdentifier>{6126306e-9137-4f56-9088-1643633ace63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\graphics\post process">
+      <UniqueIdentifier>{408bc921-778a-4da3-8ca0-efc8305d6d29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\detail">
+      <UniqueIdentifier>{170ca44c-472f-42d5-87f9-18289fefba82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\detail">
+      <UniqueIdentifier>{e5b9a033-029c-452e-bad3-e220d3834fcf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\core\App.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\FileSystem.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\MessageBus.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\State.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\StateStack.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\SysTime.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\Component.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\Director.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\Entity.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\EntityManager.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\Scene.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\System.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\SystemManager.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\FontResource.cpp">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\ShaderResource.cpp">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\components\Transform.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\components\Sprite.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\SpriteRenderer.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\components\Text.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\TextRenderer.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\CommandSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\Random.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\components\Camera.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\CameraSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\NetConf.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\NetHost.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\NetClient.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\NetEvent.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\NetPeer.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_demo.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_draw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_sfml.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\CallbackSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\components\NetInterpolation.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\InterpolationSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\UISystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\SpriteSheet.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\ConfigFile.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\SpriteAnimator.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio\Mixer.cpp">
+      <Filter>Source Files\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\AudioSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\components\AudioEmitter.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio\AudioSourceImpl.cpp">
+      <Filter>Source Files\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\postprocess\PostProcess.cpp">
+      <Filter>Source Files\graphics\post process</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\postprocess\PostChromeAb.cpp">
+      <Filter>Source Files\graphics\post process</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Console.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\ConsoleClient.cpp">
+      <Filter>Source Files\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\detail\Operators.cpp">
+      <Filter>Source Files\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\postprocess\PostAntique.cpp">
+      <Filter>Source Files\graphics\post process</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\postprocess\PostBloom.cpp">
+      <Filter>Source Files\graphics\post process</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\postprocess\PostBlur.cpp">
+      <Filter>Source Files\graphics\post process</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\postprocess\PostOldSchool.cpp">
+      <Filter>Source Files\graphics\post process</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\xyginext\Config.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\App.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\Assert.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\FileSystem.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\Log.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\MessageBus.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\State.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\StateStack.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\SysTime.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\Component.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\ComponentPool.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\Director.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\Entity.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\Scene.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\System.hpp">
+      <Filter>Header Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\Message.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\resources\Resource.hpp">
+      <Filter>Header Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\resources\ShaderResource.hpp">
+      <Filter>Header Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\SpriteRenderer.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\Sprite.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\Transform.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\Text.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\TextRenderer.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\CommandSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\CommandTarget.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\Camera.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Const.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Math.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Position.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Random.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Rectangle.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\String.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Vector.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\util\Wavetable.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\CameraSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\network\NetHost.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\NetConf.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\network\NetClient.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\network\NetData.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\CallbackSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\Callback.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\NetInterpolation.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\InterpolationSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\UIHitBox.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\UISystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\SpriteSheet.hpp">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\ConfigFile.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\SpriteAnimation.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\SpriteAnimator.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\AudioSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\audio\Mixer.hpp">
+      <Filter>Header Files\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\AudioEmitter.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\audio\AudioSourceImpl.hpp">
+      <Filter>Header Files\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\AudioListener.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\postprocess\PostProcess.hpp">
+      <Filter>Header Files\graphics\post process</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\postprocess\ChromeAb.hpp">
+      <Filter>Header Files\graphics\post process</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\Console.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\core\ConsoleClient.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\detail\Operators.hpp">
+      <Filter>Header Files\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\postprocess\Antique.hpp">
+      <Filter>Header Files\graphics\post process</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\postprocess\Bloom.hpp">
+      <Filter>Header Files\graphics\post process</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\postprocess\Blur.hpp">
+      <Filter>Header Files\graphics\post process</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\postprocess\OldSchool.hpp">
+      <Filter>Header Files\graphics\post process</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\xyginext\ecs\Entity.inl">
+      <Filter>Header Files\ecs</Filter>
+    </None>
+    <None Include="include\xyginext\ecs\EntityManager.inl">
+      <Filter>Header Files\ecs</Filter>
+    </None>
+    <None Include="include\xyginext\ecs\Scene.inl">
+      <Filter>Header Files\ecs</Filter>
+    </None>
+    <None Include="include\xyginext\ecs\System.inl">
+      <Filter>Header Files\ecs</Filter>
+    </None>
+    <None Include="include\xyginext\ecs\SystemManager.inl">
+      <Filter>Header Files\ecs</Filter>
+    </None>
+    <None Include="include\xyginext\network\NetClient.inl">
+      <Filter>Header Files\network</Filter>
+    </None>
+    <None Include="include\xyginext\network\NetData.inl">
+      <Filter>Header Files\network</Filter>
+    </None>
+    <None Include="include\xyginext\network\NetHost.inl">
+      <Filter>Header Files\network</Filter>
+    </None>
+    <None Include="include\xyginext\core\ConfigFile.inl">
+      <Filter>Header Files\core</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\PostChromeAb.inl">
+      <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="include\xyginext\core\Console.inl">
+      <Filter>Header Files\core</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\PostAdditiveBlend.inl">
+      <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\PostBrightness.inl">
+      <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\PostDownSample.inl">
+      <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\PostGaussianBlur.inl">
+      <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\DefaultVertex.inl">
+      <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\PostOldSchool.inl">
+      <Filter>Header Files\graphics\post process</Filter>
+    </None>
+  </ItemGroup>
+</Project>
