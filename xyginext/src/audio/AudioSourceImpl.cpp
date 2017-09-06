@@ -28,7 +28,7 @@ source distribution.
 #include <xyginext/audio/AudioSourceImpl.hpp>
 
 using namespace xy;
-using namespace xy::detail;
+using namespace xy::Detail;
 
 //-------------------------------------------------
 AudioSound::AudioSound(const sf::SoundBuffer& buff)

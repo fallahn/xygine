@@ -43,13 +43,13 @@ AudioEmitter::AudioEmitter()
 //public
 void AudioEmitter::setSource(const sf::SoundBuffer& buf)
 {
-    m_impl = std::make_unique<detail::AudioSound>(buf);
+    m_impl = std::make_unique<Detail::AudioSound>(buf);
 }
 
 bool AudioEmitter::setSource(const std::string& path)
 {
-    m_impl = std::make_unique<detail::AudioMusic>(path);
-    return static_cast<detail::AudioMusic*>(m_impl.get())->isValid();
+    m_impl = std::make_unique<Detail::AudioMusic>(path);
+    return static_cast<Detail::AudioMusic*>(m_impl.get())->isValid();
 }
 
 void AudioEmitter::play()

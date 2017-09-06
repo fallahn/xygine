@@ -38,7 +38,7 @@ source distribution.
 
 namespace xy
 {
-    namespace detail
+    namespace Detail
     {
         class AudioSourceImpl
         {

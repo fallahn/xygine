@@ -227,7 +227,7 @@ namespace xy
     private:
         sf::Uint8 m_mixerChannel;
         float m_volume;
-        std::unique_ptr<detail::AudioSourceImpl> m_impl;
+        std::unique_ptr<Detail::AudioSourceImpl> m_impl;
 
         friend class AudioSystem;
     };
