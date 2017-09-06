@@ -42,6 +42,10 @@ source distribution.
 #include <xyginext/util/Random.hpp>
 #include <xyginext/util/Vector.hpp>
 
+#include <xyginext/core/FileSystem.hpp>
+
+#include <tmxlite/Map.hpp>
+
 #include <SFML/System/Clock.hpp>
 
 #include <cstring>
@@ -56,7 +60,8 @@ GameServer::GameServer()
     : m_ready       (false),
     m_running       (false),
     m_thread        (&GameServer::update, this),
-    m_scene         (m_messageBus)
+    m_scene         (m_messageBus),
+    m_currentMap    (0)
 {
     m_clients[0].data.actor.type = ActorID::PlayerOne;
     m_clients[0].data.spawnX = 20.f;
@@ -77,6 +82,13 @@ void GameServer::start()
 {
     xy::Logger::log("Starting local server", xy::Logger::Type::Info);
     
+    m_mapFiles = xy::FileSystem::listFiles("assets/maps");
+    if (m_mapFiles.empty())
+    {
+        xy::Logger::log("No maps found in map directory", xy::Logger::Type::Error);
+        return;
+    }
+
     m_running = true;
     m_thread.launch();
 }
@@ -87,6 +99,7 @@ void GameServer::stop()
 
     m_running = false;
     m_thread.wait();
+    m_ready = false;
 }
 
 //private
@@ -286,63 +299,71 @@ void GameServer::initScene()
 
 void GameServer::loadMap()
 {
-    m_mapData.actorCount = MapData::MaxActors;
-    std::strcpy(m_mapData.mapName, "Flaps");
-
-    //do actor loading
-    for (auto i = 0; i < m_mapData.actorCount; ++i)
+    tmx::Map map;
+    if (map.load("assets/maps/" + m_mapFiles[m_currentMap]))
     {
-        auto entity = m_scene.createEntity();
-        entity.addComponent<xy::Transform>().setPosition(xy::Util::Random::value(0.f, xy::DefaultSceneSize.x), xy::Util::Random::value(0.f, xy::DefaultSceneSize.y));
-        entity.addComponent<Actor>().id = entity.getIndex();
-        entity.getComponent<Actor>().type = ActorID::BubbleOne;
-        entity.addComponent<Velocity>().x = xy::Util::Random::value(-10.f, 10.f) * 50.f;
-        entity.getComponent<Velocity>().y = xy::Util::Random::value(-10.f, 10.f) * 50.f;
+        m_mapData.actorCount = MapData::MaxActors;
+        std::strcpy(m_mapData.mapName, m_mapFiles[m_currentMap].c_str());
 
-        entity.addComponent<xy::Callback>().function = 
-            [](xy::Entity e, float dt)
+        //do actor loading
+        for (auto i = 0; i < m_mapData.actorCount; ++i)
         {
-            auto& tx = e.getComponent<xy::Transform>();
-            auto& vel = e.getComponent<Velocity>();
-            tx.move(vel.x * dt, vel.y * dt);
-            
-            auto pos = tx.getPosition();
-            if (pos.x < 0)
-            {
-                pos.x = 0.f;
-                auto newVel = xy::Util::Vector::reflect({ vel.x, vel.y }, { 1.f, 0.f });
-                vel.x = newVel.x;
-                vel.y = newVel.y;
-            }
-            else if (pos.x > xy::DefaultSceneSize.x)
-            {
-                pos.x = xy::DefaultSceneSize.x;
-                auto newVel = xy::Util::Vector::reflect({ vel.x, vel.y }, { -1.f, 0.f });
-                vel.x = newVel.x;
-                vel.y = newVel.y;
-            }
-            else if (pos.y < 0)
-            {
-                pos.y = 0.f;
-                auto newVel = xy::Util::Vector::reflect({ vel.x, vel.y }, { 0.f, 1.f });
-                vel.x = newVel.x;
-                vel.y = newVel.y;
-            }
-            else if (pos.y > xy::DefaultSceneSize.y)
-            {
-                pos.y = xy::DefaultSceneSize.y;
-                auto newVel = xy::Util::Vector::reflect({ vel.x, vel.y }, { 0.f, -1.f });
-                vel.x = newVel.x;
-                vel.y = newVel.y;
-            }
-        };
-        entity.getComponent<xy::Callback>().active = true;
+            auto entity = m_scene.createEntity();
+            entity.addComponent<xy::Transform>().setPosition(xy::Util::Random::value(0.f, xy::DefaultSceneSize.x), xy::Util::Random::value(0.f, xy::DefaultSceneSize.y));
+            entity.addComponent<Actor>().id = entity.getIndex();
+            entity.getComponent<Actor>().type = ActorID::BubbleOne;
+            entity.addComponent<Velocity>().x = xy::Util::Random::value(-10.f, 10.f) * 50.f;
+            entity.getComponent<Velocity>().y = xy::Util::Random::value(-10.f, 10.f) * 50.f;
 
-        //update map data
-        m_mapData.actors[i] = entity.getComponent<Actor>();
+            entity.addComponent<xy::Callback>().function =
+                [](xy::Entity e, float dt)
+            {
+                auto& tx = e.getComponent<xy::Transform>();
+                auto& vel = e.getComponent<Velocity>();
+                tx.move(vel.x * dt, vel.y * dt);
+
+                auto pos = tx.getPosition();
+                if (pos.x < 0)
+                {
+                    pos.x = 0.f;
+                    auto newVel = xy::Util::Vector::reflect({ vel.x, vel.y }, { 1.f, 0.f });
+                    vel.x = newVel.x;
+                    vel.y = newVel.y;
+                }
+                else if (pos.x > xy::DefaultSceneSize.x)
+                {
+                    pos.x = xy::DefaultSceneSize.x;
+                    auto newVel = xy::Util::Vector::reflect({ vel.x, vel.y }, { -1.f, 0.f });
+                    vel.x = newVel.x;
+                    vel.y = newVel.y;
+                }
+                else if (pos.y < 0)
+                {
+                    pos.y = 0.f;
+                    auto newVel = xy::Util::Vector::reflect({ vel.x, vel.y }, { 0.f, 1.f });
+                    vel.x = newVel.x;
+                    vel.y = newVel.y;
+                }
+                else if (pos.y > xy::DefaultSceneSize.y)
+                {
+                    pos.y = xy::DefaultSceneSize.y;
+                    auto newVel = xy::Util::Vector::reflect({ vel.x, vel.y }, { 0.f, -1.f });
+                    vel.x = newVel.x;
+                    vel.y = newVel.y;
+                }
+            };
+            entity.getComponent<xy::Callback>().active = true;
+
+            //update map data
+            m_mapData.actors[i] = entity.getComponent<Actor>();
+        }
+
+        m_serverTime.restart();
     }
-
-    m_serverTime.restart();
+    else
+    {
+        //what to do if map loading fails?
+    }
 }
 
 sf::Int32 GameServer::spawnPlayer(std::size_t player)

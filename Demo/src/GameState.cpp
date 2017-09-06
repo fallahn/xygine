@@ -80,8 +80,9 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_client.create(2);
     if (sharedData.hostState == SharedStateData::Host)
     {
+        sf::Clock joinTimer;
         m_server.start();
-        while (!m_server.ready()) {}
+        while (!m_server.ready() && joinTimer.getElapsedTime().asSeconds() < 8.f) {}
         m_client.connect("localhost", 40003);
     }
     else
