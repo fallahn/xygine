@@ -112,7 +112,7 @@ namespace xy
         struct AudioSettings final
         {
             float volume = 1.f;
-            std::array<float, AudioMixer::MaxChannels> channelVolumes{1.f};
+            std::array<float, AudioMixer::MaxChannels> channelVolumes{};
         };
 
 
