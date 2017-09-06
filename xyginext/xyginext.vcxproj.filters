@@ -231,6 +231,18 @@
     <ClCompile Include="src\detail\Operators.cpp">
       <Filter>Source Files\detail</Filter>
     </ClCompile>
+    <ClCompile Include="src\graphics\postprocess\PostAntique.cpp">
+      <Filter>Source Files\graphics\post process</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\postprocess\PostBloom.cpp">
+      <Filter>Source Files\graphics\post process</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\postprocess\PostBlur.cpp">
+      <Filter>Source Files\graphics\post process</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\postprocess\PostOldSchool.cpp">
+      <Filter>Source Files\graphics\post process</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -410,6 +422,18 @@
     <ClInclude Include="include\xyginext\detail\Operators.hpp">
       <Filter>Header Files\detail</Filter>
     </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\postprocess\Antique.hpp">
+      <Filter>Header Files\graphics\post process</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\postprocess\Bloom.hpp">
+      <Filter>Header Files\graphics\post process</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\postprocess\Blur.hpp">
+      <Filter>Header Files\graphics\post process</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\postprocess\OldSchool.hpp">
+      <Filter>Header Files\graphics\post process</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl">
@@ -444,6 +468,24 @@
     </None>
     <None Include="include\xyginext\core\Console.inl">
       <Filter>Header Files\core</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\PostAdditiveBlend.inl">
+      <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\PostBrightness.inl">
+      <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\PostDownSample.inl">
+      <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\PostGaussianBlur.inl">
+      <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\DefaultVertex.inl">
+      <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="src\graphics\postprocess\PostOldSchool.inl">
+      <Filter>Header Files\graphics\post process</Filter>
     </None>
   </ItemGroup>
 </Project>

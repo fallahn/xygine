@@ -167,7 +167,7 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     
-    //m_scene.addPostProcess<xy::PostChromeAb>(true);
+    m_scene.addPostProcess<xy::PostChromeAb>();
 
     //preload textures
     m_textureResource.get("assets/images/bubble.png");

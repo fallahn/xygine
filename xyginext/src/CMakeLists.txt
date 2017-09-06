@@ -42,7 +42,11 @@ set(PROJECT_SRC
 
   ${PROJECT_DIR}/graphics/SpriteSheet.cpp
 
+  ${PROJECT_DIR}/graphics/postprocess/PostAntique.cpp
+  ${PROJECT_DIR}/graphics/postprocess/PostBloom.cpp
+  ${PROJECT_DIR}/graphics/postprocess/PostBlur.cpp
   ${PROJECT_DIR}/graphics/postprocess/PostChromeAb.cpp
+  ${PROJECT_DIR}/graphics/postprocess/PostOldSchool.cpp
   ${PROJECT_DIR}/graphics/postprocess/PostProcess.cpp
 
   ${PROJECT_DIR}/imgui/imgui.cpp

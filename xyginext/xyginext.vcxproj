@@ -157,7 +157,11 @@
     <ClCompile Include="src\ecs\systems\SpriteRenderer.cpp" />
     <ClCompile Include="src\ecs\systems\TextRenderer.cpp" />
     <ClCompile Include="src\ecs\systems\UISystem.cpp" />
+    <ClCompile Include="src\graphics\postprocess\PostAntique.cpp" />
+    <ClCompile Include="src\graphics\postprocess\PostBloom.cpp" />
+    <ClCompile Include="src\graphics\postprocess\PostBlur.cpp" />
     <ClCompile Include="src\graphics\postprocess\PostChromeAb.cpp" />
+    <ClCompile Include="src\graphics\postprocess\PostOldSchool.cpp" />
     <ClCompile Include="src\graphics\postprocess\PostProcess.cpp" />
     <ClCompile Include="src\graphics\SpriteSheet.cpp" />
     <ClCompile Include="src\imgui\imgui.cpp" />
@@ -216,7 +220,11 @@
     <ClInclude Include="include\xyginext\ecs\systems\SpriteRenderer.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\TextRenderer.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\UISystem.hpp" />
+    <ClInclude Include="include\xyginext\graphics\postprocess\Antique.hpp" />
+    <ClInclude Include="include\xyginext\graphics\postprocess\Bloom.hpp" />
+    <ClInclude Include="include\xyginext\graphics\postprocess\Blur.hpp" />
     <ClInclude Include="include\xyginext\graphics\postprocess\ChromeAb.hpp" />
+    <ClInclude Include="include\xyginext\graphics\postprocess\OldSchool.hpp" />
     <ClInclude Include="include\xyginext\graphics\postprocess\PostProcess.hpp" />
     <ClInclude Include="include\xyginext\graphics\SpriteSheet.hpp" />
     <ClInclude Include="include\xyginext\network\NetClient.hpp" />
@@ -245,7 +253,13 @@
     <None Include="include\xyginext\network\NetClient.inl" />
     <None Include="include\xyginext\network\NetData.inl" />
     <None Include="include\xyginext\network\NetHost.inl" />
+    <None Include="src\graphics\postprocess\DefaultVertex.inl" />
+    <None Include="src\graphics\postprocess\PostAdditiveBlend.inl" />
+    <None Include="src\graphics\postprocess\PostBrightness.inl" />
     <None Include="src\graphics\postprocess\PostChromeAb.inl" />
+    <None Include="src\graphics\postprocess\PostDownSample.inl" />
+    <None Include="src\graphics\postprocess\PostGaussianBlur.inl" />
+    <None Include="src\graphics\postprocess\PostOldSchool.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
