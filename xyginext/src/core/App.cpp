@@ -172,11 +172,6 @@ void App::resume()
     timeSinceLastUpdate = 0.f;
 }
 
-const App::AudioSettings& App::getAudioSettings() const
-{
-    return m_audioSettings;
-}
-
 const App::VideoSettings& App::getVideoSettings() const
 {
     return m_videoSettings;

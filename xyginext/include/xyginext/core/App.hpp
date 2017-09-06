@@ -77,7 +77,7 @@ namespace xy
         \brief VideoSettings struct
 
         Contains the current video settings for the application
-        which a read and written to configuration file
+        which are read and written to configuration file
         */
         struct VideoSettings final
         {
@@ -104,17 +104,6 @@ namespace xy
                     && vs.WindowStyle == this->WindowStyle);
             }
         };
-        /*!
-        \brief Audio settings struct
-
-        Contains the audio settings which are read / written to the settings file
-        */
-        struct AudioSettings final
-        {
-            float volume = 1.f;
-            std::array<float, AudioMixer::MaxChannels> channelVolumes{};
-        };
-
 
         /*!
         \brief Constructor.
@@ -145,15 +134,7 @@ namespace xy
         \brief Resumes the app's update function, if it is paused
         */
         void resume();
-        /*!
-        \brief Returns a reference to the struct containing
-        the current audio settings.
 
-        Audio settings properties are updated via the messaging
-        system
-        \see MessageBus
-        */
-        const AudioSettings& getAudioSettings() const;
         /*!
         \brief Returns a reference to a struct containing the current
         Video settings.
@@ -162,11 +143,11 @@ namespace xy
         /*!
         \brief Applies a given set of video settings
 
-        Video settings can be updated va the messaging system
-        or by providing this function with a struct containing
-        the desired settings. If requested settings are invalid
-        for any reason the settings will not be applied and
-        a message will be printed when in debug mode.
+        This is the preferred method for resizing the window,
+        as SFML does not raise Resized events when calling
+        Window::setSize(). This function ensures a message is
+        posted to the message bus in such cases, so that active
+        scenes and states can correctly re-calculate the render view.
         */
         void applyVideoSettings(const VideoSettings&);
 
@@ -283,8 +264,6 @@ namespace xy
         virtual void finalise();
 
     private:
-
-        AudioSettings m_audioSettings;
 
         VideoSettings m_videoSettings;
         sf::RenderWindow m_renderWindow;
