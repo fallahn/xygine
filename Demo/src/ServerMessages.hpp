@@ -25,24 +25,32 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_PACKET_IDS_HPP_
-#define DEMO_GAME_PACKET_IDS_HPP_
+#ifndef DEMO_SERVER_MESSAGES_HPP_
+#define DEMO_SERVER_MESSAGES_HPP_
 
-namespace PacketID
+#include <array>
+#include <string>
+
+/*
+As a local server runs in its own thread, this can cause problems
+when trying to print to the console running on the client thread.
+Because of this the server will emit packets with message idents
+which the client can use to look up a message which needs to be printed.
+*/
+
+namespace MessageIdent
 {
     enum
     {
-        MapData = 0,
-        ClientData, //this has been assigned by the server to the client
-        ActorAbsolute, //applied to actors immediately rather than interpolated
-        ActorUpdate, //interpolated position
-        ActorEvent, //spawned, died, fire weapon etc
-        ClientReady, //notify the server we're connected, loaded and ready
-        ClientInput, //input from the client
-        ClientUpdate, //server's authorative position of a client and input timestamp for reconciliation
-        ClientDisconnected, //copy of client data who disconnected
-        ServerMessage, //ident of a message the server wants to print to client console
+        StopServer,
+
         Count
     };
 }
-#endif //DEMO_GAME_PACKET_IDS_HPP_
+
+static const std::array<std::string, MessageIdent::Count> serverMessages = 
+{
+    "Stopping server"
+};
+
+#endif //DEMO_SERVER_MESSAGES_HPP_

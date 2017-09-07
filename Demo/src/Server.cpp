@@ -31,6 +31,7 @@ source distribution.
 #include "ActorSystem.hpp"
 #include "PlayerSystem.hpp"
 #include "CommandIDs.hpp"
+#include "ServerMessages.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -49,6 +50,8 @@ source distribution.
 #include <SFML/System/Clock.hpp>
 
 #include <cstring>
+
+#define CLIENT_MESSAGE(x) m_host.broadcastPacket(PacketID::ServerMessage, x, xy::NetFlag::Reliable, 1)
 
 namespace
 {
@@ -80,6 +83,7 @@ GameServer::~GameServer()
 //public
 void GameServer::start()
 {
+    //we can log these locally, as we'd be in the same thread
     xy::Logger::log("Starting local server", xy::Logger::Type::Info);
     
     m_mapFiles = xy::FileSystem::listFiles("assets/maps");
@@ -95,7 +99,8 @@ void GameServer::start()
 
 void GameServer::stop()
 {
-    xy::Logger::log("Stopping server", xy::Logger::Type::Info);
+    //xy::Logger::log("Stopping server", xy::Logger::Type::Info);
+    CLIENT_MESSAGE(MessageIdent::StopServer);
 
     m_running = false;
     m_thread.wait();

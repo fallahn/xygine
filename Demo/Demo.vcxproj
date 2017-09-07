@@ -142,6 +142,7 @@
     <ClInclude Include="src\PlayerInput.hpp" />
     <ClInclude Include="src\PlayerSystem.hpp" />
     <ClInclude Include="src\Server.hpp" />
+    <ClInclude Include="src\ServerMessages.hpp" />
     <ClInclude Include="src\SharedStateData.hpp" />
     <ClInclude Include="src\StateIDs.hpp" />
     <ClInclude Include="src\TextboxDirector.hpp" />

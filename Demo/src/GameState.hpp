@@ -42,6 +42,12 @@ source distribution.
 #include "SharedStateData.hpp"
 #include "PlayerInput.hpp"
 
+namespace tmx
+{
+    class Map;
+    class Layer;
+}
+
 class GameState final : public xy::State
 {
 public:
@@ -75,6 +81,9 @@ private:
     void loadScene(const MapData&);
     void handlePacket(const xy::NetEvent&);
     void handleTimeout();
+
+    sf::Int32 parseObjLayer(const std::unique_ptr<tmx::Layer>&);
+    sf::Int32 parseTileLayer(const std::unique_ptr<tmx::Layer>&, const tmx::Map& map);
 };
 
 #endif //DEMO_GAME_STATE_HPP_

@@ -30,6 +30,7 @@ source distribution.
 #include "MapData.hpp"
 #include "CommandIDs.hpp"
 #include "PlayerSystem.hpp"
+#include "ServerMessages.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -59,6 +60,9 @@ source distribution.
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 
+#include <tmxlite/Map.hpp>
+#include <tmxlite/TileLayer.hpp>
+
 namespace
 {
     struct TestPacket
@@ -68,6 +72,13 @@ namespace
     };
 
     const float clientTimeout = 20.f;
+
+    enum MapFlags
+    {
+        Solid = 0x1,
+        Platform = 0x2,
+        Graphics = 0x4
+    };
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
@@ -180,6 +191,36 @@ void GameState::loadAssets()
 
 void GameState::loadScene(const MapData& data)
 {
+    tmx::Map map;
+    if (!map.load("assets/maps/" + std::string(data.mapName)))
+    {
+        //TODO disconnect from server and push disconnected state
+    }
+
+    //TODO crc or something on map file to compare with server's
+
+    sf::Uint8 flags = 0;
+
+    const auto& layers = map.getLayers();
+    for (const auto& layer : layers)
+    {
+        if (layer->getType() == tmx::Layer::Type::Object)
+        {
+            //create map collision
+            flags |= parseObjLayer(layer);
+        }
+        else if (layer->getType() == tmx::Layer::Type::Tile)
+        {
+            //create map drawable
+            flags |= parseTileLayer(layer, map);
+        }
+    }
+    
+    if (flags != (Solid | Platform | Graphics))
+    {
+        //TODO disconnect and bail
+    }
+
     for (auto i = 0; i < data.actorCount; ++i)
     {
         auto entity = m_scene.createEntity();
@@ -204,6 +245,12 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     switch (evt.packet.getID())
     {
     default: break;
+    case PacketID::ServerMessage:
+    {
+        sf::Int32 idx = evt.packet.as<sf::Int32>();
+        xy::Logger::log(serverMessages[idx], xy::Logger::Type::Info);
+    }
+        break;
     case PacketID::ActorAbsolute:
         //set absolute state of actor
     {
@@ -337,4 +384,27 @@ void GameState::handleTimeout()
         requestStackClear();
         requestStackPush(StateID::MainMenu);
     }
+}
+
+sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
+{
+    auto name = layer->getName();
+    if (name == "platform")
+    {
+        return Platform;
+    }
+    else if (name == "solid")
+    {
+        return Solid;
+    }
+    return 0;
+}
+
+sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, const tmx::Map& map)
+{
+    map.getTilesets();
+    
+    const auto* tiles = dynamic_cast<tmx::TileLayer*>(layer.get());
+
+    return 0;
 }
