@@ -29,6 +29,7 @@ source distribution.
 #include "SharedStateData.hpp"
 
 #include <xyginext/core/App.hpp>
+#include <xyginext/gui/Gui.hpp>
 
 #include <SFML/Graphics/Image.hpp>
 
@@ -41,6 +42,25 @@ ErrorState::ErrorState(xy::StateStack& stack, xy::State::Context ctx, const Shar
     m_backgroundTexture.loadFromImage(img);
     m_backgroundSprite.setTexture(m_backgroundTexture);
     m_backgroundSprite.setScale(xy::DefaultSceneSize);
+
+    registerWindow(
+        [&]()
+    {
+        auto windowSize = sf::Vector2f(xy::App::getRenderWindow().getSize());
+        auto boxSize = sf::Vector2f(200.f, 100.f);
+        windowSize = (windowSize - boxSize) / 2.f;
+
+        xy::Nim::setNextWindowPosition(windowSize.x, windowSize.y);
+        xy::Nim::setNextWindowSize(boxSize.x, boxSize.y);
+        xy::Nim::begin("Error");      
+        xy::Nim::text(m_message);
+        if (xy::Nim::button("OK"))
+        {
+            requestStackClear();
+            requestStackPush(StateID::MainMenu);
+        }
+        xy::Nim::end();
+    });
 }
 
 bool ErrorState::handleEvent(const sf::Event& evt)

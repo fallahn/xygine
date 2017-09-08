@@ -25,33 +25,54 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_ERROR_STATE_HPP_
-#define DEMO_ERROR_STATE_HPP_
+#include <xyginext/gui/Gui.hpp>
 
-#include "StateIDs.hpp"
+#include "imgui.h"
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/gui/GuiClient.hpp>
+using namespace xy;
 
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-
-struct SharedStateData;
-class ErrorState final : public xy::State, public xy::GuiClient
+void Nim::begin(const std::string& title, bool* b)
 {
-public:
-    ErrorState(xy::StateStack&, xy::State::Context, const SharedStateData&);
+    ImGui::Begin(title.c_str(), b);
+}
 
-    xy::StateID stateID() const override { return StateID::Error; }
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+void Nim::setNextWindowSize(float x, float y)
+{
+    ImGui::SetNextWindowSize({ x, y });
+}
 
-private:
-    sf::Texture m_backgroundTexture;
-    sf::Sprite m_backgroundSprite;
-    std::string m_message;
-};
+void Nim::setNextWindowConstraints(float minW, float minH, float maxW, float maxH)
+{
+    ImGui::SetNextWindowSizeConstraints({ minW, minH }, { maxW, maxH });
+}
 
-#endif //DEMO_ERROR_STATE_HPP_
+void Nim::setNextWindowPosition(float x, float y)
+{
+    ImGui::SetNextWindowPos({ x, y });
+}
+
+void Nim::text(const std::string& str)
+{
+    ImGui::Text(str.c_str());
+}
+
+bool Nim::button(const std::string& label)
+{
+    return ImGui::Button(label.c_str());
+}
+
+void Nim::checkbox(const std::string& title, bool* value)
+{
+    ImGui::Checkbox(title.c_str(), value);
+}
+
+void Nim::slider(const std::string& title, float& value, float min, float max)
+{
+    ImGui::SliderFloat(title.c_str(), &value, min, max);
+}
+
+void Nim::end()
+{
+    ImGui::End();
+}
+//I miss you like hell.

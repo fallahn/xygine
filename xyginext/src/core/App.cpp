@@ -31,6 +31,7 @@ source distribution.
 #include <xyginext/core/ConfigFile.hpp>
 #include <xyginext/core/FileSystem.hpp>
 #include <xyginext/detail/Operators.hpp>
+#include <xyginext/gui/GuiClient.hpp>
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_sfml.h"
@@ -390,7 +391,7 @@ void App::doImgui()
 
     Console::draw();
 
-    //for (auto& f : m_guiWindows) f.first();
+    for (auto& f : m_guiWindows) f.first();
 
     if (m_showStats)
     {
@@ -401,10 +402,10 @@ void App::doImgui()
         ImGui::NewLine();
 
         //display any registered controls
-        /*for (const auto& func : m_statusControls)
+        for (const auto& func : m_statusControls)
         {
             func.first();
-        }*/
+        }
 
         //print any debug lines       
         for (const auto& p : m_debugLines)
@@ -416,6 +417,43 @@ void App::doImgui()
     }
     m_debugLines.clear();
     m_debugLines.reserve(10);
+}
+
+void App::addStatusControl(const std::function<void()>& func, const GuiClient* c)
+{
+    XY_ASSERT(appInstance, "App not properly instanciated!");
+    appInstance->m_statusControls.push_back(std::make_pair(func, c));
+}
+
+void App::removeStatusControls(const GuiClient* c)
+{
+    XY_ASSERT(appInstance, "App not properly instanciated!");
+
+    appInstance->m_statusControls.erase(
+        std::remove_if(std::begin(appInstance->m_statusControls), std::end(appInstance->m_statusControls),
+            [c](const std::pair<std::function<void()>, const GuiClient*>& pair)
+    {
+        return pair.second == c;
+    }), std::end(appInstance->m_statusControls));
+}
+
+void App::addWindow(const std::function<void()>& func, const GuiClient* c)
+{
+    XY_ASSERT(appInstance, "App not properly instanciated!");
+
+    appInstance->m_guiWindows.push_back(std::make_pair(func, c));
+}
+
+void App::removeWindows(const GuiClient* c)
+{
+    XY_ASSERT(appInstance, "App not properly instanciated!");
+
+    appInstance->m_guiWindows.erase(
+        std::remove_if(std::begin(appInstance->m_guiWindows), std::end(appInstance->m_guiWindows),
+            [c](const std::pair<std::function<void()>, const GuiClient*>& pair)
+    {
+        return pair.second == c;
+    }), std::end(appInstance->m_guiWindows));
 }
 
 void App::loadSettings()

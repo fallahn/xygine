@@ -61,6 +61,8 @@ but offers no warranty that it is fit for any particular purpose, even those for
 */
 namespace xy
 {   
+    class GuiClient;
+
     /*!
     \brief Abstract base class for new games or applications
 
@@ -282,6 +284,17 @@ namespace xy
         bool m_showStats;
         std::vector<std::string> m_debugLines;
         void doImgui();
+
+        std::vector<std::pair<std::function<void()>, const GuiClient*>> m_statusControls;
+        std::vector<std::pair<std::function<void()>, const GuiClient*>> m_guiWindows;
+
+        static void addStatusControl(const std::function<void()>&, const GuiClient*);
+        static void removeStatusControls(const GuiClient*);
+
+        static void addWindow(const std::function<void()>&, const GuiClient*);
+        static void removeWindows(const GuiClient*);
+
+        friend class GuiClient;
 
         void loadSettings();
         void saveSettings();

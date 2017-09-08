@@ -49,6 +49,8 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/graphics/postprocess/PostOldSchool.cpp
   ${PROJECT_DIR}/graphics/postprocess/PostProcess.cpp
 
+  ${PROJECT_DIR}/imgui/Gui.cpp
+  ${PROJECT_DIR}/imgui/GuiClient.cpp
   ${PROJECT_DIR}/imgui/imgui.cpp
   ${PROJECT_DIR}/imgui/imgui_demo.cpp
   ${PROJECT_DIR}/imgui/imgui_draw.cpp

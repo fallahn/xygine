@@ -82,6 +82,9 @@
     <Filter Include="Source Files\detail">
       <UniqueIdentifier>{e5b9a033-029c-452e-bad3-e220d3834fcf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\gui">
+      <UniqueIdentifier>{2ff1bc60-c739-4aa2-a51c-2934af714f4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\App.cpp">
@@ -242,6 +245,12 @@
     </ClCompile>
     <ClCompile Include="src\graphics\postprocess\PostOldSchool.cpp">
       <Filter>Source Files\graphics\post process</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\Gui.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\GuiClient.cpp">
+      <Filter>Source Files\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -433,6 +442,12 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\graphics\postprocess\OldSchool.hpp">
       <Filter>Header Files\graphics\post process</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\gui\Gui.hpp">
+      <Filter>Header Files\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\gui\GuiClient.hpp">
+      <Filter>Header Files\gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

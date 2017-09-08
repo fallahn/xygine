@@ -25,33 +25,24 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_ERROR_STATE_HPP_
-#define DEMO_ERROR_STATE_HPP_
-
-#include "StateIDs.hpp"
-
-#include <xyginext/core/State.hpp>
 #include <xyginext/gui/GuiClient.hpp>
+#include <xyginext/core/App.hpp>
 
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
+using namespace xy;
 
-struct SharedStateData;
-class ErrorState final : public xy::State, public xy::GuiClient
+GuiClient::~GuiClient()
 {
-public:
-    ErrorState(xy::StateStack&, xy::State::Context, const SharedStateData&);
+    App::removeStatusControls(this);
+    App::removeWindows(this);
+}
 
-    xy::StateID stateID() const override { return StateID::Error; }
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+//public
+void GuiClient::registerStatusControls(const std::function<void()>& f)
+{
+    App::addStatusControl(f, this);
+}
 
-private:
-    sf::Texture m_backgroundTexture;
-    sf::Sprite m_backgroundSprite;
-    std::string m_message;
-};
-
-#endif //DEMO_ERROR_STATE_HPP_
+void GuiClient::registerWindow(const std::function<void()>& f)
+{
+    App::addWindow(f, this);
+}
