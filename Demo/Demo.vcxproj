@@ -138,6 +138,7 @@
     <ClInclude Include="src\ErrorState.hpp" />
     <ClInclude Include="src\Game.hpp" />
     <ClInclude Include="src\GameState.hpp" />
+    <ClInclude Include="src\Hitbox.hpp" />
     <ClInclude Include="src\MapData.hpp" />
     <ClInclude Include="src\MenuState.hpp" />
     <ClInclude Include="src\PacketIDs.hpp" />
