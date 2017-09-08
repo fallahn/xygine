@@ -73,6 +73,9 @@ private:
     xy::Scene m_scene;
     MapData m_mapData;
 
+    std::vector<std::string> m_mapFiles;
+    std::size_t m_currentMap;
+
     void initScene();
     void loadMap();
 

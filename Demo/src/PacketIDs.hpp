@@ -41,6 +41,7 @@ namespace PacketID
         ClientInput, //input from the client
         ClientUpdate, //server's authorative position of a client and input timestamp for reconciliation
         ClientDisconnected, //copy of client data who disconnected
+        ServerMessage, //ident of a message the server wants to print to client console
         Count
     };
 }

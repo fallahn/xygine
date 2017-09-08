@@ -30,7 +30,7 @@ xygine isn't really an engine).
 ###### Contributions
 Contributions should be acknowledged and are gratefully accepted from:  
 Jonny Paton  
-Jean-Sebastien Fauteux (macOS Testing)
+Jean-Sebastien Fauteux (macOS Testing)  
 Baard (Awesome Logo)
 
 /*********************************************************************  

@@ -25,14 +25,54 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_STATE_IDS_HPP_
-#define DEMO_STATE_IDS_HPP_
+#include <xyginext/gui/Gui.hpp>
 
-enum StateID
+#include "imgui.h"
+
+using namespace xy;
+
+void Nim::begin(const std::string& title, bool* b)
 {
-    MainMenu,
-    Game,
-    Error
-};
+    ImGui::Begin(title.c_str(), b);
+}
 
-#endif //DEMO_STATE_IDS_HPP_
+void Nim::setNextWindowSize(float x, float y)
+{
+    ImGui::SetNextWindowSize({ x, y });
+}
+
+void Nim::setNextWindowConstraints(float minW, float minH, float maxW, float maxH)
+{
+    ImGui::SetNextWindowSizeConstraints({ minW, minH }, { maxW, maxH });
+}
+
+void Nim::setNextWindowPosition(float x, float y)
+{
+    ImGui::SetNextWindowPos({ x, y });
+}
+
+void Nim::text(const std::string& str)
+{
+    ImGui::Text(str.c_str());
+}
+
+bool Nim::button(const std::string& label, float w, float h)
+{
+    return ImGui::Button(label.c_str(), { w,h });
+}
+
+void Nim::checkbox(const std::string& title, bool* value)
+{
+    ImGui::Checkbox(title.c_str(), value);
+}
+
+void Nim::slider(const std::string& title, float& value, float min, float max)
+{
+    ImGui::SliderFloat(title.c_str(), &value, min, max);
+}
+
+void Nim::end()
+{
+    ImGui::End();
+}
+//I miss you like hell.

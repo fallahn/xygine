@@ -25,14 +25,24 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_STATE_IDS_HPP_
-#define DEMO_STATE_IDS_HPP_
+#include <xyginext/gui/GuiClient.hpp>
+#include <xyginext/core/App.hpp>
 
-enum StateID
+using namespace xy;
+
+GuiClient::~GuiClient()
 {
-    MainMenu,
-    Game,
-    Error
-};
+    App::removeStatusControls(this);
+    App::removeWindows(this);
+}
 
-#endif //DEMO_STATE_IDS_HPP_
+//public
+void GuiClient::registerStatusControls(const std::function<void()>& f)
+{
+    App::addStatusControl(f, this);
+}
+
+void GuiClient::registerWindow(const std::function<void()>& f)
+{
+    App::addWindow(f, this);
+}

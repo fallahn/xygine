@@ -25,14 +25,32 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_STATE_IDS_HPP_
-#define DEMO_STATE_IDS_HPP_
+#ifndef DEMO_SERVER_MESSAGES_HPP_
+#define DEMO_SERVER_MESSAGES_HPP_
 
-enum StateID
+#include <array>
+#include <string>
+
+/*
+As a local server runs in its own thread, this can cause problems
+when trying to print to the console running on the client thread.
+Because of this the server will emit packets with message idents
+which the client can use to look up a message which needs to be printed.
+*/
+
+namespace MessageIdent
 {
-    MainMenu,
-    Game,
-    Error
+    enum
+    {
+        StopServer,
+
+        Count
+    };
+}
+
+static const std::array<std::string, MessageIdent::Count> serverMessages = 
+{
+    "Stopping server"
 };
 
-#endif //DEMO_STATE_IDS_HPP_
+#endif //DEMO_SERVER_MESSAGES_HPP_

@@ -36,11 +36,18 @@ source distribution.
 
 #include <SFML/System/Clock.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 
 #include "StateIDs.hpp"
 #include "Server.hpp"
 #include "SharedStateData.hpp"
 #include "PlayerInput.hpp"
+
+namespace tmx
+{
+    class Map;
+    class Layer;
+}
 
 class GameState final : public xy::State
 {
@@ -64,6 +71,7 @@ private:
     xy::NetClient m_client;
     GameServer m_server;
     sf::Clock m_clientTimeout;
+    SharedStateData& m_sharedData;
 
     ClientData m_clientData;
     PlayerInput m_playerInput;
@@ -72,9 +80,14 @@ private:
     sf::Text m_timeoutText;
 
     void loadAssets();
-    void loadScene(const MapData&);
+    bool loadScene(const MapData&);
     void handlePacket(const xy::NetEvent&);
     void handleTimeout();
+
+    sf::RenderTexture m_mapTexture;
+
+    sf::Int32 parseObjLayer(const std::unique_ptr<tmx::Layer>&);
+    sf::Int32 parseTileLayer(const std::unique_ptr<tmx::Layer>&, const tmx::Map& map);
 };
 
 #endif //DEMO_GAME_STATE_HPP_

@@ -30,6 +30,7 @@ source distribution.
 #include "MapData.hpp"
 #include "CommandIDs.hpp"
 #include "PlayerSystem.hpp"
+#include "ServerMessages.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -55,9 +56,13 @@ source distribution.
 
 #include <xyginext/network/NetData.hpp>
 #include <xyginext/util/Random.hpp>
+#include <xyginext/util/Vector.hpp>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+
+#include <tmxlite/Map.hpp>
+#include <tmxlite/TileLayer.hpp>
 
 namespace
 {
@@ -68,11 +73,19 @@ namespace
     };
 
     const float clientTimeout = 20.f;
+
+    enum MapFlags
+    {
+        Solid = 0x1,
+        Platform = 0x2,
+        Graphics = 0x4
+    };
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
     : xy::State     (stack, ctx),
     m_scene         (ctx.appInstance.getMessageBus()),
+    m_sharedData    (sharedData),
     m_playerInput   (m_client)
 {
     launchLoadingScreen();
@@ -80,8 +93,9 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_client.create(2);
     if (sharedData.hostState == SharedStateData::Host)
     {
+        sf::Clock joinTimer;
         m_server.start();
-        while (!m_server.ready()) {}
+        while (!m_server.ready() && joinTimer.getElapsedTime().asSeconds() < 8.f) {}
         m_client.connect("localhost", 40003);
     }
     else
@@ -167,7 +181,7 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     
-    m_scene.addPostProcess<xy::PostChromeAb>();
+    //m_scene.addPostProcess<xy::PostChromeAb>();
 
     //preload textures
     m_textureResource.get("assets/images/bubble.png");
@@ -177,8 +191,53 @@ void GameState::loadAssets()
     //m_soundResource.get("assets/boop_loop.wav");
 }
 
-void GameState::loadScene(const MapData& data)
+bool GameState::loadScene(const MapData& data)
 {
+    tmx::Map map;
+    if (!map.load("assets/maps/" + std::string(data.mapName)))
+    {
+        //disconnect from server and push disconnected state
+        m_sharedData.error = "Could not find map " + std::string(data.mapName);
+        requestStackPush(StateID::Error);
+        return false;
+    }
+
+    //TODO crc or something on map file to compare with server's
+    auto size = map.getTileCount() * map.getTileSize();
+
+    m_mapTexture.create(size.x, size.y);
+    m_mapTexture.clear(sf::Color(0, 0, 20));
+    sf::Uint8 flags = 0;
+
+    const auto& layers = map.getLayers();
+    for (const auto& layer : layers)
+    {
+        if (layer->getType() == tmx::Layer::Type::Object)
+        {
+            //create map collision
+            flags |= parseObjLayer(layer);
+        }
+        else if (layer->getType() == tmx::Layer::Type::Tile)
+        {
+            //create map drawable
+            flags |= parseTileLayer(layer, map);
+        }
+    }
+    m_mapTexture.display();
+    
+    if (flags != (Solid | Platform | Graphics))
+    {
+        //disconnect and bail
+        m_sharedData.error = std::string(data.mapName) + ": Missing or corrupt map data.";
+        requestStackPush(StateID::Error);
+        return false;
+    }
+
+    //create the background sprite
+    auto entity = m_scene.createEntity();
+    entity.addComponent<xy::Sprite>().setTexture(m_mapTexture.getTexture());
+    entity.addComponent<xy::Transform>().setPosition((xy::DefaultSceneSize.x - static_cast<float>(size.x)) / 2.f, xy::DefaultSceneSize.y - static_cast<float>(size.y));
+
     for (auto i = 0; i < data.actorCount; ++i)
     {
         auto entity = m_scene.createEntity();
@@ -196,6 +255,8 @@ void GameState::loadScene(const MapData& data)
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
     }
+
+    return true;
 }
 
 void GameState::handlePacket(const xy::NetEvent& evt)
@@ -203,6 +264,12 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     switch (evt.packet.getID())
     {
     default: break;
+    case PacketID::ServerMessage:
+    {
+        sf::Int32 idx = evt.packet.as<sf::Int32>();
+        xy::Logger::log(serverMessages[idx], xy::Logger::Type::Info);
+    }
+        break;
     case PacketID::ActorAbsolute:
         //set absolute state of actor
     {
@@ -244,10 +311,15 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
         //TODO clear old actors
         //load new actors
-        loadScene(data);
-
-        //send ready signal
-        m_client.sendPacket(PacketID::ClientReady, 0, xy::NetFlag::Reliable, 1);
+        if (loadScene(data))
+        {
+            //send ready signal
+            m_client.sendPacket(PacketID::ClientReady, 0, xy::NetFlag::Reliable, 1);
+        }
+        else
+        {
+            m_client.disconnect();
+        }
     }
         break;
     case PacketID::ClientUpdate:
@@ -331,9 +403,116 @@ void GameState::handleTimeout()
     
     if (currTime > clientTimeout)
     {
-        //TODO push a message state
-
-        requestStackClear();
-        requestStackPush(StateID::MainMenu);
+        //push a message state
+        m_sharedData.error = "Disconnected from server.";
+        requestStackPush(StateID::Error);
     }
+}
+
+sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
+{
+    auto name = xy::Util::String::toLower(layer->getName());
+    if (name == "platform")
+    {
+        return Platform;
+    }
+    else if (name == "solid")
+    {
+        return Solid;
+    }
+    return 0;
+}
+
+sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, const tmx::Map& map)
+{
+    const auto& tilesets = map.getTilesets();
+    std::vector<std::unique_ptr<sf::Texture>> textures(tilesets.size());
+    for (auto i = 0u; i < tilesets.size(); ++i)
+    {
+        textures[i] = std::make_unique<sf::Texture>();
+        if (!textures[i]->loadFromFile(tilesets[i].getImagePath()))
+        {
+            return 0;
+        }
+    }
+    
+    const auto& tiles = dynamic_cast<tmx::TileLayer*>(layer.get())->getTiles();
+    std::vector<std::pair<sf::Texture*, std::vector<sf::Vertex>>> vertexArrays;
+    
+    const auto tileCount = map.getTileCount();
+    const sf::Vector2f tileSize = { static_cast<float>(map.getTileSize().x), static_cast<float>(map.getTileSize().y) };
+    //this assumes starting in top left - we ought to check the map property really
+    for (auto y = 0u; y < tileCount.y; ++y)
+    {
+        for (auto x = 0u; x < tileCount.x; ++x)
+        {
+            auto idx = y * tileCount.x + x;
+            if (tiles[idx].ID > 0)
+            {
+                //create the vertices
+                std::array<sf::Vertex, 4u> verts;
+                verts[0].position = { x * tileSize.x, y * tileSize.y };
+                verts[1].position = { verts[0].position.x + tileSize.x, verts[0].position.y };
+                verts[2].position = verts[0].position + tileSize;
+                verts[3].position = { verts[0].position.x, verts[0].position.y + tileSize.y };
+
+                std::size_t i = 0;
+                sf::Texture* currTexture = nullptr;
+                for (; i < tilesets.size(); ++i)
+                {
+                    if (tiles[idx].ID >= tilesets[i].getFirstGID() && tiles[idx].ID <= tilesets[i].getLastGID())
+                    {
+                        //get the texcoords
+                        auto tileIdx = tiles[idx].ID - tilesets[i].getFirstGID(); //tile relative to first in set
+                        auto tileX = tileIdx % tilesets[i].getColumnCount();
+                        auto tileY = tileIdx / tilesets[i].getColumnCount();
+
+                        verts[0].texCoords = { tileX * tileSize.x, tileY * tileSize.y };
+                        verts[1].texCoords = { verts[0].texCoords.x + tileSize.x, verts[0].texCoords.y };
+                        verts[2].texCoords = verts[0].texCoords + tileSize;
+                        verts[3].texCoords = { verts[0].texCoords.x, verts[0].texCoords.y + tileSize.y };
+
+                        //and ref to the texture
+                        currTexture = textures[i].get();
+                        break;
+                    }
+                }
+
+                XY_ASSERT(currTexture, "Something went wrong loading texture!");
+
+                //find which vertex array they belong and add if not yet existing
+                auto result = std::find_if(vertexArrays.begin(), vertexArrays.end(),
+                    [currTexture](const std::pair<sf::Texture*, std::vector<sf::Vertex>>& v)
+                {
+                    return v.first == currTexture;
+                });
+
+                if (result != vertexArrays.end())
+                {
+                    //add to existing
+                    for (const auto& vertex : verts)
+                    {
+                        result->second.push_back(vertex);
+                    }
+                }
+                else
+                {
+                    //create new array
+                    vertexArrays.emplace_back(std::make_pair(currTexture, std::vector<sf::Vertex>()));
+                    for (const auto& vertex : verts)
+                    {
+                        vertexArrays.back().second.push_back(vertex);
+                    }
+                }
+            }
+        }
+    }
+
+
+    for (const auto& v : vertexArrays)
+    {
+        m_mapTexture.draw(v.second.data(), v.second.size(), sf::Quads, v.first);
+    }
+
+    return Graphics;
 }

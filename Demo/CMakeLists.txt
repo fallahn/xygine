@@ -37,9 +37,11 @@ if(UNIX)
   find_package(X11 REQUIRED)
 endif()
 
+find_package(TMXLITE REQUIRED)
 find_package(XYGINEXT REQUIRED)
 
 include_directories(
+  ${TMXLITE_INCLUDE_DIR}
   ${XYXT_INCLUDE_DIR}
   ${SFML_INCLUDE_DIR} 
   ${CMAKE_SOURCE_DIR}/include)
@@ -59,6 +61,7 @@ else()
 endif()
 
 target_link_libraries(${PROJECT_NAME}
+  ${TMXLITE_LIBRARIES}
   ${SFML_LIBRARIES}
   ${SFML_DEPENDENCIES}
   ${XYXT_LIBRARIES})
