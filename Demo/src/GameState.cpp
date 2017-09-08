@@ -181,7 +181,7 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     
-    m_scene.addPostProcess<xy::PostChromeAb>();
+    //m_scene.addPostProcess<xy::PostChromeAb>();
 
     //preload textures
     m_textureResource.get("assets/images/bubble.png");
@@ -191,19 +191,22 @@ void GameState::loadAssets()
     //m_soundResource.get("assets/boop_loop.wav");
 }
 
-void GameState::loadScene(const MapData& data)
+bool GameState::loadScene(const MapData& data)
 {
     tmx::Map map;
     if (!map.load("assets/maps/" + std::string(data.mapName)))
     {
-        //TODO disconnect from server and push disconnected state
+        //disconnect from server and push disconnected state
+        m_sharedData.error = "Could not find map " + std::string(data.mapName);
+        requestStackPush(StateID::Error);
+        return false;
     }
 
     //TODO crc or something on map file to compare with server's
     auto size = map.getTileCount() * map.getTileSize();
 
     m_mapTexture.create(size.x, size.y);
-    m_mapTexture.clear(sf::Color::Red);
+    m_mapTexture.clear(sf::Color(0, 0, 20));
     sf::Uint8 flags = 0;
 
     const auto& layers = map.getLayers();
@@ -224,7 +227,10 @@ void GameState::loadScene(const MapData& data)
     
     if (flags != (Solid | Platform | Graphics))
     {
-        //TODO disconnect and bail
+        //disconnect and bail
+        m_sharedData.error = std::string(data.mapName) + ": Missing or corrupt map data.";
+        requestStackPush(StateID::Error);
+        return false;
     }
 
     //create the background sprite
@@ -249,6 +255,8 @@ void GameState::loadScene(const MapData& data)
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
     }
+
+    return true;
 }
 
 void GameState::handlePacket(const xy::NetEvent& evt)
@@ -303,10 +311,15 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
         //TODO clear old actors
         //load new actors
-        loadScene(data);
-
-        //send ready signal
-        m_client.sendPacket(PacketID::ClientReady, 0, xy::NetFlag::Reliable, 1);
+        if (loadScene(data))
+        {
+            //send ready signal
+            m_client.sendPacket(PacketID::ClientReady, 0, xy::NetFlag::Reliable, 1);
+        }
+        else
+        {
+            m_client.disconnect();
+        }
     }
         break;
     case PacketID::ClientUpdate:
@@ -398,7 +411,7 @@ void GameState::handleTimeout()
 
 sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
 {
-    auto name = layer->getName();
+    auto name = xy::Util::String::toLower(layer->getName());
     if (name == "platform")
     {
         return Platform;

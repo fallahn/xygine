@@ -71,7 +71,7 @@ namespace xy
         /*!
         \see ImGui::Button()
         */
-        XY_EXPORT_API bool button(const std::string& label);
+        XY_EXPORT_API bool button(const std::string& label, float w = 0.f, float h = 0.f);
 
         /*!
         \see ImGui::CheckBox()

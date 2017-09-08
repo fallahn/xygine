@@ -50,7 +50,7 @@ MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 {
     launchLoadingScreen();
     createMenu();
-    ctx.appInstance.setClearColour({ 10, 0, 0 });
+    ctx.appInstance.setClearColour({ 1, 0, 10 });
     quitLoadingScreen();
 }
 

@@ -56,9 +56,9 @@ void Nim::text(const std::string& str)
     ImGui::Text(str.c_str());
 }
 
-bool Nim::button(const std::string& label)
+bool Nim::button(const std::string& label, float w, float h)
 {
-    return ImGui::Button(label.c_str());
+    return ImGui::Button(label.c_str(), { w,h });
 }
 
 void Nim::checkbox(const std::string& title, bool* value)

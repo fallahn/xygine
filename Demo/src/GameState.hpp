@@ -80,7 +80,7 @@ private:
     sf::Text m_timeoutText;
 
     void loadAssets();
-    void loadScene(const MapData&);
+    bool loadScene(const MapData&);
     void handlePacket(const xy::NetEvent&);
     void handleTimeout();
 
