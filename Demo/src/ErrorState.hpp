@@ -25,14 +25,32 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_STATE_IDS_HPP_
-#define DEMO_STATE_IDS_HPP_
+#ifndef DEMO_ERROR_STATE_HPP_
+#define DEMO_ERROR_STATE_HPP_
 
-enum StateID
+#include "StateIDs.hpp"
+
+#include <xyginext/core/State.hpp>
+
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+
+struct SharedStateData;
+class ErrorState final : public xy::State
 {
-    MainMenu,
-    Game,
-    Error
+public:
+    ErrorState(xy::StateStack&, xy::State::Context, const SharedStateData&);
+
+    xy::StateID stateID() const override { return StateID::Error; }
+    bool handleEvent(const sf::Event&) override;
+    void handleMessage(const xy::Message&) override;
+    bool update(float) override;
+    void draw() override;
+
+private:
+    sf::Texture m_backgroundTexture;
+    sf::Sprite m_backgroundSprite;
+    std::string m_message;
 };
 
-#endif //DEMO_STATE_IDS_HPP_
+#endif //DEMO_ERROR_STATE_HPP_

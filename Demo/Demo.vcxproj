@@ -122,6 +122,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ErrorState.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -134,6 +135,7 @@
   <ItemGroup>
     <ClInclude Include="src\ActorSystem.hpp" />
     <ClInclude Include="src\CommandIDs.hpp" />
+    <ClInclude Include="src\ErrorState.hpp" />
     <ClInclude Include="src\Game.hpp" />
     <ClInclude Include="src\GameState.hpp" />
     <ClInclude Include="src\MapData.hpp" />

@@ -25,14 +25,41 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_STATE_IDS_HPP_
-#define DEMO_STATE_IDS_HPP_
+#include "ErrorState.hpp"
+#include "SharedStateData.hpp"
 
-enum StateID
+#include <xyginext/core/App.hpp>
+
+#include <SFML/Graphics/Image.hpp>
+
+ErrorState::ErrorState(xy::StateStack& stack, xy::State::Context ctx, const SharedStateData& shared)
+    : xy::State(stack, ctx),
+    m_message(shared.error)
 {
-    MainMenu,
-    Game,
-    Error
-};
+    sf::Image img;
+    img.create(1, 1, { 0,0,0,160 });
+    m_backgroundTexture.loadFromImage(img);
+    m_backgroundSprite.setTexture(m_backgroundTexture);
+    m_backgroundSprite.setScale(xy::DefaultSceneSize);
+}
 
-#endif //DEMO_STATE_IDS_HPP_
+bool ErrorState::handleEvent(const sf::Event& evt)
+{
+    return false;
+}
+
+void ErrorState::handleMessage(const xy::Message& msg)
+{
+
+}
+
+bool ErrorState::update(float dt)
+{
+    return false;
+}
+
+void ErrorState::draw()
+{
+    auto& rt = getContext().appInstance.getRenderWindow();
+    rt.draw(m_backgroundSprite);
+}

@@ -28,6 +28,7 @@ source distribution.
 #include "Game.hpp"
 #include "GameState.hpp"
 #include "MenuState.hpp"
+#include "ErrorState.hpp"
 
 #include <SFML/Window/Event.hpp>
 
@@ -93,4 +94,5 @@ void Game::registerStates()
 {
     m_stateStack.registerState<GameState>(StateID::Game, sharedData);
     m_stateStack.registerState<MenuState>(StateID::MainMenu, sharedData);
+    m_stateStack.registerState<ErrorState>(StateID::Error, sharedData);
 }

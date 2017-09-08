@@ -132,6 +132,12 @@ namespace xy
                 }
                 return retVec;
             }
+
+            template <typename T>
+            sf::Vector2<T> operator * (const sf::Vector2<T>& l, const sf::Vector2<T>& r)
+            {
+                return sf::Vector2<T>(l.x * r.x, l.y * r.y);
+            }
         }
     }
 }
