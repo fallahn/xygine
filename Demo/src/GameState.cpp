@@ -31,6 +31,8 @@ source distribution.
 #include "CommandIDs.hpp"
 #include "PlayerSystem.hpp"
 #include "ServerMessages.hpp"
+#include "ClientServerShared.hpp"
+#include "CollisionSystem.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -63,6 +65,7 @@ source distribution.
 
 #include <tmxlite/Map.hpp>
 #include <tmxlite/TileLayer.hpp>
+#include <tmxlite/ObjectGroup.hpp>
 
 namespace
 {
@@ -172,13 +175,14 @@ void GameState::loadAssets()
 {
     auto& mb = getContext().appInstance.getMessageBus();
 
-    m_scene.addSystem<PlayerSystem>(mb);
+    m_scene.addSystem<PlayerSystem>(mb);   
     m_scene.addSystem<xy::InterpolationSystem>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::CommandSystem>(mb);
     m_scene.addSystem<xy::SpriteRenderer>(mb);
+    m_scene.addSystem<CollisionSystem>(mb); //TODO move this before rendering when not debugging
     m_scene.addSystem<xy::TextRenderer>(mb);
     
     //m_scene.addPostProcess<xy::PostChromeAb>();
@@ -205,6 +209,9 @@ bool GameState::loadScene(const MapData& data)
     //TODO crc or something on map file to compare with server's
     auto size = map.getTileCount() * map.getTileSize();
 
+    auto mapEntity = m_scene.createEntity();
+    mapEntity.addComponent<xy::Transform>();
+
     m_mapTexture.create(size.x, size.y);
     m_mapTexture.clear(sf::Color(0, 0, 20));
     sf::Uint8 flags = 0;
@@ -215,7 +222,7 @@ bool GameState::loadScene(const MapData& data)
         if (layer->getType() == tmx::Layer::Type::Object)
         {
             //create map collision
-            flags |= parseObjLayer(layer);
+            flags |= parseObjLayer(layer, mapEntity);
         }
         else if (layer->getType() == tmx::Layer::Type::Tile)
         {
@@ -236,7 +243,10 @@ bool GameState::loadScene(const MapData& data)
     //create the background sprite
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_mapTexture.getTexture());
-    entity.addComponent<xy::Transform>().setPosition((xy::DefaultSceneSize.x - static_cast<float>(size.x)) / 2.f, xy::DefaultSceneSize.y - static_cast<float>(size.y));
+    entity.addComponent<xy::Transform>();
+    
+    mapEntity.getComponent<xy::Transform>().addChild(entity.getComponent<xy::Transform>());
+    mapEntity.getComponent<xy::Transform>().setPosition((xy::DefaultSceneSize.x - static_cast<float>(size.x)) / 2.f, xy::DefaultSceneSize.y - static_cast<float>(size.y));
 
     for (auto i = 0; i < data.actorCount; ++i)
     {
@@ -409,15 +419,28 @@ void GameState::handleTimeout()
     }
 }
 
-sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
+sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer, xy::Entity parentEntity)
 {
+    auto& parentTx = parentEntity.getComponent<xy::Transform>();
+    
     auto name = xy::Util::String::toLower(layer->getName());
     if (name == "platform")
     {
+        const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+        for (const auto& obj : objs)
+        {
+            parentTx.addChild(createCollisionObject(m_scene, obj, CollisionType::Platform).getComponent<xy::Transform>());
+        }
+        
         return Platform;
     }
     else if (name == "solid")
     {
+        const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+        for (const auto& obj : objs)
+        {
+            parentTx.addChild(createCollisionObject(m_scene, obj, CollisionType::Solid).getComponent<xy::Transform>());
+        }
         return Solid;
     }
     return 0;
