@@ -46,6 +46,11 @@ struct Player final
     std::size_t currentInput = 0;
     std::size_t lastUpdatedInput = history.size() - 1;
     sf::Uint8 playerNumber = 0;
+    enum class State
+    {
+        Walking, Jumping
+    }state = State::Walking;
+    float velocity = 0.f;
 };
 
 class PlayerSystem final : public xy::System

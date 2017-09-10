@@ -304,11 +304,11 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
 
 void GameServer::initScene()
 {
+    m_scene.addSystem<CollisionSystem>(m_messageBus);    
     m_scene.addSystem<ActorSystem>(m_messageBus);
     m_scene.addSystem<PlayerSystem>(m_messageBus);
     m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
-    m_scene.addSystem<CollisionSystem>(m_messageBus);
 }
 
 void GameServer::loadMap()
@@ -426,10 +426,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.addComponent<xy::Transform>().setPosition(m_clients[player].data.spawnX, m_clients[player].data.spawnY);
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
 
-    //TODO fix player size - getting it from sprite doesn't work here
-    //and means the client can easily change own hitbox
-    entity.addComponent<Hitbox>().setType(CollisionType::Player);
-    entity.getComponent<Hitbox>().setCollisionRect({ 0.f, 0.f, PlayerSize, PlayerSize });
+    entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, PlayerSize, PlayerSize }, CollisionType::Player);
 
     //add client controller
     entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);

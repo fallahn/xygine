@@ -35,7 +35,10 @@ source distribution.
 
 namespace
 {
-    const float speed = 1600.f;
+    const float speed = 400.f;
+    const float maxVelocity = 800.f;
+    const float gravity = 2200.f;
+    const float initialJumpVelocity = 900.f;
 }
 
 PlayerSystem::PlayerSystem(xy::MessageBus& mb)
@@ -43,7 +46,7 @@ PlayerSystem::PlayerSystem(xy::MessageBus& mb)
 {
     requireComponent<Player>();
     requireComponent<xy::Transform>();
-    requireComponent<Hitbox>();
+    requireComponent<CollisionComponent>();
 }
 
 //public
@@ -54,6 +57,51 @@ void PlayerSystem::process(float dt)
     {
         auto& player = entity.getComponent<Player>();
         auto& tx = entity.getComponent<xy::Transform>();
+        const auto& hitboxes = entity.getComponent<CollisionComponent>().getHitboxes();
+        auto count = entity.getComponent<CollisionComponent>().getHitboxCount();
+
+        //check for collision and resolve
+        for (auto i = 0u; i < count; ++i)
+        {
+            const auto& hitbox = hitboxes[i];
+            if(hitbox.getType() == CollisionType::Player)
+            {
+                for (auto i = 0u; i < hitbox.getCollisionCount(); ++i)
+                {
+                    const auto& man = hitbox.getManifolds()[i];
+                    switch (man.otherType)
+                    {
+                    default: break;
+                    case CollisionType::Platform:
+                        //only collide when moving downwards (one way plat)
+                        //if (man.normal.y > 0 && player.velocity < 0) break; //else fall through to normal collision
+
+                    case CollisionType::Solid:
+                        //always repel
+                        tx.move(man.normal * man.penetration);
+                        if (man.normal.y < 0)
+                        {
+                            player.velocity = 0.f;
+                            player.state = Player::State::Walking;
+                        }
+                        else if (man.normal.y > 0)
+                        {
+                            player.velocity = -player.velocity * 0.25f;
+                        }
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                //foot sensor
+                if (hitbox.getCollisionCount() == 0)
+                {
+                    player.state = Player::State::Jumping;
+                }
+            }
+        }
+
 
         //current input actually points to next empty slot.
         std::size_t idx = (player.currentInput + player.history.size() - 1) % player.history.size();
@@ -61,8 +109,26 @@ void PlayerSystem::process(float dt)
         //parse any outstanding inputs
         while (player.lastUpdatedInput != idx)
         {   
-            tx.move(speed * parseInput(player.history[player.lastUpdatedInput].mask) * getDelta(player.history, player.lastUpdatedInput));
-            player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();  
+            //TODO surely we need to update collision for every input?
+
+            auto delta = getDelta(player.history, player.lastUpdatedInput);
+            tx.move(speed * parseInput(player.history[player.lastUpdatedInput].mask) * delta);
+            player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();
+
+            if (player.state != Player::State::Jumping)
+            {
+                if (player.history[player.lastUpdatedInput].mask & InputFlag::Up)
+                {
+                    player.state = Player::State::Jumping;
+                    player.velocity = -initialJumpVelocity;
+                }
+            }
+            else
+            {
+                tx.move({ 0.f, player.velocity * delta });
+                player.velocity += gravity * delta;
+                player.velocity = std::min(player.velocity, maxVelocity);
+            }
         }
     }
 }
@@ -101,14 +167,6 @@ void PlayerSystem::reconcile(float x, float y, sf::Int64 timestamp, xy::Entity e
 sf::Vector2f PlayerSystem::parseInput(sf::Uint16 mask)
 {
     sf::Vector2f motion;
-    if (mask & InputFlag::Up)
-    {
-        motion.y = -1.f;
-    }
-    if (mask & InputFlag::Down)
-    {
-        motion.y += 1.f;
-    }
     if (mask & InputFlag::Left)
     {
         motion.x = -1.f;

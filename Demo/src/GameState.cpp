@@ -175,14 +175,14 @@ void GameState::loadAssets()
 {
     auto& mb = getContext().appInstance.getMessageBus();
 
+    m_scene.addSystem<CollisionSystem>(mb); //TODO move this before rendering when not debugging
     m_scene.addSystem<PlayerSystem>(mb);   
     m_scene.addSystem<xy::InterpolationSystem>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::CommandSystem>(mb);
-    m_scene.addSystem<xy::SpriteRenderer>(mb);
-    m_scene.addSystem<CollisionSystem>(mb); //TODO move this before rendering when not debugging
+    m_scene.addSystem<xy::SpriteRenderer>(mb);    
     m_scene.addSystem<xy::TextRenderer>(mb);
     
     //m_scene.addPostProcess<xy::PostChromeAb>();
@@ -240,6 +240,7 @@ bool GameState::loadScene(const MapData& data)
     //create the background sprite
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_mapTexture.getTexture());
+    entity.getComponent<xy::Sprite>().setColour({ 255,255,255,120 });
     entity.addComponent<xy::Transform>();
     
     m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Sprite>().getSize() / 2.f);
@@ -340,7 +341,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         const auto& state = evt.packet.as<ActorState>();
 
         //reconcile
-        m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.clientTime, m_playerInput.getPlayerEntity());
+        //m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.clientTime, m_playerInput.getPlayerEntity());
     }
         break;
     case PacketID::ClientData:
@@ -365,11 +366,10 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         {
             entity.addComponent<xy::Sprite>() = spritesheet.getSprite("player_two");
         }
-        auto size = sf::Vector2f(PlayerSize, PlayerSize);
-        entity.getComponent<xy::Transform>().setOrigin(size.x / 2.f, size.y);
+
+        entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
         entity.addComponent<xy::SpriteAnimation>().play(0);
-        entity.addComponent<Hitbox>().setType(CollisionType::Player);
-        entity.getComponent<Hitbox>().setCollisionRect({ 0.f, 0.f, size.x, size.y });
+
 
         if (data.peerID == m_client.getPeer().getID())
         {
@@ -379,6 +379,9 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             //add a local controller
             entity.addComponent<Player>().playerNumber = (data.actor.type == ActorID::PlayerOne) ? 0 : 1;
             m_playerInput.setPlayerEntity(entity);
+
+            entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, PlayerSize, PlayerSize }, CollisionType::Player);
+            entity.getComponent<CollisionComponent>().addHitbox({ 0.f, PlayerSize, PlayerSize, 10.f }, CollisionType::Foot);
         }
         else
         {

@@ -37,7 +37,7 @@ source distribution.
 CollisionSystem::CollisionSystem(xy::MessageBus& mb)
     : xy::System(mb, typeid(CollisionSystem))
 {
-    requireComponent<Hitbox>();
+    requireComponent<CollisionComponent>();
     requireComponent<xy::Transform>();
 }
 
@@ -50,76 +50,96 @@ void CollisionSystem::process(float dt)
     auto& entities = getEntities();
     for (auto& entity : entities)
     {
+        const auto& xForm = entity.getComponent<xy::Transform>();
+        auto& collisionComponent = entity.getComponent<CollisionComponent>();
+
+        for (auto i = 0u; i < collisionComponent.m_hitboxCount; ++i)
+        {
+            auto& hitbox = collisionComponent.m_hitboxes[i];
+            auto rect = hitbox.getCollisionRect();
+            rect = entity.getComponent<xy::Transform>().getTransform().transformRect(rect);
+
+            //draw some debug to make sure the entities are being created in the correct place
+            sf::Color colour = (hitbox.m_collisionCount > 0) ? sf::Color::Red : sf::Color::Green;
+            //repeat the first and last points with transparent verts
+            m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), sf::Color::Transparent);
+            m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), colour); //TODO use a colour based on collision type?
+            m_vertices.emplace_back(sf::Vector2f(rect.left + rect.width, rect.top), colour);
+            m_vertices.emplace_back(sf::Vector2f(rect.left + rect.width, rect.top + rect.height), colour);
+            m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top + rect.height), colour);
+            m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), colour);
+            m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), sf::Color::Transparent);
+
+            hitbox.m_collisionCount = 0;
+        }
         
-        auto& hitbox = entity.getComponent<Hitbox>();        
-        auto rect = hitbox.getCollisionRect();
-        rect = entity.getComponent<xy::Transform>().getTransform().transformRect(rect);
-
-        //draw some debug to make sure the entities are being created in the correct place
-        sf::Color colour = (entity.getComponent<Hitbox>().getCollisionCount() > 0) ? sf::Color::Red : sf::Color::Green;
-        //repeat the first and last points with transparent verts
-        m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), sf::Color::Transparent);
-        m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), colour); //TODO use a colour based on collision type?
-        m_vertices.emplace_back(sf::Vector2f(rect.left + rect.width, rect.top), colour);
-        m_vertices.emplace_back(sf::Vector2f(rect.left + rect.width, rect.top + rect.height), colour);
-        m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top + rect.height), colour);
-        m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), colour);
-        m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), sf::Color::Transparent);
-
-        hitbox.m_collisionCount = 0;
-
         //actual collision testing...
+        auto globalBounds = xForm.getTransform().transformRect(collisionComponent.getLocalBounds());
         for (const auto& other : entities)
         {
             if (entity != other)
             {
                 //only test for collisions first, so we make sure each pair is processed only once
-                auto otherRect = other.getComponent<Hitbox>().getCollisionRect();
-                if (rect.intersects(other.getComponent<xy::Transform>().getTransform().transformRect(otherRect)))
+                auto otherBounds = other.getComponent<xy::Transform>().getTransform().transformRect(other.getComponent<CollisionComponent>().getLocalBounds());
+
+                if (globalBounds.intersects(otherBounds))
                 {
                     m_collisions.insert(std::minmax(entity, other));
                 }
             }
-        }
+        }     
     }
 
     //calc manifolds for any collisions and enter into component info
+    //DPRINT("Broadphase count", std::to_string(m_collisions.size()));
     for (auto c : m_collisions)
     {
         const auto& txA = c.first.getComponent<xy::Transform>();
         const auto& txB = c.second.getComponent<xy::Transform>();
 
-        auto& boxA = c.first.getComponent<Hitbox>();
-        auto& boxB = c.second.getComponent<Hitbox>();
-        
-        sf::FloatRect overlap;
-        txA.getTransform().transformRect(boxA.getCollisionRect()).intersects(txB.getTransform().transformRect(boxB.getCollisionRect()));
-        sf::Vector2f normal = txB.getPosition() - txA.getPosition();
+        auto& ccA = c.first.getComponent<CollisionComponent>();
+        auto& ccB = c.second.getComponent<CollisionComponent>();
 
-        Manifold manifold;
-        if (overlap.width < overlap.height)
+        //such nested...
+        for (auto i = 0; i < ccA.m_hitboxCount; ++i)
         {
-            manifold.normal.x = (normal.x < 0) ? 1.f : -1.f;
-            manifold.penetration = overlap.width;
-        }
-        else
-        {
-            manifold.normal.y = (normal.y < 0) ? 1.f : -1.f;
-            manifold.penetration = overlap.height;
-        }
-        manifold.otherType = boxB.getType();
+            auto& boxA = ccA.m_hitboxes[i];
+            auto rectA = txA.getTransform().transformRect(boxA.getCollisionRect());
 
-        if (boxA.m_collisionCount < Hitbox::MaxCollisions)
-        {
-            boxA.m_manifolds[boxA.m_collisionCount++] = manifold;
-        }
+            for (auto j = 0; j < ccB.m_hitboxCount; ++j)
+            {
+                auto& boxB = ccB.m_hitboxes[j];
 
-        manifold.normal = -manifold.normal;
-        manifold.otherType = boxA.getType();
-        if (boxB.m_collisionCount < Hitbox::MaxCollisions)
-        {
-            boxB.m_manifolds[boxB.m_collisionCount++] = manifold;
-        }  
+                sf::FloatRect overlap;
+                rectA.intersects(txB.getTransform().transformRect(boxB.getCollisionRect()), overlap);
+                sf::Vector2f normal = (txB.getPosition() - txB.getOrigin()) - (txA.getPosition() - txA.getOrigin());
+
+                Manifold manifold;
+                if (overlap.width < overlap.height)
+                {
+                    manifold.normal.x = (normal.x < 0) ? 1.f : -1.f;
+                    manifold.penetration = overlap.width;
+                }
+                else
+                {
+                    manifold.normal.y = (normal.y < 0) ? 1.f : -1.f;
+                    manifold.penetration = overlap.height;
+                }
+                manifold.otherType = boxB.getType();
+
+                if (boxA.m_collisionCount < Hitbox::MaxCollisions)
+                {
+                    boxA.m_manifolds[boxA.m_collisionCount++] = manifold;
+                }
+
+                manifold.normal = -manifold.normal;
+                manifold.otherType = boxA.getType();
+                if (boxB.m_collisionCount < Hitbox::MaxCollisions)
+                {
+                    boxB.m_manifolds[boxB.m_collisionCount++] = manifold;
+                }
+            }
+        }
     }
 }
 

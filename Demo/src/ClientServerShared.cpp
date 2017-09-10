@@ -40,7 +40,6 @@ void createCollisionObject(xy::Scene& scene, const tmx::Object& obj, CollisionTy
 
         auto entity = scene.createEntity();
         entity.addComponent<xy::Transform>().setPosition(bounds.left, bounds.top);
-        entity.addComponent<Hitbox>().setType(type);
-        entity.getComponent<Hitbox>().setCollisionRect({ 0, 0, bounds.width, bounds.height });
+        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, bounds.width, bounds.height }, type);
     }
 }

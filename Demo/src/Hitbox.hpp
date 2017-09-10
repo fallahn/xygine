@@ -28,16 +28,20 @@ source distribution.
 #ifndef DEMO_HITBOX_HPP_
 #define DEMO_HITBOX_HPP_
 
+#include <xyginext/core/Assert.hpp>
+
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <array>
+#include <limits>
 
 enum class CollisionType
 {
     None,
     Player,
+    Foot,
     Platform,
     Solid
 };
@@ -64,11 +68,63 @@ public:
     void setCollisionRect(sf::FloatRect rect) { m_collisionRect = rect; }
 
 private:
-    CollisionType m_collisionType;
+    CollisionType m_collisionType = CollisionType::None;
     std::array<Manifold, MaxCollisions> m_manifolds{};
-    std::size_t m_collisionCount;
+    std::size_t m_collisionCount = 0;
     sf::FloatRect m_collisionRect;
 
+    friend class CollisionSystem;
+};
+
+class CollisionComponent final
+{
+public:
+    static constexpr sf::Uint32 MaxHitBoxes = 2;
+
+    CollisionComponent()
+    {
+        float fMax = std::numeric_limits<float>::max();
+        m_localBounds.left = fMax;
+        m_localBounds.top = fMax;
+        m_localBounds.width = -fMax;
+        m_localBounds.height = -fMax;
+    }
+
+    void addHitbox(sf::FloatRect rect, CollisionType type)
+    {
+        XY_ASSERT(m_hitboxCount < MaxHitBoxes, "No more hitboxes may be added");
+        m_hitboxes[m_hitboxCount].setCollisionRect(rect);
+        m_hitboxes[m_hitboxCount].setType(type);
+        m_hitboxCount++;
+        //merge boxes for broad phase culling
+        if (m_localBounds.left > rect.left)
+        {
+            m_localBounds.left = rect.left;
+        }
+        if (m_localBounds.top > rect.top)
+        {
+            m_localBounds.top = rect.top;
+        }
+        if (m_localBounds.width < rect.width)
+        {
+            m_localBounds.width = rect.width;
+        }
+        if (m_localBounds.height < rect.height)
+        {
+            m_localBounds.height = rect.height;
+        }
+    }
+    std::size_t getHitboxCount() const { return m_hitboxCount; }
+
+    const std::array<Hitbox, MaxHitBoxes>& getHitboxes() const { return m_hitboxes; }
+
+    //returns the combined bounds for all hitboxes for a broadphase pass
+    sf::FloatRect getLocalBounds() const { return m_localBounds; }
+
+private:
+    std::size_t m_hitboxCount = 0;
+    std::array<Hitbox, MaxHitBoxes> m_hitboxes{};
+    sf::FloatRect m_localBounds{};
     friend class CollisionSystem;
 };
 
