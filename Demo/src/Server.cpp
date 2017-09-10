@@ -197,6 +197,7 @@ void GameServer::update()
                     state.y = tx.y;
                     state.clientTime = player.history[player.lastUpdatedInput].timestamp;
                     state.playerState = player.state;
+                    state.playerVelocity = player.velocity;
 
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
                 }
@@ -428,6 +429,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
 
     entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, PlayerSize, PlayerSize }, CollisionType::Player);
+    entity.getComponent<CollisionComponent>().addHitbox({ 0.f, PlayerSize, PlayerSize, 10.f }, CollisionType::Foot);
 
     //add client controller
     entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);

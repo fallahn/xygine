@@ -89,6 +89,7 @@ struct ActorState final
     sf::Int32 serverTime = 0;
     sf::Int64 clientTime = 0;
     Player::State playerState = Player::State::Walking;
+    float playerVelocity = 0.f;
 };
 
 //update to the server from the client's input

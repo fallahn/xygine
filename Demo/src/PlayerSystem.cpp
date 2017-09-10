@@ -95,10 +95,26 @@ void PlayerSystem::process(float dt)
             else
             {
                 //foot sensor
-                if (hitbox.getCollisionCount() == 0)
+                auto count = hitbox.getCollisionCount();
+                if (count == 0)
                 {
                     player.state = Player::State::Jumping;
                 }
+                /*else
+                {
+                    for (auto i = 0u; i < count; ++i)
+                    {
+                        const auto& man = hitbox.getManifolds()[i];
+                        switch (man.otherType)
+                        {
+                        default: break;
+                        case CollisionType::Solid:
+                        case CollisionType::Platform:
+                            if(player.velocity > 0) player.velocity = 0.2f;
+                            break;
+                        }
+                    }
+                }*/
             }
         }
 
@@ -142,6 +158,7 @@ void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
 
     tx.setPosition(state.x, state.y);
     player.state = state.playerState;
+    player.velocity = state.playerVelocity;
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
