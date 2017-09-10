@@ -27,6 +27,7 @@ source distribution.
 
 #include "PlayerSystem.hpp"
 #include "MapData.hpp"
+#include "Hitbox.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/util/Vector.hpp>
@@ -42,6 +43,7 @@ PlayerSystem::PlayerSystem(xy::MessageBus& mb)
 {
     requireComponent<Player>();
     requireComponent<xy::Transform>();
+    requireComponent<Hitbox>();
 }
 
 //public

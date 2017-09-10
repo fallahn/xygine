@@ -39,7 +39,9 @@ namespace xy
     class Scene;
 }
 
+static constexpr float PlayerSize = 64.f;
+
 //map loading functions shared between client / server
-xy::Entity createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType type);
+void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType type);
 
 #endif //DEMO_CLIENT_SERVER_SHARED_HPP_

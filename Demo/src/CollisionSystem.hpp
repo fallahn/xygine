@@ -34,6 +34,7 @@ source distribution.
 #include <SFML/Graphics/Vertex.hpp>
 
 #include <vector>
+#include <set>
 
 class CollisionSystem final :public xy::System, public sf::Drawable
 {
@@ -46,6 +47,8 @@ private:
 
     void onEntityAdded(xy::Entity) override;
     void onEntityRemoved(xy::Entity) override;
+    
+    std::set<std::pair<xy::Entity, xy::Entity>> m_collisions;
 
 
     std::vector<sf::Vertex> m_vertices;

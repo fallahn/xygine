@@ -209,9 +209,6 @@ bool GameState::loadScene(const MapData& data)
     //TODO crc or something on map file to compare with server's
     auto size = map.getTileCount() * map.getTileSize();
 
-    auto mapEntity = m_scene.createEntity();
-    mapEntity.addComponent<xy::Transform>();
-
     m_mapTexture.create(size.x, size.y);
     m_mapTexture.clear(sf::Color(0, 0, 20));
     sf::Uint8 flags = 0;
@@ -222,7 +219,7 @@ bool GameState::loadScene(const MapData& data)
         if (layer->getType() == tmx::Layer::Type::Object)
         {
             //create map collision
-            flags |= parseObjLayer(layer, mapEntity);
+            flags |= parseObjLayer(layer);
         }
         else if (layer->getType() == tmx::Layer::Type::Tile)
         {
@@ -245,8 +242,7 @@ bool GameState::loadScene(const MapData& data)
     entity.addComponent<xy::Sprite>().setTexture(m_mapTexture.getTexture());
     entity.addComponent<xy::Transform>();
     
-    mapEntity.getComponent<xy::Transform>().addChild(entity.getComponent<xy::Transform>());
-    mapEntity.getComponent<xy::Transform>().setPosition((xy::DefaultSceneSize.x - static_cast<float>(size.x)) / 2.f, xy::DefaultSceneSize.y - static_cast<float>(size.y));
+    m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Sprite>().getSize() / 2.f);
 
     for (auto i = 0; i < data.actorCount; ++i)
     {
@@ -278,6 +274,13 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     {
         sf::Int32 idx = evt.packet.as<sf::Int32>();
         xy::Logger::log(serverMessages[idx], xy::Logger::Type::Info);
+
+        if (idx == MessageIdent::MapFailed)
+        {
+            m_client.disconnect();
+            m_sharedData.error = "Server Failed To Load Map";
+            requestStackPush(StateID::Error);
+        }
     }
         break;
     case PacketID::ActorAbsolute:
@@ -356,13 +359,17 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         if (data.actor.type == ActorID::PlayerOne)
         {
             entity.addComponent<xy::Sprite>() = spritesheet.getSprite("player_one");
+            entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
         }
         else
         {
             entity.addComponent<xy::Sprite>() = spritesheet.getSprite("player_two");
         }
-        entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+        auto size = sf::Vector2f(PlayerSize, PlayerSize);
+        entity.getComponent<xy::Transform>().setOrigin(size.x / 2.f, size.y);
         entity.addComponent<xy::SpriteAnimation>().play(0);
+        entity.addComponent<Hitbox>().setType(CollisionType::Player);
+        entity.getComponent<Hitbox>().setCollisionRect({ 0.f, 0.f, size.x, size.y });
 
         if (data.peerID == m_client.getPeer().getID())
         {
@@ -419,17 +426,15 @@ void GameState::handleTimeout()
     }
 }
 
-sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer, xy::Entity parentEntity)
+sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
 {
-    auto& parentTx = parentEntity.getComponent<xy::Transform>();
-    
     auto name = xy::Util::String::toLower(layer->getName());
     if (name == "platform")
     {
         const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
         for (const auto& obj : objs)
         {
-            parentTx.addChild(createCollisionObject(m_scene, obj, CollisionType::Platform).getComponent<xy::Transform>());
+            createCollisionObject(m_scene, obj, CollisionType::Platform);
         }
         
         return Platform;
@@ -439,7 +444,7 @@ sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer, xy:
         const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
         for (const auto& obj : objs)
         {
-            parentTx.addChild(createCollisionObject(m_scene, obj, CollisionType::Solid).getComponent<xy::Transform>());
+            createCollisionObject(m_scene, obj, CollisionType::Solid);
         }
         return Solid;
     }

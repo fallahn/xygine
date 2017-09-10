@@ -68,6 +68,8 @@ private:
     std::array<Manifold, MaxCollisions> m_manifolds{};
     std::size_t m_collisionCount;
     sf::FloatRect m_collisionRect;
+
+    friend class CollisionSystem;
 };
 
 #endif //DEMO_HITBOX_HPP_

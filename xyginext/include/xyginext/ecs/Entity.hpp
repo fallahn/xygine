@@ -131,7 +131,6 @@ namespace xy
         */
         const ComponentMask& getComponentMask() const;
 
-		//TODO add tags of types
         
         bool operator == (Entity r)
         {
@@ -156,6 +155,11 @@ namespace xy
         bool operator >= (Entity r)
         {
             return getIndex() >= r.getIndex();
+        }
+
+        friend bool operator < (const Entity& l, const Entity& r)
+        {
+            return (l.getIndex() < r.getIndex());
         }
 	private:
 
@@ -253,5 +257,6 @@ namespace xy
 #include "EntityManager.inl"
 }
 
+XY_EXPORT_API bool operator < (const xy::Entity& l, const xy::Entity& r);
 
 #endif //XY_ENTITY_HPP_

@@ -43,14 +43,15 @@ namespace MessageIdent
     enum
     {
         StopServer,
-
+        MapFailed,
         Count
     };
 }
 
 static const std::array<std::string, MessageIdent::Count> serverMessages = 
 {
-    "Stopping server"
+    "Stopping server",
+    "Failed Loading Map"
 };
 
 #endif //DEMO_SERVER_MESSAGES_HPP_

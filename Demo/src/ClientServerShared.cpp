@@ -32,13 +32,15 @@ source distribution.
 
 #include <tmxlite/Object.hpp>
 
-xy::Entity createCollisionObject(xy::Scene& scene, const tmx::Object& obj, CollisionType type)
+void createCollisionObject(xy::Scene& scene, const tmx::Object& obj, CollisionType type)
 {
-    auto bounds = obj.getAABB();
-    
-    auto entity = scene.createEntity();
-    entity.addComponent<xy::Transform>().setPosition(bounds.left, bounds.top);
-    entity.addComponent<Hitbox>().setType(type);
-    entity.getComponent<Hitbox>().setCollisionRect({ 0, 0, bounds.width, bounds.height });
-    return entity;
+    if (obj.getShape() == tmx::Object::Shape::Rectangle)
+    {
+        auto bounds = obj.getAABB();
+
+        auto entity = scene.createEntity();
+        entity.addComponent<xy::Transform>().setPosition(bounds.left, bounds.top);
+        entity.addComponent<Hitbox>().setType(type);
+        entity.getComponent<Hitbox>().setCollisionRect({ 0, 0, bounds.width, bounds.height });
+    }
 }

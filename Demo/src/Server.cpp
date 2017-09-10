@@ -32,6 +32,9 @@ source distribution.
 #include "PlayerSystem.hpp"
 #include "CommandIDs.hpp"
 #include "ServerMessages.hpp"
+#include "CollisionSystem.hpp"
+#include "Hitbox.hpp"
+#include "ClientServerShared.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -57,6 +60,11 @@ namespace
 {
     const float tickRate = 1.f / 25.f;
     const float updateRate = 1.f / 60.f;
+
+    enum MapFlags
+    {
+        Solid = 0x1, Platform = 0x2
+    };
 }
 
 GameServer::GameServer()
@@ -67,12 +75,12 @@ GameServer::GameServer()
     m_currentMap    (0)
 {
     m_clients[0].data.actor.type = ActorID::PlayerOne;
-    m_clients[0].data.spawnX = 20.f;
-    m_clients[0].data.spawnY = 1016.f;
+    m_clients[0].data.spawnX = 96.f;
+    m_clients[0].data.spawnY = 864.f;
 
     m_clients[1].data.actor.type = ActorID::PlayerTwo;
-    m_clients[1].data.spawnX = 920.f;
-    m_clients[1].data.spawnY = 1016.f;
+    m_clients[1].data.spawnX = 928.f;
+    m_clients[1].data.spawnY = 864.f;
 }
 
 GameServer::~GameServer()
@@ -300,6 +308,7 @@ void GameServer::initScene()
     m_scene.addSystem<PlayerSystem>(m_messageBus);
     m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
+    m_scene.addSystem<CollisionSystem>(m_messageBus);
 }
 
 void GameServer::loadMap()
@@ -309,6 +318,42 @@ void GameServer::loadMap()
     {
         m_mapData.actorCount = MapData::MaxActors;
         std::strcpy(m_mapData.mapName, m_mapFiles[m_currentMap].c_str());
+
+        //load collision geometry
+        sf::Uint8 flags = 0;
+        const auto& layers = map.getLayers();
+        for (const auto& layer : layers)
+        {
+            if (layer->getType() == tmx::Layer::Type::Object)
+            {
+                //create map collision
+                auto name = xy::Util::String::toLower(layer->getName());
+                if (name == "platform")
+                {
+                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+                    for (const auto& obj : objs)
+                    {
+                        createCollisionObject(m_scene, obj, CollisionType::Platform);
+                    }
+
+                    flags |= Platform;
+                }
+                else if (name == "solid")
+                {
+                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+                    for (const auto& obj : objs)
+                    {
+                        createCollisionObject(m_scene, obj, CollisionType::Solid);
+                    }
+                    flags |= Solid;
+                }
+            }
+        }
+        if (flags != (Solid | Platform))
+        {
+            CLIENT_MESSAGE(MessageIdent::MapFailed);
+            return;
+        }
 
         //do actor loading
         for (auto i = 0; i < m_mapData.actorCount; ++i)
@@ -367,7 +412,8 @@ void GameServer::loadMap()
     }
     else
     {
-        //what to do if map loading fails?
+        //broadcast message ident that causes client to quit
+        CLIENT_MESSAGE(MessageIdent::MapFailed);
     }
 }
 
@@ -378,6 +424,12 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.getComponent<Actor>().id = entity.getIndex();
     m_clients[player].data.actor = entity.getComponent<Actor>();
     entity.addComponent<xy::Transform>().setPosition(m_clients[player].data.spawnX, m_clients[player].data.spawnY);
+    entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
+
+    //TODO fix player size - getting it from sprite doesn't work here
+    //and means the client can easily change own hitbox
+    entity.addComponent<Hitbox>().setType(CollisionType::Player);
+    entity.getComponent<Hitbox>().setCollisionRect({ 0.f, 0.f, PlayerSize, PlayerSize });
 
     //add client controller
     entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);
