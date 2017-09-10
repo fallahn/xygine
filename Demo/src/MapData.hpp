@@ -28,6 +28,8 @@ source distribution.
 #ifndef DEMO_GAME_MAP_DATA_HPP_
 #define DEMO_GAME_MAP_DATA_HPP_
 
+#include "PlayerSystem.hpp"
+
 #include <SFML/Config.hpp>
 
 namespace ActorID
@@ -86,6 +88,7 @@ struct ActorState final
     Actor actor;
     sf::Int32 serverTime = 0;
     sf::Int64 clientTime = 0;
+    Player::State playerState = Player::State::Walking;
 };
 
 //update to the server from the client's input

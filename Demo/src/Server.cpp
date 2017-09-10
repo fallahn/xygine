@@ -196,6 +196,7 @@ void GameServer::update()
                     state.x = tx.x;
                     state.y = tx.y;
                     state.clientTime = player.history[player.lastUpdatedInput].timestamp;
+                    state.playerState = player.state;
 
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
                 }

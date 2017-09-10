@@ -32,6 +32,7 @@ source distribution.
 
 #include <array>
 
+struct ActorState;
 struct Input final
 {
     sf::Uint16 mask = 0;
@@ -46,7 +47,7 @@ struct Player final
     std::size_t currentInput = 0;
     std::size_t lastUpdatedInput = history.size() - 1;
     sf::Uint8 playerNumber = 0;
-    enum class State
+    enum class State : sf::Uint8
     {
         Walking, Jumping
     }state = State::Walking;
@@ -60,7 +61,7 @@ public:
 
     void process(float) override;
 
-    void reconcile(float, float, sf::Int64, xy::Entity);
+    void reconcile(const ActorState&, xy::Entity);
 
 private:
 

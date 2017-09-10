@@ -133,20 +133,21 @@ void PlayerSystem::process(float dt)
     }
 }
 
-void PlayerSystem::reconcile(float x, float y, sf::Int64 timestamp, xy::Entity entity)
+void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
 {
     //DPRINT("Reconcile to: ", std::to_string(x) + ", " + std::to_string(y));
 
     auto& player = entity.getComponent<Player>();
     auto& tx = entity.getComponent<xy::Transform>();
 
-    tx.setPosition(x, y);
+    tx.setPosition(state.x, state.y);
+    player.state = state.playerState;
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
-        [timestamp](const Input& input)
+        [&state](const Input& input)
     {
-        return (timestamp == input.timestamp);
+        return (state.clientTime == input.timestamp);
     });
 
     //and reparse inputs
