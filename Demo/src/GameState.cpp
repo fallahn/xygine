@@ -340,7 +340,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         const auto& state = evt.packet.as<ActorState>();
 
         //reconcile
-        //m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
+        m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
         testShape.setPosition(state.x, state.y);
     }
         break;

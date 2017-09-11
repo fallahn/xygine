@@ -52,6 +52,7 @@ struct Player final
         Walking, Jumping
     }state = State::Walking;
     float velocity = 0.f;
+    bool canJump = true;
 };
 
 class PlayerSystem final : public xy::System

@@ -114,32 +114,35 @@ void CollisionSystem::process(float dt)
                 auto& boxB = ccB.m_hitboxes[j];
 
                 sf::FloatRect overlap;
-                rectA.intersects(txB.getTransform().transformRect(boxB.getCollisionRect()), overlap);
-                sf::Vector2f normal = (txB.getPosition() - txB.getOrigin()) - (txA.getPosition() - txA.getOrigin());
+                if (rectA.intersects(txB.getTransform().transformRect(boxB.getCollisionRect()), overlap))
+                {
+                    sf::Vector2f normal = (txB.getPosition() - txB.getOrigin()) - (txA.getPosition() - txA.getOrigin());
 
-                Manifold manifold;
-                if (overlap.width < overlap.height)
-                {
-                    manifold.normal.x = (normal.x < 0) ? 1.f : -1.f;
-                    manifold.penetration = overlap.width;
-                }
-                else
-                {
-                    manifold.normal.y = (normal.y < 0) ? 1.f : -1.f;
-                    manifold.penetration = overlap.height;
-                }
-                manifold.otherType = boxB.getType();
+                    Manifold manifold;
+                    if (overlap.width < overlap.height)
+                    {
+                        manifold.normal.x = (normal.x < 0) ? 1.f : -1.f;
+                        manifold.penetration = overlap.width;
+                    }
+                    else
+                    {
+                        manifold.normal.y = (normal.y < 0) ? 1.f : -1.f;
+                        manifold.penetration = overlap.height;
+                    }
+                    manifold.otherType = boxB.getType();
 
-                if (boxA.m_collisionCount < Hitbox::MaxCollisions)
-                {
-                    boxA.m_manifolds[boxA.m_collisionCount++] = manifold;
-                }
 
-                manifold.normal = -manifold.normal;
-                manifold.otherType = boxA.getType();
-                if (boxB.m_collisionCount < Hitbox::MaxCollisions)
-                {
-                    boxB.m_manifolds[boxB.m_collisionCount++] = manifold;
+                    if (boxA.m_collisionCount < Hitbox::MaxCollisions)
+                    {
+                        boxA.m_manifolds[boxA.m_collisionCount++] = manifold;
+                    }
+
+                    manifold.normal = -manifold.normal;
+                    manifold.otherType = boxA.getType();
+                    if (boxB.m_collisionCount < Hitbox::MaxCollisions)
+                    {
+                        boxB.m_manifolds[boxB.m_collisionCount++] = manifold;
+                    }
                 }
             }
         }

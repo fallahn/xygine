@@ -74,12 +74,19 @@ void PlayerSystem::process(float dt)
                     default: break;
                     case CollisionType::Platform:
                         //only collide when moving downwards (one way plat)
-                        //if (man.normal.y > 0 && player.velocity < 0) break; //else fall through to normal collision
+                        if (man.normal.y < 0 && player.velocity > 0)
+                        {
+                            player.velocity = 0.f;
+                            player.state = Player::State::Walking;
 
+                            tx.move(man.normal * man.penetration);
+                            break;
+                        }
+                        break;
                     case CollisionType::Solid:
                         //always repel
                         tx.move(man.normal * man.penetration);
-                        if (man.normal.y < 0)
+                        if (man.normal.y < 0 && player.velocity > 0)
                         {
                             player.velocity = 0.f;
                             player.state = Player::State::Walking;
@@ -98,9 +105,9 @@ void PlayerSystem::process(float dt)
                 auto count = hitbox.getCollisionCount();
                 if (count == 0)
                 {
-                    player.state = Player::State::Jumping;
+                    player.state = Player::State::Jumping; //start falling when nothing underneath
                 }
-                /*else
+                else
                 {
                     for (auto i = 0u; i < count; ++i)
                     {
@@ -108,13 +115,13 @@ void PlayerSystem::process(float dt)
                         switch (man.otherType)
                         {
                         default: break;
-                        case CollisionType::Solid:
+                        case CollisionType::Solid: break;
                         case CollisionType::Platform:
-                            if(player.velocity > 0) player.velocity = 0.2f;
+                            //if(player.velocity > 0) player.velocity = 0.2f;
                             break;
                         }
                     }
-                }*/
+                }
             }
         }
 
@@ -133,10 +140,12 @@ void PlayerSystem::process(float dt)
 
             if (player.state != Player::State::Jumping)
             {
-                if (player.history[player.lastUpdatedInput].mask & InputFlag::Up)
+                if (player.history[player.lastUpdatedInput].mask & InputFlag::Up
+                    && player.canJump)
                 {
                     player.state = Player::State::Jumping;
                     player.velocity = -initialJumpVelocity;
+                    player.canJump = false;
                 }
             }
             else
@@ -144,6 +153,12 @@ void PlayerSystem::process(float dt)
                 tx.move({ 0.f, player.velocity * delta });
                 player.velocity += gravity * delta;
                 player.velocity = std::min(player.velocity, maxVelocity);
+            }
+
+            //let go of jump so enable jumping again
+            if ((player.history[player.lastUpdatedInput].mask & InputFlag::Up) == 0)
+            {
+                player.canJump = true;
             }
         }
     }
