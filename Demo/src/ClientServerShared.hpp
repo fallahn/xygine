@@ -46,8 +46,9 @@ namespace MapFlags
         Solid = 0x1,
         Platform = 0x2,
         Graphics = 0x4,
+        Teleport = 0x8,
 
-        Server = Solid | Platform,
+        Server = Solid | Platform | Teleport,
         Client = Server | Graphics
     };
 }

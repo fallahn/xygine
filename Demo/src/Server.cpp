@@ -317,7 +317,7 @@ void GameServer::loadMap()
         std::strcpy(m_mapData.mapName, m_mapFiles[m_currentMap].c_str());
 
         //load collision geometry
-        sf::Uint8 flags = 0;
+        sf::Uint8 flags = MapFlags::Teleport;
         const auto& layers = map.getLayers();
         for (const auto& layer : layers)
         {

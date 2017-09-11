@@ -451,6 +451,15 @@ sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
         }
         return MapFlags::Solid;
     }
+    else if (name == "teleport")
+    {
+        const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+        /*for (const auto& obj : objs)
+        {
+            createCollisionObject(m_scene, obj, CollisionType::Teleport);
+        }*/
+        return MapFlags::Teleport;
+    }
     return 0;
 }
 
