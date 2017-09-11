@@ -92,7 +92,7 @@ void PlayerSystem::process(float dt)
                     }
                 }
             }
-            else
+            else if (hitbox.getType() == CollisionType::Foot)
             {
                 //foot sensor
                 auto count = hitbox.getCollisionCount();
@@ -175,8 +175,24 @@ void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
 
         while (idx != end) //currentInput points to the next free slot in history
         {
-            tx.move(speed * parseInput(player.history[idx].mask) * getDelta(player.history, idx));
+            float delta = getDelta(player.history, idx);
+            tx.move(speed * parseInput(player.history[idx].mask) * delta);
             idx = (idx + 1) % player.history.size();
+
+            /*if (player.state != Player::State::Jumping)
+            {
+                if (player.history[idx].mask & InputFlag::Up)
+                {
+                    player.state = Player::State::Jumping;
+                    player.velocity = -initialJumpVelocity;
+                }
+            }
+            else
+            {
+                tx.move({ 0.f, player.velocity * delta });
+                player.velocity += gravity * delta;
+                player.velocity = std::min(player.velocity, maxVelocity);
+            }*/
         }
     }
 }

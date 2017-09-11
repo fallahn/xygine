@@ -43,7 +43,8 @@ enum class CollisionType
     Player,
     Foot,
     Platform,
-    Solid
+    Solid,
+    Teleport
 };
 
 struct Manifold final
@@ -105,13 +106,13 @@ public:
         {
             m_localBounds.top = rect.top;
         }
-        if (m_localBounds.width < rect.width)
+        if (m_localBounds.width < (rect.left + rect.width))
         {
-            m_localBounds.width = rect.width;
+            m_localBounds.width = (rect.left + rect.width);
         }
-        if (m_localBounds.height < rect.height)
+        if (m_localBounds.height < (rect.top + rect.height))
         {
-            m_localBounds.height = rect.height;
+            m_localBounds.height = (rect.top + rect.height);
         }
     }
     std::size_t getHitboxCount() const { return m_hitboxCount; }
