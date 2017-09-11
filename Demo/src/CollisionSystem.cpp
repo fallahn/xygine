@@ -101,12 +101,12 @@ void CollisionSystem::process(float dt)
         auto& ccB = c.second.getComponent<CollisionComponent>();
 
         //such nested...
-        for (auto i = 0; i < ccA.m_hitboxCount; ++i)
+        for (auto i = 0u; i < ccA.m_hitboxCount; ++i)
         {
             auto& boxA = ccA.m_hitboxes[i];
             auto rectA = txA.getTransform().transformRect(boxA.getCollisionRect());
 
-            for (auto j = 0; j < ccB.m_hitboxCount; ++j)
+            for (auto j = 0u; j < ccB.m_hitboxCount; ++j)
             {
                 auto& boxB = ccB.m_hitboxes[j];
 
