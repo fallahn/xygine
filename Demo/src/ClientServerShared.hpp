@@ -39,6 +39,19 @@ namespace xy
     class Scene;
 }
 
+namespace MapFlags
+{
+    enum
+    {
+        Solid = 0x1,
+        Platform = 0x2,
+        Graphics = 0x4,
+
+        Server = Solid | Platform,
+        Client = Server | Graphics
+    };
+}
+
 static constexpr float PlayerSize = 64.f;
 
 //map loading functions shared between client / server

@@ -44,7 +44,9 @@ CollisionSystem::CollisionSystem(xy::MessageBus& mb)
 //public
 void CollisionSystem::process(float dt)
 {
+#ifdef _DEBUG_
     m_vertices.clear();
+#endif
     m_collisions.clear();
 
     auto& entities = getEntities();
@@ -56,6 +58,7 @@ void CollisionSystem::process(float dt)
         for (auto i = 0u; i < collisionComponent.m_hitboxCount; ++i)
         {
             auto& hitbox = collisionComponent.m_hitboxes[i];
+#ifdef _DEBUG_
             auto rect = hitbox.getCollisionRect();
             rect = entity.getComponent<xy::Transform>().getTransform().transformRect(rect);
 
@@ -69,7 +72,7 @@ void CollisionSystem::process(float dt)
             m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top + rect.height), colour);
             m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), colour);
             m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), sf::Color::Transparent);
-
+#endif
             hitbox.m_collisionCount = 0;
         }
         
@@ -154,7 +157,9 @@ void CollisionSystem::onEntityRemoved(xy::Entity entity)
 
 }
 
+#ifdef _DEBUG_
 void CollisionSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     rt.draw(m_vertices.data(), m_vertices.size(), sf::LinesStrip, states);
 }
+#endif

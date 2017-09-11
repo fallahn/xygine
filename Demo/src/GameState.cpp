@@ -77,12 +77,7 @@ namespace
 
     const float clientTimeout = 20.f;
 
-    enum MapFlags
-    {
-        Solid = 0x1,
-        Platform = 0x2,
-        Graphics = 0x4
-    };
+    sf::CircleShape testShape;
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
@@ -116,6 +111,9 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_timeoutText.setFillColor(sf::Color::Red);
     m_timeoutText.setFont(m_fontResource.get("buns"));
     quitLoadingScreen();
+
+    testShape.setRadius(10.f);
+    testShape.setOrigin(10.f, 10.f);
 }
 
 //public
@@ -168,6 +166,7 @@ void GameState::draw()
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
     rw.draw(m_timeoutText);
+    rw.draw(testShape);
 }
 
 //private
@@ -229,7 +228,7 @@ bool GameState::loadScene(const MapData& data)
     }
     m_mapTexture.display();
     
-    if (flags != (Solid | Platform | Graphics))
+    if (flags != MapFlags::Client)
     {
         //disconnect and bail
         m_sharedData.error = std::string(data.mapName) + ": Missing or corrupt map data.";
@@ -341,7 +340,8 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         const auto& state = evt.packet.as<ActorState>();
 
         //reconcile
-        m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
+        //m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
+        testShape.setPosition(state.x, state.y);
     }
         break;
     case PacketID::ClientData:
@@ -440,7 +440,7 @@ sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
             createCollisionObject(m_scene, obj, CollisionType::Platform);
         }
         
-        return Platform;
+        return MapFlags::Platform;
     }
     else if (name == "solid")
     {
@@ -449,7 +449,7 @@ sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
         {
             createCollisionObject(m_scene, obj, CollisionType::Solid);
         }
-        return Solid;
+        return MapFlags::Solid;
     }
     return 0;
 }
@@ -545,5 +545,5 @@ sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, co
         m_mapTexture.draw(v.second.data(), v.second.size(), sf::Quads, v.first);
     }
 
-    return Graphics;
+    return MapFlags::Graphics;
 }

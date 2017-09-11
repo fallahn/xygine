@@ -36,7 +36,10 @@ source distribution.
 #include <vector>
 #include <set>
 
-class CollisionSystem final :public xy::System, public sf::Drawable
+class CollisionSystem final :public xy::System
+#ifdef _DEBUG_
+    , public sf::Drawable
+#endif
 {
 public: 
     explicit CollisionSystem(xy::MessageBus&);
@@ -50,9 +53,10 @@ private:
     
     std::set<std::pair<xy::Entity, xy::Entity>> m_collisions;
 
-
+#ifdef _DEBUG_
     std::vector<sf::Vertex> m_vertices;
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
+#endif
 };
 
 #endif //DEMO_COLLISION_SYSTEM_HPP_

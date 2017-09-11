@@ -60,11 +60,6 @@ namespace
 {
     const float tickRate = 1.f / 25.f;
     const float updateRate = 1.f / 60.f;
-
-    enum MapFlags
-    {
-        Solid = 0x1, Platform = 0x2
-    };
 }
 
 GameServer::GameServer()
@@ -338,7 +333,7 @@ void GameServer::loadMap()
                         createCollisionObject(m_scene, obj, CollisionType::Platform);
                     }
 
-                    flags |= Platform;
+                    flags |= MapFlags::Platform;
                 }
                 else if (name == "solid")
                 {
@@ -347,11 +342,11 @@ void GameServer::loadMap()
                     {
                         createCollisionObject(m_scene, obj, CollisionType::Solid);
                     }
-                    flags |= Solid;
+                    flags |= MapFlags::Solid;
                 }
             }
         }
-        if (flags != (Solid | Platform))
+        if (flags != MapFlags::Server)
         {
             CLIENT_MESSAGE(MessageIdent::MapFailed);
             return;
