@@ -303,7 +303,7 @@ void GameServer::initScene()
 {
     m_scene.addSystem<CollisionSystem>(m_messageBus);    
     m_scene.addSystem<ActorSystem>(m_messageBus);
-    m_scene.addSystem<PlayerSystem>(m_messageBus);
+    m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
 }
@@ -317,7 +317,7 @@ void GameServer::loadMap()
         std::strcpy(m_mapData.mapName, m_mapFiles[m_currentMap].c_str());
 
         //load collision geometry
-        sf::Uint8 flags = MapFlags::Teleport;
+        sf::Uint8 flags = 0;
         const auto& layers = map.getLayers();
         for (const auto& layer : layers)
         {
@@ -343,6 +343,15 @@ void GameServer::loadMap()
                         createCollisionObject(m_scene, obj, CollisionType::Solid);
                     }
                     flags |= MapFlags::Solid;
+                }
+                else if (name == "teleport")
+                {
+                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+                    for (const auto& obj : objs)
+                    {
+                        createCollisionObject(m_scene, obj, CollisionType::Teleport);
+                    }
+                    flags |= MapFlags::Teleport;
                 }
             }
         }

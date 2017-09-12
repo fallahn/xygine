@@ -58,13 +58,15 @@ struct Player final
 class PlayerSystem final : public xy::System
 {
 public:
-    explicit PlayerSystem(xy::MessageBus&);
+    explicit PlayerSystem(xy::MessageBus&, bool = false);
 
     void process(float) override;
 
     void reconcile(const ActorState&, xy::Entity);
 
 private:
+
+    bool m_isServer;
 
     sf::Vector2f parseInput(sf::Uint16);
     float getDelta(const History&, std::size_t);

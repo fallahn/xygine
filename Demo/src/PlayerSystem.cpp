@@ -39,10 +39,12 @@ namespace
     const float maxVelocity = 800.f;
     const float gravity = 2200.f;
     const float initialJumpVelocity = 900.f;
+    const float teleportDist = (15.f * 64.f) - 10.f; //TODO hook this in with map properties somehow
 }
 
-PlayerSystem::PlayerSystem(xy::MessageBus& mb)
-    : xy::System(mb, typeid(PlayerSystem))
+PlayerSystem::PlayerSystem(xy::MessageBus& mb, bool server)
+    : xy::System(mb, typeid(PlayerSystem)),
+    m_isServer(server)
 {
     requireComponent<Player>();
     requireComponent<xy::Transform>();
@@ -96,6 +98,14 @@ void PlayerSystem::process(float dt)
                             player.velocity = -player.velocity * 0.25f;
                         }
                         break;
+                    case CollisionType::Teleport:
+                        if (man.normal.y < 0)
+                        {
+                            //move up
+                            tx.move(0.f, -teleportDist);
+                            if(m_isServer) std::cout << "Teleport!" << std::endl;
+                        }
+                        break;
                     }
                 }
             }
@@ -118,6 +128,13 @@ void PlayerSystem::process(float dt)
                         case CollisionType::Solid: break;
                         case CollisionType::Platform:
                             //if(player.velocity > 0) player.velocity = 0.2f;
+                            break;
+                        case CollisionType::Teleport:
+                            //if moving up move to bottom
+                            /*if (man.normal.y > 0)
+                            {
+                                tx.move(0.f, teleportDist);
+                            }*/
                             break;
                         }
                     }

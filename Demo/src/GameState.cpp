@@ -239,7 +239,9 @@ bool GameState::loadScene(const MapData& data)
     //create the background sprite
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_mapTexture.getTexture());
+#ifdef _DEBUG_
     entity.getComponent<xy::Sprite>().setColour({ 255,255,255,120 });
+#endif
     entity.addComponent<xy::Transform>();
     
     m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Sprite>().getSize() / 2.f);
@@ -342,6 +344,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         //reconcile
         m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
         testShape.setPosition(state.x, state.y);
+        DPRINT("Player pos", std::to_string(state.y));
     }
         break;
     case PacketID::ClientData:
@@ -454,10 +457,10 @@ sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
     else if (name == "teleport")
     {
         const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
-        /*for (const auto& obj : objs)
+        for (const auto& obj : objs)
         {
             createCollisionObject(m_scene, obj, CollisionType::Teleport);
-        }*/
+        }
         return MapFlags::Teleport;
     }
     return 0;
