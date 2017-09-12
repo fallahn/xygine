@@ -252,6 +252,15 @@
     <ClCompile Include="src\imgui\GuiClient.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\systems\QuadTreeNode.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\components\QuadTreeItem.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\QuadTree.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -448,6 +457,12 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\gui\GuiClient.hpp">
       <Filter>Header Files\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\QuadTree.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\QuadTreeItem.hpp">
+      <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

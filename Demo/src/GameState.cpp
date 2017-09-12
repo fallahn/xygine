@@ -44,6 +44,7 @@ source distribution.
 #include <xyginext/ecs/components/SpriteAnimation.hpp>
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/components/Camera.hpp>
+#include <xyginext/ecs/components/QuadTreeItem.hpp>
 
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
@@ -52,6 +53,7 @@ source distribution.
 #include <xyginext/ecs/systems/SpriteAnimator.hpp>
 #include <xyginext/ecs/systems/AudioSystem.hpp>
 #include <xyginext/ecs/systems/CameraSystem.hpp>
+#include <xyginext/ecs/systems/QuadTree.hpp>
 
 #include <xyginext/graphics/SpriteSheet.hpp>
 #include <xyginext/graphics/postprocess/ChromeAb.hpp>
@@ -177,6 +179,7 @@ void GameState::loadAssets()
     m_scene.addSystem<CollisionSystem>(mb); //TODO move this before rendering when not debugging
     m_scene.addSystem<PlayerSystem>(mb);   
     m_scene.addSystem<xy::InterpolationSystem>(mb);
+    m_scene.addSystem<xy::QuadTree>(mb, sf::FloatRect(0.f, 0.f, 15.f * 64.f, 17.f * 64.f)); //TODO better fix map size
     m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
@@ -262,6 +265,7 @@ bool GameState::loadScene(const MapData& data)
         entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
+        entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, 64.f, 64.f });
     }
 
     return true;

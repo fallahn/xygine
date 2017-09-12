@@ -26,6 +26,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/components/AudioEmitter.cpp
   ${PROJECT_DIR}/ecs/components/Camera.cpp
   ${PROJECT_DIR}/ecs/components/NetInterpolation.cpp
+  ${PROJECT_DIR}/ecs/components/QuadTreeItem.cpp
   ${PROJECT_DIR}/ecs/components/Sprite.cpp
   ${PROJECT_DIR}/ecs/components/Text.cpp
   ${PROJECT_DIR}/ecs/components/Transform.cpp
@@ -35,6 +36,8 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/systems/CameraSystem.cpp
   ${PROJECT_DIR}/ecs/systems/CommandSystem.cpp
   ${PROJECT_DIR}/ecs/systems/InterpolationSystem.cpp
+  ${PROJECT_DIR}/ecs/systems/QuadTree.cpp
+  ${PROJECT_DIR}/ecs/systems/QuadTreeNode.cpp
   ${PROJECT_DIR}/ecs/systems/SpriteAnimator.cpp
   ${PROJECT_DIR}/ecs/systems/SpriteRenderer.cpp
   ${PROJECT_DIR}/ecs/systems/TextRenderer.cpp
