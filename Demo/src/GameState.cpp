@@ -389,6 +389,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
             entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, PlayerSize, PlayerSize }, CollisionType::Player);
             entity.getComponent<CollisionComponent>().addHitbox({ 0.f, PlayerSize, PlayerSize, 10.f }, CollisionType::Foot);
+            entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
         }
         else
         {

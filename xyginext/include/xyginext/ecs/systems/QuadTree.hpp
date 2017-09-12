@@ -30,6 +30,11 @@ source distribution.
 
 #include <xyginext/ecs/System.hpp>
 
+#ifdef _DEBUG_
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Vertex.hpp>
+#endif
+
 #include <memory>
 #include <array>
 
@@ -38,7 +43,7 @@ namespace xy
     class QuadTree;
 
     /*!
-    \brief Nodes which make up the branches and leaves of  the QuadTree
+    \brief Nodes which make up the branches and leaves of the QuadTree
     */
     class QuadTreeNode final
     {
@@ -62,6 +67,10 @@ namespace xy
         const std::array<Ptr, 4u>& getChildNodes() const;
 
         std::size_t getEntityCount() const;
+
+#ifdef _DEBUG_
+        void getVertices(std::vector<sf::Vertex>&);
+#endif
 
     private:
         QuadTreeNode* m_parent;
@@ -92,6 +101,9 @@ namespace xy
     said area.
     */
     class XY_EXPORT_API QuadTree final : public xy::System 
+#ifdef _DEBUG_
+        , public sf::Drawable
+#endif
     {
     public:
         /*!
@@ -141,6 +153,11 @@ namespace xy
 
         void onEntityAdded(xy::Entity) override;
         void onEntityRemoved(xy::Entity) override;
+
+#ifdef _DEBUG_
+        mutable std::vector<sf::Vertex> m_vertices;
+        void draw(sf::RenderTarget&, sf::RenderStates) const override;
+#endif
     };
 }
 

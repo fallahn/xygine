@@ -170,6 +170,41 @@ std::size_t QuadTreeNode::getEntityCount() const
     return retVal;
 }
 
+#ifdef _DEBUG_
+void QuadTreeNode::getVertices(std::vector<sf::Vertex>& vertices)
+{
+    sf::Color colour = (m_entities.size() > 0) ? sf::Color::Magenta : sf::Color::Cyan;
+    vertices.emplace_back(sf::Vector2f(m_area.left, m_area.top), sf::Color::Transparent); //pad with breaks between quads
+    vertices.emplace_back(sf::Vector2f(m_area.left, m_area.top), colour);
+    vertices.emplace_back(sf::Vector2f(m_area.left + m_area.width, m_area.top), colour);
+    vertices.emplace_back(sf::Vector2f(m_area.left + m_area.width, m_area.top + m_area.height), colour);
+    vertices.emplace_back(sf::Vector2f(m_area.left, m_area.top + m_area.height), colour);
+    vertices.emplace_back(sf::Vector2f(m_area.left, m_area.top), colour);
+    vertices.emplace_back(sf::Vector2f(m_area.left, m_area.top), sf::Color::Transparent);
+
+    colour = sf::Color::Yellow;
+    for (auto c : m_entities)
+    {
+        auto bounds = c.getComponent<Transform>().getWorldTransform().transformRect(c.getComponent<QuadTreeItem>().m_area);
+        vertices.emplace_back(sf::Vector2f(bounds.left, bounds.top), sf::Color::Transparent);
+        vertices.emplace_back(sf::Vector2f(bounds.left, bounds.top), colour);
+        vertices.emplace_back(sf::Vector2f(bounds.left + bounds.width, bounds.top), colour);
+        vertices.emplace_back(sf::Vector2f(bounds.left + bounds.width, bounds.top + bounds.height), colour);
+        vertices.emplace_back(sf::Vector2f(bounds.left, bounds.top + bounds.height), colour);
+        vertices.emplace_back(sf::Vector2f(bounds.left, bounds.top), colour);
+        vertices.emplace_back(sf::Vector2f(bounds.left, bounds.top), sf::Color::Transparent);
+    }
+
+    if (m_hasChildren)
+    {
+        for (auto& c : m_childNodes)
+        {
+            if (c) c->getVertices(vertices);
+        }
+    }
+}
+#endif
+
 //private
 void QuadTreeNode::getSubEntities()
 {

@@ -32,6 +32,10 @@ source distribution.
 
 #include <xyginext/util/Rectangle.hpp>
 
+#ifdef _DEBUG_
+#include <SFML/Graphics/RenderTarget.hpp>
+#endif
+
 using namespace xy;
 
 QuadTree::QuadTree(xy::MessageBus& mb, sf::FloatRect rootArea)
@@ -53,6 +57,11 @@ void QuadTree::process(float)
         auto node = entity.getComponent<xy::QuadTreeItem>().m_node;
         if(node) node->update(entity);
     }
+
+#ifdef _DEBUG_
+    m_vertices.clear();
+    m_rootNode.getVertices(m_vertices);
+#endif
 }
 
 std::vector<Entity> QuadTree::queryArea(sf::FloatRect area) const
@@ -151,3 +160,10 @@ void QuadTree::onEntityRemoved(xy::Entity entity)
 {
     entity.getComponent<xy::QuadTreeItem>().m_node->removeEntity(entity);
 }
+
+#ifdef _DEBUG_
+void QuadTree::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    rt.draw(m_vertices.data(), m_vertices.size(), sf::Lines, states);
+}
+#endif
