@@ -81,8 +81,8 @@ namespace xy
         std::vector<xy::Entity> m_entities;
 
         sf::FloatRect m_area;
-        sf::Int32 m_level;
-        sf::Int32 m_numEntsBelow;
+        sf::Uint32 m_level;
+        sf::Uint32 m_numEntsBelow;
 
         void getSubEntities();
         sf::Vector2i getPossiblePosition(xy::Entity) const;
