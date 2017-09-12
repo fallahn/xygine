@@ -42,7 +42,7 @@ class CollisionSystem final :public xy::System
 #endif
 {
 public: 
-    explicit CollisionSystem(xy::MessageBus&);
+    explicit CollisionSystem(xy::MessageBus&, bool = false);
 
     void process(float) override;
 
@@ -52,6 +52,8 @@ private:
     void onEntityRemoved(xy::Entity) override;
     
     std::set<std::pair<xy::Entity, xy::Entity>> m_collisions;
+
+    bool m_isServer;
 
 #ifdef _DEBUG_
     std::vector<sf::Vertex> m_vertices;

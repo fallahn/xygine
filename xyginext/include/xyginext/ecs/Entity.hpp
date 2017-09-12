@@ -161,6 +161,11 @@ namespace xy
         {
             return (l.getIndex() < r.getIndex());
         }
+
+        friend bool operator == (const Entity& l, const Entity& r)
+        {
+            return (l.getIndex() == r.getIndex());
+        }
 	private:
 
 		ID m_id;

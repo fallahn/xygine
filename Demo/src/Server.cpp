@@ -39,9 +39,11 @@ source distribution.
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
+#include <xyginext/ecs/components/QuadTreeItem.hpp>
 
 #include <xyginext/ecs/systems/CallbackSystem.hpp>
 #include <xyginext/ecs/systems/CommandSystem.hpp>
+#include <xyginext/ecs/systems/QuadTree.hpp>
 
 #include <xyginext/util/Random.hpp>
 #include <xyginext/util/Vector.hpp>
@@ -301,7 +303,8 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
 
 void GameServer::initScene()
 {
-    m_scene.addSystem<CollisionSystem>(m_messageBus);    
+    m_scene.addSystem<xy::QuadTree>(m_messageBus, MapBounds);
+    m_scene.addSystem<CollisionSystem>(m_messageBus, true);    
     m_scene.addSystem<ActorSystem>(m_messageBus);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
@@ -434,6 +437,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
 
     entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, PlayerSize, PlayerSize }, CollisionType::Player);
     entity.getComponent<CollisionComponent>().addHitbox({ 0.f, PlayerSize, PlayerSize, 10.f }, CollisionType::Foot);
+    entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
 
     //add client controller
     entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);

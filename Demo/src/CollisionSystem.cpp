@@ -29,13 +29,16 @@ source distribution.
 #include "Hitbox.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/Scene.hpp>
+#include <xyginext/ecs/systems/QuadTree.hpp>
 #include <xyginext/core/App.hpp>
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
-CollisionSystem::CollisionSystem(xy::MessageBus& mb)
-    : xy::System(mb, typeid(CollisionSystem))
+CollisionSystem::CollisionSystem(xy::MessageBus& mb, bool server)
+    : xy::System(mb, typeid(CollisionSystem)),
+    m_isServer  (server)
 {
     requireComponent<CollisionComponent>();
     requireComponent<xy::Transform>();
@@ -84,7 +87,10 @@ void CollisionSystem::process(float dt)
 
         //actual collision testing...
         auto globalBounds = xForm.getTransform().transformRect(collisionComponent.getLocalBounds());
+        //auto others = getScene()->getSystem<xy::QuadTree>().queryArea(globalBounds);
+        //if (m_isServer) DPRINT("Query count", std::to_string(others.size()));
         for (const auto& other : entities)
+        //for (const auto& other : others)
         {
             if (entity != other)
             {

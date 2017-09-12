@@ -90,7 +90,8 @@ void QuadTreeNode::update(xy::Entity entity)
     //TODO we don't really want to call this on entities which
     //haven't changed, as we're basically removing it from the 
     //node then adding it back again, only with spurious checks
-    m_entities.erase(std::find(m_entities.begin(), m_entities.end(), entity));
+    m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(),
+        [entity](const Entity& ent) {return ent == entity; }), m_entities.end());
 
     auto entBounds = entity.getComponent<xy::Transform>().getWorldTransform().transformRect(entity.getComponent<xy::QuadTreeItem>().m_area);
 
@@ -115,7 +116,7 @@ void QuadTreeNode::update(xy::Entity entity)
         if (std::find(outsideSet.begin(), outsideSet.end(), entity) == outsideSet.end())
         {
             outsideSet.push_back(entity);
-            entity.getComponent<xy::QuadTreeItem>().m_quadTree = nullptr;
+            entity.getComponent<xy::QuadTreeItem>().m_node = nullptr;
         }
     }
     else

@@ -103,7 +103,6 @@ void PlayerSystem::process(float dt)
                         {
                             //move up
                             tx.move(0.f, -teleportDist);
-                            if(m_isServer) std::cout << "Teleport!" << std::endl;
                         }
                         break;
                     }
@@ -131,10 +130,10 @@ void PlayerSystem::process(float dt)
                             break;
                         case CollisionType::Teleport:
                             //if moving up move to bottom
-                            /*if (man.normal.y > 0)
+                            if (man.normal.y > 0)
                             {
                                 tx.move(0.f, teleportDist);
-                            }*/
+                            }
                             break;
                         }
                     }

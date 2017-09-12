@@ -29,6 +29,7 @@ source distribution.
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/components/QuadTreeItem.hpp>
 
 #include <tmxlite/Object.hpp>
 
@@ -41,5 +42,6 @@ void createCollisionObject(xy::Scene& scene, const tmx::Object& obj, CollisionTy
         auto entity = scene.createEntity();
         entity.addComponent<xy::Transform>().setPosition(bounds.left, bounds.top);
         entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, bounds.width, bounds.height }, type);
+        entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, bounds.width, bounds.height });
     }
 }

@@ -176,10 +176,10 @@ void GameState::loadAssets()
 {
     auto& mb = getContext().appInstance.getMessageBus();
 
-    m_scene.addSystem<CollisionSystem>(mb); //TODO move this before rendering when not debugging
+    m_scene.addSystem<xy::QuadTree>(mb, MapBounds);
+    m_scene.addSystem<CollisionSystem>(mb);
     m_scene.addSystem<PlayerSystem>(mb);   
-    m_scene.addSystem<xy::InterpolationSystem>(mb);
-    m_scene.addSystem<xy::QuadTree>(mb, sf::FloatRect(0.f, 0.f, 15.f * 64.f, 17.f * 64.f)); //TODO better fix map size
+    m_scene.addSystem<xy::InterpolationSystem>(mb);    
     m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
@@ -265,7 +265,7 @@ bool GameState::loadScene(const MapData& data)
         entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
-        entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, 64.f, 64.f });
+        //entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, 64.f, 64.f });
     }
 
     return true;
@@ -348,7 +348,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         //reconcile
         m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
         testShape.setPosition(state.x, state.y);
-        DPRINT("Player pos", std::to_string(state.y));
+        //DPRINT("Player pos", std::to_string(state.y));
     }
         break;
     case PacketID::ClientData:

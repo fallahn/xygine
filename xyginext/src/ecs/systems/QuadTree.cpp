@@ -32,6 +32,8 @@ source distribution.
 
 #include <xyginext/util/Rectangle.hpp>
 
+#include <xyginext/core/App.hpp>
+
 #ifdef _DEBUG_
 #include <SFML/Graphics/RenderTarget.hpp>
 #endif
@@ -54,9 +56,28 @@ void QuadTree::process(float)
     auto& entities = getEntities();
     for (auto& entity : entities)
     {
-        auto node = entity.getComponent<xy::QuadTreeItem>().m_node;
-        if(node) node->update(entity);
+        auto item = entity.getComponent<xy::QuadTreeItem>();
+        if (item.m_node)
+        {
+            item.m_node->update(entity);
+        }
+        else
+        {
+            //we must have been outside, lets see if we entered rhe root
+            auto rect = entity.getComponent<xy::Transform>().getWorldTransform().transformRect(item.m_area);
+            if (Util::Rectangle::contains(m_rootNode.getArea(), rect))
+            {
+                m_rootNode.addEntity(entity);
+
+                m_outsideRoot.erase(std::remove_if(m_outsideRoot.begin(), m_outsideRoot.end(),
+                    [entity](const Entity& ent)
+                {
+                    return ent == entity;
+                }), m_outsideRoot.end());
+            }
+        }
     }
+    //DPRINT("Outside root", std::to_string(m_outsideRoot.size()));
 
 #ifdef _DEBUG_
     m_vertices.clear();
@@ -158,7 +179,19 @@ void QuadTree::onEntityAdded(xy::Entity entity)
 
 void QuadTree::onEntityRemoved(xy::Entity entity)
 {
-    entity.getComponent<xy::QuadTreeItem>().m_node->removeEntity(entity);
+    auto node = entity.getComponent<xy::QuadTreeItem>().m_node;
+    if (node)
+    {
+        node->removeEntity(entity);
+    }
+    else
+    {
+        m_outsideRoot.erase(std::remove_if(m_outsideRoot.begin(), m_outsideRoot.end(),
+            [entity](const Entity& ent)
+        {
+            return ent == entity;
+        }), m_outsideRoot.end());
+    }
 }
 
 #ifdef _DEBUG_
