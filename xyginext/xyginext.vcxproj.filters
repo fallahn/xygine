@@ -261,6 +261,9 @@
     <ClCompile Include="src\ecs\systems\QuadTree.cpp">
       <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\components\ParticleEmitter.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -462,6 +465,9 @@
       <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\components\QuadTreeItem.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\ParticleEmitter.hpp">
       <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
   </ItemGroup>

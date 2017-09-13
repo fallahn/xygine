@@ -139,6 +139,7 @@
     <ClCompile Include="src\ecs\components\AudioEmitter.cpp" />
     <ClCompile Include="src\ecs\components\Camera.cpp" />
     <ClCompile Include="src\ecs\components\NetInterpolation.cpp" />
+    <ClCompile Include="src\ecs\components\ParticleEmitter.cpp" />
     <ClCompile Include="src\ecs\components\QuadTreeItem.cpp" />
     <ClCompile Include="src\ecs\components\Sprite.cpp" />
     <ClCompile Include="src\ecs\components\Text.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="include\xyginext\ecs\components\Camera.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\CommandTarget.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\NetInterpolation.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\ParticleEmitter.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\QuadTreeItem.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\Sprite.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\SpriteAnimation.hpp" />

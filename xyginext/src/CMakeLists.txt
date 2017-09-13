@@ -26,6 +26,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/components/AudioEmitter.cpp
   ${PROJECT_DIR}/ecs/components/Camera.cpp
   ${PROJECT_DIR}/ecs/components/NetInterpolation.cpp
+  ${PROJECT_DIR}/ecs/components/ParticleEmitter.cpp
   ${PROJECT_DIR}/ecs/components/QuadTreeItem.cpp
   ${PROJECT_DIR}/ecs/components/Sprite.cpp
   ${PROJECT_DIR}/ecs/components/Text.cpp
