@@ -30,6 +30,8 @@ source distribution.
 
 #include <xyginext/ecs/System.hpp>
 
+#include <SFML/Config.hpp>
+
 #ifdef DDRAW
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Vertex.hpp>
@@ -139,9 +141,9 @@ namespace xy
         */
         std::size_t getEntityCount() const;
 
-        static constexpr std::size_t MinNodeEntities = 3u;
+        static constexpr sf::Int32 MinNodeEntities = 3;
         static constexpr std::size_t MaxNodeEntities = 6u;
-        static constexpr std::size_t MaxLevels = 40u;
+        static constexpr sf::Int32 MaxLevels = 40u;
 
     private:
 
