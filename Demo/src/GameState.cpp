@@ -33,6 +33,7 @@ source distribution.
 #include "ServerMessages.hpp"
 #include "ClientServerShared.hpp"
 #include "CollisionSystem.hpp"
+#include "AnimationController.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -173,7 +174,8 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::QuadTree>(mb, MapBounds);
     m_scene.addSystem<CollisionSystem>(mb);
     m_scene.addSystem<PlayerSystem>(mb);   
-    m_scene.addSystem<xy::InterpolationSystem>(mb);    
+    m_scene.addSystem<xy::InterpolationSystem>(mb);
+    m_scene.addSystem<AnimationControllerSystem>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
@@ -369,7 +371,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
         entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
         entity.addComponent<xy::SpriteAnimation>().play(0);
-
+        entity.addComponent<AnimationController>().lastPostion = entity.getComponent<xy::Transform>().getPosition();
 
         if (data.peerID == m_client.getPeer().getID())
         {

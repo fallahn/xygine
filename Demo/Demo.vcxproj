@@ -122,6 +122,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\AnimationController.cpp" />
     <ClCompile Include="src\ClientServerShared.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
     <ClCompile Include="src\ErrorState.cpp" />
@@ -136,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ActorSystem.hpp" />
+    <ClInclude Include="src\AnimationController.hpp" />
     <ClInclude Include="src\ClientServerShared.hpp" />
     <ClInclude Include="src\CollisionSystem.hpp" />
     <ClInclude Include="src\CommandIDs.hpp" />
