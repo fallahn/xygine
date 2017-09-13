@@ -39,6 +39,7 @@ namespace
     const float maxVelocity = 800.f;
     const float gravity = 2200.f;
     const float initialJumpVelocity = 900.f;
+    const float minJumpVelocity = -initialJumpVelocity * 0.35f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocity
     const float teleportDist = (15.f * 64.f) - 10.f; //TODO hook this in with map properties somehow
 }
 
@@ -166,6 +167,13 @@ void PlayerSystem::process(float dt)
             }
             else
             {
+                //variable jump height
+                if ((player.history[player.lastUpdatedInput].mask & InputFlag::Up) == 0
+                    && player.velocity < minJumpVelocity)
+                {
+                    player.velocity = minJumpVelocity;
+                }
+                
                 tx.move({ 0.f, player.velocity * delta });
                 player.velocity += gravity * delta;
                 player.velocity = std::min(player.velocity, maxVelocity);
