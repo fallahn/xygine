@@ -278,8 +278,11 @@ void Console::draw()
     //draw options window if visible
     if (showVideoOptions)
     {
-        nim::SetNextWindowSize({ 305.f, 100.f });
+        nim::SetNextWindowSize({ 340.f, 150.f });
         nim::Begin("Video Options", &showVideoOptions, ImGuiWindowFlags_ShowBorders);
+
+        nim::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        nim::NewLine();
 
         nim::Combo("Resolution", &currentResolution, resolutionNames.data());
 

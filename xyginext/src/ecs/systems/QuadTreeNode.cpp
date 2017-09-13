@@ -166,7 +166,7 @@ std::size_t QuadTreeNode::getEntityCount() const
     return retVal;
 }
 
-#ifdef _DEBUG_
+#ifdef DDRAW
 void QuadTreeNode::getVertices(std::vector<sf::Vertex>& vertices)
 {
     sf::Color colour = (m_entities.size() > 0) ? sf::Color::Magenta : sf::Color::Cyan;

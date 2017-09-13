@@ -30,7 +30,7 @@ source distribution.
 
 #include <xyginext/ecs/System.hpp>
 
-#ifdef _DEBUG_
+#ifdef DDRAW
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #endif
@@ -67,7 +67,7 @@ namespace xy
 
         std::size_t getEntityCount() const;
 
-#ifdef _DEBUG_
+#ifdef DDRAW
         void getVertices(std::vector<sf::Vertex>&);
 #endif
 
@@ -100,7 +100,7 @@ namespace xy
     said area.
     */
     class XY_EXPORT_API QuadTree final : public xy::System 
-#ifdef _DEBUG_
+#ifdef DDRAW
         , public sf::Drawable
 #endif
     {
@@ -153,7 +153,7 @@ namespace xy
         void onEntityAdded(xy::Entity) override;
         void onEntityRemoved(xy::Entity) override;
 
-#ifdef _DEBUG_
+#ifdef DDRAW
         mutable std::vector<sf::Vertex> m_vertices;
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
 #endif

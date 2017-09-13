@@ -78,8 +78,6 @@ namespace
     };
 
     const float clientTimeout = 20.f;
-
-    sf::CircleShape testShape;
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
@@ -113,9 +111,6 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_timeoutText.setFillColor(sf::Color::Red);
     m_timeoutText.setFont(m_fontResource.get("buns"));
     quitLoadingScreen();
-
-    testShape.setRadius(10.f);
-    testShape.setOrigin(10.f, 10.f);
 }
 
 //public
@@ -168,7 +163,6 @@ void GameState::draw()
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
     rw.draw(m_timeoutText);
-    rw.draw(testShape);
 }
 
 //private
@@ -242,7 +236,7 @@ bool GameState::loadScene(const MapData& data)
     //create the background sprite
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_mapTexture.getTexture());
-#ifdef _DEBUG_
+#ifdef DDRAW
     entity.getComponent<xy::Sprite>().setColour({ 255,255,255,120 });
 #endif
     entity.addComponent<xy::Transform>();
@@ -348,8 +342,6 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
         //reconcile
         m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
-        testShape.setPosition(state.x, state.y);
-        //DPRINT("Player pos", std::to_string(state.y));
     }
         break;
     case PacketID::ClientData:

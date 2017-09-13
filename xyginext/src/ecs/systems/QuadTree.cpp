@@ -34,7 +34,7 @@ source distribution.
 
 #include <xyginext/core/App.hpp>
 
-#ifdef _DEBUG_
+#ifdef DDRAW
 #include <SFML/Graphics/RenderTarget.hpp>
 #endif
 
@@ -79,7 +79,7 @@ void QuadTree::process(float)
     }
     //DPRINT("Outside root", std::to_string(m_outsideRoot.size()));
 
-#ifdef _DEBUG_
+#ifdef DDRAW
     m_vertices.clear();
     m_rootNode.getVertices(m_vertices);
 #endif
@@ -194,7 +194,7 @@ void QuadTree::onEntityRemoved(xy::Entity entity)
     }
 }
 
-#ifdef _DEBUG_
+#ifdef DDRAW
 void QuadTree::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     rt.draw(m_vertices.data(), m_vertices.size(), sf::Lines, states);

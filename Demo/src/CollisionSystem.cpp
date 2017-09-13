@@ -39,8 +39,8 @@ source distribution.
 CollisionSystem::CollisionSystem(xy::MessageBus& mb, bool server)
     : xy::System(mb, typeid(CollisionSystem)),
     m_isServer  (server)
-#ifdef _DEBUG_
-    ,m_drawDebug(false)
+#ifdef DDRAW
+    ,m_drawDebug(true)
 #endif
 {
     requireComponent<CollisionComponent>();
@@ -50,7 +50,7 @@ CollisionSystem::CollisionSystem(xy::MessageBus& mb, bool server)
 //public
 void CollisionSystem::process(float dt)
 {
-#ifdef _DEBUG_
+#ifdef DDRAW
     m_vertices.clear();
 #endif
     m_collisions.clear();
@@ -66,7 +66,7 @@ void CollisionSystem::process(float dt)
         for (auto i = 0u; i < collisionComponent.m_hitboxCount; ++i)
         {
             auto& hitbox = collisionComponent.m_hitboxes[i];
-#ifdef _DEBUG_
+#ifdef DDRAW
             auto rect = hitbox.getCollisionRect();
             rect = entity.getComponent<xy::Transform>().getTransform().transformRect(rect);
 
@@ -174,7 +174,7 @@ void CollisionSystem::onEntityRemoved(xy::Entity entity)
 
 }
 
-#ifdef _DEBUG_
+#ifdef DDRAW
 void CollisionSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     if(m_drawDebug) rt.draw(m_vertices.data(), m_vertices.size(), sf::LinesStrip, states);

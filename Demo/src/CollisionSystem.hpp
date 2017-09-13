@@ -37,7 +37,7 @@ source distribution.
 #include <set>
 
 class CollisionSystem final :public xy::System
-#ifdef _DEBUG_
+#ifdef DDRAW
     , public sf::Drawable
 #endif
 {
@@ -55,7 +55,7 @@ private:
 
     bool m_isServer;
 
-#ifdef _DEBUG_
+#ifdef DDRAW
     bool m_drawDebug;
     std::vector<sf::Vertex> m_vertices;
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
