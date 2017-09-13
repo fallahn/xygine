@@ -34,13 +34,6 @@ source distribution.
 
 using namespace xy;
 
-QuadTreeNode::QuadTreeNode()
-    : m_parent      (nullptr),
-    m_tree          (nullptr),
-    m_hasChildren   (false),
-    m_level         (0),
-    m_numEntsBelow  (0) {}
-
 QuadTreeNode::QuadTreeNode(sf::FloatRect area, sf::Int32 level, QuadTreeNode* parent, QuadTree* quadTree)
     : m_parent      (parent),
     m_tree          (quadTree),
@@ -68,6 +61,8 @@ void QuadTreeNode::addEntity(xy::Entity entity)
         {
             split();
             if (addToChildren(entity)) return;
+
+            //std::cout << "Split node with " << m_entities.size() << " entities" << std::endl;
         }
     }
 
@@ -134,7 +129,7 @@ void QuadTreeNode::removeEntity(xy::Entity entity)
     {
         currentNode->m_numEntsBelow--;
 
-        if (currentNode->m_numEntsBelow >= QuadTree::MinNodeEntities)
+        if (currentNode->m_numEntsBelow <= QuadTree::MinNodeEntities)
         {
             join();
             break;
@@ -184,6 +179,23 @@ void QuadTreeNode::getVertices(std::vector<sf::Vertex>& vertices)
     vertices.emplace_back(sf::Vector2f(m_area.left, m_area.top), sf::Color::Transparent);
 
     colour = sf::Color::Yellow;
+
+    //switch (m_level)
+    //{
+    //default:
+    //    colour = sf::Color::Cyan;
+    //    break;
+    //case 0:
+    //    colour = sf::Color::Yellow;
+    //    break;
+    //case 1:
+    //    colour = sf::Color(255, 127, 0);
+    //    break;
+    //case 2:
+    //    colour = sf::Color::Red;
+    //    break;
+    //}
+
     for (auto c : m_entities)
     {
         auto bounds = c.getComponent<Transform>().getWorldTransform().transformRect(c.getComponent<QuadTreeItem>().m_area);
@@ -255,6 +267,7 @@ void QuadTreeNode::addToThis(xy::Entity entity)
     if (std::find(m_entities.begin(), m_entities.end(), entity) == m_entities.end())
     {
         m_entities.push_back(entity);
+        m_numEntsBelow++;
     }
 }
 
@@ -291,7 +304,7 @@ void QuadTreeNode::split()
     sf::Vector2f areaPosition(m_area.left, m_area.top);
     sf::Vector2f areaCentre = Util::Rectangle::centre(m_area);
 
-    sf::Int32 nextLevel = m_level - 1;
+    sf::Int32 nextLevel = m_level + 1;
     for (auto x = 0; x < 2; ++x)
     {
         for (auto y = 0; y < 2; ++y)

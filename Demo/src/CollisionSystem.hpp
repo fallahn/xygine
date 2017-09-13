@@ -56,6 +56,7 @@ private:
     bool m_isServer;
 
 #ifdef _DEBUG_
+    bool m_drawDebug;
     std::vector<sf::Vertex> m_vertices;
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 #endif

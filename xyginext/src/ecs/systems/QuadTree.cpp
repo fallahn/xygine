@@ -136,7 +136,7 @@ std::vector<Entity> QuadTree::queryArea(sf::FloatRect area) const
         }
     }
 
-    return {};
+    return m_queryVector;
 }
 
 sf::FloatRect QuadTree::getRootArea() const

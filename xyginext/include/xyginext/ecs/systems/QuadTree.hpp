@@ -50,7 +50,6 @@ namespace xy
     public:
         using Ptr = std::unique_ptr<QuadTreeNode>;
 
-        QuadTreeNode();
         QuadTreeNode(sf::FloatRect area, sf::Int32 level, QuadTreeNode* parent, QuadTree* quadTree);
 
         void addEntity(xy::Entity);
@@ -81,8 +80,8 @@ namespace xy
         std::vector<xy::Entity> m_entities;
 
         sf::FloatRect m_area;
-        sf::Uint32 m_level;
-        sf::Uint32 m_numEntsBelow;
+        sf::Int32 m_level;
+        sf::Int32 m_numEntsBelow;
 
         void getSubEntities();
         sf::Vector2i getPossiblePosition(xy::Entity) const;
@@ -142,7 +141,7 @@ namespace xy
 
         static constexpr std::size_t MinNodeEntities = 3u;
         static constexpr std::size_t MaxNodeEntities = 6u;
-        static constexpr std::size_t MaxLevels = 20u;
+        static constexpr std::size_t MaxLevels = 40u;
 
     private:
 

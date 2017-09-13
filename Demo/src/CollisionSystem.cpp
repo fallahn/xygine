@@ -39,6 +39,9 @@ source distribution.
 CollisionSystem::CollisionSystem(xy::MessageBus& mb, bool server)
     : xy::System(mb, typeid(CollisionSystem)),
     m_isServer  (server)
+#ifdef _DEBUG_
+    ,m_drawDebug(false)
+#endif
 {
     requireComponent<CollisionComponent>();
     requireComponent<xy::Transform>();
@@ -87,10 +90,9 @@ void CollisionSystem::process(float dt)
 
         //actual collision testing...
         auto globalBounds = xForm.getTransform().transformRect(collisionComponent.getLocalBounds());
-        //auto others = getScene()->getSystem<xy::QuadTree>().queryArea(globalBounds);
-        //if (m_isServer) DPRINT("Query count", std::to_string(others.size()));
-        for (const auto& other : entities)
-        //for (const auto& other : others)
+        auto others = getScene()->getSystem<xy::QuadTree>().queryArea(globalBounds);
+
+        for (const auto& other : others)
         {
             if (entity != other)
             {
@@ -175,6 +177,6 @@ void CollisionSystem::onEntityRemoved(xy::Entity entity)
 #ifdef _DEBUG_
 void CollisionSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    rt.draw(m_vertices.data(), m_vertices.size(), sf::LinesStrip, states);
+    if(m_drawDebug) rt.draw(m_vertices.data(), m_vertices.size(), sf::LinesStrip, states);
 }
 #endif

@@ -266,6 +266,7 @@ bool GameState::loadScene(const MapData& data)
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
         //entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, 64.f, 64.f });
+        //entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, 64.f, 64.f }, CollisionType::Player);
     }
 
     return true;
