@@ -218,7 +218,7 @@ void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
             tx.move(speed * parseInput(player.history[idx].mask) * delta);
             idx = (idx + 1) % player.history.size();
 
-            /*if (player.state != Player::State::Jumping)
+            if (player.state != Player::State::Jumping)
             {
                 if (player.history[idx].mask & InputFlag::Up)
                 {
@@ -227,11 +227,18 @@ void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
                 }
             }
             else
+            //if(player.state == Player::State::Jumping)
             {
+                if ((player.history[idx].mask & InputFlag::Up) == 0
+                    && player.velocity < minJumpVelocity)
+                {
+                    player.velocity = minJumpVelocity;
+                }                
+                
                 tx.move({ 0.f, player.velocity * delta });
                 player.velocity += gravity * delta;
                 player.velocity = std::min(player.velocity, maxVelocity);
-            }*/
+            }
         }
     }
 }

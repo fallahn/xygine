@@ -68,7 +68,7 @@ void AnimationControllerSystem::process(float)
             controller.currentAnim = anim;
         }
 
-        //check if overriding anim (such as shooting) has finished
+        //check if overriding anim (such as shooting/dying) has finished
         //and revert to previously playing animation
 
 

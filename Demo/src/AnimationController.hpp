@@ -36,7 +36,7 @@ struct AnimationController final
 {
     enum class Animation
     {
-        Walk, Idle, JumpUp, JumpDown, Shoot
+        Walk, Idle, JumpUp, JumpDown, Shoot, Die
     }currentAnim = Animation::Idle;
     sf::Vector2f lastPostion;
     sf::Vector2f lastVelocity;
