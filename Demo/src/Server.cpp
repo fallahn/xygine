@@ -55,6 +55,7 @@ source distribution.
 #include <SFML/System/Clock.hpp>
 
 #include <cstring>
+#include <fstream>
 
 #define CLIENT_MESSAGE(x) m_host.broadcastPacket(PacketID::ServerMessage, x, xy::NetFlag::Reliable, 1)
 
@@ -91,7 +92,7 @@ void GameServer::start()
     //we can log these locally, as we'd be in the same thread
     xy::Logger::log("Starting local server", xy::Logger::Type::Info);
     
-    m_mapFiles = xy::FileSystem::listFiles("assets/maps");
+    initMaplist();
     if (m_mapFiles.empty())
     {
         xy::Logger::log("No maps found in map directory", xy::Logger::Type::Error);
@@ -299,6 +300,45 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
     }
         break;
     }
+}
+
+void GameServer::initMaplist()
+{
+    auto mapFiles = xy::FileSystem::listFiles("assets/maps");
+
+    //if no map cycle list create it
+    if (!xy::FileSystem::fileExists("assets/maps/mapcycle.txt"))
+    {
+        //TODO should really be using user data directory
+        std::ofstream file("assets/maps/mapcycle.txt");
+        if (file.good())
+        {
+            for (const auto& map : mapFiles)
+            {
+                file << map << std::endl;
+            }
+            file.close();
+        }
+    }
+
+    static const std::size_t maxMaps = 255;
+    std::ifstream file("assets/maps/mapcycle.txt");
+    if (file.good())
+    {
+        std::string line;
+        while (!file.eof() && m_mapFiles.size() < maxMaps)
+        {
+            std::getline(file, line);
+            m_mapFiles.push_back(line);
+        }
+    }
+
+    //remove from list if file doesn't exist
+    m_mapFiles.erase(std::remove_if(m_mapFiles.begin(), m_mapFiles.end(),
+        [&mapFiles](const std::string& str) 
+    {
+        return std::find(mapFiles.begin(), mapFiles.end(), str) == mapFiles.end();
+    }), m_mapFiles.end());
 }
 
 void GameServer::initScene()
