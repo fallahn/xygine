@@ -25,35 +25,27 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_ANIM_CONTROLLER_HPP_
-#define DEMO_ANIM_CONTROLLER_HPP_
+#ifndef DEMO_MESSAGE_IDS_HPP_
+#define DEMO_MESSAGE_IDS_HPP_
 
-#include <xyginext/ecs/System.hpp>
+#include <SFML/Config.hpp>
 
-#include <SFML/System/Vector2.hpp>
-
-struct AnimationController final
+namespace MessageID
 {
-    enum Animation
+    enum
     {
-        Idle, Walk, Shoot, Die, JumpUp, JumpDown
-    }currentAnim = Animation::Idle;
-    Animation previousAnimation = Animation::Idle;
-    sf::Vector2f lastPostion;
-    sf::Vector2f lastVelocity;
-};
+        PlayerMessage
+    };
+}
 
-class AnimationControllerSystem final : public xy::System
+struct PlayerEvent final
 {
-public:
-    explicit AnimationControllerSystem(xy::MessageBus&);
-
-    void handleMessage(const xy::Message&) override;
-
-    void process(float) override;
-
-private:
-
+    enum
+    {
+        FiredWeapon,
+        Died
+    }type;
+    xy::Entity entity{ 0,0 };
 };
 
-#endif //DEMO_ANIM_CONTROLLER_HPP_
+#endif //DEMO_MESSAGE_IDS_HPP_

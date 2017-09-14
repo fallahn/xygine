@@ -47,23 +47,23 @@ void SpriteAnimator::process(float dt)
     for (auto& entity : entities) 
     {
         auto& animation = entity.getComponent<SpriteAnimation>();
-        if (animation.playing)
+        if (animation.m_playing)
         {
             auto& sprite = entity.getComponent<Sprite>();
-            animation.currentFrameTime -= dt;
-            if (animation.currentFrameTime < 0)
+            animation.m_currentFrameTime -= dt;
+            if (animation.m_currentFrameTime < 0)
             {
-                animation.currentFrameTime += (1.f / sprite.m_animations[animation.id].framerate);
+                animation.m_currentFrameTime += (1.f / sprite.m_animations[animation.m_id].framerate);
 
-                auto lastFrame = animation.frameID;
-                animation.frameID = (animation.frameID + 1) % sprite.m_animations[animation.id].frameCount;
+                auto lastFrame = animation.m_frameID;
+                animation.m_frameID = (animation.m_frameID + 1) % sprite.m_animations[animation.m_id].frameCount;
 
-                if (animation.frameID < lastFrame && !sprite.m_animations[animation.id].looped)
+                if (animation.m_frameID < lastFrame && !sprite.m_animations[animation.m_id].looped)
                 {
                     animation.stop();
                 }
 
-                sprite.setTextureRect(sprite.m_animations[animation.id].frames[animation.frameID]);
+                sprite.setTextureRect(sprite.m_animations[animation.m_id].frames[animation.m_frameID]);
             }
         }
     }

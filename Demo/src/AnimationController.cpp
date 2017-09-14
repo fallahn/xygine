@@ -26,9 +26,12 @@ source distribution.
 *********************************************************************/
 
 #include "AnimationController.hpp"
+#include "MessageIDs.hpp"
 
 #include <xyginext/ecs/components/SpriteAnimation.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
+
+#include <xyginext/core/Message.hpp>
 
 AnimationControllerSystem::AnimationControllerSystem(xy::MessageBus& mb)
     : xy::System(mb, typeid(AnimationControllerSystem))
@@ -36,6 +39,28 @@ AnimationControllerSystem::AnimationControllerSystem(xy::MessageBus& mb)
     requireComponent<AnimationController>();
     requireComponent<xy::Transform>();
     requireComponent<xy::SpriteAnimation>();
+}
+
+void AnimationControllerSystem::handleMessage(const xy::Message& msg)
+{
+    if (msg.id == MessageID::PlayerMessage)
+    {
+        const auto& data = msg.getData<PlayerEvent>();
+        auto entity = data.entity;
+        auto& controller = entity.getComponent<AnimationController>();
+
+        switch (data.type)
+        {
+        default: break;
+        case PlayerEvent::Died:
+            controller.currentAnim = AnimationController::Animation::Die;
+            break;
+        case PlayerEvent::FiredWeapon:
+            controller.currentAnim = AnimationController::Animation::Shoot;
+            break;
+        }
+        entity.getComponent<xy::SpriteAnimation>().play(controller.currentAnim);
+    }
 }
 
 void AnimationControllerSystem::process(float)
@@ -62,18 +87,24 @@ void AnimationControllerSystem::process(float)
         if (vel.y < 0) anim = AnimationController::Animation::JumpUp;
         else if (vel.y > 0) anim = AnimationController::Animation::JumpDown;
 
-        if (anim != controller.currentAnim)
+        if (anim != controller.currentAnim && 
+            controller.currentAnim == controller.previousAnimation) //we're not being overridden  right now
         {
             //set SpriteAnimatior
             entity.getComponent<xy::SpriteAnimation>().play(anim);
-
-            controller.currentAnim = anim;
+            controller.currentAnim = controller.previousAnimation = anim;
         }
 
-        //check if overriding anim (such as shooting/dying) has finished
-        //and revert to previously playing animation
-
-
+        if (controller.previousAnimation != controller.currentAnim)
+        {
+            //check if overriding anim (such as shooting/dying) has finished
+            //and revert to previously playing animation
+            if (entity.getComponent<xy::SpriteAnimation>().stopped())
+            {
+                entity.getComponent<xy::SpriteAnimation>().play(controller.previousAnimation);
+                controller.currentAnim = controller.previousAnimation;
+            }
+        }
         controller.lastPostion = currPos;
         controller.lastVelocity = vel;
     }

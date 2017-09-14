@@ -148,6 +148,7 @@
     <ClInclude Include="src\Hitbox.hpp" />
     <ClInclude Include="src\MapData.hpp" />
     <ClInclude Include="src\MenuState.hpp" />
+    <ClInclude Include="src\MessageIDs.hpp" />
     <ClInclude Include="src\PacketIDs.hpp" />
     <ClInclude Include="src\PlayerInput.hpp" />
     <ClInclude Include="src\PlayerSystem.hpp" />

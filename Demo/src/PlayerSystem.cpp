@@ -28,6 +28,7 @@ source distribution.
 #include "PlayerSystem.hpp"
 #include "MapData.hpp"
 #include "Hitbox.hpp"
+#include "MessageIDs.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/util/Vector.hpp>
@@ -67,17 +68,15 @@ void PlayerSystem::process(float dt)
         std::size_t idx = (player.currentInput + player.history.size() - 1) % player.history.size();
 
         //parse any outstanding inputs
+        sf::Uint16 lastMask = 0;
         while (player.lastUpdatedInput != idx)
         {   
-            //TODO surely we need to update collision for every input?
-
             auto delta = getDelta(player.history, player.lastUpdatedInput);
-            tx.move(speed * parseInput(player.history[player.lastUpdatedInput].mask) * delta);
-            player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();
+            auto currentMask = player.history[player.lastUpdatedInput].mask;
 
             if (player.state != Player::State::Jumping)
             {
-                if (player.history[player.lastUpdatedInput].mask & InputFlag::Up
+                if ((currentMask & InputFlag::Up)
                     && player.canJump)
                 {
                     player.state = Player::State::Jumping;
@@ -88,7 +87,7 @@ void PlayerSystem::process(float dt)
             else
             {
                 //variable jump height
-                if ((player.history[player.lastUpdatedInput].mask & InputFlag::Up) == 0
+                if ((currentMask & InputFlag::Up) == 0
                     && player.velocity < minJumpVelocity)
                 {
                     player.velocity = minJumpVelocity;
@@ -100,10 +99,24 @@ void PlayerSystem::process(float dt)
             }
 
             //let go of jump so enable jumping again
-            if ((player.history[player.lastUpdatedInput].mask & InputFlag::Up) == 0)
+            if ((currentMask & InputFlag::Up) == 0)
             {
                 player.canJump = true;
             }
+
+            //if shoot was pressed but not last frame, raise message
+            //note this is NOT reconciled and ammo actors are entirely server side
+            if ((lastMask & InputFlag::Shoot) == 0 && (currentMask & InputFlag::Shoot))
+            {
+                auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                msg->entity = entity;
+                msg->type = PlayerEvent::FiredWeapon;
+            }
+
+            lastMask = currentMask;
+            
+            tx.move(speed * parseInput(currentMask) * delta);
+            player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();
         }
     }
 }
@@ -135,9 +148,7 @@ void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
         while (idx != end) //currentInput points to the next free slot in history
         {
             float delta = getDelta(player.history, idx);
-            tx.move(speed * parseInput(player.history[idx].mask) * delta);
-            idx = (idx + 1) % player.history.size();
-
+            
             if (player.state != Player::State::Jumping)
             {
                 if (player.history[idx].mask & InputFlag::Up
@@ -165,6 +176,9 @@ void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
             {
                 player.canJump = true;
             }
+
+            tx.move(speed * parseInput(player.history[idx].mask) * delta);
+            idx = (idx + 1) % player.history.size();
         }
     }
 }

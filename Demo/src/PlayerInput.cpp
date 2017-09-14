@@ -66,11 +66,8 @@ void PlayerInput::handleEvent(const sf::Event& evt)
         case sf::Keyboard::D:
             m_currentInput |= InputFlag::Right;
             break;
-        case sf::Keyboard::E:
-            m_currentInput |= InputFlag::Shoot;
-            break;
         case sf::Keyboard::Space:
-            m_currentInput |= InputFlag::Jump;
+            m_currentInput |= InputFlag::Shoot;
             break;
         }
 
@@ -92,11 +89,8 @@ void PlayerInput::handleEvent(const sf::Event& evt)
         case sf::Keyboard::D:
             m_currentInput &= ~InputFlag::Right;
             break;
-        case sf::Keyboard::E:
-            m_currentInput &= ~InputFlag::Shoot;
-            break;
         case sf::Keyboard::Space:
-            m_currentInput &= ~InputFlag::Jump;
+            m_currentInput &= ~InputFlag::Shoot;
             break;
         }
     }

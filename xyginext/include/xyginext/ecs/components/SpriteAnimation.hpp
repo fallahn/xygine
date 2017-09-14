@@ -42,24 +42,29 @@ namespace xy
         /*!
         \brief Play the animation at the given index if it exists
         */
-        void play(sf::Int32 index) { id = index; playing = true; }
+        void play(sf::Int32 index) { m_id = index; m_playing = true; }
 
         /*!
         \brief Pause the playing animation, if there is one
         */
-        void pause() { playing = false; }
+        void pause() { m_playing = false; }
 
         /*!
         \brief Stops the current animation if it is playing and
         rewinds it to the first frame if it is playing or paused
         */
-        void stop() { playing = false; frameID = 0; }
+        void stop() { m_playing = false; m_frameID = 0; }
+
+        /*!
+        \brief Returns true if the current animation has stopped playing
+        */
+        bool stopped() const { return !m_playing; }
 
     private:
-        sf::Int32 id = -1;
-        bool playing = false;
-        float currentFrameTime = 0.f;
-        sf::Uint32 frameID = 0;
+        sf::Int32 m_id = -1;
+        bool m_playing = false;
+        float m_currentFrameTime = 0.f;
+        sf::Uint32 m_frameID = 0;
 
         friend class SpriteAnimator;
     };
