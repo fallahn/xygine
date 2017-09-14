@@ -13,6 +13,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/core/StateStack.cpp
   ${PROJECT_DIR}/core/SysTime.cpp
 
+  ${PROJECT_DIR}/detail/glad.c
   ${PROJECT_DIR}/detail/Operators.cpp
 
   ${PROJECT_DIR}/ecs/Component.cpp
@@ -37,6 +38,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ecs/systems/CameraSystem.cpp
   ${PROJECT_DIR}/ecs/systems/CommandSystem.cpp
   ${PROJECT_DIR}/ecs/systems/InterpolationSystem.cpp
+  ${PROJECT_DIR}/ecs/systems/ParticleSystem.cpp
   ${PROJECT_DIR}/ecs/systems/QuadTree.cpp
   ${PROJECT_DIR}/ecs/systems/QuadTreeNode.cpp
   ${PROJECT_DIR}/ecs/systems/SpriteAnimator.cpp

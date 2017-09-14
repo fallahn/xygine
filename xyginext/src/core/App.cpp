@@ -37,6 +37,8 @@ source distribution.
 #include "../imgui/imgui_sfml.h"
 #include "../imgui/imgui_internal.h"
 
+#include "../detail/glad.h"
+
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -108,6 +110,11 @@ App::App()
     eventHandler = std::bind(&App::handleEvent, this, _1);
 
     appInstance = this;
+
+    if (!gladLoadGL())
+    {
+        Logger::log("Something went wrong loading OpenGL. Particles may be unavailable", Logger::Type::Error, Logger::Output::All);
+    }
 }
 
 //public
