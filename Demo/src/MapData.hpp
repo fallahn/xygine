@@ -28,6 +28,8 @@ source distribution.
 #ifndef DEMO_GAME_MAP_DATA_HPP_
 #define DEMO_GAME_MAP_DATA_HPP_
 
+#include "PlayerSystem.hpp"
+
 #include <SFML/Config.hpp>
 
 namespace ActorID
@@ -63,6 +65,7 @@ struct MapData final
     static constexpr sf::Uint8 MaxChars = 11;
     static constexpr sf::Uint8 MaxActors = 12;
     char mapName[MaxChars]{};
+    char mapSha[41]{}; //sha1 is always 40 chars long
     Actor actors[MaxActors]{};
     sf::Uint8 actorCount = 0;
 };
@@ -86,6 +89,8 @@ struct ActorState final
     Actor actor;
     sf::Int32 serverTime = 0;
     sf::Int64 clientTime = 0;
+    Player::State playerState = Player::State::Walking;
+    float playerVelocity = 0.f;
 };
 
 //update to the server from the client's input

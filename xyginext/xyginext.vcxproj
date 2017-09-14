@@ -134,11 +134,14 @@
     <ClCompile Include="src\core\State.cpp" />
     <ClCompile Include="src\core\StateStack.cpp" />
     <ClCompile Include="src\core\SysTime.cpp" />
+    <ClCompile Include="src\detail\glad.c" />
     <ClCompile Include="src\detail\Operators.cpp" />
     <ClCompile Include="src\ecs\Component.cpp" />
     <ClCompile Include="src\ecs\components\AudioEmitter.cpp" />
     <ClCompile Include="src\ecs\components\Camera.cpp" />
     <ClCompile Include="src\ecs\components\NetInterpolation.cpp" />
+    <ClCompile Include="src\ecs\components\ParticleEmitter.cpp" />
+    <ClCompile Include="src\ecs\components\QuadTreeItem.cpp" />
     <ClCompile Include="src\ecs\components\Sprite.cpp" />
     <ClCompile Include="src\ecs\components\Text.cpp" />
     <ClCompile Include="src\ecs\components\Transform.cpp" />
@@ -153,6 +156,9 @@
     <ClCompile Include="src\ecs\systems\CameraSystem.cpp" />
     <ClCompile Include="src\ecs\systems\CommandSystem.cpp" />
     <ClCompile Include="src\ecs\systems\InterpolationSystem.cpp" />
+    <ClCompile Include="src\ecs\systems\ParticleSystem.cpp" />
+    <ClCompile Include="src\ecs\systems\QuadTree.cpp" />
+    <ClCompile Include="src\ecs\systems\QuadTreeNode.cpp" />
     <ClCompile Include="src\ecs\systems\SpriteAnimator.cpp" />
     <ClCompile Include="src\ecs\systems\SpriteRenderer.cpp" />
     <ClCompile Include="src\ecs\systems\TextRenderer.cpp" />
@@ -204,6 +210,8 @@
     <ClInclude Include="include\xyginext\ecs\components\Camera.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\CommandTarget.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\NetInterpolation.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\ParticleEmitter.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\QuadTreeItem.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\Sprite.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\SpriteAnimation.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\Text.hpp" />
@@ -218,6 +226,8 @@
     <ClInclude Include="include\xyginext\ecs\systems\CameraSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\CommandSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\InterpolationSystem.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\ParticleSystem.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\QuadTree.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\SpriteAnimator.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\SpriteRenderer.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\TextRenderer.hpp" />

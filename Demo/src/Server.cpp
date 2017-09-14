@@ -32,13 +32,19 @@ source distribution.
 #include "PlayerSystem.hpp"
 #include "CommandIDs.hpp"
 #include "ServerMessages.hpp"
+#include "CollisionSystem.hpp"
+#include "Hitbox.hpp"
+#include "ClientServerShared.hpp"
+#include "sha1.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
+#include <xyginext/ecs/components/QuadTreeItem.hpp>
 
 #include <xyginext/ecs/systems/CallbackSystem.hpp>
 #include <xyginext/ecs/systems/CommandSystem.hpp>
+#include <xyginext/ecs/systems/QuadTree.hpp>
 
 #include <xyginext/util/Random.hpp>
 #include <xyginext/util/Vector.hpp>
@@ -50,6 +56,7 @@ source distribution.
 #include <SFML/System/Clock.hpp>
 
 #include <cstring>
+#include <fstream>
 
 #define CLIENT_MESSAGE(x) m_host.broadcastPacket(PacketID::ServerMessage, x, xy::NetFlag::Reliable, 1)
 
@@ -67,12 +74,12 @@ GameServer::GameServer()
     m_currentMap    (0)
 {
     m_clients[0].data.actor.type = ActorID::PlayerOne;
-    m_clients[0].data.spawnX = 20.f;
-    m_clients[0].data.spawnY = 1016.f;
+    m_clients[0].data.spawnX = 96.f;
+    m_clients[0].data.spawnY = 864.f;
 
     m_clients[1].data.actor.type = ActorID::PlayerTwo;
-    m_clients[1].data.spawnX = 920.f;
-    m_clients[1].data.spawnY = 1016.f;
+    m_clients[1].data.spawnX = 928.f;
+    m_clients[1].data.spawnY = 864.f;
 }
 
 GameServer::~GameServer()
@@ -86,7 +93,7 @@ void GameServer::start()
     //we can log these locally, as we'd be in the same thread
     xy::Logger::log("Starting local server", xy::Logger::Type::Info);
     
-    m_mapFiles = xy::FileSystem::listFiles("assets/maps");
+    initMaplist();
     if (m_mapFiles.empty())
     {
         xy::Logger::log("No maps found in map directory", xy::Logger::Type::Error);
@@ -188,6 +195,8 @@ void GameServer::update()
                     state.x = tx.x;
                     state.y = tx.y;
                     state.clientTime = player.history[player.lastUpdatedInput].timestamp;
+                    state.playerState = player.state;
+                    state.playerVelocity = player.velocity;
 
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
                 }
@@ -294,10 +303,51 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
     }
 }
 
+void GameServer::initMaplist()
+{
+    auto mapFiles = xy::FileSystem::listFiles("assets/maps");
+
+    //if no map cycle list create it
+    if (!xy::FileSystem::fileExists("assets/maps/mapcycle.txt"))
+    {
+        //TODO should really be using user data directory
+        std::ofstream file("assets/maps/mapcycle.txt");
+        if (file.good())
+        {
+            for (const auto& map : mapFiles)
+            {
+                file << map << std::endl;
+            }
+            file.close();
+        }
+    }
+
+    static const std::size_t maxMaps = 255;
+    std::ifstream file("assets/maps/mapcycle.txt");
+    if (file.good())
+    {
+        std::string line;
+        while (!file.eof() && m_mapFiles.size() < maxMaps)
+        {
+            std::getline(file, line);
+            m_mapFiles.push_back(line);
+        }
+    }
+
+    //remove from list if file doesn't exist
+    m_mapFiles.erase(std::remove_if(m_mapFiles.begin(), m_mapFiles.end(),
+        [&mapFiles](const std::string& str) 
+    {
+        return std::find(mapFiles.begin(), mapFiles.end(), str) == mapFiles.end();
+    }), m_mapFiles.end());
+}
+
 void GameServer::initScene()
 {
+    m_scene.addSystem<xy::QuadTree>(m_messageBus, MapBounds);
+    m_scene.addSystem<CollisionSystem>(m_messageBus, true);    
     m_scene.addSystem<ActorSystem>(m_messageBus);
-    m_scene.addSystem<PlayerSystem>(m_messageBus);
+    m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
 }
@@ -307,8 +357,56 @@ void GameServer::loadMap()
     tmx::Map map;
     if (map.load("assets/maps/" + m_mapFiles[m_currentMap]))
     {
+        std::string sha1 = SHA1::from_file("assets/maps/" + m_mapFiles[m_currentMap]);
+        
         m_mapData.actorCount = MapData::MaxActors;
         std::strcpy(m_mapData.mapName, m_mapFiles[m_currentMap].c_str());
+        std::strcpy(m_mapData.mapSha, sha1.c_str());
+
+        //load collision geometry
+        sf::Uint8 flags = 0;
+        const auto& layers = map.getLayers();
+        for (const auto& layer : layers)
+        {
+            if (layer->getType() == tmx::Layer::Type::Object)
+            {
+                //create map collision
+                auto name = xy::Util::String::toLower(layer->getName());
+                if (name == "platform")
+                {
+                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+                    for (const auto& obj : objs)
+                    {
+                        createCollisionObject(m_scene, obj, CollisionType::Platform);
+                    }
+
+                    flags |= MapFlags::Platform;
+                }
+                else if (name == "solid")
+                {
+                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+                    for (const auto& obj : objs)
+                    {
+                        createCollisionObject(m_scene, obj, CollisionType::Solid);
+                    }
+                    flags |= MapFlags::Solid;
+                }
+                else if (name == "teleport")
+                {
+                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+                    for (const auto& obj : objs)
+                    {
+                        createCollisionObject(m_scene, obj, CollisionType::Teleport);
+                    }
+                    flags |= MapFlags::Teleport;
+                }
+            }
+        }
+        if (flags != MapFlags::Server)
+        {
+            CLIENT_MESSAGE(MessageIdent::MapFailed);
+            return;
+        }
 
         //do actor loading
         for (auto i = 0; i < m_mapData.actorCount; ++i)
@@ -367,7 +465,8 @@ void GameServer::loadMap()
     }
     else
     {
-        //what to do if map loading fails?
+        //broadcast message ident that causes client to quit
+        CLIENT_MESSAGE(MessageIdent::MapFailed);
     }
 }
 
@@ -378,6 +477,11 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.getComponent<Actor>().id = entity.getIndex();
     m_clients[player].data.actor = entity.getComponent<Actor>();
     entity.addComponent<xy::Transform>().setPosition(m_clients[player].data.spawnX, m_clients[player].data.spawnY);
+    entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
+
+    entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
+    entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize, PlayerFootSize }, CollisionType::Foot);
+    entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
 
     //add client controller
     entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);

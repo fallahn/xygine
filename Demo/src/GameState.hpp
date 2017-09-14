@@ -86,7 +86,7 @@ private:
 
     sf::RenderTexture m_mapTexture;
 
-    sf::Int32 parseObjLayer(const std::unique_ptr<tmx::Layer>&);
+    sf::Int32 parseObjLayer(const std::unique_ptr<tmx::Layer>&/*, xy::Entity*/);
     sf::Int32 parseTileLayer(const std::unique_ptr<tmx::Layer>&, const tmx::Map& map);
 };
 

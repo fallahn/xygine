@@ -32,6 +32,7 @@ source distribution.
 
 #include <array>
 
+struct ActorState;
 struct Input final
 {
     sf::Uint16 mask = 0;
@@ -46,21 +47,32 @@ struct Player final
     std::size_t currentInput = 0;
     std::size_t lastUpdatedInput = history.size() - 1;
     sf::Uint8 playerNumber = 0;
+    enum class State : sf::Uint8
+    {
+        Walking, Jumping
+    }state = State::Walking;
+    float velocity = 0.f;
+    bool canJump = true;
+    bool canLand = false; //only for 1 way platforms
 };
 
 class PlayerSystem final : public xy::System
 {
 public:
-    explicit PlayerSystem(xy::MessageBus&);
+    explicit PlayerSystem(xy::MessageBus&, bool = false);
 
     void process(float) override;
 
-    void reconcile(float, float, sf::Int64, xy::Entity);
+    void reconcile(const ActorState&, xy::Entity);
 
 private:
 
+    bool m_isServer;
+
     sf::Vector2f parseInput(sf::Uint16);
     float getDelta(const History&, std::size_t);
+
+    void resolveCollision(xy::Entity);
 };
 
 #endif //DEMO_PLAYER_SYSTEM_HPP_

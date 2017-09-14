@@ -31,6 +31,10 @@ source distribution.
 #include "CommandIDs.hpp"
 #include "PlayerSystem.hpp"
 #include "ServerMessages.hpp"
+#include "ClientServerShared.hpp"
+#include "CollisionSystem.hpp"
+#include "AnimationController.hpp"
+#include "sha1.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -42,6 +46,7 @@ source distribution.
 #include <xyginext/ecs/components/SpriteAnimation.hpp>
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/components/Camera.hpp>
+#include <xyginext/ecs/components/QuadTreeItem.hpp>
 
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
@@ -50,6 +55,7 @@ source distribution.
 #include <xyginext/ecs/systems/SpriteAnimator.hpp>
 #include <xyginext/ecs/systems/AudioSystem.hpp>
 #include <xyginext/ecs/systems/CameraSystem.hpp>
+#include <xyginext/ecs/systems/QuadTree.hpp>
 
 #include <xyginext/graphics/SpriteSheet.hpp>
 #include <xyginext/graphics/postprocess/ChromeAb.hpp>
@@ -63,6 +69,7 @@ source distribution.
 
 #include <tmxlite/Map.hpp>
 #include <tmxlite/TileLayer.hpp>
+#include <tmxlite/ObjectGroup.hpp>
 
 namespace
 {
@@ -73,13 +80,6 @@ namespace
     };
 
     const float clientTimeout = 20.f;
-
-    enum MapFlags
-    {
-        Solid = 0x1,
-        Platform = 0x2,
-        Graphics = 0x4
-    };
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
@@ -172,13 +172,16 @@ void GameState::loadAssets()
 {
     auto& mb = getContext().appInstance.getMessageBus();
 
-    m_scene.addSystem<PlayerSystem>(mb);
+    m_scene.addSystem<xy::QuadTree>(mb, MapBounds);
+    m_scene.addSystem<CollisionSystem>(mb);
+    m_scene.addSystem<PlayerSystem>(mb);   
     m_scene.addSystem<xy::InterpolationSystem>(mb);
+    m_scene.addSystem<AnimationControllerSystem>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::CommandSystem>(mb);
-    m_scene.addSystem<xy::SpriteRenderer>(mb);
+    m_scene.addSystem<xy::SpriteRenderer>(mb);    
     m_scene.addSystem<xy::TextRenderer>(mb);
     
     //m_scene.addPostProcess<xy::PostChromeAb>();
@@ -193,16 +196,27 @@ void GameState::loadAssets()
 
 bool GameState::loadScene(const MapData& data)
 {
-    tmx::Map map;
-    if (!map.load("assets/maps/" + std::string(data.mapName)))
+    std::string mapName(data.mapName);
+    std::string remoteSha(data.mapSha);
+    
+    //check the local sha1 to make sure we have the same file version
+    auto mapSha = SHA1::from_file("assets/maps/" + mapName);
+    if (mapSha != remoteSha)
     {
-        //disconnect from server and push disconnected state
-        m_sharedData.error = "Could not find map " + std::string(data.mapName);
+        m_sharedData.error = "Local copy of " + mapName + " is different version to server's";
         requestStackPush(StateID::Error);
         return false;
     }
 
-    //TODO crc or something on map file to compare with server's
+    tmx::Map map;
+    if (!map.load("assets/maps/" + mapName))
+    {
+        //disconnect from server and push disconnected state
+        m_sharedData.error = "Could not find map " + mapName;
+        requestStackPush(StateID::Error);
+        return false;
+    }
+
     auto size = map.getTileCount() * map.getTileSize();
 
     m_mapTexture.create(size.x, size.y);
@@ -225,7 +239,7 @@ bool GameState::loadScene(const MapData& data)
     }
     m_mapTexture.display();
     
-    if (flags != (Solid | Platform | Graphics))
+    if (flags != MapFlags::Client)
     {
         //disconnect and bail
         m_sharedData.error = std::string(data.mapName) + ": Missing or corrupt map data.";
@@ -236,7 +250,12 @@ bool GameState::loadScene(const MapData& data)
     //create the background sprite
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_mapTexture.getTexture());
-    entity.addComponent<xy::Transform>().setPosition((xy::DefaultSceneSize.x - static_cast<float>(size.x)) / 2.f, xy::DefaultSceneSize.y - static_cast<float>(size.y));
+#ifdef DDRAW
+    entity.getComponent<xy::Sprite>().setColour({ 255,255,255,120 });
+#endif
+    entity.addComponent<xy::Transform>();
+    
+    m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Sprite>().getSize() / 2.f);
 
     for (auto i = 0; i < data.actorCount; ++i)
     {
@@ -254,6 +273,8 @@ bool GameState::loadScene(const MapData& data)
         entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
+        //entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, 64.f, 64.f });
+        //entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, 64.f, 64.f }, CollisionType::Player);
     }
 
     return true;
@@ -268,6 +289,13 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     {
         sf::Int32 idx = evt.packet.as<sf::Int32>();
         xy::Logger::log(serverMessages[idx], xy::Logger::Type::Info);
+
+        if (idx == MessageIdent::MapFailed)
+        {
+            m_client.disconnect();
+            m_sharedData.error = "Server Failed To Load Map";
+            requestStackPush(StateID::Error);
+        }
     }
         break;
     case PacketID::ActorAbsolute:
@@ -327,7 +355,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         const auto& state = evt.packet.as<ActorState>();
 
         //reconcile
-        m_scene.getSystem<PlayerSystem>().reconcile(state.x, state.y, state.clientTime, m_playerInput.getPlayerEntity());
+        m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
     }
         break;
     case PacketID::ClientData:
@@ -346,13 +374,16 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         if (data.actor.type == ActorID::PlayerOne)
         {
             entity.addComponent<xy::Sprite>() = spritesheet.getSprite("player_one");
+            entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
         }
         else
         {
             entity.addComponent<xy::Sprite>() = spritesheet.getSprite("player_two");
         }
-        entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+
+        entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
         entity.addComponent<xy::SpriteAnimation>().play(0);
+        entity.addComponent<AnimationController>().lastPostion = entity.getComponent<xy::Transform>().getPosition();
 
         if (data.peerID == m_client.getPeer().getID())
         {
@@ -362,6 +393,10 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             //add a local controller
             entity.addComponent<Player>().playerNumber = (data.actor.type == ActorID::PlayerOne) ? 0 : 1;
             m_playerInput.setPlayerEntity(entity);
+
+            entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
+            entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize, PlayerFootSize }, CollisionType::Foot);
+            entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
         }
         else
         {
@@ -414,11 +449,31 @@ sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
     auto name = xy::Util::String::toLower(layer->getName());
     if (name == "platform")
     {
-        return Platform;
+        const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+        for (const auto& obj : objs)
+        {
+            createCollisionObject(m_scene, obj, CollisionType::Platform);
+        }
+        
+        return MapFlags::Platform;
     }
     else if (name == "solid")
     {
-        return Solid;
+        const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+        for (const auto& obj : objs)
+        {
+            createCollisionObject(m_scene, obj, CollisionType::Solid);
+        }
+        return MapFlags::Solid;
+    }
+    else if (name == "teleport")
+    {
+        const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+        for (const auto& obj : objs)
+        {
+            createCollisionObject(m_scene, obj, CollisionType::Teleport);
+        }
+        return MapFlags::Teleport;
     }
     return 0;
 }
@@ -514,5 +569,5 @@ sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, co
         m_mapTexture.draw(v.second.data(), v.second.size(), sf::Quads, v.first);
     }
 
-    return Graphics;
+    return MapFlags::Graphics;
 }

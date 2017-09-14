@@ -74,3 +74,5 @@ const ComponentMask& Entity::getComponentMask() const
     XY_ASSERT(m_entityManager, "Invalid Entity instance");
     return m_entityManager->getComponentMask(*this);
 }
+
+bool operator < (const Entity& l, const Entity& r) { return (l.getIndex() < r.getIndex()); }

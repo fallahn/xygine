@@ -27,6 +27,8 @@ source distribution.
 
 #include "PlayerSystem.hpp"
 #include "MapData.hpp"
+#include "Hitbox.hpp"
+#include "MessageIDs.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/util/Vector.hpp>
@@ -34,14 +36,21 @@ source distribution.
 
 namespace
 {
-    const float speed = 1600.f;
+    const float speed = 400.f;
+    const float maxVelocity = 800.f;
+    const float gravity = 2200.f;
+    const float initialJumpVelocity = 840.f;
+    const float minJumpVelocity = -initialJumpVelocity * 0.35f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocity
+    const float teleportDist = (15.f * 64.f) - 10.f; //TODO hook this in with map properties somehow
 }
 
-PlayerSystem::PlayerSystem(xy::MessageBus& mb)
-    : xy::System(mb, typeid(PlayerSystem))
+PlayerSystem::PlayerSystem(xy::MessageBus& mb, bool server)
+    : xy::System(mb, typeid(PlayerSystem)),
+    m_isServer(server)
 {
     requireComponent<Player>();
     requireComponent<xy::Transform>();
+    requireComponent<CollisionComponent>();
 }
 
 //public
@@ -50,6 +59,8 @@ void PlayerSystem::process(float dt)
     auto& entities = getEntities();
     for (auto& entity : entities)
     {
+        resolveCollision(entity);
+
         auto& player = entity.getComponent<Player>();
         auto& tx = entity.getComponent<xy::Transform>();
 
@@ -57,28 +68,75 @@ void PlayerSystem::process(float dt)
         std::size_t idx = (player.currentInput + player.history.size() - 1) % player.history.size();
 
         //parse any outstanding inputs
+        sf::Uint16 lastMask = 0;
         while (player.lastUpdatedInput != idx)
         {   
-            tx.move(speed * parseInput(player.history[player.lastUpdatedInput].mask) * getDelta(player.history, player.lastUpdatedInput));
-            player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();  
+            auto delta = getDelta(player.history, player.lastUpdatedInput);
+            auto currentMask = player.history[player.lastUpdatedInput].mask;
+
+            if (player.state != Player::State::Jumping)
+            {
+                if ((currentMask & InputFlag::Up)
+                    && player.canJump)
+                {
+                    player.state = Player::State::Jumping;
+                    player.velocity = -initialJumpVelocity;
+                    player.canJump = false;
+                }
+            }
+            else
+            {
+                //variable jump height
+                if ((currentMask & InputFlag::Up) == 0
+                    && player.velocity < minJumpVelocity)
+                {
+                    player.velocity = minJumpVelocity;
+                }
+                
+                tx.move({ 0.f, player.velocity * delta });
+                player.velocity += gravity * delta;
+                player.velocity = std::min(player.velocity, maxVelocity);
+            }
+
+            //let go of jump so enable jumping again
+            if ((currentMask & InputFlag::Up) == 0)
+            {
+                player.canJump = true;
+            }
+
+            //if shoot was pressed but not last frame, raise message
+            //note this is NOT reconciled and ammo actors are entirely server side
+            if ((lastMask & InputFlag::Shoot) == 0 && (currentMask & InputFlag::Shoot))
+            {
+                auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                msg->entity = entity;
+                msg->type = PlayerEvent::FiredWeapon;
+            }
+
+            lastMask = currentMask;
+            
+            tx.move(speed * parseInput(currentMask) * delta);
+            player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();
         }
     }
 }
 
-void PlayerSystem::reconcile(float x, float y, sf::Int64 timestamp, xy::Entity entity)
+void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
 {
     //DPRINT("Reconcile to: ", std::to_string(x) + ", " + std::to_string(y));
 
     auto& player = entity.getComponent<Player>();
     auto& tx = entity.getComponent<xy::Transform>();
 
-    tx.setPosition(x, y);
+    tx.setPosition(state.x, state.y);
+    player.state = state.playerState;
+    player.velocity = state.playerVelocity;
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
-        [timestamp](const Input& input)
+        [&state](const Input& input)
     {
-        return (timestamp == input.timestamp);
+        return (state.clientTime == input.timestamp);
     });
 
     //and reparse inputs
@@ -89,7 +147,37 @@ void PlayerSystem::reconcile(float x, float y, sf::Int64 timestamp, xy::Entity e
 
         while (idx != end) //currentInput points to the next free slot in history
         {
-            tx.move(speed * parseInput(player.history[idx].mask) * getDelta(player.history, idx));
+            float delta = getDelta(player.history, idx);
+            
+            if (player.state != Player::State::Jumping)
+            {
+                if (player.history[idx].mask & InputFlag::Up
+                    && player.canJump)
+                {
+                    player.state = Player::State::Jumping;
+                    player.velocity = -initialJumpVelocity;
+                }
+            }
+            else
+            {
+                if ((player.history[idx].mask & InputFlag::Up) == 0
+                    && player.velocity < minJumpVelocity)
+                {
+                    player.velocity = minJumpVelocity;
+                }                
+                
+                tx.move({ 0.f, player.velocity * delta });
+                player.velocity += gravity * delta;
+                player.velocity = std::min(player.velocity, maxVelocity);
+            }
+
+            //let go of jump so enable jumping again
+            if ((player.history[idx].mask & InputFlag::Up) == 0)
+            {
+                player.canJump = true;
+            }
+
+            tx.move(speed * parseInput(player.history[idx].mask) * delta);
             idx = (idx + 1) % player.history.size();
         }
     }
@@ -99,14 +187,6 @@ void PlayerSystem::reconcile(float x, float y, sf::Int64 timestamp, xy::Entity e
 sf::Vector2f PlayerSystem::parseInput(sf::Uint16 mask)
 {
     sf::Vector2f motion;
-    if (mask & InputFlag::Up)
-    {
-        motion.y = -1.f;
-    }
-    if (mask & InputFlag::Down)
-    {
-        motion.y += 1.f;
-    }
     if (mask & InputFlag::Left)
     {
         motion.x = -1.f;
@@ -131,4 +211,102 @@ float PlayerSystem::getDelta(const History& history, std::size_t idx)
     auto delta = history[idx].timestamp - history[prevInput].timestamp;
 
     return static_cast<float>(delta) / 1000000.f;
+}
+
+void PlayerSystem::resolveCollision(xy::Entity entity)
+{
+    auto& player = entity.getComponent<Player>();
+    auto& tx = entity.getComponent<xy::Transform>();
+    const auto& hitboxes = entity.getComponent<CollisionComponent>().getHitboxes();
+    auto count = entity.getComponent<CollisionComponent>().getHitboxCount();
+
+    //check for collision and resolve
+    for (auto i = 0u; i < count; ++i)
+    {
+        const auto& hitbox = hitboxes[i];
+        if (hitbox.getType() == CollisionType::Player)
+        {
+            auto collisionCount = hitbox.getCollisionCount();
+            if (collisionCount == 0)
+            {
+                player.canLand = true; //only land on a platform once we've been in freefall
+            }
+
+            for (auto i = 0u; i < collisionCount; ++i)
+            {
+                const auto& man = hitbox.getManifolds()[i];
+                switch (man.otherType)
+                {
+                default: break;
+                case CollisionType::Platform:
+                    //only collide when moving downwards (one way plat)
+                    if (man.normal.y < 0 && player.canLand)
+                    {
+                        player.velocity = 0.f;
+                        player.state = Player::State::Walking;
+
+                        tx.move(man.normal * man.penetration);
+                        break;
+                    }
+                    player.canLand = false;
+                    break;
+                case CollisionType::Solid:
+                    //always repel
+                    tx.move(man.normal * man.penetration);
+                    if (man.normal.y < 0 && player.velocity > 0)
+                    {
+                        player.velocity = 0.f;
+                        player.state = Player::State::Walking;
+                    }
+                    else if (man.normal.y > 0)
+                    {
+                        player.velocity = -player.velocity * 0.25f;
+                    }
+                    break;
+                case CollisionType::Teleport:
+                    if (tx.getPosition().y > xy::DefaultSceneSize.y / 2.f)
+                    {
+                        //move up
+                        tx.move(0.f, -teleportDist);
+                    }
+                    else
+                    {
+                        tx.move(0.f, teleportDist);
+                    }
+                    break;
+                }
+            }
+        }
+        else if (hitbox.getType() == CollisionType::Foot)
+        {
+            //foot sensor
+            auto count = hitbox.getCollisionCount();
+            if (count == 0)
+            {
+                player.state = Player::State::Jumping; //start falling when nothing underneath
+            }
+            //else
+            //{
+            //    for (auto i = 0u; i < count; ++i)
+            //    {
+            //        const auto& man = hitbox.getManifolds()[i];
+            //        switch (man.otherType)
+            //        {
+            //        default: break;
+            //        case CollisionType::Solid: break;
+            //        case CollisionType::Platform:
+
+            //            break;
+            //        case CollisionType::Teleport:
+            //            //if moving up move to bottom
+            //            /*if (man.normal.y > 0)
+            //            {
+            //            tx.move(0.f, teleportDist);
+            //            }*/
+            //            break;
+            //        }
+            //    }
+            //}
+        }
+    }
 }

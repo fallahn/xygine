@@ -76,6 +76,7 @@ private:
     std::vector<std::string> m_mapFiles;
     std::size_t m_currentMap;
 
+    void initMaplist();
     void initScene();
     void loadMap();
 
