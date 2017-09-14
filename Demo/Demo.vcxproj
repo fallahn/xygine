@@ -133,6 +133,7 @@
     <ClCompile Include="src\PlayerInput.cpp" />
     <ClCompile Include="src\PlayerSystem.cpp" />
     <ClCompile Include="src\Server.cpp" />
+    <ClCompile Include="src\sha1.cpp" />
     <ClCompile Include="src\TextboxDirector.cpp" />
   </ItemGroup>
   <ItemGroup>

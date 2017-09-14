@@ -65,6 +65,7 @@ struct MapData final
     static constexpr sf::Uint8 MaxChars = 11;
     static constexpr sf::Uint8 MaxActors = 12;
     char mapName[MaxChars]{};
+    char mapSha[41]{}; //sha1 is always 40 chars long
     Actor actors[MaxActors]{};
     sf::Uint8 actorCount = 0;
 };

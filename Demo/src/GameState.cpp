@@ -34,6 +34,7 @@ source distribution.
 #include "ClientServerShared.hpp"
 #include "CollisionSystem.hpp"
 #include "AnimationController.hpp"
+#include "sha1.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -195,16 +196,27 @@ void GameState::loadAssets()
 
 bool GameState::loadScene(const MapData& data)
 {
-    tmx::Map map;
-    if (!map.load("assets/maps/" + std::string(data.mapName)))
+    std::string mapName(data.mapName);
+    std::string remoteSha(data.mapSha);
+    
+    //check the local sha1 to make sure we have the same file version
+    auto mapSha = SHA1::from_file("assets/maps/" + mapName);
+    if (mapSha != remoteSha)
     {
-        //disconnect from server and push disconnected state
-        m_sharedData.error = "Could not find map " + std::string(data.mapName);
+        m_sharedData.error = "Local copy of " + mapName + " is different version to server's";
         requestStackPush(StateID::Error);
         return false;
     }
 
-    //TODO crc or something on map file to compare with server's
+    tmx::Map map;
+    if (!map.load("assets/maps/" + mapName))
+    {
+        //disconnect from server and push disconnected state
+        m_sharedData.error = "Could not find map " + mapName;
+        requestStackPush(StateID::Error);
+        return false;
+    }
+
     auto size = map.getTileCount() * map.getTileSize();
 
     m_mapTexture.create(size.x, size.y);

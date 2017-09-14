@@ -11,4 +11,5 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/PlayerInput.cpp
   ${PROJECT_DIR}/PlayerSystem.cpp
   ${PROJECT_DIR}/Server.cpp
+  ${PROJECT_DIR}/sha1.cpp
   ${PROJECT_DIR}/TextboxDirector.cpp)

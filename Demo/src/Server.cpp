@@ -35,6 +35,7 @@ source distribution.
 #include "CollisionSystem.hpp"
 #include "Hitbox.hpp"
 #include "ClientServerShared.hpp"
+#include "sha1.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -356,8 +357,11 @@ void GameServer::loadMap()
     tmx::Map map;
     if (map.load("assets/maps/" + m_mapFiles[m_currentMap]))
     {
+        std::string sha1 = SHA1::from_file("assets/maps/" + m_mapFiles[m_currentMap]);
+        
         m_mapData.actorCount = MapData::MaxActors;
         std::strcpy(m_mapData.mapName, m_mapFiles[m_currentMap].c_str());
+        std::strcpy(m_mapData.mapSha, sha1.c_str());
 
         //load collision geometry
         sf::Uint8 flags = 0;
