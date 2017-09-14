@@ -480,7 +480,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
 
     entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
-    entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize, 10.f }, CollisionType::Foot);
+    entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize, PlayerFootSize }, CollisionType::Foot);
     entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
 
     //add client controller

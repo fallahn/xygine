@@ -58,95 +58,10 @@ void PlayerSystem::process(float dt)
     auto& entities = getEntities();
     for (auto& entity : entities)
     {
+        resolveCollision(entity);
+
         auto& player = entity.getComponent<Player>();
         auto& tx = entity.getComponent<xy::Transform>();
-        const auto& hitboxes = entity.getComponent<CollisionComponent>().getHitboxes();
-        auto count = entity.getComponent<CollisionComponent>().getHitboxCount();
-
-        //check for collision and resolve
-        for (auto i = 0u; i < count; ++i)
-        {
-            const auto& hitbox = hitboxes[i];
-            if(hitbox.getType() == CollisionType::Player)
-            {
-                for (auto i = 0u; i < hitbox.getCollisionCount(); ++i)
-                {
-                    const auto& man = hitbox.getManifolds()[i];
-                    switch (man.otherType)
-                    {
-                    default: break;
-                    case CollisionType::Platform:
-                        //only collide when moving downwards (one way plat)
-                        if (man.normal.y < 0 && player.velocity > 0/* && man.penetration < 16.f*/)
-                        {
-                            player.velocity = 0.f;
-                            player.state = Player::State::Walking;
-
-                            tx.move(man.normal * man.penetration);
-                            break;
-                        }
-                        break;
-                    case CollisionType::Solid:
-                        //always repel
-                        tx.move(man.normal * man.penetration);
-                        if (man.normal.y < 0 && player.velocity > 0)
-                        {
-                            player.velocity = 0.f;
-                            player.state = Player::State::Walking;
-                        }
-                        else if (man.normal.y > 0)
-                        {
-                            player.velocity = -player.velocity * 0.25f;
-                        }
-                        break;
-                    case CollisionType::Teleport:
-                        //if (man.normal.y < 0)
-                        if(tx.getPosition().y > xy::DefaultSceneSize.y / 2.f)
-                        {
-                            //move up
-                            tx.move(0.f, -teleportDist);
-                        }
-                        else
-                        {
-                            tx.move(0.f, teleportDist);
-                        }
-                        break;
-                    }
-                }
-            }
-            else if (hitbox.getType() == CollisionType::Foot)
-            {
-                //foot sensor
-                auto count = hitbox.getCollisionCount();
-                if (count == 0)
-                {
-                    player.state = Player::State::Jumping; //start falling when nothing underneath
-                }
-                else
-                {
-                    for (auto i = 0u; i < count; ++i)
-                    {
-                        const auto& man = hitbox.getManifolds()[i];
-                        switch (man.otherType)
-                        {
-                        default: break;
-                        case CollisionType::Solid: break;
-                        case CollisionType::Platform:
-                            //if(player.velocity > 0) player.velocity = 0.2f;
-                            break;
-                        case CollisionType::Teleport:
-                            //if moving up move to bottom
-                            /*if (man.normal.y > 0)
-                            {
-                                tx.move(0.f, teleportDist);
-                            }*/
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
 
         //current input actually points to next empty slot.
         std::size_t idx = (player.currentInput + player.history.size() - 1) % player.history.size();
@@ -233,7 +148,6 @@ void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
                 }
             }
             else
-            //if(player.state == Player::State::Jumping)
             {
                 if ((player.history[idx].mask & InputFlag::Up) == 0
                     && player.velocity < minJumpVelocity)
@@ -283,4 +197,102 @@ float PlayerSystem::getDelta(const History& history, std::size_t idx)
     auto delta = history[idx].timestamp - history[prevInput].timestamp;
 
     return static_cast<float>(delta) / 1000000.f;
+}
+
+void PlayerSystem::resolveCollision(xy::Entity entity)
+{
+    auto& player = entity.getComponent<Player>();
+    auto& tx = entity.getComponent<xy::Transform>();
+    const auto& hitboxes = entity.getComponent<CollisionComponent>().getHitboxes();
+    auto count = entity.getComponent<CollisionComponent>().getHitboxCount();
+
+    //check for collision and resolve
+    for (auto i = 0u; i < count; ++i)
+    {
+        const auto& hitbox = hitboxes[i];
+        if (hitbox.getType() == CollisionType::Player)
+        {
+            auto collisionCount = hitbox.getCollisionCount();
+            if (collisionCount == 0)
+            {
+                player.canLand = true; //only land on a platform once we've been in freefall
+            }
+
+            for (auto i = 0u; i < collisionCount; ++i)
+            {
+                const auto& man = hitbox.getManifolds()[i];
+                switch (man.otherType)
+                {
+                default: break;
+                case CollisionType::Platform:
+                    //only collide when moving downwards (one way plat)
+                    if (man.normal.y < 0 && player.canLand)
+                    {
+                        player.velocity = 0.f;
+                        player.state = Player::State::Walking;
+
+                        tx.move(man.normal * man.penetration);
+                        break;
+                    }
+                    player.canLand = false;
+                    break;
+                case CollisionType::Solid:
+                    //always repel
+                    tx.move(man.normal * man.penetration);
+                    if (man.normal.y < 0 && player.velocity > 0)
+                    {
+                        player.velocity = 0.f;
+                        player.state = Player::State::Walking;
+                    }
+                    else if (man.normal.y > 0)
+                    {
+                        player.velocity = -player.velocity * 0.25f;
+                    }
+                    break;
+                case CollisionType::Teleport:
+                    if (tx.getPosition().y > xy::DefaultSceneSize.y / 2.f)
+                    {
+                        //move up
+                        tx.move(0.f, -teleportDist);
+                    }
+                    else
+                    {
+                        tx.move(0.f, teleportDist);
+                    }
+                    break;
+                }
+            }
+        }
+        else if (hitbox.getType() == CollisionType::Foot)
+        {
+            //foot sensor
+            auto count = hitbox.getCollisionCount();
+            if (count == 0)
+            {
+                player.state = Player::State::Jumping; //start falling when nothing underneath
+            }
+            //else
+            //{
+            //    for (auto i = 0u; i < count; ++i)
+            //    {
+            //        const auto& man = hitbox.getManifolds()[i];
+            //        switch (man.otherType)
+            //        {
+            //        default: break;
+            //        case CollisionType::Solid: break;
+            //        case CollisionType::Platform:
+
+            //            break;
+            //        case CollisionType::Teleport:
+            //            //if moving up move to bottom
+            //            /*if (man.normal.y > 0)
+            //            {
+            //            tx.move(0.f, teleportDist);
+            //            }*/
+            //            break;
+            //        }
+            //    }
+            //}
+        }
+    }
 }

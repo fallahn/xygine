@@ -56,6 +56,7 @@ namespace MapFlags
 
 static constexpr float PlayerSize = 60.f;
 static constexpr float PlayerSizeOffset = 2.f;
+static constexpr float PlayerFootSize = 20.f;
 static const sf::FloatRect MapBounds(0.f, 0.f, 16.f *64.f, 17.f * 64.f);
 
 //map loading functions shared between client / server

@@ -53,6 +53,7 @@ struct Player final
     }state = State::Walking;
     float velocity = 0.f;
     bool canJump = true;
+    bool canLand = false; //only for 1 way platforms
 };
 
 class PlayerSystem final : public xy::System
@@ -70,6 +71,8 @@ private:
 
     sf::Vector2f parseInput(sf::Uint16);
     float getDelta(const History&, std::size_t);
+
+    void resolveCollision(xy::Entity);
 };
 
 #endif //DEMO_PLAYER_SYSTEM_HPP_
