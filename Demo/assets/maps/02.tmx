@@ -14,31 +14,31 @@
   <object id="7" x="64" y="928" width="896" height="32"/>
   <object id="8" x="960" y="128" width="64" height="832"/>
   <object id="9" x="0" y="128" width="64" height="832"/>
+  <object id="23" x="416" y="320" width="32" height="96"/>
+  <object id="22" x="256" y="320" width="32" height="96"/>
+  <object id="25" x="736" y="320" width="32" height="96"/>
+  <object id="24" x="576" y="320" width="32" height="96"/>
  </objectgroup>
  <objectgroup name="Platform">
   <object id="29" x="480" y="544" width="64" height="32"/>
-  <object id="22" x="256" y="320" width="32" height="96"/>
-  <object id="34" x="256" y="672" width="160" height="32"/>
-  <object id="40" x="544" y="800" width="224" height="32"/>
-  <object id="27" x="192" y="544" width="64" height="32"/>
+  <object id="34" x="272" y="672" width="128" height="32"/>
+  <object id="40" x="560" y="800" width="192" height="32"/>
+  <object id="27" x="192" y="544" width="48" height="32"/>
   <object id="38" x="64" y="800" width="128" height="32"/>
-  <object id="36" x="608" y="672" width="160" height="32"/>
-  <object id="19" x="64" y="416" width="64" height="32"/>
-  <object id="26" x="64" y="544" width="64" height="32"/>
+  <object id="36" x="624" y="672" width="128" height="32"/>
+  <object id="19" x="64" y="416" width="48" height="32"/>
+  <object id="26" x="64" y="544" width="48" height="32"/>
   <object id="33" x="64" y="672" width="128" height="32"/>
   <object id="30" x="640" y="544" width="64" height="32"/>
   <object id="20" x="192" y="416" width="640" height="32"/>
-  <object id="25" x="736" y="320" width="32" height="96"/>
-  <object id="21" x="896" y="416" width="64" height="32"/>
+  <object id="21" x="912" y="416" width="48" height="32"/>
   <object id="28" x="320" y="544" width="64" height="32"/>
-  <object id="31" x="768" y="544" width="64" height="32"/>
-  <object id="23" x="416" y="320" width="32" height="96"/>
+  <object id="31" x="784" y="544" width="48" height="32"/>
   <object id="18" x="256" y="288" width="512" height="32"/>
   <object id="41" x="832" y="800" width="128" height="32"/>
   <object id="37" x="832" y="672" width="128" height="32"/>
-  <object id="32" x="896" y="544" width="64" height="32"/>
+  <object id="32" x="912" y="544" width="48" height="32"/>
   <object id="35" x="480" y="672" width="64" height="32"/>
-  <object id="39" x="256" y="800" width="224" height="32"/>
-  <object id="24" x="576" y="320" width="32" height="96"/>
+  <object id="39" x="272" y="800" width="192" height="32"/>
  </objectgroup>
 </map>

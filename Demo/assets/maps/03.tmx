@@ -9,8 +9,6 @@
   </data>
  </layer>
  <objectgroup name="Teleport">
-  <object id="51" x="288" y="0" width="128" height="64"/>
-  <object id="52" x="608" y="16" width="128" height="48"/>
   <object id="53" x="608" y="1024" width="128" height="64"/>
   <object id="54" x="288" y="1024" width="128" height="64"/>
  </objectgroup>
@@ -23,11 +21,13 @@
   <object id="43" x="736" y="64" width="224" height="96"/>
   <object id="49" x="416" y="928" width="192" height="96"/>
   <object id="50" x="736" y="928" width="224" height="96"/>
+  <object id="52" x="608" y="16" width="128" height="48"/>
+  <object id="51" x="288" y="0" width="128" height="64"/>
  </objectgroup>
  <objectgroup name="Platform">
   <object id="44" x="192" y="288" width="768" height="32"/>
-  <object id="48" x="544" y="768" width="352" height="32"/>
-  <object id="47" x="128" y="768" width="352" height="32"/>
+  <object id="48" x="560" y="768" width="336" height="32"/>
+  <object id="47" x="128" y="768" width="336" height="32"/>
   <object id="45" x="64" y="448" width="768" height="32"/>
   <object id="46" x="192" y="608" width="768" height="32"/>
  </objectgroup>

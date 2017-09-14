@@ -38,7 +38,7 @@ namespace
     const float speed = 400.f;
     const float maxVelocity = 800.f;
     const float gravity = 2200.f;
-    const float initialJumpVelocity = 900.f;
+    const float initialJumpVelocity = 840.f;
     const float minJumpVelocity = -initialJumpVelocity * 0.35f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocity
     const float teleportDist = (15.f * 64.f) - 10.f; //TODO hook this in with map properties somehow
 }
@@ -77,7 +77,7 @@ void PlayerSystem::process(float dt)
                     default: break;
                     case CollisionType::Platform:
                         //only collide when moving downwards (one way plat)
-                        if (man.normal.y < 0 && player.velocity > 0)
+                        if (man.normal.y < 0 && player.velocity > 0/* && man.penetration < 16.f*/)
                         {
                             player.velocity = 0.f;
                             player.state = Player::State::Walking;
@@ -100,10 +100,15 @@ void PlayerSystem::process(float dt)
                         }
                         break;
                     case CollisionType::Teleport:
-                        if (man.normal.y < 0)
+                        //if (man.normal.y < 0)
+                        if(tx.getPosition().y > xy::DefaultSceneSize.y / 2.f)
                         {
                             //move up
                             tx.move(0.f, -teleportDist);
+                        }
+                        else
+                        {
+                            tx.move(0.f, teleportDist);
                         }
                         break;
                     }
@@ -131,10 +136,10 @@ void PlayerSystem::process(float dt)
                             break;
                         case CollisionType::Teleport:
                             //if moving up move to bottom
-                            if (man.normal.y > 0)
+                            /*if (man.normal.y > 0)
                             {
                                 tx.move(0.f, teleportDist);
-                            }
+                            }*/
                             break;
                         }
                     }
@@ -220,7 +225,8 @@ void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
 
             if (player.state != Player::State::Jumping)
             {
-                if (player.history[idx].mask & InputFlag::Up)
+                if (player.history[idx].mask & InputFlag::Up
+                    && player.canJump)
                 {
                     player.state = Player::State::Jumping;
                     player.velocity = -initialJumpVelocity;
@@ -238,6 +244,12 @@ void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
                 tx.move({ 0.f, player.velocity * delta });
                 player.velocity += gravity * delta;
                 player.velocity = std::min(player.velocity, maxVelocity);
+            }
+
+            //let go of jump so enable jumping again
+            if ((player.history[idx].mask & InputFlag::Up) == 0)
+            {
+                player.canJump = true;
             }
         }
     }

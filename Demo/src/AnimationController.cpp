@@ -64,7 +64,9 @@ void AnimationControllerSystem::process(float)
 
         if (anim != controller.currentAnim)
         {
-            //TODO set SpriteAnimatior
+            //set SpriteAnimatior
+            entity.getComponent<xy::SpriteAnimation>().play(anim);
+
             controller.currentAnim = anim;
         }
 

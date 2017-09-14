@@ -62,9 +62,15 @@ namespace xy
         */
         Sprite getSprite(const std::string& name) const;
 
+        /*!
+        \brief Returns the index of the animation with the given name
+        on the given sprite if it exists, else returns 0
+        */
+        std::size_t getAnimationIndex(const std::string& name, const std::string& sprite) const;
+
     private:
         mutable std::unordered_map<std::string, Sprite> m_sprites;
-
+        mutable std::unordered_map<std::string, std::vector<std::string>> m_animations;
     };
 }
 

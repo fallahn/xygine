@@ -34,9 +34,9 @@ source distribution.
 
 struct AnimationController final
 {
-    enum class Animation
+    enum Animation
     {
-        Walk, Idle, JumpUp, JumpDown, Shoot, Die
+        Idle, Walk, Shoot, Die, JumpUp, JumpDown
     }currentAnim = Animation::Idle;
     sf::Vector2f lastPostion;
     sf::Vector2f lastVelocity;

@@ -394,8 +394,8 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             entity.addComponent<Player>().playerNumber = (data.actor.type == ActorID::PlayerOne) ? 0 : 1;
             m_playerInput.setPlayerEntity(entity);
 
-            entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, PlayerSize, PlayerSize }, CollisionType::Player);
-            entity.getComponent<CollisionComponent>().addHitbox({ 0.f, PlayerSize, PlayerSize, 10.f }, CollisionType::Foot);
+            entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
+            entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize, 10.f }, CollisionType::Foot);
             entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
         }
         else

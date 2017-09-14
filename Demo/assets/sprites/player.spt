@@ -15,7 +15,7 @@ sprite_sheet player
 			loop=true
 		}
 
-		animation run
+		animation walk
 		{
 			frame = 0,0,64,64
 			frame = 64,0,64,64
@@ -88,7 +88,7 @@ sprite_sheet player
 			loop=true
 		}
 
-		animation run
+		animation walk
 		{
 			frame = 0,64,64,64
 			frame = 64,64,64,64
