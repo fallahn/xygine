@@ -25,59 +25,45 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_PLAYER_SYSTEM_HPP_
-#define DEMO_PLAYER_SYSTEM_HPP_
+#ifndef DEMO_BUBBLE_SYSTEM_HPP_
+#define DEMO_BUBBLE_SYSTEM_HPP_
 
 #include <xyginext/ecs/System.hpp>
+#include <xyginext/network/NetHost.hpp>
 
-#include <array>
+#include <SFML/Config.hpp>
 
-struct ClientState;
-struct Input final
+namespace xy
 {
-    sf::Uint16 mask = 0;
-    sf::Int64 timestamp = 0;
+    class Transform;
+}
+
+struct Bubble final
+{
+    sf::Uint8 player = 0;
+    enum
+    {
+        Spawning,
+        Normal,
+        HasNPC
+    }state = Spawning;
+    float lifetime = 5.f;
+    float spawntime = 0.1f;
+    float velocity = 0.f; //used in X when spawned, then Y
 };
 
-using History = std::array<Input, 120u>;
-
-struct Player final
-{
-    History history;
-    std::size_t currentInput = 0;
-    std::size_t lastUpdatedInput = history.size() - 1;
-    sf::Uint8 playerNumber = 0;
-    enum class State : sf::Uint8
-    {
-        Walking, Jumping
-    }state = State::Walking;
-    float velocity = 0.f;
-    bool canJump = true;
-    bool canLand = false; //only for 1 way platforms
-    bool canShoot = true;
-    enum class Direction : sf::Uint8 
-    {
-        Left, Right
-    }direction = Direction::Right;
-};
-
-class PlayerSystem final : public xy::System
+class BubbleSystem final : public xy::System
 {
 public:
-    explicit PlayerSystem(xy::MessageBus&, bool = false);
+    BubbleSystem(xy::MessageBus&, xy::NetHost&);
 
+    void handleMessage(const xy::Message&) override;
     void process(float) override;
 
-    void reconcile(const ClientState&, xy::Entity);
-
 private:
+    xy::NetHost& m_host;
 
-    bool m_isServer;
-
-    sf::Vector2f parseInput(sf::Uint16);
-    float getDelta(const History&, std::size_t);
-
-    void resolveCollision(xy::Entity);
+    void doCollision(xy::Entity);
 };
 
-#endif //DEMO_PLAYER_SYSTEM_HPP_
+#endif //DEMO_BUBBLE_SYSTEM_HPP_

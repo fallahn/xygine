@@ -81,6 +81,7 @@ void AnimationControllerSystem::process(float)
             xForm.setScale(vel.x / std::abs(vel.x), 1.f);
         }
 
+
         //use velocity to decide which animation should be playing
         AnimationController::Animation anim = AnimationController::Animation::Idle;
         if (vel.x != 0) anim = AnimationController::Animation::Walk;

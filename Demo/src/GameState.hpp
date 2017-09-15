@@ -49,6 +49,9 @@ namespace tmx
     class Layer;
 }
 
+struct ActorEvent;
+struct ClientData;
+
 class GameState final : public xy::State
 {
 public:
@@ -86,8 +89,12 @@ private:
 
     sf::RenderTexture m_mapTexture;
 
-    sf::Int32 parseObjLayer(const std::unique_ptr<tmx::Layer>&/*, xy::Entity*/);
+    sf::Int32 parseObjLayer(const std::unique_ptr<tmx::Layer>&);
     sf::Int32 parseTileLayer(const std::unique_ptr<tmx::Layer>&, const tmx::Map& map);
+
+    void spawnActor(const ActorEvent&);
+    void spawnClient(const ClientData&);
+    void killActor(const ActorEvent&);
 };
 
 #endif //DEMO_GAME_STATE_HPP_
