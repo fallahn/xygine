@@ -31,13 +31,16 @@ source distribution.
 #include "MapData.hpp"
 #include "PacketIDs.hpp"
 #include "ClientServerShared.hpp"
+#include "Hitbox.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/components/QuadTreeItem.hpp>
 #include <xyginext/ecs/Scene.hpp>
 
 namespace
 {
     const float spawnVelocity = 1100.f;
+    const float verticalVelocity = -140.f;
 }
 
 BubbleSystem::BubbleSystem(xy::MessageBus& mb, xy::NetHost& host)
@@ -47,6 +50,7 @@ BubbleSystem::BubbleSystem(xy::MessageBus& mb, xy::NetHost& host)
     requireComponent<xy::Transform>();
     requireComponent<Actor>();
     requireComponent<Bubble>();
+    requireComponent<CollisionComponent>();
 }
 
 //public
@@ -65,11 +69,13 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
             auto scene = getScene();
             auto entity = scene->createEntity();
             entity.addComponent<xy::Transform>().setPosition(pos);
+            entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
             entity.addComponent<Actor>().id = entity.getIndex();
             entity.getComponent<Actor>().type = (player.playerNumber == 0) ?  ActorID::BubbleOne : ActorID::BubbleTwo;
             entity.addComponent<Bubble>().player = player.playerNumber;
-            entity.getComponent<Bubble>().velocity = (player.direction == Player::Direction::Right) ? spawnVelocity : -spawnVelocity;
-            //TODO collision component
+            entity.getComponent<Bubble>().velocity.x = (player.direction == Player::Direction::Right) ? spawnVelocity : -spawnVelocity;
+            entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
+            entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
 
             //broadcast to clients
             ActorEvent evt;
@@ -89,27 +95,25 @@ void BubbleSystem::process(float dt)
     auto& entities = getEntities();
     for (auto& entity : entities)
     {
+        doCollision(entity);        
+        
         auto& bubble = entity.getComponent<Bubble>();
         auto& tx = entity.getComponent<xy::Transform>();
+        tx.move(bubble.velocity * dt);
         
         bubble.lifetime -= dt;
         switch (bubble.state)
         {
         default: break;
         case Bubble::Spawning:
-            tx.move(bubble.velocity * dt, 0.f);
-
             bubble.spawntime -= dt;
             if (bubble.spawntime < 0)
             {
                 bubble.state = Bubble::Normal;
-                bubble.velocity = -140.f;
+                bubble.velocity.x *= 0.001f;
+                bubble.velocity.y = verticalVelocity;
             }
             break;
-        case Bubble::Normal:
-            doCollision(entity);
-            tx.move(0.f, bubble.velocity * dt);
-
         case Bubble::HasNPC:
             if (bubble.lifetime < 0)
             {
@@ -139,5 +143,24 @@ void BubbleSystem::process(float dt)
 
 void BubbleSystem::doCollision(xy::Entity entity)
 {
+    //auto& bubble = entity.getComponent<Bubble>();
+    auto& tx = entity.getComponent<xy::Transform>();
+    const auto& collision = entity.getComponent<CollisionComponent>();
 
+    const auto& hitboxes = collision.getHitboxes();
+    for (const auto& hitbox : hitboxes)
+    {
+        auto count = hitbox.getCollisionCount();
+        for (auto i = 0u; i < count; ++i)
+        {
+            const auto& man = hitbox.getManifolds()[i];
+            if (man.otherType == CollisionType::Solid)
+            {
+                tx.move(man.normal * man.penetration);
+            }
+            
+            //TODO bubbles only catch NPCs in spawn state
+            //TODO bubbles burst if they hit the owning player and carry an NPC
+        }
+    }
 }

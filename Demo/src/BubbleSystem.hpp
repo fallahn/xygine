@@ -47,9 +47,9 @@ struct Bubble final
         Normal,
         HasNPC
     }state = Spawning;
-    float lifetime = 5.f;
+    float lifetime = 4.f;
     float spawntime = 0.1f;
-    float velocity = 0.f; //used in X when spawned, then Y
+    sf::Vector2f velocity;
 };
 
 class BubbleSystem final : public xy::System
