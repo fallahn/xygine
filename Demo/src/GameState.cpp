@@ -200,7 +200,7 @@ bool GameState::loadScene(const MapData& data)
     std::string remoteSha(data.mapSha);
     
     //check the local sha1 to make sure we have the same file version
-    auto mapSha = SHA1::from_file("assets/maps/" + mapName);
+    std::string mapSha("godverdomme");// = SHA1::from_file("assets/maps/" + mapName);
     if (mapSha != remoteSha)
     {
         m_sharedData.error = "Local copy of " + mapName + " is different version to server's";

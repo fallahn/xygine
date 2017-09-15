@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include "ClientServerShared.hpp"
+#include "sha1.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
@@ -44,4 +45,22 @@ void createCollisionObject(xy::Scene& scene, const tmx::Object& obj, CollisionTy
         entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, bounds.width, bounds.height }, type);
         entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, bounds.width, bounds.height });
     }
+}
+
+std::string getSha(const std::string& path)
+{
+    std::string line;
+    SHA1 checksum;
+    
+    std::ifstream file(path);
+    if (file.good())
+    {
+        while (!file.eof())
+        {
+            std::getline(file, line);
+            checksum.update(line);
+        }
+    }
+
+    return checksum.final();
 }

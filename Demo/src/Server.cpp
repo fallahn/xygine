@@ -358,7 +358,12 @@ void GameServer::loadMap()
     if (map.load("assets/maps/" + m_mapFiles[m_currentMap]))
     {
         std::string sha1 = SHA1::from_file("assets/maps/" + m_mapFiles[m_currentMap]);
-        
+        std::cout << sha1 << std::endl;
+        sha1 = getSha("assets/maps/" + m_mapFiles[m_currentMap]);
+        std::cout << sha1 << std::endl;
+
+        /*std::string*/ sha1 = { "godverdomme" }; //SHA1 is different across windows / linux :(
+
         m_mapData.actorCount = MapData::MaxActors;
         std::strcpy(m_mapData.mapName, m_mapFiles[m_currentMap].c_str());
         std::strcpy(m_mapData.mapSha, sha1.c_str());
