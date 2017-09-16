@@ -54,6 +54,20 @@ namespace MapFlags
     };
 }
 
+namespace CollisionFlags
+{
+    enum
+    {
+        Solid = 0x1,
+        Platform = 0x2,
+        Teleport = 0x4,
+        Player = 0x8,
+        Bubble = 0x10,
+
+        PlayerMask = Bubble | Platform | Solid | Teleport
+    };
+}
+
 static constexpr float PlayerSize = 60.f;
 static constexpr float PlayerSizeOffset = 2.f;
 static constexpr float PlayerFootSize = 20.f;

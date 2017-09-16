@@ -94,9 +94,9 @@ void CollisionSystem::process(float dt)
 
         for (const auto& other : others)
         {
-            if (entity != other)
+            if (entity != other && passesFilter(entity, other))
             {
-                //only test for collisions first, so we make sure each pair is processed only once
+                //only test for AABB collisions first, so we make sure each pair is processed only once
                 auto otherBounds = other.getComponent<xy::Transform>().getTransform().transformRect(other.getComponent<CollisionComponent>().getLocalBounds());
 
                 if (globalBounds.intersects(otherBounds))
@@ -108,7 +108,7 @@ void CollisionSystem::process(float dt)
     }
 
     //calc manifolds for any collisions and enter into component info
-    //DPRINT("Broadphase count", std::to_string(m_collisions.size()));
+    //if(m_isServer) DPRINT("Broadphase count", std::to_string(m_collisions.size()));
     for (auto c : m_collisions)
     {
         const auto& txA = c.first.getComponent<xy::Transform>();
@@ -172,6 +172,14 @@ void CollisionSystem::onEntityAdded(xy::Entity entity)
 void CollisionSystem::onEntityRemoved(xy::Entity entity)
 {
 
+}
+
+bool CollisionSystem::passesFilter(xy::Entity a, xy::Entity b)
+{
+    const auto collisionA = a.getComponent<CollisionComponent>();
+    const auto collisionB = b.getComponent<CollisionComponent>();
+
+    return ((collisionA.m_maskBits & collisionB.m_categoryBits) != 0 && (collisionA.m_categoryBits & collisionB.m_maskBits) != 0);
 }
 
 #ifdef DDRAW

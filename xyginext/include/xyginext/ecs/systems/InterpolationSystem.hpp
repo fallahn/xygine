@@ -46,6 +46,7 @@ namespace xy
 
     private:
 
+        void onEntityAdded(Entity) override;
     };
 }
 

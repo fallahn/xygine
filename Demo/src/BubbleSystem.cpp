@@ -40,7 +40,7 @@ source distribution.
 namespace
 {
     const float spawnVelocity = 1100.f;
-    const float verticalVelocity = -140.f;
+    const float verticalVelocity = -100.f;
 }
 
 BubbleSystem::BubbleSystem(xy::MessageBus& mb, xy::NetHost& host)
@@ -75,6 +75,8 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
             entity.addComponent<Bubble>().player = player.playerNumber;
             entity.getComponent<Bubble>().velocity.x = (player.direction == Player::Direction::Right) ? spawnVelocity : -spawnVelocity;
             entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
+            entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid/* | CollisionFlags::Bubble*/);
             entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
 
             //broadcast to clients

@@ -44,6 +44,23 @@ void createCollisionObject(xy::Scene& scene, const tmx::Object& obj, CollisionTy
         entity.addComponent<xy::Transform>().setPosition(bounds.left, bounds.top);
         entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, bounds.width, bounds.height }, type);
         entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, bounds.width, bounds.height });
+
+        switch (type)
+        {
+        default: break;
+        case CollisionType::Platform:
+            entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Platform);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+            break;
+        case CollisionType::Solid:
+            entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Solid);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player | CollisionFlags::Bubble);
+            break;
+        case CollisionType::Teleport:
+            entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Teleport);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+            break;
+        }
     }
 }
 
