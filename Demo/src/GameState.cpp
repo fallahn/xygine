@@ -567,6 +567,11 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.getComponent<xy::Sprite>().setDepth(-2);
         entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
+
+        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
+        entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+        entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
         break;
     }
 }

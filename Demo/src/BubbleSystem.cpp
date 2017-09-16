@@ -76,7 +76,7 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
             entity.getComponent<Bubble>().velocity.x = (player.direction == Player::Direction::Right) ? spawnVelocity : -spawnVelocity;
             entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
-            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid/* | CollisionFlags::Bubble*/);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player);
             entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
 
             //broadcast to clients
@@ -145,7 +145,7 @@ void BubbleSystem::process(float dt)
 
 void BubbleSystem::doCollision(xy::Entity entity)
 {
-    //auto& bubble = entity.getComponent<Bubble>();
+    auto& bubble = entity.getComponent<Bubble>();
     auto& tx = entity.getComponent<xy::Transform>();
     const auto& collision = entity.getComponent<CollisionComponent>();
 
@@ -156,9 +156,36 @@ void BubbleSystem::doCollision(xy::Entity entity)
         for (auto i = 0u; i < count; ++i)
         {
             const auto& man = hitbox.getManifolds()[i];
-            if (man.otherType == CollisionType::Solid)
+            switch (man.otherType)
             {
+            default: break;
+            case CollisionType::Solid:
                 tx.move(man.normal * man.penetration);
+                break;
+            case CollisionType::Player:
+                switch (bubble.state)
+                {
+                case Bubble::HasNPC:
+                    //TODO check this player owns us
+                    //burst because we scored a baddie
+                    break;
+                case Bubble::Normal:
+                    //player jumps off
+                    if (man.normal.y > 0)
+                    {
+                        tx.move(man.normal * man.penetration);
+                        if (bubble.lifetime > 1.f) bubble.lifetime = 1.f;
+                        bubble.velocity.y *= 0.5f;
+                    }
+                    break;
+                case Bubble::Spawning:
+                    /*bubble.state = Bubble::Normal;
+                    bubble.velocity.x *= 0.001f;
+                    bubble.velocity.y = verticalVelocity;*/
+                    break;
+                default:break;
+                }
+                break;
             }
             
             //TODO bubbles only catch NPCs in spawn state
