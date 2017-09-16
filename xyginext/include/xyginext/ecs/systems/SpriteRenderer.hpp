@@ -44,6 +44,10 @@ namespace xy
 
     private:
 
+        bool m_wantsSorting;
+
+        void onEntityAdded(Entity) override;
+
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }

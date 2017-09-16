@@ -146,6 +146,20 @@ namespace xy
             float framerate = 12.f;
         };
 
+        /*!
+        \brief Sets the z-depth of a sprite.
+        The lower the value the further back the sprite is drawn,
+        inversely the greater the value thr further forward it is drawn.
+        Default value is 0.
+        */
+        void setDepth(sf::Int32 depth) { m_zDepth = depth; m_wantsSorting = true; }
+
+        /*!
+        \brief Returns the sprite's Z depth value
+        \see setDepth();
+        */
+        sf::Int32 getDepth() const { return m_zDepth; }
+
     private:
 
         sf::FloatRect m_textureRect;
@@ -155,6 +169,9 @@ namespace xy
 
         std::size_t m_animationCount;
         std::array<Animation, MaxAnimations> m_animations;
+
+        sf::Int32 m_zDepth;
+        bool m_wantsSorting;
 
         friend class SpriteRenderer;
         friend class SpriteSheet;

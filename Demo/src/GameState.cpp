@@ -250,6 +250,7 @@ bool GameState::loadScene(const MapData& data)
     //create the background sprite
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_mapTexture.getTexture());
+    entity.getComponent<xy::Sprite>().setDepth(-10);
 #ifdef DDRAW
     entity.getComponent<xy::Sprite>().setColour({ 255,255,255,120 });
 #endif
@@ -562,6 +563,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
             bounds.left += bounds.width;
         }
         entity.getComponent<xy::Sprite>().setTextureRect(bounds);
+        entity.getComponent<xy::Sprite>().setDepth(-2);
         entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
         break;
     }

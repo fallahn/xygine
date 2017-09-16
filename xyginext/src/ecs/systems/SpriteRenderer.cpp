@@ -35,7 +35,8 @@ source distribution.
 using namespace xy;
 
 SpriteRenderer::SpriteRenderer(MessageBus& mb)
-    : System(mb, typeid(SpriteRenderer))
+    : System        (mb, typeid(SpriteRenderer)),
+    m_wantsSorting  (false)
 {
     requireComponent<xy::Transform>();
     requireComponent<xy::Sprite>();
@@ -67,10 +68,33 @@ void SpriteRenderer::process(float dt)
 
             sprite.m_dirty = false;
         }
+
+        if (sprite.m_wantsSorting)
+        {
+            m_wantsSorting = true;
+            sprite.m_wantsSorting = false;
+        }
+    }
+
+    //do Z sorting
+    if (m_wantsSorting)
+    {
+        m_wantsSorting = false;
+
+        std::sort(entities.begin(), entities.end(),
+            [](const Entity& entA, const Entity& entB) 
+        {
+            return entA.getComponent<Sprite>().getDepth() < entB.getComponent<Sprite>().getDepth();
+        });
     }
 }
 
 //private
+void SpriteRenderer::onEntityAdded(Entity)
+{
+    m_wantsSorting = true;
+}
+
 void SpriteRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     const auto& entities = getEntities();
