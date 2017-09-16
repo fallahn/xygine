@@ -35,6 +35,7 @@ source distribution.
 #include "CollisionSystem.hpp"
 #include "AnimationController.hpp"
 #include "sha1.hpp"
+#include "SpriteIDs.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -187,8 +188,14 @@ void GameState::loadAssets()
     //m_scene.addPostProcess<xy::PostChromeAb>();
 
     //preload textures
-    m_textureResource.get("assets/images/bubble.png");
-    m_textureResource.get("assets/images/target.png");
+    xy::SpriteSheet spriteSheet;
+    spriteSheet.loadFromFile("assets/sprites/bubble.spt", m_textureResource);
+    m_sprites[SpriteID::BubbleOne] = spriteSheet.getSprite("player_one");
+    m_sprites[SpriteID::BubbleTwo] = spriteSheet.getSprite("player_two");
+
+    spriteSheet.loadFromFile("assets/sprites/player.spt", m_textureResource);
+    m_sprites[SpriteID::PlayerOne] = spriteSheet.getSprite("player_one");
+    m_sprites[SpriteID::PlayerTwo] = spriteSheet.getSprite("player_two");
 
     //audio
     //m_soundResource.get("assets/boop_loop.wav");
@@ -555,14 +562,9 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     default: break;
     case ActorID::BubbleOne:
     case ActorID::BubbleTwo:
-        entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/bubble.png"));
-        auto bounds = entity.getComponent<xy::Sprite>().getLocalBounds();
-        bounds.width /= 2.f;
-        if (actorEvent.actor.type == ActorID::BubbleTwo)
-        {
-            bounds.left += bounds.width;
-        }
-        entity.getComponent<xy::Sprite>().setTextureRect(bounds);
+        entity.addComponent<xy::Sprite>() =
+            (actorEvent.actor.type == ActorID::BubbleOne) ? m_sprites[SpriteID::BubbleOne] : m_sprites[SpriteID::BubbleTwo];
+        entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.getComponent<xy::Sprite>().setDepth(-2);
         entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
         break;
@@ -577,17 +579,14 @@ void GameState::spawnClient(const ClientData& data)
     entity.addComponent<Actor>() = data.actor;
     entity.addComponent<xy::Transform>().setPosition(data.spawnX, data.spawnY);
 
-    xy::SpriteSheet spritesheet;
-    spritesheet.loadFromFile("assets/sprites/player.spt", m_textureResource);
-
     if (data.actor.type == ActorID::PlayerOne)
     {
-        entity.addComponent<xy::Sprite>() = spritesheet.getSprite("player_one");
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerOne];
         entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
     }
     else
     {
-        entity.addComponent<xy::Sprite>() = spritesheet.getSprite("player_two");
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerTwo];
     }
 
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);

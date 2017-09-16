@@ -30,6 +30,7 @@ source distribution.
 
 #include <xyginext/core/State.hpp>
 #include <xyginext/ecs/Scene.hpp>
+#include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/resources/Resource.hpp>
 
 #include <xyginext/network/NetClient.hpp>
@@ -42,6 +43,9 @@ source distribution.
 #include "Server.hpp"
 #include "SharedStateData.hpp"
 #include "PlayerInput.hpp"
+#include "SpriteIDs.hpp"
+
+#include <array>
 
 namespace tmx
 {
@@ -70,6 +74,8 @@ private:
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
     xy::SoundResource m_soundResource;
+
+    std::array<xy::Sprite, SpriteID::Count> m_sprites;
 
     xy::NetClient m_client;
     GameServer m_server;
