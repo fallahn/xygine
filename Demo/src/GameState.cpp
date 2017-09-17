@@ -197,6 +197,10 @@ void GameState::loadAssets()
     m_sprites[SpriteID::PlayerOne] = spriteSheet.getSprite("player_one");
     m_sprites[SpriteID::PlayerTwo] = spriteSheet.getSprite("player_two");
 
+    spriteSheet.loadFromFile("assets/sprites/npcs.spt", m_textureResource);
+    m_sprites[SpriteID::WhirlyBob] = spriteSheet.getSprite("whirlybob");
+    m_sprites[SpriteID::Clocksy] = spriteSheet.getSprite("clocksy");
+
     //audio
     //m_soundResource.get("assets/boop_loop.wav");
 }
@@ -270,15 +274,8 @@ bool GameState::loadScene(const MapData& data)
         auto entity = m_scene.createEntity();
         entity.addComponent<xy::Transform>();
         entity.addComponent<Actor>() = data.actors[i];
-        entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/bubble.png"));
-        auto bounds = entity.getComponent<xy::Sprite>().getLocalBounds();
-        bounds.width /= 2.f;
-        if (xy::Util::Random::value(0, 1) == 1)
-        {
-            bounds.left += bounds.width;
-        }
-        entity.getComponent<xy::Sprite>().setTextureRect(bounds);
-        entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::BubbleOne];
+        entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
     }

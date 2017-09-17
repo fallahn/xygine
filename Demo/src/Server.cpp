@@ -408,6 +408,10 @@ void GameServer::loadMap()
                     }
                     flags |= MapFlags::Teleport;
                 }
+                else if (name == "spawn")
+                {
+
+                }
             }
         }
         if (flags != MapFlags::Server)
@@ -416,8 +420,7 @@ void GameServer::loadMap()
             return;
         }
 
-        //do actor loading - TODO probably easier just to send
-        //spawns on their own
+        //do actor loading
         for (auto i = 0; i < m_mapData.actorCount; ++i)
         {
             auto entity = m_scene.createEntity();

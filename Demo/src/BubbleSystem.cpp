@@ -104,22 +104,14 @@ void BubbleSystem::process(float dt)
         tx.move(bubble.velocity * dt);
         
         bubble.lifetime -= dt;
-        switch (bubble.state)
+        if(bubble.state == Bubble::Spawning)
         {
-        default: break;
-        case Bubble::Spawning:
             bubble.spawntime -= dt;
             if (bubble.spawntime < 0)
             {
                 bubble.state = Bubble::Normal;
                 bubble.velocity.x *= 0.001f;
                 bubble.velocity.y = verticalVelocity;
-            }
-            break;
-        case Bubble::HasNPC:
-            if (bubble.lifetime < 0)
-            {
-                //release trapped NPC
             }
             break;
         }
@@ -165,18 +157,14 @@ void BubbleSystem::doCollision(xy::Entity entity)
             case CollisionType::Player:
                 switch (bubble.state)
                 {
-                case Bubble::HasNPC:
-                    //TODO check this player owns us
-                    //burst because we scored a baddie
-                    break;
                 case Bubble::Normal:
                     //player jumps off
                     if (man.normal.y > 0)
-                    {
-                        tx.move(man.normal * man.penetration);
+                    {                      
                         if (bubble.lifetime > 1.f) bubble.lifetime = 1.f;
                         bubble.velocity.y *= 0.5f;
                     }
+                    //tx.move(man.normal * man.penetration);
                     break;
                 case Bubble::Spawning:
                     /*bubble.state = Bubble::Normal;
@@ -187,9 +175,6 @@ void BubbleSystem::doCollision(xy::Entity entity)
                 }
                 break;
             }
-            
-            //TODO bubbles only catch NPCs in spawn state
-            //TODO bubbles burst if they hit the owning player and carry an NPC
         }
     }
 }

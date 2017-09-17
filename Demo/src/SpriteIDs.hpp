@@ -36,6 +36,8 @@ namespace SpriteID
         BubbleTwo,
         PlayerOne,
         PlayerTwo,
+        WhirlyBob,
+        Clocksy,
 
         Count
     };

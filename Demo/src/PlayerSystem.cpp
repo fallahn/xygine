@@ -259,7 +259,7 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                 switch (man.otherType)
                 {
                 default: break;
-                case CollisionType::Bubble:
+                //case CollisionType::Bubble:
                 case CollisionType::Platform:
                     //only collide when moving downwards (one way plat)
                     if (man.normal.y < 0 && player.canLand)

@@ -44,8 +44,7 @@ struct Bubble final
     enum
     {
         Spawning,
-        Normal,
-        HasNPC
+        Normal
     }state = Spawning;
     float lifetime = 4.f;
     float spawntime = 0.1f;
