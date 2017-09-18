@@ -76,7 +76,7 @@ namespace
         void main()
         {
             vec2 texCoord = v_rotation * (gl_PointCoord - vec2(0.5));
-            gl_FragColor = gl_Color; //* texture2D(u_texture, texCoord + vec2(0.5));
+            gl_FragColor = gl_Color * texture2D(u_texture, texCoord + vec2(0.5));
         })";
 
     const std::size_t MaxParticleSystems = 64; //max VBOs, must be divisible by min count
@@ -193,6 +193,7 @@ void ParticleSystem::process(float dt)
         {
             auto& vertArray = m_emitterArrays[m_activeArrayCount++];
             vertArray.count = 0;
+            vertArray.texture = emitter.settings.texture;
 
             for (auto i = 0u; i < emitter.m_nextFreeParticle; ++i)
             {
@@ -240,6 +241,11 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     glCheck(glEnable(GL_POINT_SPRITE));
     for (auto i = 0u; i < m_activeArrayCount; ++i)
     {
+        if (m_emitterArrays[i].texture)
+        {
+            m_shader.setUniform("u_texture", *m_emitterArrays[i].texture);
+        }
+        
         rt.draw(m_emitterArrays[i].vertices.data(), m_emitterArrays[i].count, sf::Points, states);
         //DPRINT("Particle Count", std::to_string(m_emitterArrays[i].count));
     }

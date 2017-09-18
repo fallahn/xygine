@@ -142,6 +142,7 @@ void MenuState::createMenu()
     emitter.settings.lifetime = 2.f;
     emitter.settings.emitRate = 20.f;
     emitter.settings.rotationSpeed = 12.f;
+    //emitter.settings.texture = &m_textureResource.get("assets/images/block_small.png");
     emitter.start();
 
     //join text

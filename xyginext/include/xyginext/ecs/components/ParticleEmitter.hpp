@@ -38,6 +38,11 @@ source distribution.
 
 #include <array>
 
+namespace sf
+{
+    class Texture;
+}
+
 namespace xy
 {
     class TextureResource;
@@ -74,7 +79,7 @@ namespace xy
         float size = 1.f; //! <diameter of particle
         float emitRate = 1.f; //! <particles per second
         float spawnRadius = 0.f;
-        //sf::Uint32 textureID = 0;
+        sf::Texture* texture = nullptr;
         bool loadFromFile(const std::string&, TextureResource&);
     };
 

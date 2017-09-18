@@ -63,12 +63,13 @@ namespace xy
         void onEntityAdded(xy::Entity) override;
         void onEntityRemoved(xy::Entity) override;
 
-        sf::Shader m_shader;
+        mutable sf::Shader m_shader;
 
         struct EmitterArray
         {
             std::array<sf::Vertex, ParticleEmitter::MaxParticles> vertices;
             std::size_t count = 0;
+            sf::Texture* texture = nullptr;
         };
 
         std::vector<EmitterArray> m_emitterArrays;
