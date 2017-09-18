@@ -30,7 +30,7 @@ source distribution.
 using namespace xy;
 
 ParticleEmitter::ParticleEmitter()
-    : m_vbo             (0),
+    : m_arrayIndex      (0),
     m_nextFreeParticle  (0),
     m_running           (false)
 {

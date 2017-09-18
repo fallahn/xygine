@@ -29,6 +29,14 @@ source distribution.
 #define XY_PARTICLE_SYSTEM_HPP_
 
 #include <xyginext/ecs/System.hpp>
+#include <xyginext/ecs/components/ParticleEmitter.hpp>
+
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics/Texture.hpp>
+
+#include <vector>
+#include <array>
 
 namespace xy
 {
@@ -55,7 +63,19 @@ namespace xy
         void onEntityAdded(xy::Entity) override;
         void onEntityRemoved(xy::Entity) override;
 
-        void allocateBuffer();
+        sf::Shader m_shader;
+
+        struct EmitterArray
+        {
+            std::array<sf::Vertex, ParticleEmitter::MaxParticles> vertices;
+            std::size_t count = 0;
+        };
+
+        std::vector<EmitterArray> m_emitterArrays;
+        std::size_t m_arrayCount;
+        std::size_t m_activeArrayCount;
+
+        sf::Texture m_dummyTexture;//used to enable tex coords in which we fudge rotation and scale
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
