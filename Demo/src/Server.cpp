@@ -37,6 +37,7 @@ source distribution.
 #include "ClientServerShared.hpp"
 #include "sha1.hpp"
 #include "BubbleSystem.hpp"
+#include "NPCSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -353,6 +354,7 @@ void GameServer::initScene()
     m_scene.addSystem<CollisionSystem>(m_messageBus, true);    
     m_scene.addSystem<ActorSystem>(m_messageBus);
     m_scene.addSystem<BubbleSystem>(m_messageBus, m_host);
+    m_scene.addSystem<NPCSystem>(m_messageBus);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
@@ -427,6 +429,7 @@ void GameServer::loadMap()
                             spawnCount++;
                         }
                     }
+
                     flags |= (spawnCount == 0) ? 0 : MapFlags::Spawn;
                 }
             }
@@ -477,15 +480,27 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = id;
 
-    /*entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
-    entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
-    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player);
-    entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });*/
+    entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
+    entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::Bubble | CollisionFlags::Platform);
+    entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, NPCSize, NPCSize });
 
+    entity.addComponent<NPC>();
     switch (id)
     {
     default: break;
-        //TODO add behaviour
+    case ActorID::Whirlybob:
+        entity.getComponent<NPC>().velocity = 
+        {
+            xy::Util::Random::value(-1.f, 1.f),
+            xy::Util::Random::value(-1.f, 1.f)
+        };
+        entity.getComponent<NPC>().velocity = xy::Util::Vector::normalise(entity.getComponent<NPC>().velocity);
+        break;
+    case ActorID::Clocksy:
+        entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(1, 2) % 2 == 1) ? -1.f : 1.f;
+        entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize, PlayerFootSize }, CollisionType::Foot); //feets!
+        break;
     }
 
     m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();

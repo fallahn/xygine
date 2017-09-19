@@ -45,7 +45,8 @@ enum class CollisionType
     Platform,
     Solid,
     Teleport,
-    Bubble
+    Bubble,
+    NPC
 };
 
 struct Manifold final

@@ -36,6 +36,7 @@ source distribution.
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
+
 CollisionSystem::CollisionSystem(xy::MessageBus& mb, bool server)
     : xy::System(mb, typeid(CollisionSystem)),
     m_isServer  (server)

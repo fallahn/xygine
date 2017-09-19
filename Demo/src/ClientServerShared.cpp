@@ -50,15 +50,15 @@ void createCollisionObject(xy::Scene& scene, const tmx::Object& obj, CollisionTy
         default: break;
         case CollisionType::Platform:
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Platform);
-            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player | CollisionFlags::NPC);
             break;
         case CollisionType::Solid:
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Solid);
-            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player | CollisionFlags::Bubble);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player | CollisionFlags::Bubble | CollisionFlags::NPC);
             break;
         case CollisionType::Teleport:
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Teleport);
-            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player | CollisionFlags::NPC);
             break;
         }
     }
