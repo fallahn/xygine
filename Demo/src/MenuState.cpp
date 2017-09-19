@@ -36,12 +36,10 @@ source distribution.
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/ecs/components/UIHitBox.hpp>
-#include <xyginext/ecs/components/ParticleEmitter.hpp>
 
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
 #include <xyginext/ecs/systems/UISystem.hpp>
-#include <xyginext/ecs/systems/ParticleSystem.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -79,14 +77,6 @@ void MenuState::draw()
 {
     auto& rt = getContext().renderWindow;
 
-
-    std::vector<sf::Vertex> buns =
-    {
-        sf::Vertex(sf::Vector2f(), sf::Color::Red), sf::Vertex(sf::Vector2f(100.f, 100.f), sf::Color::Red),
-        sf::Vertex(sf::Vector2f(200.f, 100.f), sf::Color::Red), sf::Vertex(sf::Vector2f(100.f, 800.f), sf::Color::Red)
-    };
-    //rt.draw(buns.data(), buns.size(), sf::LineStrip, sf::Transform());
-
     rt.draw(m_scene);
 }
 
@@ -97,7 +87,6 @@ void MenuState::createMenu()
     m_scene.addSystem<xy::UISystem>(mb);
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
-    m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addDirector<TextboxDirector>(m_sharedStateData);
 
     xy::AudioMixer::setLabel("Testy", 7);
@@ -134,16 +123,6 @@ void MenuState::createMenu()
             requestStackPush(StateID::Game);
         }
     });
-
-    auto& emitter = entity.addComponent<xy::ParticleEmitter>();
-    emitter.settings.colour = sf::Color::White;
-    emitter.settings.gravity = { -130.f, 1219.f };
-    emitter.settings.initialVelocity = { 320.f, -530.f };
-    emitter.settings.lifetime = 2.f;
-    emitter.settings.emitRate = 20.f;
-    emitter.settings.rotationSpeed = 12.f;
-    //emitter.settings.texture = &m_textureResource.get("assets/images/block_small.png");
-    emitter.start();
 
     //join text
     entity = m_scene.createEntity();
