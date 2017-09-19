@@ -29,6 +29,7 @@ source distribution.
 #include "MapData.hpp"
 #include "Hitbox.hpp"
 #include "MessageIDs.hpp"
+#include "ClientServerShared.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/util/Vector.hpp>
@@ -41,7 +42,6 @@ namespace
     const float gravity = 2200.f;
     const float initialJumpVelocity = 840.f;
     const float minJumpVelocity = -initialJumpVelocity * 0.35f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocity
-    const float teleportDist = (15.f * 64.f) - 10.f; //TODO hook this in with map properties somehow
 }
 
 PlayerSystem::PlayerSystem(xy::MessageBus& mb, bool server)
@@ -289,11 +289,11 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                     if (tx.getPosition().y > xy::DefaultSceneSize.y / 2.f)
                     {
                         //move up
-                        tx.move(0.f, -teleportDist);
+                        tx.move(0.f, -TeleportDistance);
                     }
                     else
                     {
-                        tx.move(0.f, teleportDist);
+                        tx.move(0.f, TeleportDistance);
                     }
                     break;
                 }

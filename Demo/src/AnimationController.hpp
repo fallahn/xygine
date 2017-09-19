@@ -32,15 +32,21 @@ source distribution.
 
 #include <SFML/System/Vector2.hpp>
 
+#include <array>
+
 struct AnimationController final
 {
     enum Animation
     {
-        Idle, Walk, Shoot, Die, JumpUp, JumpDown
+        Idle, Walk, Shoot, Die, JumpUp, JumpDown, Count
     }currentAnim = Animation::Idle;
+
+    std::array<sf::Int32, Animation::Count> animationMap{};
+
     Animation previousAnimation = Animation::Idle;
     sf::Vector2f lastPostion;
     sf::Vector2f lastVelocity;
+    sf::Int32 actorID = -1;
 };
 
 class AnimationControllerSystem final : public xy::System

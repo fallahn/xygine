@@ -67,7 +67,8 @@ namespace CollisionFlags
         Bubble = 0x10,
         NPC = 0x20,
 
-        PlayerMask = Bubble | Platform | Solid | Teleport
+        PlayerMask = Bubble | Platform | Solid | Teleport,
+        NPCMask = CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::Bubble | CollisionFlags::Platform | Teleport
     };
 }
 
@@ -77,6 +78,8 @@ static constexpr float PlayerFootSize = 20.f;
 
 static constexpr float BubbleSize = 64.f;
 static constexpr float NPCSize = 64.f;
+
+static constexpr float TeleportDistance = 950.f;
 
 static const sf::FloatRect MapBounds(0.f, 0.f, 16.f *64.f, 17.f * 64.f);
 

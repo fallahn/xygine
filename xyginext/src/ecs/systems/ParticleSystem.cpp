@@ -31,6 +31,7 @@ source distribution.
 #include <xyginext/core/App.hpp>
 #include <xyginext/util/Const.hpp>
 #include <xyginext/util/Random.hpp>
+#include <xyginext/util/Vector.hpp>
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -127,7 +128,7 @@ void ParticleSystem::process(float dt)
             if (emitter.m_nextFreeParticle < emitter.m_particles.size() - 1)
             {
                 auto& tx = entity.getComponent<Transform>();
-                auto rotation = tx.getRotation() * Util::Const::degToRad;
+                auto rotation = tx.getRotation();
 
                 const auto& settings = emitter.settings;
                 XY_ASSERT(settings.emitRate > 0, "Emit rate must be grater than 0");
@@ -137,7 +138,7 @@ void ParticleSystem::process(float dt)
                 p.gravity = settings.gravity;
                 p.lifetime = settings.lifetime + xy::Util::Random::value(-settings.lifetimeVariance, settings.lifetimeVariance + epsilon);
                 p.maxLifetime = p.lifetime;
-                p.velocity = /*rotation **/ settings.initialVelocity; //this should rotate the velocity
+                p.velocity = Util::Vector::rotate(settings.initialVelocity, rotation);
                 p.rotation = Util::Random::value(-Util::Const::TAU, Util::Const::TAU);
                 p.scale = 1.f;
 

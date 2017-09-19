@@ -41,7 +41,8 @@ namespace ActorID
         PlayerTwo,
         Whirlybob, Clocksy,
         BubbleOne,
-        BubbleTwo
+        BubbleTwo,
+        Client
     };
 }
 

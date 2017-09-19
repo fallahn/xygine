@@ -74,12 +74,6 @@ source distribution.
 
 namespace
 {
-    struct TestPacket
-    {
-        int a = 2;
-        float z = 54.f;
-    };
-
     const float clientTimeout = 20.f;
 }
 
@@ -268,6 +262,7 @@ bool GameState::loadScene(const MapData& data)
     entity.addComponent<xy::Transform>();
     
     m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+    //m_scene.getActiveCamera().getComponent<xy::Camera>().setZoom(0.5f);
 
     for (auto i = 0; i < data.actorCount; ++i)
     {
@@ -287,8 +282,10 @@ bool GameState::loadScene(const MapData& data)
             break;
         case ActorID::Clocksy:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
+            entity.addComponent<xy::Text>(m_fontResource.get("flaps")).setString("BUNS");
             break;
         }
+        entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
         entity.addComponent<xy::SpriteAnimation>().play(0);
     }
 
@@ -617,16 +614,20 @@ void GameState::spawnClient(const ClientData& data)
         m_playerInput.setPlayerEntity(entity);
 
         entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
-        entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize, PlayerFootSize }, CollisionType::Foot);
+        entity.getComponent<CollisionComponent>().addHitbox({ -PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
         entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
+
+        entity.getComponent<AnimationController>().actorID = ActorID::Client;
     }
     else
     {
         //add interp controller
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
+
+        entity.getComponent<AnimationController>().actorID = data.actor.type;
     }
 }
 

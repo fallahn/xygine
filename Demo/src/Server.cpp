@@ -459,7 +459,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
 
     entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
-    entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize, PlayerFootSize }, CollisionType::Foot);
+    entity.getComponent<CollisionComponent>().addHitbox({ -PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot);
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
     entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
@@ -482,7 +482,7 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
 
     entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
-    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::Bubble | CollisionFlags::Platform);
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask);
     entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, NPCSize, NPCSize });
 
     entity.addComponent<NPC>();
@@ -499,7 +499,9 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
         break;
     case ActorID::Clocksy:
         entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(1, 2) % 2 == 1) ? -1.f : 1.f;
-        entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize, PlayerFootSize }, CollisionType::Foot); //feets!
+        entity.getComponent<CollisionComponent>().addHitbox(
+        { -PlayerSizeOffset, NPCSize,
+            NPCSize + PlayerSizeOffset, PlayerFootSize }, CollisionType::Foot); //feets!
         break;
     }
 

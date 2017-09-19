@@ -28,6 +28,7 @@ source distribution.
 #include "NPCSystem.hpp"
 #include "ActorSystem.hpp"
 #include "Hitbox.hpp"
+#include "ClientServerShared.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/util/Vector.hpp>
@@ -84,7 +85,7 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
     const auto& collision = entity.getComponent<CollisionComponent>();
     const auto& hitboxes = collision.getHitboxes();
 
-    for (auto i = 0; i < collision.getHitboxCount(); ++i)
+    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
     {
         auto& manifolds = hitboxes[i].getManifolds();
         for (auto j = 0u; j < hitboxes[i].getCollisionCount(); ++j)
@@ -101,6 +102,9 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
                 break;
             case CollisionType::Bubble:
                 //switch to bubble state if bubble in spawn state
+                break;
+            case CollisionType::Teleport:
+                tx.move(0.f, -TeleportDistance);
                 break;
             }
         }
@@ -124,12 +128,12 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
     const auto& collision = entity.getComponent<CollisionComponent>();
     const auto& hitboxes = collision.getHitboxes();
 
-    for (auto i = 0; i < collision.getHitboxCount(); ++i)
-    {
-        auto& manifolds = hitboxes[i].getManifolds();
-        for (auto j = 0u; j < hitboxes[i].getCollisionCount(); ++j)
-        {   
-            if (hitboxes[i].getType() == CollisionType::NPC)
+    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
+    {    
+        if (hitboxes[i].getType() == CollisionType::NPC)
+        {
+            auto& manifolds = hitboxes[i].getManifolds();
+            for (auto j = 0u; j < hitboxes[i].getCollisionCount(); ++j)
             {
                 auto& manifold = manifolds[j];
                 switch (manifold.otherType)
@@ -150,17 +154,20 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
                 case CollisionType::Bubble:
                     //switch to bubble state if bubble in spawn state
                     break;
-                }
-            }
-            else
-            {
-                if (hitboxes[i].getCollisionCount() == 0)
-                {
-                    //foots in the air so we're falling
-                    npc.state = NPC::State::Falling;
+                case CollisionType::Teleport:
+                    tx.move(0.f, -TeleportDistance);
+                    break;
                 }
             }
         }
+        else //footbox
+        {
+            if (hitboxes[i].getCollisionCount() == 0)
+            {
+                //foots in the air so we're falling
+                npc.state = NPC::State::Falling;
+            }
+        }  
     }
 
 
