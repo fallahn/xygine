@@ -410,7 +410,24 @@ void GameServer::loadMap()
                 }
                 else if (name == "spawn")
                 {
-
+                    sf::Int32 spawnCount = 0;
+                    
+                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+                    for (const auto& obj : objs)
+                    {
+                        auto name = xy::Util::String::toLower(obj.getName());
+                        if (name == "whirlybob")
+                        {
+                            spawnNPC(ActorID::Whirlybob, { obj.getPosition().x, obj.getPosition().y });
+                            spawnCount++;
+                        }
+                        else if (name == "clocksy")
+                        {
+                            spawnNPC(ActorID::Clocksy, { obj.getPosition().x, obj.getPosition().y });
+                            spawnCount++;
+                        }
+                    }
+                    flags |= (spawnCount == 0) ? 0 : MapFlags::Spawn;
                 }
             }
         }
@@ -418,18 +435,6 @@ void GameServer::loadMap()
         {
             CLIENT_MESSAGE(MessageIdent::MapFailed);
             return;
-        }
-
-        //do actor loading
-        for (auto i = 0; i < m_mapData.actorCount; ++i)
-        {
-            auto entity = m_scene.createEntity();
-            entity.addComponent<xy::Transform>().setPosition(xy::Util::Random::value(0.f, xy::DefaultSceneSize.x), xy::Util::Random::value(0.f, xy::DefaultSceneSize.y));
-            entity.addComponent<Actor>().id = entity.getIndex();
-            entity.getComponent<Actor>().type = ActorID::BubbleOne;
-            
-            //update map data
-            m_mapData.actors[i] = entity.getComponent<Actor>();
         }
 
         m_serverTime.restart();
@@ -462,4 +467,26 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.addComponent<xy::CommandTarget>().ID = (player == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
 
     return entity.getIndex();
+}
+
+void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
+{
+    auto entity = m_scene.createEntity();
+    entity.addComponent<xy::Transform>().setPosition(pos);
+    //entity.getComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
+    entity.addComponent<Actor>().id = entity.getIndex();
+    entity.getComponent<Actor>().type = id;
+
+    /*entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
+    entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player);
+    entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });*/
+
+    switch (id)
+    {
+    default: break;
+        //TODO add behaviour
+    }
+
+    m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
 }

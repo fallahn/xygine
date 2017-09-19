@@ -75,6 +75,7 @@ static constexpr float PlayerSizeOffset = 2.f;
 static constexpr float PlayerFootSize = 20.f;
 
 static constexpr float BubbleSize = 64.f;
+static constexpr float NPCSize = 64.f;
 
 static const sf::FloatRect MapBounds(0.f, 0.f, 16.f *64.f, 17.f * 64.f);
 

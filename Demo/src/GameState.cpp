@@ -273,11 +273,23 @@ bool GameState::loadScene(const MapData& data)
     {
         auto entity = m_scene.createEntity();
         entity.addComponent<xy::Transform>();
-        entity.addComponent<Actor>() = data.actors[i];
-        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::BubbleOne];
-        entity.addComponent<xy::SpriteAnimation>().play(0);
+        entity.addComponent<Actor>() = data.actors[i];       
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
+
+        switch (data.actors[i].type)
+        {
+        default:
+            //add missing texture or placeholder
+            break;
+        case ActorID::Whirlybob:
+            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
+            break;
+        case ActorID::Clocksy:
+            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
+            break;
+        }
+        entity.addComponent<xy::SpriteAnimation>().play(0);
     }
 
     return true;

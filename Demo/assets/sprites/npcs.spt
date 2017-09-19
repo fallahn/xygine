@@ -47,12 +47,12 @@ sprite_sheet npcs
 
 		animation walk
 		{
-			bounds = 192,64,64,64
-			bounds = 192,128,64,64
-			bounds = 192,192,64,64
-			bounds = 192,256,64,64
+			frame = 192,64,64,64
+			frame = 192,128,64,64
+			frame = 192,192,64,64
+			frame = 192,256,64,64
 
-			framerate = 12
+			framerate = 10
 			loop=true
 		}
 

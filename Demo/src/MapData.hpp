@@ -39,7 +39,7 @@ namespace ActorID
         None = -1,
         PlayerOne,
         PlayerTwo,
-        NPC0, NPC1,
+        Whirlybob, Clocksy,
         BubbleOne,
         BubbleTwo
     };

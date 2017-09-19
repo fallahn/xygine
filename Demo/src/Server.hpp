@@ -82,6 +82,8 @@ private:
 
     sf::Int32 spawnPlayer(std::size_t);
 
+    void spawnNPC(sf::Int32, sf::Vector2f);
+
     struct Client final
     {
         ClientData data;
