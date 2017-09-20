@@ -34,9 +34,11 @@ struct NPC final
 {
     enum class State
     {
-        Normal, Bubble, Falling, Jumping
+        Normal, Bubble, /*Falling,*/ Jumping, Thinking
     }state = State::Normal;
     sf::Vector2f velocity;
+    float thinkTimer = 0.f;
+    bool canLand = true;
 };
 
 class NPCSystem final : public xy::System
@@ -49,6 +51,10 @@ public:
     void process(float) override;
 
 private:
+
+    void onEntityAdded(xy::Entity) override;
+
+    std::size_t m_currentThinkTime;
 
     void updateWhirlybob(xy::Entity, float);
     void updateClocksy(xy::Entity, float);
