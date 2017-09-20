@@ -42,11 +42,9 @@ struct AnimationController final
     }currentAnim = Animation::Idle;
 
     std::array<std::size_t, Animation::Count> animationMap{};
-
-    Animation previousAnimation = Animation::Idle;
-    sf::Vector2f lastPostion;
-    sf::Vector2f lastVelocity;
-    sf::Int32 actorID = -1;
+    Animation prevAnimation = Animation::Idle;
+    Animation nextAnimation = Animation::Idle;
+    float direction = 1.f;
 };
 
 class AnimationControllerSystem final : public xy::System

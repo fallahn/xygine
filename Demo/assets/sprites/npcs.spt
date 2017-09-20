@@ -49,7 +49,7 @@ sprite_sheet npcs
 		{
 			frame = 192,64,64,64
 			loop = true
-			framerate = 1
+			framerate = 25
 		}
 
 		animation walk

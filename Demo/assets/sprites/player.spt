@@ -63,7 +63,7 @@ sprite_sheet player
 		{
 			frame = 448,0,64,64
 
-			framerate = 1
+			framerate = 25
 			loop = true
 		}
 
@@ -71,7 +71,7 @@ sprite_sheet player
 		{
 			frame = 384,0,64,64
 
-			framerate = 1
+			framerate = 25
 			loop = true
 		}
 	}
@@ -136,7 +136,7 @@ sprite_sheet player
 		{
 			frame = 448,64,64,64
 			
-			framerate = 1
+			framerate = 25
 			loop = true
 		}
 
@@ -144,7 +144,7 @@ sprite_sheet player
 		{
 			frame = 384,64,64,64
 			
-			framerate = 1
+			framerate = 25
 			loop = true
 		}		
 	}

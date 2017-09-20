@@ -49,7 +49,7 @@ void AnimationControllerSystem::handleMessage(const xy::Message& msg)
         const auto& data = msg.getData<PlayerEvent>();
         auto entity = data.entity;
         auto& controller = entity.getComponent<AnimationController>();
-
+        controller.prevAnimation = controller.currentAnim;
         switch (data.type)
         {
         default: break;
@@ -72,65 +72,26 @@ void AnimationControllerSystem::process(float)
         auto& xForm = entity.getComponent<xy::Transform>();
         auto& controller = entity.getComponent<AnimationController>();
 
-        const auto currPos = xForm.getPosition();
-        auto vel = currPos - controller.lastPostion;
+        xForm.setScale(controller.direction, 1.f);
 
-
-        switch (controller.actorID)
+        //if animation has changed update it
+        if (controller.nextAnimation != controller.currentAnim
+            && controller.prevAnimation == controller.currentAnim)
         {
-        case ActorID::Client:
-            //this is our local player
-        {
-            float scale = entity.getComponent<Player>().direction == Player::Direction::Left ? 1.f : -1.f;
-            xForm.setScale(scale, 1.f);
+            controller.prevAnimation = controller.currentAnim = controller.nextAnimation;
+            entity.getComponent<xy::SpriteAnimation>().play(controller.animationMap[controller.currentAnim]);
         }
-            break;
-        case ActorID::PlayerOne:
-        case ActorID::PlayerTwo:
-            //these are remote versions
 
-        case ActorID::Clocksy:
-        default:
-            //set direction
-            if ((controller.lastVelocity.x <= 0 && vel.x > 0)
-                || (controller.lastVelocity.x >= 0 && vel.x < 0))
+        //if overriding anim such as shooting is playing
+        //check to see if it has stopped
+        if (controller.prevAnimation != controller.currentAnim)
+        {
+            auto& sprAnim = entity.getComponent<xy::SpriteAnimation>();
+            if (sprAnim.stopped())
             {
-                xForm.setScale(-vel.x / std::abs(vel.x), 1.f);
-            }
-            break;
-        }
-
-        //use velocity to decide which animation should be playing
-        AnimationController::Animation anim = AnimationController::Animation::Idle;
-        if (vel.x != 0) anim = AnimationController::Animation::Walk;
-        //if (std::abs(vel.x) < std::abs(vel.y))
-        //else
-        {
-            if (vel.y < -0.2f) anim = AnimationController::Animation::JumpUp;
-            else if (vel.y > 20.2f) anim = AnimationController::Animation::JumpDown;
-        }
-
-        if (anim != controller.currentAnim &&
-            controller.currentAnim == controller.previousAnimation) //we're not being overridden right now
-        {
-            //set SpriteAnimation
-            entity.getComponent<xy::SpriteAnimation>().play(controller.animationMap[anim]);
-            controller.currentAnim = controller.previousAnimation = anim;
-        }
-
-
-
-        if (controller.previousAnimation != controller.currentAnim)
-        {
-            //check if overriding anim (such as shooting/dying) has finished
-            //and revert to previously playing animation
-            if (entity.getComponent<xy::SpriteAnimation>().stopped())
-            {
-                entity.getComponent<xy::SpriteAnimation>().play(controller.previousAnimation);
-                controller.currentAnim = controller.previousAnimation;
+                controller.currentAnim = controller.prevAnimation;
+                sprAnim.play(controller.animationMap[controller.currentAnim]);
             }
         }
-        controller.lastPostion = currPos;
-        controller.lastVelocity = vel;
     }
 }

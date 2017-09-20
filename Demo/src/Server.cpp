@@ -30,6 +30,7 @@ source distribution.
 #include "PacketIDs.hpp"
 #include "ActorSystem.hpp"
 #include "PlayerSystem.hpp"
+#include "AnimationController.hpp"
 #include "CommandIDs.hpp"
 #include "ServerMessages.hpp"
 #include "CollisionSystem.hpp"
@@ -464,6 +465,8 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
     entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
 
+    entity.addComponent<AnimationController>();
+
     //add client controller
     entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);
     if (player == 1) entity.getComponent<Player>().direction = Player::Direction::Left;
@@ -484,6 +487,8 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask);
     entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, NPCSize, NPCSize });
+
+    entity.addComponent<AnimationController>();
 
     entity.addComponent<NPC>();
     switch (id)

@@ -202,7 +202,6 @@ void GameState::loadAssets()
 
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "clocksy");
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "clocksy");
-    m_animationControllers[SpriteID::Clocksy].actorID = ActorID::Clocksy;
 
     //audio
     //m_soundResource.get("assets/boop_loop.wav");
@@ -291,7 +290,7 @@ bool GameState::loadScene(const MapData& data)
             break;
         case ActorID::Clocksy:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
-            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
+            //entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
             //entity.addComponent<xy::Text>(m_fontResource.get("flaps")).setString("BUNS");
             break;
         }
@@ -613,7 +612,6 @@ void GameState::spawnClient(const ClientData& data)
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
     entity.addComponent<xy::SpriteAnimation>().play(0);
     entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::PlayerOne];
-    entity.getComponent<AnimationController>().lastPostion = entity.getComponent<xy::Transform>().getPosition();
 
     if (data.peerID == m_client.getPeer().getID())
     {
@@ -629,16 +627,12 @@ void GameState::spawnClient(const ClientData& data)
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
         entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
-
-        entity.getComponent<AnimationController>().actorID = ActorID::Client;
     }
     else
     {
         //add interp controller
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
-
-        entity.getComponent<AnimationController>().actorID = data.actor.type;
     }
 }
 

@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include "PlayerSystem.hpp"
+#include "AnimationController.hpp"
 #include "MapData.hpp"
 #include "Hitbox.hpp"
 #include "MessageIDs.hpp"
@@ -34,6 +35,8 @@ source distribution.
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/util/Vector.hpp>
 #include <xyginext/core/App.hpp>
+
+#include <xyginext/ecs/components/Text.hpp>
 
 namespace
 {
@@ -51,6 +54,7 @@ PlayerSystem::PlayerSystem(xy::MessageBus& mb, bool server)
     requireComponent<Player>();
     requireComponent<xy::Transform>();
     requireComponent<CollisionComponent>();
+    requireComponent<AnimationController>();
 }
 
 //public
@@ -63,6 +67,8 @@ void PlayerSystem::process(float dt)
 
         auto& player = entity.getComponent<Player>();
         auto& tx = entity.getComponent<xy::Transform>();
+
+        float xMotion = tx.getPosition().x; //used for animation, below
 
         //current input actually points to next empty slot.
         std::size_t idx = (player.currentInput + player.history.size() - 1) % player.history.size();
@@ -129,6 +135,19 @@ void PlayerSystem::process(float dt)
                 player.direction = Player::Direction::Left;
             }
             player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();
+        }
+
+        //update animation state
+        auto& animController = entity.getComponent<AnimationController>();
+        animController.direction = (player.direction == Player::Direction::Left) ? 1.f : -1.f;
+        if (player.state == Player::State::Jumping)
+        {
+            animController.nextAnimation = (player.velocity > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
+        }
+        else
+        {
+            xMotion = tx.getPosition().x - xMotion;
+            animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
         }
     }
 }
@@ -201,6 +220,19 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
             }
             idx = (idx + 1) % player.history.size();
         }
+    }
+
+    //update resulting animation
+    auto& animController = entity.getComponent<AnimationController>();
+    animController.direction = (player.direction == Player::Direction::Left) ? 1.f : -1.f;
+    if (player.state == Player::State::Jumping)
+    {
+        animController.nextAnimation = (player.velocity > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
+    }
+    else
+    {
+        float xMotion = tx.getPosition().x - state.x;
+        animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
     }
 }
 
