@@ -89,6 +89,8 @@ struct ActorState
     float y = 0.f;
     Actor actor;
     sf::Int32 serverTime = 0;
+    float animationDirection = 1.f;
+    sf::Int32 animationID = 0;
 };
 //client state for client side reconciliation
 struct ClientState final : public ActorState

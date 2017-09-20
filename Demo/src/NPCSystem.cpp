@@ -28,6 +28,7 @@ source distribution.
 #include "NPCSystem.hpp"
 #include "ActorSystem.hpp"
 #include "BubbleSystem.hpp"
+#include "AnimationController.hpp"
 #include "Hitbox.hpp"
 #include "ClientServerShared.hpp"
 
@@ -56,6 +57,7 @@ NPCSystem::NPCSystem(xy::MessageBus& mb)
     requireComponent<Actor>();
     requireComponent<CollisionComponent>();
     requireComponent<xy::Transform>();
+    requireComponent<AnimationController>();
 }
 
 //public
@@ -122,6 +124,11 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
                     npc.state = NPC::State::Bubble;
                     npc.velocity.y = BubbleVerticalVelocity;
                     npc.thinkTimer = BubbleTime;
+                    npc.bubbleOwner = bubble.player;
+
+                    entity.getComponent<AnimationController>().nextAnimation = 
+                        (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
+
                     return;
                 }
             }
@@ -133,13 +140,9 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
         }
     }
 
-    if (npc.state == NPC::State::Normal)
+    //if (npc.state == NPC::State::Normal)
     {
         tx.move(npc.velocity * WhirlybobSpeed * dt);
-    }
-    else
-    {
-        //we're in bubble state
     }
 }
 
@@ -147,6 +150,8 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
 {
     auto& tx = entity.getComponent<xy::Transform>();
     auto& npc = entity.getComponent<NPC>();
+
+    float xMotion = tx.getPosition().x; //used in animation, see below
 
     const auto& collision = entity.getComponent<CollisionComponent>();
     const auto& hitboxes = collision.getHitboxes();
@@ -208,6 +213,9 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
                         npc.state = NPC::State::Bubble;
                         npc.velocity.y = BubbleVerticalVelocity;
                         npc.thinkTimer = BubbleTime;
+                        npc.bubbleOwner = bubble.player;
+                        entity.getComponent<AnimationController>().nextAnimation = 
+                            (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
                         return;
                     }
                 }
@@ -269,6 +277,19 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
             }
         }
         break;
+    }
+
+    //update animation state   
+    auto& animController = entity.getComponent<AnimationController>();
+    animController.direction = -npc.velocity.x;
+    if (npc.state == NPC::State::Jumping)
+    {
+        animController.nextAnimation = (npc.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
+    }
+    else
+    {
+        xMotion = tx.getPosition().x - xMotion;
+        animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
     }
 }
 

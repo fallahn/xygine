@@ -28,6 +28,7 @@ source distribution.
 #include "BubbleSystem.hpp"
 #include "ActorSystem.hpp"
 #include "NPCSystem.hpp"
+#include "AnimationController.hpp"
 #include "MessageIDs.hpp"
 #include "MapData.hpp"
 #include "PacketIDs.hpp"
@@ -40,7 +41,7 @@ source distribution.
 
 namespace
 {
-    const float spawnVelocity = 1100.f;
+    const float spawnVelocity = 600.f;
 }
 
 BubbleSystem::BubbleSystem(xy::MessageBus& mb, xy::NetHost& host)
@@ -73,11 +74,14 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
             entity.addComponent<Actor>().id = entity.getIndex();
             entity.getComponent<Actor>().type = (player.playerNumber == 0) ?  ActorID::BubbleOne : ActorID::BubbleTwo;
             entity.addComponent<Bubble>().player = player.playerNumber;
+            //TODO add player current velocity to spawn velocity
             entity.getComponent<Bubble>().velocity.x = (player.direction == Player::Direction::Right) ? spawnVelocity : -spawnVelocity;
             entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
             entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC);
             entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
+
+            entity.addComponent<AnimationController>();
 
             //broadcast to clients
             ActorEvent evt;
@@ -107,6 +111,7 @@ void BubbleSystem::process(float dt)
         if(bubble.state == Bubble::Spawning)
         {
             bubble.spawntime -= dt;
+            bubble.velocity.x *= 0.99f;
             if (bubble.spawntime < 0)
             {
                 bubble.state = Bubble::Normal;

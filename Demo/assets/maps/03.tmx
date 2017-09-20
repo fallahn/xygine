@@ -35,8 +35,8 @@
  </objectgroup>
  <objectgroup name="Platform">
   <object id="44" x="192" y="288" width="768" height="32"/>
-  <object id="48" x="560" y="768" width="336" height="32"/>
-  <object id="47" x="128" y="768" width="336" height="32"/>
+  <object id="48" x="560" y="768" width="327" height="32"/>
+  <object id="47" x="137" y="768" width="327" height="32"/>
   <object id="45" x="64" y="448" width="768" height="32"/>
   <object id="46" x="192" y="608" width="768" height="32"/>
  </objectgroup>

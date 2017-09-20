@@ -39,6 +39,7 @@ struct NPC final
     sf::Vector2f velocity;
     float thinkTimer = 0.f;
     bool canLand = true;
+    sf::Int32 bubbleOwner = -1;
 };
 
 class NPCSystem final : public xy::System

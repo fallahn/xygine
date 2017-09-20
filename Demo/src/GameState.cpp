@@ -202,6 +202,11 @@ void GameState::loadAssets()
 
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "clocksy");
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "clocksy");
+    m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "clocksy");
+    m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "clocksy");
+
+    m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "whirlybob");
+    m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "whirlybob");
 
     //audio
     //m_soundResource.get("assets/boop_loop.wav");
@@ -287,10 +292,11 @@ bool GameState::loadScene(const MapData& data)
             break;
         case ActorID::Whirlybob:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
+            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::WhirlyBob];
             break;
         case ActorID::Clocksy:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
-            //entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
+            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
             //entity.addComponent<xy::Text>(m_fontResource.get("flaps")).setString("BUNS");
             break;
         }
@@ -362,6 +368,9 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             {
                 entity.getComponent<xy::NetInterpolate>().setTarget({ state.x, state.y }, state.serverTime);
                 //DPRINT("Timestamp", std::to_string(state.timestamp));
+                auto& anim = entity.getComponent<AnimationController>();
+                anim.nextAnimation = static_cast<AnimationController::Animation>(state.animationID);
+                anim.direction = state.animationDirection;
             }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
@@ -571,6 +580,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     entity.addComponent<Actor>() = actorEvent.actor;
     entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
     entity.addComponent<xy::NetInterpolate>();
+    entity.addComponent<AnimationController>();
 
     switch (actorEvent.actor.type)
     {

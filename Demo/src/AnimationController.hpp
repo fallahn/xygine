@@ -38,7 +38,7 @@ struct AnimationController final
 {
     enum Animation
     {
-        Idle, Walk, Shoot, Die, JumpUp, JumpDown, Count
+        Idle, Walk, Shoot, Die, JumpUp, JumpDown, TrappedOne, TrappedTwo, Count
     }currentAnim = Animation::Idle;
 
     std::array<std::size_t, Animation::Count> animationMap{};

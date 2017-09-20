@@ -23,7 +23,7 @@ sprite_sheet player
 			frame = 192,0,64,64
 			frame = 256,0,64,64
 
-			framerate = 12
+			framerate = 18
 			loop = true
 		}
 
@@ -96,7 +96,7 @@ sprite_sheet player
 			frame = 192,64,64,64
 			frame = 256,64,64,64
 
-			framerate = 12
+			framerate = 18
 			loop = true
 		}
 

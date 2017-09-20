@@ -47,7 +47,7 @@ struct Bubble final
         Normal
     }state = Spawning;
     float lifetime = 4.f;
-    float spawntime = 0.1f;
+    float spawntime = 0.2f;
     sf::Vector2f velocity;
 };
 

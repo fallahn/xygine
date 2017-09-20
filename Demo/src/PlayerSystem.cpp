@@ -40,7 +40,7 @@ source distribution.
 
 namespace
 {
-    const float speed = 400.f;
+    const float speed = 200.f;
     const float maxVelocity = 800.f;
     const float gravity = 2200.f;
     const float initialJumpVelocity = 840.f;

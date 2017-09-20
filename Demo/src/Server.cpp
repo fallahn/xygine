@@ -176,6 +176,7 @@ void GameServer::update()
             {
                 const auto& actorComponent = actor.getComponent<Actor>();
                 const auto& tx = actor.getComponent<xy::Transform>().getPosition();
+                const auto& anim = actor.getComponent<AnimationController>();
 
                 ActorState state;
                 state.actor.id = actorComponent.id;
@@ -183,6 +184,8 @@ void GameServer::update()
                 state.x = tx.x;
                 state.y = tx.y;
                 state.serverTime = m_serverTime.getElapsedTime().asMilliseconds();
+                state.animationDirection = anim.direction;
+                state.animationID = anim.nextAnimation;
 
                 m_host.broadcastPacket(PacketID::ActorUpdate, state, xy::NetFlag::Unreliable);
             }
