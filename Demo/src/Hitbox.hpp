@@ -55,7 +55,7 @@ struct Manifold final
     float penetration = 0.f;
     sf::Vector2f normal;
     CollisionType otherType = CollisionType::None;
-    xy::Entity otherEntity = { -1, -1 };
+    xy::Entity otherEntity;
 };
 
 class Hitbox final

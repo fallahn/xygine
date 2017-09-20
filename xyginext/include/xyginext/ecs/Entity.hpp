@@ -40,6 +40,7 @@ source distribution.
 #include <vector>
 #include <deque>
 #include <memory>
+#include <limits>
 
 namespace xy
 {
@@ -69,7 +70,7 @@ namespace xy
 		using ID = sf::Uint32;
 		using Generation = sf::Uint8;
 
-		Entity(ID index, Generation generation);
+		Entity(ID index = std::numeric_limits<ID>::max(), Generation generation = 0);
 
 		/*
 		\brief Returns the index of this entity
