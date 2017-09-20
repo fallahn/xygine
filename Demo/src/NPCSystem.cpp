@@ -27,6 +27,7 @@ source distribution.
 
 #include "NPCSystem.hpp"
 #include "ActorSystem.hpp"
+#include "BubbleSystem.hpp"
 #include "Hitbox.hpp"
 #include "ClientServerShared.hpp"
 
@@ -43,7 +44,8 @@ namespace
     const float gravity = 2200.f;
     const float initialJumpVelocity = 940.f;
 
-    std::array<float, 10> thinkTimes = { 20.f, 16.f, 12.f, 31.f, 15.4f, 14.9f, 25.f, 12.7f, 13.3f, 18.f };
+    const std::array<float, 10> thinkTimes = { 20.f, 16.f, 12.f, 31.f, 15.4f, 14.9f, 25.f, 12.7f, 13.3f, 18.f };
+    const float BubbleTime = 6.f;
 }
 
 NPCSystem::NPCSystem(xy::MessageBus& mb)
@@ -67,15 +69,22 @@ void NPCSystem::process(float dt)
     auto entities = getEntities();
     for (auto& entity : entities)
     {
-        switch (entity.getComponent<Actor>().type)
+        if (entity.getComponent<NPC>().state == NPC::State::Bubble)
         {
-        default: break;
-        case ActorID::Clocksy:
-            updateClocksy(entity, dt);
-            break;
-        case ActorID::Whirlybob:
-            updateWhirlybob(entity, dt);
-            break;
+            updateBubbleState(entity, dt);
+        }
+        else
+        {
+            switch (entity.getComponent<Actor>().type)
+            {
+            default: break;
+            case ActorID::Clocksy:
+                updateClocksy(entity, dt);
+                break;
+            case ActorID::Whirlybob:
+                updateWhirlybob(entity, dt);
+                break;
+            }
         }
     }
 }
@@ -106,6 +115,16 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
                 break;
             case CollisionType::Bubble:
                 //switch to bubble state if bubble in spawn state
+            {
+                const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
+                if (bubble.state == Bubble::Spawning)
+                {
+                    npc.state = NPC::State::Bubble;
+                    npc.velocity.y = BubbleVerticalVelocity;
+                    npc.thinkTimer = BubbleTime;
+                    return;
+                }
+            }
                 break;
             case CollisionType::Teleport:
                 tx.move(0.f, -(TeleportDistance - NPCSize));
@@ -182,6 +201,16 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
                     break;
                 case CollisionType::Bubble:
                     //switch to bubble state if bubble in spawn state
+                {
+                    const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
+                    if (bubble.state == Bubble::Spawning)
+                    {
+                        npc.state = NPC::State::Bubble;
+                        npc.velocity.y = BubbleVerticalVelocity;
+                        npc.thinkTimer = BubbleTime;
+                        return;
+                    }
+                }
                     break;
                 case CollisionType::Teleport:
                     tx.move(0.f, -TeleportDistance);
@@ -240,6 +269,43 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
             }
         }
         break;
+    }
+}
+
+void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
+{
+    auto& tx = entity.getComponent<xy::Transform>();
+    auto& npc = entity.getComponent<NPC>();
+
+    const auto& collision = entity.getComponent<CollisionComponent>();
+    const auto& hitboxes = collision.getHitboxes();
+
+    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
+    {
+        auto& manifolds = hitboxes[i].getManifolds();
+        for (auto j = 0u; j < hitboxes[i].getCollisionCount(); ++j)
+        {
+            auto& manifold = manifolds[j];
+            switch (manifold.otherType)
+            {
+            default: break;
+            case CollisionType::Solid:
+            //case CollisionType::Platform:
+                tx.move(manifold.normal * manifold.penetration);
+                break;
+            case CollisionType::Player:
+                //kill ent and give player points
+                break;
+            }
+        }
+    }
+
+    tx.move(npc.velocity * dt);
+
+    npc.thinkTimer -= dt;
+    if (npc.thinkTimer < 0)
+    {
+        //bubble wasn't burst in time, release NPC (angry mode?)
     }
 }
 

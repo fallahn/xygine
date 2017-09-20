@@ -27,6 +27,7 @@ source distribution.
 
 #include "BubbleSystem.hpp"
 #include "ActorSystem.hpp"
+#include "NPCSystem.hpp"
 #include "MessageIDs.hpp"
 #include "MapData.hpp"
 #include "PacketIDs.hpp"
@@ -40,7 +41,6 @@ source distribution.
 namespace
 {
     const float spawnVelocity = 1100.f;
-    const float verticalVelocity = -100.f;
 }
 
 BubbleSystem::BubbleSystem(xy::MessageBus& mb, xy::NetHost& host)
@@ -76,7 +76,7 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
             entity.getComponent<Bubble>().velocity.x = (player.direction == Player::Direction::Right) ? spawnVelocity : -spawnVelocity;
             entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
-            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC);
             entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
 
             //broadcast to clients
@@ -111,26 +111,14 @@ void BubbleSystem::process(float dt)
             {
                 bubble.state = Bubble::Normal;
                 bubble.velocity.x *= 0.001f;
-                bubble.velocity.y = verticalVelocity;
+                bubble.velocity.y = BubbleVerticalVelocity;
             }
             break;
         }
 
         if (bubble.lifetime < 0)
         {
-            getScene()->destroyEntity(entity);
-
-            //broadcast to client
-            ActorEvent evt;
-            evt.actor.id = entity.getIndex();
-            evt.actor.type = entity.getComponent<Actor>().type;
-            evt.x = tx.getPosition().x;
-            evt.y = tx.getPosition().y;
-            evt.type = ActorEvent::Died;
-
-            m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
-
-            //TODO raise message
+            killBubble(entity);
         }
     }
 }
@@ -174,7 +162,33 @@ void BubbleSystem::doCollision(xy::Entity entity)
                 default:break;
                 }
                 break;
+            case CollisionType::NPC:
+                if(man.otherEntity.getComponent<NPC>().state != NPC::State::Bubble
+                 && bubble.state == Bubble::Spawning)
+                {
+                    //pop!
+                    killBubble(entity);
+                }
+                break;
             }
         }
     }
+}
+
+void BubbleSystem::killBubble(xy::Entity entity)
+{
+    const auto& tx = entity.getComponent<xy::Transform>();
+    getScene()->destroyEntity(entity);
+
+    //broadcast to client
+    ActorEvent evt;
+    evt.actor.id = entity.getIndex();
+    evt.actor.type = entity.getComponent<Actor>().type;
+    evt.x = tx.getPosition().x;
+    evt.y = tx.getPosition().y;
+    evt.type = ActorEvent::Died;
+
+    m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+
+    //TODO raise message
 }

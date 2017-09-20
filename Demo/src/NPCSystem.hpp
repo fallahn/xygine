@@ -34,7 +34,7 @@ struct NPC final
 {
     enum class State
     {
-        Normal, Bubble, /*Falling,*/ Jumping, Thinking
+        Normal, Bubble, Jumping, Thinking
     }state = State::Normal;
     sf::Vector2f velocity;
     float thinkTimer = 0.f;
@@ -58,6 +58,8 @@ private:
 
     void updateWhirlybob(xy::Entity, float);
     void updateClocksy(xy::Entity, float);
+
+    void updateBubbleState(xy::Entity, float);
 };
 
 #endif //DEMO_NPC_SYSTEM_HPP_

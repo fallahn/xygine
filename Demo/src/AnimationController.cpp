@@ -73,7 +73,7 @@ void AnimationControllerSystem::process(float)
         auto& controller = entity.getComponent<AnimationController>();
 
         const auto currPos = xForm.getPosition();
-        auto vel = controller.lastPostion - currPos;
+        auto vel = currPos - controller.lastPostion;
 
 
         switch (controller.actorID)
@@ -95,7 +95,7 @@ void AnimationControllerSystem::process(float)
             if ((controller.lastVelocity.x <= 0 && vel.x > 0)
                 || (controller.lastVelocity.x >= 0 && vel.x < 0))
             {
-                xForm.setScale(vel.x / std::abs(vel.x), 1.f);
+                xForm.setScale(-vel.x / std::abs(vel.x), 1.f);
             }
             break;
         }
@@ -103,8 +103,12 @@ void AnimationControllerSystem::process(float)
         //use velocity to decide which animation should be playing
         AnimationController::Animation anim = AnimationController::Animation::Idle;
         if (vel.x != 0) anim = AnimationController::Animation::Walk;
-        if (vel.y < 0) anim = AnimationController::Animation::JumpUp;
-        else if (vel.y > 0.2f) anim = AnimationController::Animation::JumpDown;
+        //if (std::abs(vel.x) < std::abs(vel.y))
+        //else
+        {
+            if (vel.y < -0.2f) anim = AnimationController::Animation::JumpUp;
+            else if (vel.y > 20.2f) anim = AnimationController::Animation::JumpDown;
+        }
 
         if (anim != controller.currentAnim &&
             controller.currentAnim == controller.previousAnimation) //we're not being overridden right now

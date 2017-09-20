@@ -145,7 +145,7 @@ void CollisionSystem::process(float dt)
                         manifold.penetration = overlap.height;
                     }
                     manifold.otherType = boxB.getType();
-
+                    manifold.otherEntity = c.second;
 
                     if (boxA.m_collisionCount < Hitbox::MaxCollisions)
                     {
@@ -154,6 +154,7 @@ void CollisionSystem::process(float dt)
 
                     manifold.normal = -manifold.normal;
                     manifold.otherType = boxA.getType();
+                    manifold.otherEntity = c.first;
                     if (boxB.m_collisionCount < Hitbox::MaxCollisions)
                     {
                         boxB.m_manifolds[boxB.m_collisionCount++] = manifold;

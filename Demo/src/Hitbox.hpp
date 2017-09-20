@@ -29,6 +29,7 @@ source distribution.
 #define DEMO_HITBOX_HPP_
 
 #include <xyginext/core/Assert.hpp>
+#include <xyginext/ecs/Entity.hpp>
 
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -54,6 +55,7 @@ struct Manifold final
     float penetration = 0.f;
     sf::Vector2f normal;
     CollisionType otherType = CollisionType::None;
+    xy::Entity otherEntity = { -1, -1 };
 };
 
 class Hitbox final

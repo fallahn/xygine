@@ -63,6 +63,7 @@ private:
     xy::NetHost& m_host;
 
     void doCollision(xy::Entity);
+    void killBubble(xy::Entity);
 };
 
 #endif //DEMO_BUBBLE_SYSTEM_HPP_

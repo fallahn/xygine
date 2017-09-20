@@ -76,6 +76,7 @@ static constexpr float PlayerSize = 60.f;
 static constexpr float PlayerSizeOffset = 2.f;
 static constexpr float PlayerFootSize = 10.f;
 
+static constexpr float BubbleVerticalVelocity = -100.f;
 static constexpr float BubbleSize = 64.f;
 static constexpr float NPCSize = 64.f;
 
