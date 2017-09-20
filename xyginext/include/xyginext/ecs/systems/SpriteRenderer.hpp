@@ -30,10 +30,14 @@ source distribution.
 
 #include <xyginext/ecs/System.hpp>
 
+#include <SFML/Graphics/Vertex.hpp>
+
+#include <array>
+
 namespace xy
 {
     /*!
-    \brief System for renderering sprites
+    \brief System for rendering sprites
     */
     class XY_EXPORT_API SpriteRenderer final : public xy::System, public sf::Drawable
     {
@@ -43,6 +47,18 @@ namespace xy
         void process(float) override;
 
     private:
+
+        bool m_wantsSorting;
+
+        struct Item final
+        {
+            std::array<sf::Vertex, 4u> verts;
+            sf::RenderStates states;
+        };
+        std::vector<Item> m_drawlist;
+        std::size_t m_drawCount;
+
+        void onEntityAdded(Entity) override;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };

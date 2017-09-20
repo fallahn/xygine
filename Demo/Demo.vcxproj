@@ -123,6 +123,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\AnimationController.cpp" />
+    <ClCompile Include="src\BubbleSystem.cpp" />
     <ClCompile Include="src\ClientServerShared.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
     <ClCompile Include="src\ErrorState.cpp" />
@@ -130,6 +131,7 @@
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MenuState.cpp" />
+    <ClCompile Include="src\NPCSystem.cpp" />
     <ClCompile Include="src\PlayerInput.cpp" />
     <ClCompile Include="src\PlayerSystem.cpp" />
     <ClCompile Include="src\Server.cpp" />
@@ -139,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="src\ActorSystem.hpp" />
     <ClInclude Include="src\AnimationController.hpp" />
+    <ClInclude Include="src\BubbleSystem.hpp" />
     <ClInclude Include="src\ClientServerShared.hpp" />
     <ClInclude Include="src\CollisionSystem.hpp" />
     <ClInclude Include="src\CommandIDs.hpp" />
@@ -149,12 +152,14 @@
     <ClInclude Include="src\MapData.hpp" />
     <ClInclude Include="src\MenuState.hpp" />
     <ClInclude Include="src\MessageIDs.hpp" />
+    <ClInclude Include="src\NPCSystem.hpp" />
     <ClInclude Include="src\PacketIDs.hpp" />
     <ClInclude Include="src\PlayerInput.hpp" />
     <ClInclude Include="src\PlayerSystem.hpp" />
     <ClInclude Include="src\Server.hpp" />
     <ClInclude Include="src\ServerMessages.hpp" />
     <ClInclude Include="src\SharedStateData.hpp" />
+    <ClInclude Include="src\SpriteIDs.hpp" />
     <ClInclude Include="src\StateIDs.hpp" />
     <ClInclude Include="src\TextboxDirector.hpp" />
   </ItemGroup>

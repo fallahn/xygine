@@ -28,14 +28,24 @@ source distribution.
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
+#include <xyginext/core/App.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
 using namespace xy;
 
+namespace
+{
+    const std::size_t MaxSprites = 256;
+    const std::size_t MinSprites = 16;
+}
+
 SpriteRenderer::SpriteRenderer(MessageBus& mb)
-    : System(mb, typeid(SpriteRenderer))
+    : System        (mb, typeid(SpriteRenderer)),
+    m_wantsSorting  (false),
+    m_drawlist      (MinSprites),
+    m_drawCount     (0)
 {
     requireComponent<xy::Transform>();
     requireComponent<xy::Sprite>();
@@ -44,7 +54,7 @@ SpriteRenderer::SpriteRenderer(MessageBus& mb)
 //public
 void SpriteRenderer::process(float dt)
 {
-    //TODO cull to viewport
+    //update geometry
     auto& entities = getEntities();
     for (auto& entity : entities)
     {
@@ -67,20 +77,64 @@ void SpriteRenderer::process(float dt)
 
             sprite.m_dirty = false;
         }
+
+        if (sprite.m_wantsSorting)
+        {
+            m_wantsSorting = true;
+            sprite.m_wantsSorting = false;
+        }
+    }
+
+    //do Z sorting
+    if (m_wantsSorting)
+    {
+        m_wantsSorting = false;
+
+        std::sort(entities.begin(), entities.end(),
+            [](const Entity& entA, const Entity& entB) 
+        {
+            return entA.getComponent<Sprite>().getDepth() < entB.getComponent<Sprite>().getDepth();
+        });
+    }
+
+    //cull to viewport
+    auto view = App::getRenderWindow().getView();
+    sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
+
+    m_drawCount = 0;
+
+    //add visible to draw list
+    for (const auto& entity : entities)
+    {
+        const auto& sprite = entity.getComponent<xy::Sprite>();
+        const auto& tx = entity.getComponent<xy::Transform>().getWorldTransform();
+        if (tx.transformRect(sprite.getLocalBounds()).intersects(viewableArea)
+            && m_drawCount < m_drawlist.size())
+        {
+            m_drawlist[m_drawCount].verts = sprite.m_vertices;
+            m_drawlist[m_drawCount].states = sprite.m_states;
+            m_drawlist[m_drawCount++].states.transform = tx;
+        }
     }
 }
 
 //private
+void SpriteRenderer::onEntityAdded(Entity)
+{
+    m_wantsSorting = true;
+
+    if (getEntities().size() > m_drawlist.size()
+        && getEntities().size() < MaxSprites)
+    {
+        m_drawlist.resize(m_drawlist.size() + MinSprites);
+    }
+}
+
 void SpriteRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    const auto& entities = getEntities();
-    for (const auto& entity : entities)
+    for(auto i = 0u; i < m_drawCount; ++i)
     {
-        const auto& sprite = entity.getComponent<Sprite>();
-        
-        states = sprite.m_states;
-        states.transform = entity.getComponent<Transform>().getWorldTransform();
-
-        rt.draw(sprite.m_vertices.data(), 4, sf::Quads, states);
+        const auto& sprite = m_drawlist[i];
+        rt.draw(sprite.verts.data(), 4, sf::Quads, sprite.states);
     }
 }

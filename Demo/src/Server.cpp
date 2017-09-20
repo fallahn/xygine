@@ -36,6 +36,8 @@ source distribution.
 #include "Hitbox.hpp"
 #include "ClientServerShared.hpp"
 #include "sha1.hpp"
+#include "BubbleSystem.hpp"
+#include "NPCSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -155,6 +157,10 @@ void GameServer::update()
             }
 
             //update scene logic.
+            while (!m_messageBus.empty())
+            {
+                m_scene.forwardMessage(m_messageBus.poll());
+            }
             m_scene.update(updateRate);
         }
 
@@ -189,7 +195,7 @@ void GameServer::update()
                     const auto& tx = ent.getComponent<xy::Transform>().getPosition();
                     const auto& player = ent.getComponent<Player>();
 
-                    ActorState state;
+                    ClientState state;
                     state.actor.id = c.data.actor.id;
                     state.actor.type = c.data.actor.type;
                     state.x = tx.x;
@@ -347,6 +353,8 @@ void GameServer::initScene()
     m_scene.addSystem<xy::QuadTree>(m_messageBus, MapBounds);
     m_scene.addSystem<CollisionSystem>(m_messageBus, true);    
     m_scene.addSystem<ActorSystem>(m_messageBus);
+    m_scene.addSystem<BubbleSystem>(m_messageBus, m_host);
+    m_scene.addSystem<NPCSystem>(m_messageBus);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
@@ -357,11 +365,13 @@ void GameServer::loadMap()
     tmx::Map map;
     if (map.load("assets/maps/" + m_mapFiles[m_currentMap]))
     {
-        std::string sha1 = SHA1::from_file("assets/maps/" + m_mapFiles[m_currentMap]);
-        
-        m_mapData.actorCount = MapData::MaxActors;
+        auto sha1 = getSha("assets/maps/" + m_mapFiles[m_currentMap]);
+
+        //m_mapData.actorCount = MapData::MaxActors;
         std::strcpy(m_mapData.mapName, m_mapFiles[m_currentMap].c_str());
         std::strcpy(m_mapData.mapSha, sha1.c_str());
+
+        //TODO load NPC/actor data
 
         //load collision geometry
         sf::Uint8 flags = 0;
@@ -400,65 +410,34 @@ void GameServer::loadMap()
                     }
                     flags |= MapFlags::Teleport;
                 }
+                else if (name == "spawn")
+                {
+                    sf::Int32 spawnCount = 0;
+                    
+                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+                    for (const auto& obj : objs)
+                    {
+                        auto name = xy::Util::String::toLower(obj.getName());
+                        if (name == "whirlybob")
+                        {
+                            spawnNPC(ActorID::Whirlybob, { obj.getPosition().x, obj.getPosition().y });
+                            spawnCount++;
+                        }
+                        else if (name == "clocksy")
+                        {
+                            spawnNPC(ActorID::Clocksy, { obj.getPosition().x, obj.getPosition().y });
+                            spawnCount++;
+                        }
+                    }
+
+                    flags |= (spawnCount == 0) ? 0 : MapFlags::Spawn;
+                }
             }
         }
         if (flags != MapFlags::Server)
         {
             CLIENT_MESSAGE(MessageIdent::MapFailed);
             return;
-        }
-
-        //do actor loading
-        for (auto i = 0; i < m_mapData.actorCount; ++i)
-        {
-            auto entity = m_scene.createEntity();
-            entity.addComponent<xy::Transform>().setPosition(xy::Util::Random::value(0.f, xy::DefaultSceneSize.x), xy::Util::Random::value(0.f, xy::DefaultSceneSize.y));
-            entity.addComponent<Actor>().id = entity.getIndex();
-            entity.getComponent<Actor>().type = ActorID::BubbleOne;
-            entity.addComponent<Velocity>().x = xy::Util::Random::value(-10.f, 10.f) * 50.f;
-            entity.getComponent<Velocity>().y = xy::Util::Random::value(-10.f, 10.f) * 50.f;
-
-            entity.addComponent<xy::Callback>().function =
-                [](xy::Entity e, float dt)
-            {
-                auto& tx = e.getComponent<xy::Transform>();
-                auto& vel = e.getComponent<Velocity>();
-                tx.move(vel.x * dt, vel.y * dt);
-
-                auto pos = tx.getPosition();
-                if (pos.x < 0)
-                {
-                    pos.x = 0.f;
-                    auto newVel = xy::Util::Vector::reflect({ vel.x, vel.y }, { 1.f, 0.f });
-                    vel.x = newVel.x;
-                    vel.y = newVel.y;
-                }
-                else if (pos.x > xy::DefaultSceneSize.x)
-                {
-                    pos.x = xy::DefaultSceneSize.x;
-                    auto newVel = xy::Util::Vector::reflect({ vel.x, vel.y }, { -1.f, 0.f });
-                    vel.x = newVel.x;
-                    vel.y = newVel.y;
-                }
-                else if (pos.y < 0)
-                {
-                    pos.y = 0.f;
-                    auto newVel = xy::Util::Vector::reflect({ vel.x, vel.y }, { 0.f, 1.f });
-                    vel.x = newVel.x;
-                    vel.y = newVel.y;
-                }
-                else if (pos.y > xy::DefaultSceneSize.y)
-                {
-                    pos.y = xy::DefaultSceneSize.y;
-                    auto newVel = xy::Util::Vector::reflect({ vel.x, vel.y }, { 0.f, -1.f });
-                    vel.x = newVel.x;
-                    vel.y = newVel.y;
-                }
-            };
-            entity.getComponent<xy::Callback>().active = true;
-
-            //update map data
-            m_mapData.actors[i] = entity.getComponent<Actor>();
         }
 
         m_serverTime.restart();
@@ -480,12 +459,51 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
 
     entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
-    entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize, PlayerFootSize }, CollisionType::Foot);
+    entity.getComponent<CollisionComponent>().addHitbox({ -PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot);
+    entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
     entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
 
     //add client controller
     entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);
+    if (player == 1) entity.getComponent<Player>().direction = Player::Direction::Left;
     entity.addComponent<xy::CommandTarget>().ID = (player == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
 
     return entity.getIndex();
+}
+
+void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
+{
+    auto entity = m_scene.createEntity();
+    entity.addComponent<xy::Transform>().setPosition(pos);
+    entity.getComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
+    entity.addComponent<Actor>().id = entity.getIndex();
+    entity.getComponent<Actor>().type = id;
+
+    entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
+    entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask);
+    entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, NPCSize, NPCSize });
+
+    entity.addComponent<NPC>();
+    switch (id)
+    {
+    default: break;
+    case ActorID::Whirlybob:
+        entity.getComponent<NPC>().velocity = 
+        {
+            xy::Util::Random::value(-1.f, 1.f),
+            xy::Util::Random::value(-1.f, 1.f)
+        };
+        entity.getComponent<NPC>().velocity = xy::Util::Vector::normalise(entity.getComponent<NPC>().velocity);
+        break;
+    case ActorID::Clocksy:
+        entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(1, 2) % 2 == 1) ? -1.f : 1.f;
+        entity.getComponent<CollisionComponent>().addHitbox(
+        { -PlayerSizeOffset, NPCSize,
+            NPCSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot); //feets!
+        break;
+    }
+
+    m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
 }

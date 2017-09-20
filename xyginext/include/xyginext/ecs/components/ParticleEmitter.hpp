@@ -34,8 +34,14 @@ source distribution.
 #include <SFML/System/Clock.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/BlendMode.hpp>
+#include <SFML/Graphics/Rect.hpp>
 
 #include <array>
+
+namespace sf
+{
+    class Texture;
+}
 
 namespace xy
 {
@@ -73,7 +79,7 @@ namespace xy
         float size = 1.f; //! <diameter of particle
         float emitRate = 1.f; //! <particles per second
         float spawnRadius = 0.f;
-        //sf::Uint32 textureID = 0;
+        sf::Texture* texture = nullptr;
         bool loadFromFile(const std::string&, TextureResource&);
     };
 
@@ -104,13 +110,15 @@ namespace xy
         
     private:
 
-        sf::Uint32 m_vbo;
+        sf::Uint32 m_arrayIndex;
 
         std::array<Particle, MaxParticles> m_particles;
         std::size_t m_nextFreeParticle;
 
         bool m_running;
         sf::Clock m_emissionClock;
+
+        sf::FloatRect m_bounds;
 
         friend class ParticleSystem;
     };

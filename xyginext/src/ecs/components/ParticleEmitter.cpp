@@ -26,11 +26,13 @@ source distribution.
 *********************************************************************/
 
 #include <xyginext/ecs/components/ParticleEmitter.hpp>
+#include <xyginext/resources/Resource.hpp>
+#include <xyginext/core/ConfigFile.hpp>
 
 using namespace xy;
 
 ParticleEmitter::ParticleEmitter()
-    : m_vbo             (0),
+    : m_arrayIndex      (0),
     m_nextFreeParticle  (0),
     m_running           (false)
 {
@@ -52,5 +54,105 @@ void ParticleEmitter::stop()
 //----emitter settings loader----//
 bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& textureResource)
 {
+    ConfigFile cfg;
+    if (!cfg.loadFromFile(path)) return false;
+
+    if (cfg.getName() == "particle_system")
+    {
+        const auto& properties = cfg.getProperties();
+        for (const auto& p : properties)
+        {
+            auto name = p.getName();
+            if (name == "src")
+            {
+                texture = &textureResource.get(p.getValue<std::string>());
+            }
+            else if (name == "blendmode")
+            {
+                auto mode = p.getValue<std::string>();
+                if (mode == "add")
+                {
+                    blendmode = sf::BlendAdd;
+                }
+                else if (mode == "multiply")
+                {
+                    blendmode = sf::BlendMultiply;
+                }
+                else
+                {
+                    blendmode = sf::BlendAlpha;
+                }
+            }
+            else if (name == "gravity")
+            {
+                gravity = p.getValue<sf::Vector2f>();
+            }
+            else if (name == "velocity")
+            {
+                initialVelocity = p.getValue<sf::Vector2f>();
+            }
+            else if (name == "lifetime")
+            {
+                lifetime = p.getValue<float>();
+            }
+            else if (name == "lifetime_variance")
+            {
+                lifetimeVariance = p.getValue<float>();
+            }
+            else if (name == "colour")
+            {
+                //glm::vec4 c = p.getValue<glm::vec4>();
+                colour = p.getValue<sf::Color>();
+            }
+            else if (name == "rotation_speed")
+            {
+                rotationSpeed = p.getValue<float>();
+            }
+            else if (name == "scale_affector")
+            {
+                scaleModifier = p.getValue<float>();
+            }
+            else if (name == "size")
+            {
+                size = p.getValue<float>();
+            }
+            else if (name == "emit_rate")
+            {
+                emitRate = p.getValue<float>();
+            }
+            else if (name == "spawn_radius")
+            {
+                spawnRadius = p.getValue<float>();
+            }
+        }
+
+        const auto& objects = cfg.getObjects();
+        for (const auto& o : objects)
+        {
+            //load force array
+            if (o.getName() == "forces")
+            {
+                const auto& props = o.getProperties();
+                std::size_t currentForce = 0;
+                for (const auto& force : props)
+                {
+                    if (force.getName() == "force")
+                    {
+                        forces[currentForce++] = force.getValue<sf::Vector2f>();
+                        if (currentForce == forces.size())
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!texture)
+        {
+            Logger::log(path + ": no texture property found", Logger::Type::Warning);
+        }
+    }
+
     return false;
 }

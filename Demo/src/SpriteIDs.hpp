@@ -25,41 +25,22 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_ANIM_CONTROLLER_HPP_
-#define DEMO_ANIM_CONTROLLER_HPP_
+#ifndef DEMO_SPRITE_IDS_HPP_
+#define DEMO_SPRITE_IDS_HPP_
 
-#include <xyginext/ecs/System.hpp>
-
-#include <SFML/System/Vector2.hpp>
-
-#include <array>
-
-struct AnimationController final
+namespace SpriteID
 {
-    enum Animation
+    enum
     {
-        Idle, Walk, Shoot, Die, JumpUp, JumpDown, Count
-    }currentAnim = Animation::Idle;
+        BubbleOne = 0,
+        BubbleTwo,
+        PlayerOne,
+        PlayerTwo,
+        WhirlyBob,
+        Clocksy,
 
-    std::array<std::size_t, Animation::Count> animationMap{};
+        Count
+    };
+}
 
-    Animation previousAnimation = Animation::Idle;
-    sf::Vector2f lastPostion;
-    sf::Vector2f lastVelocity;
-    sf::Int32 actorID = -1;
-};
-
-class AnimationControllerSystem final : public xy::System
-{
-public:
-    explicit AnimationControllerSystem(xy::MessageBus&);
-
-    void handleMessage(const xy::Message&) override;
-
-    void process(float) override;
-
-private:
-
-};
-
-#endif //DEMO_ANIM_CONTROLLER_HPP_
+#endif //DEMO_SPRITE_IDS_HPP_

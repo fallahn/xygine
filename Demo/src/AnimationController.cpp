@@ -27,6 +27,7 @@ source distribution.
 
 #include "AnimationController.hpp"
 #include "MessageIDs.hpp"
+#include "MapData.hpp"
 
 #include <xyginext/ecs/components/SpriteAnimation.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
@@ -59,7 +60,7 @@ void AnimationControllerSystem::handleMessage(const xy::Message& msg)
             controller.currentAnim = AnimationController::Animation::Shoot;
             break;
         }
-        entity.getComponent<xy::SpriteAnimation>().play(controller.currentAnim);
+        entity.getComponent<xy::SpriteAnimation>().play(controller.animationMap[controller.currentAnim]);
     }
 }
 
@@ -72,28 +73,52 @@ void AnimationControllerSystem::process(float)
         auto& controller = entity.getComponent<AnimationController>();
 
         const auto currPos = xForm.getPosition();
-        auto vel = controller.lastPostion - currPos;
+        auto vel = currPos - controller.lastPostion;
 
-        //set direction
-        if ((controller.lastVelocity.x <= 0 && vel.x > 0)
-            || (controller.lastVelocity.x >= 0 && vel.x < 0))
+
+        switch (controller.actorID)
         {
-            xForm.setScale(vel.x / std::abs(vel.x), 1.f);
+        case ActorID::Client:
+            //this is our local player
+        {
+            float scale = entity.getComponent<Player>().direction == Player::Direction::Left ? 1.f : -1.f;
+            xForm.setScale(scale, 1.f);
+        }
+            break;
+        case ActorID::PlayerOne:
+        case ActorID::PlayerTwo:
+            //these are remote versions
+
+        case ActorID::Clocksy:
+        default:
+            //set direction
+            if ((controller.lastVelocity.x <= 0 && vel.x > 0)
+                || (controller.lastVelocity.x >= 0 && vel.x < 0))
+            {
+                xForm.setScale(-vel.x / std::abs(vel.x), 1.f);
+            }
+            break;
         }
 
         //use velocity to decide which animation should be playing
         AnimationController::Animation anim = AnimationController::Animation::Idle;
         if (vel.x != 0) anim = AnimationController::Animation::Walk;
-        if (vel.y < 0) anim = AnimationController::Animation::JumpUp;
-        else if (vel.y > 0) anim = AnimationController::Animation::JumpDown;
-
-        if (anim != controller.currentAnim && 
-            controller.currentAnim == controller.previousAnimation) //we're not being overridden  right now
+        //if (std::abs(vel.x) < std::abs(vel.y))
+        //else
         {
-            //set SpriteAnimatior
-            entity.getComponent<xy::SpriteAnimation>().play(anim);
+            if (vel.y < -0.2f) anim = AnimationController::Animation::JumpUp;
+            else if (vel.y > 20.2f) anim = AnimationController::Animation::JumpDown;
+        }
+
+        if (anim != controller.currentAnim &&
+            controller.currentAnim == controller.previousAnimation) //we're not being overridden right now
+        {
+            //set SpriteAnimation
+            entity.getComponent<xy::SpriteAnimation>().play(controller.animationMap[anim]);
             controller.currentAnim = controller.previousAnimation = anim;
         }
+
+
 
         if (controller.previousAnimation != controller.currentAnim)
         {

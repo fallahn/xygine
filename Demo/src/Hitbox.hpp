@@ -29,6 +29,7 @@ source distribution.
 #define DEMO_HITBOX_HPP_
 
 #include <xyginext/core/Assert.hpp>
+#include <xyginext/ecs/Entity.hpp>
 
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -44,7 +45,9 @@ enum class CollisionType
     Foot,
     Platform,
     Solid,
-    Teleport
+    Teleport,
+    Bubble,
+    NPC
 };
 
 struct Manifold final
@@ -52,6 +55,7 @@ struct Manifold final
     float penetration = 0.f;
     sf::Vector2f normal;
     CollisionType otherType = CollisionType::None;
+    xy::Entity otherEntity;
 };
 
 class Hitbox final
@@ -122,10 +126,18 @@ public:
     //returns the combined bounds for all hitboxes for a broadphase pass
     sf::FloatRect getLocalBounds() const { return m_localBounds; }
 
+    void setCollisionCategoryBits(sf::Uint32 bits) { m_categoryBits = bits; }
+
+    void setCollisionMaskBits(sf::Uint32 bits) { m_maskBits = bits; }
+
 private:
     std::size_t m_hitboxCount = 0;
     std::array<Hitbox, MaxHitBoxes> m_hitboxes{};
     sf::FloatRect m_localBounds{};
+
+    sf::Uint32 m_categoryBits = 1;
+    sf::Uint32 m_maskBits = std::numeric_limits<sf::Uint32>::max();
+
     friend class CollisionSystem;
 };
 

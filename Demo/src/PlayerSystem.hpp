@@ -32,7 +32,7 @@ source distribution.
 
 #include <array>
 
-struct ActorState;
+struct ClientState;
 struct Input final
 {
     sf::Uint16 mask = 0;
@@ -54,6 +54,11 @@ struct Player final
     float velocity = 0.f;
     bool canJump = true;
     bool canLand = false; //only for 1 way platforms
+    bool canShoot = true;
+    enum class Direction : sf::Uint8 
+    {
+        Left, Right
+    }direction = Direction::Right;
 };
 
 class PlayerSystem final : public xy::System
@@ -63,7 +68,7 @@ public:
 
     void process(float) override;
 
-    void reconcile(const ActorState&, xy::Entity);
+    void reconcile(const ClientState&, xy::Entity);
 
 private:
 

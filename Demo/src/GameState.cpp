@@ -33,8 +33,8 @@ source distribution.
 #include "ServerMessages.hpp"
 #include "ClientServerShared.hpp"
 #include "CollisionSystem.hpp"
-#include "AnimationController.hpp"
 #include "sha1.hpp"
+#include "SpriteIDs.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -73,12 +73,6 @@ source distribution.
 
 namespace
 {
-    struct TestPacket
-    {
-        int a = 2;
-        float z = 54.f;
-    };
-
     const float clientTimeout = 20.f;
 }
 
@@ -187,8 +181,28 @@ void GameState::loadAssets()
     //m_scene.addPostProcess<xy::PostChromeAb>();
 
     //preload textures
-    m_textureResource.get("assets/images/bubble.png");
-    m_textureResource.get("assets/images/target.png");
+    xy::SpriteSheet spriteSheet;
+    spriteSheet.loadFromFile("assets/sprites/bubble.spt", m_textureResource);
+    m_sprites[SpriteID::BubbleOne] = spriteSheet.getSprite("player_one");
+    m_sprites[SpriteID::BubbleTwo] = spriteSheet.getSprite("player_two");
+
+    spriteSheet.loadFromFile("assets/sprites/player.spt", m_textureResource);
+    m_sprites[SpriteID::PlayerOne] = spriteSheet.getSprite("player_one");
+    m_sprites[SpriteID::PlayerTwo] = spriteSheet.getSprite("player_two");
+
+    m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one");
+    m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one");
+    m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Shoot] = spriteSheet.getAnimationIndex("shoot", "player_one");
+    m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::JumpDown] = spriteSheet.getAnimationIndex("jump_down", "player_one");
+    m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one");
+
+    spriteSheet.loadFromFile("assets/sprites/npcs.spt", m_textureResource);
+    m_sprites[SpriteID::WhirlyBob] = spriteSheet.getSprite("whirlybob");
+    m_sprites[SpriteID::Clocksy] = spriteSheet.getSprite("clocksy");
+
+    m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "clocksy");
+    m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "clocksy");
+    m_animationControllers[SpriteID::Clocksy].actorID = ActorID::Clocksy;
 
     //audio
     //m_soundResource.get("assets/boop_loop.wav");
@@ -200,7 +214,7 @@ bool GameState::loadScene(const MapData& data)
     std::string remoteSha(data.mapSha);
     
     //check the local sha1 to make sure we have the same file version
-    auto mapSha = SHA1::from_file("assets/maps/" + mapName);
+    std::string mapSha = getSha("assets/maps/" + mapName);
     if (mapSha != remoteSha)
     {
         m_sharedData.error = "Local copy of " + mapName + " is different version to server's";
@@ -250,31 +264,39 @@ bool GameState::loadScene(const MapData& data)
     //create the background sprite
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_mapTexture.getTexture());
+    entity.getComponent<xy::Sprite>().setDepth(-10);
 #ifdef DDRAW
     entity.getComponent<xy::Sprite>().setColour({ 255,255,255,120 });
 #endif
     entity.addComponent<xy::Transform>();
     
     m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+    //m_scene.getActiveCamera().getComponent<xy::Camera>().setZoom(0.5f);
 
     for (auto i = 0; i < data.actorCount; ++i)
     {
         auto entity = m_scene.createEntity();
-        entity.addComponent<xy::Transform>();
-        entity.addComponent<Actor>() = data.actors[i];
-        entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/bubble.png"));
-        auto bounds = entity.getComponent<xy::Sprite>().getLocalBounds();
-        bounds.width /= 2.f;
-        if (xy::Util::Random::value(0, 1) == 1)
-        {
-            bounds.left += bounds.width;
-        }
-        entity.getComponent<xy::Sprite>().setTextureRect(bounds);
-        entity.getComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+        entity.addComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
+        entity.addComponent<Actor>() = data.actors[i];       
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
-        //entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, 64.f, 64.f });
-        //entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, 64.f, 64.f }, CollisionType::Player);
+
+        switch (data.actors[i].type)
+        {
+        default:
+            //add missing texture or placeholder
+            break;
+        case ActorID::Whirlybob:
+            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
+            break;
+        case ActorID::Clocksy:
+            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
+            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
+            //entity.addComponent<xy::Text>(m_fontResource.get("flaps")).setString("BUNS");
+            break;
+        }
+        entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
+        entity.addComponent<xy::SpriteAnimation>().play(0);
     }
 
     return true;
@@ -315,6 +337,19 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
         break;
+    case PacketID::ActorEvent:
+    {
+        const auto actorEvent = evt.packet.as<ActorEvent>();
+        if (actorEvent.type == ActorEvent::Spawned)
+        {
+            spawnActor(actorEvent);
+        }
+        else if (actorEvent.type == ActorEvent::Died)
+        {
+            killActor(actorEvent);
+        }
+    }
+        break;
     case PacketID::ActorUpdate:
         //do actor interpolation
     {
@@ -352,7 +387,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         break;
     case PacketID::ClientUpdate:
     {
-        const auto& state = evt.packet.as<ActorState>();
+        const auto& state = evt.packet.as<ClientState>();
 
         //reconcile
         m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
@@ -361,49 +396,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::ClientData:
     {
         ClientData data = evt.packet.as<ClientData>();
-        
-        //create the local ent
-        //set sprite based on actor type (player one or two)
-        auto entity = m_scene.createEntity();
-        entity.addComponent<Actor>() = data.actor;
-        entity.addComponent<xy::Transform>().setPosition(data.spawnX, data.spawnY);
-
-        xy::SpriteSheet spritesheet;
-        spritesheet.loadFromFile("assets/sprites/player.spt", m_textureResource);
-
-        if (data.actor.type == ActorID::PlayerOne)
-        {
-            entity.addComponent<xy::Sprite>() = spritesheet.getSprite("player_one");
-            entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
-        }
-        else
-        {
-            entity.addComponent<xy::Sprite>() = spritesheet.getSprite("player_two");
-        }
-
-        entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
-        entity.addComponent<xy::SpriteAnimation>().play(0);
-        entity.addComponent<AnimationController>().lastPostion = entity.getComponent<xy::Transform>().getPosition();
-
-        if (data.peerID == m_client.getPeer().getID())
-        {
-            //this is us, stash the info
-            m_clientData = data;
-
-            //add a local controller
-            entity.addComponent<Player>().playerNumber = (data.actor.type == ActorID::PlayerOne) ? 0 : 1;
-            m_playerInput.setPlayerEntity(entity);
-
-            entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
-            entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize, PlayerFootSize }, CollisionType::Foot);
-            entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
-        }
-        else
-        {
-            //add interp controller
-            entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
-            entity.addComponent<xy::NetInterpolate>();
-        }
+        spawnClient(data);        
     }
         break;
     case PacketID::ClientDisconnected:
@@ -570,4 +563,99 @@ sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, co
     }
 
     return MapFlags::Graphics;
+}
+
+void GameState::spawnActor(const ActorEvent& actorEvent)
+{
+    auto entity = m_scene.createEntity();
+    entity.addComponent<xy::Transform>().setPosition(actorEvent.x, actorEvent.y);
+    entity.addComponent<Actor>() = actorEvent.actor;
+    entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
+    entity.addComponent<xy::NetInterpolate>();
+
+    switch (actorEvent.actor.type)
+    {
+    default: break;
+    case ActorID::BubbleOne:
+    case ActorID::BubbleTwo:
+        entity.addComponent<xy::Sprite>() =
+            (actorEvent.actor.type == ActorID::BubbleOne) ? m_sprites[SpriteID::BubbleOne] : m_sprites[SpriteID::BubbleTwo];
+        entity.addComponent<xy::SpriteAnimation>().play(0);
+        entity.getComponent<xy::Sprite>().setDepth(-2);
+        entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
+
+        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
+        entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+        entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
+        break;
+    }
+}
+
+void GameState::spawnClient(const ClientData& data)
+{
+    //create the local ent
+    //set sprite based on actor type (player one or two)
+    auto entity = m_scene.createEntity();
+    entity.addComponent<Actor>() = data.actor;
+    entity.addComponent<xy::Transform>().setPosition(data.spawnX, data.spawnY);
+
+    if (data.actor.type == ActorID::PlayerOne)
+    {
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerOne];
+        entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
+    }
+    else
+    {
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerTwo];
+    }
+
+    entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
+    entity.addComponent<xy::SpriteAnimation>().play(0);
+    entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::PlayerOne];
+    entity.getComponent<AnimationController>().lastPostion = entity.getComponent<xy::Transform>().getPosition();
+
+    if (data.peerID == m_client.getPeer().getID())
+    {
+        //this is us, stash the info
+        m_clientData = data;
+
+        //add a local controller
+        entity.addComponent<Player>().playerNumber = (data.actor.type == ActorID::PlayerOne) ? 0 : 1;
+        m_playerInput.setPlayerEntity(entity);
+
+        entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
+        entity.getComponent<CollisionComponent>().addHitbox({ -PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot);
+        entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
+        entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
+
+        entity.getComponent<AnimationController>().actorID = ActorID::Client;
+    }
+    else
+    {
+        //add interp controller
+        entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
+        entity.addComponent<xy::NetInterpolate>();
+
+        entity.getComponent<AnimationController>().actorID = data.actor.type;
+    }
+}
+
+void GameState::killActor(const ActorEvent& actorEvent)
+{
+    //kill the scene entity
+    auto id = actorEvent.actor.id;
+    xy::Command cmd;
+    cmd.targetFlags = CommandID::NetActor;
+    cmd.action = [&, id](xy::Entity entity, float)
+    {
+        if (entity.getComponent<Actor>().id == id)
+        {
+            m_scene.destroyEntity(entity);
+        }
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+    //TODO raise a message to say who died
 }

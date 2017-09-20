@@ -48,18 +48,45 @@ namespace MapFlags
         Platform = 0x2,
         Graphics = 0x4,
         Teleport = 0x8,
+        Spawn = 0x10,
 
-        Server = Solid | Platform | Teleport,
-        Client = Server | Graphics
+        Shared = Solid | Platform | Teleport,
+        Server = Shared | Spawn,
+        Client = Shared | Graphics
+    };
+}
+
+namespace CollisionFlags
+{
+    enum
+    {
+        Solid = 0x1,
+        Platform = 0x2,
+        Teleport = 0x4,
+        Player = 0x8,
+        Bubble = 0x10,
+        NPC = 0x20,
+
+        PlayerMask = Bubble | Platform | Solid | Teleport,
+        NPCMask = CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::Bubble | CollisionFlags::Platform | Teleport
     };
 }
 
 static constexpr float PlayerSize = 60.f;
 static constexpr float PlayerSizeOffset = 2.f;
-static constexpr float PlayerFootSize = 20.f;
+static constexpr float PlayerFootSize = 10.f;
+
+static constexpr float BubbleVerticalVelocity = -100.f;
+static constexpr float BubbleSize = 64.f;
+static constexpr float NPCSize = 64.f;
+
+static constexpr float TeleportDistance = 950.f;
+
 static const sf::FloatRect MapBounds(0.f, 0.f, 16.f *64.f, 17.f * 64.f);
 
 //map loading functions shared between client / server
 void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType type);
+
+std::string getSha(const std::string&);
 
 #endif //DEMO_CLIENT_SERVER_SHARED_HPP_

@@ -25,34 +25,26 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_ANIM_CONTROLLER_HPP_
-#define DEMO_ANIM_CONTROLLER_HPP_
+#ifndef DEMO_NPC_SYSTEM_HPP_
+#define DEMO_NPC_SYSTEM_HPP_
 
 #include <xyginext/ecs/System.hpp>
 
-#include <SFML/System/Vector2.hpp>
-
-#include <array>
-
-struct AnimationController final
+struct NPC final
 {
-    enum Animation
+    enum class State
     {
-        Idle, Walk, Shoot, Die, JumpUp, JumpDown, Count
-    }currentAnim = Animation::Idle;
-
-    std::array<std::size_t, Animation::Count> animationMap{};
-
-    Animation previousAnimation = Animation::Idle;
-    sf::Vector2f lastPostion;
-    sf::Vector2f lastVelocity;
-    sf::Int32 actorID = -1;
+        Normal, Bubble, Jumping, Thinking
+    }state = State::Normal;
+    sf::Vector2f velocity;
+    float thinkTimer = 0.f;
+    bool canLand = true;
 };
 
-class AnimationControllerSystem final : public xy::System
+class NPCSystem final : public xy::System
 {
 public:
-    explicit AnimationControllerSystem(xy::MessageBus&);
+    explicit NPCSystem(xy::MessageBus&);
 
     void handleMessage(const xy::Message&) override;
 
@@ -60,6 +52,14 @@ public:
 
 private:
 
+    void onEntityAdded(xy::Entity) override;
+
+    std::size_t m_currentThinkTime;
+
+    void updateWhirlybob(xy::Entity, float);
+    void updateClocksy(xy::Entity, float);
+
+    void updateBubbleState(xy::Entity, float);
 };
 
-#endif //DEMO_ANIM_CONTROLLER_HPP_
+#endif //DEMO_NPC_SYSTEM_HPP_

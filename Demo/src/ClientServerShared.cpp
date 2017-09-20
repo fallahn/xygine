@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include "ClientServerShared.hpp"
+#include "sha1.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
@@ -43,5 +44,40 @@ void createCollisionObject(xy::Scene& scene, const tmx::Object& obj, CollisionTy
         entity.addComponent<xy::Transform>().setPosition(bounds.left, bounds.top);
         entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, bounds.width, bounds.height }, type);
         entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, bounds.width, bounds.height });
+
+        switch (type)
+        {
+        default: break;
+        case CollisionType::Platform:
+            entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Platform);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player | CollisionFlags::NPC);
+            break;
+        case CollisionType::Solid:
+            entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Solid);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player | CollisionFlags::Bubble | CollisionFlags::NPC);
+            break;
+        case CollisionType::Teleport:
+            entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Teleport);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player | CollisionFlags::NPC);
+            break;
+        }
     }
+}
+
+std::string getSha(const std::string& path)
+{
+    std::string line;
+    SHA1 checksum;
+    
+    std::ifstream file(path);
+    if (file.good())
+    {
+        while (!file.eof())
+        {
+            std::getline(file, line);
+            checksum.update(line);
+        }
+    }
+
+    return checksum.final();
 }

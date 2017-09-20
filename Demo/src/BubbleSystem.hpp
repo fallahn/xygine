@@ -25,41 +25,45 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_ANIM_CONTROLLER_HPP_
-#define DEMO_ANIM_CONTROLLER_HPP_
+#ifndef DEMO_BUBBLE_SYSTEM_HPP_
+#define DEMO_BUBBLE_SYSTEM_HPP_
 
 #include <xyginext/ecs/System.hpp>
+#include <xyginext/network/NetHost.hpp>
 
-#include <SFML/System/Vector2.hpp>
+#include <SFML/Config.hpp>
 
-#include <array>
-
-struct AnimationController final
+namespace xy
 {
-    enum Animation
+    class Transform;
+}
+
+struct Bubble final
+{
+    sf::Uint8 player = 0;
+    enum
     {
-        Idle, Walk, Shoot, Die, JumpUp, JumpDown, Count
-    }currentAnim = Animation::Idle;
-
-    std::array<std::size_t, Animation::Count> animationMap{};
-
-    Animation previousAnimation = Animation::Idle;
-    sf::Vector2f lastPostion;
-    sf::Vector2f lastVelocity;
-    sf::Int32 actorID = -1;
+        Spawning,
+        Normal
+    }state = Spawning;
+    float lifetime = 4.f;
+    float spawntime = 0.1f;
+    sf::Vector2f velocity;
 };
 
-class AnimationControllerSystem final : public xy::System
+class BubbleSystem final : public xy::System
 {
 public:
-    explicit AnimationControllerSystem(xy::MessageBus&);
+    BubbleSystem(xy::MessageBus&, xy::NetHost&);
 
     void handleMessage(const xy::Message&) override;
-
     void process(float) override;
 
 private:
+    xy::NetHost& m_host;
 
+    void doCollision(xy::Entity);
+    void killBubble(xy::Entity);
 };
 
-#endif //DEMO_ANIM_CONTROLLER_HPP_
+#endif //DEMO_BUBBLE_SYSTEM_HPP_

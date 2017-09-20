@@ -39,9 +39,10 @@ namespace ActorID
         None = -1,
         PlayerOne,
         PlayerTwo,
-        NPC0, NPC1,
+        Whirlybob, Clocksy,
         BubbleOne,
-        BubbleTwo
+        BubbleTwo,
+        Client
     };
 }
 
@@ -82,15 +83,28 @@ struct ClientData final
 
 //actor and its position
 //sent as part of an update, or containing initial positions
-struct ActorState final
+struct ActorState
 {
     float x = 0.f;
     float y = 0.f;
     Actor actor;
     sf::Int32 serverTime = 0;
+};
+//client state for client side reconciliation
+struct ClientState final : public ActorState
+{
     sf::Int64 clientTime = 0;
     Player::State playerState = Player::State::Walking;
     float playerVelocity = 0.f;
+};
+
+//actor events for spawn/despawn etc
+struct ActorEvent final : public ActorState
+{
+    enum
+    {
+        Spawned, Died
+    }type;
 };
 
 //update to the server from the client's input

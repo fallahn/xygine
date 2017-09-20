@@ -76,6 +76,7 @@ bool MenuState::update(float dt)
 void MenuState::draw()
 {
     auto& rt = getContext().renderWindow;
+
     rt.draw(m_scene);
 }
 
@@ -133,7 +134,7 @@ void MenuState::createMenu()
 
     //ip text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("127.0.0.1");
+    entity.addComponent<xy::Text>(font).setString(m_sharedStateData.remoteIP);
     entity.getComponent<xy::Text>().setCharacterSize(65);
     bounds.width -= 48.f;
     entity.getComponent<xy::Text>().setCroppingArea(bounds);

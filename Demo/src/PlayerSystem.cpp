@@ -29,6 +29,7 @@ source distribution.
 #include "MapData.hpp"
 #include "Hitbox.hpp"
 #include "MessageIDs.hpp"
+#include "ClientServerShared.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/util/Vector.hpp>
@@ -41,7 +42,6 @@ namespace
     const float gravity = 2200.f;
     const float initialJumpVelocity = 840.f;
     const float minJumpVelocity = -initialJumpVelocity * 0.35f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocity
-    const float teleportDist = (15.f * 64.f) - 10.f; //TODO hook this in with map properties somehow
 }
 
 PlayerSystem::PlayerSystem(xy::MessageBus& mb, bool server)
@@ -68,7 +68,6 @@ void PlayerSystem::process(float dt)
         std::size_t idx = (player.currentInput + player.history.size() - 1) % player.history.size();
 
         //parse any outstanding inputs
-        sf::Uint16 lastMask = 0;
         while (player.lastUpdatedInput != idx)
         {   
             auto delta = getDelta(player.history, player.lastUpdatedInput);
@@ -106,22 +105,35 @@ void PlayerSystem::process(float dt)
 
             //if shoot was pressed but not last frame, raise message
             //note this is NOT reconciled and ammo actors are entirely server side
-            if ((lastMask & InputFlag::Shoot) == 0 && (currentMask & InputFlag::Shoot))
+            if ((currentMask & InputFlag::Shoot) && player.canShoot/*== 0 && (currentMask & InputFlag::Shoot)*/)
             {
                 auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
                 msg->entity = entity;
                 msg->type = PlayerEvent::FiredWeapon;
-            }
 
-            lastMask = currentMask;
+                player.canShoot = false;
+            }
+            else if ((currentMask & InputFlag::Shoot) == 0)
+            {
+                player.canShoot = true;
+            }
             
-            tx.move(speed * parseInput(currentMask) * delta);
+            auto motion = parseInput(currentMask);
+            tx.move(speed * motion * delta);
+            if (motion.x > 0)
+            {
+                player.direction = Player::Direction::Right;
+            }
+            else if (motion.x < 0)
+            {
+                player.direction = Player::Direction::Left;
+            }
             player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();
         }
     }
 }
 
-void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
+void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
 {
     //DPRINT("Reconcile to: ", std::to_string(x) + ", " + std::to_string(y));
 
@@ -177,7 +189,16 @@ void PlayerSystem::reconcile(const ActorState& state, xy::Entity entity)
                 player.canJump = true;
             }
 
-            tx.move(speed * parseInput(player.history[idx].mask) * delta);
+            auto motion = parseInput(player.history[idx].mask);
+            tx.move(speed * motion * delta);
+            if(motion.x > 0)
+            {
+                player.direction = Player::Direction::Right;
+            }
+            else if (motion.x < 0)
+            {
+                player.direction = Player::Direction::Left;
+            }
             idx = (idx + 1) % player.history.size();
         }
     }
@@ -197,10 +218,10 @@ sf::Vector2f PlayerSystem::parseInput(sf::Uint16 mask)
     }
 
     //normalise if not along one axis
-    if (xy::Util::Vector::lengthSquared(motion) > 1)
+    /*if (xy::Util::Vector::lengthSquared(motion) > 1)
     {
         motion = xy::Util::Vector::normalise(motion);
-    }
+    }*/
 
     return motion;
 }
@@ -238,6 +259,7 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                 switch (man.otherType)
                 {
                 default: break;
+                //case CollisionType::Bubble:
                 case CollisionType::Platform:
                     //only collide when moving downwards (one way plat)
                     if (man.normal.y < 0 && player.canLand)
@@ -267,11 +289,11 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                     if (tx.getPosition().y > xy::DefaultSceneSize.y / 2.f)
                     {
                         //move up
-                        tx.move(0.f, -teleportDist);
+                        tx.move(0.f, -TeleportDistance);
                     }
                     else
                     {
-                        tx.move(0.f, teleportDist);
+                        tx.move(0.f, TeleportDistance);
                     }
                     break;
                 }

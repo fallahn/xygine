@@ -33,14 +33,18 @@ using namespace xy;
 
 Sprite::Sprite()
     : m_dirty       (true),
-    m_animationCount(0)
+    m_animationCount(0),
+    m_zDepth        (0),
+    m_wantsSorting  (false)
 {
 
 }
 
 Sprite::Sprite(const sf::Texture& texture)
     : m_dirty       (true),
-    m_animationCount(0)
+    m_animationCount(0),
+    m_zDepth        (0),
+    m_wantsSorting  (false)
 {
     setTexture(texture);
 }

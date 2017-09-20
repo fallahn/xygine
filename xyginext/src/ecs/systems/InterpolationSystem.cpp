@@ -30,7 +30,14 @@ source distribution.
 #include <xyginext/ecs/components/NetInterpolation.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
 
+#include <xyginext/util/Vector.hpp>
+
 using namespace xy;
+
+namespace
+{
+    const float MaxDistSqr = 460.f * 460.f; //if we're bigger than this go straight to dest to hide flickering
+}
 
 InterpolationSystem::InterpolationSystem(xy::MessageBus& mb)
     : System(mb, typeid(InterpolationSystem))
@@ -55,7 +62,25 @@ void InterpolationSystem::process(float dt)
         }
 
         interp.m_elapsedTime += dt;
+        
+        auto diff = (interp.m_targetPosition - interp.m_previousPosition);
+        if (Util::Vector::lengthSquared(diff) > MaxDistSqr)
+        {
+            interp.m_elapsedTime = 0;
+            tx.setPosition(interp.m_targetPosition);
+            return;
+        }
+
         //previous position + diff * timePassed
-        tx.setPosition(interp.m_previousPosition + ((interp.m_targetPosition - interp.m_previousPosition) * std::min(interp.m_elapsedTime / interp.m_timeDifference, 1.f)));
+        tx.setPosition(interp.m_previousPosition + (diff * std::min(interp.m_elapsedTime / interp.m_timeDifference, 1.f)));
     }
+}
+
+//private
+void InterpolationSystem::onEntityAdded(Entity entity)
+{
+    //make sure the initial transform is applied
+    auto pos = entity.getComponent<Transform>().getPosition();
+    entity.getComponent<NetInterpolate>().m_targetPosition = pos;
+    entity.getComponent<NetInterpolate>().m_previousPosition = pos;
 }
