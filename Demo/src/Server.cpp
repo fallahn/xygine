@@ -476,7 +476,7 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
 {
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(pos);
-    //entity.getComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
+    entity.getComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = id;
 
@@ -501,7 +501,7 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
         entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(1, 2) % 2 == 1) ? -1.f : 1.f;
         entity.getComponent<CollisionComponent>().addHitbox(
         { -PlayerSizeOffset, NPCSize,
-            NPCSize + PlayerSizeOffset, PlayerFootSize }, CollisionType::Foot); //feets!
+            NPCSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot); //feets!
         break;
     }
 

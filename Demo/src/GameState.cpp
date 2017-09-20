@@ -33,7 +33,6 @@ source distribution.
 #include "ServerMessages.hpp"
 #include "ClientServerShared.hpp"
 #include "CollisionSystem.hpp"
-#include "AnimationController.hpp"
 #include "sha1.hpp"
 #include "SpriteIDs.hpp"
 
@@ -191,9 +190,19 @@ void GameState::loadAssets()
     m_sprites[SpriteID::PlayerOne] = spriteSheet.getSprite("player_one");
     m_sprites[SpriteID::PlayerTwo] = spriteSheet.getSprite("player_two");
 
+    m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one");
+    m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one");
+    m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Shoot] = spriteSheet.getAnimationIndex("shoot", "player_one");
+    m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::JumpDown] = spriteSheet.getAnimationIndex("jump_down", "player_one");
+    m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one");
+
     spriteSheet.loadFromFile("assets/sprites/npcs.spt", m_textureResource);
     m_sprites[SpriteID::WhirlyBob] = spriteSheet.getSprite("whirlybob");
     m_sprites[SpriteID::Clocksy] = spriteSheet.getSprite("clocksy");
+
+    m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "clocksy");
+    m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "clocksy");
+    m_animationControllers[SpriteID::Clocksy].actorID = ActorID::Clocksy;
 
     //audio
     //m_soundResource.get("assets/boop_loop.wav");
@@ -267,7 +276,7 @@ bool GameState::loadScene(const MapData& data)
     for (auto i = 0; i < data.actorCount; ++i)
     {
         auto entity = m_scene.createEntity();
-        entity.addComponent<xy::Transform>();
+        entity.addComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
         entity.addComponent<Actor>() = data.actors[i];       
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
@@ -282,7 +291,8 @@ bool GameState::loadScene(const MapData& data)
             break;
         case ActorID::Clocksy:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
-            entity.addComponent<xy::Text>(m_fontResource.get("flaps")).setString("BUNS");
+            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
+            //entity.addComponent<xy::Text>(m_fontResource.get("flaps")).setString("BUNS");
             break;
         }
         entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
@@ -602,7 +612,8 @@ void GameState::spawnClient(const ClientData& data)
 
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
     entity.addComponent<xy::SpriteAnimation>().play(0);
-    entity.addComponent<AnimationController>().lastPostion = entity.getComponent<xy::Transform>().getPosition();
+    entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::PlayerOne];
+    entity.getComponent<AnimationController>().lastPostion = entity.getComponent<xy::Transform>().getPosition();
 
     if (data.peerID == m_client.getPeer().getID())
     {

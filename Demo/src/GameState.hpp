@@ -44,6 +44,7 @@ source distribution.
 #include "SharedStateData.hpp"
 #include "PlayerInput.hpp"
 #include "SpriteIDs.hpp"
+#include "AnimationController.hpp"
 
 #include <array>
 
@@ -76,6 +77,7 @@ private:
     xy::SoundResource m_soundResource;
 
     std::array<xy::Sprite, SpriteID::Count> m_sprites;
+    std::array<AnimationController, SpriteID::Count> m_animationControllers;
 
     xy::NetClient m_client;
     GameServer m_server;

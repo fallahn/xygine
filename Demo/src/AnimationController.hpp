@@ -41,7 +41,7 @@ struct AnimationController final
         Idle, Walk, Shoot, Die, JumpUp, JumpDown, Count
     }currentAnim = Animation::Idle;
 
-    std::array<sf::Int32, Animation::Count> animationMap{};
+    std::array<std::size_t, Animation::Count> animationMap{};
 
     Animation previousAnimation = Animation::Idle;
     sf::Vector2f lastPostion;

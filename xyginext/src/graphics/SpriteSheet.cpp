@@ -46,6 +46,7 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
     }
 
     m_sprites.clear();
+    m_animations.clear();
 
     std::size_t count = 0;
 

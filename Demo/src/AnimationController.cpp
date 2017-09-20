@@ -60,7 +60,7 @@ void AnimationControllerSystem::handleMessage(const xy::Message& msg)
             controller.currentAnim = AnimationController::Animation::Shoot;
             break;
         }
-        entity.getComponent<xy::SpriteAnimation>().play(controller.currentAnim);
+        entity.getComponent<xy::SpriteAnimation>().play(controller.animationMap[controller.currentAnim]);
     }
 }
 
@@ -104,13 +104,13 @@ void AnimationControllerSystem::process(float)
         AnimationController::Animation anim = AnimationController::Animation::Idle;
         if (vel.x != 0) anim = AnimationController::Animation::Walk;
         if (vel.y < 0) anim = AnimationController::Animation::JumpUp;
-        else if (vel.y > 0) anim = AnimationController::Animation::JumpDown;
+        else if (vel.y > 0.2f) anim = AnimationController::Animation::JumpDown;
 
         if (anim != controller.currentAnim &&
             controller.currentAnim == controller.previousAnimation) //we're not being overridden right now
         {
             //set SpriteAnimation
-            entity.getComponent<xy::SpriteAnimation>().play(anim);
+            entity.getComponent<xy::SpriteAnimation>().play(controller.animationMap[anim]);
             controller.currentAnim = controller.previousAnimation = anim;
         }
 

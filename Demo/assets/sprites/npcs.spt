@@ -45,6 +45,13 @@ sprite_sheet npcs
 	{
 		bounds = 192,64,64,64
 
+		animation idle
+		{
+			frame = 192,64,64,64
+			loop = true
+			framerate = 1
+		}
+
 		animation walk
 		{
 			frame = 192,64,64,64
