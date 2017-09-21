@@ -10,6 +10,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/main.cpp
   ${PROJECT_DIR}/MenuState.cpp
   ${PROJECT_DIR}/NPCSystem.cpp
+  ${PROJECT_DIR}/ParticleDirector.cpp
   ${PROJECT_DIR}/PlayerInput.cpp
   ${PROJECT_DIR}/PlayerSystem.cpp
   ${PROJECT_DIR}/Server.cpp

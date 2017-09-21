@@ -57,6 +57,7 @@ source distribution.
 #include <xyginext/ecs/systems/AudioSystem.hpp>
 #include <xyginext/ecs/systems/CameraSystem.hpp>
 #include <xyginext/ecs/systems/QuadTree.hpp>
+#include <xyginext/ecs/systems/ParticleSystem.hpp>
 
 #include <xyginext/graphics/SpriteSheet.hpp>
 #include <xyginext/graphics/postprocess/ChromeAb.hpp>
@@ -176,7 +177,8 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::CommandSystem>(mb);
-    m_scene.addSystem<xy::SpriteRenderer>(mb);    
+    m_scene.addSystem<xy::SpriteRenderer>(mb);
+    m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     
     //m_scene.addPostProcess<xy::PostChromeAb>();

@@ -102,6 +102,11 @@ namespace xy
         void stop();
 
         /*!
+        \brief Returns true if emitter has stopped
+        */
+        bool stopped() const { return (!m_running/* && m_nextFreeParticle == 0*/); }
+
+        /*!
         \brief Settings used by this emitter when creating a new particle
         */
         EmitterSettings settings;
