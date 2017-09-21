@@ -30,6 +30,11 @@ source distribution.
 
 #include <xyginext/ecs/System.hpp>
 
+namespace xy
+{
+    class NetHost;
+}
+
 struct NPC final
 {
     enum class State
@@ -37,6 +42,7 @@ struct NPC final
         Normal, Bubble, Jumping, Thinking
     }state = State::Normal;
     sf::Vector2f velocity;
+    sf::Vector2f lastVelocity; //so can be restored when bubble bursts
     float thinkTimer = 0.f;
     bool canLand = true;
     sf::Int32 bubbleOwner = -1;
@@ -45,13 +51,15 @@ struct NPC final
 class NPCSystem final : public xy::System
 {
 public:
-    explicit NPCSystem(xy::MessageBus&);
+    NPCSystem(xy::MessageBus&, xy::NetHost&);
 
     void handleMessage(const xy::Message&) override;
 
     void process(float) override;
 
 private:
+
+    xy::NetHost& m_host;
 
     void onEntityAdded(xy::Entity) override;
 

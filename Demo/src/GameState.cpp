@@ -35,6 +35,7 @@ source distribution.
 #include "CollisionSystem.hpp"
 #include "sha1.hpp"
 #include "SpriteIDs.hpp"
+#include "MessageIDs.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -103,7 +104,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     camera.setView(view.getSize());
     camera.setViewport(view.getViewport());
 
-    //TODO replace this
+    //TODO replace this when creating UI
     m_timeoutText.setFillColor(sf::Color::Red);
     m_timeoutText.setFont(m_fontResource.get("buns"));
     quitLoadingScreen();
@@ -575,12 +576,20 @@ sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, co
 
 void GameState::spawnActor(const ActorEvent& actorEvent)
 {
+    auto msg = getContext().appInstance.getMessageBus().post<SceneEvent>(MessageID::SceneMessage);
+    
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(actorEvent.x, actorEvent.y);
     entity.addComponent<Actor>() = actorEvent.actor;
     entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
     entity.addComponent<xy::NetInterpolate>();
     entity.addComponent<AnimationController>();
+
+    msg->entity = entity;
+    msg->type = SceneEvent::ActorSpawned;
+    msg->actorID = actorEvent.actor.id;
+    msg->x = actorEvent.x;
+    msg->y = actorEvent.y;
 
     switch (actorEvent.actor.type)
     {
@@ -597,6 +606,18 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
         entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
+
+        {
+            xy::Command cmd;
+            cmd.targetFlags = (actorEvent.actor.type == ActorID::BubbleOne) ? CommandID::PlayerOne : CommandID::PlayerTwo;
+            cmd.action = [](xy::Entity entity, float)
+            {
+                auto& controller = entity.getComponent<AnimationController>();
+                controller.currentAnim = AnimationController::Shoot;
+                entity.getComponent<xy::SpriteAnimation>().play(controller.animationMap[AnimationController::Shoot]);
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+        }
         break;
     }
 }
@@ -613,10 +634,12 @@ void GameState::spawnClient(const ClientData& data)
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerOne];
         entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
+        entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerOne;
     }
     else
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerTwo];
+        entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerTwo;
     }
 
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
@@ -641,7 +664,7 @@ void GameState::spawnClient(const ClientData& data)
     else
     {
         //add interp controller
-        entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
+        entity.getComponent<xy::CommandTarget>().ID |= CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
     }
 }
@@ -649,17 +672,23 @@ void GameState::spawnClient(const ClientData& data)
 void GameState::killActor(const ActorEvent& actorEvent)
 {
     //kill the scene entity
-    auto id = actorEvent.actor.id;
+    //auto id = actorEvent.actor.id;
     xy::Command cmd;
     cmd.targetFlags = CommandID::NetActor;
-    cmd.action = [&, id](xy::Entity entity, float)
+    cmd.action = [&, actorEvent](xy::Entity entity, float)
     {
-        if (entity.getComponent<Actor>().id == id)
+        if (entity.getComponent<Actor>().id == actorEvent.actor.id)
         {
             m_scene.destroyEntity(entity);
+
+            //raise a message to say who died
+            auto msg = getContext().appInstance.getMessageBus().post<SceneEvent>(MessageID::SceneMessage);
+            msg->entity = entity;
+            msg->type = SceneEvent::ActorRemoved;
+            msg->actorID = actorEvent.actor.id;
+            msg->x = actorEvent.x;
+            msg->y = actorEvent.y;
         }
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
-
-    //TODO raise a message to say who died
 }

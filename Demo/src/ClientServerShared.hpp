@@ -67,8 +67,8 @@ namespace CollisionFlags
         Bubble = 0x10,
         NPC = 0x20,
 
-        PlayerMask = Bubble | Platform | Solid | Teleport,
-        NPCMask = CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::Bubble | CollisionFlags::Platform | Teleport
+        PlayerMask = Bubble | Platform | Solid | Teleport | NPC,
+        NPCMask = Solid | Player | Bubble | Platform | Teleport
     };
 }
 

@@ -358,9 +358,9 @@ void GameServer::initScene()
     m_scene.addSystem<CollisionSystem>(m_messageBus, true);    
     m_scene.addSystem<ActorSystem>(m_messageBus);
     m_scene.addSystem<BubbleSystem>(m_messageBus, m_host);
-    m_scene.addSystem<NPCSystem>(m_messageBus);
+    m_scene.addSystem<NPCSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
-    m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
+    //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
 }
 

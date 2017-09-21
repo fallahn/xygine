@@ -34,7 +34,8 @@ namespace MessageID
 {
     enum
     {
-        PlayerMessage
+        PlayerMessage,
+        SceneMessage
     };
 }
 
@@ -45,7 +46,20 @@ struct PlayerEvent final
         FiredWeapon,
         Died
     }type;
-    xy::Entity entity{ 0,0 };
+    xy::Entity entity;
+};
+
+struct SceneEvent final
+{
+    enum
+    {
+        ActorSpawned,
+        ActorRemoved
+    }type;
+    xy::Entity entity;
+    sf::Int32 actorID = -1;
+    float x = 0.f;
+    float y = 0.f;
 };
 
 #endif //DEMO_MESSAGE_IDS_HPP_

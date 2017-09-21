@@ -31,8 +31,10 @@ source distribution.
 #include "AnimationController.hpp"
 #include "Hitbox.hpp"
 #include "ClientServerShared.hpp"
+#include "PacketIDs.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/Scene.hpp>
 #include <xyginext/util/Vector.hpp>
 #include <xyginext/util/Random.hpp>
 
@@ -49,8 +51,9 @@ namespace
     const float BubbleTime = 6.f;
 }
 
-NPCSystem::NPCSystem(xy::MessageBus& mb)
-    : xy::System(mb, typeid(NPCSystem)),
+NPCSystem::NPCSystem(xy::MessageBus& mb, xy::NetHost& host)
+    : xy::System    (mb, typeid(NPCSystem)),
+    m_host          (host),
     m_currentThinkTime(0)
 {
     requireComponent<NPC>();
@@ -97,8 +100,8 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
     auto& tx = entity.getComponent<xy::Transform>();
     auto& npc = entity.getComponent<NPC>();
 
-    const auto& collision = entity.getComponent<CollisionComponent>();
-    const auto& hitboxes = collision.getHitboxes();
+    auto& collision = entity.getComponent<CollisionComponent>();
+    auto& hitboxes = collision.getHitboxes();
 
     for (auto i = 0u; i < collision.getHitboxCount(); ++i)
     {
@@ -118,14 +121,16 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
             case CollisionType::Bubble:
                 //switch to bubble state if bubble in spawn state
             {
-                const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
+                auto& bubble = manifold.otherEntity.getComponent<Bubble>();
                 if (bubble.state == Bubble::Spawning)
                 {
+                    npc.lastVelocity = npc.velocity;
+                    
                     npc.state = NPC::State::Bubble;
                     npc.velocity.y = BubbleVerticalVelocity;
                     npc.thinkTimer = BubbleTime;
                     npc.bubbleOwner = bubble.player;
-
+                    entity.getComponent<AnimationController>().direction = 1.f;
                     entity.getComponent<AnimationController>().nextAnimation = 
                         (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
 
@@ -143,6 +148,7 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
     //if (npc.state == NPC::State::Normal)
     {
         tx.move(npc.velocity * WhirlybobSpeed * dt);
+        entity.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
     }
 }
 
@@ -210,10 +216,13 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
                     const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
                     if (bubble.state == Bubble::Spawning)
                     {
+                        npc.lastVelocity = npc.velocity; //so we can  restore if bubble pops
+
                         npc.state = NPC::State::Bubble;
                         npc.velocity.y = BubbleVerticalVelocity;
                         npc.thinkTimer = BubbleTime;
                         npc.bubbleOwner = bubble.player;
+                        entity.getComponent<AnimationController>().direction = 1.f;
                         entity.getComponent<AnimationController>().nextAnimation = 
                             (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
                         return;
@@ -315,7 +324,27 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
                 tx.move(manifold.normal * manifold.penetration);
                 break;
             case CollisionType::Player:
-                //kill ent and give player points
+                //kill ent
+            {
+                const auto& player = manifold.otherEntity.getComponent<Player>();
+                if (player.playerNumber == npc.bubbleOwner && player.state == Player::State::Jumping)
+                {
+                    const auto& tx = entity.getComponent<xy::Transform>();
+                    getScene()->destroyEntity(entity);
+
+                    //broadcast to client
+                    ActorEvent evt;
+                    evt.actor.id = entity.getIndex();
+                    evt.actor.type = entity.getComponent<Actor>().type;
+                    evt.x = tx.getPosition().x;
+                    evt.y = tx.getPosition().y;
+                    evt.type = ActorEvent::Died;
+
+                    m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+
+                    //TODO raise message - needed to award points and spawn fruits
+                }
+            }
                 break;
             }
         }
@@ -327,6 +356,10 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
     if (npc.thinkTimer < 0)
     {
         //bubble wasn't burst in time, release NPC (angry mode?)
+        npc.state = NPC::State::Normal;
+        npc.velocity = npc.lastVelocity;
+        npc.thinkTimer = thinkTimes[m_currentThinkTime];
+        m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();
     }
 }
 

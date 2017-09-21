@@ -173,6 +173,7 @@ void BubbleSystem::doCollision(xy::Entity entity)
                 {
                     //pop!
                     killBubble(entity);
+                    return; //only want to hit one entity
                 }
                 break;
             }
