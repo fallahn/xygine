@@ -40,6 +40,7 @@ source distribution.
 namespace
 {
     const std::size_t MinEmitters = 4;
+    const sf::Color bubble(255, 106, 105, 200);
 }
 
 ParticleDirector::ParticleDirector(xy::TextureResource& tr)
@@ -64,8 +65,12 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             default: return;
             //case ActorID::BubbleOne:
             //case ActorID::BubbleTwo:
+            
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
+                ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
+                ent.getComponent<xy::ParticleEmitter>().settings.colour = bubble;
+                break;
             case ActorID::FruitSmall:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
                 break;
