@@ -127,6 +127,7 @@
     <ClCompile Include="src\ClientServerShared.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
     <ClCompile Include="src\ErrorState.cpp" />
+    <ClCompile Include="src\FruitSystem.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="src\CollisionSystem.hpp" />
     <ClInclude Include="src\CommandIDs.hpp" />
     <ClInclude Include="src\ErrorState.hpp" />
+    <ClInclude Include="src\FruitSystem.hpp" />
     <ClInclude Include="src\Game.hpp" />
     <ClInclude Include="src\GameState.hpp" />
     <ClInclude Include="src\Hitbox.hpp" />

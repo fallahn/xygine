@@ -213,6 +213,9 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "whirlybob");
     m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "whirlybob");
 
+
+    m_sprites[SpriteID::FruitSmall] = xy::Sprite(m_textureResource.get("assets/images/target.png"));
+
     //audio
     //m_soundResource.get("assets/boop_loop.wav");
 }
@@ -381,11 +384,10 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
         break;
-    case PacketID::MapData:
+    case PacketID::MapJoin:
     {
         MapData data = evt.packet.as<MapData>();
 
-        //TODO clear old actors
         //load new actors
         if (loadScene(data))
         {
@@ -622,6 +624,12 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
             };
             m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
         }
+        break;
+    case ActorID::FruitSmall:
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::FruitSmall];
+        //entity.addComponent<xy::SpriteAnimation>().play(0);
+        entity.getComponent<xy::Sprite>().setDepth(2);
+        entity.getComponent<xy::Transform>().setOrigin(SmallFruitSize / 2.f, SmallFruitSize / 2.f);
         break;
     }
 }

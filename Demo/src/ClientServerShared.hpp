@@ -66,9 +66,11 @@ namespace CollisionFlags
         Player = 0x8,
         Bubble = 0x10,
         NPC = 0x20,
+        Fruit = 0x40,
 
-        PlayerMask = Bubble | Platform | Solid | Teleport | NPC,
-        NPCMask = Solid | Player | Bubble | Platform | Teleport
+        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit,
+        NPCMask = Solid | Player | Bubble | Platform | Teleport,
+        FruitMask = Solid | Platform | Player | Teleport
     };
 }
 
@@ -80,7 +82,12 @@ static constexpr float BubbleVerticalVelocity = -100.f;
 static constexpr float BubbleSize = 64.f;
 static constexpr float NPCSize = 64.f;
 
+static constexpr float SmallFruitSize = 64.f;
+static constexpr float LargeFruitSize = 96.f;
+
 static constexpr float TeleportDistance = 950.f;
+static constexpr float gravity = 2200.f;
+static constexpr float maxVelocity = 800.f;
 
 static const sf::FloatRect MapBounds(0.f, 0.f, 16.f *64.f, 17.f * 64.f);
 

@@ -66,6 +66,7 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             //case ActorID::BubbleTwo:
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
+            case ActorID::FruitSmall:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
                 break;
             }

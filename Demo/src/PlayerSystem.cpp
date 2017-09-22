@@ -41,8 +41,6 @@ source distribution.
 namespace
 {
     const float speed = 280.f;
-    const float maxVelocity = 800.f;
-    const float gravity = 2200.f;
     const float initialJumpVelocity = 840.f;
     const float minJumpVelocity = -initialJumpVelocity * 0.35f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocity
 }

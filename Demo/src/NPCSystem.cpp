@@ -32,6 +32,7 @@ source distribution.
 #include "Hitbox.hpp"
 #include "ClientServerShared.hpp"
 #include "PacketIDs.hpp"
+#include "MessageIDs.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -42,9 +43,6 @@ namespace
 {
     const float WhirlybobSpeed = 100.f;
     const float ClocksySpeed = 86.f;
-
-    const float maxVelocity = 800.f;
-    const float gravity = 2200.f;
     const float initialJumpVelocity = 940.f;
 
     const std::array<float, 10> thinkTimes = { 20.f, 16.f, 12.f, 31.f, 15.4f, 14.9f, 25.f, 12.7f, 13.3f, 18.f };
@@ -342,7 +340,13 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
 
                     m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 
-                    //TODO raise message - needed to award points and spawn fruits
+                    //raise message
+                    auto* msg = postMessage<SceneEvent>(MessageID::SceneMessage);
+                    msg->actorID = evt.actor.type;
+                    msg->type = SceneEvent::ActorRemoved;
+                    msg->entity = entity;
+                    msg->x = evt.x;
+                    msg->y = evt.y;
                 }
             }
                 break;

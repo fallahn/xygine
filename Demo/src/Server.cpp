@@ -39,6 +39,7 @@ source distribution.
 #include "sha1.hpp"
 #include "BubbleSystem.hpp"
 #include "NPCSystem.hpp"
+#include "FruitSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -224,7 +225,7 @@ void GameServer::handleConnect(const xy::NetEvent& evt)
     //TODO check not existing client
 
     //send map name, list of actor ID's up to count
-    m_host.sendPacket(evt.peer, PacketID::MapData, m_mapData, xy::NetFlag::Reliable, 1);
+    m_host.sendPacket(evt.peer, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
 }
 
 void GameServer::handleDisconnect(const xy::NetEvent& evt)
@@ -359,6 +360,7 @@ void GameServer::initScene()
     m_scene.addSystem<ActorSystem>(m_messageBus);
     m_scene.addSystem<BubbleSystem>(m_messageBus, m_host);
     m_scene.addSystem<NPCSystem>(m_messageBus, m_host);
+    m_scene.addSystem<FruitSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);

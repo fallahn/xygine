@@ -47,8 +47,10 @@ struct PlayerEvent final
     enum
     {
         FiredWeapon,
-        Died
+        Died,
+        Scored
     }type;
+    sf::Int32 value = 0;
     xy::Entity entity;
 };
 

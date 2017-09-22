@@ -25,23 +25,48 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_SPRITE_IDS_HPP_
-#define DEMO_SPRITE_IDS_HPP_
+#ifndef DEMO_FRUIT_SYSTEM_HPP_
+#define DEMO_FRUIT_SYSTEM_HPP_
 
-namespace SpriteID
+#include <SFML/Config.hpp>
+
+#include <xyginext/ecs/System.hpp>
+
+struct Fruit final
 {
     enum
     {
-        BubbleOne = 0,
-        BubbleTwo,
-        PlayerOne,
-        PlayerTwo,
-        WhirlyBob,
-        Clocksy,
-        FruitSmall,
+        Large, Small
+    }size = Small;
 
-        Count
-    };
+    enum
+    {
+        Spawning, Colliding, Idle
+    }state = Spawning;
+
+    sf::Uint32 value = 50;
+    sf::Vector2f velocity;
+    float spawnTime = 2.5f;
+    float lifeTime = 6.f;
+};
+
+namespace xy
+{
+    class NetHost;
 }
 
-#endif //DEMO_SPRITE_IDS_HPP_
+class FruitSystem final : public xy::System
+{
+public:
+    FruitSystem(xy::MessageBus&, xy::NetHost&);
+
+    void handleMessage(const xy::Message&) override;
+
+    void process(float) override;
+
+private:
+
+    xy::NetHost& m_host;
+};
+
+#endif //DEMO_FRUIT_SYSTEM_HPP_

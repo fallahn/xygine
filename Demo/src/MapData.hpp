@@ -42,7 +42,8 @@ namespace ActorID
         Whirlybob, Clocksy,
         BubbleOne,
         BubbleTwo,
-        Client
+        FruitSmall,
+        FruitLarge
     };
 }
 
