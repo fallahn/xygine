@@ -36,6 +36,7 @@ source distribution.
 #include "sha1.hpp"
 #include "SpriteIDs.hpp"
 #include "MessageIDs.hpp"
+#include "ParticleDirector.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -182,6 +183,7 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::TextRenderer>(mb);
     
     //m_scene.addPostProcess<xy::PostChromeAb>();
+    m_scene.addDirector<ParticleDirector>(m_textureResource);
 
     //preload textures
     xy::SpriteSheet spriteSheet;

@@ -70,6 +70,7 @@ namespace xy
         sf::BlendMode blendmode = sf::BlendAlpha;
         sf::Vector2f gravity;
         sf::Vector2f initialVelocity;
+        float spread = 0.f;
         std::array<sf::Vector2f, 4> forces{};
         float lifetime = 1.f;
         float lifetimeVariance = 0.f;
@@ -78,7 +79,9 @@ namespace xy
         float scaleModifier = 0.f;
         float size = 1.f; //! <diameter of particle
         float emitRate = 1.f; //! <particles per second
+        sf::Uint32 emitCount = 1; //! <amount relased at once
         float spawnRadius = 0.f;
+        sf::Int32 releaseCount = 0; //! <number of particles release before stopping (0 for infinite)
         sf::Texture* texture = nullptr;
         bool loadFromFile(const std::string&, TextureResource&);
     };
@@ -104,7 +107,7 @@ namespace xy
         /*!
         \brief Returns true if emitter has stopped
         */
-        bool stopped() const { return (!m_running/* && m_nextFreeParticle == 0*/); }
+        bool stopped() const { return (!m_running && m_nextFreeParticle == 0); }
 
         /*!
         \brief Settings used by this emitter when creating a new particle
@@ -124,6 +127,8 @@ namespace xy
         sf::Clock m_emissionClock;
 
         sf::FloatRect m_bounds;
+
+        sf::Int32 m_releaseCount;
 
         friend class ParticleSystem;
     };

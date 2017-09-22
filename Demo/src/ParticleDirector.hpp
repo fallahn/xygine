@@ -31,23 +31,41 @@ source distribution.
 #include <xyginext/ecs/Director.hpp>
 #include <xyginext/ecs/Entity.hpp>
 
+#include <xyginext/ecs/components/ParticleEmitter.hpp>
+
 #include <vector>
+#include <array>
+
+namespace xy
+{
+    class TextureResource;
+}
 
 class ParticleDirector final : public xy::Director 
 {
 public:
-    ParticleDirector();
+    explicit ParticleDirector(xy::TextureResource&);
 
     void handleMessage(const xy::Message&) override;
 
-    void handleEvent(const sf::Event&) override {}
+    void handleEvent(const sf::Event&) override;
 
     void process(float) override;
 
 private:
 
+    enum SettingsID
+    {
+        BubblePop,
+        Count
+    };
+
+    std::array<xy::EmitterSettings, SettingsID::Count> m_settings;
+
     std::size_t m_nextFreeEmitter;
     std::vector<xy::Entity> m_emitters;
+
+    void resizeEmitters();
 };
 
 

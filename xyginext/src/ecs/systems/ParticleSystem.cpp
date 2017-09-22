@@ -64,7 +64,7 @@ namespace
 
             gl_FrontColor = gl_Color;
             gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-            gl_PointSize = 15.0;//rotScale.y;
+            gl_PointSize = rotScale.y;
         })";
 
     const std::string FragmentShader = R"(
@@ -100,7 +100,10 @@ ParticleSystem::ParticleSystem(xy::MessageBus& mb)
     m_emitterArrays.reserve(MaxParticleSystems);
     m_emitterArrays.resize(MinParticleSystems);
 
-    m_dummyTexture.create(1, 1);
+    sf::Image img;
+    img.create(1, 1, sf::Color::White);
+    m_dummyTexture.loadFromImage(img);
+    //m_dummyTexture.setRepeated(true);
 }
 
 ParticleSystem::~ParticleSystem()
@@ -125,33 +128,39 @@ void ParticleSystem::process(float dt)
             //time to emit a particle
             emitter.m_emissionClock.restart();
             static const float epsilon = 0.0001f;
-            if (emitter.m_nextFreeParticle < emitter.m_particles.size() - 1)
+            auto emitCount = emitter.settings.emitCount;
+            while (emitCount--)
             {
-                auto& tx = entity.getComponent<Transform>();
-                auto rotation = tx.getRotation();
+                if (emitter.m_nextFreeParticle < emitter.m_particles.size() - 1)
+                {
+                    auto& tx = entity.getComponent<Transform>();
+                    auto rotation = tx.getRotation();
 
-                const auto& settings = emitter.settings;
-                XY_ASSERT(settings.emitRate > 0, "Emit rate must be grater than 0");
-                XY_ASSERT(settings.lifetime > 0, "Lifetime must be greater than 0");
-                auto& p = emitter.m_particles[emitter.m_nextFreeParticle];
-                p.colour = settings.colour;
-                p.gravity = settings.gravity;
-                p.lifetime = settings.lifetime + xy::Util::Random::value(-settings.lifetimeVariance, settings.lifetimeVariance + epsilon);
-                p.maxLifetime = p.lifetime;
-                p.velocity = Util::Vector::rotate(settings.initialVelocity, rotation);
-                p.rotation = Util::Random::value(-Util::Const::TAU, Util::Const::TAU);
-                p.scale = 1.f;
+                    const auto& settings = emitter.settings;
+                    XY_ASSERT(settings.emitRate > 0, "Emit rate must be grater than 0");
+                    XY_ASSERT(settings.lifetime > 0, "Lifetime must be greater than 0");
+                    auto& p = emitter.m_particles[emitter.m_nextFreeParticle];
+                    p.colour = settings.colour;
+                    p.gravity = settings.gravity;
+                    p.lifetime = settings.lifetime + xy::Util::Random::value(-settings.lifetimeVariance, settings.lifetimeVariance + epsilon);
+                    p.maxLifetime = p.lifetime;
+                    p.velocity = Util::Vector::rotate(settings.initialVelocity, rotation + Util::Random::value(-settings.spread, (settings.spread + epsilon)));
+                    p.rotation = Util::Random::value(-Util::Const::TAU, Util::Const::TAU);
+                    p.scale = settings.size;
 
-                //spawn particle in world position
-                p.position = tx.getWorldTransform().transformPoint({});
+                    //spawn particle in world position
+                    p.position = tx.getWorldTransform().transformPoint({});
 
-                //add random radius placement - TODO how to do with a position table? CAN'T HAVE +- 0!!
-                p.position.x += Util::Random::value(-settings.spawnRadius, settings.spawnRadius + epsilon);
-                p.position.y += Util::Random::value(-settings.spawnRadius, settings.spawnRadius + epsilon);
+                    //add random radius placement - TODO how to do with a position table? CAN'T HAVE +- 0!!
+                    p.position.x += Util::Random::value(-settings.spawnRadius, settings.spawnRadius + epsilon);
+                    p.position.y += Util::Random::value(-settings.spawnRadius, settings.spawnRadius + epsilon);
 
-                emitter.m_nextFreeParticle++;
+                    emitter.m_nextFreeParticle++;
+                    if(emitter.m_releaseCount > 0) emitter.m_releaseCount--;
+                }
             }
         }
+        if (emitter.m_releaseCount == 0) emitter.stop();
 
         //update each particle
         sf::Vector2f minBounds(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
@@ -194,7 +203,7 @@ void ParticleSystem::process(float dt)
         {
             auto& vertArray = m_emitterArrays[m_activeArrayCount++];
             vertArray.count = 0;
-            vertArray.texture = emitter.settings.texture;
+            vertArray.texture = (emitter.settings.texture) ? emitter.settings.texture : &m_dummyTexture;
 
             for (auto i = 0u; i < emitter.m_nextFreeParticle; ++i)
             {
@@ -203,7 +212,6 @@ void ParticleSystem::process(float dt)
                     emitter.m_particles[i].position,
                     emitter.m_particles[i].colour,
                     sf::Vector2f(emitter.m_particles[i].rotation, emitter.m_particles[i].scale)
-                    //TODO wrangle rotation/scale into UV
                 };
             }
         }
@@ -242,10 +250,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     glCheck(glEnable(GL_POINT_SPRITE));
     for (auto i = 0u; i < m_activeArrayCount; ++i)
     {
-        if (m_emitterArrays[i].texture)
-        {
-            m_shader.setUniform("u_texture", *m_emitterArrays[i].texture);
-        }
+        m_shader.setUniform("u_texture", *m_emitterArrays[i].texture);
         
         rt.draw(m_emitterArrays[i].vertices.data(), m_emitterArrays[i].count, sf::Points, states);
         //DPRINT("Particle Count", std::to_string(m_emitterArrays[i].count));

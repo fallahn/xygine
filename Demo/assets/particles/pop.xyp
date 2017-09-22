@@ -2,14 +2,17 @@ particle_system pop
 {
 	//src = "assets/particles/snowflake.png"
 	//blendmode = add
-	gravity = 0,1
-	velocity = -2.4,-0.1
+	gravity = 0,9
+	velocity = -200.4,-80.1
+	spread = 360
 	lifetime = 2
-	lifetime_variance = 0
-	colour = 1,1,1,1
-	rotation_speed = 5
-	scale_affector = 0
-	size = 0.03
+	lifetime_variance = 0.5
+	colour = 255,255,255,255
+	rotation_speed = 25
+	scale_affector = 0.6
+	size = 3.0
 	emit_rate = 30
-	spawn_radius = 0.8	
+	emit_count = 4
+	spawn_radius = 10.8
+	//release_count = 16
 }
