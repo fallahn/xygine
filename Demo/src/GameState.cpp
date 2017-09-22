@@ -689,7 +689,7 @@ void GameState::killActor(const ActorEvent& actorEvent)
             auto msg = getContext().appInstance.getMessageBus().post<SceneEvent>(MessageID::SceneMessage);
             msg->entity = entity;
             msg->type = SceneEvent::ActorRemoved;
-            msg->actorID = actorEvent.actor.id;
+            msg->actorID = actorEvent.actor.type;
             msg->x = actorEvent.x;
             msg->y = actorEvent.y;
         }

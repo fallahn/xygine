@@ -27,6 +27,8 @@ source distribution.
 
 #include "ParticleDirector.hpp"
 #include "MessageIDs.hpp"
+#include "MapData.hpp"
+#include "AnimationController.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/ParticleEmitter.hpp>
@@ -50,26 +52,69 @@ ParticleDirector::ParticleDirector(xy::TextureResource& tr)
 //public
 void ParticleDirector::handleMessage(const xy::Message& msg)
 {
-    //TODO fire a particle system based on event
+    //fire a particle system based on event
+    if (msg.id == MessageID::SceneMessage)
+    {
+        const auto& data = msg.getData<SceneEvent>();
+        if (data.type == SceneEvent::ActorRemoved)
+        {
+            auto ent = getNextEntity();
+            switch (data.actorID)
+            {
+            default: return;
+            //case ActorID::BubbleOne:
+            //case ActorID::BubbleTwo:
+            case ActorID::Clocksy:
+            case ActorID::Whirlybob:
+                ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
+                break;
+            }
+            ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
+            ent.getComponent<xy::ParticleEmitter>().start();
+        }
+    }
+    else if (msg.id == MessageID::AnimationMessage)
+    {
+        const auto& data = msg.getData<AnimationEvent>();
+        if (data.entity.hasComponent<Actor>())
+        {
+            auto actorID = data.entity.getComponent<Actor>().type;
+            switch (actorID)
+            {
+            case ActorID::Clocksy:
+            case ActorID::Whirlybob:
+                if (data.oldAnim == AnimationController::TrappedOne
+                    || data.oldAnim == AnimationController::TrappedTwo)
+                {
+                    auto ent = getNextEntity();
+                    ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
+                    ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
+                    ent.getComponent<xy::ParticleEmitter>().start();
+                }
+                break;
+            default: break;
+            }
+        }
+    }
 }
 
 void ParticleDirector::handleEvent(const sf::Event& evt)
 {
-    if (evt.type == sf::Event::KeyReleased)
-    {
-        if (evt.key.code == sf::Keyboard::T)
-        {
-            if (m_nextFreeEmitter == m_emitters.size())
-            {
-                resizeEmitters();
-            }
+    //if (evt.type == sf::Event::KeyReleased)
+    //{
+    //    if (evt.key.code == sf::Keyboard::T)
+    //    {
+    //        if (m_nextFreeEmitter == m_emitters.size())
+    //        {
+    //            resizeEmitters();
+    //        }
 
-            m_emitters[m_nextFreeEmitter].getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-            m_emitters[m_nextFreeEmitter].getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
-            m_emitters[m_nextFreeEmitter].getComponent<xy::ParticleEmitter>().start();
-            //m_nextFreeEmitter++;
-        }
-    }
+    //        m_emitters[m_nextFreeEmitter].getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
+    //        m_emitters[m_nextFreeEmitter].getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
+    //        m_emitters[m_nextFreeEmitter].getComponent<xy::ParticleEmitter>().start();
+    //        //m_nextFreeEmitter++;
+    //    }
+    //}
 }
 
 void ParticleDirector::process(float dt)
@@ -98,4 +143,14 @@ void ParticleDirector::resizeEmitters()
         m_emitters[i].addComponent<xy::ParticleEmitter>();
         m_emitters[i].addComponent<xy::Transform>();
     }
+}
+
+xy::Entity ParticleDirector::getNextEntity()
+{
+    if (m_nextFreeEmitter == m_emitters.size())
+    {
+        resizeEmitters();
+    }
+    auto ent = m_emitters[m_nextFreeEmitter++];
+    return ent;
 }

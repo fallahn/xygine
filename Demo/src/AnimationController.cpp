@@ -76,11 +76,19 @@ void AnimationControllerSystem::process(float)
         auto& controller = entity.getComponent<AnimationController>();
 
         xForm.setScale(controller.direction, 1.f);
+        auto position = xForm.getPosition();
 
         //if animation has changed update it
         if (controller.nextAnimation != controller.currentAnim
             && controller.prevAnimation == controller.currentAnim)
         {
+            auto* msg = postMessage<AnimationEvent>(MessageID::AnimationMessage);
+            msg->oldAnim = controller.currentAnim;
+            msg->newAnim = controller.nextAnimation;
+            msg->x = position.x;
+            msg->y = position.y;
+            msg->entity = entity;            
+            
             controller.prevAnimation = controller.currentAnim = controller.nextAnimation;
             entity.getComponent<xy::SpriteAnimation>().play(controller.animationMap[controller.currentAnim]);
         }
@@ -92,6 +100,13 @@ void AnimationControllerSystem::process(float)
             auto& sprAnim = entity.getComponent<xy::SpriteAnimation>();
             if (sprAnim.stopped())
             {
+                auto* msg = postMessage<AnimationEvent>(MessageID::AnimationMessage);
+                msg->oldAnim = controller.currentAnim;
+                msg->newAnim = controller.prevAnimation;
+                msg->x = position.x;
+                msg->y = position.y;
+                msg->entity = entity;   
+
                 controller.currentAnim = controller.prevAnimation;
                 sprAnim.play(controller.animationMap[controller.currentAnim]);
             }

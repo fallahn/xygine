@@ -66,6 +66,7 @@ private:
     std::vector<xy::Entity> m_emitters;
 
     void resizeEmitters();
+    xy::Entity getNextEntity();
 };
 
 
