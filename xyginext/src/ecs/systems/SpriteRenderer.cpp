@@ -27,7 +27,9 @@ source distribution.
 
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
+#include <xyginext/ecs/Scene.hpp>
 #include <xyginext/core/App.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -98,9 +100,10 @@ void SpriteRenderer::process(float dt)
     }
 
     //cull to viewport
-    auto view = App::getRenderWindow().getView();
-    sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
-
+    /*auto view = getScene()->getActiveCamera().getComponent<Camera>().getView();
+    sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());*/
+    //TODO get from active camera
+    
     m_drawCount = 0;
 
     //add visible to draw list
@@ -108,8 +111,8 @@ void SpriteRenderer::process(float dt)
     {
         const auto& sprite = entity.getComponent<xy::Sprite>();
         const auto& tx = entity.getComponent<xy::Transform>().getWorldTransform();
-        if (tx.transformRect(sprite.getLocalBounds()).intersects(viewableArea)
-            && m_drawCount < m_drawlist.size())
+        /*if (tx.transformRect(sprite.getLocalBounds()).intersects(viewableArea)
+            && m_drawCount < m_drawlist.size())*/
         {
             m_drawlist[m_drawCount].verts = sprite.m_vertices;
             m_drawlist[m_drawCount].states = sprite.m_states;

@@ -1,6 +1,6 @@
 particle_system pop
 {
-	//src = "assets/particles/snowflake.png"
+	src = "assets/images/star.png"
 	//blendmode = add
 	gravity = 0,90
 	velocity = -200.4,-180.1
@@ -10,7 +10,7 @@ particle_system pop
 	colour = 255,255,255,255
 	rotation_speed = 25
 	scale_affector = 0.6
-	size = 2.0
+	size = 10.0
 	emit_rate = 30
 	emit_count = 8
 	spawn_radius = 4

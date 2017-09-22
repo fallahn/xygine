@@ -47,7 +47,7 @@ namespace
 
     const std::array<float, 10> thinkTimes = { 20.f, 16.f, 12.f, 31.f, 15.4f, 14.9f, 25.f, 12.7f, 13.3f, 18.f };
     const float BubbleTime = 6.f;
-    const float DieTime = 2.5f;
+    const float DieTime = 1.5f;
 }
 
 NPCSystem::NPCSystem(xy::MessageBus& mb, xy::NetHost& host)
@@ -322,7 +322,7 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
             {
             default: break;
             case CollisionType::Solid:
-            //case CollisionType::Platform:
+            case CollisionType::Platform:
                 tx.move(manifold.normal * manifold.penetration);
                 break;
             case CollisionType::Player:
@@ -339,6 +339,7 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
                     npc.velocity.y = (position.y > MapBounds.height / 2.f) ? -300.f : -230.f;
 
                     entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask & ~CollisionFlags::Player);
                 }
             }
                 return;
