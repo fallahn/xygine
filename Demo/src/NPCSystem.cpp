@@ -47,6 +47,7 @@ namespace
 
     const std::array<float, 10> thinkTimes = { 20.f, 16.f, 12.f, 31.f, 15.4f, 14.9f, 25.f, 12.7f, 13.3f, 18.f };
     const float BubbleTime = 6.f;
+    const float DieTime = 2.5f;
 }
 
 NPCSystem::NPCSystem(xy::MessageBus& mb, xy::NetHost& host)
@@ -72,12 +73,15 @@ void NPCSystem::process(float dt)
     auto entities = getEntities();
     for (auto& entity : entities)
     {
-        if (entity.getComponent<NPC>().state == NPC::State::Bubble)
+        switch(entity.getComponent<NPC>().state)
         {
+        case NPC::State::Bubble:
             updateBubbleState(entity, dt);
-        }
-        else
-        {
+            break;
+        case NPC::State::Dying:
+            updateDyingState(entity, dt);
+            break;
+        default:
             switch (entity.getComponent<Actor>().type)
             {
             default: break;
@@ -327,6 +331,68 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
                 const auto& player = manifold.otherEntity.getComponent<Player>();
                 if (player.playerNumber == npc.bubbleOwner && player.state == Player::State::Jumping)
                 {
+                    npc.state = NPC::State::Dying;
+                    npc.thinkTimer = DieTime;
+
+                    auto position = tx.getPosition();
+                    npc.velocity.x = (position.x > MapBounds.width / 2.f) ? -90.f : 90.f;
+                    npc.velocity.y = (position.y > MapBounds.height / 2.f) ? -300.f : -230.f;
+
+                    entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+                }
+            }
+                return;
+            }
+        }
+    }
+
+    tx.move(npc.velocity * dt);
+
+    npc.thinkTimer -= dt;
+    if (npc.thinkTimer < 0)
+    {
+        //bubble wasn't burst in time, release NPC (angry mode?)
+        npc.state = NPC::State::Normal;
+        npc.velocity = npc.lastVelocity;
+        npc.thinkTimer = thinkTimes[m_currentThinkTime];
+        m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();
+    }
+}
+
+void NPCSystem::updateDyingState(xy::Entity entity, float dt)
+{
+    auto& tx = entity.getComponent<xy::Transform>();
+    auto& npc = entity.getComponent<NPC>();
+
+    const auto& collision = entity.getComponent<CollisionComponent>();
+    const auto& hitboxes = collision.getHitboxes();
+
+    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
+    {
+        auto& manifolds = hitboxes[i].getManifolds();
+        for (auto j = 0u; j < hitboxes[i].getCollisionCount(); ++j)
+        {
+            auto& manifold = manifolds[j];
+
+            if (npc.thinkTimer > 0)
+            {
+                if (manifold.otherType == CollisionType::Solid)
+                {
+                    tx.move(manifold.normal * manifold.penetration);
+                    npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
+                    npc.velocity *= 0.8f;
+                }
+                else if (manifold.otherType == CollisionType::Teleport)
+                {
+                    tx.move(0.f, -TeleportDistance);
+                }
+            }
+            else
+            {
+                //we can settle
+                if (((manifolds[j].otherType == CollisionType::Solid) || (manifolds[j].otherType == CollisionType::Platform))
+                    && manifolds[j].normal.y < 0)
+                {
                     const auto& tx = entity.getComponent<xy::Transform>();
                     getScene()->destroyEntity(entity);
 
@@ -347,23 +413,17 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
                     msg->entity = entity;
                     msg->x = evt.x;
                     msg->y = evt.y;
+                    break;
                 }
-            }
-                break;
-            }
+            }   
         }
     }
 
-    tx.move(npc.velocity * dt);
-
     npc.thinkTimer -= dt;
-    if (npc.thinkTimer < 0)
+    tx.move(npc.velocity * dt);
+    if (npc.velocity.y < maxVelocity)
     {
-        //bubble wasn't burst in time, release NPC (angry mode?)
-        npc.state = NPC::State::Normal;
-        npc.velocity = npc.lastVelocity;
-        npc.thinkTimer = thinkTimes[m_currentThinkTime];
-        m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();
+        npc.velocity.y += gravity * dt;
     }
 }
 

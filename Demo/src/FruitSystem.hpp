@@ -46,7 +46,7 @@ struct Fruit final
 
     sf::Uint32 value = 50;
     sf::Vector2f velocity;
-    float spawnTime = 2.5f;
+    float spawnTime = 0.5f;
     float lifeTime = 6.f;
 };
 

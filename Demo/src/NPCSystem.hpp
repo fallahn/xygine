@@ -39,7 +39,7 @@ struct NPC final
 {
     enum class State
     {
-        Normal, Bubble, Jumping, Thinking
+        Normal, Bubble, Jumping, Thinking, Dying
     }state = State::Normal;
     sf::Vector2f velocity;
     sf::Vector2f lastVelocity; //so can be restored when bubble bursts
@@ -69,6 +69,7 @@ private:
     void updateClocksy(xy::Entity, float);
 
     void updateBubbleState(xy::Entity, float);
+    void updateDyingState(xy::Entity, float);
 };
 
 #endif //DEMO_NPC_SYSTEM_HPP_

@@ -64,8 +64,8 @@ void FruitSystem::handleMessage(const xy::Message& msg)
             case ActorID::Whirlybob:
             {
                 sf::Vector2f initialVelocity;
-                initialVelocity.x = (data.x > MapBounds.width / 2.f) ? -90.f : 90.f;
-                initialVelocity.y = (data.y > MapBounds.height / 2.f) ? -300.f : -230.f;
+                initialVelocity.x = (data.x > MapBounds.width / 2.f) ? -50.f : 50.f;
+                initialVelocity.y = (data.y > MapBounds.height / 2.f) ? -180.f : -100.f;
                 
                 //spawn a fruit
                 auto scene = getScene();

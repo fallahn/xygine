@@ -207,14 +207,16 @@ void GameState::loadAssets()
 
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "clocksy");
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "clocksy");
+    m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "clocksy");
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "clocksy");
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "clocksy");
 
     m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "whirlybob");
     m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "whirlybob");
+    m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "whirlybob");
 
 
-    m_sprites[SpriteID::FruitSmall] = xy::Sprite(m_textureResource.get("assets/images/target.png"));
+    m_sprites[SpriteID::FruitSmall] = spriteSheet.getSprite("fruit");
 
     //audio
     //m_soundResource.get("assets/boop_loop.wav");
@@ -627,7 +629,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         break;
     case ActorID::FruitSmall:
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::FruitSmall];
-        //entity.addComponent<xy::SpriteAnimation>().play(0);
+        entity.addComponent<xy::SpriteAnimation>().play(xy::Util::Random::value(0, 1));
         entity.getComponent<xy::Sprite>().setDepth(2);
         entity.getComponent<xy::Transform>().setOrigin(SmallFruitSize / 2.f, SmallFruitSize / 2.f);
         break;

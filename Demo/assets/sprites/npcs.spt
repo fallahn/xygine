@@ -3,6 +3,25 @@ sprite_sheet npcs
 	src = "assets/images/npcs.png"
 	blendmode = alpha
 
+	sprite fruit
+	{
+		bounds = 256,0,64,64
+
+		animation melon
+		{
+			frame = 256,0,64,64
+			loop = true
+			framerate = 30
+		}
+
+		animation banana
+		{
+			frame = 320,0,64,64
+			loop = true
+			framerate = 30
+		}
+	}
+
 	sprite whirlybob
 	{
 		bounds = 0,0,64,64
@@ -15,6 +34,17 @@ sprite_sheet npcs
 			frame = 192,0,64,64
 
 			framerate = 12
+			loop=true
+		}
+
+		animation die
+		{
+			frame = 256,64,64,64
+			frame = 256,128,64,64
+			frame = 256,192,64,64
+			frame = 256,256,64,64
+
+			framerate = 14
 			loop=true
 		}
 
@@ -60,6 +90,17 @@ sprite_sheet npcs
 			frame = 192,256,64,64
 
 			framerate = 10
+			loop=true
+		}
+
+		animation die
+		{
+			frame = 320,64,64,64
+			frame = 320,128,64,64
+			frame = 320,192,64,64
+			frame = 320,256,64,64
+
+			framerate = 14
 			loop=true
 		}
 
