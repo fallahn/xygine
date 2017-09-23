@@ -50,14 +50,6 @@ namespace xy
 
         bool m_wantsSorting;
 
-        struct Item final
-        {
-            std::array<sf::Vertex, 4u> verts;
-            sf::RenderStates states;
-        };
-        std::vector<Item> m_drawlist;
-        std::size_t m_drawCount;
-
         void onEntityAdded(Entity) override;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;

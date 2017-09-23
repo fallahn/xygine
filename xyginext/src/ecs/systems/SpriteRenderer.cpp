@@ -39,15 +39,13 @@ using namespace xy;
 
 namespace
 {
-    const std::size_t MaxSprites = 256;
-    const std::size_t MinSprites = 16;
+    //const std::size_t MaxSprites = 256;
+    //const std::size_t MinSprites = 16;
 }
 
 SpriteRenderer::SpriteRenderer(MessageBus& mb)
     : System        (mb, typeid(SpriteRenderer)),
-    m_wantsSorting  (false),
-    m_drawlist      (MinSprites),
-    m_drawCount     (0)
+    m_wantsSorting  (false)
 {
     requireComponent<xy::Transform>();
     requireComponent<xy::Sprite>();
@@ -98,46 +96,35 @@ void SpriteRenderer::process(float dt)
             return entA.getComponent<Sprite>().getDepth() < entB.getComponent<Sprite>().getDepth();
         });
     }
-
-    //cull to viewport
-    /*auto view = getScene()->getActiveCamera().getComponent<Camera>().getView();
-    sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());*/
-    //TODO get from active camera
-    
-    m_drawCount = 0;
-
-    //add visible to draw list
-    for (const auto& entity : entities)
-    {
-        const auto& sprite = entity.getComponent<xy::Sprite>();
-        const auto& tx = entity.getComponent<xy::Transform>().getWorldTransform();
-        /*if (tx.transformRect(sprite.getLocalBounds()).intersects(viewableArea)
-            && m_drawCount < m_drawlist.size())*/
-        {
-            m_drawlist[m_drawCount].verts = sprite.m_vertices;
-            m_drawlist[m_drawCount].states = sprite.m_states;
-            m_drawlist[m_drawCount++].states.transform = tx;
-        }
-    }
 }
 
 //private
 void SpriteRenderer::onEntityAdded(Entity)
 {
     m_wantsSorting = true;
-
-    if (getEntities().size() > m_drawlist.size()
-        && getEntities().size() < MaxSprites)
-    {
-        m_drawlist.resize(m_drawlist.size() + MinSprites);
-    }
 }
 
 void SpriteRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    for(auto i = 0u; i < m_drawCount; ++i)
+    //culling only really works here because we may render a single scene
+    //with multiple views, or even with a frame buffer.
+    auto view = rt.getView();
+    sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
+
+    for (auto entity : getEntities())
     {
-        const auto& sprite = m_drawlist[i];
-        rt.draw(sprite.verts.data(), 4, sf::Quads, sprite.states);
+        const auto& sprite = entity.getComponent<xy::Sprite>();
+        const auto& tx = entity.getComponent<xy::Transform>().getWorldTransform();
+        const auto bounds = tx.transformRect(sprite.getLocalBounds());
+        if (bounds.intersects(viewableArea))
+        {
+            states = sprite.m_states;
+            states.transform = tx;
+            rt.draw(sprite.m_vertices.data(), 4, sf::Quads, states);
+        }
+        else
+        {
+            std::cout << "Left " << bounds.left << ", Top " << bounds.top << ", Width " << bounds.width << ", Height " << bounds.height <<  std::endl;
+        }
     }
 }
