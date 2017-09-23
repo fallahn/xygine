@@ -45,6 +45,7 @@ namespace
     const float initialJumpVelocity = 840.f;
     const float minJumpVelocity = -initialJumpVelocity * 0.35f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocit
     const float dyingTime = 2.f;
+    const float invincibleTime = 2.f;
 }
 
 PlayerSystem::PlayerSystem(xy::MessageBus& mb, bool server)
@@ -103,6 +104,7 @@ void PlayerSystem::process(float dt)
 
 
             //state specific...
+            player.timer -= delta;
             if (player.state == Player::State::Walking)
             {
                 if ((currentMask & InputFlag::Up)
@@ -134,13 +136,14 @@ void PlayerSystem::process(float dt)
                 tx.move({ 0.f, player.velocity * delta });
                 player.canShoot = false;
 
-                player.dyingTime -= delta;
-                if (player.dyingTime < 0)
+                if (player.timer < 0) //respawn
                 {
                     tx.setPosition(player.spawnPosition);
                     player.state = Player::State::Walking;
                     player.direction = 
                         (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
+
+                    player.timer = invincibleTime;
 
                     //TODO raise message
                 }
@@ -192,7 +195,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     tx.setPosition(state.x, state.y);
     player.state = state.playerState;
     player.velocity = state.playerVelocity;
-    player.dyingTime = state.playerDieTime;
+    player.timer = state.playerTimer;
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
@@ -217,6 +220,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                 player.canJump = true;
             }
 
+            player.timer -= delta;
             if (player.state == Player::State::Walking)
             {
                 if (player.history[idx].mask & InputFlag::Up
@@ -243,9 +247,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                 //dying
                 player.velocity += gravity * delta;
                 player.velocity = std::min(player.velocity, maxVelocity);
-                tx.move({ 0.f, player.velocity * delta });
-
-                player.dyingTime -= delta;
+                tx.move({ 0.f, player.velocity * delta });             
             }
 
 
@@ -380,13 +382,14 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                     }
                     break;
                 case CollisionType::NPC:
-                    if (player.state != Player::State::Dying)
+                    if (player.state != Player::State::Dying
+                        && player.timer < 0)
                     {
                         const auto& npc = man.otherEntity.getComponent<NPC>();
                         if (npc.state != NPC::State::Bubble && npc.state != NPC::State::Dying)
                         {
                             player.state = Player::State::Dying;
-                            player.dyingTime = dyingTime;
+                            player.timer = dyingTime;
 
                             entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
 

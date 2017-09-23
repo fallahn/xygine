@@ -49,6 +49,7 @@ source distribution.
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
+#include <xyginext/ecs/components/Callback.hpp>
 
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
@@ -59,6 +60,7 @@ source distribution.
 #include <xyginext/ecs/systems/CameraSystem.hpp>
 #include <xyginext/ecs/systems/QuadTree.hpp>
 #include <xyginext/ecs/systems/ParticleSystem.hpp>
+#include <xyginext/ecs/systems/CallbackSystem.hpp>
 
 #include <xyginext/graphics/SpriteSheet.hpp>
 #include <xyginext/graphics/postprocess/ChromeAb.hpp>
@@ -178,6 +180,7 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::CommandSystem>(mb);
+    m_scene.addSystem<xy::CallbackSystem>(mb);
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
@@ -679,6 +682,24 @@ void GameState::spawnClient(const ClientData& data)
 
         //entity.addComponent<xy::Camera>() = m_scene.getActiveCamera().getComponent<xy::Camera>();
         //m_scene.setActiveCamera(entity);
+
+        //temp for now just to flash player when invincible
+        entity.addComponent<xy::Callback>().function = 
+            [](xy::Entity entity, float dt)
+        {
+            static sf::Color colour = sf::Color::White;
+            if (entity.getComponent<Player>().timer > 0
+                && entity.getComponent<Player>().state != Player::State::Dying)
+            {
+                colour.a = (colour.a == 0) ? 255 : 0;
+                entity.getComponent<xy::Sprite>().setColour(colour);
+            }
+            else
+            {
+                entity.getComponent<xy::Sprite>().setColour(sf::Color::White);
+            }
+        };
+        entity.getComponent<xy::Callback>().active = true;
     }
     else
     {

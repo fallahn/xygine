@@ -208,7 +208,7 @@ void GameServer::update()
                     state.clientTime = player.history[player.lastUpdatedInput].timestamp;
                     state.playerState = player.state;
                     state.playerVelocity = player.velocity;
-                    state.playerDieTime = player.dyingTime;
+                    state.playerTimer = player.timer;
 
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
                 }

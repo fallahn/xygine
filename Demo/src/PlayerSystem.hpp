@@ -61,7 +61,7 @@ struct Player final
     }direction = Direction::Right;
 
     sf::Vector2f spawnPosition;
-    float dyingTime = 0.f;
+    float timer = 2.f; //times invulnerability when spawning, and time to respawn
 };
 
 class PlayerSystem final : public xy::System
