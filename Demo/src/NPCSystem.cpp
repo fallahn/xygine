@@ -141,7 +141,14 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
             }
                 break;
             case CollisionType::Teleport:
-                tx.move(0.f, -(TeleportDistance - NPCSize));
+                if (manifold.normal.y < 1)
+                {
+                    tx.move(0.f, -(TeleportDistance - NPCSize));
+                }
+                else
+                {
+                    tx.move(0.f, (TeleportDistance - NPCSize));
+                }
                 break;
             }
         }
@@ -343,6 +350,16 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
                 }
             }
                 return;
+            case CollisionType::Teleport:
+                if (manifold.normal.y < 1)
+                {
+                    tx.move(0.f, -TeleportDistance);
+                }
+                else
+                {
+                    tx.move(0.f, TeleportDistance);
+                }
+                break;
             }
         }
     }

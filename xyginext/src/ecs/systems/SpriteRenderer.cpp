@@ -122,9 +122,5 @@ void SpriteRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
             states.transform = tx;
             rt.draw(sprite.m_vertices.data(), 4, sf::Quads, states);
         }
-        else
-        {
-            std::cout << "Left " << bounds.left << ", Top " << bounds.top << ", Width " << bounds.width << ", Height " << bounds.height <<  std::endl;
-        }
     }
 }
