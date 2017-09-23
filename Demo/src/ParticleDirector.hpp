@@ -25,45 +25,49 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_BUBBLE_SYSTEM_HPP_
-#define DEMO_BUBBLE_SYSTEM_HPP_
+#ifndef DEMO_PARTICLE_DIRECTOR_HPP_
+#define DEMO_APRTICLE_DIRECTOR_HPP_
 
-#include <xyginext/ecs/System.hpp>
-#include <xyginext/network/NetHost.hpp>
+#include <xyginext/ecs/Director.hpp>
+#include <xyginext/ecs/Entity.hpp>
 
-#include <SFML/Config.hpp>
+#include <xyginext/ecs/components/ParticleEmitter.hpp>
+
+#include <vector>
+#include <array>
 
 namespace xy
 {
-    class Transform;
+    class TextureResource;
 }
 
-struct Bubble final
-{
-    sf::Uint8 player = 0;
-    enum
-    {
-        Spawning,
-        Normal
-    }state = Spawning;
-    float lifetime = 4.f;
-    float spawntime = 0.2f;
-    sf::Vector2f velocity;
-};
-
-class BubbleSystem final : public xy::System
+class ParticleDirector final : public xy::Director 
 {
 public:
-    BubbleSystem(xy::MessageBus&, xy::NetHost&);
+    explicit ParticleDirector(xy::TextureResource&);
 
     void handleMessage(const xy::Message&) override;
+
+    void handleEvent(const sf::Event&) override;
+
     void process(float) override;
 
 private:
-    xy::NetHost& m_host;
 
-    void doCollision(xy::Entity);
-    void killBubble(xy::Entity);
+    enum SettingsID
+    {
+        BubblePop,
+        Count
+    };
+
+    std::array<xy::EmitterSettings, SettingsID::Count> m_settings;
+
+    std::size_t m_nextFreeEmitter;
+    std::vector<xy::Entity> m_emitters;
+
+    void resizeEmitters();
+    xy::Entity getNextEntity();
 };
 
-#endif //DEMO_BUBBLE_SYSTEM_HPP_
+
+#endif //DEMO_PARTICLE_DIRECTOR_HPP_

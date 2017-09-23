@@ -38,15 +38,13 @@ struct AnimationController final
 {
     enum Animation
     {
-        Idle, Walk, Shoot, Die, JumpUp, JumpDown, Count
+        Idle, Walk, Shoot, Die, JumpUp, JumpDown, TrappedOne, TrappedTwo, Count
     }currentAnim = Animation::Idle;
 
     std::array<std::size_t, Animation::Count> animationMap{};
-
-    Animation previousAnimation = Animation::Idle;
-    sf::Vector2f lastPostion;
-    sf::Vector2f lastVelocity;
-    sf::Int32 actorID = -1;
+    Animation prevAnimation = Animation::Idle;
+    Animation nextAnimation = Animation::Idle;
+    float direction = 1.f;
 };
 
 class AnimationControllerSystem final : public xy::System

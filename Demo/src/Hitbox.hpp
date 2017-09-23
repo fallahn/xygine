@@ -47,7 +47,8 @@ enum class CollisionType
     Solid,
     Teleport,
     Bubble,
-    NPC
+    NPC,
+    Fruit
 };
 
 struct Manifold final

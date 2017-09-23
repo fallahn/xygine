@@ -75,6 +75,16 @@ void ConfigProperty::setValue(sf::Vector3f v)
     m_value = std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z);
 }
 
+void ConfigProperty::setValue(sf::FloatRect v)
+{
+    m_value = std::to_string(v.left) + "," + std::to_string(v.top) + "," + std::to_string(v.width) + "," + std::to_string(v.height);
+}
+
+void ConfigProperty::setValue(sf::Color v)
+{
+    m_value = std::to_string(v.r) + "," + std::to_string(v.g) + "," + std::to_string(v.b) + "," + std::to_string(v.a);
+}
+
 std::vector<float> ConfigProperty::valueAsArray() const
 {
     std::vector<float> retval;

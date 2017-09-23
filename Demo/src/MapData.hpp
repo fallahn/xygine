@@ -42,7 +42,8 @@ namespace ActorID
         Whirlybob, Clocksy,
         BubbleOne,
         BubbleTwo,
-        Client
+        FruitSmall,
+        FruitLarge
     };
 }
 
@@ -89,6 +90,8 @@ struct ActorState
     float y = 0.f;
     Actor actor;
     sf::Int32 serverTime = 0;
+    float animationDirection = 1.f;
+    sf::Int32 animationID = 0;
 };
 //client state for client side reconciliation
 struct ClientState final : public ActorState
@@ -96,6 +99,7 @@ struct ClientState final : public ActorState
     sf::Int64 clientTime = 0;
     Player::State playerState = Player::State::Walking;
     float playerVelocity = 0.f;
+    float playerTimer = 0.f;
 };
 
 //actor events for spawn/despawn etc

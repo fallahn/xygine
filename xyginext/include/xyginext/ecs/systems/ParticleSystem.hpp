@@ -76,7 +76,7 @@ namespace xy
         std::size_t m_arrayCount;
         std::size_t m_activeArrayCount;
 
-        sf::Texture m_dummyTexture;//used to enable tex coords in which we fudge rotation and scale
+        sf::Texture m_dummyTexture;//used to enable tex coords within which we fudge rotation and scale
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };

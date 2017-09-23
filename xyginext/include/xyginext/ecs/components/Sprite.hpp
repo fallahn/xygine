@@ -117,7 +117,7 @@ namespace xy
         /*!
         \brief Returns the local (pre transform) bounds
         */
-        sf::FloatRect getLocalBounds() const { return m_textureRect; }
+        sf::FloatRect getLocalBounds() const { return { {}, getSize() }; }
 
         /*!
         \brief Returns the size of the sprite

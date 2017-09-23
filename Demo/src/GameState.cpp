@@ -35,6 +35,8 @@ source distribution.
 #include "CollisionSystem.hpp"
 #include "sha1.hpp"
 #include "SpriteIDs.hpp"
+#include "MessageIDs.hpp"
+#include "ParticleDirector.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -47,6 +49,7 @@ source distribution.
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
+#include <xyginext/ecs/components/Callback.hpp>
 
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
@@ -56,6 +59,8 @@ source distribution.
 #include <xyginext/ecs/systems/AudioSystem.hpp>
 #include <xyginext/ecs/systems/CameraSystem.hpp>
 #include <xyginext/ecs/systems/QuadTree.hpp>
+#include <xyginext/ecs/systems/ParticleSystem.hpp>
+#include <xyginext/ecs/systems/CallbackSystem.hpp>
 
 #include <xyginext/graphics/SpriteSheet.hpp>
 #include <xyginext/graphics/postprocess/ChromeAb.hpp>
@@ -103,7 +108,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     camera.setView(view.getSize());
     camera.setViewport(view.getViewport());
 
-    //TODO replace this
+    //TODO replace this when creating UI
     m_timeoutText.setFillColor(sf::Color::Red);
     m_timeoutText.setFont(m_fontResource.get("buns"));
     quitLoadingScreen();
@@ -175,10 +180,13 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::CommandSystem>(mb);
-    m_scene.addSystem<xy::SpriteRenderer>(mb);    
+    m_scene.addSystem<xy::CallbackSystem>(mb);
+    m_scene.addSystem<xy::SpriteRenderer>(mb);
+    m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     
     //m_scene.addPostProcess<xy::PostChromeAb>();
+    m_scene.addDirector<ParticleDirector>(m_textureResource);
 
     //preload textures
     xy::SpriteSheet spriteSheet;
@@ -202,7 +210,16 @@ void GameState::loadAssets()
 
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "clocksy");
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "clocksy");
-    m_animationControllers[SpriteID::Clocksy].actorID = ActorID::Clocksy;
+    m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "clocksy");
+    m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "clocksy");
+    m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "clocksy");
+
+    m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "whirlybob");
+    m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "whirlybob");
+    m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "whirlybob");
+
+
+    m_sprites[SpriteID::FruitSmall] = spriteSheet.getSprite("fruit");
 
     //audio
     //m_soundResource.get("assets/boop_loop.wav");
@@ -288,6 +305,7 @@ bool GameState::loadScene(const MapData& data)
             break;
         case ActorID::Whirlybob:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
+            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::WhirlyBob];
             break;
         case ActorID::Clocksy:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
@@ -363,16 +381,18 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             {
                 entity.getComponent<xy::NetInterpolate>().setTarget({ state.x, state.y }, state.serverTime);
                 //DPRINT("Timestamp", std::to_string(state.timestamp));
+                auto& anim = entity.getComponent<AnimationController>();
+                anim.nextAnimation = static_cast<AnimationController::Animation>(state.animationID);
+                anim.direction = state.animationDirection;
             }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
         break;
-    case PacketID::MapData:
+    case PacketID::MapJoin:
     {
         MapData data = evt.packet.as<MapData>();
 
-        //TODO clear old actors
         //load new actors
         if (loadScene(data))
         {
@@ -567,11 +587,20 @@ sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, co
 
 void GameState::spawnActor(const ActorEvent& actorEvent)
 {
+    auto msg = getContext().appInstance.getMessageBus().post<SceneEvent>(MessageID::SceneMessage);
+    
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(actorEvent.x, actorEvent.y);
     entity.addComponent<Actor>() = actorEvent.actor;
     entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
     entity.addComponent<xy::NetInterpolate>();
+    entity.addComponent<AnimationController>();
+
+    msg->entity = entity;
+    msg->type = SceneEvent::ActorSpawned;
+    msg->actorID = actorEvent.actor.id;
+    msg->x = actorEvent.x;
+    msg->y = actorEvent.y;
 
     switch (actorEvent.actor.type)
     {
@@ -588,6 +617,24 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
         entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
+
+        {
+            xy::Command cmd;
+            cmd.targetFlags = (actorEvent.actor.type == ActorID::BubbleOne) ? CommandID::PlayerOne : CommandID::PlayerTwo;
+            cmd.action = [](xy::Entity entity, float)
+            {
+                auto& controller = entity.getComponent<AnimationController>();
+                controller.currentAnim = AnimationController::Shoot;
+                entity.getComponent<xy::SpriteAnimation>().play(controller.animationMap[AnimationController::Shoot]);
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+        }
+        break;
+    case ActorID::FruitSmall:
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::FruitSmall];
+        entity.addComponent<xy::SpriteAnimation>().play(xy::Util::Random::value(0, 1));
+        entity.getComponent<xy::Sprite>().setDepth(2);
+        entity.getComponent<xy::Transform>().setOrigin(SmallFruitSize / 2.f, SmallFruitSize / 2.f);
         break;
     }
 }
@@ -599,21 +646,23 @@ void GameState::spawnClient(const ClientData& data)
     auto entity = m_scene.createEntity();
     entity.addComponent<Actor>() = data.actor;
     entity.addComponent<xy::Transform>().setPosition(data.spawnX, data.spawnY);
+    entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::PlayerOne];
 
     if (data.actor.type == ActorID::PlayerOne)
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerOne];
         entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
+        entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerOne;
     }
     else
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerTwo];
+        entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerTwo;
     }
 
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
     entity.addComponent<xy::SpriteAnimation>().play(0);
-    entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::PlayerOne];
-    entity.getComponent<AnimationController>().lastPostion = entity.getComponent<xy::Transform>().getPosition();
+    
 
     if (data.peerID == m_client.getPeer().getID())
     {
@@ -622,6 +671,7 @@ void GameState::spawnClient(const ClientData& data)
 
         //add a local controller
         entity.addComponent<Player>().playerNumber = (data.actor.type == ActorID::PlayerOne) ? 0 : 1;
+        entity.getComponent<Player>().spawnPosition = { data.spawnX, data.spawnY };
         m_playerInput.setPlayerEntity(entity);
 
         entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
@@ -630,32 +680,55 @@ void GameState::spawnClient(const ClientData& data)
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
         entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
 
-        entity.getComponent<AnimationController>().actorID = ActorID::Client;
+        //entity.addComponent<xy::Camera>() = m_scene.getActiveCamera().getComponent<xy::Camera>();
+        //m_scene.setActiveCamera(entity);
+
+        //temp for now just to flash player when invincible
+        entity.addComponent<xy::Callback>().function = 
+            [](xy::Entity entity, float dt)
+        {
+            static sf::Color colour = sf::Color::White;
+            if (entity.getComponent<Player>().timer > 0
+                && entity.getComponent<Player>().state != Player::State::Dying)
+            {
+                colour.a = (colour.a == 0) ? 255 : 0;
+                entity.getComponent<xy::Sprite>().setColour(colour);
+            }
+            else
+            {
+                entity.getComponent<xy::Sprite>().setColour(sf::Color::White);
+            }
+        };
+        entity.getComponent<xy::Callback>().active = true;
     }
     else
     {
         //add interp controller
-        entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
+        entity.getComponent<xy::CommandTarget>().ID |= CommandID::NetActor;
         entity.addComponent<xy::NetInterpolate>();
-
-        entity.getComponent<AnimationController>().actorID = data.actor.type;
     }
 }
 
 void GameState::killActor(const ActorEvent& actorEvent)
 {
     //kill the scene entity
-    auto id = actorEvent.actor.id;
+    //auto id = actorEvent.actor.id;
     xy::Command cmd;
     cmd.targetFlags = CommandID::NetActor;
-    cmd.action = [&, id](xy::Entity entity, float)
+    cmd.action = [&, actorEvent](xy::Entity entity, float)
     {
-        if (entity.getComponent<Actor>().id == id)
+        if (entity.getComponent<Actor>().id == actorEvent.actor.id)
         {
             m_scene.destroyEntity(entity);
+
+            //raise a message to say who died
+            auto msg = getContext().appInstance.getMessageBus().post<SceneEvent>(MessageID::SceneMessage);
+            msg->entity = entity;
+            msg->type = SceneEvent::ActorRemoved;
+            msg->actorID = actorEvent.actor.type;
+            msg->x = actorEvent.x;
+            msg->y = actorEvent.y;
         }
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
-
-    //TODO raise a message to say who died
 }

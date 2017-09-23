@@ -72,7 +72,7 @@ void Camera::setBounds(sf::FloatRect bounds)
     m_bounds = bounds;
 }
 
-void Camera::setZoom(float zoom)
+void Camera::zoom(float zoom)
 {
     XY_ASSERT(zoom > 0, "Value must be larger than 0");
     m_zoom = zoom;

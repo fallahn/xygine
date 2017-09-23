@@ -38,6 +38,7 @@ namespace SpriteID
         PlayerTwo,
         WhirlyBob,
         Clocksy,
+        FruitSmall,
 
         Count
     };

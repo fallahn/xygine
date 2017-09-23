@@ -80,8 +80,8 @@ namespace xy
 
         /*!
         \brief Attempts to retrieve the value as the requested type.
-        Valid types are : std::string, int32, float, bool, glm::vec2,
-        glm::vec3, glm::vec4, cro::FloatRect, cro::Colour
+        Valid types are : std::string, sf::Int32, float, bool, sf::Vector2f,
+        sf::Vector3f, sf::FloatRect, sf::Color
         */
         template <typename T>
         T getValue() const;// = delete;
@@ -93,6 +93,8 @@ namespace xy
         void setValue(bool v);
         void setValue(sf::Vector2f v);
         void setValue(sf::Vector3f v);
+        void setValue(sf::FloatRect);
+        void setValue(sf::Color);
         
     private:
         std::string m_value;

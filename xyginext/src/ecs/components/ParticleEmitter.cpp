@@ -34,7 +34,8 @@ using namespace xy;
 ParticleEmitter::ParticleEmitter()
     : m_arrayIndex      (0),
     m_nextFreeParticle  (0),
-    m_running           (false)
+    m_running           (false),
+    m_releaseCount      (-1)
 {
 
 }
@@ -43,6 +44,11 @@ ParticleEmitter::ParticleEmitter()
 void ParticleEmitter::start()
 {
     m_running = true;
+
+    if (settings.releaseCount)
+    {
+        m_releaseCount = settings.releaseCount;
+    }
 }
 
 void ParticleEmitter::stop()
@@ -91,6 +97,10 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             {
                 initialVelocity = p.getValue<sf::Vector2f>();
             }
+            else if (name == "spread")
+            {
+                spread = p.getValue<float>() / 2.f; //because the initial rotation is +- this
+            }
             else if (name == "lifetime")
             {
                 lifetime = p.getValue<float>();
@@ -101,7 +111,6 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             }
             else if (name == "colour")
             {
-                //glm::vec4 c = p.getValue<glm::vec4>();
                 colour = p.getValue<sf::Color>();
             }
             else if (name == "rotation_speed")
@@ -120,9 +129,17 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             {
                 emitRate = p.getValue<float>();
             }
+            else if (name == "emit_count")
+            {
+                emitCount = p.getValue<sf::Int32>();
+            }
             else if (name == "spawn_radius")
             {
                 spawnRadius = p.getValue<float>();
+            }
+            else if (name == "release_count")
+            {
+                releaseCount = p.getValue<sf::Int32>();
             }
         }
 

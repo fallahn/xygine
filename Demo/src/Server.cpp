@@ -30,6 +30,7 @@ source distribution.
 #include "PacketIDs.hpp"
 #include "ActorSystem.hpp"
 #include "PlayerSystem.hpp"
+#include "AnimationController.hpp"
 #include "CommandIDs.hpp"
 #include "ServerMessages.hpp"
 #include "CollisionSystem.hpp"
@@ -38,6 +39,7 @@ source distribution.
 #include "sha1.hpp"
 #include "BubbleSystem.hpp"
 #include "NPCSystem.hpp"
+#include "FruitSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -175,6 +177,7 @@ void GameServer::update()
             {
                 const auto& actorComponent = actor.getComponent<Actor>();
                 const auto& tx = actor.getComponent<xy::Transform>().getPosition();
+                const auto& anim = actor.getComponent<AnimationController>();
 
                 ActorState state;
                 state.actor.id = actorComponent.id;
@@ -182,6 +185,8 @@ void GameServer::update()
                 state.x = tx.x;
                 state.y = tx.y;
                 state.serverTime = m_serverTime.getElapsedTime().asMilliseconds();
+                state.animationDirection = anim.direction;
+                state.animationID = anim.nextAnimation;
 
                 m_host.broadcastPacket(PacketID::ActorUpdate, state, xy::NetFlag::Unreliable);
             }
@@ -203,6 +208,7 @@ void GameServer::update()
                     state.clientTime = player.history[player.lastUpdatedInput].timestamp;
                     state.playerState = player.state;
                     state.playerVelocity = player.velocity;
+                    state.playerTimer = player.timer;
 
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
                 }
@@ -220,7 +226,7 @@ void GameServer::handleConnect(const xy::NetEvent& evt)
     //TODO check not existing client
 
     //send map name, list of actor ID's up to count
-    m_host.sendPacket(evt.peer, PacketID::MapData, m_mapData, xy::NetFlag::Reliable, 1);
+    m_host.sendPacket(evt.peer, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
 }
 
 void GameServer::handleDisconnect(const xy::NetEvent& evt)
@@ -354,9 +360,10 @@ void GameServer::initScene()
     m_scene.addSystem<CollisionSystem>(m_messageBus, true);    
     m_scene.addSystem<ActorSystem>(m_messageBus);
     m_scene.addSystem<BubbleSystem>(m_messageBus, m_host);
-    m_scene.addSystem<NPCSystem>(m_messageBus);
+    m_scene.addSystem<NPCSystem>(m_messageBus, m_host);
+    m_scene.addSystem<FruitSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
-    m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
+    //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
 }
 
@@ -464,8 +471,11 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
     entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
 
+    entity.addComponent<AnimationController>();
+
     //add client controller
     entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);
+    entity.getComponent<Player>().spawnPosition = entity.getComponent<xy::Transform>().getPosition();
     if (player == 1) entity.getComponent<Player>().direction = Player::Direction::Left;
     entity.addComponent<xy::CommandTarget>().ID = (player == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
 
@@ -484,6 +494,8 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask);
     entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, NPCSize, NPCSize });
+
+    entity.addComponent<AnimationController>();
 
     entity.addComponent<NPC>();
     switch (id)

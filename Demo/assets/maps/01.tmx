@@ -9,30 +9,30 @@
   </data>
  </layer>
  <objectgroup color="#00aa00" name="Solid">
-  <object id="2" x="416" y="64" width="192" height="96"/>
-  <object id="3" x="64" y="64" width="224" height="96"/>
-  <object id="4" x="736" y="64" width="224" height="96"/>
-  <object id="5" x="736" y="928" width="224" height="96"/>
-  <object id="6" x="416" y="928" width="192" height="96"/>
-  <object id="7" x="64" y="928" width="224" height="96"/>
+  <object id="2" x="416" y="0" width="192" height="160"/>
+  <object id="3" x="64" y="0" width="224" height="160"/>
+  <object id="4" x="736" y="0" width="224" height="160"/>
+  <object id="5" x="736" y="928" width="224" height="112"/>
+  <object id="6" x="416" y="928" width="192" height="112"/>
+  <object id="7" x="64" y="928" width="224" height="112"/>
   <object id="8" x="960" y="128" width="64" height="832"/>
   <object id="9" x="0" y="128" width="64" height="832"/>
-  <object id="19" x="288" y="0" width="128" height="64"/>
-  <object id="20" x="608" y="0" width="128" height="64"/>
  </objectgroup>
  <objectgroup color="#ff007f" name="Teleport">
-  <object id="21" x="288" y="1024" width="128" height="64"/>
-  <object id="22" x="608" y="1024" width="128" height="64"/>
+  <object id="21" x="288" y="1040" width="128" height="48"/>
+  <object id="22" x="608" y="1040" width="128" height="48"/>
+  <object id="19" x="288" y="0" width="128" height="10"/>
+  <object id="20" x="608" y="0" width="128" height="10"/>
  </objectgroup>
  <objectgroup color="#00ff00" name="Platform">
   <object id="10" type="platform" x="64" y="288" width="192" height="32"/>
   <object id="14" type="platform" x="640" y="608" width="320" height="32"/>
   <object id="12" type="platform" x="704" y="448" width="256" height="32"/>
-  <object id="15" type="platform" x="576" y="768" width="320" height="32"/>
+  <object id="15" type="platform" x="576" y="768" width="304" height="32"/>
   <object id="17" type="platform" x="64" y="608" width="320" height="32"/>
   <object id="11" type="platform" x="768" y="288" width="192" height="32"/>
   <object id="13" type="platform" x="64" y="448" width="256" height="32"/>
-  <object id="16" type="platform" x="128" y="768" width="320" height="32"/>
+  <object id="16" type="platform" x="144" y="768" width="304" height="32"/>
  </objectgroup>
  <objectgroup name="Spawn">
   <object id="28" name="whirlybob" x="128" y="208" width="16" height="16"/>

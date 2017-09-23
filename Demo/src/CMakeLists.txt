@@ -5,11 +5,13 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/ClientServerShared.cpp
   ${PROJECT_DIR}/CollisionSystem.cpp
   ${PROJECT_DIR}/ErrorState.cpp
+  ${PROJECT_DIR}/FruitSystem.cpp
   ${PROJECT_DIR}/Game.cpp
   ${PROJECT_DIR}/GameState.cpp
   ${PROJECT_DIR}/main.cpp
   ${PROJECT_DIR}/MenuState.cpp
   ${PROJECT_DIR}/NPCSystem.cpp
+  ${PROJECT_DIR}/ParticleDirector.cpp
   ${PROJECT_DIR}/PlayerInput.cpp
   ${PROJECT_DIR}/PlayerSystem.cpp
   ${PROJECT_DIR}/Server.cpp

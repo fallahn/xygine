@@ -26,22 +26,26 @@ source distribution.
 *********************************************************************/
 
 #include "PlayerSystem.hpp"
+#include "AnimationController.hpp"
 #include "MapData.hpp"
 #include "Hitbox.hpp"
 #include "MessageIDs.hpp"
 #include "ClientServerShared.hpp"
+#include "NPCSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/util/Vector.hpp>
 #include <xyginext/core/App.hpp>
 
+#include <xyginext/ecs/components/Text.hpp>
+
 namespace
 {
-    const float speed = 400.f;
-    const float maxVelocity = 800.f;
-    const float gravity = 2200.f;
+    const float speed = 280.f;
     const float initialJumpVelocity = 840.f;
-    const float minJumpVelocity = -initialJumpVelocity * 0.35f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocity
+    const float minJumpVelocity = -initialJumpVelocity * 0.35f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocit
+    const float dyingTime = 2.f;
+    const float invincibleTime = 2.f;
 }
 
 PlayerSystem::PlayerSystem(xy::MessageBus& mb, bool server)
@@ -51,6 +55,7 @@ PlayerSystem::PlayerSystem(xy::MessageBus& mb, bool server)
     requireComponent<Player>();
     requireComponent<xy::Transform>();
     requireComponent<CollisionComponent>();
+    requireComponent<AnimationController>();
 }
 
 //public
@@ -64,6 +69,8 @@ void PlayerSystem::process(float dt)
         auto& player = entity.getComponent<Player>();
         auto& tx = entity.getComponent<xy::Transform>();
 
+        float xMotion = tx.getPosition().x; //used for animation, below
+
         //current input actually points to next empty slot.
         std::size_t idx = (player.currentInput + player.history.size() - 1) % player.history.size();
 
@@ -73,7 +80,32 @@ void PlayerSystem::process(float dt)
             auto delta = getDelta(player.history, player.lastUpdatedInput);
             auto currentMask = player.history[player.lastUpdatedInput].mask;
 
-            if (player.state != Player::State::Jumping)
+            //let go of jump so enable jumping again
+            if ((currentMask & InputFlag::Up) == 0)
+            {
+                player.canJump = true;
+            }
+
+            //if shoot was pressed but not last frame, raise message
+            //note this is NOT reconciled and ammo actors are entirely server side
+            if ((currentMask & InputFlag::Shoot) && player.canShoot)
+            {
+                auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                msg->entity = entity;
+                msg->type = PlayerEvent::FiredWeapon;
+
+                player.canShoot = false;
+            }
+            else if ((currentMask & InputFlag::Shoot) == 0
+                && player.state != Player::State::Dying)
+            {
+                player.canShoot = true;
+            }
+
+
+            //state specific...
+            player.timer -= delta;
+            if (player.state == Player::State::Walking)
             {
                 if ((currentMask & InputFlag::Up)
                     && player.canJump)
@@ -83,7 +115,7 @@ void PlayerSystem::process(float dt)
                     player.canJump = false;
                 }
             }
-            else
+            else if(player.state == Player::State::Jumping)
             {
                 //variable jump height
                 if ((currentMask & InputFlag::Up) == 0
@@ -96,39 +128,59 @@ void PlayerSystem::process(float dt)
                 player.velocity += gravity * delta;
                 player.velocity = std::min(player.velocity, maxVelocity);
             }
-
-            //let go of jump so enable jumping again
-            if ((currentMask & InputFlag::Up) == 0)
+            else
             {
-                player.canJump = true;
-            }
-
-            //if shoot was pressed but not last frame, raise message
-            //note this is NOT reconciled and ammo actors are entirely server side
-            if ((currentMask & InputFlag::Shoot) && player.canShoot/*== 0 && (currentMask & InputFlag::Shoot)*/)
-            {
-                auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
-                msg->entity = entity;
-                msg->type = PlayerEvent::FiredWeapon;
-
+                //dying
+                player.velocity += gravity * delta;
+                player.velocity = std::min(player.velocity, maxVelocity);
+                tx.move({ 0.f, player.velocity * delta });
                 player.canShoot = false;
-            }
-            else if ((currentMask & InputFlag::Shoot) == 0)
-            {
-                player.canShoot = true;
+
+                if (player.timer < 0) //respawn
+                {
+                    tx.setPosition(player.spawnPosition);
+                    player.state = Player::State::Walking;
+                    player.direction = 
+                        (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
+
+                    player.timer = invincibleTime;
+
+                    //TODO raise message
+                }
             }
             
-            auto motion = parseInput(currentMask);
-            tx.move(speed * motion * delta);
-            if (motion.x > 0)
+            //move with input if not dying
+            if (player.state != Player::State::Dying)
             {
-                player.direction = Player::Direction::Right;
-            }
-            else if (motion.x < 0)
-            {
-                player.direction = Player::Direction::Left;
+                auto motion = parseInput(currentMask);
+                tx.move(speed * motion * delta);
+                if (motion.x > 0)
+                {
+                    player.direction = Player::Direction::Right;
+                }
+                else if (motion.x < 0)
+                {
+                    player.direction = Player::Direction::Left;
+                }
             }
             player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();
+        }
+
+        //update animation state
+        auto& animController = entity.getComponent<AnimationController>();
+        animController.direction = (player.direction == Player::Direction::Left) ? 1.f : -1.f;
+        if (player.state == Player::State::Jumping)
+        {
+            animController.nextAnimation = (player.velocity > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
+        }
+        else if(player.state == Player::State::Walking)
+        {
+            xMotion = tx.getPosition().x - xMotion;
+            animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
+        }
+        else
+        {
+            animController.nextAnimation = AnimationController::Die;
         }
     }
 }
@@ -143,6 +195,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     tx.setPosition(state.x, state.y);
     player.state = state.playerState;
     player.velocity = state.playerVelocity;
+    player.timer = state.playerTimer;
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
@@ -161,7 +214,14 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
         {
             float delta = getDelta(player.history, idx);
             
-            if (player.state != Player::State::Jumping)
+            //let go of jump so enable jumping again
+            if ((player.history[idx].mask & InputFlag::Up) == 0)
+            {
+                player.canJump = true;
+            }
+
+            player.timer -= delta;
+            if (player.state == Player::State::Walking)
             {
                 if (player.history[idx].mask & InputFlag::Up
                     && player.canJump)
@@ -170,7 +230,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                     player.velocity = -initialJumpVelocity;
                 }
             }
-            else
+            else if(player.state == Player::State::Jumping)
             {
                 if ((player.history[idx].mask & InputFlag::Up) == 0
                     && player.velocity < minJumpVelocity)
@@ -182,25 +242,43 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                 player.velocity += gravity * delta;
                 player.velocity = std::min(player.velocity, maxVelocity);
             }
-
-            //let go of jump so enable jumping again
-            if ((player.history[idx].mask & InputFlag::Up) == 0)
+            else
             {
-                player.canJump = true;
+                //dying
+                player.velocity += gravity * delta;
+                player.velocity = std::min(player.velocity, maxVelocity);
+                tx.move({ 0.f, player.velocity * delta });             
             }
 
-            auto motion = parseInput(player.history[idx].mask);
-            tx.move(speed * motion * delta);
-            if(motion.x > 0)
+
+            if (player.state != Player::State::Dying)
             {
-                player.direction = Player::Direction::Right;
-            }
-            else if (motion.x < 0)
-            {
-                player.direction = Player::Direction::Left;
+                auto motion = parseInput(player.history[idx].mask);
+                tx.move(speed * motion * delta);
+                if (motion.x > 0)
+                {
+                    player.direction = Player::Direction::Right;
+                }
+                else if (motion.x < 0)
+                {
+                    player.direction = Player::Direction::Left;
+                }
             }
             idx = (idx + 1) % player.history.size();
         }
+    }
+
+    //update resulting animation
+    auto& animController = entity.getComponent<AnimationController>();
+    animController.direction = (player.direction == Player::Direction::Left) ? 1.f : -1.f;
+    if (player.state == Player::State::Jumping)
+    {
+        animController.nextAnimation = (player.velocity > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
+    }
+    else
+    {
+        float xMotion = tx.getPosition().x - state.x;
+        animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
     }
 }
 
@@ -265,7 +343,11 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                     if (man.normal.y < 0 && player.canLand)
                     {
                         player.velocity = 0.f;
-                        player.state = Player::State::Walking;
+                        if (player.state == Player::State::Jumping)
+                        {
+                            //don't switch if we're dying
+                            player.state = Player::State::Walking;
+                        }
 
                         tx.move(man.normal * man.penetration);
                         break;
@@ -278,7 +360,10 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                     if (man.normal.y < 0 && player.velocity > 0)
                     {
                         player.velocity = 0.f;
-                        player.state = Player::State::Walking;
+                        if (player.state == Player::State::Jumping)
+                        {
+                            player.state = Player::State::Walking;
+                        }
                     }
                     else if (man.normal.y > 0)
                     {
@@ -296,10 +381,29 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                         tx.move(0.f, TeleportDistance);
                     }
                     break;
+                case CollisionType::NPC:
+                    if (player.state != Player::State::Dying
+                        && player.timer < 0)
+                    {
+                        const auto& npc = man.otherEntity.getComponent<NPC>();
+                        if (npc.state != NPC::State::Bubble && npc.state != NPC::State::Dying)
+                        {
+                            player.state = Player::State::Dying;
+                            player.timer = dyingTime;
+
+                            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+
+                            //TODO raise dead message
+
+                            return;
+                        }
+                    }
+                    break;
                 }
             }
         }
-        else if (hitbox.getType() == CollisionType::Foot)
+        else if (hitbox.getType() == CollisionType::Foot
+            && player.state != Player::State::Dying)
         {
             //foot sensor
             auto count = hitbox.getCollisionCount();
@@ -307,28 +411,6 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
             {
                 player.state = Player::State::Jumping; //start falling when nothing underneath
             }
-            //else
-            //{
-            //    for (auto i = 0u; i < count; ++i)
-            //    {
-            //        const auto& man = hitbox.getManifolds()[i];
-            //        switch (man.otherType)
-            //        {
-            //        default: break;
-            //        case CollisionType::Solid: break;
-            //        case CollisionType::Platform:
-
-            //            break;
-            //        case CollisionType::Teleport:
-            //            //if moving up move to bottom
-            //            /*if (man.normal.y > 0)
-            //            {
-            //            tx.move(0.f, teleportDist);
-            //            }*/
-            //            break;
-            //        }
-            //    }
-            //}
         }
     }
 }

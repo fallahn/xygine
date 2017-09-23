@@ -30,11 +30,15 @@ source distribution.
 
 #include <SFML/Config.hpp>
 
+#include <xyginext/core/Message.hpp>
+
 namespace MessageID
 {
     enum
     {
-        PlayerMessage
+        PlayerMessage = xy::Message::Count,
+        SceneMessage,
+        AnimationMessage
     };
 }
 
@@ -43,9 +47,33 @@ struct PlayerEvent final
     enum
     {
         FiredWeapon,
-        Died
+        Died,
+        Scored
     }type;
-    xy::Entity entity{ 0,0 };
+    sf::Int32 value = 0;
+    xy::Entity entity;
+};
+
+struct SceneEvent final
+{
+    enum
+    {
+        ActorSpawned,
+        ActorRemoved
+    }type;
+    xy::Entity entity;
+    sf::Int32 actorID = -1;
+    float x = 0.f;
+    float y = 0.f;
+};
+
+struct AnimationEvent final
+{
+    sf::Int32 newAnim = -1;
+    sf::Int32 oldAnim = -1;
+    xy::Entity entity;
+    float x = 0.f;
+    float y = 0.f;
 };
 
 #endif //DEMO_MESSAGE_IDS_HPP_

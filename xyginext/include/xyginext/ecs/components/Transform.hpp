@@ -63,6 +63,14 @@ namespace xy
         */
         sf::Transform getWorldTransform() const;
 
+        /*!
+        \brief Returns the world position of the transform.
+        This is effectively a shortcut for getWorldTransform().transformPoint({}).
+        If this transform does not have a parent transform then getPosition()
+        is probably preferable.
+        */
+        sf::Vector2f getWorldPosition() const;
+
     private:
         Transform* m_parent;
         std::vector<Transform*> m_children;

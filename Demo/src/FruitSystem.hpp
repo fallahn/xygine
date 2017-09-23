@@ -25,45 +25,48 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_BUBBLE_SYSTEM_HPP_
-#define DEMO_BUBBLE_SYSTEM_HPP_
-
-#include <xyginext/ecs/System.hpp>
-#include <xyginext/network/NetHost.hpp>
+#ifndef DEMO_FRUIT_SYSTEM_HPP_
+#define DEMO_FRUIT_SYSTEM_HPP_
 
 #include <SFML/Config.hpp>
 
-namespace xy
-{
-    class Transform;
-}
+#include <xyginext/ecs/System.hpp>
 
-struct Bubble final
+struct Fruit final
 {
-    sf::Uint8 player = 0;
     enum
     {
-        Spawning,
-        Normal
+        Large, Small
+    }size = Small;
+
+    enum
+    {
+        Spawning, Colliding, Idle
     }state = Spawning;
-    float lifetime = 4.f;
-    float spawntime = 0.2f;
+
+    sf::Uint32 value = 50;
     sf::Vector2f velocity;
+    float spawnTime = 0.5f;
+    float lifeTime = 6.f;
 };
 
-class BubbleSystem final : public xy::System
+namespace xy
+{
+    class NetHost;
+}
+
+class FruitSystem final : public xy::System
 {
 public:
-    BubbleSystem(xy::MessageBus&, xy::NetHost&);
+    FruitSystem(xy::MessageBus&, xy::NetHost&);
 
     void handleMessage(const xy::Message&) override;
+
     void process(float) override;
 
 private:
-    xy::NetHost& m_host;
 
-    void doCollision(xy::Entity);
-    void killBubble(xy::Entity);
+    xy::NetHost& m_host;
 };
 
-#endif //DEMO_BUBBLE_SYSTEM_HPP_
+#endif //DEMO_FRUIT_SYSTEM_HPP_

@@ -49,7 +49,7 @@ struct Player final
     sf::Uint8 playerNumber = 0;
     enum class State : sf::Uint8
     {
-        Walking, Jumping
+        Walking, Jumping, Dying
     }state = State::Walking;
     float velocity = 0.f;
     bool canJump = true;
@@ -59,6 +59,9 @@ struct Player final
     {
         Left, Right
     }direction = Direction::Right;
+
+    sf::Vector2f spawnPosition;
+    float timer = 2.f; //times invulnerability when spawning, and time to respawn
 };
 
 class PlayerSystem final : public xy::System

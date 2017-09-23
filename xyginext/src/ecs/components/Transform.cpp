@@ -135,3 +135,8 @@ sf::Transform Transform::getWorldTransform() const
     }
     return getTransform();
 }
+
+sf::Vector2f Transform::getWorldPosition() const
+{
+    return getWorldTransform().transformPoint({});
+}
