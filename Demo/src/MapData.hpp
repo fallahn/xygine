@@ -99,6 +99,7 @@ struct ClientState final : public ActorState
     sf::Int64 clientTime = 0;
     Player::State playerState = Player::State::Walking;
     float playerVelocity = 0.f;
+    float playerDieTime = 0.f;
 };
 
 //actor events for spawn/despawn etc

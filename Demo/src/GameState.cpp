@@ -643,6 +643,7 @@ void GameState::spawnClient(const ClientData& data)
     auto entity = m_scene.createEntity();
     entity.addComponent<Actor>() = data.actor;
     entity.addComponent<xy::Transform>().setPosition(data.spawnX, data.spawnY);
+    entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::PlayerOne];
 
     if (data.actor.type == ActorID::PlayerOne)
     {
@@ -658,7 +659,7 @@ void GameState::spawnClient(const ClientData& data)
 
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
     entity.addComponent<xy::SpriteAnimation>().play(0);
-    entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::PlayerOne];
+    
 
     if (data.peerID == m_client.getPeer().getID())
     {
@@ -667,6 +668,7 @@ void GameState::spawnClient(const ClientData& data)
 
         //add a local controller
         entity.addComponent<Player>().playerNumber = (data.actor.type == ActorID::PlayerOne) ? 0 : 1;
+        entity.getComponent<Player>().spawnPosition = { data.spawnX, data.spawnY };
         m_playerInput.setPlayerEntity(entity);
 
         entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
@@ -674,6 +676,9 @@ void GameState::spawnClient(const ClientData& data)
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
         entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
+
+        //entity.addComponent<xy::Camera>() = m_scene.getActiveCamera().getComponent<xy::Camera>();
+        //m_scene.setActiveCamera(entity);
     }
     else
     {

@@ -53,7 +53,8 @@ sprite_sheet player
 
 			frame = 320,0,64,64
 			frame = 320,64,64,64
-			frame = 192,128,64,64		
+			frame = 192,128,64,64
+			frame = 192,192,64,64
 
 			framerate = 12
 			loop = false
@@ -126,7 +127,8 @@ sprite_sheet player
 
 			frame = 320,0,64,64
 			frame = 320,64,64,64
-			frame = 192,128,64,64		
+			frame = 192,128,64,64
+			frame = 192,192,64,64		
 
 			framerate = 12
 			loop = false

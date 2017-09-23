@@ -89,12 +89,12 @@ namespace xy
         void setBounds(sf::FloatRect);
 
         /*!
-        \brief Sets the zoom level.
+        \brief Sets the zoom level relative to the current view size.
         Contrary to default SFML views a value of 2 will make the scene
         appear 2x larger, and a value of less than 1 will zoom out.
         Values must be greater than 0
         */
-        void setZoom(float);
+        void zoom(float);
 
         /*!
         \brief Returns the current view of the camera, in world units

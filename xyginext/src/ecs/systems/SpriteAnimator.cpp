@@ -61,6 +61,7 @@ void SpriteAnimator::process(float dt)
                 if (animation.m_frameID < lastFrame && !sprite.m_animations[animation.m_id].looped)
                 {
                     animation.stop();
+                    continue;
                 }
 
                 sprite.setTextureRect(sprite.m_animations[animation.m_id].frames[animation.m_frameID]);

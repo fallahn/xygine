@@ -208,6 +208,7 @@ void GameServer::update()
                     state.clientTime = player.history[player.lastUpdatedInput].timestamp;
                     state.playerState = player.state;
                     state.playerVelocity = player.velocity;
+                    state.playerDieTime = player.dyingTime;
 
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
                 }
@@ -474,6 +475,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
 
     //add client controller
     entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);
+    entity.getComponent<Player>().spawnPosition = entity.getComponent<xy::Transform>().getPosition();
     if (player == 1) entity.getComponent<Player>().direction = Player::Direction::Left;
     entity.addComponent<xy::CommandTarget>().ID = (player == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
 
