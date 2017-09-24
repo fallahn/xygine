@@ -264,7 +264,7 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
 
         if (npc.thinkTimer < 0)
         {
-            npc.thinkTimer = thinkTimes[m_currentThinkTime] * 0.125f;
+            npc.thinkTimer = thinkTimes[m_currentThinkTime] * 0.065f;
             m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();
             npc.state = NPC::State::Thinking;
         }
@@ -347,6 +347,12 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
 
                     entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
                     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask & ~CollisionFlags::Player);
+
+                    //raise message
+                    auto* msg = postMessage<NpcEvent>(MessageID::NpcMessage);
+                    msg->type = NpcEvent::Died;
+                    msg->entityID = entity.getIndex();
+                    msg->playerID = player.playerNumber;
                 }
             }
                 return;

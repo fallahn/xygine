@@ -8,6 +8,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/FruitSystem.cpp
   ${PROJECT_DIR}/Game.cpp
   ${PROJECT_DIR}/GameState.cpp
+  ${PROJECT_DIR}/InventoryDirector.cpp
   ${PROJECT_DIR}/main.cpp
   ${PROJECT_DIR}/MenuState.cpp
   ${PROJECT_DIR}/NPCSystem.cpp

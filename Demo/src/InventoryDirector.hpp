@@ -25,47 +25,39 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_FRUIT_SYSTEM_HPP_
-#define DEMO_FRUIT_SYSTEM_HPP_
+#ifndef DEMO_INVENTORY_DIRECTOR_HPP_
+#define DEMO_INVENTORY_DIRECTOR_HPP_
 
-#include <SFML/Config.hpp>
+#include <xyginext/ecs/Director.hpp>
 
-#include <xyginext/ecs/System.hpp>
-
-struct Fruit final
-{
-    enum
-    {
-        Large, Small
-    }size = Small;
-
-    enum
-    {
-        Spawning, Colliding, Idle
-    }state = Spawning;
-
-    sf::Vector2f velocity;
-    float spawnTime = 0.5f;
-    float lifeTime = 6.f;
-};
+#include <array>
 
 namespace xy
 {
     class NetHost;
 }
 
-class FruitSystem final : public xy::System
+class InventoryDirector final : public xy::Director
 {
 public:
-    FruitSystem(xy::MessageBus&, xy::NetHost&);
+    explicit InventoryDirector(xy::NetHost&);
 
     void handleMessage(const xy::Message&) override;
-
-    void process(float) override;
+    void handleEvent(const sf::Event&) override {}
+    void process(float) override {}
 
 private:
-
     xy::NetHost& m_host;
+    
+    struct Inventory final
+    {
+        sf::Uint32 score = 0;
+        sf::Uint8 lives = 3;
+        //TODO letters for bonus
+    };
+    std::array<Inventory, 2> m_playerValues{};
+
+    void sendUpdate(sf::Uint8);
 };
 
-#endif //DEMO_FRUIT_SYSTEM_HPP_
+#endif //DEMO_INVENTORY_DIRECTOR_HPP_

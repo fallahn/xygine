@@ -438,6 +438,12 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
         break;
+    case PacketID::InventoryUpdate:
+    {
+        auto data = evt.packet.as<InventoryUpdate>();
+        std::cout << "Player " << data.playerID << " Score: " << data.score << ", Lives: " << data.lives << std::endl;
+    }
+        break;
     }
 }
 

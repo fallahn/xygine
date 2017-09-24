@@ -122,18 +122,13 @@ namespace xy
         */
         sf::FloatRect getBounds() const { return m_bounds; }
 
-        /*!
-        \brief Returns the current zoom level
-        */
-        float getZoom() const { return m_zoom; }
-
     private:
 
         sf::View m_view;
         Axis m_lockAxis;
         float m_axisValue;
         bool m_lockRotation;
-        float m_zoom;
+
         sf::FloatRect m_bounds;
 
         friend class Scene;
