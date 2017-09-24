@@ -37,6 +37,7 @@ source distribution.
 #include "SpriteIDs.hpp"
 #include "MessageIDs.hpp"
 #include "ParticleDirector.hpp"
+#include "FXDirector.hpp"
 
 #include <xyginext/core/App.hpp>
 
@@ -50,6 +51,8 @@ source distribution.
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
+#include <xyginext/ecs/components/AudioEmitter.hpp>
+#include <xyginext/ecs/components/AudioListener.hpp>
 
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
@@ -61,6 +64,7 @@ source distribution.
 #include <xyginext/ecs/systems/QuadTree.hpp>
 #include <xyginext/ecs/systems/ParticleSystem.hpp>
 #include <xyginext/ecs/systems/CallbackSystem.hpp>
+#include <xyginext/ecs/systems/AudioSystem.hpp>
 
 #include <xyginext/graphics/SpriteSheet.hpp>
 #include <xyginext/graphics/postprocess/ChromeAb.hpp>
@@ -184,9 +188,11 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
+    m_scene.addSystem<xy::AudioSystem>(mb);
     
     //m_scene.addPostProcess<xy::PostChromeAb>();
     m_scene.addDirector<ParticleDirector>(m_textureResource);
+    m_scene.addDirector<FXDirector>();
 
     //preload textures
     xy::SpriteSheet spriteSheet;
@@ -221,8 +227,6 @@ void GameState::loadAssets()
 
     m_sprites[SpriteID::FruitSmall] = spriteSheet.getSprite("fruit");
 
-    //audio
-    //m_soundResource.get("assets/boop_loop.wav");
 }
 
 bool GameState::loadScene(const MapData& data)
@@ -288,6 +292,7 @@ bool GameState::loadScene(const MapData& data)
     entity.addComponent<xy::Transform>();
     
     m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+    m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(1.f);
     //m_scene.getActiveCamera().getComponent<xy::Camera>().setZoom(0.5f);
 
     for (auto i = 0; i < data.actorCount; ++i)

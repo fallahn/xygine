@@ -113,6 +113,10 @@ void PlayerSystem::process(float dt)
                     player.state = Player::State::Jumping;
                     player.velocity = -initialJumpVelocity;
                     player.canJump = false;
+
+                    auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                    msg->type = PlayerEvent::Jumped;
+                    msg->entity = entity;
                 }
             }
             else if(player.state == Player::State::Jumping)

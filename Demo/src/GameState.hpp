@@ -74,7 +74,6 @@ private:
     xy::Scene m_scene;
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
-    xy::SoundResource m_soundResource;
 
     std::array<xy::Sprite, SpriteID::Count> m_sprites;
     std::array<AnimationController, SpriteID::Count> m_animationControllers;

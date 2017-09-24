@@ -6,6 +6,7 @@ set(PROJECT_SRC
   ${PROJECT_DIR}/CollisionSystem.cpp
   ${PROJECT_DIR}/ErrorState.cpp
   ${PROJECT_DIR}/FruitSystem.cpp
+  ${PROJECT_DIR}/FXDirector.cpp
   ${PROJECT_DIR}/Game.cpp
   ${PROJECT_DIR}/GameState.cpp
   ${PROJECT_DIR}/InventoryDirector.cpp
