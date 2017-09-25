@@ -35,7 +35,7 @@ if (NOT BUILD_SHARED_LIBS)
   add_definitions(-DXY_STATIC)
 endif()
 
-# Add XY_DEBUG on Debug and RelWithDebInfo builds
+# Add XY_DEBUG on Debug builds
 if (CMAKE_BUILD_TYPE MATCHES Debug) 
   add_definitions(-DXY_DEBUG)
 endif()
