@@ -25,25 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_COMMAND_ID_HPP_
-#define DEMO_GAME_COMMAND_ID_HPP_
+#ifndef DEMO_FX_DIRECTOR_HPP_
+#define DEMO_FX_DIRECTOR_HPP_
 
-namespace CommandID
+#include <xyginext/ecs/Director.hpp>
+#include <xyginext/resources/Resource.hpp>
+#include <xyginext/ecs/Entity.hpp>
+
+#include <vector>
+
+class FXDirector final : public xy::Director
 {
-    enum
-    {
-        NetActor = 0x1,
-        MenuText = 0x2,
-        PlayerOne = 0x4,
-        PlayerTwo = 0x8,
-        //scoreboard/UI
-        ScoreOne = 0x10,
-        ScoreTwo = 0x20,
-        LivesOne = 0x40,
-        LivesTwo = 0x80,
-        Timeout = 0x100,
-        HighScore = 0x200
-    };
-}
+public:
+    FXDirector();
 
-#endif //DEMO_GAME_COMMAND_ID_HPP_
+    void handleEvent(const sf::Event&) override {}
+    void handleMessage(const xy::Message&) override;
+    void process(float) override;
+
+private:
+
+    xy::SoundResource m_soundResource;
+
+    std::size_t m_nextFreeEntity;
+    std::vector<xy::Entity> m_entities;
+
+    void resizeEntities();
+    xy::Entity getNextEntity();
+};
+
+#endif //DEMO_FX_DIRECTOR_HPP_

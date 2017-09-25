@@ -56,7 +56,7 @@ PostChromeAb::PostChromeAb(bool distort)
         m_shader.loadFromMemory(CHRAB_NO_DISTORT, sf::Shader::Fragment);
     }
 
-#ifdef _DEBUG_
+#ifdef XY_DEBUG
 
     //xy::App::addUserWindow(
     //    [this]()
@@ -66,7 +66,7 @@ PostChromeAb::PostChromeAb(bool distort)
     //    nim::End();
     //}, this);
 
-#endif //_DEBUG_
+#endif //XY_DEBUG
 }
 
 PostChromeAb::~PostChromeAb()

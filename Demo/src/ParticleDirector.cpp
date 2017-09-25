@@ -106,21 +106,7 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
 
 void ParticleDirector::handleEvent(const sf::Event& evt)
 {
-    //if (evt.type == sf::Event::KeyReleased)
-    //{
-    //    if (evt.key.code == sf::Keyboard::T)
-    //    {
-    //        if (m_nextFreeEmitter == m_emitters.size())
-    //        {
-    //            resizeEmitters();
-    //        }
 
-    //        m_emitters[m_nextFreeEmitter].getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    //        m_emitters[m_nextFreeEmitter].getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
-    //        m_emitters[m_nextFreeEmitter].getComponent<xy::ParticleEmitter>().start();
-    //        //m_nextFreeEmitter++;
-    //    }
-    //}
 }
 
 void ParticleDirector::process(float dt)

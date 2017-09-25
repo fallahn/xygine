@@ -66,8 +66,11 @@ void Text::setCharacterSize(sf::Uint32 size)
 
 void Text::setString(const sf::String& str)
 {
-    m_string = str;
-    m_dirty = true;
+    if (m_string != str)
+    {
+        m_string = str;
+        m_dirty = true;
+    }
 }
 
 void Text::setFillColour(sf::Color colour)
@@ -127,7 +130,8 @@ sf::FloatRect Text::getLocalBounds() const
 {
     if (m_dirty)
     {
-
+        //TODO we want to be able to query this without having to wait for
+        //the scene to update at least once first - eg when creating text
     }
 
     return m_localBounds;

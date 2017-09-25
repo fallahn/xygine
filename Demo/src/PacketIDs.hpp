@@ -44,6 +44,7 @@ namespace PacketID
         ClientDisconnected, //copy of client data who disconnected
         ServerMessage, //ident of a message the server wants to print to client console
         ConsoleMessage, //as server message only contains an arbitrary string (prefer ServerMessage where possible)
+        InventoryUpdate, //tells clients to update player inventory display (lives etc)
         Count
     };
 }

@@ -44,7 +44,6 @@ struct Fruit final
         Spawning, Colliding, Idle
     }state = Spawning;
 
-    sf::Uint32 value = 50;
     sf::Vector2f velocity;
     float spawnTime = 0.5f;
     float lifeTime = 6.f;

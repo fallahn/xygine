@@ -65,7 +65,7 @@ Transform::Transform(Transform&& other)
     if (m_parent)
     {
         auto& siblings = m_parent->m_children;
-        for (auto s : siblings)
+        for (auto& s : siblings)
         {
             if (s == &other)
             {
@@ -75,6 +75,12 @@ Transform::Transform(Transform&& other)
         }
     }
     m_children = std::move(other.m_children);
+
+    //update the children's new parent
+    for (auto c : m_children)
+    {
+        c->m_parent = this;
+    }
 }
 
 Transform& Transform::operator=(Transform&& other)
@@ -88,7 +94,7 @@ Transform& Transform::operator=(Transform&& other)
         if (m_parent)
         {
             auto& siblings = m_parent->m_children;
-            for (auto s : siblings)
+            for (auto& s : siblings)
             {
                 if (s == &other)
                 {
@@ -99,6 +105,12 @@ Transform& Transform::operator=(Transform&& other)
         }
 
         m_children = std::move(other.m_children);
+
+        //update the children's new parent
+        for (auto c : m_children)
+        {
+            c->m_parent = this;
+        }
     }
     return *this;
 }
