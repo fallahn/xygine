@@ -159,7 +159,7 @@ namespace xy
         }
     };
 }
-#ifndef _DEBUG_
+#ifndef XY_DEBUG
 #define LOG(message, type)
 #else
 #define LOG(message, type) {\
@@ -168,6 +168,6 @@ fileName = xy::FileSystem::getFileName(fileName); \
 std::stringstream ss; \
 ss << message << " (" << fileName << ", " << __LINE__ << ")"; \
 xy::Logger::log(ss.str(), type);}
-#endif //_DEBUG_
+#endif //XY_DEBUG
 
 #endif //XY_LOGGER_HPP_

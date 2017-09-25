@@ -35,11 +35,11 @@ source distribution.
 #ifndef XY_GL_CHECK_HPP_
 #define XY_GL_CHECK_HPP_
 
-#ifdef _DEBUG_
+#ifdef XY_DEBUG
 #define glCheck(x) do{x; xy::Detail::glErrorCheck(__FILE__, __LINE__, #x);}while (false)
 #else
 #define glCheck(x) (x)
-#endif //_DEBUG_
+#endif //XY_DEBUG
 
 namespace xy
 {

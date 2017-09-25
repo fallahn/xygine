@@ -1,0 +1,109 @@
+sprite_sheet ui
+{
+	src = "assets/images/ui.png"
+	blendmode = alpha
+
+	sprite player_one_lives
+	{
+		bounds = 0,0,32,32
+
+		animation zero
+		{
+			frame = 0,0,0,0
+			framerate = 24
+			loop=true
+		}
+
+		animation one
+		{
+			frame = 0,0,32,32
+
+			framerate = 24
+			loop=true
+		}
+
+		animation two
+		{
+			frame = 0,0,64,32
+
+			framerate = 24
+			loop=true
+		}
+
+		animation three
+		{
+			frame = 0,0,96,32
+
+			framerate = 24
+			loop=true
+		}
+
+		animation four
+		{
+			frame = 0,0,128,32
+
+			framerate = 24
+			loop=true
+		}
+
+		animation five
+		{
+			frame = 0,0,160,32
+
+			framerate = 24
+			loop=true
+		}
+	}
+
+	sprite player_two_lives
+	{
+		bounds = 0,32,32,32
+
+		animation zero
+		{
+			frame = 0,0,0,0
+			framerate = 24
+			loop=true
+		}
+
+		animation one
+		{
+			frame = 0,32,32,32
+
+			framerate = 24
+			loop=true
+		}
+
+		animation two
+		{
+			frame = 0,32,64,32
+
+			framerate = 24
+			loop=true
+		}
+
+		animation three
+		{
+			frame = 0,32,96,32
+
+			framerate = 24
+			loop=true
+		}
+
+		animation four
+		{
+			frame = 0,32,128,32
+
+			framerate = 24
+			loop=true
+		}
+
+		animation five
+		{
+			frame = 0,32,160,32
+
+			framerate = 24
+			loop=true
+		}
+	}
+}

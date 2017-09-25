@@ -93,6 +93,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 {
     launchLoadingScreen();
     loadAssets();
+    loadUI();
     m_client.create(2);
     if (sharedData.hostState == SharedStateData::Host)
     {
@@ -112,9 +113,6 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     camera.setView(view.getSize());
     camera.setViewport(view.getViewport());
 
-    //TODO replace this when creating UI
-    m_timeoutText.setFillColor(sf::Color::Red);
-    m_timeoutText.setFont(m_fontResource.get("buns"));
     quitLoadingScreen();
 }
 
@@ -167,7 +165,6 @@ void GameState::draw()
 {
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
-    rw.draw(m_timeoutText);
 }
 
 //private
@@ -226,7 +223,6 @@ void GameState::loadAssets()
 
 
     m_sprites[SpriteID::FruitSmall] = spriteSheet.getSprite("fruit");
-
 }
 
 bool GameState::loadScene(const MapData& data)
@@ -323,6 +319,79 @@ bool GameState::loadScene(const MapData& data)
     }
 
     return true;
+}
+
+void GameState::loadUI()
+{
+    //timeout msg
+    auto ent = m_scene.createEntity();
+    ent.addComponent<xy::Transform>().setPosition(-410.f, 1010.f);
+    ent.addComponent<xy::Text>(m_fontResource.get("assets/fonts/VeraMono.ttf"));
+    ent.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::Timeout;
+
+    //title texts
+    auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Transform>().setPosition(10.f, 10.f);
+    ent.addComponent<xy::Text>(font);
+    ent.getComponent<xy::Text>().setFillColour(sf::Color(255, 212, 0));
+    ent.getComponent<xy::Text>().setString("PLAYER ONE");
+    ent.getComponent<xy::Text>().setCharacterSize(60);
+    
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 140.f, 10.f);
+    ent.addComponent<xy::Text>(font);
+    ent.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    ent.getComponent<xy::Text>().setString("HIGH SCORE");
+    ent.getComponent<xy::Text>().setCharacterSize(60);
+    
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Transform>().setPosition(MapBounds.width - 260.f, 10.f);
+    ent.addComponent<xy::Text>(font);
+    ent.getComponent<xy::Text>().setFillColour(sf::Color(255, 0, 212));
+    ent.getComponent<xy::Text>().setString("PLAYER TWO");
+    ent.getComponent<xy::Text>().setCharacterSize(60);
+    
+    //score texts
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Transform>().setPosition(10.f, 46.f);
+    ent.addComponent<xy::Text>(font);
+    ent.getComponent<xy::Text>().setString("0");
+    ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::ScoreOne;
+
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 140.f, 46.f);
+    ent.addComponent<xy::Text>(font);
+    ent.getComponent<xy::Text>().setString("0"); //TODO load the high score from config
+    ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::HighScore;
+
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Transform>().setPosition(MapBounds.width - 260.f, 46.f);
+    ent.addComponent<xy::Text>(font);
+    ent.getComponent<xy::Text>().setString("0");
+    ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::ScoreTwo;
+
+
+    //lives display
+    xy::SpriteSheet spriteSheet;
+    spriteSheet.loadFromFile("assets/sprites/ui.spt", m_textureResource);
+
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Transform>().setPosition(10.f, MapBounds.height - 128.f);
+    ent.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_one_lives");
+    ent.addComponent<xy::SpriteAnimation>().play(0);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::LivesOne;
+
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Transform>().setPosition(MapBounds.width - 10.f, MapBounds.height - 128.f);
+    ent.getComponent<xy::Transform>().setScale(-1.f, 1.f);
+    ent.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_two_lives");
+    ent.addComponent<xy::SpriteAnimation>().play(0);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::LivesTwo;
 }
 
 void GameState::handlePacket(const xy::NetEvent& evt)
@@ -446,7 +515,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::InventoryUpdate:
     {
         auto data = evt.packet.as<InventoryUpdate>();
-        std::cout << "Player " << data.playerID << " Score: " << data.score << ", Lives: " << data.lives << std::endl;
+        updateUI(data);
     }
         break;
     }
@@ -457,7 +526,15 @@ void GameState::handleTimeout()
     float currTime = m_clientTimeout.getElapsedTime().asSeconds();
     if (currTime > clientTimeout / 5.f)
     {
-        m_timeoutText.setString("WARNING: Connection Problem\nAuto Disconnect in: " + std::to_string(clientTimeout - currTime));
+        float displayTime = clientTimeout - currTime;
+        
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::Timeout;
+        cmd.action = [displayTime](xy::Entity entity, float)
+        {
+            entity.getComponent<xy::Text>().setString("WARNING: Connection Problem\nAuto Disconnect in: " + std::to_string(displayTime));
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
     
     if (currTime > clientTimeout)
@@ -742,4 +819,34 @@ void GameState::killActor(const ActorEvent& actorEvent)
         }
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+}
+
+void GameState::updateUI(const InventoryUpdate& data)
+{
+    xy::Command scoreCmd;
+    scoreCmd.action = [data](xy::Entity entity, float)
+    {
+        entity.getComponent<xy::Text>().setString(std::to_string(data.score));
+    };
+
+    //TODO check if greater than high score and update
+
+    xy::Command livesCommand;
+    livesCommand.action = [data](xy::Entity entity, float)
+    {
+        entity.getComponent<xy::SpriteAnimation>().play(data.lives);
+    };
+
+    if (data.playerID == 0)
+    {
+        scoreCmd.targetFlags = CommandID::ScoreOne;
+        livesCommand.targetFlags = CommandID::LivesOne;
+    }
+    else
+    {
+        scoreCmd.targetFlags = CommandID::ScoreTwo;
+        livesCommand.targetFlags = CommandID::LivesTwo;
+    }
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(scoreCmd);
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(livesCommand);
 }

@@ -35,7 +35,14 @@ namespace CommandID
         NetActor = 0x1,
         MenuText = 0x2,
         PlayerOne = 0x4,
-        PlayerTwo = 0x8
+        PlayerTwo = 0x8,
+        //scoreboard/UI
+        ScoreOne = 0x10,
+        ScoreTwo = 0x20,
+        LivesOne = 0x40,
+        LivesTwo = 0x80,
+        Timeout = 0x100,
+        HighScore = 0x200
     };
 }
 

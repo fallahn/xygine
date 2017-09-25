@@ -38,7 +38,7 @@ source distribution.
 #define __func__ __FUNCTION__
 #endif //_MSC_VER
 
-#ifdef _DEBUG_
+#ifdef XY_DEBUG
 #define XY_ASSERT(condition, message) \
 do \
 { \
@@ -66,6 +66,6 @@ do \
 #define XY_ASSERT(condition, message)
 #define XY_WARNING(condition, message)
 
-#endif //_DEBUG_
+#endif //XY_DEBUG
 
 #endif //XY_ASSERT_HPP_

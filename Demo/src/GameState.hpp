@@ -86,11 +86,10 @@ private:
     ClientData m_clientData;
     PlayerInput m_playerInput;
 
-    //TODO replace this with the scene UI
-    sf::Text m_timeoutText;
-
     void loadAssets();
     bool loadScene(const MapData&);
+    void loadUI();
+
     void handlePacket(const xy::NetEvent&);
     void handleTimeout();
 
@@ -102,6 +101,8 @@ private:
     void spawnActor(const ActorEvent&);
     void spawnClient(const ClientData&);
     void killActor(const ActorEvent&);
+
+    void updateUI(const InventoryUpdate&);
 };
 
 #endif //DEMO_GAME_STATE_HPP_

@@ -89,7 +89,7 @@ namespace
 
     float elapsedTime = 0.f;
 
-#ifdef _DEBUG_
+#ifdef XY_DEBUG
     float toneMix = 0.95f;
 
     float vignetteRadius = 0.5f;
@@ -99,7 +99,7 @@ namespace
     float flickerAmount = 0.05f;
     float jitterAmount = 0.01f;
     float noiseAmount = 1.f;
-#endif //_DEBUG_
+#endif //XY_DEBUG
 }
 
 PostAntique::PostAntique()
@@ -109,7 +109,7 @@ PostAntique::PostAntique()
         xy::Logger::log("Failed to create Antique post shader", xy::Logger::Type::Error);
     }
 
-#ifdef _DEBUG_
+#ifdef XY_DEBUG
     //xy::App::addUserWindow(
     //    [this]()
     //{
@@ -122,7 +122,7 @@ PostAntique::PostAntique()
     //    nim::DragFloat("Noise Amount", &noiseAmount, 0.01f, 0.f, 2.f);
     //    nim::End();
     //}, this);
-#endif //_DEBUG_
+#endif //XY_DEBUG
 }
 
 PostAntique::~PostAntique()
@@ -143,7 +143,7 @@ void PostAntique::update(float dt)
     elapsedTime += dt;
     m_shader.setUniform("u_time", elapsedTime);
 
-#ifdef _DEBUG_
+#ifdef XY_DEBUG
 
     m_shader.setUniform("u_toneMix", toneMix);
     m_shader.setUniform("u_vignetteRadius", vignetteRadius);
@@ -152,5 +152,5 @@ void PostAntique::update(float dt)
     m_shader.setUniform("u_jitterAmount", jitterAmount);
     m_shader.setUniform("u_noiseAmount", noiseAmount);
 
-#endif //_DEBUG_
+#endif //XY_DEBUG
 }
