@@ -13,6 +13,7 @@ SET(BUILD_SHARED_LIBS true CACHE BOOL "Build Shared libs")
 # We're using c++14
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -Wall -Wextra")
 
 # Only works with SFML version 2.4 and above
 SET(SFML_MIN_VERSION 2.4)
