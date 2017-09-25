@@ -31,6 +31,7 @@ source distribution.
 #include <SFML/Config.hpp>
 
 #include <xyginext/core/Message.hpp>
+#include <xyginext/ecs/Entity.hpp>
 
 namespace MessageID
 {
@@ -38,7 +39,9 @@ namespace MessageID
     {
         PlayerMessage = xy::Message::Count,
         SceneMessage,
-        AnimationMessage
+        AnimationMessage,
+        NpcMessage,
+        ItemMessage
     };
 }
 
@@ -46,11 +49,11 @@ struct PlayerEvent final
 {
     enum
     {
+        Spawned,
         FiredWeapon,
-        Died,
-        Scored
+        Jumped,
+        Died
     }type;
-    sf::Int32 value = 0;
     xy::Entity entity;
 };
 
@@ -65,6 +68,23 @@ struct SceneEvent final
     sf::Int32 actorID = -1;
     float x = 0.f;
     float y = 0.f;
+};
+
+struct NpcEvent final
+{
+    enum
+    {
+        Died
+    }type = Died;
+    sf::Int32 entityID = 0;
+    sf::Uint8 playerID = 0; //who gets points?
+};
+
+//when an item such as fruit or bonus collected
+struct ItemEvent final
+{
+    sf::Uint8 playerID = 0;
+    sf::Int32 actorID = -1;
 };
 
 struct AnimationEvent final

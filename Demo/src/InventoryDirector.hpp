@@ -25,25 +25,39 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_COMMAND_ID_HPP_
-#define DEMO_GAME_COMMAND_ID_HPP_
+#ifndef DEMO_INVENTORY_DIRECTOR_HPP_
+#define DEMO_INVENTORY_DIRECTOR_HPP_
 
-namespace CommandID
+#include <xyginext/ecs/Director.hpp>
+
+#include <array>
+
+namespace xy
 {
-    enum
-    {
-        NetActor = 0x1,
-        MenuText = 0x2,
-        PlayerOne = 0x4,
-        PlayerTwo = 0x8,
-        //scoreboard/UI
-        ScoreOne = 0x10,
-        ScoreTwo = 0x20,
-        LivesOne = 0x40,
-        LivesTwo = 0x80,
-        Timeout = 0x100,
-        HighScore = 0x200
-    };
+    class NetHost;
 }
 
-#endif //DEMO_GAME_COMMAND_ID_HPP_
+class InventoryDirector final : public xy::Director
+{
+public:
+    explicit InventoryDirector(xy::NetHost&);
+
+    void handleMessage(const xy::Message&) override;
+    void handleEvent(const sf::Event&) override {}
+    void process(float) override {}
+
+private:
+    xy::NetHost& m_host;
+    
+    struct Inventory final
+    {
+        sf::Uint32 score = 0;
+        sf::Uint8 lives = 3;
+        //TODO letters for bonus
+    };
+    std::array<Inventory, 2> m_playerValues{};
+
+    void sendUpdate(sf::Uint8);
+};
+
+#endif //DEMO_INVENTORY_DIRECTOR_HPP_

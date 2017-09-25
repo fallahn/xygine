@@ -52,7 +52,7 @@ void AudioSystem::process(float dt)
     auto listener = getScene()->getActiveListener();
     auto listenerPos = listener.getComponent<xy::Transform>().getWorldTransform().transformPoint({});
 
-    sf::Listener::setPosition({ listenerPos.x, listenerPos.y, 0.f });
+    sf::Listener::setPosition({ listenerPos.x, listenerPos.y, 10.f });
     sf::Listener::setGlobalVolume(listener.getComponent<AudioListener>().m_volume * AudioMixer::getMasterVolume() * 100.f);
 
     auto& entities = getEntities();

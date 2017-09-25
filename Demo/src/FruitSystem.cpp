@@ -156,10 +156,9 @@ void FruitSystem::process(float dt)
 
                         m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 
-                        auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
-                        msg->entity = manifolds[j].otherEntity;
-                        msg->type = PlayerEvent::Scored;
-                        msg->value = fruit.value;
+                        auto* msg = postMessage<ItemEvent>(MessageID::ItemMessage);
+                        msg->playerID = manifolds[j].otherEntity.getComponent<Player>().playerNumber;
+                        msg->actorID = (fruit.size == Fruit::Small) ? ActorID::FruitSmall : Fruit::Large;
                     }
                     break;
                 }

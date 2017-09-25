@@ -40,6 +40,8 @@ source distribution.
 #include "BubbleSystem.hpp"
 #include "NPCSystem.hpp"
 #include "FruitSystem.hpp"
+#include "MessageIDs.hpp"
+#include "InventoryDirector.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -161,7 +163,9 @@ void GameServer::update()
             //update scene logic.
             while (!m_messageBus.empty())
             {
-                m_scene.forwardMessage(m_messageBus.poll());
+                auto msg = m_messageBus.poll();
+                handleMessage(msg);
+                m_scene.forwardMessage(msg);
             }
             m_scene.update(updateRate);
         }
@@ -365,6 +369,8 @@ void GameServer::initScene()
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
+
+    m_scene.addDirector<InventoryDirector>(m_host);
 }
 
 void GameServer::loadMap()
@@ -479,6 +485,11 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     if (player == 1) entity.getComponent<Player>().direction = Player::Direction::Left;
     entity.addComponent<xy::CommandTarget>().ID = (player == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
 
+    //raise a message to say this happened
+    auto* msg = m_messageBus.post<PlayerEvent>(MessageID::PlayerMessage);
+    msg->type = PlayerEvent::Spawned;
+    msg->entity = entity;
+
     return entity.getIndex();
 }
 
@@ -518,4 +529,34 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     }
 
     m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+}
+
+void GameServer::handleMessage(const xy::Message& msg)
+{
+    switch (msg.id)
+    {
+    default: break;
+    case MessageID::NpcMessage:
+    {
+        const auto& data = msg.getData<NpcEvent>();
+
+        //remove from list of actors
+        std::size_t i = 0u;
+        for (i; i < m_mapData.actorCount; ++i)
+        {
+            if (m_mapData.actors[i].id == data.entityID)
+            {
+                break;
+            }
+        }
+
+        m_mapData.actorCount--;
+        m_mapData.actors[i] = m_mapData.actors[m_mapData.actorCount];
+
+        LOG(std::to_string(m_mapData.actorCount), xy::Logger::Type::Info);
+
+        //TODO change map when all actors are removed.
+    }
+        break;
+    }
 }

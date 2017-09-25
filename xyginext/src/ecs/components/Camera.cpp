@@ -35,8 +35,7 @@ using namespace xy;
 Camera::Camera()
     : m_lockAxis    (None),
     m_axisValue     (0.f),
-    m_lockRotation  (false),
-    m_zoom          (1.f)
+    m_lockRotation  (false)
 {
     m_view.setSize(DefaultSceneSize);
     m_view.setCenter(DefaultSceneSize / 2.f);
@@ -75,7 +74,6 @@ void Camera::setBounds(sf::FloatRect bounds)
 void Camera::zoom(float zoom)
 {
     XY_ASSERT(zoom > 0, "Value must be larger than 0");
-    m_zoom = zoom;
     m_view.zoom(1.f / zoom);
 }
 

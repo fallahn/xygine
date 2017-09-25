@@ -56,11 +56,11 @@ namespace
     const float timePerFrame = 1.f / 60.f;
     float timeSinceLastUpdate = 0.f;
 
-#ifndef _DEBUG_
+#ifndef XY_DEBUG
     const std::string windowTitle("xyginext game (Release Build) - F1: Console, F2: Show stats");
 #else
     const std::string windowTitle("xyginext game (Debug Build) - F1: Console, F2: Show stats");
-#endif //_DEBUG_
+#endif //XY_DEBUG
 
     sf::Clock frameClock;
 

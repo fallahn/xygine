@@ -84,6 +84,8 @@ private:
 
     void spawnNPC(sf::Int32, sf::Vector2f);
 
+    void handleMessage(const xy::Message&);
+
     struct Client final
     {
         ClientData data;

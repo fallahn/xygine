@@ -132,4 +132,13 @@ namespace InputFlag
     };
 }
 
+//player inventory update
+struct InventoryUpdate final
+{
+    sf::Uint8 playerID = 0;
+    sf::Uint32 score = 0;
+    sf::Uint8 lives = 0;
+};
+
+
 #endif //DEMO_GAME_MAP_DATA_HPP_

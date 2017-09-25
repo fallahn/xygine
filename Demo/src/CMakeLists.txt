@@ -1,3 +1,4 @@
+#add source files used by your project here
 set(PROJECT_SRC 
   ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/AnimationController.cpp
@@ -6,8 +7,10 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ErrorState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/FruitSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/FXDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Game.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/GameState.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/InventoryDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MenuState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/NPCSystem.cpp
