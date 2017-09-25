@@ -30,6 +30,16 @@ include_directories(
 # Project source files
 add_subdirectory(src)
 
+# If building static, define XY_STATIC 
+if (NOT BUILD_SHARED_LIBS)
+  add_definitions(-DXY_STATIC)
+endif()
+
+# Add XY_DEBUG on Debug and RelWithDebInfo builds
+if (CMAKE_BUILD_TYPE MATCHES Debug) 
+  add_definitions(-DXY_DEBUG)
+endif()
+
 # Create the library
 add_library(${PROJECT_NAME} ${PROJECT_SRC})
 
