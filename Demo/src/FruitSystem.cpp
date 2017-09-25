@@ -32,9 +32,11 @@ source distribution.
 #include "ClientServerShared.hpp"
 #include "PacketIDs.hpp"
 #include "AnimationController.hpp"
+#include "CommandIDs.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
+#include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/network/NetHost.hpp>
 #include <xyginext/util/Vector.hpp>
@@ -81,6 +83,7 @@ void FruitSystem::handleMessage(const xy::Message& msg)
                 entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, SmallFruitSize, SmallFruitSize });
 
                 entity.addComponent<AnimationController>();
+                entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor; //so we can destroy at whim
 
                 //broadcast to clients
                 ActorEvent evt;

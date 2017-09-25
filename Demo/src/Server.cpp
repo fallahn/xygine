@@ -77,7 +77,8 @@ GameServer::GameServer()
     m_running       (false),
     m_thread        (&GameServer::update, this),
     m_scene         (m_messageBus),
-    m_currentMap    (0)
+    m_currentMap    (0),
+    m_mapTimer      (3.f)
 {
     m_clients[0].data.actor.type = ActorID::PlayerOne;
     m_clients[0].data.spawnX = 96.f;
@@ -218,6 +219,9 @@ void GameServer::update()
                 }
             }
         }
+
+        //check if it's time to change map
+        checkMapStatus(dt);
     }
 
     m_host.stop();
@@ -319,6 +323,35 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
     }
 }
 
+void GameServer::checkMapStatus(float dt)
+{
+    m_mapTimer -= dt;
+
+    if (m_mapData.actorCount == 0
+        && m_mapTimer < 0)
+    {
+        //clear remaining actors (should just be collectables / bubbles)
+        //as well as any geometry
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::NetActor | CommandID::Geometry;
+        cmd.action = [&](xy::Entity entity, float)
+        {
+            m_scene.destroyEntity(entity);
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        //load next map
+        m_currentMap = (m_currentMap + 1) % m_mapFiles.size();
+        loadMap();
+
+        //tell client to do map change
+        m_host.broadcastPacket(PacketID::MapChange, m_mapData, xy::NetFlag::Reliable, 1);
+
+        //set clients to not ready
+        //TODO main update holds until both clients are set ready by incoming packets
+    }
+}
+
 void GameServer::initMaplist()
 {
     auto mapFiles = xy::FileSystem::listFiles("assets/maps");
@@ -380,11 +413,8 @@ void GameServer::loadMap()
     {
         auto sha1 = getSha("assets/maps/" + m_mapFiles[m_currentMap]);
 
-        //m_mapData.actorCount = MapData::MaxActors;
         std::strcpy(m_mapData.mapName, m_mapFiles[m_currentMap].c_str());
         std::strcpy(m_mapData.mapSha, sha1.c_str());
-
-        //TODO load NPC/actor data
 
         //load collision geometry
         sf::Uint8 flags = 0;
@@ -507,6 +537,7 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, NPCSize, NPCSize });
 
     entity.addComponent<AnimationController>();
+    entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
 
     entity.addComponent<NPC>();
     switch (id)
@@ -529,6 +560,10 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     }
 
     m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+
+    auto* msg = m_messageBus.post<NpcEvent>(MessageID::NpcMessage);
+    msg->type = NpcEvent::Spawned;
+    msg->entityID = entity.getIndex();
 }
 
 void GameServer::handleMessage(const xy::Message& msg)
@@ -539,23 +574,24 @@ void GameServer::handleMessage(const xy::Message& msg)
     case MessageID::NpcMessage:
     {
         const auto& data = msg.getData<NpcEvent>();
-
-        //remove from list of actors
-        std::size_t i = 0u;
-        for (i; i < m_mapData.actorCount; ++i)
+        if (data.type == NpcEvent::Died)
         {
-            if (m_mapData.actors[i].id == data.entityID)
+            //remove from list of actors
+            std::size_t i = 0u;
+            for (i; i < m_mapData.actorCount; ++i)
             {
-                break;
+                if (m_mapData.actors[i].id == data.entityID)
+                {
+                    break;
+                }
             }
+
+            m_mapData.actorCount--;
+            m_mapData.actors[i] = m_mapData.actors[m_mapData.actorCount];
+
+            //LOG(std::to_string(m_mapData.actorCount), xy::Logger::Type::Info);
+            m_mapTimer = 3.f;
         }
-
-        m_mapData.actorCount--;
-        m_mapData.actors[i] = m_mapData.actors[m_mapData.actorCount];
-
-        LOG(std::to_string(m_mapData.actorCount), xy::Logger::Type::Info);
-
-        //TODO change map when all actors are removed.
     }
         break;
     }

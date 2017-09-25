@@ -106,7 +106,7 @@ namespace xy
         Mac: /Users/squidward/Library/Application Support/appname/
         \endcode
         \param appName Name of the current application used to create the appname directory
-        \returns Above formatted string, or an emptry string if something went wrong
+        \returns Above formatted string, or an empty string if something went wrong
         */
         static std::string getConfigDirectory(const std::string& appName);
 

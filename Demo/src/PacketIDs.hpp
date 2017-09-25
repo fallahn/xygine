@@ -33,7 +33,7 @@ namespace PacketID
     enum
     {
         MapJoin = 0,
-        MapChange, //map os change when client already connected
+        MapChange, //map is changed when client already connected
         ClientData, //this has been assigned by the server to the client
         ActorAbsolute, //applied to actors immediately rather than interpolated
         ActorUpdate, //interpolated position

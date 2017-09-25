@@ -260,7 +260,7 @@ bool GameState::loadScene(const MapData& data)
     auto size = map.getTileCount() * map.getTileSize();
 
     m_mapTexture.create(size.x, size.y);
-    m_mapTexture.clear(sf::Color(0, 0, 20));
+    m_mapTexture.clear(sf::Color(0, 0, 20, 80));
     sf::Uint8 flags = 0;
 
     const auto& layers = map.getLayers();
@@ -487,6 +487,12 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             m_client.disconnect();
         }
     }
+        break;
+    case PacketID::MapChange:
+        //TODO check we're already a valid client and not attempting to join
+        //in the middle of a map change.
+        //rx new map data
+        //clear old, trigger transition
         break;
     case PacketID::ClientUpdate:
     {

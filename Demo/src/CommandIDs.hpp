@@ -42,7 +42,9 @@ namespace CommandID
         LivesOne = 0x40,
         LivesTwo = 0x80,
         Timeout = 0x100,
-        HighScore = 0x200
+        HighScore = 0x200,
+        //map data
+        Geometry = 0x400
     };
 }
 

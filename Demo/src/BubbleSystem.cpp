@@ -34,9 +34,11 @@ source distribution.
 #include "PacketIDs.hpp"
 #include "ClientServerShared.hpp"
 #include "Hitbox.hpp"
+#include "CommandIDs.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
+#include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/ecs/Scene.hpp>
 
 namespace
@@ -82,6 +84,7 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
             entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
 
             entity.addComponent<AnimationController>();
+            entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor; //so we can destroy at whim
 
             //broadcast to clients
             ActorEvent evt;
