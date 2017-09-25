@@ -40,6 +40,7 @@ source distribution.
 #include "FXDirector.hpp"
 
 #include <xyginext/core/App.hpp>
+#include <xyginext/core/FileSystem.hpp>
 
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
@@ -83,6 +84,7 @@ source distribution.
 namespace
 {
     const float clientTimeout = 20.f;
+    const std::string scoreFile("scores.txt");
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
@@ -221,8 +223,15 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "whirlybob");
     m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "whirlybob");
 
-
     m_sprites[SpriteID::FruitSmall] = spriteSheet.getSprite("fruit");
+
+
+    if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile))
+    {
+        //create one
+        m_scores.addProperty("hiscore", "0");
+        m_scores.save(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile);
+    }
 }
 
 bool GameState::loadScene(const MapData& data)
@@ -364,7 +373,7 @@ void GameState::loadUI()
     ent = m_scene.createEntity();
     ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 140.f, 46.f);
     ent.addComponent<xy::Text>(font);
-    ent.getComponent<xy::Text>().setString("0"); //TODO load the high score from config
+    ent.getComponent<xy::Text>().setString(m_scores.getProperties()[0].getValue<std::string>());
     ent.getComponent<xy::Text>().setCharacterSize(60);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::HighScore;
 
@@ -829,7 +838,20 @@ void GameState::updateUI(const InventoryUpdate& data)
         entity.getComponent<xy::Text>().setString(std::to_string(data.score));
     };
 
-    //TODO check if greater than high score and update
+    //check if greater than high score and update
+    if (data.score > m_scores.getProperties()[0].getValue<sf::Int32>())
+    {
+        m_scores.findProperty("hiscore")->setValue(static_cast<sf::Int32>(data.score));
+        m_scores.save(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile);
+
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::HighScore;
+        cmd.action = [data](xy::Entity entity, float)
+        {
+            entity.getComponent<xy::Text>().setString(std::to_string(data.score));
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
 
     xy::Command livesCommand;
     livesCommand.action = [data](xy::Entity entity, float)

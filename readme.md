@@ -19,12 +19,16 @@ development of systems with a data-driven approach, as well as the
 removal of 3D support. If you're interested in a 3D, crossplatform, mobile
 compatible framework with a very similar API, check out [crogine](https://github.com/fallahn/crogine).
 
+###### What's new?
+All new modular ECS providing a flexible and performant API for implementing
+custom components and systems, which compliment the systems included in the library
 
-###### Why xygine?
+Reworked CMake build system, courtesy of Jonny 'The Machine' Paton, using
+modern CMake syntax as well as being Visual Studio compatible.
 
-The name is simply derived from the fact that this is a 2D framework -
-hence xy, followed by the gine part of engine (although technically
-xygine isn't really an engine).
+All new reliable network connection classes dedicated to creating
+gameplay oriented connections based upon the indomitable [Enet](http://enet.bespin.org/)
+
 
 
 ###### Contributions
@@ -32,6 +36,36 @@ Contributions should be acknowledged and are gratefully accepted from:
 Jonny Paton  
 Jean-Sebastien Fauteux (macOS Testing)  
 Baard (Awesome Logo)
+
+
+#### FAQ
+###### Where's the 3D stuff gone?
+While it had the potential to look very pretty the 3D API did not mesh
+(pun intended ;) ) well with the 2D rendering. Mixing custom OpenGL, particularly
+non-core 2.1 level, with SFML meant that it did not perform optimally, as
+well as not working on macOS which doesn't support compatibility
+profiles. If you really want 3D there are many better engines/frameworks out
+there, including [crogine](https://github.com/fallahn/crogine), another
+framework by myself which is optimised for 3D, particularly on mobile devices.
+It features a very similar API to xygine too.
+
+###### What about physics stuff?
+The physics binding of Box2D has been removed, mostly because I wasn't using it.
+It may return in the future, but thanks to the new ECS API implementing your
+own binding to any physics engine of choice, or even implementing your own
+collision detection is super easy.
+
+###### ...and the Tiled map support?
+This had already been spun out into [tmxlite](https://github.com/fallahn/tmxlite)
+and maintaining two versions of it seemed an unnecessary amount of work.
+Tmxlite works easily with any project, and is even used in the demo project
+included in this repository.
+
+###### Why xygine?
+The name is simply derived from the fact that this is a 2D framework -
+hence xy, followed by the gine part of engine (although technically
+xygine isn't really an engine).
+
 
 /*********************************************************************  
 (c) Matt Marchant 2017  

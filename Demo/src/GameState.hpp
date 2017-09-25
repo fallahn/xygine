@@ -29,6 +29,7 @@ source distribution.
 #define DEMO_GAME_STATE_HPP_
 
 #include <xyginext/core/State.hpp>
+#include <xyginext/core/ConfigFile.hpp>
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/resources/Resource.hpp>
@@ -85,6 +86,8 @@ private:
 
     ClientData m_clientData;
     PlayerInput m_playerInput;
+
+    xy::ConfigFile m_scores;
 
     void loadAssets();
     bool loadScene(const MapData&);
