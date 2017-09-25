@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XT_QUAD_TREE_HPP_
+#ifndef XY_QUAD_TREE_HPP_
 #define XY_QUAD_TREE_HPP_
 
 #include <xyginext/ecs/System.hpp>
@@ -97,11 +97,11 @@ namespace xy
 
     /*!
     \brief Partition system for entities with QuadTreeItem components.
-    Entities are sorted in a tree hierarchy which can be queried with a 
+    Entities are sorted in a tree hierarchy which can be queried with a
     given area to return a set of entities which are contained or intersect
     said area.
     */
-    class XY_EXPORT_API QuadTree final : public xy::System 
+    class XY_EXPORT_API QuadTree final : public xy::System
 #ifdef DDRAW
         , public sf::Drawable
 #endif
