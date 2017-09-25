@@ -1,70 +1,67 @@
-#rename your project here
-project(xyginext)
+cmake_minimum_required(VERSION 3.1)
+
+# Rename this variable to change the project name
 SET(PROJECT_NAME xyginext)
-cmake_minimum_required(VERSION 2.8)
 
-if(NOT CMAKE_BUILD_TYPE)
-  SET(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
-endif()
-
+# Set the path to our find modules
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-  if(PROJECT_STATIC_RUNTIME)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14 -static")
-  else()
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14")
-  endif()
-endif()
+# Some default variables which the user may change
+SET(CMAKE_BUILD_TYPE Debug CACHE STRING  "Choose the type of build (Debug or Release)")
 
-SET (CMAKE_CXX_FLAGS_DEBUG "-g -DXY_DEBUG")
-SET (CMAKE_CXX_FLAGS_RELEASE "-O4 -DNDEBUG")
-SET (CMAKE_DEBUG_POSTFIX -d)
+# We're using c++14
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-SET(SFML_MIN_VERSION "2.4")
-if(WIN32)
-  find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system network main)
-else()
-  find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system network)
-endif()
+# Only works with SFML version 2.4 and above
+SET(SFML_MIN_VERSION 2.4)
+find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system network)
 
-if(UNIX)
-  find_package(X11 REQUIRED)
-endif()
+# Also require OpenGL and ENet
 find_package(OpenGL REQUIRED)
 find_package(ENet REQUIRED)
 
+# Additional include directories
 include_directories(
   ${SFML_INCLUDE_DIR} 
   ${ENET_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}/include)
   
+# Project source files
+add_subdirectory(src)
 
-SET(PROJECT_DIR ${CMAKE_SOURCE_DIR}/src)
-include(${PROJECT_DIR}/CMakeLists.txt)
-
-if(PROJECT_STATIC_RUNTIME)
-  add_library(${PROJECT_NAME} STATIC ${PROJECT_SRC})
-else()
-  add_library(${PROJECT_NAME} SHARED ${PROJECT_SRC})
+# If building static, define XY_STATIC 
+if (NOT BUILD_SHARED_LIBS)
+  add_definitions(-DXY_STATIC)
 endif()
 
+# Add XY_DEBUG on Debug builds
+if (CMAKE_BUILD_TYPE MATCHES Debug) 
+  add_definitions(-DXY_DEBUG)
+endif()
 
+# Create the library
+add_library(${PROJECT_NAME} ${PROJECT_SRC})
+
+# Linker settings
 target_link_libraries(${PROJECT_NAME}
   ${SFML_LIBRARIES}
   ${SFML_DEPENDENCIES}
   ${ENET_LIBRARIES}
   ${OPENGL_LIBRARIES})
 
-
+# The project specific includes (Useful if linking to this target from another cmake script)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+# Install the includes
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/xyginext DESTINATION include)
-if(XYGINEXT_STATIC_LIB)
-  install(TARGETS ${PROJECT_NAME} EXPORT xyginext-targets DESTINATION lib)
-else()
-  install(TARGETS ${PROJECT_NAME} EXPORT xyginext-targets 
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin)
-endif()
+
+# And the rest
+install(TARGETS ${PROJECT_NAME} EXPORT xyginext-targets 
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin)
+
+ # Configuration for packaging
+ include(CPack)
+

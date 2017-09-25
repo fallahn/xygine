@@ -1,21 +1,23 @@
 #add source files used by your project here
-set(PROJECT_SRC
-  ${PROJECT_DIR}/AnimationController.cpp
-  ${PROJECT_DIR}/BubbleSystem.cpp
-  ${PROJECT_DIR}/ClientServerShared.cpp
-  ${PROJECT_DIR}/CollisionSystem.cpp
-  ${PROJECT_DIR}/ErrorState.cpp
-  ${PROJECT_DIR}/FruitSystem.cpp
-  ${PROJECT_DIR}/FXDirector.cpp
-  ${PROJECT_DIR}/Game.cpp
-  ${PROJECT_DIR}/GameState.cpp
-  ${PROJECT_DIR}/InventoryDirector.cpp
-  ${PROJECT_DIR}/main.cpp
-  ${PROJECT_DIR}/MenuState.cpp
-  ${PROJECT_DIR}/NPCSystem.cpp
-  ${PROJECT_DIR}/ParticleDirector.cpp
-  ${PROJECT_DIR}/PlayerInput.cpp
-  ${PROJECT_DIR}/PlayerSystem.cpp
-  ${PROJECT_DIR}/Server.cpp
-  ${PROJECT_DIR}/sha1.cpp
-  ${PROJECT_DIR}/TextboxDirector.cpp)
+set(PROJECT_SRC 
+  ${PROJECT_SRC}
+  ${CMAKE_CURRENT_SOURCE_DIR}/AnimationController.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BubbleSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/ClientServerShared.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/ErrorState.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/FruitSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/FXDirector.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Game.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/GameState.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/InventoryDirector.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/MenuState.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/NPCSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/ParticleDirector.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/PlayerInput.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/PlayerSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Server.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sha1.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/TextboxDirector.cpp
+  PARENT_SCOPE)
