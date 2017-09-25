@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 
 # Rename this variable to change the project name
-SET(PROJECT_NAME xy-demo)
+SET(PROJECT_NAME xy_demo)
 
 # Set up the project
 project(${PROJECT_NAME})
@@ -24,12 +24,21 @@ find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system netw
 find_package(XYGINEXT REQUIRED)
 find_package(TMXLITE REQUIRED)
 
+# X11 is required on unices
+if(UNIX)
+  find_package(X11 REQUIRED)
+endif()
+
 # Additional include directories
 include_directories(
   ${XYXT_INCLUDE_DIR}
   ${SFML_INCLUDE_DIR} 
   ${TMXLITE_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}/include)
+
+if(X11_FOUND)
+  include_directories(${X11_INCLUDE_DIRS})
+endif()
 
 # Project source files
 add_subdirectory(src)
@@ -43,6 +52,12 @@ target_link_libraries(${PROJECT_NAME}
   ${SFML_DEPENDENCIES}
   ${TMXLITE_LIBRARIES}
   ${XYXT_LIBRARIES})
+
+if(X11_FOUND)
+  target_link_libraries(${PROJECT_NAME}
+    ${X11_LIBRARIES})
+endif()
+
 
 # Install executable
 install(TARGETS ${PROJECT_NAME}

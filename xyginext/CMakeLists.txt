@@ -8,6 +8,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 # Some default variables which the user may change
 SET(CMAKE_BUILD_TYPE Debug CACHE STRING  "Choose the type of build (Debug or Release)")
+SET(BUILD_SHARED_LIBS true CACHE BOOL "Build Shared libs")
 
 # We're using c++14
 set(CMAKE_CXX_STANDARD 14)

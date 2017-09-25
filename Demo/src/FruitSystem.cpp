@@ -158,7 +158,7 @@ void FruitSystem::process(float dt)
 
                         auto* msg = postMessage<ItemEvent>(MessageID::ItemMessage);
                         msg->playerID = manifolds[j].otherEntity.getComponent<Player>().playerNumber;
-                        msg->actorID = (fruit.size == Fruit::Small) ? ActorID::FruitSmall : Fruit::Large;
+                        msg->actorID = (fruit.size == Fruit::Small) ? ActorID::FruitSmall : ActorID::FruitLarge;
                     }
                     break;
                 }
