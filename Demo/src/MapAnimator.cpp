@@ -35,7 +35,7 @@ source distribution.
 namespace
 {
     const float minDist = 1000.f; //sqr len
-    const float speed = 540.f;
+    const float speed = 500.f;
 }
 
 MapAnimatorSystem::MapAnimatorSystem(xy::MessageBus& mb)
@@ -59,16 +59,18 @@ void MapAnimatorSystem::process(float dt)
         {
             auto dist = animator.dest - tx.getPosition();
             auto l2 = xy::Util::Vector::lengthSquared(dist);
-            if (l2 > 0)
-            {
-                tx.move(xy::Util::Vector::normalise(dist) * speed * dt);
-            }
-            else if (l2 < minDist)
+            
+            if (l2 < minDist)
             {
                 tx.setPosition(animator.dest);
                 animator.state = MapAnimator::State::Static;
             }
-            DPRINT("L2", std::to_string(l2));
+            else if (l2 > 0)
+            {
+                tx.move(xy::Util::Vector::normalise(dist) * speed * dt);
+            }
+
+            //DPRINT("L2", std::to_string(l2));
         }
         else
         {

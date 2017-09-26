@@ -74,13 +74,24 @@ Transform::Transform(Transform&& other)
             }
         }
     }
-    m_children = std::move(other.m_children);
+    m_children.swap(other.m_children);
 
     //update the children's new parent
     for (auto c : m_children)
     {
         c->m_parent = this;
     }
+
+    //actually take on the other transform
+    setPosition(other.getPosition());
+    setRotation(other.getRotation());
+    setScale(other.getScale());
+    setOrigin(other.getOrigin());
+
+    other.setPosition({});
+    other.setRotation(0.f);
+    other.setScale({ 1.f, 1.f });
+    other.setOrigin({});
 }
 
 Transform& Transform::operator=(Transform&& other)
@@ -104,13 +115,24 @@ Transform& Transform::operator=(Transform&& other)
             }
         }
 
-        m_children = std::move(other.m_children);
+        m_children.swap(other.m_children);
 
         //update the children's new parent
         for (auto c : m_children)
         {
             c->m_parent = this;
         }
+
+        //actually take on the other transform
+        setPosition(other.getPosition());
+        setRotation(other.getRotation());
+        setScale(other.getScale());
+        setOrigin(other.getOrigin());
+
+        other.setPosition({});
+        other.setRotation(0.f);
+        other.setScale({ 1.f, 1.f });
+        other.setOrigin({});
     }
     return *this;
 }

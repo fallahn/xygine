@@ -31,6 +31,11 @@ source distribution.
 
 using namespace xy;
 
+namespace
+{
+    const std::size_t MinComponentMasks = 50;
+}
+
 EntityManager::EntityManager(MessageBus& mb)
     : m_messageBus  (mb),
     m_componentPools(Detail::MaxComponents)
@@ -53,7 +58,7 @@ Entity EntityManager::createEntity()
         XY_ASSERT(idx < (1 << Detail::IndexBits), "Index out of range");
         if (idx >= m_componentMasks.size())
         {
-            m_componentMasks.resize(idx + 1);
+            m_componentMasks.resize(m_componentMasks.size() + MinComponentMasks);
         }
     }
 
@@ -77,8 +82,6 @@ void EntityManager::destroyEntity(Entity entity)
     auto msg = m_messageBus.post<Message::SceneEvent>(Message::SceneMessage);
     msg->entityID = index;
     msg->event = Message::SceneEvent::EntityDestroyed;
-
-    //TODO reset tags when tag management implemented
 }
 
 bool EntityManager::entityDestroyed(Entity entity) const

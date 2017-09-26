@@ -326,8 +326,6 @@ bool GameState::loadScene(const MapData& data, sf::Vector2f position)
     entity.addComponent<MapAnimator>();
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapBackground;
 
-    std::cout << "Loaded " << mapName << " on texture " << m_currentMapTexture << std::endl;
-
     m_currentMapTexture = (m_currentMapTexture + 1) % m_mapTextures.size();
     
     m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Sprite>().getSize() / 2.f);
