@@ -83,7 +83,7 @@ void FruitSystem::handleMessage(const xy::Message& msg)
                 entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, SmallFruitSize, SmallFruitSize });
 
                 entity.addComponent<AnimationController>();
-                entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor; //so we can destroy at whim
+                entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem; //so we can destroy at whim
 
                 //broadcast to clients
                 ActorEvent evt;

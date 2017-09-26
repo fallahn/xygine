@@ -90,13 +90,14 @@ private:
     xy::ConfigFile m_scores;
 
     void loadAssets();
-    bool loadScene(const MapData&);
+    bool loadScene(const MapData&, sf::Vector2f = sf::Vector2f());
     void loadUI();
 
     void handlePacket(const xy::NetEvent&);
     void handleTimeout();
 
-    sf::RenderTexture m_mapTexture;
+    std::array<sf::RenderTexture, 2u> m_mapTextures;
+    std::size_t m_currentMapTexture;
 
     sf::Int32 parseObjLayer(const std::unique_ptr<tmx::Layer>&);
     sf::Int32 parseTileLayer(const std::unique_ptr<tmx::Layer>&, const tmx::Map& map);
@@ -104,6 +105,7 @@ private:
     void spawnActor(const ActorEvent&);
     void spawnClient(const ClientData&);
     void killActor(const ActorEvent&);
+    void switchMap(const MapData&);
 
     void updateUI(const InventoryUpdate&);
 };

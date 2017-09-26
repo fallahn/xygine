@@ -79,7 +79,7 @@ namespace xy
         \param helpText Optional string describing the variable which appears the console
         when search for variable names.
         */
-        static void addConvar(const std::string& name, const std::string& value, const std::string& helpText = "");
+        static void addConvar(const std::string& name, const std::string& value, const std::string& helpText = std::string());
 
         /*!
         \brief Attempts to retrieve the current value of the given console variable

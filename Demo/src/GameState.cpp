@@ -38,6 +38,7 @@ source distribution.
 #include "MessageIDs.hpp"
 #include "ParticleDirector.hpp"
 #include "FXDirector.hpp"
+#include "MapAnimator.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -88,10 +89,11 @@ namespace
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
-    : xy::State     (stack, ctx),
-    m_scene         (ctx.appInstance.getMessageBus()),
-    m_sharedData    (sharedData),
-    m_playerInput   (m_client)
+    : xy::State         (stack, ctx),
+    m_scene             (ctx.appInstance.getMessageBus()),
+    m_sharedData        (sharedData),
+    m_playerInput       (m_client),
+    m_currentMapTexture (0)
 {
     launchLoadingScreen();
     loadAssets();
@@ -142,6 +144,19 @@ bool GameState::handleEvent(const sf::Event& evt)
 
 void GameState::handleMessage(const xy::Message& msg)
 {
+    if (msg.id == MessageID::MapMessage)
+    {
+        const auto& data = msg.getData<MapEvent>();
+        if (data.type == MapEvent::AnimationComplete)
+        {
+            m_playerInput.setEnabled(true);
+            m_scene.getSystem<CollisionSystem>().setEnabled(true);
+
+            //send OK to server to continue game
+            m_client.sendPacket(PacketID::MapReady, m_clientData.actor.type, xy::NetFlag::Reliable, 1);
+        }
+    }
+
     m_scene.forwardMessage(msg);
 }
 
@@ -179,6 +194,7 @@ void GameState::loadAssets()
     m_scene.addSystem<PlayerSystem>(mb);   
     m_scene.addSystem<xy::InterpolationSystem>(mb);
     m_scene.addSystem<AnimationControllerSystem>(mb);
+    m_scene.addSystem<MapAnimatorSystem>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
@@ -225,6 +241,18 @@ void GameState::loadAssets()
 
     m_sprites[SpriteID::FruitSmall] = spriteSheet.getSprite("fruit");
 
+    //load background
+    auto ent = m_scene.createEntity();
+    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/background.png")).setDepth(-50);
+    ent.addComponent<xy::Transform>().setScale(4.f, 4.f);
+    ent.getComponent<xy::Transform>().setPosition((-(xy::DefaultSceneSize.x / 2.f) + MapBounds.width / 2.f), 0.f);
+    /*ent.addComponent<xy::Callback>().active = true;
+    ent.getComponent<xy::Callback>().function = [](xy::Entity entity, float)
+    {
+        const auto& tx = entity.getComponent<xy::Transform>();
+        xy::App::printStat("Background:", std::to_string(tx.getPosition().x) + ", " + std::to_string(tx.getPosition().y) + ", " + std::to_string(tx.getScale().x) + ", " + std::to_string(tx.getScale().y));
+        
+    };*/
 
     if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile))
     {
@@ -234,7 +262,7 @@ void GameState::loadAssets()
     }
 }
 
-bool GameState::loadScene(const MapData& data)
+bool GameState::loadScene(const MapData& data, sf::Vector2f position)
 {
     std::string mapName(data.mapName);
     std::string remoteSha(data.mapSha);
@@ -259,8 +287,8 @@ bool GameState::loadScene(const MapData& data)
 
     auto size = map.getTileCount() * map.getTileSize();
 
-    m_mapTexture.create(size.x, size.y);
-    m_mapTexture.clear(sf::Color(0, 0, 20, 80));
+    m_mapTextures[m_currentMapTexture].create(size.x, size.y);
+    m_mapTextures[m_currentMapTexture].clear(sf::Color::Transparent);
     sf::Uint8 flags = 0;
 
     const auto& layers = map.getLayers();
@@ -277,7 +305,7 @@ bool GameState::loadScene(const MapData& data)
             flags |= parseTileLayer(layer, map);
         }
     }
-    m_mapTexture.display();
+    m_mapTextures[m_currentMapTexture].display();
     
     if (flags != MapFlags::Client)
     {
@@ -287,14 +315,20 @@ bool GameState::loadScene(const MapData& data)
         return false;
     }
 
-    //create the background sprite
+    //create the map sprite
     auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_mapTexture.getTexture());
+    entity.addComponent<xy::Sprite>().setTexture(m_mapTextures[m_currentMapTexture].getTexture());
     entity.getComponent<xy::Sprite>().setDepth(-10);
 #ifdef DDRAW
     entity.getComponent<xy::Sprite>().setColour({ 255,255,255,120 });
 #endif
-    entity.addComponent<xy::Transform>();
+    entity.addComponent<xy::Transform>().setPosition(position);
+    entity.addComponent<MapAnimator>();
+    entity.addComponent<xy::CommandTarget>().ID = CommandID::MapBackground;
+
+    std::cout << "Loaded " << mapName << " on texture " << m_currentMapTexture << std::endl;
+
+    m_currentMapTexture = (m_currentMapTexture + 1) % m_mapTextures.size();
     
     m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Sprite>().getSize() / 2.f);
     m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(1.f);
@@ -305,7 +339,7 @@ bool GameState::loadScene(const MapData& data)
         auto entity = m_scene.createEntity();
         entity.addComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
         entity.addComponent<Actor>() = data.actors[i];       
-        entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
+        entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
         entity.addComponent<xy::NetInterpolate>();
 
         switch (data.actors[i].type)
@@ -481,6 +515,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         {
             //send ready signal
             m_client.sendPacket(PacketID::ClientReady, 0, xy::NetFlag::Reliable, 1);
+            m_playerInput.setEnabled(true);
         }
         else
         {
@@ -489,17 +524,20 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     }
         break;
     case PacketID::MapChange:
-        //TODO check we're already a valid client and not attempting to join
-        //in the middle of a map change.
-        //rx new map data
-        //clear old, trigger transition
+    {
+        const auto data = evt.packet.as<MapData>();
+        switchMap(data);
+    }
         break;
     case PacketID::ClientUpdate:
     {
         const auto& state = evt.packet.as<ClientState>();
 
         //reconcile
-        m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
+        if (m_playerInput.isEnabled())
+        {
+            m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
+        }
     }
         break;
     case PacketID::ClientData:
@@ -682,7 +720,7 @@ sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, co
 
     for (const auto& v : vertexArrays)
     {
-        m_mapTexture.draw(v.second.data(), v.second.size(), sf::Quads, v.first);
+        m_mapTextures[m_currentMapTexture].draw(v.second.data(), v.second.size(), sf::Quads, v.first);
     }
 
     return MapFlags::Graphics;
@@ -695,7 +733,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(actorEvent.x, actorEvent.y);
     entity.addComponent<Actor>() = actorEvent.actor;
-    entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
+    entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
     entity.addComponent<xy::NetInterpolate>();
     entity.addComponent<AnimationController>();
 
@@ -765,7 +803,7 @@ void GameState::spawnClient(const ClientData& data)
 
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
     entity.addComponent<xy::SpriteAnimation>().play(0);
-    
+    entity.addComponent<MapAnimator>().state = MapAnimator::State::Static;
 
     if (data.peerID == m_client.getPeer().getID())
     {
@@ -834,6 +872,53 @@ void GameState::killActor(const ActorEvent& actorEvent)
         }
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+}
+
+void GameState::switchMap(const MapData& data)
+{
+    m_playerInput.setEnabled(false);
+
+    //clear remaining actors (should just be collectables / bubbles)
+    //as well as any geometry
+    xy::Command cmd;
+    cmd.targetFlags = CommandID::MapItem;
+    cmd.action = [&](xy::Entity entity, float)
+    {
+        m_scene.destroyEntity(entity);
+        //std::cout << "delete client geometry" << std::endl;
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    m_scene.update(0.f); //force the command right away
+
+
+    if (loadScene(data, { 0.f, MapBounds.height - 128.f }))
+    {
+        //init transition
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::MapBackground;
+        cmd.action = [&](xy::Entity entity, float)
+        {
+            auto& animator = entity.getComponent<MapAnimator>();
+            if (animator.state == MapAnimator::State::Static)
+            {
+                animator.state = MapAnimator::State::Active;
+                animator.dest.y = -(MapBounds.height - 128.f);
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        //move player sprites to position
+        cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+        cmd.action = [&](xy::Entity entity, float)
+        {
+            auto& animator = entity.getComponent<MapAnimator>();
+            animator.dest = entity.getComponent<xy::CommandTarget>().ID == CommandID::PlayerOne ? playerOneSpawn : playerTwoSpawn;
+            animator.state = MapAnimator::State::Active;
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        m_scene.getSystem<CollisionSystem>().setEnabled(false);
+    }
 }
 
 void GameState::updateUI(const InventoryUpdate& data)

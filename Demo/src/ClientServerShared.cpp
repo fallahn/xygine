@@ -46,7 +46,7 @@ void createCollisionObject(xy::Scene& scene, const tmx::Object& obj, CollisionTy
         entity.addComponent<xy::Transform>().setPosition(bounds.left, bounds.top);
         entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, bounds.width, bounds.height }, type);
         entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, bounds.width, bounds.height });
-        entity.addComponent<xy::CommandTarget>().ID = CommandID::Geometry;
+        entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
 
         switch (type)
         {

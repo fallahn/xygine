@@ -76,7 +76,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)extlibs\include;$(SolutionDir)xyginext\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG_;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>XY_DEBUG;_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)extlibs\bin\msvc_x64\sfml\Debug;$(SolutionDir)x64\Debug;$(SolutionDir)extlibs\bin\msvc_x64\tmxlite\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -133,6 +133,7 @@
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\InventoryDirector.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\MapAnimator.cpp" />
     <ClCompile Include="src\MenuState.cpp" />
     <ClCompile Include="src\NPCSystem.cpp" />
     <ClCompile Include="src\ParticleDirector.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="src\GameState.hpp" />
     <ClInclude Include="src\Hitbox.hpp" />
     <ClInclude Include="src\InventoryDirector.hpp" />
+    <ClInclude Include="src\MapAnimator.hpp" />
     <ClInclude Include="src\MapData.hpp" />
     <ClInclude Include="src\MenuState.hpp" />
     <ClInclude Include="src\MessageIDs.hpp" />

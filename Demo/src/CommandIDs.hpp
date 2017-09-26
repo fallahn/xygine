@@ -44,7 +44,8 @@ namespace CommandID
         Timeout = 0x100,
         HighScore = 0x200,
         //map data
-        Geometry = 0x400
+        MapItem = 0x400, //anything with this is removed on map changed
+        MapBackground = 0x800
     };
 }
 

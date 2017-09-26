@@ -91,6 +91,9 @@ static constexpr float maxVelocity = 800.f;
 
 static const sf::FloatRect MapBounds(0.f, 0.f, 16.f *64.f, 17.f * 64.f);
 
+static const sf::Vector2f playerOneSpawn(96.f, 896.f);
+static const sf::Vector2f playerTwoSpawn(928.f, 896.f);
+
 //map loading functions shared between client / server
 void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType type);
 

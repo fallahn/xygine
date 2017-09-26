@@ -40,7 +40,8 @@ source distribution.
 PlayerInput::PlayerInput(xy::NetClient& nc)
     : m_netClient   (nc),
     m_currentInput  (0),
-    m_playerEntity  (0, 0)
+    m_enabled       (false),
+    m_playerEntity  (0,0)
 {
 
 }
@@ -104,7 +105,7 @@ void PlayerInput::update()
     auto& player = m_playerEntity.getComponent<Player>();
 
     Input input;
-    input.mask = m_currentInput;
+    input.mask = m_enabled ? m_currentInput : 0;
     input.timestamp = m_clientTimer.getElapsedTime().asMicroseconds();
 
     //update player input history

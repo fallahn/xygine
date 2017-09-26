@@ -34,6 +34,7 @@ namespace PacketID
     {
         MapJoin = 0,
         MapChange, //map is changed when client already connected
+        MapReady, //client has load new map and is ready to continue
         ClientData, //this has been assigned by the server to the client
         ActorAbsolute, //applied to actors immediately rather than interpolated
         ActorUpdate, //interpolated position

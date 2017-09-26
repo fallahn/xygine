@@ -92,6 +92,7 @@ private:
     {
         ClientData data;
         xy::NetPeer peer;
+        bool ready = false;
     };
     std::array<Client, 2u> m_clients;
 };

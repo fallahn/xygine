@@ -25,52 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_PLAYER_INPUT_HPP_
-#define DEMO_PLAYER_INPUT_HPP_
+#ifndef DEMO_MAP_ANIMATOR_HPP_
+#define DEMO_MAP_ANIMATOR_HPP_
 
-#include <xyginext/ecs/Entity.hpp>
+#include <xyginext/ecs/System.hpp>
 
-#include <SFML/Config.hpp>
-#include <SFML/System/Clock.hpp>
-
-namespace xy
+struct MapAnimator final
 {
-    class NetClient;
-}
+    enum class State
+    {
+        Active, Static
+    }state = State::Active;
 
-namespace sf
-{
-    class Event;
-}
+    sf::Vector2f dest;
+};
 
-/*!
-brief Updates the current input mask and applies it to the
-current player, along with the client timestamp.
-*/
-class PlayerInput final
+//animated map transistions
+class MapAnimatorSystem final : public xy::System
 {
 public:
-    explicit PlayerInput(xy::NetClient&);
 
-    void handleEvent(const sf::Event&);
-    void update();
+    MapAnimatorSystem(xy::MessageBus&);
 
-    void setPlayerEntity(xy::Entity);
-    xy::Entity getPlayerEntity() const;
-
-    void setEnabled(bool enabled) { m_enabled = enabled; }
-    bool isEnabled() const { return m_enabled; }
+    void process(float) override;
 
 private:
 
-    xy::NetClient& m_netClient;
-
-    sf::Uint16 m_currentInput;
-    sf::Clock m_clientTimer;
-
-    bool m_enabled;
-
-    xy::Entity m_playerEntity;
+    std::size_t m_lastCount;
 };
 
-#endif //DEMO_PLAYER_INPUT_HPP_
+#endif //DEMO_MAP_ANIMATOR_HPP_

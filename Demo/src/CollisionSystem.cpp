@@ -39,6 +39,7 @@ source distribution.
 
 CollisionSystem::CollisionSystem(xy::MessageBus& mb, bool server)
     : xy::System(mb, typeid(CollisionSystem)),
+    m_enabled   (true),
     m_isServer  (server)
 #ifdef DDRAW
     ,m_drawDebug(true)
@@ -51,6 +52,8 @@ CollisionSystem::CollisionSystem(xy::MessageBus& mb, bool server)
 //public
 void CollisionSystem::process(float dt)
 {
+    if (!m_enabled) return;
+
 #ifdef DDRAW
     m_vertices.clear();
 #endif

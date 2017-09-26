@@ -70,6 +70,7 @@ namespace
 {
     const float tickRate = 1.f / 25.f;
     const float updateRate = 1.f / 60.f;
+    const float endOfRoundTime = 6.f;
 }
 
 GameServer::GameServer()
@@ -81,12 +82,12 @@ GameServer::GameServer()
     m_mapTimer      (3.f)
 {
     m_clients[0].data.actor.type = ActorID::PlayerOne;
-    m_clients[0].data.spawnX = 96.f;
-    m_clients[0].data.spawnY = 864.f;
+    m_clients[0].data.spawnX = playerOneSpawn.x;
+    m_clients[0].data.spawnY = playerOneSpawn.y;
 
     m_clients[1].data.actor.type = ActorID::PlayerTwo;
-    m_clients[1].data.spawnX = 928.f;
-    m_clients[1].data.spawnY = 864.f;
+    m_clients[1].data.spawnX = playerTwoSpawn.x;
+    m_clients[1].data.spawnY = playerTwoSpawn.y;
 }
 
 GameServer::~GameServer()
@@ -257,7 +258,7 @@ void GameServer::handleDisconnect(const xy::NetEvent& evt)
         m_scene.destroyEntity(m_scene.getEntity(client->data.actor.id));
 
         //update the client array
-        client->data.actor.id = -1;
+        client->data.actor.id = ActorID::None;
         client->data.peerID = 0;
         client->peer = {};
     }
@@ -284,6 +285,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         //send the client info
         m_clients[playerNumber].data.peerID = evt.peer.getID();
         m_clients[playerNumber].peer = evt.peer;
+        m_clients[playerNumber].ready = true;
         m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber].data, xy::NetFlag::Reliable, 1);
 
         //send initial position of existing actors
@@ -320,6 +322,45 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
         break;
+    case PacketID::MapReady:
+    {
+        sf::Int16 actor = evt.packet.as<sf::Int16>();
+        if (actor == ActorID::PlayerOne)
+        {
+            m_clients[0].ready = true;
+        }
+        else if (actor == ActorID::PlayerTwo)
+        {
+            m_clients[1].ready = true;
+        }
+
+        //check if all connected clients are ready then send message to continue
+        bool p1Ready = ((m_clients[0].data.actor.id == ActorID::None) || (m_clients[0].data.actor.id != ActorID::None && m_clients[0].ready));
+        bool p2Ready = ((m_clients[1].data.actor.id == ActorID::None) || (m_clients[1].data.actor.id != ActorID::None && m_clients[1].ready));
+
+        if (p1Ready && p2Ready)
+        {
+            m_scene.getSystem<NPCSystem>().setEnabled(true);
+            m_scene.getSystem<CollisionSystem>().setEnabled(true);
+
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+            cmd.action = [](xy::Entity entity, float)
+            {
+                if (entity.getComponent<xy::CommandTarget>().ID == CommandID::PlayerOne)
+                {
+                    entity.getComponent<xy::Transform>().setPosition(playerOneSpawn);
+                }
+                else
+                {
+                    entity.getComponent<xy::Transform>().setPosition(playerTwoSpawn);
+                }
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+            
+        }
+    }
+        break;
     }
 }
 
@@ -333,22 +374,37 @@ void GameServer::checkMapStatus(float dt)
         //clear remaining actors (should just be collectables / bubbles)
         //as well as any geometry
         xy::Command cmd;
-        cmd.targetFlags = CommandID::NetActor | CommandID::Geometry;
+        cmd.targetFlags = CommandID::MapItem;
         cmd.action = [&](xy::Entity entity, float)
         {
             m_scene.destroyEntity(entity);
+            //std::cout << "delete server geometry" << std::endl;
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+        m_scene.update(0.f); //force the command right away
 
         //load next map
         m_currentMap = (m_currentMap + 1) % m_mapFiles.size();
-        loadMap();
+        loadMap(); //TODO we need to check this was successful
 
-        //tell client to do map change
+        //tell clients to do map change
         m_host.broadcastPacket(PacketID::MapChange, m_mapData, xy::NetFlag::Reliable, 1);
 
         //set clients to not ready
-        //TODO main update holds until both clients are set ready by incoming packets
+        m_clients[0].ready = false;
+        m_clients[1].ready = false;
+
+        /*cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+        cmd.action = [&](xy::Entity entity, float)
+        {
+            auto number = entity.getComponent<Player>().playerNumber;
+            entity.getComponent<xy::Transform>().setPosition(m_clients[number].data.spawnX, m_clients[number].data.spawnY);
+            entity.getComponent<Player>().direction = (number == 0) ? Player::Direction::Right : Player::Direction::Left;
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);*/
+
+        m_scene.getSystem<NPCSystem>().setEnabled(false);
+        m_scene.getSystem<CollisionSystem>().setEnabled(false);
     }
 }
 
@@ -472,7 +528,7 @@ void GameServer::loadMap()
                             spawnCount++;
                         }
                     }
-
+                    //spawnNPC(ActorID::Clocksy, { 220.f, 220.f }); spawnCount++;
                     flags |= (spawnCount == 0) ? 0 : MapFlags::Spawn;
                 }
             }
@@ -480,6 +536,7 @@ void GameServer::loadMap()
         if (flags != MapFlags::Server)
         {
             CLIENT_MESSAGE(MessageIdent::MapFailed);
+            //std::cout << m_mapFiles[m_currentMap] << ", Bad flags! " << std::bitset<8>(flags) << std::endl;
             return;
         }
 
@@ -489,6 +546,7 @@ void GameServer::loadMap()
     {
         //broadcast message ident that causes client to quit
         CLIENT_MESSAGE(MessageIdent::MapFailed);
+        //std::cout << "failed opening next map" << std::endl;
     }
 }
 
@@ -537,7 +595,7 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, NPCSize, NPCSize });
 
     entity.addComponent<AnimationController>();
-    entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor;
+    entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
 
     entity.addComponent<NPC>();
     switch (id)
@@ -590,7 +648,7 @@ void GameServer::handleMessage(const xy::Message& msg)
             m_mapData.actors[i] = m_mapData.actors[m_mapData.actorCount];
 
             //LOG(std::to_string(m_mapData.actorCount), xy::Logger::Type::Info);
-            m_mapTimer = 3.f;
+            m_mapTimer = endOfRoundTime;
         }
     }
         break;

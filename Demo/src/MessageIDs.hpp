@@ -41,7 +41,8 @@ namespace MessageID
         SceneMessage,
         AnimationMessage,
         NpcMessage,
-        ItemMessage
+        ItemMessage,
+        MapMessage
     };
 }
 
@@ -95,6 +96,14 @@ struct AnimationEvent final
     xy::Entity entity;
     float x = 0.f;
     float y = 0.f;
+};
+
+struct MapEvent final
+{
+    enum
+    {
+        AnimationComplete
+    }type;
 };
 
 #endif //DEMO_MESSAGE_IDS_HPP_
