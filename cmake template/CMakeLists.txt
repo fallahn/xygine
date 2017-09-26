@@ -16,6 +16,13 @@ SET(CMAKE_BUILD_TYPE        Debug CACHE STRING  "Choose the type of build (Debug
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# enable some warnings in debug builds with gcc/clang
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wextra -Wreorder")
+else if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wextra -Wreorder -Wheader-guard")
+endif()
+
 # Only works with SFML version 2.4 and above
 SET(SFML_MIN_VERSION 2.4)
 find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system network)

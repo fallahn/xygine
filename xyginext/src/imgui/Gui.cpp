@@ -53,7 +53,7 @@ void Nim::setNextWindowPosition(float x, float y)
 
 void Nim::text(const std::string& str)
 {
-    ImGui::Text(str.c_str());
+    ImGui::Text("%s", str.c_str());
 }
 
 bool Nim::button(const std::string& label, float w, float h)

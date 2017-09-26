@@ -417,7 +417,7 @@ void App::doImgui()
         //print any debug lines       
         for (const auto& p : m_debugLines)
         {
-            ImGui::Text(p.c_str());
+            ImGui::Text("%s", p.c_str());
         }
 
         ImGui::End();
