@@ -257,6 +257,11 @@ void GameState::loadAssets()
         xy::App::printStat("Background:", std::to_string(tx.getPosition().x) + ", " + std::to_string(tx.getPosition().y) + ", " + std::to_string(tx.getScale().x) + ", " + std::to_string(tx.getScale().y));
         
     };*/
+    ent.addComponent<xy::AudioEmitter>().setSource("assets/sound/music/02.ogg");
+    ent.getComponent<xy::AudioEmitter>().play();
+    ent.getComponent<xy::AudioEmitter>().setLooped(true);
+    ent.getComponent<xy::AudioEmitter>().setVolume(0.25f);
+    ent.getComponent<xy::AudioEmitter>().setChannel(1);
 
     if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile))
     {
@@ -333,7 +338,7 @@ bool GameState::loadScene(const MapData& data, sf::Vector2f position)
     m_currentMapTexture = (m_currentMapTexture + 1) % m_mapTextures.size();
     
     m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Sprite>().getSize() / 2.f);
-    m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(10.f);
+    m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(1.f);
     //m_scene.getActiveCamera().getComponent<xy::Camera>().setZoom(0.5f);
 
     m_mapData = data;
@@ -725,7 +730,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
 
     msg->entity = entity;
     msg->type = SceneEvent::ActorSpawned;
-    msg->actorID = actorEvent.actor.id;
+    msg->actorID = actorEvent.actor.type;
     msg->x = actorEvent.x;
     msg->y = actorEvent.y;
 

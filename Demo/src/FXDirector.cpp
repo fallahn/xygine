@@ -50,30 +50,8 @@ FXDirector::FXDirector()
 
 //public
 void FXDirector::handleMessage(const xy::Message& msg)
-{
-    if (msg.id == MessageID::PlayerMessage)
-    {
-        const auto& data = msg.getData<PlayerEvent>();
-        switch (data.type)
-        {
-        default: break;
-        case PlayerEvent::FiredWeapon:
-        {
-            auto ent = getNextEntity();
-            ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/shoot.wav"));
-            ent.getComponent<xy::AudioEmitter>().play();
-        }
-            break;
-        case PlayerEvent::Jumped:
-        {
-            auto ent = getNextEntity();
-            ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/jump.wav"));
-            ent.getComponent<xy::AudioEmitter>().play();
-        }
-            break;
-        }
-    }
-    else if (msg.id == MessageID::SceneMessage)
+{ 
+    if (msg.id == MessageID::SceneMessage)
     {
         const auto& data = msg.getData<SceneEvent>();
         if (data.type == SceneEvent::ActorRemoved)
@@ -91,6 +69,21 @@ void FXDirector::handleMessage(const xy::Message& msg)
                 break;
             }
         }
+        else if (data.type == SceneEvent::ActorSpawned)
+        {
+            switch (data.actorID)
+            {
+            default: break;
+            case ActorID::BubbleOne:
+            case ActorID::BubbleTwo:
+            {
+                auto ent = getNextEntity();
+                ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/shoot.wav"));
+                ent.getComponent<xy::AudioEmitter>().play();
+            }
+            break;
+            }
+        }
     }
     else if (msg.id == MessageID::AnimationMessage)
     {
@@ -106,6 +99,13 @@ void FXDirector::handleMessage(const xy::Message& msg)
                 ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/npc_pop.wav"));
                 ent.getComponent<xy::AudioEmitter>().play();
             }
+            break;
+        case AnimationController::JumpUp:
+        {
+            auto ent = getNextEntity();
+            ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/jump.wav"));
+            ent.getComponent<xy::AudioEmitter>().play();
+        }
             break;
         }
     }
@@ -135,7 +135,7 @@ void FXDirector::resizeEntities()
     {
         m_entities[i] = getScene().createEntity();
         m_entities[i].addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("placeholder"));
-        m_entities[i].getComponent<xy::AudioEmitter>().setVolume(70.f);
+        m_entities[i].getComponent<xy::AudioEmitter>().setVolume(100.f);
         m_entities[i].getComponent<xy::AudioEmitter>().setMinDistance(1920.f);
         m_entities[i].getComponent<xy::AudioEmitter>().setRelativeTolistener(true);
         m_entities[i].addComponent<xy::Transform>();
