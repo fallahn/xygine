@@ -71,6 +71,13 @@ void PlayerSystem::process(float dt)
 
         float xMotion = tx.getPosition().x; //used for animation, below
 
+        //check  the player hasn't managed to warp out of the gameplay area for some reason
+        if (!MapBounds.contains(tx.getPosition()))
+        {
+            tx.setPosition(player.spawnPosition);
+        }
+
+
         //current input actually points to next empty slot.
         std::size_t idx = (player.currentInput + player.history.size() - 1) % player.history.size();
 

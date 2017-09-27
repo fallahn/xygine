@@ -124,7 +124,8 @@ void BubbleSystem::process(float dt)
             break;
         }
 
-        if (bubble.lifetime < 0)
+        if (bubble.lifetime < 0
+            || !MapBounds.contains(tx.getPosition()))
         {
             killBubble(entity);
         }
