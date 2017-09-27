@@ -1,0 +1,69 @@
+
+language: c++
+sudo: true
+
+# Remove this if/when xyginext merged into master
+branches:
+ only:
+  - xyginext
+
+addons:
+ apt:
+   packages:
+    - cmake
+    - libxrandr-dev
+    - libudev-dev
+    - libopenal-dev
+    - libflac-dev
+    - libvorbis-dev
+    - libenet-dev
+    - g++-5
+    - gcc-5
+    - clang
+   sources:
+    - ubuntu-toolchain-r-test
+
+# Install SFML from git for consistent version
+before_script:
+ - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 90; fi
+ - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90; fi
+ - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install enet; fi
+
+ - git clone https://github.com/sfml/sfml && cd sfml
+ - git checkout tags/2.4.2
+ - cmake . && sudo make install && cd ..
+
+script:
+ - mkdir build && cd build
+ - cmake ../xyginext
+ - make
+
+matrix:
+ include:
+
+    - os: linux
+      compiler: gcc
+
+    - os: linux
+      compiler: clang
+
+    - os: osx
+      osx_image: xcode6.4
+
+    - os: osx
+      osx_image: xcode7.3
+
+    - os: osx
+      osx_image: xcode8
+
+    - os: osx
+      osx_image: xcode8.1
+
+    - os: osx
+      osx_image: xcode8.2
+
+    - os: osx
+      osx_image: xcode8.3
+
+    - os: osx
+      osx_image: xcode9
