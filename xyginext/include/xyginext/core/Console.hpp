@@ -31,6 +31,7 @@ source distribution.
 #include <xyginext/Config.hpp>
 #include <SFML/Config.hpp>
 
+#include <string>
 #include <functional>
 #include <string>
 
