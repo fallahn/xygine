@@ -25,39 +25,44 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_INVENTORY_DIRECTOR_HPP_
-#define DEMO_INVENTORY_DIRECTOR_HPP_
+#include "ScoreTag.hpp"
 
-#include <xyginext/ecs/Director.hpp>
+#include <xyginext/ecs/components/Text.hpp>
+#include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/Scene.hpp>
 
-#include <array>
-
-namespace xy
+namespace
 {
-    class NetHost;
+    const float speed = -120.f;
 }
 
-class InventoryDirector final : public xy::Director
+ScoreTagSystem::ScoreTagSystem(xy::MessageBus& mb)
+    : xy::System(mb, typeid(ScoreTagSystem))
 {
-public:
-    explicit InventoryDirector(xy::NetHost&);
+    requireComponent<ScoreTag>();
+    requireComponent<xy::Text>();
+    requireComponent<xy::Transform>();
+}
 
-    void handleMessage(const xy::Message&) override;
-    void handleEvent(const sf::Event&) override {}
-    void process(float) override {}
-
-private:
-    xy::NetHost& m_host;
-    
-    struct Inventory final
+//public
+void ScoreTagSystem::process(float dt)
+{
+    auto& entities = getEntities();
+    for (auto entity : entities)
     {
-        sf::Uint32 score = 0;
-        sf::Uint8 lives = 3;
-        //TODO letters for bonus
-    };
-    std::array<Inventory, 2> m_playerValues{};
+        auto& tag = entity.getComponent<ScoreTag>();
+        tag.lifetime -= dt;
+        if (tag.lifetime < 0)
+        {
+            getScene()->destroyEntity(entity);
+            return;
+        }
 
-    void sendUpdate(sf::Uint8, sf::Uint32);
-};
+        auto alpha = 255.f * (tag.lifetime / tag.MaxLife);
 
-#endif //DEMO_INVENTORY_DIRECTOR_HPP_
+        sf::Color colour(155, 255, 55, static_cast<sf::Uint8>(alpha));
+        
+        entity.getComponent<xy::Text>().setFillColour(colour);
+        entity.getComponent<xy::Transform>().move(0.f, speed * dt);
+    }
+}

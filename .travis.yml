@@ -56,8 +56,8 @@ matrix:
     - os: osx
       osx_image: xcode8
 
-    - os: osx
-      osx_image: xcode8.1
+#    - os: osx
+#      osx_image: xcode8.1
 
     - os: osx
       osx_image: xcode8.2

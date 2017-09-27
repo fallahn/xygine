@@ -137,6 +137,7 @@ struct InventoryUpdate final
 {
     sf::Uint8 playerID = 0;
     sf::Uint32 score = 0;
+    sf::Uint32 amount = 0;
     sf::Uint8 lives = 0;
 };
 

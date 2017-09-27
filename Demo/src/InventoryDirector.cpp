@@ -47,7 +47,7 @@ InventoryDirector::InventoryDirector(xy::NetHost& host)
 
 //public
 void InventoryDirector::handleMessage(const xy::Message& msg)
-{
+{    
     switch (msg.id)
     {
     default: break;
@@ -57,12 +57,13 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         if (data.type == NpcEvent::Died)
         {
             m_playerValues[data.playerID].score += NpcScore;
+            sendUpdate(data.playerID, NpcScore);
         }
-        sendUpdate(data.playerID);
     }
         break;
     case MessageID::ItemMessage:
     {
+        sf::Uint32 amount = 0;
         const auto& data = msg.getData<ItemEvent>();
         switch (data.actorID)
         {
@@ -71,11 +72,12 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
 
             break;
         case ActorID::FruitSmall:
-            m_playerValues[data.playerID].score += SmallFruitScore;
+            amount = SmallFruitScore;
             break;
         }
 
-        sendUpdate(data.playerID);
+        m_playerValues[data.playerID].score += amount;
+        sendUpdate(data.playerID, amount);
     }
         break;
     case MessageID::PlayerMessage:
@@ -88,7 +90,7 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             m_playerValues[id].lives = 3;
             m_playerValues[id].score = 0;
 
-            sendUpdate(id);
+            sendUpdate(id, 0);
         }
     }
         break;
@@ -96,11 +98,12 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
 }
 
 //private
-void InventoryDirector::sendUpdate(sf::Uint8 player)
+void InventoryDirector::sendUpdate(sf::Uint8 player, sf::Uint32 amount)
 {
         InventoryUpdate update;
         update.lives = m_playerValues[player].lives;
         update.score = m_playerValues[player].score;
+        update.amount = amount;
         update.playerID = player;
 
         m_host.broadcastPacket(PacketID::InventoryUpdate, update, xy::NetFlag::Reliable, 1);

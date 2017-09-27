@@ -1,6 +1,8 @@
 xygineXT
 --------
 
+[![Build Status](https://travis-ci.org/fallahn/xygine.svg?branch=xyginext)](https://travis-ci.org/fallahn/xygine)
+
 The next iteration of xygine....
 
 ![Logo by Baard](xyginext/xygine.png?raw=true)

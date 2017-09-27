@@ -25,39 +25,25 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_INVENTORY_DIRECTOR_HPP_
-#define DEMO_INVENTORY_DIRECTOR_HPP_
+#ifndef DEMO_SCORE_TAG_HPP_
+#define DEMO_SCORE_TAG_HPP_
 
-#include <xyginext/ecs/Director.hpp>
+#include <xyginext/ecs/System.hpp>
 
-#include <array>
-
-namespace xy
+struct ScoreTag final
 {
-    class NetHost;
-}
-
-class InventoryDirector final : public xy::Director
-{
-public:
-    explicit InventoryDirector(xy::NetHost&);
-
-    void handleMessage(const xy::Message&) override;
-    void handleEvent(const sf::Event&) override {}
-    void process(float) override {}
-
-private:
-    xy::NetHost& m_host;
-    
-    struct Inventory final
-    {
-        sf::Uint32 score = 0;
-        sf::Uint8 lives = 3;
-        //TODO letters for bonus
-    };
-    std::array<Inventory, 2> m_playerValues{};
-
-    void sendUpdate(sf::Uint8, sf::Uint32);
+    static constexpr float MaxLife = 2.f;
+    float lifetime = MaxLife;
 };
 
-#endif //DEMO_INVENTORY_DIRECTOR_HPP_
+class ScoreTagSystem final : public xy::System
+{
+public:
+    explicit ScoreTagSystem(xy::MessageBus&);
+
+    void process(float) override;
+
+private:
+};
+
+#endif //DEMO_SCORE_TAG_HPP_

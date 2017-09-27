@@ -39,6 +39,7 @@ source distribution.
 #include "ParticleDirector.hpp"
 #include "FXDirector.hpp"
 #include "MapAnimator.hpp"
+#include "ScoreTag.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -197,6 +198,7 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::InterpolationSystem>(mb);
     m_scene.addSystem<AnimationControllerSystem>(mb);
     m_scene.addSystem<MapAnimatorSystem>(mb);
+    m_scene.addSystem<ScoreTagSystem>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
@@ -990,16 +992,37 @@ void GameState::updateUI(const InventoryUpdate& data)
         entity.getComponent<xy::SpriteAnimation>().play(data.lives);
     };
 
+
+    xy::Command textCommand; //displays the score bubble
+    textCommand.action =
+        [&, data](xy::Entity entity, float)
+    {
+        auto pos = entity.getComponent<xy::Transform>().getPosition();
+
+        auto scoreEnt = m_scene.createEntity();
+        scoreEnt.addComponent<xy::Transform>().setPosition(pos);
+        scoreEnt.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString(std::to_string(data.amount));
+        scoreEnt.getComponent<xy::Text>().setCharacterSize(40);
+        scoreEnt.addComponent<ScoreTag>();
+    };
+
     if (data.playerID == 0)
     {
         scoreCmd.targetFlags = CommandID::ScoreOne;
         livesCommand.targetFlags = CommandID::LivesOne;
+        textCommand.targetFlags = CommandID::PlayerOne;
     }
     else
     {
         scoreCmd.targetFlags = CommandID::ScoreTwo;
         livesCommand.targetFlags = CommandID::LivesTwo;
+        textCommand.targetFlags = CommandID::PlayerTwo;
     }
     m_scene.getSystem<xy::CommandSystem>().sendCommand(scoreCmd);
     m_scene.getSystem<xy::CommandSystem>().sendCommand(livesCommand);
+
+    if (data.amount)
+    {
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(textCommand);
+    }
 }
