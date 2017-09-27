@@ -148,7 +148,10 @@ void BubbleSystem::doCollision(xy::Entity entity)
             {
             default: break;
             case CollisionType::Solid:
-                tx.move(man.normal * man.penetration);
+                if (bubble.state != Bubble::Spawning)
+                {
+                    tx.move(man.normal * man.penetration);
+                }
                 break;
             case CollisionType::Player:
                 switch (bubble.state)
