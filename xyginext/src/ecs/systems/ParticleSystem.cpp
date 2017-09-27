@@ -80,7 +80,7 @@ namespace
             gl_FragColor = gl_Color * texture2D(u_texture, texCoord + vec2(0.5));
         })";
 
-    const std::size_t MaxParticleSystems = 64; //max VBOs, must be divisible by min count
+    const std::size_t MaxParticleSystems = 128; //max VBOs, must be divisible by min count
     const std::size_t MinParticleSystems = 4; //min amount before resizing. This many are added on resize
 }
 
@@ -199,7 +199,7 @@ void ParticleSystem::process(float dt)
         }
 
         //check if visible and create a vertex array for it
-        if (viewableArea.intersects(emitter.m_bounds)) 
+        if (viewableArea.intersects(emitter.m_bounds) && m_activeArrayCount < MaxParticleSystems) 
         {
             auto& vertArray = m_emitterArrays[m_activeArrayCount++];
             vertArray.count = 0;
