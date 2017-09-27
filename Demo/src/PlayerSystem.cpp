@@ -59,7 +59,7 @@ PlayerSystem::PlayerSystem(xy::MessageBus& mb, bool server)
 }
 
 //public
-void PlayerSystem::process(float dt)
+void PlayerSystem::process(float)
 {
     auto& entities = getEntities();
     for (auto& entity : entities)

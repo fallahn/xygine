@@ -221,7 +221,7 @@ void ParticleSystem::process(float dt)
 }
 
 //private
-void ParticleSystem::onEntityAdded(xy::Entity entity)
+void ParticleSystem::onEntityAdded(xy::Entity)
 {
     m_arrayCount++;
 
@@ -231,7 +231,7 @@ void ParticleSystem::onEntityAdded(xy::Entity entity)
     }
 }
 
-void ParticleSystem::onEntityRemoved(xy::Entity entity)
+void ParticleSystem::onEntityRemoved(xy::Entity)
 {
     m_arrayCount--; //if this is right it should never go less than 0...
     if (m_arrayCount < (m_emitterArrays.size() - MinParticleSystems))

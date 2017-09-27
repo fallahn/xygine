@@ -51,9 +51,6 @@ public:
 private:
 
     bool m_enabled;
-
-    void onEntityAdded(xy::Entity) override;
-    void onEntityRemoved(xy::Entity) override;
     
     bool passesFilter(xy::Entity, xy::Entity);
 

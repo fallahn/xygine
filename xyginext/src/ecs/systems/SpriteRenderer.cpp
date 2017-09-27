@@ -52,7 +52,7 @@ SpriteRenderer::SpriteRenderer(MessageBus& mb)
 }
 
 //public
-void SpriteRenderer::process(float dt)
+void SpriteRenderer::process(float)
 {
     //update geometry
     auto& entities = getEntities();

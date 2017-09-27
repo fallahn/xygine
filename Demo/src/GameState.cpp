@@ -839,7 +839,7 @@ void GameState::spawnClient(const ClientData& data)
 
         //temp for now just to flash player when invincible
         entity.addComponent<xy::Callback>().function = 
-            [](xy::Entity entity, float dt)
+            [](xy::Entity entity, float)
         {
             static sf::Color colour = sf::Color::White;
             if (entity.getComponent<Player>().timer > 0

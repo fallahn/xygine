@@ -63,17 +63,17 @@ ErrorState::ErrorState(xy::StateStack& stack, xy::State::Context ctx, const Shar
     });
 }
 
-bool ErrorState::handleEvent(const sf::Event& evt)
+bool ErrorState::handleEvent(const sf::Event&)
 {
     return false;
 }
 
-void ErrorState::handleMessage(const xy::Message& msg)
+void ErrorState::handleMessage(const xy::Message&)
 {
 
 }
 
-bool ErrorState::update(float dt)
+bool ErrorState::update(float)
 {
     return false;
 }

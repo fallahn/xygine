@@ -101,7 +101,7 @@ void UISystem::handleEvent(const sf::Event& evt)
     }
 }
 
-void UISystem::process(float dt)
+void UISystem::process(float)
 {    
     //TODO we probably want some partitioning? Checking every entity for a collision could be a bit pants
     auto& entities = getEntities();
@@ -152,7 +152,7 @@ void UISystem::process(float dt)
     m_movementDelta = {};
 }
 
-void UISystem::handleMessage(const Message& msg)
+void UISystem::handleMessage(const Message&)
 {
 
 }

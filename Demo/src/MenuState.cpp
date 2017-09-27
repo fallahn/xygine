@@ -114,7 +114,7 @@ void MenuState::createMenu()
     bounds = entity.getComponent<xy::Sprite>().getLocalBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] = 
-        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -154,7 +154,7 @@ void MenuState::createMenu()
     tx2.move(0.f, -64.f);
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {

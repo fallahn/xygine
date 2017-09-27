@@ -46,7 +46,7 @@ AudioSystem::AudioSystem(MessageBus& mb)
 }
 
 //public
-void AudioSystem::process(float dt)
+void AudioSystem::process(float)
 {
     //set listener position to active camera
     auto listener = getScene()->getActiveListener();

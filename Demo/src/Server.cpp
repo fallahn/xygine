@@ -656,7 +656,7 @@ void GameServer::handleMessage(const xy::Message& msg)
         {
             //remove from list of actors
             std::size_t i = 0u;
-            for (i; i < m_mapData.actorCount; ++i)
+            for (; i < m_mapData.actorCount; ++i)
             {
                 if (m_mapData.actors[i].id == data.entityID)
                 {

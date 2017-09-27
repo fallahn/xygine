@@ -120,12 +120,12 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
     }
 }
 
-void ParticleDirector::handleEvent(const sf::Event& evt)
+void ParticleDirector::handleEvent(const sf::Event&)
 {
 
 }
 
-void ParticleDirector::process(float dt)
+void ParticleDirector::process(float)
 {
     //check for finished systems then free up by swapping
     for (auto i = 0u; i < m_nextFreeEmitter; ++i)

@@ -50,7 +50,7 @@ CollisionSystem::CollisionSystem(xy::MessageBus& mb, bool server)
 }
 
 //public
-void CollisionSystem::process(float dt)
+void CollisionSystem::process(float)
 {
     if (!m_enabled) return;
 
@@ -169,16 +169,6 @@ void CollisionSystem::process(float dt)
 }
 
 //private
-void CollisionSystem::onEntityAdded(xy::Entity entity)
-{
-
-}
-
-void CollisionSystem::onEntityRemoved(xy::Entity entity)
-{
-
-}
-
 bool CollisionSystem::passesFilter(xy::Entity a, xy::Entity b)
 {
     const auto collisionA = a.getComponent<CollisionComponent>();

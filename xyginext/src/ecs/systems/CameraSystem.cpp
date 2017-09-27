@@ -42,7 +42,7 @@ CameraSystem::CameraSystem(MessageBus& mb)
 }
 
 //public
-void CameraSystem::process(float dt)
+void CameraSystem::process(float)
 {
     auto& entities = getEntities();
     for (auto& entity : entities)

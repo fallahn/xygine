@@ -80,7 +80,7 @@ void TextboxDirector::handleEvent(const sf::Event& evt)
     }
 }
 
-void TextboxDirector::process(float dt)
+void TextboxDirector::process(float)
 {
 
 }
