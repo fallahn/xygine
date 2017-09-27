@@ -76,8 +76,10 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
             entity.addComponent<Actor>().id = entity.getIndex();
             entity.getComponent<Actor>().type = (player.playerNumber == 0) ?  ActorID::BubbleOne : ActorID::BubbleTwo;
             entity.addComponent<Bubble>().player = player.playerNumber;
-            //TODO add player current velocity to spawn velocity
+            //add player current velocity to spawn velocity
             entity.getComponent<Bubble>().velocity.x = (player.direction == Player::Direction::Right) ? spawnVelocity : -spawnVelocity;
+            entity.getComponent<Bubble>().velocity.x += player.velocity.x;
+            std::cout << entity.getComponent<Bubble>().velocity.x << std::endl;
             entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
             entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC);

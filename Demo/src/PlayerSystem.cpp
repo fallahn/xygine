@@ -118,7 +118,7 @@ void PlayerSystem::process(float)
                     && player.canJump)
                 {
                     player.state = Player::State::Jumping;
-                    player.velocity = -initialJumpVelocity;
+                    player.velocity.y = -initialJumpVelocity;
                     player.canJump = false;
 
                     auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
@@ -130,21 +130,21 @@ void PlayerSystem::process(float)
             {
                 //variable jump height
                 if ((currentMask & InputFlag::Up) == 0
-                    && player.velocity < minJumpVelocity)
+                    && player.velocity.y < minJumpVelocity)
                 {
-                    player.velocity = minJumpVelocity;
+                    player.velocity.y = minJumpVelocity;
                 }
                 
-                tx.move({ 0.f, player.velocity * delta });
-                player.velocity += gravity * delta;
-                player.velocity = std::min(player.velocity, maxVelocity);
+                tx.move({ 0.f, player.velocity.y * delta });
+                player.velocity.y += gravity * delta;
+                player.velocity.y = std::min(player.velocity.y, maxVelocity);
             }
             else
             {
                 //dying
-                player.velocity += gravity * delta;
-                player.velocity = std::min(player.velocity, maxVelocity);
-                tx.move({ 0.f, player.velocity * delta });
+                player.velocity.y += gravity * delta;
+                player.velocity.y = std::min(player.velocity.y, maxVelocity);
+                tx.move({ 0.f, player.velocity.y * delta });
                 player.canShoot = false;
 
                 if (player.timer < 0) //respawn
@@ -165,6 +165,8 @@ void PlayerSystem::process(float)
             {
                 auto motion = parseInput(currentMask);
                 tx.move(speed * motion * delta);
+                player.velocity.x = speed * motion.x; //used to decide how much velocity to add to bubble spawn
+                
                 if (motion.x > 0)
                 {
                     player.direction = Player::Direction::Right;
@@ -182,7 +184,7 @@ void PlayerSystem::process(float)
         animController.direction = (player.direction == Player::Direction::Left) ? 1.f : -1.f;
         if (player.state == Player::State::Jumping)
         {
-            animController.nextAnimation = (player.velocity > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
+            animController.nextAnimation = (player.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
         }
         else if(player.state == Player::State::Walking)
         {
@@ -205,7 +207,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
 
     tx.setPosition(state.x, state.y);
     player.state = state.playerState;
-    player.velocity = state.playerVelocity;
+    player.velocity.y = state.playerVelocity;
     player.timer = state.playerTimer;
 
     //find the oldest timestamp not used by server
@@ -238,27 +240,27 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                     && player.canJump)
                 {
                     player.state = Player::State::Jumping;
-                    player.velocity = -initialJumpVelocity;
+                    player.velocity.y = -initialJumpVelocity;
                 }
             }
             else if(player.state == Player::State::Jumping)
             {
                 if ((player.history[idx].mask & InputFlag::Up) == 0
-                    && player.velocity < minJumpVelocity)
+                    && player.velocity.y < minJumpVelocity)
                 {
-                    player.velocity = minJumpVelocity;
+                    player.velocity.y = minJumpVelocity;
                 }                
                 
-                tx.move({ 0.f, player.velocity * delta });
-                player.velocity += gravity * delta;
-                player.velocity = std::min(player.velocity, maxVelocity);
+                tx.move({ 0.f, player.velocity.y * delta });
+                player.velocity.y += gravity * delta;
+                player.velocity.y = std::min(player.velocity.y, maxVelocity);
             }
             else
             {
                 //dying
-                player.velocity += gravity * delta;
-                player.velocity = std::min(player.velocity, maxVelocity);
-                tx.move({ 0.f, player.velocity * delta });             
+                player.velocity.y += gravity * delta;
+                player.velocity.y = std::min(player.velocity.y, maxVelocity);
+                tx.move({ 0.f, player.velocity.y * delta });             
             }
 
 
@@ -266,6 +268,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
             {
                 auto motion = parseInput(player.history[idx].mask);
                 tx.move(speed * motion * delta);
+                player.velocity.x = speed * motion.x;
                 if (motion.x > 0)
                 {
                     player.direction = Player::Direction::Right;
@@ -284,7 +287,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     animController.direction = (player.direction == Player::Direction::Left) ? 1.f : -1.f;
     if (player.state == Player::State::Jumping)
     {
-        animController.nextAnimation = (player.velocity > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
+        animController.nextAnimation = (player.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
     }
     else
     {
@@ -353,7 +356,7 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                     //only collide when moving downwards (one way plat)
                     if (man.normal.y < 0 && player.canLand)
                     {
-                        player.velocity = 0.f;
+                        player.velocity.y = 0.f;
                         if (player.state == Player::State::Jumping)
                         {
                             //don't switch if we're dying
@@ -368,9 +371,9 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                 case CollisionType::Solid:
                     //always repel
                     tx.move(man.normal * man.penetration);
-                    if (man.normal.y < 0 && player.velocity > 0)
+                    if (man.normal.y < 0 && player.velocity.y > 0)
                     {
-                        player.velocity = 0.f;
+                        player.velocity.y = 0.f;
                         if (player.state == Player::State::Jumping)
                         {
                             player.state = Player::State::Walking;

@@ -333,35 +333,8 @@ bool GameState::loadScene(const MapData& data, sf::Vector2f position)
     m_currentMapTexture = (m_currentMapTexture + 1) % m_mapTextures.size();
     
     m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Sprite>().getSize() / 2.f);
-    m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(1.f);
+    m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(10.f);
     //m_scene.getActiveCamera().getComponent<xy::Camera>().setZoom(0.5f);
-
-    //for (auto i = 0; i < data.actorCount; ++i)
-    //{
-    //    auto entity = m_scene.createEntity();
-    //    entity.addComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
-    //    entity.addComponent<Actor>() = data.actors[i];       
-    //    entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
-    //    entity.addComponent<xy::NetInterpolate>();
-
-    //    switch (data.actors[i].type)
-    //    {
-    //    default:
-    //        //add missing texture or placeholder
-    //        break;
-    //    case ActorID::Whirlybob:
-    //        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
-    //        entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::WhirlyBob];
-    //        break;
-    //    case ActorID::Clocksy:
-    //        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
-    //        entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
-    //        //entity.addComponent<xy::Text>(m_fontResource.get("flaps")).setString("BUNS");
-    //        break;
-    //    }
-    //    entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
-    //    entity.addComponent<xy::SpriteAnimation>().play(0);
-    //}
 
     m_mapData = data;
 

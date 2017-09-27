@@ -201,6 +201,11 @@ void App::applyVideoSettings(const VideoSettings& settings)
     {
         m_renderWindow.setSize({ settings.VideoMode.width, settings.VideoMode.height });
         m_renderWindow.setTitle(settings.Title);
+
+        sf::Vector2u windowPos = { sf::VideoMode::getDesktopMode().width / 2, sf::VideoMode::getDesktopMode().height / 2 };
+        windowPos.x -= settings.VideoMode.width / 2;
+        windowPos.y -= settings.VideoMode.height / 2;
+        m_renderWindow.setPosition({ static_cast<sf::Int32>(windowPos.x), static_cast<sf::Int32>(windowPos.y) });
     }
 
     auto* msg = m_messageBus.post<Message::WindowEvent>(Message::WindowMessage);

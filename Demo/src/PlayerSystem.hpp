@@ -51,7 +51,7 @@ struct Player final
     {
         Walking, Jumping, Dying
     }state = State::Walking;
-    float velocity = 0.f;
+    sf::Vector2f velocity; //only the Y velocity is actually used in movement - the x value is used to track how much initial velocity to spawn bubble with
     bool canJump = true;
     bool canLand = false; //only for 1 way platforms
     bool canShoot = true;

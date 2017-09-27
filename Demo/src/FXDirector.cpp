@@ -62,7 +62,6 @@ void FXDirector::handleMessage(const xy::Message& msg)
             auto ent = getNextEntity();
             ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/shoot.wav"));
             ent.getComponent<xy::AudioEmitter>().play();
-            ent.getComponent<xy::Transform>().setPosition(data.entity.getComponent<xy::Transform>().getPosition());
         }
             break;
         case PlayerEvent::Jumped:
@@ -70,7 +69,6 @@ void FXDirector::handleMessage(const xy::Message& msg)
             auto ent = getNextEntity();
             ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/jump.wav"));
             ent.getComponent<xy::AudioEmitter>().play();
-            ent.getComponent<xy::Transform>().setPosition(data.entity.getComponent<xy::Transform>().getPosition());
         }
             break;
         }
@@ -89,7 +87,6 @@ void FXDirector::handleMessage(const xy::Message& msg)
                 auto ent = getNextEntity();
                 ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/collect.wav"));
                 ent.getComponent<xy::AudioEmitter>().play();
-                ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
             }
                 break;
             }
@@ -108,7 +105,6 @@ void FXDirector::handleMessage(const xy::Message& msg)
                 auto ent = getNextEntity();
                 ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/npc_pop.wav"));
                 ent.getComponent<xy::AudioEmitter>().play();
-                ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
             }
             break;
         }
@@ -139,8 +135,9 @@ void FXDirector::resizeEntities()
     {
         m_entities[i] = getScene().createEntity();
         m_entities[i].addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("placeholder"));
-        m_entities[i].getComponent<xy::AudioEmitter>().setVolume(100.f);
+        m_entities[i].getComponent<xy::AudioEmitter>().setVolume(70.f);
         m_entities[i].getComponent<xy::AudioEmitter>().setMinDistance(1920.f);
+        m_entities[i].getComponent<xy::AudioEmitter>().setRelativeTolistener(true);
         m_entities[i].addComponent<xy::Transform>();
     }
 }

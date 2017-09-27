@@ -74,7 +74,7 @@ Transform::Transform(Transform&& other)
             }
         }
     }
-    m_children.swap(other.m_children);
+    m_children = std::move(other.m_children);
 
     //update the children's new parent
     for (auto c : m_children)
@@ -115,7 +115,7 @@ Transform& Transform::operator=(Transform&& other)
             }
         }
 
-        m_children.swap(other.m_children);
+        m_children = std::move(other.m_children);
 
         //update the children's new parent
         for (auto c : m_children)
