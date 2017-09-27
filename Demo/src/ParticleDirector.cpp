@@ -48,6 +48,7 @@ ParticleDirector::ParticleDirector(xy::TextureResource& tr)
 {
     //load particle presets
     m_settings[SettingsID::BubblePop].loadFromFile("assets/particles/pop.xyp", tr);
+    m_settings[SettingsID::SpawnNPC].loadFromFile("assets/particles/spawn.xyp", tr);
 }
 
 //public
@@ -78,6 +79,21 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
             ent.getComponent<xy::ParticleEmitter>().start();
         }
+        else if (data.type == SceneEvent::ActorSpawned)
+        {
+            auto ent = getNextEntity();
+            switch (data.actorID)
+            {
+            default: return;
+            case ActorID::Clocksy:
+            case ActorID::Whirlybob:
+                ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::SpawnNPC];
+                break;
+            }
+            ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
+            ent.getComponent<xy::ParticleEmitter>().start();
+        }
+
     }
     else if (msg.id == MessageID::AnimationMessage)
     {

@@ -333,32 +333,8 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         {
             m_clients[1].ready = true;
         }
+        beginNewRound();
 
-        //check if all connected clients are ready then send message to continue
-        bool p1Ready = ((m_clients[0].data.actor.id == ActorID::None) || (m_clients[0].data.actor.id != ActorID::None && m_clients[0].ready));
-        bool p2Ready = ((m_clients[1].data.actor.id == ActorID::None) || (m_clients[1].data.actor.id != ActorID::None && m_clients[1].ready));
-
-        if (p1Ready && p2Ready)
-        {
-            m_scene.getSystem<NPCSystem>().setEnabled(true);
-            m_scene.getSystem<CollisionSystem>().setEnabled(true);
-
-            xy::Command cmd;
-            cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
-            cmd.action = [](xy::Entity entity, float)
-            {
-                if (entity.getComponent<xy::CommandTarget>().ID == CommandID::PlayerOne)
-                {
-                    entity.getComponent<xy::Transform>().setPosition(playerOneSpawn);
-                }
-                else
-                {
-                    entity.getComponent<xy::Transform>().setPosition(playerTwoSpawn);
-                }
-            };
-            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
-            
-        }
     }
         break;
     }
@@ -547,6 +523,50 @@ void GameServer::loadMap()
         //broadcast message ident that causes client to quit
         CLIENT_MESSAGE(MessageIdent::MapFailed);
         //std::cout << "failed opening next map" << std::endl;
+    }
+}
+
+void GameServer::beginNewRound()
+{
+    //check if all connected clients are ready then send message to continue
+    bool p1Ready = ((m_clients[0].data.actor.id == ActorID::None) || (m_clients[0].data.actor.id != ActorID::None && m_clients[0].ready));
+    bool p2Ready = ((m_clients[1].data.actor.id == ActorID::None) || (m_clients[1].data.actor.id != ActorID::None && m_clients[1].ready));
+
+    if (p1Ready && p2Ready)
+    {
+        m_scene.getSystem<NPCSystem>().setEnabled(true);
+        m_scene.getSystem<CollisionSystem>().setEnabled(true);
+
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+        cmd.action = [](xy::Entity entity, float)
+        {
+            if (entity.getComponent<xy::CommandTarget>().ID == CommandID::PlayerOne)
+            {
+                entity.getComponent<xy::Transform>().setPosition(playerOneSpawn);
+            }
+            else
+            {
+                entity.getComponent<xy::Transform>().setPosition(playerTwoSpawn);
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        //send initial position of existing actors
+        const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
+        for (const auto& actor : actors)
+        {
+            const auto& actorComponent = actor.getComponent<Actor>();
+            const auto& tx = actor.getComponent<xy::Transform>().getPosition();
+
+            ActorState state;
+            state.actor.id = actorComponent.id;
+            state.actor.type = actorComponent.type;
+            state.x = tx.x;
+            state.y = tx.y;
+
+            m_host.broadcastPacket(PacketID::ActorAbsolute, state, xy::NetFlag::Reliable, 1);
+        }
     }
 }
 

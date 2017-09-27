@@ -149,6 +149,8 @@ void GameState::handleMessage(const xy::Message& msg)
         const auto& data = msg.getData<MapEvent>();
         if (data.type == MapEvent::AnimationComplete)
         {
+            spawnMapActors();
+            
             m_playerInput.setEnabled(true);
             m_scene.getSystem<CollisionSystem>().setEnabled(true);
 
@@ -332,32 +334,34 @@ bool GameState::loadScene(const MapData& data, sf::Vector2f position)
     m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(1.f);
     //m_scene.getActiveCamera().getComponent<xy::Camera>().setZoom(0.5f);
 
-    for (auto i = 0; i < data.actorCount; ++i)
-    {
-        auto entity = m_scene.createEntity();
-        entity.addComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
-        entity.addComponent<Actor>() = data.actors[i];       
-        entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
-        entity.addComponent<xy::NetInterpolate>();
+    //for (auto i = 0; i < data.actorCount; ++i)
+    //{
+    //    auto entity = m_scene.createEntity();
+    //    entity.addComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
+    //    entity.addComponent<Actor>() = data.actors[i];       
+    //    entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
+    //    entity.addComponent<xy::NetInterpolate>();
 
-        switch (data.actors[i].type)
-        {
-        default:
-            //add missing texture or placeholder
-            break;
-        case ActorID::Whirlybob:
-            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
-            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::WhirlyBob];
-            break;
-        case ActorID::Clocksy:
-            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
-            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
-            //entity.addComponent<xy::Text>(m_fontResource.get("flaps")).setString("BUNS");
-            break;
-        }
-        entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
-        entity.addComponent<xy::SpriteAnimation>().play(0);
-    }
+    //    switch (data.actors[i].type)
+    //    {
+    //    default:
+    //        //add missing texture or placeholder
+    //        break;
+    //    case ActorID::Whirlybob:
+    //        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
+    //        entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::WhirlyBob];
+    //        break;
+    //    case ActorID::Clocksy:
+    //        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
+    //        entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
+    //        //entity.addComponent<xy::Text>(m_fontResource.get("flaps")).setString("BUNS");
+    //        break;
+    //    }
+    //    entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
+    //    entity.addComponent<xy::SpriteAnimation>().play(0);
+    //}
+
+    m_mapData = data;
 
     return true;
 }
@@ -460,11 +464,18 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
         xy::Command cmd;
         cmd.targetFlags = CommandID::NetActor;
-        cmd.action = [state](xy::Entity entity, float)
+        cmd.action = [&, state](xy::Entity entity, float)
         {
             if (entity.getComponent<Actor>().id == state.actor.id)
             {
                 entity.getComponent<xy::Transform>().setPosition(state.x, state.y);
+
+                auto msg = getContext().appInstance.getMessageBus().post<SceneEvent>(MessageID::SceneMessage);
+                msg->entity = entity;
+                msg->type = SceneEvent::ActorSpawned;
+                msg->actorID = state.actor.type;
+                msg->x = state.x;
+                msg->y = state.y;
             }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
@@ -511,6 +522,8 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         //load new actors
         if (loadScene(data))
         {
+            spawnMapActors();
+
             //send ready signal
             m_client.sendPacket(PacketID::ClientReady, 0, xy::NetFlag::Reliable, 1);
             m_playerInput.setEnabled(true);
@@ -916,6 +929,35 @@ void GameState::switchMap(const MapData& data)
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
         m_scene.getSystem<CollisionSystem>().setEnabled(false);
+    }
+}
+
+void GameState::spawnMapActors()
+{
+    for (auto i = 0; i < m_mapData.actorCount; ++i)
+    {
+        auto entity = m_scene.createEntity();
+        entity.addComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
+        entity.addComponent<Actor>() = m_mapData.actors[i];
+        entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
+        entity.addComponent<xy::NetInterpolate>();
+
+        switch (m_mapData.actors[i].type)
+        {
+        default:
+            //add missing texture or placeholder
+            break;
+        case ActorID::Whirlybob:
+            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
+            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::WhirlyBob];
+            break;
+        case ActorID::Clocksy:
+            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
+            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
+            break;
+        }
+        entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
+        entity.addComponent<xy::SpriteAnimation>().play(0);
     }
 }
 

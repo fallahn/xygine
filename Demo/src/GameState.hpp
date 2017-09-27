@@ -89,6 +89,8 @@ private:
 
     xy::ConfigFile m_scores;
 
+    MapData m_mapData;
+
     void loadAssets();
     bool loadScene(const MapData&, sf::Vector2f = sf::Vector2f());
     void loadUI();
@@ -106,6 +108,7 @@ private:
     void spawnClient(const ClientData&);
     void killActor(const ActorEvent&);
     void switchMap(const MapData&);
+    void spawnMapActors();
 
     void updateUI(const InventoryUpdate&);
 };

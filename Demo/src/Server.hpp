@@ -81,6 +81,7 @@ private:
     void initMaplist();
     void initScene();
     void loadMap();
+    void beginNewRound();
 
     sf::Int32 spawnPlayer(std::size_t);
 

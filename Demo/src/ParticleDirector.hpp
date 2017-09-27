@@ -57,6 +57,7 @@ private:
     enum SettingsID
     {
         BubblePop,
+        SpawnNPC,
         Count
     };
 
