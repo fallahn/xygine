@@ -505,7 +505,7 @@ std::string FileSystem::getConfigDirectory(const std::string& appName)
     strcat(out, PATH_SEPARATOR_STRING);
     strcat(out, appname);
     /* Make the .config/appname folder if it doesn't already exist */
-    _mkdir(out, 0755);
+    mkdir(out, 0755);
     strcat(out, PATH_SEPARATOR_STRING);
 #endif
 

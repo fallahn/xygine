@@ -21,6 +21,10 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wextra -Wreorder -Wheader-guard")
 endif()
 
+# Apple requires some extra guff
+if (APPLE)
+find_library(CORESERVICES_LIBRARY CoreServices)
+endif()
 
 # Only works with SFML version 2.4 and above
 SET(SFML_MIN_VERSION 2.4)
@@ -58,6 +62,11 @@ target_link_libraries(${PROJECT_NAME}
   ${SFML_DEPENDENCIES}
   ${ENET_LIBRARIES}
   ${OPENGL_LIBRARIES})
+
+# Link apple guff if appropriate
+if (APPLE)
+target_link_libraries(${PROJECT_NAME} ${CORESERVICES_LIBRARY})
+endif()
 
 # The project specific includes (Useful if linking to this target from another cmake script)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
