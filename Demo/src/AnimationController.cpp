@@ -31,6 +31,7 @@ source distribution.
 
 #include <xyginext/ecs/components/SpriteAnimation.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/components/Sprite.hpp>
 
 #include <xyginext/core/Message.hpp>
 
@@ -82,6 +83,12 @@ void AnimationControllerSystem::process(float)
         if (controller.nextAnimation != controller.currentAnim
             && controller.prevAnimation == controller.currentAnim)
         {
+            if (controller.nextAnimation == AnimationController::TrappedOne ||
+                controller.nextAnimation == AnimationController::TrappedTwo)
+            {
+                entity.getComponent<xy::Sprite>().setColour(sf::Color::White);
+            }
+            
             auto* msg = postMessage<AnimationEvent>(MessageID::AnimationMessage);
             msg->oldAnim = controller.currentAnim;
             msg->newAnim = controller.nextAnimation;

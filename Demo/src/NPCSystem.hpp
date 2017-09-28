@@ -46,6 +46,7 @@ struct NPC final
     float thinkTimer = 0.f;
     bool canLand = true;
     sf::Int32 bubbleOwner = -1;
+    bool angry = false;
 };
 
 class NPCSystem final : public xy::System

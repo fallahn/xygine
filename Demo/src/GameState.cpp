@@ -469,13 +469,30 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::ActorEvent:
     {
         const auto actorEvent = evt.packet.as<ActorEvent>();
-        if (actorEvent.type == ActorEvent::Spawned)
+        switch (actorEvent.type)
         {
+        case ActorEvent::Spawned:
             spawnActor(actorEvent);
-        }
-        else if (actorEvent.type == ActorEvent::Died)
-        {
+            break;
+        case ActorEvent::Died:
             killActor(actorEvent);
+            break;
+        case ActorEvent::GotAngry:
+        {
+            auto id = actorEvent.actor.id;
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::NetActor;
+            cmd.action = [id](xy::Entity entity, float)
+            {
+                if (entity.getComponent<Actor>().id == id)
+                {
+                    entity.getComponent<xy::Sprite>().setColour(sf::Color(255, 160, 160));
+                }
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+        }
+            break;
+        default: break;
         }
     }
         break;

@@ -107,7 +107,7 @@ struct ActorEvent final : public ActorState
 {
     enum
     {
-        Spawned, Died
+        Spawned, Died, GotAngry
     }type;
 };
 

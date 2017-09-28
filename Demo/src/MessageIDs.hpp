@@ -76,7 +76,8 @@ struct NpcEvent final
     enum
     {
         Died,
-        Spawned
+        Spawned,
+        GotAngry
     }type = Died;
     sf::Int32 entityID = 0;
     sf::Uint8 playerID = 0; //who gets points?

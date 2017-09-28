@@ -43,6 +43,7 @@ namespace
 {
     const float WhirlybobSpeed = 100.f;
     const float ClocksySpeed = 86.f;
+    const float angryMultiplier = 2.f;
     const float initialJumpVelocity = 940.f;
 
     const std::array<float, 10> thinkTimes = { 20.f, 16.f, 12.f, 31.f, 15.4f, 14.9f, 25.f, 12.7f, 13.3f, 18.f };
@@ -159,7 +160,9 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
 
     //if (npc.state == NPC::State::Normal)
     {
-        tx.move(npc.velocity * WhirlybobSpeed * dt);
+        auto vel = npc.velocity * WhirlybobSpeed * dt;
+        if (npc.angry) vel *= angryMultiplier;
+        tx.move(vel);
         entity.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
     }
 }
@@ -197,6 +200,7 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
                     if (manifold.normal.y < 0 && npc.canLand)
                     {
                         npc.velocity.y = 0.f;
+                        if(xy::Util::Random::value(0, 1) == 0) npc.velocity.x = -npc.velocity.x;
                         npc.state = NPC::State::Normal;
 
                         tx.move(manifold.normal * manifold.penetration);
@@ -263,7 +267,10 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
     {
     default: break;
     case NPC::State::Normal:
-        tx.move(npc.velocity * ClocksySpeed * dt);
+    {
+        auto vel = npc.velocity * ClocksySpeed * dt;
+        if (npc.angry) vel *= angryMultiplier;
+        tx.move(vel);
 
         if (npc.thinkTimer < 0)
         {
@@ -271,7 +278,7 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
             m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();
             npc.state = NPC::State::Thinking;
         }
-
+    }
         break;
     case NPC::State::Jumping:
         npc.velocity.y += gravity * dt;
@@ -378,10 +385,22 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
     npc.thinkTimer -= dt;
     if (npc.thinkTimer < 0)
     {
-        //bubble wasn't burst in time, release NPC (angry mode?)
+        //bubble wasn't burst in time, release NPC (angry mode)
         npc.state = NPC::State::Normal;
         npc.velocity = npc.lastVelocity;
         npc.thinkTimer = thinkTimes[m_currentThinkTime];
+        npc.angry = true;
+        
+        //broadcast anger
+        /*auto* msg = postMessage<NpcEvent>(MessageID::NpcMessage);
+        msg->type = NpcEvent::GotAngry;
+        msg->entityID = entity.getIndex();*/
+
+        ActorEvent evt;
+        evt.type = ActorEvent::GotAngry;
+        evt.actor = entity.getComponent<Actor>();
+        m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+
         m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();
     }
 }

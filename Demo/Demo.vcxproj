@@ -146,6 +146,7 @@
     <ClCompile Include="src\TextboxDirector.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\ActorSystem.hpp" />
     <ClInclude Include="src\AnimationController.hpp" />
     <ClInclude Include="src\BubbleSystem.hpp" />
