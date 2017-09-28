@@ -132,11 +132,16 @@ bool GameState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         default: break;
-        case sf::Keyboard::Insert:
+        /*case sf::Keyboard::Insert:
             m_client.disconnect();
             break;
         case sf::Keyboard::Home:
             m_server.stop();
+            break;*/
+        case sf::Keyboard::P:
+        case sf::Keyboard::Escape:
+        case sf::Keyboard::Pause:
+            requestStackPush(StateID::Pause);
             break;
         }
     }

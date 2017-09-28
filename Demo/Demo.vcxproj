@@ -137,6 +137,7 @@
     <ClCompile Include="src\MenuState.cpp" />
     <ClCompile Include="src\NPCSystem.cpp" />
     <ClCompile Include="src\ParticleDirector.cpp" />
+    <ClCompile Include="src\PauseState.cpp" />
     <ClCompile Include="src\PlayerInput.cpp" />
     <ClCompile Include="src\PlayerSystem.cpp" />
     <ClCompile Include="src\ScoreTag.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="src\NPCSystem.hpp" />
     <ClInclude Include="src\PacketIDs.hpp" />
     <ClInclude Include="src\ParticleDirector.hpp" />
+    <ClInclude Include="src\PauseState.hpp" />
     <ClInclude Include="src\PlayerInput.hpp" />
     <ClInclude Include="src\PlayerSystem.hpp" />
     <ClInclude Include="src\ScoreTag.hpp" />

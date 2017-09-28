@@ -16,6 +16,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/MenuState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/NPCSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ParticleDirector.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/PauseState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/PlayerInput.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/PlayerSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ScoreTag.cpp

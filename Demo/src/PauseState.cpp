@@ -25,86 +25,81 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "MenuState.hpp"
-#include "CommandIDs.hpp"
-#include "StateIDs.hpp"
-#include "TextboxDirector.hpp"
+#include "PauseState.hpp"
 
-#include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Text.hpp>
-#include <xyginext/ecs/components/Transform.hpp>
-#include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/ecs/components/UIHitBox.hpp>
+#include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/components/Camera.hpp>
 
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
 #include <xyginext/ecs/systems/UISystem.hpp>
 
-#include <SFML/Window/Event.hpp>
-
-MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
+PauseState::PauseState(xy::StateStack& stack, xy::State::Context ctx)
     : xy::State(stack, ctx),
-    m_scene             (ctx.appInstance.getMessageBus()),
-    m_sharedStateData   (sharedData)
+    m_scene(ctx.appInstance.getMessageBus())
 {
-    launchLoadingScreen();
-    createMenu();
-    ctx.appInstance.setClearColour({ 1, 0, 10 });
-    quitLoadingScreen();
+    m_buttonTexture.loadFromFile("assets/images/button.png");
+    m_font.loadFromFile("assets/fonts/Cave-Story.ttf");
+
+    sf::Image img;
+    img.create(1, 1, sf::Color(0, 0, 0, 120));
+    m_backgroundTexture.loadFromImage(img);
+
+    load();
 }
 
-//public
-bool MenuState::handleEvent(const sf::Event& evt)
+bool PauseState::handleEvent(const sf::Event& evt)
 {
     m_scene.getSystem<xy::UISystem>().handleEvent(evt);
     m_scene.forwardEvent(evt);
-    return true;
+    return false;
 }
 
-void MenuState::handleMessage(const xy::Message& msg)
+void PauseState::handleMessage(const xy::Message& msg)
 {
     m_scene.forwardMessage(msg);
 }
 
-bool MenuState::update(float dt)
+bool PauseState::update(float dt)
 {
     m_scene.update(dt);
     return true;
 }
 
-void MenuState::draw()
+void PauseState::draw()
 {
-    auto& rt = getContext().renderWindow;
-
-    rt.draw(m_scene);
+    auto& rw = getContext().renderWindow;
+    rw.draw(m_scene);
 }
 
 //private
-void MenuState::createMenu()
+void PauseState::load()
 {
     auto& mb = getContext().appInstance.getMessageBus();
     m_scene.addSystem<xy::UISystem>(mb);
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
-    m_scene.addDirector<TextboxDirector>(m_sharedStateData);
 
-    xy::AudioMixer::setLabel("FX", 0);
-    xy::AudioMixer::setLabel("Music", 1);
-
-    //host text
-    auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");
+    //background
     auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("HOST");
+    entity.addComponent<xy::Sprite>(m_backgroundTexture);
+    entity.addComponent<xy::Transform>().setScale(xy::DefaultSceneSize);
+
+    //resume text
+    entity = m_scene.createEntity();
+    entity.addComponent<xy::Text>(m_font).setString("RESUME");
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
     auto& tx = entity.addComponent<xy::Transform>();
-    tx.setOrigin(52.f, 45.f);
+    tx.setOrigin(72.f, 45.f);
 
-    //host button
+    //resume button
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    entity.addComponent<xy::Sprite>().setTexture(m_buttonTexture);
     bounds = entity.getComponent<xy::Sprite>().getLocalBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
     entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
@@ -114,54 +109,43 @@ void MenuState::createMenu()
     tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
     bounds = entity.getComponent<xy::Sprite>().getLocalBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] = 
-        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity, sf::Uint64 flags)
-    {
-        if (flags & xy::UISystem::LeftMouse)
-        {
-            m_sharedStateData.hostState = SharedStateData::Host;
-            requestStackClear();
-            requestStackPush(StateID::Game);
-        }
-    });
-
-    //join text
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("JOIN");
-    entity.getComponent<xy::Text>().setCharacterSize(60);
-    entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
-    auto& tx2 = entity.addComponent<xy::Transform>();
-    tx2.setOrigin(54.f, 45.f);
-
-    //ip text
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString(m_sharedStateData.remoteIP);
-    entity.getComponent<xy::Text>().setCharacterSize(65);
-    bounds.width -= 48.f;
-    entity.getComponent<xy::Text>().setCroppingArea(bounds);
-    entity.addComponent<xy::CommandTarget>().ID = CommandID::MenuText;
-    auto& tx3 = entity.addComponent<xy::Transform>();
-    tx3.setPosition(24.f, 136.f);
-
-    //join button
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
-    entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
-    entity.getComponent<xy::Transform>().addChild(tx2);
-    entity.getComponent<xy::Transform>().addChild(tx3);
-    entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    entity.getComponent<xy::Transform>().move(0.f, 64.f);
-    tx2.setPosition(entity.getComponent<xy::Transform>().getOrigin());
-    tx2.move(0.f, -64.f);
-    entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
         m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
-            m_sharedStateData.hostState = SharedStateData::Client;
+            requestStackPop();
+        }
+    });
+
+    //quit text
+    entity = m_scene.createEntity();
+    entity.addComponent<xy::Text>(m_font).setString("QUIT");
+    entity.getComponent<xy::Text>().setCharacterSize(60);
+    entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    auto& tx2 = entity.addComponent<xy::Transform>();
+    tx2.setOrigin(48.f, 45.f);
+
+
+    //quit button
+    entity = m_scene.createEntity();
+    entity.addComponent<xy::Sprite>().setTexture(m_buttonTexture);
+    bounds = entity.getComponent<xy::Sprite>().getLocalBounds();
+    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
+    entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+    entity.getComponent<xy::Transform>().addChild(tx2);
+    entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
+    tx2.setPosition(entity.getComponent<xy::Transform>().getOrigin());
+    entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
+        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity entity, sf::Uint64 flags)
+    {
+        if (flags & xy::UISystem::LeftMouse)
+        {
+            entity.getComponent<xy::Sprite>().setColour(sf::Color(200, 200, 200));
+            
             requestStackClear();
-            requestStackPush(StateID::Game);
+            requestStackPush(StateID::MainMenu);
         }
     });
 

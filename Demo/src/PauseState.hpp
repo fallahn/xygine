@@ -25,15 +25,36 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_STATE_IDS_HPP_
-#define DEMO_STATE_IDS_HPP_
+#ifndef DEMO_PAUSE_STATE_HPP_
+#define DEMO_PAUSE_STATE_HPP_
 
-enum StateID
+#include "StateIDs.hpp"
+
+#include <xyginext/core/State.hpp>
+#include <xyginext/ecs/Scene.hpp>
+
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Texture.hpp>
+
+class PauseState final : public xy::State
 {
-    MainMenu,
-    Game,
-    Error,
-    Pause
+public:
+    PauseState(xy::StateStack&, xy::State::Context);
+
+    xy::StateID stateID() const override { return StateID::Pause; }
+    bool handleEvent(const sf::Event&) override;
+    void handleMessage(const xy::Message&) override;
+    bool update(float) override;
+    void draw() override;
+
+private:
+
+    xy::Scene m_scene;
+    sf::Font m_font;
+    sf::Texture m_buttonTexture;
+    sf::Texture m_backgroundTexture;
+
+    void load();
 };
 
-#endif //DEMO_STATE_IDS_HPP_
+#endif //DEMO_PAUSE_STATE_HPP_
