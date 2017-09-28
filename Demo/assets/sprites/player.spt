@@ -9,7 +9,7 @@ sprite_sheet player
 
 		animation idle
 		{
-			frame = 0,0,64,64
+		    frame = 0,0,64,64
 			frame = 128,0,64,64
 			framerate = 5.5
 			loop=true
@@ -21,7 +21,7 @@ sprite_sheet player
 			frame = 64,0,64,64
 			frame = 128,0,64,64
 			frame = 192,0,64,64
-			frame = 256,0,64,64
+            frame = 256,0,64,64
 
 			framerate = 18
 			loop = true

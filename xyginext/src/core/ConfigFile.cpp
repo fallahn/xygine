@@ -157,7 +157,7 @@ bool ConfigObject::loadFromFile(const std::string& path)
         
         ConfigObject* currentObject = this;
 
-        if (data == "{")
+        if (data[0] == '{')
         {
             //we have our opening object
             auto objectName = getObjectName(lastLine);
@@ -176,7 +176,7 @@ bool ConfigObject::loadFromFile(const std::string& path)
             removeComment(data);
             if (!data.empty())
             {
-                if (data == "}")
+                if (data[0] == '}')
                 {
                     //close current object and move to parent
                     braceCount--;
@@ -209,7 +209,7 @@ bool ConfigObject::loadFromFile(const std::string& path)
                     std::getline(file, data);
 
                     removeComment(data);
-                    if (data == "{")
+                    if (data[0] == '{')
                     {
                         braceCount++;
                         auto name = getObjectName(prevLine);
@@ -460,11 +460,11 @@ void ConfigObject::removeComment(std::string& line)
     
     //remove any tabs while we're at it
     Util::String::removeChar(line, '\t');
-
-    if (line.find('{') != std::string::npos
-        || line.find('}') != std::string::npos)
+    //and preceding spaces
+    auto start = line.find_first_not_of(' ');
+    if (start != std::string::npos)
     {
-        Util::String::removeChar(line, ' ');
+        line = line.substr(start);
     }
 }
 
