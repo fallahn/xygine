@@ -46,7 +46,8 @@ namespace CommandID
         HighScore = 0x400,
         //map data
         MapItem = 0x800, //anything with this is removed on map changed
-        MapBackground = 0x1000
+        MapBackground = 0x1000,
+        Music = 0x2000
     };
 }
 

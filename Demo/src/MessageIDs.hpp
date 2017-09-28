@@ -103,7 +103,8 @@ struct MapEvent final
 {
     enum
     {
-        AnimationComplete
+        AnimationComplete,
+        HurryUp
     }type;
 };
 

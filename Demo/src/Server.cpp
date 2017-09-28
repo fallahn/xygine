@@ -71,8 +71,8 @@ namespace
     const float tickRate = 1.f / 25.f;
     const float updateRate = 1.f / 60.f;
     const float endOfRoundTime = 6.f;
-    const float roundTime = 30.f; //after this everything is angry
-    const float roundWarnTime = roundTime - 4.f; //allows time for clients to do warning
+    const float roundTime = 39.f; //after this everything is angry
+    const float roundWarnTime = roundTime - 2.5f; //allows time for clients to do warning
 }
 
 GameServer::GameServer()
@@ -173,6 +173,12 @@ void GameServer::update()
                 m_scene.forwardMessage(msg);
             }
             m_scene.update(updateRate);
+
+            //check if it's time to make everything angry
+            checkRoundTime(updateRate);
+
+            //check if it's time to change map
+            checkMapStatus(updateRate);
         }
 
         //network updates are less frequent than logic updates
@@ -224,11 +230,6 @@ void GameServer::update()
             }
         }
 
-        //check if it's time to make everything angry
-        checkRoundTime(dt);
-
-        //check if it's time to change map
-        checkMapStatus(dt);
     }
 
     m_host.stop();
@@ -309,6 +310,8 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
 
             m_host.sendPacket(evt.peer, PacketID::ActorAbsolute, state, xy::NetFlag::Reliable, 1);
         }
+
+        m_currentRoundTime = 0.f;
     }
         break;
     case PacketID::ClientInput:

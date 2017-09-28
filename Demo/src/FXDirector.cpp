@@ -46,6 +46,8 @@ FXDirector::FXDirector()
     m_soundResource.get("assets/sound/jump.wav");
     m_soundResource.get("assets/sound/npc_pop.wav");
     m_soundResource.get("assets/sound/shoot.wav");
+    m_soundResource.get("assets/sound/hurry.wav");
+    m_soundResource.get("assets/sound/player_die.wav");
 }
 
 //public
@@ -92,13 +94,21 @@ void FXDirector::handleMessage(const xy::Message& msg)
         {
         default: break;
         case AnimationController::Die:
-            if (data.entity.getComponent<Actor>().type == ActorID::Clocksy
-                || data.entity.getComponent<Actor>().type == ActorID::Whirlybob)
+        {
+            const auto& actor = data.entity.getComponent<Actor>();
+            if (actor.type == ActorID::Clocksy || actor.type == ActorID::Whirlybob)
             {
                 auto ent = getNextEntity();
                 ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/npc_pop.wav"));
                 ent.getComponent<xy::AudioEmitter>().play();
             }
+            else if (actor.type == ActorID::PlayerOne || actor.type == ActorID::PlayerTwo)
+            {
+                auto ent = getNextEntity();
+                ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/player_die.wav"));
+                ent.getComponent<xy::AudioEmitter>().play();
+            }
+        }
             break;
         case AnimationController::JumpUp:
         {
@@ -107,6 +117,16 @@ void FXDirector::handleMessage(const xy::Message& msg)
             ent.getComponent<xy::AudioEmitter>().play();
         }
             break;
+        }
+    }
+    else if (msg.id == MessageID::MapMessage)
+    {
+        const auto& data = msg.getData<MapEvent>();
+        if (data.type == MapEvent::HurryUp)
+        {
+            auto ent = getNextEntity();
+            ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/hurry.wav"));
+            ent.getComponent<xy::AudioEmitter>().play();
         }
     }
 }

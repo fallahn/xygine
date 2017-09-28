@@ -109,9 +109,18 @@ namespace
 
             auto& tx = entity.getComponent<xy::Transform>();
             tx.move(-600.f * dt, 0.f);
-            if (tx.getPosition().x < -1200.f)
+            if (tx.getPosition().x < -1000.f)
             {
                 m_scene.destroyEntity(entity);
+
+                xy::Command cmd;
+                cmd.targetFlags = CommandID::Music;
+                cmd.action = [](xy::Entity entity, float)
+                {
+                    entity.getComponent<xy::AudioEmitter>().play();
+                    entity.getComponent<xy::AudioEmitter>().setPitch(1.1f);
+                };
+                m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
             }
         }
     private:
@@ -287,18 +296,13 @@ void GameState::loadAssets()
     ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/background.png")).setDepth(-50);
     ent.addComponent<xy::Transform>().setScale(4.f, 4.f);
     ent.getComponent<xy::Transform>().setPosition((-(xy::DefaultSceneSize.x / 2.f) + MapBounds.width / 2.f), 0.f);
-    /*ent.addComponent<xy::Callback>().active = true;
-    ent.getComponent<xy::Callback>().function = [](xy::Entity entity, float)
-    {
-        const auto& tx = entity.getComponent<xy::Transform>();
-        xy::App::printStat("Background:", std::to_string(tx.getPosition().x) + ", " + std::to_string(tx.getPosition().y) + ", " + std::to_string(tx.getScale().x) + ", " + std::to_string(tx.getScale().y));
-        
-    };*/
+
     ent.addComponent<xy::AudioEmitter>().setSource("assets/sound/music/02.ogg");
     ent.getComponent<xy::AudioEmitter>().play();
     ent.getComponent<xy::AudioEmitter>().setLooped(true);
     ent.getComponent<xy::AudioEmitter>().setVolume(0.25f);
     ent.getComponent<xy::AudioEmitter>().setChannel(1);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::Music;
 
     if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile))
     {
@@ -933,9 +937,17 @@ void GameState::switchMap(const MapData& data)
     cmd.action = [&](xy::Entity entity, float)
     {
         m_scene.destroyEntity(entity);
-        //std::cout << "delete client geometry" << std::endl;
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    
+    cmd.targetFlags = CommandID::Music;
+    cmd.action = [](xy::Entity entity, float)
+    {
+        entity.getComponent<xy::AudioEmitter>().setPitch(1.f);
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+    
     m_scene.update(0.f); //force the command right away
 
 
@@ -971,6 +983,9 @@ void GameState::switchMap(const MapData& data)
 
 void GameState::spawnMapActors()
 {
+    //xy::EmitterSettings emitterSettings;
+    //emitterSettings.loadFromFile("assets/particles/angry.xyp", m_textureResource);
+    
     for (auto i = 0; i < m_mapData.actorCount; ++i)
     {
         auto entity = m_scene.createEntity();
@@ -995,6 +1010,8 @@ void GameState::spawnMapActors()
         }
         entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
         entity.addComponent<xy::SpriteAnimation>().play(0);
+        //entity.addComponent<xy::ParticleEmitter>().settings = emitterSettings;
+        //entity.getComponent<xy::ParticleEmitter>().start();
     }
 }
 
@@ -1008,6 +1025,16 @@ void GameState::spawnWarning()
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
     entity.addComponent<xy::Callback>().active = true;
     entity.getComponent<xy::Callback>().function = Flasher(m_scene);
+
+    xy::Command cmd;
+    cmd.targetFlags = CommandID::Music;
+    cmd.action = [](xy::Entity entity, float)
+    {
+        entity.getComponent<xy::AudioEmitter>().pause();
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+    getContext().appInstance.getMessageBus().post<MapEvent>(MessageID::MapMessage)->type = MapEvent::HurryUp;
 }
 
 void GameState::updateUI(const InventoryUpdate& data)
