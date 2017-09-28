@@ -75,8 +75,10 @@ private:
 
     std::vector<std::string> m_mapFiles;
     std::size_t m_currentMap;
-    float m_mapTimer; //hm, this feels like it should be encapsulated somewhere
-    void checkMapStatus(float dt);
+    float m_endOfRoundPauseTime; //hm, this feels like it should be encapsulated somewhere
+    float m_currentRoundTime;
+    void checkRoundTime(float);
+    void checkMapStatus(float);
 
     void initMaplist();
     void initScene();

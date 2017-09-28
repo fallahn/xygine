@@ -46,6 +46,7 @@ namespace PacketID
         ServerMessage, //ident of a message the server wants to print to client console
         ConsoleMessage, //as server message only contains an arbitrary string (prefer ServerMessage where possible)
         InventoryUpdate, //tells clients to update player inventory display (lives etc)
+        RoundWarning, //notifies clients of near time limit
         Count
     };
 }

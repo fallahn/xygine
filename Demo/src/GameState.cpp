@@ -87,6 +87,38 @@ namespace
 {
     const float clientTimeout = 20.f;
     const std::string scoreFile("scores.txt");
+
+    //flashes text
+    class Flasher final
+    {   
+    private:
+        static constexpr float flashTime = 0.25f;
+
+    public:
+        Flasher(xy::Scene& scene) : m_scene(scene) {}
+        void operator ()(xy::Entity entity, float dt)
+        {
+            m_flashTime -= dt;
+
+            if (m_flashTime < 0)
+            {
+                m_flashTime = flashTime;
+                m_colour.a = (m_colour.a == 255) ? 0 : 255;
+                entity.getComponent<xy::Text>().setFillColour(m_colour);
+            }
+
+            auto& tx = entity.getComponent<xy::Transform>();
+            tx.move(-600.f * dt, 0.f);
+            if (tx.getPosition().x < -1200.f)
+            {
+                m_scene.destroyEntity(entity);
+            }
+        }
+    private:
+        xy::Scene& m_scene;
+        float m_flashTime = flashTime;
+        sf::Color m_colour = sf::Color::Red;   
+    };
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
@@ -584,6 +616,9 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         updateUI(data);
     }
         break;
+    case PacketID::RoundWarning:
+        spawnWarning();
+        break;
     }
 }
 
@@ -961,6 +996,18 @@ void GameState::spawnMapActors()
         entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
         entity.addComponent<xy::SpriteAnimation>().play(0);
     }
+}
+
+void GameState::spawnWarning()
+{
+    auto entity = m_scene.createEntity();
+    entity.addComponent<xy::Transform>().setPosition(m_scene.getActiveCamera().getComponent<xy::Transform>().getPosition());
+    entity.getComponent<xy::Transform>().move(xy::DefaultSceneSize.x / 1.8f, -180.f);
+    entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString("Hurry Up!");
+    entity.getComponent<xy::Text>().setCharacterSize(200);
+    entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    entity.addComponent<xy::Callback>().active = true;
+    entity.getComponent<xy::Callback>().function = Flasher(m_scene);
 }
 
 void GameState::updateUI(const InventoryUpdate& data)

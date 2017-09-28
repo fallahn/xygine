@@ -71,15 +71,18 @@ namespace
     const float tickRate = 1.f / 25.f;
     const float updateRate = 1.f / 60.f;
     const float endOfRoundTime = 6.f;
+    const float roundTime = 30.f; //after this everything is angry
+    const float roundWarnTime = roundTime - 4.f; //allows time for clients to do warning
 }
 
 GameServer::GameServer()
-    : m_ready       (false),
-    m_running       (false),
-    m_thread        (&GameServer::update, this),
-    m_scene         (m_messageBus),
-    m_currentMap    (0),
-    m_mapTimer      (3.f)
+    : m_ready               (false),
+    m_running               (false),
+    m_thread                (&GameServer::update, this),
+    m_scene                 (m_messageBus),
+    m_currentMap            (0),
+    m_endOfRoundPauseTime   (3.f),
+    m_currentRoundTime      (0.f)
 {
     m_clients[0].data.actor.type = ActorID::PlayerOne;
     m_clients[0].data.spawnX = playerOneSpawn.x;
@@ -221,6 +224,9 @@ void GameServer::update()
             }
         }
 
+        //check if it's time to make everything angry
+        checkRoundTime(dt);
+
         //check if it's time to change map
         checkMapStatus(dt);
     }
@@ -340,12 +346,42 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
     }
 }
 
+void GameServer::checkRoundTime(float dt)
+{
+    float lastTime = m_currentRoundTime;
+    m_currentRoundTime += dt;
+
+    if (lastTime < roundWarnTime
+        && m_currentRoundTime >= roundWarnTime)
+    {
+        //send warning message
+        m_host.broadcastPacket(PacketID::RoundWarning, 0, xy::NetFlag::Reliable, 1);
+    }
+    else if (lastTime < roundTime &&
+        m_currentRoundTime >= roundTime)
+    {
+        //make everything angry
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::NPC;
+        cmd.action = [&](xy::Entity entity, float)
+        {
+            entity.getComponent<NPC>().angry = true;
+            //broadcast to clients
+            ActorEvent evt;
+            evt.type = ActorEvent::GotAngry;
+            evt.actor = entity.getComponent<Actor>();
+            m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
+}
+
 void GameServer::checkMapStatus(float dt)
 {
-    m_mapTimer -= dt;
+    m_endOfRoundPauseTime -= dt;
 
     if (m_mapData.actorCount == 0
-        && m_mapTimer < 0)
+        && m_endOfRoundPauseTime < 0)
     {
         //clear remaining actors (should just be collectables / bubbles)
         //as well as any geometry
@@ -567,6 +603,8 @@ void GameServer::beginNewRound()
 
             m_host.broadcastPacket(PacketID::ActorAbsolute, state, xy::NetFlag::Reliable, 1);
         }
+
+        m_currentRoundTime = 0.f;
     }
 }
 
@@ -615,7 +653,7 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, NPCSize, NPCSize });
 
     entity.addComponent<AnimationController>();
-    entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
+    entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem | CommandID::NPC;
 
     entity.addComponent<NPC>();
     switch (id)
@@ -668,7 +706,7 @@ void GameServer::handleMessage(const xy::Message& msg)
             m_mapData.actors[i] = m_mapData.actors[m_mapData.actorCount];
 
             //LOG(std::to_string(m_mapData.actorCount), xy::Logger::Type::Info);
-            m_mapTimer = endOfRoundTime;
+            m_endOfRoundPauseTime = endOfRoundTime;
         }
     }
         break;

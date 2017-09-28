@@ -36,16 +36,17 @@ namespace CommandID
         MenuText = 0x2,
         PlayerOne = 0x4,
         PlayerTwo = 0x8,
+        NPC = 0x10,
         //scoreboard/UI
-        ScoreOne = 0x10,
-        ScoreTwo = 0x20,
-        LivesOne = 0x40,
-        LivesTwo = 0x80,
-        Timeout = 0x100,
-        HighScore = 0x200,
+        ScoreOne = 0x20,
+        ScoreTwo = 0x40,
+        LivesOne = 0x80,
+        LivesTwo = 0x100,
+        Timeout = 0x200,
+        HighScore = 0x400,
         //map data
-        MapItem = 0x400, //anything with this is removed on map changed
-        MapBackground = 0x800
+        MapItem = 0x800, //anything with this is removed on map changed
+        MapBackground = 0x1000
     };
 }
 

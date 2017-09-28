@@ -109,6 +109,7 @@ private:
     void killActor(const ActorEvent&);
     void switchMap(const MapData&);
     void spawnMapActors();
+    void spawnWarning();
 
     void updateUI(const InventoryUpdate&);
 };
