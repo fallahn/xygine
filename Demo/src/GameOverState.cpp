@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "GameoverState.hpp"
+#include "GameOverState.hpp"
 #include "SharedStateData.hpp"
 
 #include <xyginext/ecs/components/Sprite.hpp>
