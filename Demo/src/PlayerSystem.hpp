@@ -49,7 +49,7 @@ struct Player final
     sf::Uint8 playerNumber = 0;
     enum class State : sf::Uint8
     {
-        Walking, Jumping, Dying
+        Walking, Jumping, Dying, Dead
     }state = State::Walking;
     sf::Vector2f velocity; //only the Y velocity is actually used in movement - the x value is used to track how much initial velocity to spawn bubble with
     bool canJump = true;
@@ -62,6 +62,7 @@ struct Player final
 
     sf::Vector2f spawnPosition;
     float timer = 2.f; //times invulnerability when spawning, and time to respawn
+    sf::Uint8 lives = 3;
 };
 
 class PlayerSystem final : public xy::System

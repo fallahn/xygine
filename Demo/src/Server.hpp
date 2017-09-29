@@ -80,6 +80,8 @@ private:
     void checkRoundTime(float);
     void checkMapStatus(float);
 
+    bool m_gameOver;
+
     void initMaplist();
     void initScene();
     void loadMap();

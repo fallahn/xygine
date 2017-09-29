@@ -139,7 +139,7 @@ void PlayerSystem::process(float)
                 player.velocity.y += gravity * delta;
                 player.velocity.y = std::min(player.velocity.y, maxVelocity);
             }
-            else
+            else if(player.state == Player::State::Dying)
             {
                 //dying
                 player.velocity.y += gravity * delta;
@@ -149,19 +149,32 @@ void PlayerSystem::process(float)
 
                 if (player.timer < 0) //respawn
                 {
-                    tx.setPosition(player.spawnPosition);
-                    player.state = Player::State::Walking;
-                    player.direction = 
-                        (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
+                    if (player.lives)
+                    {
+                        tx.setPosition(player.spawnPosition);
+                        player.state = Player::State::Walking;
+                        player.direction =
+                            (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
 
-                    player.timer = invincibleTime;
+                        player.timer = invincibleTime;
 
-                    //TODO raise message
+                        //raise message
+                        auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                        msg->entity = entity;
+                        msg->type = PlayerEvent::Spawned;
+                    }
+                    else
+                    {
+                        //TODO set dead animation
+                        player.state = Player::State::Dead;
+                        entity.getComponent<CollisionComponent>().setCollisionMaskBits(0); //remove collision
+                        //tx.setPosition(player.spawnPosition);
+                    }
                 }
             }
             
             //move with input if not dying
-            if (player.state != Player::State::Dying)
+            if (player.state != Player::State::Dying && player.state != Player::State::Dead)
             {
                 auto motion = parseInput(currentMask);
                 tx.move(speed * motion * delta);
@@ -195,6 +208,8 @@ void PlayerSystem::process(float)
         {
             animController.nextAnimation = AnimationController::Die;
         }
+
+        //if (m_isServer) std::cout << (int)player.state << std::endl;
     }
 }
 
@@ -255,16 +270,22 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                 player.velocity.y += gravity * delta;
                 player.velocity.y = std::min(player.velocity.y, maxVelocity);
             }
-            else
+            else if(player.state == Player::State::Dying)
             {
                 //dying
                 player.velocity.y += gravity * delta;
                 player.velocity.y = std::min(player.velocity.y, maxVelocity);
-                tx.move({ 0.f, player.velocity.y * delta });             
+                tx.move({ 0.f, player.velocity.y * delta });
+
+                if (!player.lives)
+                {
+                    //TODO set dead animation
+                    player.state = Player::State::Dead;
+                }
             }
 
 
-            if (player.state != Player::State::Dying)
+            if (player.state != Player::State::Dying && player.state != Player::State::Dead)
             {
                 auto motion = parseInput(player.history[idx].mask);
                 tx.move(speed * motion * delta);
@@ -407,7 +428,12 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
 
                             entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
 
-                            //TODO raise dead message
+                            player.lives--;
+
+                            //raise dead message
+                            auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                            msg->entity = entity;
+                            msg->type = PlayerEvent::Died;
 
                             return;
                         }
@@ -417,7 +443,7 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
             }
         }
         else if (hitbox.getType() == CollisionType::Foot
-            && player.state != Player::State::Dying)
+            && player.state != Player::State::Dying && player.state != Player::State::Dead)
         {
             //foot sensor
             auto count = hitbox.getCollisionCount();

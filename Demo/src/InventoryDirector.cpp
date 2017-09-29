@@ -86,11 +86,19 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         if (data.type == PlayerEvent::Spawned)
         {
             //reset the old scores
-            auto id = data.entity.getComponent<Player>().playerNumber;
-            m_playerValues[id].lives = 3;
-            m_playerValues[id].score = 0;
+            const auto& player = data.entity.getComponent<Player>();
+            m_playerValues[player.playerNumber].lives = player.lives;
+            m_playerValues[player.playerNumber].score = 0;
 
-            sendUpdate(id, 0);
+            //send info on both, in case new player has joined
+            sendUpdate(0, 0);
+            sendUpdate(1, 0);
+        }
+        else if (data.type == PlayerEvent::Died)
+        {
+            const auto& player = data.entity.getComponent<Player>();
+            m_playerValues[player.playerNumber].lives = player.lives;
+            sendUpdate(player.playerNumber, 0);
         }
     }
         break;

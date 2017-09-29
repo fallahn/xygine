@@ -623,6 +623,10 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::RoundWarning:
         spawnWarning();
         break;
+    case PacketID::GameOver:
+        m_sharedData.error = "Game Over";
+        requestStackPush(StateID::Error);
+        break;
     }
 }
 

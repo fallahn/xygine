@@ -82,7 +82,8 @@ GameServer::GameServer()
     m_scene                 (m_messageBus),
     m_currentMap            (0),
     m_endOfRoundPauseTime   (3.f),
-    m_currentRoundTime      (0.f)
+    m_currentRoundTime      (0.f),
+    m_gameOver              (false)
 {
     m_clients[0].data.actor.type = ActorID::PlayerOne;
     m_clients[0].data.spawnX = playerOneSpawn.x;
@@ -206,6 +207,9 @@ void GameServer::update()
                 m_host.broadcastPacket(PacketID::ActorUpdate, state, xy::NetFlag::Unreliable);
             }
 
+            //check if all players are dead
+            bool gameOver = m_clients[0].ready || m_clients[1].ready;
+
             //send client reconciliation
             for (const auto& c : m_clients)
             {
@@ -226,8 +230,17 @@ void GameServer::update()
                     state.playerTimer = player.timer;
 
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
+
+                    gameOver = (gameOver && player.state == Player::State::Dead);
                 }
             }
+
+            if (gameOver && !m_gameOver)
+            {
+                //state changed, send message
+                m_host.broadcastPacket(PacketID::GameOver, 0, xy::NetFlag::Reliable, 1);
+            }
+            m_gameOver = gameOver;
         }
 
     }
@@ -268,6 +281,7 @@ void GameServer::handleDisconnect(const xy::NetEvent& evt)
         client->data.actor.id = ActorID::None;
         client->data.peerID = 0;
         client->peer = {};
+        client->ready = false;
     }
 }
 

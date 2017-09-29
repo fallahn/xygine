@@ -52,7 +52,7 @@ private:
     struct Inventory final
     {
         sf::Uint32 score = 0;
-        sf::Uint8 lives = 3;
+        sf::Uint8 lives = 0;
         //TODO letters for bonus
     };
     std::array<Inventory, 2> m_playerValues{};
