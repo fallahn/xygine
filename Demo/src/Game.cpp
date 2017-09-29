@@ -30,6 +30,7 @@ source distribution.
 #include "MenuState.hpp"
 #include "ErrorState.hpp"
 #include "PauseState.hpp"
+#include "GameOverState.hpp"
 
 #include <SFML/Window/Event.hpp>
 
@@ -48,6 +49,7 @@ Game::Game()
 //private
 void Game::handleEvent(const sf::Event& evt)
 {    
+#ifdef XY_DEBUG
     if (evt.type == sf::Event::KeyPressed)
     {
         switch(evt.key.code)
@@ -58,6 +60,7 @@ void Game::handleEvent(const sf::Event& evt)
                 break;
         }
     }
+#endif 
 
     m_stateStack.handleEvent(evt);
 }
@@ -97,4 +100,5 @@ void Game::registerStates()
     m_stateStack.registerState<MenuState>(StateID::MainMenu, sharedData);
     m_stateStack.registerState<ErrorState>(StateID::Error, sharedData);
     m_stateStack.registerState<PauseState>(StateID::Pause);
+    m_stateStack.registerState<GameoverState>(StateID::GameOver, sharedData);
 }

@@ -88,10 +88,12 @@ GameServer::GameServer()
     m_clients[0].data.actor.type = ActorID::PlayerOne;
     m_clients[0].data.spawnX = playerOneSpawn.x;
     m_clients[0].data.spawnY = playerOneSpawn.y;
+    m_clients[0].data.playerNumber = 0;
 
     m_clients[1].data.actor.type = ActorID::PlayerTwo;
     m_clients[1].data.spawnX = playerTwoSpawn.x;
     m_clients[1].data.spawnY = playerTwoSpawn.y;
+    m_clients[1].data.playerNumber = 1;
 }
 
 GameServer::~GameServer()

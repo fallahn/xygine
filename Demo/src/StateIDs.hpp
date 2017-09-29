@@ -33,7 +33,8 @@ enum StateID
     MainMenu,
     Game,
     Error,
-    Pause
+    Pause,
+    GameOver
 };
 
 #endif //DEMO_STATE_IDS_HPP_

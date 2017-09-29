@@ -159,9 +159,9 @@ void PlayerSystem::process(float)
                         player.timer = invincibleTime;
 
                         //raise message
-                        auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                        /*auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
                         msg->entity = entity;
-                        msg->type = PlayerEvent::Spawned;
+                        msg->type = PlayerEvent::Spawned;*/
                     }
                     else
                     {

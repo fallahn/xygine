@@ -9,6 +9,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/FruitSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/FXDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Game.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/GameOverState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/GameState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/InventoryDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp

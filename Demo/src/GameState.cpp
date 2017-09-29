@@ -624,8 +624,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         spawnWarning();
         break;
     case PacketID::GameOver:
-        m_sharedData.error = "Game Over";
-        requestStackPush(StateID::Error);
+        requestStackPush(StateID::GameOver);
         break;
     }
 }
@@ -1049,6 +1048,12 @@ void GameState::updateUI(const InventoryUpdate& data)
         entity.getComponent<xy::Text>().setString(std::to_string(data.score));
     };
 
+    //keep a copy of our score for the scoreboard
+    if (data.playerID == m_clientData.playerNumber)
+    {
+        m_sharedData.score = std::to_string(data.score);
+    }
+
     //check if greater than high score and update
     if (data.score > m_scores.getProperties()[0].getValue<sf::Int32>())
     {
@@ -1069,7 +1074,6 @@ void GameState::updateUI(const InventoryUpdate& data)
     {
         entity.getComponent<xy::SpriteAnimation>().play(data.lives);
     };
-
 
     xy::Command textCommand; //displays the score bubble
     textCommand.action =

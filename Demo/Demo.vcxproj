@@ -130,6 +130,7 @@
     <ClCompile Include="src\FruitSystem.cpp" />
     <ClCompile Include="src\FXDirector.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\GameOverState.cpp" />
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\InventoryDirector.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="src\FruitSystem.hpp" />
     <ClInclude Include="src\FXDirector.hpp" />
     <ClInclude Include="src\Game.hpp" />
+    <ClInclude Include="src\GameOverState.hpp" />
     <ClInclude Include="src\GameState.hpp" />
     <ClInclude Include="src\Hitbox.hpp" />
     <ClInclude Include="src\InventoryDirector.hpp" />

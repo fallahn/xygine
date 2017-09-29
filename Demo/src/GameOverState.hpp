@@ -25,22 +25,37 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_SHARED_STATE_DATA_HPP_
-#define DEMO_GAME_SHARED_STATE_DATA_HPP_
+#ifndef DEMO_OVER_STATE_HPP_
+#define DEMO_OVER_STATE_HPP_
 
-#include <string>
+#include "StateIDs.hpp"
 
-struct SharedStateData
+#include <xyginext/core/State.hpp>
+#include <xyginext/ecs/Scene.hpp>
+
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Texture.hpp>
+
+struct SharedStateData;
+class GameoverState final : public xy::State
 {
-    enum
-    {
-        Host,
-        Client
-    }hostState = Client;
-    std::string remoteIP = "127.0.0.1";
-    std::string error;
+public:
+    GameoverState(xy::StateStack&, xy::State::Context, const SharedStateData&);
 
-    std::string score;
+    xy::StateID stateID() const override { return StateID::GameOver; }
+    bool handleEvent(const sf::Event&) override;
+    void handleMessage(const xy::Message&) override;
+    bool update(float) override;
+    void draw() override;
+
+private:
+
+    xy::Scene m_scene;
+    sf::Font m_font;
+    sf::Texture m_buttonTexture;
+    sf::Texture m_backgroundTexture;
+
+    void load(const SharedStateData&);
 };
 
-#endif //DEMO_GAME_SHARED_STATE_DATA_HPP_
+#endif //DEMO_OVER_STATE_HPP_
