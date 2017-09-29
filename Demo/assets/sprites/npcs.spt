@@ -22,6 +22,20 @@ sprite_sheet npcs
 		}
 	}
 
+	sprite goobly
+	{
+		bounds = 320, 320, 64, 64
+
+		animation idle
+		{
+			frame = 320, 320, 64, 64
+			frame = 256, 320, 64, 64
+
+			loop = true
+			framerate = 15
+		}
+	}
+
 	sprite whirlybob
 	{
 		bounds = 0,0,64,64

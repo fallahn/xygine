@@ -89,7 +89,7 @@ private:
 
     sf::Int32 spawnPlayer(std::size_t);
 
-    void spawnNPC(sf::Int32, sf::Vector2f);
+    xy::Entity spawnNPC(sf::Int32, sf::Vector2f);
 
     void handleMessage(const xy::Message&);
 

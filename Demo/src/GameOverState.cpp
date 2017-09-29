@@ -46,7 +46,7 @@ GameoverState::GameoverState(xy::StateStack& stack, xy::State::Context ctx, cons
     m_font.loadFromFile("assets/fonts/Cave-Story.ttf");
 
     sf::Image img;
-    img.create(1, 1, sf::Color(0, 0, 0, 120));
+    img.create(1, 1, sf::Color(0, 0, 0, 180));
     m_backgroundTexture.loadFromImage(img);
 
     load(data);
@@ -92,7 +92,7 @@ void GameoverState::load(const SharedStateData& data)
     //title text
     entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    entity.getComponent<xy::Transform>().move(-490.f, -560.f);
+    entity.getComponent<xy::Transform>().move(-490.f, -460.f);
     entity.addComponent<xy::Text>(m_font).setString("GAME OVER");
     entity.getComponent<xy::Text>().setCharacterSize(260);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
@@ -100,7 +100,7 @@ void GameoverState::load(const SharedStateData& data)
     //score text
     entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    entity.getComponent<xy::Transform>().move(-360.f, -220.f);
+    entity.getComponent<xy::Transform>().move(-360.f, -180.f);
     entity.addComponent<xy::Text>(m_font).setString("Score: " + data.score);
     entity.getComponent<xy::Text>().setCharacterSize(140);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);

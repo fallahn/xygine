@@ -278,6 +278,7 @@ void GameState::loadAssets()
     spriteSheet.loadFromFile("assets/sprites/npcs.spt", m_textureResource);
     m_sprites[SpriteID::WhirlyBob] = spriteSheet.getSprite("whirlybob");
     m_sprites[SpriteID::Clocksy] = spriteSheet.getSprite("clocksy");
+    m_sprites[SpriteID::Goobly] = spriteSheet.getSprite("goobly");
 
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "clocksy");
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "clocksy");
@@ -288,6 +289,8 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "whirlybob");
     m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "whirlybob");
     m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "whirlybob");
+
+    m_animationControllers[SpriteID::Goobly].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "goobly");
 
     m_sprites[SpriteID::FruitSmall] = spriteSheet.getSprite("fruit");
 
@@ -833,10 +836,9 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.getComponent<xy::Transform>().setOrigin(SmallFruitSize / 2.f, SmallFruitSize / 2.f);
         break;
     case ActorID::Goobly:
-        //TODO replace with proper sprite
-        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
-        entity.getComponent<xy::Sprite>().setColour(sf::Color::Black);
-        entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::WhirlyBob];
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Goobly];
+        entity.addComponent<xy::SpriteAnimation>().play(0);
+        entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::Goobly];
         break;
     }
 }

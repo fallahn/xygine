@@ -47,6 +47,7 @@ struct NPC final
     bool canLand = true;
     sf::Int32 bubbleOwner = -1;
     bool angry = false;
+    xy::Entity target; //used if targetting a player
 };
 
 class NPCSystem final : public xy::System

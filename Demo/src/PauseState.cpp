@@ -37,6 +37,8 @@ source distribution.
 #include <xyginext/ecs/systems/TextRenderer.hpp>
 #include <xyginext/ecs/systems/UISystem.hpp>
 
+#include <SFML/Window/Event.hpp>
+
 PauseState::PauseState(xy::StateStack& stack, xy::State::Context ctx)
     : xy::State(stack, ctx),
     m_scene(ctx.appInstance.getMessageBus())
@@ -45,7 +47,7 @@ PauseState::PauseState(xy::StateStack& stack, xy::State::Context ctx)
     m_font.loadFromFile("assets/fonts/Cave-Story.ttf");
 
     sf::Image img;
-    img.create(1, 1, sf::Color(0, 0, 0, 120));
+    img.create(1, 1, sf::Color(0, 0, 0, 180));
     m_backgroundTexture.loadFromImage(img);
 
     load();
@@ -53,6 +55,19 @@ PauseState::PauseState(xy::StateStack& stack, xy::State::Context ctx)
 
 bool PauseState::handleEvent(const sf::Event& evt)
 {
+    if (evt.type == sf::Event::KeyReleased)
+    {
+        switch (evt.key.code)
+        {
+        default: break;
+        case sf::Keyboard::Escape:
+        case sf::Keyboard::P:
+        case sf::Keyboard::Pause:
+            requestStackPop();
+            break;
+        }
+    }
+    
     m_scene.getSystem<xy::UISystem>().handleEvent(evt);
     m_scene.forwardEvent(evt);
     return false;

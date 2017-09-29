@@ -368,25 +368,25 @@ void NPCSystem::updateGoobly(xy::Entity entity, float dt)
                 npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
 
                 break;
-            case CollisionType::Bubble:
-                //switch to bubble state if bubble in spawn state
-            {
-                auto& bubble = manifold.otherEntity.getComponent<Bubble>();
-                if (bubble.state == Bubble::Spawning)
-                {
-                    npc.lastVelocity = npc.velocity;
+            //case CollisionType::Bubble:
+            //    //switch to bubble state if bubble in spawn state
+            //{
+            //    auto& bubble = manifold.otherEntity.getComponent<Bubble>();
+            //    if (bubble.state == Bubble::Spawning)
+            //    {
+            //        npc.lastVelocity = npc.velocity;
 
-                    npc.state = NPC::State::Bubble;
-                    npc.velocity.y = BubbleVerticalVelocity;
-                    npc.thinkTimer = BubbleTime;
-                    npc.bubbleOwner = bubble.player;
-                    entity.getComponent<AnimationController>().direction = 1.f;
-                    entity.getComponent<AnimationController>().nextAnimation =
-                        (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
+            //        npc.state = NPC::State::Bubble;
+            //        npc.velocity.y = BubbleVerticalVelocity;
+            //        npc.thinkTimer = BubbleTime;
+            //        npc.bubbleOwner = bubble.player;
+            //        entity.getComponent<AnimationController>().direction = 1.f;
+            //        entity.getComponent<AnimationController>().nextAnimation =
+            //            (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
 
-                    return;
-                }
-            }
+            //        return;
+            //    }
+            //}
             break;
             case CollisionType::Teleport:
                 if (manifold.normal.y < 1)
@@ -407,7 +407,7 @@ void NPCSystem::updateGoobly(xy::Entity entity, float dt)
     npc.thinkTimer -= dt;
     if (npc.state == NPC::State::Normal)
     {
-        auto vel = npc.velocity * GooblySpeed * dt;
+        auto vel = npc.velocity * dt;
         //if (npc.angry) vel *= angryMultiplier;
         tx.move(vel);
         entity.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
@@ -429,19 +429,18 @@ void NPCSystem::updateGoobly(xy::Entity entity, float dt)
             npc.thinkTimer = thinkTimes[m_currentThinkTime] * 0.055f;
             m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();
 
-            //TODO how do we pick nearest player?
-            xy::Command cmd;
-            cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
-            cmd.action = [entity](xy::Entity playerEnt, float) mutable
+            //get target position and move on either x or y axis
+            auto dir = npc.target.getComponent<xy::Transform>().getPosition() - tx.getPosition();
+            if (xy::Util::Random::value(0, 1) == 0)
             {
-                //there's a small chance entity has been destroyed here
-                if (!entity.destroyed())
-                {
-                    auto dir = playerEnt.getComponent<xy::Transform>().getPosition() - entity.getComponent<xy::Transform>().getPosition();
-                    entity.getComponent<NPC>().velocity = xy::Util::Vector::normalise(dir);
-                }
-            };
-            getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
+                npc.velocity.x = dir.x / npc.thinkTimer;
+                npc.velocity.y = 0.f;
+            }
+            else
+            {
+                npc.velocity.x = dir.x > 0 ? 0.01f : -0.01f;
+                npc.velocity.y = dir.y / npc.thinkTimer;
+            }
         }
     }
 

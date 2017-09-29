@@ -44,11 +44,13 @@ AudioEmitter::AudioEmitter()
 void AudioEmitter::setSource(const sf::SoundBuffer& buf)
 {
     m_impl = std::make_unique<Detail::AudioSound>(buf);
+    m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel));
 }
 
 bool AudioEmitter::setSource(const std::string& path)
 {
     m_impl = std::make_unique<Detail::AudioMusic>(path);
+    m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel));
     return static_cast<Detail::AudioMusic*>(m_impl.get())->isValid();
 }
 
@@ -116,6 +118,7 @@ void AudioEmitter::setChannel(sf::Uint8 chan)
 {
     XY_ASSERT(chan < AudioMixer::MaxChannels, "Channel out of range");
     m_mixerChannel = chan;
+    m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel));
 }
 
 float AudioEmitter::getPitch() const

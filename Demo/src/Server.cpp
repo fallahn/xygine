@@ -377,7 +377,7 @@ void GameServer::checkRoundTime(float dt)
         m_host.broadcastPacket(PacketID::RoundWarning, 0, xy::NetFlag::Reliable, 1);
     }
     else if (lastTime < roundTime &&
-        m_currentRoundTime >= roundTime)
+        m_currentRoundTime >= roundTime && m_mapData.actorCount > 0)
     {
         //make everything angry
         xy::Command cmd;
@@ -395,8 +395,40 @@ void GameServer::checkRoundTime(float dt)
 
         //spawn some gooblies
         static const float offset = 200.f;
-        spawnNPC(ActorID::Goobly, { MapBounds.left + offset, MapBounds.top + offset });
-        spawnNPC(ActorID::Goobly, { MapBounds.width - offset, MapBounds.top + offset });
+        if (m_clients[0].data.actor.type != ActorID::None)
+        {
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::PlayerOne;
+            cmd.action = [&](xy::Entity entity, float)
+            {
+                if (entity.getComponent<Player>().state != Player::State::Dead)
+                {
+                    //spawn and set player as target
+                    auto ent = spawnNPC(ActorID::Goobly, { MapBounds.left + offset, MapBounds.top + offset });
+                    ent.getComponent<NPC>().target = entity;
+                }
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        }
+
+        if (m_clients[1].data.actor.type != ActorID::None)
+        {
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::PlayerTwo;
+            cmd.action = [&](xy::Entity entity, float)
+            {
+                if (entity.getComponent<Player>().state != Player::State::Dead)
+                {
+                    //spawn and set player as target
+                    auto ent = spawnNPC(ActorID::Goobly, { MapBounds.width - offset, MapBounds.top + offset });
+                    ent.getComponent<NPC>().target = entity;
+                }
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        }
+        
     }
 }
 
@@ -663,7 +695,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     return entity.getIndex();
 }
 
-void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
+xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
 {
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(pos);
@@ -697,6 +729,10 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
         { -PlayerSizeOffset, NPCSize,
             NPCSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot); //feets!
         break;
+    case ActorID::Goobly:
+        //don't include this in npc count
+        m_mapData.actorCount--;
+        break;
     }
 
     m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
@@ -704,6 +740,8 @@ void GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     auto* msg = m_messageBus.post<NpcEvent>(MessageID::NpcMessage);
     msg->type = NpcEvent::Spawned;
     msg->entityID = entity.getIndex();
+
+    return entity;
 }
 
 void GameServer::handleMessage(const xy::Message& msg)
