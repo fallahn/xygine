@@ -52,6 +52,8 @@ private:
 
     void resizeEntities();
     xy::Entity getNextEntity();
+
+    void playSound(sf::SoundBuffer&);
 };
 
 #endif //DEMO_FX_DIRECTOR_HPP_

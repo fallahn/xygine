@@ -53,7 +53,10 @@ FXDirector::FXDirector()
 //public
 void FXDirector::handleMessage(const xy::Message& msg)
 { 
-    if (msg.id == MessageID::SceneMessage)
+    switch (msg.id)
+    {
+    default: break;
+    case MessageID::SceneMessage:
     {
         const auto& data = msg.getData<SceneEvent>();
         if (data.type == SceneEvent::ActorRemoved)
@@ -64,11 +67,9 @@ void FXDirector::handleMessage(const xy::Message& msg)
             case ActorID::FruitSmall:
             case ActorID::FruitLarge:
             {
-                auto ent = getNextEntity();
-                ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/collect.wav"));
-                ent.getComponent<xy::AudioEmitter>().play();
+                playSound(m_soundResource.get("assets/sound/collect.wav"));
             }
-                break;
+            break;
             }
         }
         else if (data.type == SceneEvent::ActorSpawned)
@@ -79,15 +80,14 @@ void FXDirector::handleMessage(const xy::Message& msg)
             case ActorID::BubbleOne:
             case ActorID::BubbleTwo:
             {
-                auto ent = getNextEntity();
-                ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/shoot.wav"));
-                ent.getComponent<xy::AudioEmitter>().play();
+                playSound(m_soundResource.get("assets/sound/shoot.wav"));
             }
             break;
             }
         }
     }
-    else if (msg.id == MessageID::AnimationMessage)
+        break;
+    case MessageID::AnimationMessage:
     {
         const auto& data = msg.getData<AnimationEvent>();
         switch (data.newAnim)
@@ -98,36 +98,31 @@ void FXDirector::handleMessage(const xy::Message& msg)
             const auto& actor = data.entity.getComponent<Actor>();
             if (actor.type == ActorID::Clocksy || actor.type == ActorID::Whirlybob)
             {
-                auto ent = getNextEntity();
-                ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/npc_pop.wav"));
-                ent.getComponent<xy::AudioEmitter>().play();
+                playSound(m_soundResource.get("assets/sound/npc_pop.wav"));
             }
             else if (actor.type == ActorID::PlayerOne || actor.type == ActorID::PlayerTwo)
             {
-                auto ent = getNextEntity();
-                ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/player_die.wav"));
-                ent.getComponent<xy::AudioEmitter>().play();
+                playSound(m_soundResource.get("assets/sound/player_die.wav"));
             }
         }
-            break;
+        break;
         case AnimationController::JumpUp:
         {
-            auto ent = getNextEntity();
-            ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/jump.wav"));
-            ent.getComponent<xy::AudioEmitter>().play();
+            playSound(m_soundResource.get("assets/sound/jump.wav"));
         }
-            break;
+        break;
         }
     }
-    else if (msg.id == MessageID::MapMessage)
+        break;
+    case MessageID::MapMessage:
     {
         const auto& data = msg.getData<MapEvent>();
         if (data.type == MapEvent::HurryUp)
         {
-            auto ent = getNextEntity();
-            ent.getComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/hurry.wav"));
-            ent.getComponent<xy::AudioEmitter>().play();
+            playSound(m_soundResource.get("assets/sound/hurry.wav"));
         }
+    }
+        break;
     }
 }
 
@@ -170,4 +165,11 @@ xy::Entity FXDirector::getNextEntity()
     }
     auto ent = m_entities[m_nextFreeEntity++];
     return ent;
+}
+
+void FXDirector::playSound(sf::SoundBuffer& buffer)
+{
+    auto ent = getNextEntity();
+    ent.getComponent<xy::AudioEmitter>().setSource(buffer);
+    ent.getComponent<xy::AudioEmitter>().play();
 }
