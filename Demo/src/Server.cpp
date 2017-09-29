@@ -392,6 +392,11 @@ void GameServer::checkRoundTime(float dt)
             m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        //spawn some gooblies
+        static const float offset = 200.f;
+        spawnNPC(ActorID::Goobly, { MapBounds.left + offset, MapBounds.top + offset });
+        spawnNPC(ActorID::Goobly, { MapBounds.width - offset, MapBounds.top + offset });
     }
 }
 

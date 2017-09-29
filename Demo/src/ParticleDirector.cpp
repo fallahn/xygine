@@ -87,6 +87,7 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             default: return;
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
+            case ActorID::Goobly:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::SpawnNPC];
                 break;
             }

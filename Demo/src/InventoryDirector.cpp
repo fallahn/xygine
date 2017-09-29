@@ -31,12 +31,14 @@ source distribution.
 #include "MapData.hpp"
 
 #include <xyginext/network/NetHost.hpp>
+#include <xyginext/ecs/Scene.hpp>
 
 namespace
 {
-    const sf::Uint32 NpcScore = 50;
-    const sf::Uint32 SmallFruitScore = 35;
-    const sf::Uint32 LargeFruitScore = 100;
+    const sf::Uint32 NpcScore = 500;
+    const sf::Uint32 GooblyScore = 850;
+    const sf::Uint32 SmallFruitScore = 350;
+    const sf::Uint32 LargeFruitScore = 1000;
 }
 
 InventoryDirector::InventoryDirector(xy::NetHost& host)
@@ -56,8 +58,18 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         const auto& data = msg.getData<NpcEvent>();
         if (data.type == NpcEvent::Died)
         {
-            m_playerValues[data.playerID].score += NpcScore;
-            sendUpdate(data.playerID, NpcScore);
+            auto actor = getScene().getEntity(data.entityID).getComponent<Actor>().type;
+            
+            if (actor == ActorID::Goobly)
+            {
+                m_playerValues[data.playerID].score += GooblyScore;
+                sendUpdate(data.playerID, GooblyScore);
+            }
+            else
+            {
+                m_playerValues[data.playerID].score += NpcScore;
+                sendUpdate(data.playerID, NpcScore);
+            }            
         }
     }
         break;

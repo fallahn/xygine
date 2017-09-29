@@ -832,6 +832,12 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.getComponent<xy::Sprite>().setDepth(2);
         entity.getComponent<xy::Transform>().setOrigin(SmallFruitSize / 2.f, SmallFruitSize / 2.f);
         break;
+    case ActorID::Goobly:
+        //TODO replace with proper sprite
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
+        entity.getComponent<xy::Sprite>().setColour(sf::Color::Black);
+        entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::WhirlyBob];
+        break;
     }
 }
 
@@ -1001,6 +1007,9 @@ void GameState::spawnMapActors()
         {
         default:
             //add missing texture or placeholder
+            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
+            entity.getComponent<xy::Sprite>().setColour(sf::Color::Black);
+            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::WhirlyBob];
             break;
         case ActorID::Whirlybob:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];

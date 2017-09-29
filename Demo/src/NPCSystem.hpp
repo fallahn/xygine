@@ -71,6 +71,7 @@ private:
 
     void updateWhirlybob(xy::Entity, float);
     void updateClocksy(xy::Entity, float);
+    void updateGoobly(xy::Entity, float);
 
     void updateBubbleState(xy::Entity, float);
     void updateDyingState(xy::Entity, float);

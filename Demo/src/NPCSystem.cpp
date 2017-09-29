@@ -33,6 +33,7 @@ source distribution.
 #include "ClientServerShared.hpp"
 #include "PacketIDs.hpp"
 #include "MessageIDs.hpp"
+#include "CommandIDs.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -43,6 +44,7 @@ namespace
 {
     const float WhirlybobSpeed = 100.f;
     const float ClocksySpeed = 86.f;
+    const float GooblySpeed = 300.f;
     const float angryMultiplier = 2.f;
     const float initialJumpVelocity = 940.f;
 
@@ -65,9 +67,28 @@ NPCSystem::NPCSystem(xy::MessageBus& mb, xy::NetHost& host)
 }
 
 //public
-void NPCSystem::handleMessage(const xy::Message&)
+void NPCSystem::handleMessage(const xy::Message& msg)
 {
+    if (msg.id == MessageID::NpcMessage)
+    {
+        const auto& data = msg.getData<NpcEvent>();
+        if (data.type == NpcEvent::Spawned)
+        {
+            auto entity = getScene()->getEntity(data.entityID);
+            
+            if (entity.getComponent<Actor>().type == ActorID::Goobly)
+            {
+                //send to clients
+                ActorEvent evt;
+                evt.actor = entity.getComponent<Actor>();
+                evt.type = ActorEvent::Spawned;
+                evt.x = entity.getComponent<xy::Transform>().getPosition().x;
+                evt.y = entity.getComponent<xy::Transform>().getPosition().y;
 
+                m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+            }            
+        }
+    }
 }
 
 void NPCSystem::process(float dt)
@@ -94,6 +115,9 @@ void NPCSystem::process(float dt)
                 break;
             case ActorID::Whirlybob:
                 updateWhirlybob(entity, dt);
+                break;
+            case ActorID::Goobly:
+                updateGoobly(entity, dt);
                 break;
             }
         }
@@ -321,6 +345,112 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
     }
 }
 
+void NPCSystem::updateGoobly(xy::Entity entity, float dt)
+{
+    auto& tx = entity.getComponent<xy::Transform>();
+    auto& npc = entity.getComponent<NPC>();
+
+    auto& collision = entity.getComponent<CollisionComponent>();
+    auto& hitboxes = collision.getHitboxes();
+
+    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
+    {
+        auto& manifolds = hitboxes[i].getManifolds();
+        for (auto j = 0u; j < hitboxes[i].getCollisionCount(); ++j)
+        {
+            auto& manifold = manifolds[j];
+            switch (manifold.otherType)
+            {
+            default: break;
+            case CollisionType::Solid:
+            //case CollisionType::Platform:
+                tx.move(manifold.normal * manifold.penetration);
+                npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
+
+                break;
+            case CollisionType::Bubble:
+                //switch to bubble state if bubble in spawn state
+            {
+                auto& bubble = manifold.otherEntity.getComponent<Bubble>();
+                if (bubble.state == Bubble::Spawning)
+                {
+                    npc.lastVelocity = npc.velocity;
+
+                    npc.state = NPC::State::Bubble;
+                    npc.velocity.y = BubbleVerticalVelocity;
+                    npc.thinkTimer = BubbleTime;
+                    npc.bubbleOwner = bubble.player;
+                    entity.getComponent<AnimationController>().direction = 1.f;
+                    entity.getComponent<AnimationController>().nextAnimation =
+                        (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
+
+                    return;
+                }
+            }
+            break;
+            case CollisionType::Teleport:
+                if (manifold.normal.y < 1)
+                {
+                    tx.move(0.f, -(TeleportDistance - NPCSize));
+                }
+                else
+                {
+                    tx.move(0.f, (TeleportDistance - NPCSize));
+                }
+                break;
+            }
+        }
+    }
+
+
+    //do thinks
+    npc.thinkTimer -= dt;
+    if (npc.state == NPC::State::Normal)
+    {
+        auto vel = npc.velocity * GooblySpeed * dt;
+        //if (npc.angry) vel *= angryMultiplier;
+        tx.move(vel);
+        entity.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
+
+        if (npc.thinkTimer < 0)
+        {
+            npc.state = NPC::State::Thinking;
+            npc.thinkTimer = thinkTimes[m_currentThinkTime] * 0.08f;
+            m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();
+        }
+    }
+    else if (npc.state == NPC::State::Thinking)
+    {
+        //get a new velocity from direction to player
+
+        if (npc.thinkTimer < 0)
+        {
+            npc.state = NPC::State::Normal;
+            npc.thinkTimer = thinkTimes[m_currentThinkTime] * 0.055f;
+            m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();
+
+            //TODO how do we pick nearest player?
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+            cmd.action = [entity](xy::Entity playerEnt, float) mutable
+            {
+                //there's a small chance entity has been destroyed here
+                if (!entity.destroyed())
+                {
+                    auto dir = playerEnt.getComponent<xy::Transform>().getPosition() - entity.getComponent<xy::Transform>().getPosition();
+                    entity.getComponent<NPC>().velocity = xy::Util::Vector::normalise(dir);
+                }
+            };
+            getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
+        }
+    }
+
+    //update animation state   
+    auto& animController = entity.getComponent<AnimationController>();
+    if (npc.velocity.x < 0) animController.direction = 1.f;
+    else if (npc.velocity.x > 0) animController.direction = -1.f;
+}
+
 void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
 {
     auto& tx = entity.getComponent<xy::Transform>();
@@ -473,9 +603,9 @@ void NPCSystem::updateDyingState(xy::Entity entity, float dt)
     }
 }
 
-void NPCSystem::onEntityAdded(xy::Entity entity)
+void NPCSystem::onEntityAdded(xy::Entity /*entity*/)
 {
-    entity.getComponent<NPC>().thinkTimer = thinkTimes[m_currentThinkTime];
+    /*entity.getComponent<NPC>().thinkTimer = thinkTimes[m_currentThinkTime];
 
-    m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();
+    m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();*/
 }
