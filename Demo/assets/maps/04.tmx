@@ -25,12 +25,10 @@
   <object id="61" x="160" y="448" width="32" height="64"/>
  </objectgroup>
  <objectgroup name="Spawn">
-  <object id="75" name="whirlybob" x="480" y="192" width="16" height="16"/>
+  <object id="75" name="whirlybob" x="496" y="368" width="16" height="16"/>
   <object id="76" name="whirlybob" x="96" y="192" width="16" height="16"/>
   <object id="77" name="whirlybob" x="832" y="192" width="16" height="16"/>
-  <object id="78" name="whirlybob" x="480" y="672" width="16" height="16"/>
-  <object id="79" name="clocksy" x="192" y="352" width="16" height="16"/>
-  <object id="80" name="clocksy" x="784" y="352" width="16" height="16"/>
+  <object id="78" name="clocksy" x="480" y="864" width="16" height="16"/>
   <object id="81" name="clocksy" x="208" y="704" width="16" height="16"/>
   <object id="82" name="clocksy" x="720" y="704" width="16" height="16"/>
  </objectgroup>

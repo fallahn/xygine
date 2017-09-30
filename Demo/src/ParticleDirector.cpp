@@ -75,6 +75,9 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             case ActorID::FruitSmall:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
                 break;
+            case ActorID::Goobly:
+                ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::SpawnNPC];
+                break;
             }
             ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
             ent.getComponent<xy::ParticleEmitter>().start();

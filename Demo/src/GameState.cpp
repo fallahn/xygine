@@ -70,7 +70,7 @@ source distribution.
 #include <xyginext/ecs/systems/AudioSystem.hpp>
 
 #include <xyginext/graphics/SpriteSheet.hpp>
-#include <xyginext/graphics/postprocess/ChromeAb.hpp>
+#include <xyginext/graphics/postprocess/OldSchool.hpp>
 
 #include <xyginext/network/NetData.hpp>
 #include <xyginext/util/Random.hpp>
@@ -255,7 +255,7 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::TextRenderer>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
     
-    //m_scene.addPostProcess<xy::PostChromeAb>();
+    //m_scene.addPostProcess<xy::PostOldSchool>();
     m_scene.addDirector<ParticleDirector>(m_textureResource);
     m_scene.addDirector<FXDirector>();
 
@@ -866,7 +866,7 @@ void GameState::spawnClient(const ClientData& data)
 
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
     entity.addComponent<xy::SpriteAnimation>().play(0);
-    entity.addComponent<MapAnimator>().state = MapAnimator::State::Static;
+    //entity.addComponent<MapAnimator>().state = MapAnimator::State::Static;
 
     if (data.peerID == m_client.getPeer().getID())
     {
@@ -889,18 +889,26 @@ void GameState::spawnClient(const ClientData& data)
 
         //temp for now just to flash player when invincible
         entity.addComponent<xy::Callback>().function = 
-            [](xy::Entity entity, float)
+            [](xy::Entity entity, float dt)
         {
             static sf::Color colour = sf::Color::White;
             if (entity.getComponent<Player>().timer > 0
                 && entity.getComponent<Player>().state != Player::State::Dying)
             {
-                colour.a = (colour.a == 0) ? 255 : 0;
-                entity.getComponent<xy::Sprite>().setColour(colour);
+                static float flashTime = 0.0625f;
+                flashTime -= dt;
+
+                if (flashTime < 0)
+                {
+                    colour.a = (colour.a == 20) ? 255 : 20;
+                    entity.getComponent<xy::Sprite>().setColour(colour);
+                    flashTime = 0.0625f;
+                }
             }
             else
             {
                 entity.getComponent<xy::Sprite>().setColour(sf::Color::White);
+                //entity.getComponent<xy::Callback>().active = false;
             }
         };
         entity.getComponent<xy::Callback>().active = true;
@@ -986,7 +994,7 @@ void GameState::switchMap(const MapData& data)
             animator.dest = entity.getComponent<xy::CommandTarget>().ID == CommandID::PlayerOne ? playerOneSpawn : playerTwoSpawn;
             animator.state = MapAnimator::State::Active;
         };
-        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+        //m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
         m_scene.getSystem<CollisionSystem>().setEnabled(false);
     }

@@ -34,6 +34,10 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Antique Post process effect.
+    Creates an old 'filmic' looks, with dust, jitter and desaturation.
+    */
     class XY_EXPORT_API PostAntique final : public xy::PostProcess
     {
     public:
@@ -42,6 +46,24 @@ namespace xy
 
         void apply(const sf::RenderTexture&, sf::RenderTarget&) override;
         void update(float) override;
+
+        /*!
+        \brief Allows updating shader parameters.
+        Available paramters are:
+        u_tone sf::Glsl::vec3 representing normalise RGB values to tint the image
+        u_toneMix float 0 - 1 mix between untinted and tone colour
+        u_vignetteRadius float 0 - 1 range affecting the radius of the non-vignetted area
+        u_vignetteSoftness float 0 - 1 range feathering the edge of the vignette
+        u_vignetteAmount float 0 -1 range affecting the vignette mix. 0 is no vignette, 1 is hard black
+        u_flickerAmount float 0 - 1 affects the frequency of flicker, 0 is no flicker
+        u_jitterAmount float 0 - 1 affects the offset of jitter, 0 is no jitter
+        u_noiseAmount float 0 - 1 increases the amount of visible noise
+        */
+        template <typename T>
+        void setUniform(const std::string& name, T value)
+        {
+            m_shader.setUniform(name, value);
+        }
 
     private:
         sf::Shader m_shader;

@@ -368,26 +368,38 @@ void NPCSystem::updateGoobly(xy::Entity entity, float dt)
                 npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
 
                 break;
-            //case CollisionType::Bubble:
-            //    //switch to bubble state if bubble in spawn state
-            //{
-            //    auto& bubble = manifold.otherEntity.getComponent<Bubble>();
-            //    if (bubble.state == Bubble::Spawning)
-            //    {
-            //        npc.lastVelocity = npc.velocity;
+            case CollisionType::Player:
+            {
+                auto player = manifold.otherEntity.getComponent<Player>();
+                if (player.state != Player::State::Dead && player.state != Player::State::Dying)
+                {
+                    if (player.timer > 0)
+                    {
+                        //player is invincible so kill goobly
+                        getScene()->destroyEntity(entity);
 
-            //        npc.state = NPC::State::Bubble;
-            //        npc.velocity.y = BubbleVerticalVelocity;
-            //        npc.thinkTimer = BubbleTime;
-            //        npc.bubbleOwner = bubble.player;
-            //        entity.getComponent<AnimationController>().direction = 1.f;
-            //        entity.getComponent<AnimationController>().nextAnimation =
-            //            (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
+                        //broadcast to client
+                        ActorEvent evt;
+                        evt.actor.id = entity.getIndex();
+                        evt.actor.type = entity.getComponent<Actor>().type;
+                        evt.x = tx.getPosition().x;
+                        evt.y = tx.getPosition().y;
+                        evt.type = ActorEvent::Died;
 
-            //        return;
-            //    }
-            //}
-            break;
+                        m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+
+                        //raise message
+                        auto* msg = postMessage<SceneEvent>(MessageID::SceneMessage);
+                        msg->actorID = evt.actor.type;
+                        msg->type = SceneEvent::ActorRemoved;
+                        msg->entity = entity;
+                        msg->x = evt.x;
+                        msg->y = evt.y;
+                        break;
+                    }
+                }
+            }
+                break;
             case CollisionType::Teleport:
                 if (manifold.normal.y < 1)
                 {
