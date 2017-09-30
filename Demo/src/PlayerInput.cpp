@@ -180,15 +180,17 @@ xy::Entity PlayerInput::getPlayerEntity() const
 //private
 void PlayerInput::checkControllerInput()
 {
-    bool haveInput = false;
-    
+    auto startInput = m_currentInput;
+
+    //TODO replace static vars with members if we decide to have local multiplayer
+    static sf::Uint16 prevPad = 0; 
+
     //DPad
     if (sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) < -deadZone)
     {
         m_currentInput |= InputFlag::Left;
-        haveInput = true;
     }
-    else
+    else if (prevPad & InputFlag::Left)
     {
         m_currentInput &= ~InputFlag::Left;
     }
@@ -196,20 +198,25 @@ void PlayerInput::checkControllerInput()
     if (sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) > deadZone)
     {
         m_currentInput |= InputFlag::Right;
-        haveInput = true;
     }
-    else
+    else if (prevPad & InputFlag::Right)
     {
         m_currentInput &= ~InputFlag::Right;
     }
-    if (haveInput) return; //prevent analogue stick overwriting state
+    if (startInput ^ m_currentInput)
+    {
+        prevPad = m_currentInput;
+        return; //prevent analogue stick overwriting state
+    }
 
+    
+    static sf::Uint16 prevStick = 0;
     //left stick (xbox controller)
     if (sf::Joystick::getAxisPosition(0, sf::Joystick::X) < -deadZone)
     {
         m_currentInput |= InputFlag::Left;
     }
-    else
+    else if (prevStick & InputFlag::Left)
     {
         m_currentInput &= ~InputFlag::Left;
     }
@@ -218,8 +225,12 @@ void PlayerInput::checkControllerInput()
     {
         m_currentInput |= InputFlag::Right;
     }
-    else
+    else if (prevStick & InputFlag::Right)
     {
         m_currentInput &= ~InputFlag::Right;
+    }
+    if (startInput ^ m_currentInput)
+    {
+        prevStick = m_currentInput;
     }
 }

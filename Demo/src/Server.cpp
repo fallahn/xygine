@@ -255,7 +255,7 @@ void GameServer::handleConnect(const xy::NetEvent& evt)
 {
     LOG("Client connected from " + evt.peer.getAddress(), xy::Logger::Type::Info);
 
-    //TODO check not existing client
+    //TODO check not existing client? what if we want 2 local players?
 
     if (!m_changingMaps)
     {
@@ -584,7 +584,7 @@ void GameServer::loadMap()
                 {
                     sf::Int32 spawnCount = 0;
                     
-                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+                    /*const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
                     for (const auto& obj : objs)
                     {
                         auto name = xy::Util::String::toLower(obj.getName());
@@ -598,8 +598,8 @@ void GameServer::loadMap()
                             spawnNPC(ActorID::Clocksy, { obj.getPosition().x, obj.getPosition().y });
                             spawnCount++;
                         }
-                    }
-                    //spawnNPC(ActorID::Clocksy, { 220.f, 220.f }); spawnCount++;
+                    }*/
+                    spawnNPC(ActorID::Clocksy, { 220.f, 220.f }); spawnCount++;
                     flags |= (spawnCount == 0) ? 0 : MapFlags::Spawn;
                 }
             }
@@ -636,7 +636,7 @@ void GameServer::beginNewRound()
         cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
         cmd.action = [](xy::Entity entity, float)
         {
-            if (entity.getComponent<xy::CommandTarget>().ID == CommandID::PlayerOne)
+            if (entity.getComponent<xy::CommandTarget>().ID & CommandID::PlayerOne)
             {
                 entity.getComponent<xy::Transform>().setPosition(playerOneSpawn);
             }

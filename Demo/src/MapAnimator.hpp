@@ -52,6 +52,9 @@ public:
 private:
 
     std::size_t m_lastCount;
+
+    void onEntityAdded(xy::Entity) override;
+    void onEntityRemoved(xy::Entity) override;
 };
 
 #endif //DEMO_MAP_ANIMATOR_HPP_

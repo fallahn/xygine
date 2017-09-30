@@ -80,7 +80,7 @@ void MapAnimatorSystem::process(float dt)
                     cmd.action = [&](xy::Entity entity, float)
                     {
                         auto& animator = entity.getComponent<MapAnimator>();
-                        animator.dest = entity.getComponent<xy::CommandTarget>().ID == CommandID::PlayerOne ? playerOneSpawn : playerTwoSpawn;
+                        animator.dest = (entity.getComponent<xy::CommandTarget>().ID & CommandID::PlayerOne) ? playerOneSpawn : playerTwoSpawn;
                         animator.state = MapAnimator::State::Active;
                     };
                     getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
@@ -102,4 +102,23 @@ void MapAnimatorSystem::process(float dt)
         msg->type = MapEvent::AnimationComplete;
     }
     m_lastCount = count;
+}
+
+//private
+void MapAnimatorSystem::onEntityAdded(xy::Entity)
+{
+    //OK so adding an entity will trigger the map change complete
+    //message because entities size will no longer match the last
+    //number of entities counted - particularly when a new client
+    //has joined. We negate this here by adding to the last count
+
+    //TODO better fix for this please...
+
+    m_lastCount++;
+}
+
+void MapAnimatorSystem::onEntityRemoved(xy::Entity)
+{
+    //see comment in onEntityAdded()
+    m_lastCount--;
 }
