@@ -40,7 +40,8 @@ namespace
 }
 
 InterpolationSystem::InterpolationSystem(xy::MessageBus& mb)
-    : System(mb, typeid(InterpolationSystem))
+    : System(mb, typeid(InterpolationSystem)),
+    m_enabled(true)
 {
     requireComponent<Transform>();
     requireComponent<NetInterpolate>();
@@ -49,6 +50,8 @@ InterpolationSystem::InterpolationSystem(xy::MessageBus& mb)
 //public
 void InterpolationSystem::process(float dt)
 {
+    if (!m_enabled) return;
+    
     auto& entities = getEntities();
     for (auto& entity : entities)
     {

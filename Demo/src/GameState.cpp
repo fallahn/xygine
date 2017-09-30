@@ -200,6 +200,7 @@ void GameState::handleMessage(const xy::Message& msg)
             
             m_playerInput.setEnabled(true);
             m_scene.getSystem<CollisionSystem>().setEnabled(true);
+            m_scene.getSystem<xy::InterpolationSystem>().setEnabled(true);
 
             //send OK to server to continue game
             m_client.sendPacket(PacketID::MapReady, m_clientData.actor.type, xy::NetFlag::Reliable, 1);
@@ -627,6 +628,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         spawnWarning();
         break;
     case PacketID::GameOver:
+        m_client.disconnect();
         requestStackPush(StateID::GameOver);
         break;
     }
@@ -775,6 +777,14 @@ sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, co
         }
     }
 
+    //attempt at making a 'shadow' - needs darkening without changing the colour of every vertex
+    //sf::RenderStates states;
+    //states.transform.translate(16.f, 16.f);
+    //for (const auto& v : vertexArrays)
+    //{
+    //    states.texture = v.first;
+    //    m_mapTextures[m_currentMapTexture].draw(v.second.data(), v.second.size(), sf::Quads, states);
+    //}
 
     for (const auto& v : vertexArrays)
     {
@@ -866,7 +876,7 @@ void GameState::spawnClient(const ClientData& data)
 
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
     entity.addComponent<xy::SpriteAnimation>().play(0);
-    //entity.addComponent<MapAnimator>().state = MapAnimator::State::Static;
+    entity.addComponent<MapAnimator>().state = MapAnimator::State::Static;
 
     if (data.peerID == m_client.getPeer().getID())
     {
@@ -987,16 +997,17 @@ void GameState::switchMap(const MapData& data)
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
         //move player sprites to position
-        cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+        /*cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
         cmd.action = [&](xy::Entity entity, float)
         {
             auto& animator = entity.getComponent<MapAnimator>();
             animator.dest = entity.getComponent<xy::CommandTarget>().ID == CommandID::PlayerOne ? playerOneSpawn : playerTwoSpawn;
             animator.state = MapAnimator::State::Active;
-        };
+        };*/
         //m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
         m_scene.getSystem<CollisionSystem>().setEnabled(false);
+        m_scene.getSystem<xy::InterpolationSystem>().setEnabled(false);
     }
 }
 

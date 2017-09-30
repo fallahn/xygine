@@ -81,5 +81,6 @@ bool ErrorState::update(float)
 void ErrorState::draw()
 {
     auto& rt = getContext().appInstance.getRenderWindow();
+    rt.setView(getContext().defaultView);
     rt.draw(m_backgroundSprite);
 }

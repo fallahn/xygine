@@ -27,10 +27,14 @@ source distribution.
 
 #include "MapAnimator.hpp"
 #include "MessageIDs.hpp"
+#include "CommandIDs.hpp"
+#include "ClientServerShared.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/util/Vector.hpp>
 #include <xyginext/core/App.hpp>
+#include <xyginext/ecs/Scene.hpp>
 
 namespace
 {
@@ -68,6 +72,19 @@ void MapAnimatorSystem::process(float dt)
             else if (l2 > 0)
             {
                 tx.move(xy::Util::Vector::normalise(dist) * speed * dt);
+
+                if (l2 < minDist * 2.f) //we assume this is a map movement and tell player sprites to start moving
+                {
+                    xy::Command cmd;
+                    cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+                    cmd.action = [&](xy::Entity entity, float)
+                    {
+                        auto& animator = entity.getComponent<MapAnimator>();
+                        animator.dest = entity.getComponent<xy::CommandTarget>().ID == CommandID::PlayerOne ? playerOneSpawn : playerTwoSpawn;
+                        animator.state = MapAnimator::State::Active;
+                    };
+                    getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
+                }
             }
 
             //DPRINT("L2", std::to_string(l2));

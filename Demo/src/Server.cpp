@@ -262,7 +262,8 @@ void GameServer::handleConnect(const xy::NetEvent& evt)
 
 void GameServer::handleDisconnect(const xy::NetEvent& evt)
 {
-    LOG("Client dropped from server", xy::Logger::Type::Info);
+    //LOG("Client dropped from server", xy::Logger::Type::Info);
+    CLIENT_MESSAGE(MessageIdent::ClientDropped);
     const auto& peer = evt.peer;
 
     auto client = std::find_if(m_clients.begin(), m_clients.end(),

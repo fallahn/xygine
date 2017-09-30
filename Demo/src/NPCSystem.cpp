@@ -442,16 +442,19 @@ void NPCSystem::updateGoobly(xy::Entity entity, float dt)
             m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();
 
             //get target position and move on either x or y axis
-            auto dir = npc.target.getComponent<xy::Transform>().getPosition() - tx.getPosition();
-            if (xy::Util::Random::value(0, 1) == 0)
+            if (npc.target.hasComponent<xy::Transform>())
             {
-                npc.velocity.x = dir.x / npc.thinkTimer;
-                npc.velocity.y = 0.f;
-            }
-            else
-            {
-                npc.velocity.x = dir.x > 0 ? 0.01f : -0.01f;
-                npc.velocity.y = dir.y / npc.thinkTimer;
+                auto dir = npc.target.getComponent<xy::Transform>().getPosition() - tx.getPosition();
+                if (xy::Util::Random::value(0, 1) == 0)
+                {
+                    npc.velocity.x = dir.x / npc.thinkTimer;
+                    npc.velocity.y = 0.f;
+                }
+                else
+                {
+                    npc.velocity.x = dir.x > 0 ? 0.01f : -0.01f;
+                    npc.velocity.y = dir.y / npc.thinkTimer;
+                }
             }
         }
     }

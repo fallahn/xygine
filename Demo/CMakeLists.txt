@@ -25,7 +25,7 @@ endif()
 
 # Only works with SFML version 2.4 and above
 SET(SFML_MIN_VERSION 2.4)
-find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system network)
+find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system)
 
 # Find xyginext and tmxlite
 find_package(XYGINEXT REQUIRED)
