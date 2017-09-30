@@ -71,6 +71,8 @@ private:
     bool m_enabled;
 
     xy::Entity m_playerEntity;
+
+    void checkControllerInput();
 };
 
 #endif //DEMO_PLAYER_INPUT_HPP_

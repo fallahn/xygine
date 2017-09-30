@@ -67,6 +67,16 @@ bool PauseState::handleEvent(const sf::Event& evt)
             break;
         }
     }
+    else if (evt.type == sf::Event::JoystickButtonReleased)
+    {
+        if (evt.joystickButton.joystickId == 0)
+        {
+            if (evt.joystickButton.button == 7) //start on xbox
+            {
+                requestStackPop();
+            }
+        }
+    }
     
     m_scene.getSystem<xy::UISystem>().handleEvent(evt);
     m_scene.forwardEvent(evt);

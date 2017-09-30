@@ -36,6 +36,10 @@ source distribution.
 
 #include "SFML/Window/Event.hpp"
 
+namespace
+{
+    const float deadZone = 20.f;
+}
 
 PlayerInput::PlayerInput(xy::NetClient& nc)
     : m_netClient   (nc),
@@ -56,15 +60,19 @@ void PlayerInput::handleEvent(const sf::Event& evt)
         {
         default: break;
         case sf::Keyboard::W:
+        case sf::Keyboard::Up:
             m_currentInput |= InputFlag::Up;
             break;
         case sf::Keyboard::S:
+        case sf::Keyboard::Down:
             m_currentInput |= InputFlag::Down;
             break;
         case sf::Keyboard::A:
+        case sf::Keyboard::Left:
             m_currentInput |= InputFlag::Left;
                 break;
         case sf::Keyboard::D:
+        case sf::Keyboard::Right:
             m_currentInput |= InputFlag::Right;
             break;
         case sf::Keyboard::Space:
@@ -79,15 +87,19 @@ void PlayerInput::handleEvent(const sf::Event& evt)
         {
         default: break;
         case sf::Keyboard::W:
+        case sf::Keyboard::Up:
             m_currentInput &= ~InputFlag::Up;
             break;
         case sf::Keyboard::S:
+        case sf::Keyboard::Down:
             m_currentInput &= ~InputFlag::Down;
             break;
         case sf::Keyboard::A:
+        case sf::Keyboard::Left:
             m_currentInput &= ~InputFlag::Left;
             break;
         case sf::Keyboard::D:
+        case sf::Keyboard::Right:
             m_currentInput &= ~InputFlag::Right;
             break;
         case sf::Keyboard::Space:
@@ -95,11 +107,44 @@ void PlayerInput::handleEvent(const sf::Event& evt)
             break;
         }
     }
+    else if (evt.type == sf::Event::JoystickButtonPressed)
+    {
+        if (evt.joystickButton.joystickId == 0)
+        {
+            if (evt.joystickButton.button == 0)
+            {
+                //A button on xbox controller
+                m_currentInput |= InputFlag::Up;
+            }
+            else if (evt.joystickButton.button == 1)
+            {
+                m_currentInput |= InputFlag::Shoot;
+            }
+        }
+    }
+    else if (evt.type == sf::Event::JoystickButtonReleased)
+    {
+        if (evt.joystickButton.joystickId == 0)
+        {
+            if (evt.joystickButton.button == 0)
+            {
+                //A button on xbox controller
+                m_currentInput &= ~InputFlag::Up;
+            }
+            else if (evt.joystickButton.button == 1)
+            {
+                m_currentInput &= ~InputFlag::Shoot;
+            }
+        }
+    }
 }
 
 void PlayerInput::update()
 {
     if (m_playerEntity.getIndex() == 0) return;
+
+    //check state of controller axis
+    checkControllerInput();
 
     //set local player input
     auto& player = m_playerEntity.getComponent<Player>();
@@ -130,4 +175,51 @@ void PlayerInput::setPlayerEntity(xy::Entity entity)
 xy::Entity PlayerInput::getPlayerEntity() const
 {
     return m_playerEntity;
+}
+
+//private
+void PlayerInput::checkControllerInput()
+{
+    bool haveInput = false;
+    
+    //DPad
+    if (sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) < -deadZone)
+    {
+        m_currentInput |= InputFlag::Left;
+        haveInput = true;
+    }
+    else
+    {
+        m_currentInput &= ~InputFlag::Left;
+    }
+
+    if (sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) > deadZone)
+    {
+        m_currentInput |= InputFlag::Right;
+        haveInput = true;
+    }
+    else
+    {
+        m_currentInput &= ~InputFlag::Right;
+    }
+    if (haveInput) return; //prevent analogue stick overwriting state
+
+    //left stick (xbox controller)
+    if (sf::Joystick::getAxisPosition(0, sf::Joystick::X) < -deadZone)
+    {
+        m_currentInput |= InputFlag::Left;
+    }
+    else
+    {
+        m_currentInput &= ~InputFlag::Left;
+    }
+
+    if (sf::Joystick::getAxisPosition(0, sf::Joystick::X) > deadZone)
+    {
+        m_currentInput |= InputFlag::Right;
+    }
+    else
+    {
+        m_currentInput &= ~InputFlag::Right;
+    }
 }

@@ -186,6 +186,16 @@ bool GameState::handleEvent(const sf::Event& evt)
             break;
         }
     }
+    else if (evt.type == sf::Event::JoystickButtonReleased)
+    {
+        if (evt.joystickButton.joystickId == 0)
+        {
+            if (evt.joystickButton.button == 7) //start on xbox
+            {
+                requestStackPush(StateID::Pause);
+            }
+        }
+    }
     return false;
 }
 
@@ -628,6 +638,14 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         spawnWarning();
         break;
     case PacketID::GameOver:
+    {
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+        cmd.action = [&](xy::Entity entity, float) {m_scene.destroyEntity(entity); };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+        m_playerInput.setPlayerEntity({ 0,0 });
+    }
+
         m_client.disconnect();
         requestStackPush(StateID::GameOver);
         break;
