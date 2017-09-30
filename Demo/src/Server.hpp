@@ -81,6 +81,8 @@ private:
     void checkMapStatus(float);
 
     bool m_gameOver;
+    bool m_changingMaps;
+    std::unique_ptr<xy::NetPeer> m_queuedClient;
 
     void initMaplist();
     void initScene();

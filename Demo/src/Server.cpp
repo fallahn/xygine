@@ -83,7 +83,8 @@ GameServer::GameServer()
     m_currentMap            (0),
     m_endOfRoundPauseTime   (3.f),
     m_currentRoundTime      (0.f),
-    m_gameOver              (false)
+    m_gameOver              (false),
+    m_changingMaps          (false)
 {
     m_clients[0].data.actor.type = ActorID::PlayerOne;
     m_clients[0].data.spawnX = playerOneSpawn.x;
@@ -256,8 +257,16 @@ void GameServer::handleConnect(const xy::NetEvent& evt)
 
     //TODO check not existing client
 
-    //send map name, list of actor ID's up to count
-    m_host.sendPacket(evt.peer, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
+    if (!m_changingMaps)
+    {
+        //send map name, list of actor ID's up to count
+        m_host.sendPacket(evt.peer, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
+    }
+    else
+    {
+        //queue until change complete
+        m_queuedClient = std::make_unique<xy::NetPeer>(evt.peer);
+    }
 }
 
 void GameServer::handleDisconnect(const xy::NetEvent& evt)
@@ -368,6 +377,8 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
 
 void GameServer::checkRoundTime(float dt)
 {
+    if (m_changingMaps) return;
+    
     float lastTime = m_currentRoundTime;
     m_currentRoundTime += dt;
 
@@ -427,7 +438,6 @@ void GameServer::checkRoundTime(float dt)
                 }
             };
             m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
-
         }
         
     }
@@ -462,15 +472,7 @@ void GameServer::checkMapStatus(float dt)
         //set clients to not ready
         m_clients[0].ready = false;
         m_clients[1].ready = false;
-
-        /*cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
-        cmd.action = [&](xy::Entity entity, float)
-        {
-            auto number = entity.getComponent<Player>().playerNumber;
-            entity.getComponent<xy::Transform>().setPosition(m_clients[number].data.spawnX, m_clients[number].data.spawnY);
-            entity.getComponent<Player>().direction = (number == 0) ? Player::Direction::Right : Player::Direction::Left;
-        };
-        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);*/
+        m_changingMaps = true;
 
         m_scene.getSystem<NPCSystem>().setEnabled(false);
         m_scene.getSystem<CollisionSystem>().setEnabled(false);
@@ -662,6 +664,14 @@ void GameServer::beginNewRound()
         }
 
         m_currentRoundTime = 0.f;
+        m_changingMaps = false;
+
+        //check if anyone tried joining mid map change
+        if (m_queuedClient)
+        {
+            m_host.sendPacket(*m_queuedClient, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
+            m_queuedClient.reset();
+        }
     }
 }
 

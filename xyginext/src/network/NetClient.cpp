@@ -135,6 +135,11 @@ bool NetClient::connect(const std::string& address, sf::Uint16 port, sf::Uint32 
     return false;
 }
 
+bool NetClient::connected() const
+{
+    return m_peer.m_peer != nullptr;
+}
+
 void NetClient::disconnect()
 {
     if (m_peer.m_peer)

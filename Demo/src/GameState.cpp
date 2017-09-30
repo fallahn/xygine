@@ -636,7 +636,10 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
 void GameState::handleTimeout()
 {
+    if (!m_client.connected()) return;
+    
     float currTime = m_clientTimeout.getElapsedTime().asSeconds();
+    static bool wasError = false;
     if (currTime > clientTimeout / 5.f)
     {
         float displayTime = clientTimeout - currTime;
@@ -648,6 +651,8 @@ void GameState::handleTimeout()
             entity.getComponent<xy::Text>().setString("WARNING: Connection Problem\nAuto Disconnect in: " + std::to_string(displayTime));
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        wasError = true;
     }
     
     if (currTime > clientTimeout)
@@ -655,6 +660,19 @@ void GameState::handleTimeout()
         //push a message state
         m_sharedData.error = "Disconnected from server.";
         requestStackPush(StateID::Error);
+    }
+    else if (currTime < clientTimeout && wasError)
+    {
+        //reset the text
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::Timeout;
+        cmd.action = [](xy::Entity entity, float)
+        {
+            entity.getComponent<xy::Text>().setString("");
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        wasError = false;
     }
 }
 
@@ -995,16 +1013,6 @@ void GameState::switchMap(const MapData& data)
             }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
-
-        //move player sprites to position
-        /*cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
-        cmd.action = [&](xy::Entity entity, float)
-        {
-            auto& animator = entity.getComponent<MapAnimator>();
-            animator.dest = entity.getComponent<xy::CommandTarget>().ID == CommandID::PlayerOne ? playerOneSpawn : playerTwoSpawn;
-            animator.state = MapAnimator::State::Active;
-        };*/
-        //m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
         m_scene.getSystem<CollisionSystem>().setEnabled(false);
         m_scene.getSystem<xy::InterpolationSystem>().setEnabled(false);

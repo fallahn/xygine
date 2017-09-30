@@ -85,6 +85,12 @@ namespace xy
         bool connect(const std::string& address, sf::Uint16 port, sf::Uint32 timeout = 5000);
 
         /*!
+        \brief Returns true if connected to a NetHost and is ready to poll for events
+        else returns false.
+        */
+        bool connected() const;
+
+        /*!
         \brief Closes any active connections.
         This is blocking for up to 3 seconds while waiting for graceful disconnection
         before forcefully closing the connection and causing a timeout on the remote server
