@@ -46,10 +46,17 @@ public:
 
     void process(float) override;
 
+    //allows querying the current world state with a given
+    //entity to see if it collides. Entity must have collision
+    //component and quad tree component. Used in reconciliation.
+    void queryState(xy::Entity);
+
 private:
     
-    bool passesFilter(xy::Entity, xy::Entity);
+    void broadPhase(xy::Entity);
+    void narrowPhase();
 
+    bool passesFilter(xy::Entity, xy::Entity);
     std::set<std::pair<xy::Entity, xy::Entity>> m_collisions;
 
     bool m_isServer;

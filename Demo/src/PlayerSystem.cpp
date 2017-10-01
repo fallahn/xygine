@@ -32,12 +32,14 @@ source distribution.
 #include "MessageIDs.hpp"
 #include "ClientServerShared.hpp"
 #include "NPCSystem.hpp"
+#include "CollisionSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/Scene.hpp>
 #include <xyginext/util/Vector.hpp>
 #include <xyginext/core/App.hpp>
 
-#include <xyginext/ecs/components/Text.hpp>
+//#include <xyginext/ecs/components/Text.hpp>
 
 namespace
 {
@@ -300,6 +302,10 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                 }
             }
             idx = (idx + 1) % player.history.size();
+
+            //check the result with the collision world and resolve
+            getScene()->getSystem<CollisionSystem>().queryState(entity);
+            resolveCollision(entity);
         }
     }
 

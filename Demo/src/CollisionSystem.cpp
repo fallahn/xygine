@@ -59,55 +59,75 @@ void CollisionSystem::process(float)
     auto& entities = getEntities();
     for (auto& entity : entities)
     {
-        const auto& xForm = entity.getComponent<xy::Transform>();
-        auto& collisionComponent = entity.getComponent<CollisionComponent>();
-
-        bool isMapGeom = false;
-
-        for (auto i = 0u; i < collisionComponent.m_hitboxCount; ++i)
-        {
-            auto& hitbox = collisionComponent.m_hitboxes[i];
-#ifdef DDRAW
-            auto rect = hitbox.getCollisionRect();
-            rect = entity.getComponent<xy::Transform>().getTransform().transformRect(rect);
-
-            //draw some debug to make sure the entities are being created in the correct place
-            sf::Color colour = (hitbox.m_collisionCount > 0) ? sf::Color::Red : sf::Color::Green;
-            //repeat the first and last points with transparent verts
-            m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), sf::Color::Transparent);
-            m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), colour); //TODO use a colour based on collision type?
-            m_vertices.emplace_back(sf::Vector2f(rect.left + rect.width, rect.top), colour);
-            m_vertices.emplace_back(sf::Vector2f(rect.left + rect.width, rect.top + rect.height), colour);
-            m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top + rect.height), colour);
-            m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), colour);
-            m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), sf::Color::Transparent);
-#endif
-            hitbox.m_collisionCount = 0;
-            auto type = hitbox.getType();
-            isMapGeom = (type == CollisionType::Platform || type == CollisionType::Solid || type == CollisionType::Teleport);
-        }
-        
-        if (isMapGeom) continue;
-
-        //actual collision testing...
-        auto globalBounds = xForm.getTransform().transformRect(collisionComponent.getLocalBounds());
-        auto others = getScene()->getSystem<xy::QuadTree>().queryArea(globalBounds);
-
-        for (const auto& other : others)
-        {
-            if (entity != other && passesFilter(entity, other))
-            {
-                //only test for AABB collisions first, so we make sure each pair is processed only once
-                auto otherBounds = other.getComponent<xy::Transform>().getTransform().transformRect(other.getComponent<CollisionComponent>().getLocalBounds());
-
-                if (globalBounds.intersects(otherBounds))
-                {
-                    m_collisions.insert(std::minmax(entity, other));
-                }
-            }
-        }     
+        broadPhase(entity);
     }
 
+    narrowPhase();
+}
+
+void CollisionSystem::queryState(xy::Entity entity)
+{
+    m_collisions.clear();
+    broadPhase(entity);
+    narrowPhase();
+}
+
+//private
+void CollisionSystem::broadPhase(xy::Entity entity)
+{
+    XY_ASSERT(entity.hasComponent<CollisionComponent>(), "Requirtes collision component!");
+
+    const auto& xForm = entity.getComponent<xy::Transform>();
+    auto& collisionComponent = entity.getComponent<CollisionComponent>();
+
+    bool isMapGeom = false;
+
+    for (auto i = 0u; i < collisionComponent.m_hitboxCount; ++i)
+    {
+        auto& hitbox = collisionComponent.m_hitboxes[i];
+#ifdef DDRAW
+        auto rect = hitbox.getCollisionRect();
+        rect = entity.getComponent<xy::Transform>().getTransform().transformRect(rect);
+
+        //draw some debug to make sure the entities are being created in the correct place
+        sf::Color colour = (hitbox.m_collisionCount > 0) ? sf::Color::Red : sf::Color::Green;
+        //repeat the first and last points with transparent verts
+        m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), sf::Color::Transparent);
+        m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), colour); //TODO use a colour based on collision type?
+        m_vertices.emplace_back(sf::Vector2f(rect.left + rect.width, rect.top), colour);
+        m_vertices.emplace_back(sf::Vector2f(rect.left + rect.width, rect.top + rect.height), colour);
+        m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top + rect.height), colour);
+        m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), colour);
+        m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), sf::Color::Transparent);
+#endif
+        hitbox.m_collisionCount = 0;
+        auto type = hitbox.getType();
+        isMapGeom = (type == CollisionType::Platform || type == CollisionType::Solid || type == CollisionType::Teleport);
+    }
+
+    if (isMapGeom) return;
+
+    //actual collision testing...
+    auto globalBounds = xForm.getTransform().transformRect(collisionComponent.getLocalBounds());
+    auto others = getScene()->getSystem<xy::QuadTree>().queryArea(globalBounds);
+
+    for (const auto& other : others)
+    {
+        if (entity != other && passesFilter(entity, other))
+        {
+            //only test for AABB collisions first, so we make sure each pair is processed only once
+            auto otherBounds = other.getComponent<xy::Transform>().getTransform().transformRect(other.getComponent<CollisionComponent>().getLocalBounds());
+
+            if (globalBounds.intersects(otherBounds))
+            {
+                m_collisions.insert(std::minmax(entity, other));
+            }
+        }
+    }
+}
+
+void CollisionSystem::narrowPhase()
+{
     //calc manifolds for any collisions and enter into component info
     //if(m_isServer) DPRINT("Broadphase count", std::to_string(m_collisions.size()));
     for (auto c : m_collisions)
@@ -165,7 +185,6 @@ void CollisionSystem::process(float)
     }
 }
 
-//private
 bool CollisionSystem::passesFilter(xy::Entity a, xy::Entity b)
 {
     const auto collisionA = a.getComponent<CollisionComponent>();
