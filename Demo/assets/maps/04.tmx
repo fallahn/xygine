@@ -8,7 +8,7 @@
  </tileset>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFkV0KgDAMg3eVwS7g3Mt+7n8uFRYooe1EBT8oaGmWdAvhX9JZm6h99rvotdkrNJtmSeS8BOexN+tBprKyW3qZod/QD8eT+1XRFzo7Gt8XuGOpx/00RRONGW9/zx9wfuvtAPy1/Ly/h7c/Mqz+Wf8E6LW3HYtefun9FQfQPBND
+   eJzFUUEKwCAM8yuCH5jzMvX/79oGBkKwnbDBAgWJTZNqCP8iXbVR7YNvxNXBFelNoxjcz8A89VY9kKWs7JaeM7QFfXc8lT8m+iKzo3G+gTdmPd6nTjTR6PH29/wBzW/9HQD/WX7d34O3P2doctZ7b/8VQD/72/7A5ZfeX+EEYTQS4Q==
   </data>
  </layer>
  <objectgroup name="Solid">
@@ -31,7 +31,7 @@
   <object id="75" name="whirlybob" x="496" y="368" width="16" height="16"/>
   <object id="76" name="whirlybob" x="96" y="192" width="16" height="16"/>
   <object id="77" name="whirlybob" x="832" y="192" width="16" height="16"/>
-  <object id="78" name="clocksy" x="480" y="864" width="16" height="16"/>
+  <object id="78" name="clocksy" x="496" y="864" width="16" height="16"/>
   <object id="81" name="clocksy" x="208" y="704" width="16" height="16"/>
   <object id="82" name="clocksy" x="720" y="704" width="16" height="16"/>
  </objectgroup>
@@ -47,7 +47,7 @@
   <object id="64" x="736" y="640" width="128" height="32"/>
   <object id="68" x="672" y="768" width="192" height="32"/>
   <object id="53" x="288" y="192" width="56" height="32"/>
-  <object id="67" x="423" y="768" width="177" height="32"/>
+  <object id="67" x="480" y="768" width="64" height="32"/>
   <object id="65" x="160" y="640" width="128" height="32"/>
   <object id="56" x="160" y="416" width="224" height="32"/>
   <object id="54" x="681" y="192" width="55" height="32"/>

@@ -384,7 +384,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
 
 void GameServer::checkRoundTime(float dt)
 {
-    if (m_changingMaps) return;
+    if (m_changingMaps || m_mapData.actorCount == 0) return;
     
     float lastTime = m_currentRoundTime;
     m_currentRoundTime += dt;

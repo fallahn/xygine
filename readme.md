@@ -37,7 +37,7 @@ gameplay oriented connections based upon the indomitable [Enet](http://enet.besp
 
 ###### Contributions
 Contributions should be acknowledged and are gratefully accepted from:  
-Jonny Paton  
+Jonny Paton (Build system and CI setup)  
 Jean-Sebastien Fauteux (macOS Testing)  
 Baard (Awesome Logo)
 

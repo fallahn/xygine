@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="99">
+ <properties>
+  <property name="round_time" type="float" value="54"/>
+ </properties>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
+  <image source="../images/block.png" width="512" height="512"/>
+ </tileset>
+ <layer name="Blocks" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBhYwALEgkhYCiouTUBMEKqXhUK7kfULA7EQAcyDRz+l9ksSoUcGj35BIrA0Hv2kguEefqB0h57mBPHoJxXA9COHD8wPMgTEhCi0m1oAALVZBY4=
+  </data>
+ </layer>
+ <objectgroup name="Solid">
+  <object id="4" x="64" y="0" width="224" height="160"/>
+  <object id="7" x="64" y="928" width="224" height="128"/>
+  <object id="8" x="960" y="128" width="64" height="832"/>
+  <object id="9" x="0" y="128" width="64" height="832"/>
+  <object id="42" x="416" y="0" width="192" height="160"/>
+  <object id="43" x="736" y="0" width="224" height="160"/>
+  <object id="49" x="416" y="928" width="192" height="128"/>
+  <object id="50" x="736" y="928" width="224" height="128"/>
+  <object id="83" x="192" y="256" width="32" height="64"/>
+  <object id="84" x="192" y="416" width="32" height="64"/>
+  <object id="85" x="192" y="576" width="32" height="64"/>
+  <object id="86" x="192" y="736" width="32" height="64"/>
+  <object id="87" x="800" y="736" width="32" height="64"/>
+  <object id="88" x="800" y="576" width="32" height="64"/>
+  <object id="89" x="800" y="416" width="32" height="64"/>
+  <object id="90" x="800" y="256" width="32" height="64"/>
+ </objectgroup>
+ <objectgroup name="Spawn">
+  <object id="76" name="clocksy" x="608" y="224" width="16" height="16"/>
+  <object id="96" name="clocksy" x="512" y="384" width="16" height="16"/>
+  <object id="97" name="clocksy" x="416" y="528" width="16" height="16"/>
+  <object id="98" name="clocksy" x="288" y="688" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup name="Teleport">
+  <object id="73" x="288" y="1056" width="128" height="32"/>
+  <object id="74" x="608" y="1056" width="128" height="32"/>
+  <object id="71" x="288" y="0" width="128" height="10"/>
+  <object id="72" x="608" y="0" width="128" height="10"/>
+ </objectgroup>
+ <objectgroup name="Platform">
+  <object id="91" x="272" y="288" width="528" height="32"/>
+  <object id="92" x="224" y="448" width="528" height="32"/>
+  <object id="93" x="272" y="608" width="528" height="32"/>
+  <object id="94" x="224" y="768" width="240" height="32"/>
+  <object id="95" x="560" y="768" width="240" height="32"/>
+ </objectgroup>
+</map>
