@@ -481,6 +481,21 @@ void GameServer::checkMapStatus(float dt)
         m_clients[1].ready = false;
         m_changingMaps = true;
 
+        //move players to spawn point ready for next map
+        cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+        cmd.action = [](xy::Entity entity, float)
+        {
+            if (entity.getComponent<xy::CommandTarget>().ID & CommandID::PlayerOne)
+            {
+                entity.getComponent<xy::Transform>().setPosition(playerOneSpawn);
+            }
+            else
+            {
+                entity.getComponent<xy::Transform>().setPosition(playerTwoSpawn);
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
         m_scene.setSystemActive<NPCSystem>(false);
         m_scene.setSystemActive<CollisionSystem>(false);
     }
@@ -655,21 +670,6 @@ void GameServer::beginNewRound()
     {
         m_scene.setSystemActive<NPCSystem>(true);
         m_scene.setSystemActive<CollisionSystem>(true);
-
-        xy::Command cmd;
-        cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
-        cmd.action = [](xy::Entity entity, float)
-        {
-            if (entity.getComponent<xy::CommandTarget>().ID & CommandID::PlayerOne)
-            {
-                entity.getComponent<xy::Transform>().setPosition(playerOneSpawn);
-            }
-            else
-            {
-                entity.getComponent<xy::Transform>().setPosition(playerTwoSpawn);
-            }
-        };
-        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
         //send initial position of existing actors
         const auto& actors = m_scene.getSystem<ActorSystem>().getActors();

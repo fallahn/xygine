@@ -34,6 +34,7 @@ struct ScoreTag final
 {
     static constexpr float MaxLife = 2.f;
     float lifetime = MaxLife;
+    sf::Color colour = { 155, 255, 55 };
 };
 
 class ScoreTagSystem final : public xy::System

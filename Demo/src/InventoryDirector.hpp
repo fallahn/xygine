@@ -58,6 +58,8 @@ private:
     std::array<Inventory, 2> m_playerValues{};
 
     void sendUpdate(sf::Uint8, sf::Uint32);
+
+    void checkLifeBonus(sf::Uint8, sf::Uint32);
 };
 
 #endif //DEMO_INVENTORY_DIRECTOR_HPP_

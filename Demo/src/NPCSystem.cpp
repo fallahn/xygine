@@ -250,19 +250,22 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
                 case CollisionType::Bubble:
                     //switch to bubble state if bubble in spawn state
                 {
-                    const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
-                    if (bubble.state == Bubble::Spawning)
+                    if (manifold.otherEntity.hasComponent<Bubble>())
                     {
-                        npc.lastVelocity = npc.velocity; //so we can  restore if bubble pops
+                        const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
+                        if (bubble.state == Bubble::Spawning)
+                        {
+                            npc.lastVelocity = npc.velocity; //so we can  restore if bubble pops
 
-                        npc.state = NPC::State::Bubble;
-                        npc.velocity.y = BubbleVerticalVelocity;
-                        npc.thinkTimer = BubbleTime;
-                        npc.bubbleOwner = bubble.player;
-                        entity.getComponent<AnimationController>().direction = 1.f;
-                        entity.getComponent<AnimationController>().nextAnimation = 
-                            (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
-                        return;
+                            npc.state = NPC::State::Bubble;
+                            npc.velocity.y = BubbleVerticalVelocity;
+                            npc.thinkTimer = BubbleTime;
+                            npc.bubbleOwner = bubble.player;
+                            entity.getComponent<AnimationController>().direction = 1.f;
+                            entity.getComponent<AnimationController>().nextAnimation =
+                                (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
+                            return;
+                        }
                     }
                 }
                     break;

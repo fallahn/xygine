@@ -137,6 +137,10 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             {
                 spawnRadius = p.getValue<float>();
             }
+            else if (name == "spawn_offset")
+            {
+                spawnOffset = p.getValue<sf::Vector2f>();
+            }
             else if (name == "release_count")
             {
                 releaseCount = p.getValue<sf::Int32>();

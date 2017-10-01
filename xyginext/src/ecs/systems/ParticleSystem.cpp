@@ -155,6 +155,11 @@ void ParticleSystem::process(float dt)
                     p.position.x += Util::Random::value(-settings.spawnRadius, settings.spawnRadius + epsilon);
                     p.position.y += Util::Random::value(-settings.spawnRadius, settings.spawnRadius + epsilon);
 
+                    auto offset = settings.spawnOffset;
+                    offset.x *= tx.getScale().x;
+                    offset.y *= tx.getScale().y;
+                    p.position += offset;
+
                     emitter.m_nextFreeParticle++;
                     if(emitter.m_releaseCount > 0) emitter.m_releaseCount--;
                 }
@@ -199,7 +204,9 @@ void ParticleSystem::process(float dt)
         }
 
         //check if visible and create a vertex array for it
-        if (viewableArea.intersects(emitter.m_bounds) && m_activeArrayCount < MaxParticleSystems) 
+        //TODO apparently emitter bounds is not calculated correctly. Also the viewable
+        //area is potentially incorrect so culling should be done in the draw function
+        if (/*viewableArea.intersects(emitter.m_bounds) &&*/ m_activeArrayCount < MaxParticleSystems) 
         {
             auto& vertArray = m_emitterArrays[m_activeArrayCount++];
             vertArray.count = 0;
@@ -218,6 +225,7 @@ void ParticleSystem::process(float dt)
         //DPRINT("Position", std::to_string(emitter.m_particles[0].position.y));
     }
     //DPRINT("Emitter Count", std::to_string(m_activeArrayCount));
+    //DPRINT("Viewable area", std::to_string(viewableArea.left) + ", " + std::to_string(viewableArea.top) + ", " + std::to_string(viewableArea.width) + ", " + std::to_string(viewableArea.height));
 }
 
 //private

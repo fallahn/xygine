@@ -1,0 +1,19 @@
+particle_system angry
+{
+	src="assets/images/puff.png"
+	blend_mode = add
+	gravity = 0,-120
+	velocity = -2.4,-120.1
+	spread = 30
+	lifetime = 0.83
+	//lifetime_variance = 0.83
+	colour = 255,255,255,255
+	rotation_speed = 5
+	scale_affector = 1.6
+	size = 4.0
+	emit_rate = 6.7
+	emit_count = 1
+	spawn_radius = 15
+	spawn_offset = 32,32
+	//release_count = 10
+}

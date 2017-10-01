@@ -32,6 +32,7 @@ source distribution.
 #include <xyginext/ecs/components/SpriteAnimation.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
+#include <xyginext/ecs/components/ParticleEmitter.hpp>
 
 #include <xyginext/core/Message.hpp>
 
@@ -87,6 +88,7 @@ void AnimationControllerSystem::process(float)
                 controller.nextAnimation == AnimationController::TrappedTwo)
             {
                 entity.getComponent<xy::Sprite>().setColour(sf::Color::White);
+                entity.getComponent<xy::ParticleEmitter>().stop();
             }
             
             auto* msg = postMessage<AnimationEvent>(MessageID::AnimationMessage);

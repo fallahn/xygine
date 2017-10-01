@@ -81,6 +81,7 @@ namespace xy
         float emitRate = 1.f; //! <particles per second
         sf::Uint32 emitCount = 1; //! <amount relased at once
         float spawnRadius = 0.f;
+        sf::Vector2f spawnOffset; //! <initial spawn position is offset this much
         sf::Int32 releaseCount = 0; //! <number of particles release before stopping (0 for infinite)
         sf::Texture* texture = nullptr;
         bool loadFromFile(const std::string&, TextureResource&);

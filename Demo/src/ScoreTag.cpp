@@ -60,9 +60,9 @@ void ScoreTagSystem::process(float dt)
 
         auto alpha = 255.f * (tag.lifetime / tag.MaxLife);
 
-        sf::Color colour(155, 255, 55, static_cast<sf::Uint8>(alpha));
+        tag.colour.a = static_cast<sf::Uint8>(alpha);
         
-        entity.getComponent<xy::Text>().setFillColour(colour);
+        entity.getComponent<xy::Text>().setFillColour(tag.colour);
         entity.getComponent<xy::Transform>().move(0.f, speed * dt);
     }
 }

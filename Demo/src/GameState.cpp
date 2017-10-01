@@ -538,6 +538,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
                 if (entity.getComponent<Actor>().id == id)
                 {
                     entity.getComponent<xy::Sprite>().setColour(sf::Color(255, 160, 160));
+                    entity.getComponent<xy::ParticleEmitter>().start();
                 }
             };
             m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
@@ -1033,6 +1034,18 @@ void GameState::switchMap(const MapData& data)
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
+        //make sure we don't jump mid animation
+        //because there's no collision to stop us
+        /*cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+        cmd.action = [](xy::Entity entity, float)
+        {
+            if (entity.hasComponent<Player>())
+            {
+                entity.getComponent<Player>().state = Player::State::Walking;
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);*/
+
         m_scene.setSystemActive<CollisionSystem>(false);
         m_scene.setSystemActive<xy::InterpolationSystem>(false);
     }
@@ -1040,8 +1053,8 @@ void GameState::switchMap(const MapData& data)
 
 void GameState::spawnMapActors()
 {
-    //xy::EmitterSettings emitterSettings;
-    //emitterSettings.loadFromFile("assets/particles/angry.xyp", m_textureResource);
+    xy::EmitterSettings emitterSettings;
+    emitterSettings.loadFromFile("assets/particles/angry.xyp", m_textureResource);
     
     for (auto i = 0; i < m_mapData.actorCount; ++i)
     {
@@ -1070,7 +1083,7 @@ void GameState::spawnMapActors()
         }
         entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
         entity.addComponent<xy::SpriteAnimation>().play(0);
-        //entity.addComponent<xy::ParticleEmitter>().settings = emitterSettings;
+        entity.addComponent<xy::ParticleEmitter>().settings = emitterSettings;
         //entity.getComponent<xy::ParticleEmitter>().start();
     }
 }
@@ -1140,9 +1153,21 @@ void GameState::updateUI(const InventoryUpdate& data)
 
         auto scoreEnt = m_scene.createEntity();
         scoreEnt.addComponent<xy::Transform>().setPosition(pos);
-        scoreEnt.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString(std::to_string(data.amount));
-        scoreEnt.getComponent<xy::Text>().setCharacterSize(40);
-        scoreEnt.addComponent<ScoreTag>();
+        scoreEnt.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf"));
+
+        if (data.amount == std::numeric_limits<sf::Uint32>::max())
+        {
+            //this is a 1up bonus
+            scoreEnt.getComponent<xy::Text>().setString("1 UP!");
+            scoreEnt.getComponent<xy::Text>().setCharacterSize(56);
+            scoreEnt.addComponent<ScoreTag>().colour = sf::Color::Red;
+        }
+        else
+        {
+            scoreEnt.getComponent<xy::Text>().setString(std::to_string(data.amount));
+            scoreEnt.getComponent<xy::Text>().setCharacterSize(40);
+            scoreEnt.addComponent<ScoreTag>();
+        }
     };
 
     if (data.playerID == 0)

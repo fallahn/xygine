@@ -33,12 +33,17 @@ source distribution.
 #include <xyginext/network/NetHost.hpp>
 #include <xyginext/ecs/Scene.hpp>
 
+#include <limits>
+
 namespace
 {
     const sf::Uint32 NpcScore = 500;
     const sf::Uint32 GooblyScore = 850;
     const sf::Uint32 SmallFruitScore = 350;
     const sf::Uint32 LargeFruitScore = 1000;
+
+    const sf::Uint32 lifeScore = 10000; //extra life is awarded in multiples of this
+    const sf::Uint8 maxLives = 5;
 }
 
 InventoryDirector::InventoryDirector(xy::NetHost& host)
@@ -50,6 +55,10 @@ InventoryDirector::InventoryDirector(xy::NetHost& host)
 //public
 void InventoryDirector::handleMessage(const xy::Message& msg)
 {    
+    //used to check if we got an extra life
+    auto p1Old = m_playerValues[0].score / lifeScore;
+    auto p2Old = m_playerValues[1].score / lifeScore;
+    
     switch (msg.id)
     {
     default: break;
@@ -126,6 +135,9 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
     }
         break;
     }
+
+    checkLifeBonus(0, p1Old);
+    checkLifeBonus(1, p2Old);
 }
 
 //private
@@ -138,4 +150,14 @@ void InventoryDirector::sendUpdate(sf::Uint8 player, sf::Uint32 amount)
         update.playerID = player;
 
         m_host.broadcastPacket(PacketID::InventoryUpdate, update, xy::NetFlag::Reliable, 1);
+}
+
+void InventoryDirector::checkLifeBonus(sf::Uint8 player, sf::Uint32 oldScore)
+{
+    auto newScore = m_playerValues[player].score / lifeScore;
+    if (newScore > oldScore && m_playerValues[player].lives < maxLives)
+    {
+        m_playerValues[player].lives++;
+        sendUpdate(player, std::numeric_limits<sf::Uint32>::max()); //flag to say this is a life update rather than score
+    }
 }
