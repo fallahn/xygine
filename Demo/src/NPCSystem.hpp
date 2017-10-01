@@ -59,12 +59,9 @@ public:
 
     void process(float) override;
 
-    void setEnabled(bool enabled) { m_enabled = enabled; }
-
 private:
 
     xy::NetHost& m_host;
-    bool m_enabled;
 
     void onEntityAdded(xy::Entity) override;
 

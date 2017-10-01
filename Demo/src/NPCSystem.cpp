@@ -56,7 +56,6 @@ namespace
 NPCSystem::NPCSystem(xy::MessageBus& mb, xy::NetHost& host)
     : xy::System        (mb, typeid(NPCSystem)),
     m_host              (host),
-    m_enabled           (true),
     m_currentThinkTime  (0)
 {
     requireComponent<NPC>();
@@ -92,9 +91,7 @@ void NPCSystem::handleMessage(const xy::Message& msg)
 }
 
 void NPCSystem::process(float dt)
-{
-    if (!m_enabled) return;
-    
+{    
     auto entities = getEntities();
     for (auto& entity : entities)
     {

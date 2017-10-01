@@ -46,11 +46,7 @@ public:
 
     void process(float) override;
 
-    void setEnabled(bool enabled) { m_enabled = enabled; }
-
 private:
-
-    bool m_enabled;
     
     bool passesFilter(xy::Entity, xy::Entity);
 

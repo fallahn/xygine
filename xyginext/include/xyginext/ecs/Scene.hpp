@@ -107,6 +107,15 @@ namespace xy
         T& getSystem();
 
         /*!
+        \brief Sets the given system type active or inactive in the scene.
+        Inactive systems are moved from the processing list and are ignored
+        until set active again. If the system type give doesn't exist then
+        this function does nothing.
+        */
+        template <typename T>
+        void setSystemActive(bool active);
+
+        /*!
         \brief Adds a Director to the Scene.
         Directors are used to control in game entities and events through
         observed messages and events.

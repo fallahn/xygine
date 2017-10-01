@@ -61,7 +61,7 @@ namespace xy
         */
         //template <typename T>
         System(MessageBus& mb, UniqueType t) 
-            : m_messageBus(mb), m_type(t), m_scene(nullptr){}
+            : m_messageBus(mb), m_type(t), m_scene(nullptr), m_active(false){}
 
         virtual ~System() = default;
 
@@ -100,6 +100,12 @@ namespace xy
         \brief Implement this for system specific processing to entities.
         */
         virtual void process(float);
+
+        /*!
+        \brief Returns true if the system is currently active.
+        Systems can be activeated and deactivated with Scene::setSystemActive()
+        */
+        bool isActive() const { return m_active; }
 
     protected:
 
@@ -153,6 +159,7 @@ namespace xy
 
         Scene* m_scene;
 
+        bool m_active; //used by system manager to check if it has been added to the active list
         friend class SystemManager;
     };
 
@@ -181,6 +188,15 @@ namespace xy
         */
         template <typename T>
         void removeSystem();
+
+        /*!
+        \brief Sets a system active or inactive by adding or removing it
+        from the active systems processing list.
+        \param active Set true to enable the system or false to disable.
+        If the systems does not exist this function has no effect.
+        */
+        template <typename T>
+        void setSystemActive(bool active);
 
         /*!
         \brief Returns a reference to this system type, if it exists
@@ -216,6 +232,10 @@ namespace xy
     private:
         Scene& m_scene;
         std::vector<std::unique_ptr<System>> m_systems;
+        std::vector<System*> m_activeSystems;
+
+        template <typename T>
+        void removeFromActive();
     };
 
 #include "System.inl"

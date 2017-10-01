@@ -209,8 +209,8 @@ void GameState::handleMessage(const xy::Message& msg)
             spawnMapActors();
             
             m_playerInput.setEnabled(true);
-            m_scene.getSystem<CollisionSystem>().setEnabled(true);
-            m_scene.getSystem<xy::InterpolationSystem>().setEnabled(true);
+            m_scene.setSystemActive<CollisionSystem>(true);
+            m_scene.setSystemActive<xy::InterpolationSystem>(true);
 
             //send OK to server to continue game
             m_client.sendPacket(PacketID::MapReady, m_clientData.actor.type, xy::NetFlag::Reliable, 1);
@@ -1033,8 +1033,8 @@ void GameState::switchMap(const MapData& data)
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
-        m_scene.getSystem<CollisionSystem>().setEnabled(false);
-        m_scene.getSystem<xy::InterpolationSystem>().setEnabled(false);
+        m_scene.setSystemActive<CollisionSystem>(false);
+        m_scene.setSystemActive<xy::InterpolationSystem>(false);
     }
 }
 

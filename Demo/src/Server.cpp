@@ -474,8 +474,8 @@ void GameServer::checkMapStatus(float dt)
         m_clients[1].ready = false;
         m_changingMaps = true;
 
-        m_scene.getSystem<NPCSystem>().setEnabled(false);
-        m_scene.getSystem<CollisionSystem>().setEnabled(false);
+        m_scene.setSystemActive<NPCSystem>(false);
+        m_scene.setSystemActive<CollisionSystem>(false);
     }
 }
 
@@ -629,8 +629,8 @@ void GameServer::beginNewRound()
 
     if (p1Ready && p2Ready)
     {
-        m_scene.getSystem<NPCSystem>().setEnabled(true);
-        m_scene.getSystem<CollisionSystem>().setEnabled(true);
+        m_scene.setSystemActive<NPCSystem>(true);
+        m_scene.setSystemActive<CollisionSystem>(true);
 
         xy::Command cmd;
         cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;

@@ -44,11 +44,7 @@ namespace xy
 
         void process(float) override;
 
-        void setEnabled(bool enabled) { m_enabled = enabled; }
-
     private:
-
-        bool m_enabled;
 
         void onEntityAdded(Entity) override;
     };
