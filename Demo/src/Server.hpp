@@ -77,6 +77,7 @@ private:
     std::size_t m_currentMap;
     float m_endOfRoundPauseTime; //hm, this feels like it should be encapsulated somewhere
     float m_currentRoundTime;
+    float m_roundTimeout;
     void checkRoundTime(float);
     void checkMapStatus(float);
 

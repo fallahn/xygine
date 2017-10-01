@@ -71,8 +71,8 @@ namespace
     const float tickRate = 1.f / 25.f;
     const float updateRate = 1.f / 60.f;
     const float endOfRoundTime = 6.f;
-    const float roundTime = 39.f; //after this everything is angry
-    const float roundWarnTime = roundTime - 2.5f; //allows time for clients to do warning
+    const float defaultRoundTime = 39.f; //after this everything is angry
+    const float roundWarnTime = 2.5f; //allows time for clients to do warning
 }
 
 GameServer::GameServer()
@@ -83,6 +83,7 @@ GameServer::GameServer()
     m_currentMap            (0),
     m_endOfRoundPauseTime   (3.f),
     m_currentRoundTime      (0.f),
+    m_roundTimeout          (defaultRoundTime),
     m_gameOver              (false),
     m_changingMaps          (false)
 {
@@ -388,14 +389,14 @@ void GameServer::checkRoundTime(float dt)
     float lastTime = m_currentRoundTime;
     m_currentRoundTime += dt;
 
-    if (lastTime < roundWarnTime
-        && m_currentRoundTime >= roundWarnTime)
+    if (lastTime < (m_roundTimeout - roundWarnTime)
+        && m_currentRoundTime >= (m_roundTimeout - roundWarnTime))
     {
         //send warning message
         m_host.broadcastPacket(PacketID::RoundWarning, 0, xy::NetFlag::Reliable, 1);
     }
-    else if (lastTime < roundTime &&
-        m_currentRoundTime >= roundTime && m_mapData.actorCount > 0)
+    else if (lastTime < m_roundTimeout &&
+        m_currentRoundTime >= m_roundTimeout && m_mapData.actorCount > 0)
     {
         //make everything angry
         xy::Command cmd;
@@ -615,6 +616,23 @@ void GameServer::loadMap()
             CLIENT_MESSAGE(MessageIdent::MapFailed);
             //std::cout << m_mapFiles[m_currentMap] << ", Bad flags! " << std::bitset<8>(flags) << std::endl;
             return;
+        }
+
+        //check if map has a round time associated with it
+        const auto& properties = map.getProperties();
+        auto result = std::find_if(properties.begin(), properties.end(),
+            [](const tmx::Property& property)
+        {
+            return xy::Util::String::toLower(property.getName()) == "round_time";
+        });
+
+        if (result != properties.end())
+        {
+            m_roundTimeout = result->getFloatValue();
+        }
+        else
+        {
+            m_roundTimeout = defaultRoundTime;
         }
 
         m_serverTime.restart();
