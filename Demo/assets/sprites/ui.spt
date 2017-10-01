@@ -9,7 +9,8 @@ sprite_sheet ui
 
 		animation zero
 		{
-			frame = 0,0,0,0
+			//frame = 0,0,0,0
+			frame = 0, 64, 192, 32
 			framerate = 24
 			loop=true
 		}
@@ -68,7 +69,8 @@ sprite_sheet ui
 
 		animation zero
 		{
-			frame = 0,0,0,0
+			//frame = 0,0,0,0
+			frame = 0, 96, 192, 32
 			framerate = 24
 			loop=true
 		}

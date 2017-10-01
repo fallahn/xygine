@@ -114,6 +114,17 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         }
     }
         break;
+    case MessageID::NetworkMessage:
+    {
+        const auto& data = msg.getData<NetworkEvent>();
+        if (data.type == NetworkEvent::Disconnected)
+        {
+            m_playerValues[data.playerID].lives = 0;
+            m_playerValues[data.playerID].score = 0;
+            sendUpdate(data.playerID, 0);
+        }
+    }
+        break;
     }
 }
 

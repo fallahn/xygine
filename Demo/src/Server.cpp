@@ -287,7 +287,13 @@ void GameServer::handleDisconnect(const xy::NetEvent& evt)
         m_host.broadcastPacket(PacketID::ClientDisconnected, client->data, xy::NetFlag::Reliable, 1);
 
         //remove from scene
-        m_scene.destroyEntity(m_scene.getEntity(client->data.actor.id));
+        auto entity = m_scene.getEntity(client->data.actor.id);
+        
+        auto* msg = m_messageBus.post<NetworkEvent>(MessageID::NetworkMessage);
+        msg->type = NetworkEvent::Disconnected;
+        msg->playerID = entity.getComponent<Player>().playerNumber;
+
+        m_scene.destroyEntity(entity);
 
         //update the client array
         client->data.actor.id = ActorID::None;

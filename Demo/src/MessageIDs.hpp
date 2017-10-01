@@ -42,7 +42,8 @@ namespace MessageID
         AnimationMessage,
         NpcMessage,
         ItemMessage,
-        MapMessage
+        MapMessage,
+        NetworkMessage
     };
 }
 
@@ -106,6 +107,15 @@ struct MapEvent final
         AnimationComplete,
         HurryUp
     }type;
+};
+
+struct NetworkEvent final
+{
+    enum
+    {
+        Connected, Disconnected
+    }type = Connected;
+    sf::Uint8 playerID = 0;
 };
 
 #endif //DEMO_MESSAGE_IDS_HPP_
