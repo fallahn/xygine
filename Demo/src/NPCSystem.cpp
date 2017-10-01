@@ -148,20 +148,23 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
             case CollisionType::Bubble:
                 //switch to bubble state if bubble in spawn state
             {
-                auto& bubble = manifold.otherEntity.getComponent<Bubble>();
-                if (bubble.state == Bubble::Spawning)
+                if (manifold.otherEntity.hasComponent<Bubble>())
                 {
-                    npc.lastVelocity = npc.velocity;
-                    
-                    npc.state = NPC::State::Bubble;
-                    npc.velocity.y = BubbleVerticalVelocity;
-                    npc.thinkTimer = BubbleTime;
-                    npc.bubbleOwner = bubble.player;
-                    entity.getComponent<AnimationController>().direction = 1.f;
-                    entity.getComponent<AnimationController>().nextAnimation = 
-                        (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
+                    auto& bubble = manifold.otherEntity.getComponent<Bubble>();
+                    if (bubble.state == Bubble::Spawning)
+                    {
+                        npc.lastVelocity = npc.velocity;
 
-                    return;
+                        npc.state = NPC::State::Bubble;
+                        npc.velocity.y = BubbleVerticalVelocity;
+                        npc.thinkTimer = BubbleTime;
+                        npc.bubbleOwner = bubble.player;
+                        entity.getComponent<AnimationController>().direction = 1.f;
+                        entity.getComponent<AnimationController>().nextAnimation =
+                            (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
+
+                        return;
+                    }
                 }
             }
                 break;

@@ -606,7 +606,7 @@ void GameServer::loadMap()
                 {
                     sf::Int32 spawnCount = 0;
                     
-                    /*const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
                     for (const auto& obj : objs)
                     {
                         auto name = xy::Util::String::toLower(obj.getName());
@@ -620,8 +620,8 @@ void GameServer::loadMap()
                             spawnNPC(ActorID::Clocksy, { obj.getPosition().x, obj.getPosition().y });
                             spawnCount++;
                         }
-                    }*/
-                    spawnNPC(ActorID::Clocksy, { 220.f, 220.f }); spawnCount++;
+                    }
+                    //spawnNPC(ActorID::Clocksy, { 220.f, 220.f }); spawnCount++;
                     flags |= (spawnCount == 0) ? 0 : MapFlags::Spawn;
                 }
             }
