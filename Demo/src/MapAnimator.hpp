@@ -35,7 +35,7 @@ struct MapAnimator final
     enum class State
     {
         Active, Static
-    }state = State::Active;
+    }state = State::Static;
 
     sf::Vector2f dest;
 };
@@ -52,6 +52,7 @@ public:
 private:
 
     std::size_t m_lastCount;
+    bool m_counting;
 
     void onEntityAdded(xy::Entity) override;
     void onEntityRemoved(xy::Entity) override;

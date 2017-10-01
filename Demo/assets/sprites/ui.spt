@@ -53,6 +53,13 @@ sprite_sheet ui
 			framerate = 24
 			loop=true
 		}
+
+		animation gameover
+		{
+			frame = 0, 64, 192, 32
+			framerate=24
+			loop=true
+		}
 	}
 
 	sprite player_two_lives
@@ -103,6 +110,13 @@ sprite_sheet ui
 			frame = 0,32,160,32
 
 			framerate = 24
+			loop=true
+		}
+
+		animation gameover
+		{
+			frame = 0, 96, 192, 32
+			framerate=24
 			loop=true
 		}
 	}

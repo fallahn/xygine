@@ -43,7 +43,8 @@ namespace
 }
 
 MapAnimatorSystem::MapAnimatorSystem(xy::MessageBus& mb)
-    : xy::System(mb, typeid(MapAnimatorSystem))
+    : xy::System(mb, typeid(MapAnimatorSystem)),
+    m_lastCount(0)
 {
     requireComponent<MapAnimator>();
     requireComponent<xy::Transform>();
@@ -63,6 +64,7 @@ void MapAnimatorSystem::process(float dt)
         {
             auto dist = animator.dest - tx.getPosition();
             auto l2 = xy::Util::Vector::lengthSquared(dist);
+            m_counting = true;
             
             if (l2 < minDist)
             {
@@ -95,11 +97,12 @@ void MapAnimatorSystem::process(float dt)
         }
     }
 
-    if (count != m_lastCount && count == entities.size())
+    if (m_counting && count != m_lastCount && count == entities.size())
     {
         //raise message to say all finished
         auto* msg = postMessage<MapEvent>(MessageID::MapMessage);
         msg->type = MapEvent::AnimationComplete;
+        m_counting = false;
     }
     m_lastCount = count;
 }

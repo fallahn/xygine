@@ -388,6 +388,7 @@ bool GameState::loadScene(const MapData& data, sf::Vector2f position)
 #endif
     entity.addComponent<xy::Transform>().setPosition(position);
     entity.addComponent<MapAnimator>();
+    if (position.y > 0) entity.getComponent<MapAnimator>().state = MapAnimator::State::Active;
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapBackground;
 
     m_currentMapTexture = (m_currentMapTexture + 1) % m_mapTextures.size();
