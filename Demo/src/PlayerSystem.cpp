@@ -33,6 +33,7 @@ source distribution.
 #include "ClientServerShared.hpp"
 #include "NPCSystem.hpp"
 #include "CollisionSystem.hpp"
+#include "BubbleSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -244,6 +245,10 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
 
         while (idx != end) //currentInput points to the next free slot in history
         {
+            //check the result with the collision world and resolve
+            getScene()->getSystem<CollisionSystem>().queryState(entity);
+            resolveCollision(entity);
+            
             float delta = getDelta(player.history, idx);
             
             //let go of jump so enable jumping again
@@ -304,10 +309,6 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                 }
             }
             idx = (idx + 1) % player.history.size();
-
-            //check the result with the collision world and resolve
-            getScene()->getSystem<CollisionSystem>().queryState(entity);
-            resolveCollision(entity);
         }
     }
 
@@ -382,7 +383,16 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                 switch (man.otherType)
                 {
                 default: break;
-                //case CollisionType::Bubble:
+                case CollisionType::Bubble:
+                    //check bubble not in spawn state
+                    if (man.otherEntity.hasComponent<Bubble>())
+                    {
+                        if (man.otherEntity.getComponent<Bubble>().state == Bubble::Spawning)
+                        {
+                            break;
+                        }
+                    }
+                    //else perform the same as if it were a platform
                 case CollisionType::Platform:
                     //only collide when moving downwards (one way plat)
                     if (man.normal.y < 0 && player.canLand)

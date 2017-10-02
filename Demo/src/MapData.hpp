@@ -43,7 +43,10 @@ namespace ActorID
         BubbleOne,
         BubbleTwo,
         FruitSmall,
-        FruitLarge
+        FruitLarge,
+        FlameOne, FlameTwo,
+        LightningOne, LightningTwo,
+        WaterOne, WaterTwo
     };
 }
 

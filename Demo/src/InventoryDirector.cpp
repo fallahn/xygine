@@ -45,7 +45,7 @@ namespace
     const sf::Uint32 LargeFruitScore = 1000;
 
     const sf::Uint32 lifeScore = 10000; //extra life is awarded in multiples of this
-    const sf::Uint8 maxLives = 5;
+    const sf::Uint8 maxLives = 6;
 }
 
 InventoryDirector::InventoryDirector(xy::NetHost& host)

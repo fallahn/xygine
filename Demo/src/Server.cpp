@@ -42,6 +42,7 @@ source distribution.
 #include "FruitSystem.hpp"
 #include "MessageIDs.hpp"
 #include "InventoryDirector.hpp"
+#include "PowerupSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -548,6 +549,7 @@ void GameServer::initScene()
     m_scene.addSystem<BubbleSystem>(m_messageBus, m_host);
     m_scene.addSystem<NPCSystem>(m_messageBus, m_host);
     m_scene.addSystem<FruitSystem>(m_messageBus, m_host);
+    m_scene.addSystem<PowerupSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);

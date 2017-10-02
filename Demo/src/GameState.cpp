@@ -286,6 +286,7 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::JumpDown] = spriteSheet.getAnimationIndex("jump_down", "player_one");
     m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one");
 
+    //NPCs
     spriteSheet.loadFromFile("assets/sprites/npcs.spt", m_textureResource);
     m_sprites[SpriteID::WhirlyBob] = spriteSheet.getSprite("whirlybob");
     m_sprites[SpriteID::Clocksy] = spriteSheet.getSprite("clocksy");
@@ -304,6 +305,31 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::Goobly].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "goobly");
 
     m_sprites[SpriteID::FruitSmall] = spriteSheet.getSprite("fruit");
+
+    //power ups
+    spriteSheet.loadFromFile("assets/sprites/power_ups.spt", m_textureResource);
+    m_sprites[SpriteID::FlameOne] = spriteSheet.getSprite("player_one_flame");
+    m_sprites[SpriteID::FlameTwo] = spriteSheet.getSprite("player_two_flame");
+    m_sprites[SpriteID::LightningOne] = spriteSheet.getSprite("player_one_lightning");
+    m_sprites[SpriteID::LightningTwo] = spriteSheet.getSprite("player_two_lightning");
+    m_sprites[SpriteID::WaterOne] = spriteSheet.getSprite("player_one_water");
+    m_sprites[SpriteID::WaterTwo] = spriteSheet.getSprite("player_two_water");
+
+    m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one_flame");
+    m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one_flame");
+    m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one_flame");
+
+    m_animationControllers[SpriteID::FlameTwo].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_two_flame");
+    m_animationControllers[SpriteID::FlameTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two_flame");
+    m_animationControllers[SpriteID::FlameTwo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_two_flame");
+
+    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one_lightning");
+    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one_lightning");
+    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one_lightning");
+
+    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_two_lightning");
+    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two_lightning");
+    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_two_lightning");
 
     //load background
     auto ent = m_scene.createEntity();
@@ -849,6 +875,14 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     msg->x = actorEvent.x;
     msg->y = actorEvent.y;
 
+    auto addSprite = [&](xy::Entity sprEnt, sf::Int32 id)
+    {
+        sprEnt.addComponent<xy::Sprite>() = m_sprites[id];
+        sprEnt.addComponent<xy::SpriteAnimation>().play(0);
+        sprEnt.getComponent<AnimationController>() = m_animationControllers[id];
+        sprEnt.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
+    };
+
     switch (actorEvent.actor.type)
     {
     default: break;
@@ -887,6 +921,18 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Goobly];
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::Goobly];
+        break;
+    case ActorID::LightningOne:
+        addSprite(entity, SpriteID::LightningOne);
+        break;
+    case ActorID::LightningTwo:
+        addSprite(entity, SpriteID::LightningTwo);
+        break;
+    case ActorID::FlameOne:
+        addSprite(entity, SpriteID::FlameOne);
+        break;
+    case ActorID::FlameTwo:
+        addSprite(entity, SpriteID::FlameTwo);
         break;
     }
 }

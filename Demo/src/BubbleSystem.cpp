@@ -163,7 +163,7 @@ void BubbleSystem::doCollision(xy::Entity entity)
                     if (man.normal.y > 0)
                     {                      
                         if (bubble.lifetime > 1.f) bubble.lifetime = 1.f;
-                        bubble.velocity.y *= 0.5f;
+                        //bubble.velocity.y *= 0.5f;
                     }
                     //tx.move(man.normal * man.penetration);
                     break;

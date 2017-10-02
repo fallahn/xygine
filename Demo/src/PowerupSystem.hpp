@@ -25,27 +25,51 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_SPRITE_IDS_HPP_
-#define DEMO_SPRITE_IDS_HPP_
+#ifndef DEMO_POWERUP_SYSTEM_HPP_
+#define DEMO_POWERUP_SYSTEM_HPP_
 
-namespace SpriteID
+#include <xyginext/ecs/System.hpp>
+
+namespace xy
 {
-    enum
-    {
-        BubbleOne = 0,
-        BubbleTwo,
-        PlayerOne,
-        PlayerTwo,
-        WhirlyBob,
-        Clocksy,
-        Goobly,
-        FruitSmall,
-        LightningOne, LightningTwo,
-        FlameOne, FlameTwo,
-        WaterOne, WaterTwo,
-
-        Count
-    };
+    class NetHost;
 }
 
-#endif //DEMO_SPRITE_IDS_HPP_
+struct Powerup final
+{
+    enum class Type
+    {
+        Lightning, Fire, Water
+    }type = Type::Lightning;
+
+    enum class State
+    {
+        Idle, Active, Dying
+    }state = State::Idle;
+
+    sf::Uint8 owner = 0;
+    float lifetime = 10.f;
+    sf::Vector2f velocity;
+};
+
+class PowerupSystem final : public xy::System
+{
+public:
+    PowerupSystem(xy::MessageBus&, xy::NetHost&);
+
+    void process(float) override;
+
+private:
+    xy::NetHost& m_host;
+
+    void processLightning(xy::Entity, float);
+    void processFire(xy::Entity, float);
+    void processWater(xy::Entity, float);
+    void processIdle(xy::Entity, float);
+
+    void handleCollision(xy::Entity, float);
+
+    void spawn(sf::Int32 actorID, sf::Uint8 player);
+};
+
+#endif //DEMO_POWERUP_SYSTEM_HPP_

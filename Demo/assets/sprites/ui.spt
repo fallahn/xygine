@@ -55,9 +55,9 @@ sprite_sheet ui
 			loop=true
 		}
 
-		animation gameover
+		animation six
 		{
-			frame = 0, 64, 192, 32
+			frame = 0, 0, 192, 32
 			framerate=24
 			loop=true
 		}
@@ -115,9 +115,9 @@ sprite_sheet ui
 			loop=true
 		}
 
-		animation gameover
+		animation six
 		{
-			frame = 0, 96, 192, 32
+			frame = 0, 32, 192, 32
 			framerate=24
 			loop=true
 		}

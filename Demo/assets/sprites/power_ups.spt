@@ -1,0 +1,189 @@
+sprite_sheet power_ups
+{
+	src = "assets/images/power_ups.png"
+	blendmode = alpha
+
+	sprite player_one_flame
+	{
+		bounds = 0,0,64,64
+
+		animation idle
+		{
+			frame = 0,0,64,64
+			frame = 64,0,64,64
+			frame = 128,0,64,64
+
+			framerate = 12
+			loop=true
+		}
+
+		animation walk
+		{
+			frame = 0, 128, 64, 64
+			frame = 64, 128, 64, 64
+			frame = 128, 128, 64, 64
+
+			loop=true
+			framerate = 12
+		}
+
+		animation die
+		{
+			frame = 0, 192, 64, 64
+			frame = 64, 192, 64, 64
+			frame = 128, 192, 64, 64
+			frame = 0, 256, 64, 64
+			frame = 64, 256, 64, 64
+			frame = 128, 256, 64, 64
+
+			loop=false
+			framerate = 12
+		}		
+	}
+
+	sprite player_two_flame
+	{
+		bounds = 0,64,64,64
+
+		animation idle
+		{
+			frame = 0,64,64,64
+			frame = 64,64,64,64
+			frame = 128,64,64,64
+
+			framerate = 12
+			loop=true
+		}
+
+		animation walk
+		{
+			frame = 0, 128, 64, 64
+			frame = 64, 128, 64, 64
+			frame = 128, 128, 64, 64
+
+			loop=true
+			framerate = 12
+		}
+
+		animation die
+		{
+			frame = 0, 192, 64, 64
+			frame = 64, 192, 64, 64
+			frame = 128, 192, 64, 64
+			frame = 0, 256, 64, 64
+			frame = 64, 256, 64, 64
+			frame = 128, 256, 64, 64
+
+			loop=false
+			framerate = 12
+		}		
+	}
+
+	sprite player_one_lightning
+	{
+		bounds = 192,0,64,64
+
+		animation idle
+		{
+			frame = 192,0,64,64
+			frame = 256,0,64,64
+			frame = 320,0,64,64
+
+			framerate = 12
+			loop=true
+		}
+
+		animation walk
+		{
+			frame = 192,128,64,64
+			frame = 256,128,64,64
+			frame = 320,128,64,64
+
+			loop=true
+			framerate=12
+		}
+
+		animation die
+		{
+			frame = 192, 192, 64, 64
+			frame = 256, 192, 64, 64
+			frame = 320, 192, 64, 64
+			frame = 192, 256, 64, 64
+			frame = 256, 256, 64, 64
+			frame = 320, 256, 64, 64
+
+			loop=false
+			framerate=12
+		}		
+	}
+
+	sprite player_two_lightning
+	{
+		bounds = 192,64,64,64
+
+		animation idle
+		{
+			frame = 192,64,64,64
+			frame = 256,64,64,64
+			frame = 320,64,64,64
+
+			framerate = 12
+			loop=true
+		}
+
+		animation walk
+		{
+			frame = 192,128,64,64
+			frame = 256,128,64,64
+			frame = 320,128,64,64
+
+			loop=true
+			framerate=12
+		}
+
+		animation die
+		{
+			frame = 192, 192, 64, 64
+			frame = 256, 192, 64, 64
+			frame = 320, 192, 64, 64
+			frame = 192, 256, 64, 64
+			frame = 256, 256, 64, 64
+			frame = 320, 256, 64, 64
+
+			loop=false
+			framerate=12
+		}		
+	}
+
+	sprite player_one_water
+	{
+		bounds = 0,320,64,64
+
+		animation idle
+		{
+			frame = 0,320,64,64
+			frame = 64,320,64,64
+			frame = 128,320,64,64
+			frame = 64,320,64,64
+
+			framerate = 12
+			loop=true
+		}
+	}
+
+	sprite player_two_water
+	{
+		bounds = 192,320,64,64
+
+		animation idle
+		{
+			frame = 192,320,64,64
+			frame = 256,320,64,64
+			frame = 320,320,64,64
+			frame = 256,320,64,64
+
+			framerate = 12
+			loop=true
+		}	
+	}
+}
