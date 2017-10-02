@@ -39,7 +39,7 @@ struct Powerup final
 {
     enum class Type
     {
-        Lightning, Fire, Water
+        Lightning, Flame, Water
     }type = Type::Lightning;
 
     enum class State
@@ -70,6 +70,7 @@ private:
     void handleCollision(xy::Entity, float);
 
     void spawn(sf::Int32 actorID, sf::Uint8 player);
+    void despawn(xy::Entity);
 };
 
 #endif //DEMO_POWERUP_SYSTEM_HPP_

@@ -35,6 +35,7 @@ sprite_sheet power_ups
 			frame = 0, 256, 64, 64
 			frame = 64, 256, 64, 64
 			frame = 128, 256, 64, 64
+			frame = 0,0,0,0
 
 			loop=false
 			framerate = 12
@@ -73,6 +74,7 @@ sprite_sheet power_ups
 			frame = 0, 256, 64, 64
 			frame = 64, 256, 64, 64
 			frame = 128, 256, 64, 64
+			frame = 0,0,0,0
 
 			loop=false
 			framerate = 12
@@ -111,6 +113,7 @@ sprite_sheet power_ups
 			frame = 192, 256, 64, 64
 			frame = 256, 256, 64, 64
 			frame = 320, 256, 64, 64
+			frame = 0,0,0,0
 
 			loop=false
 			framerate=12
@@ -149,6 +152,7 @@ sprite_sheet power_ups
 			frame = 192, 256, 64, 64
 			frame = 256, 256, 64, 64
 			frame = 320, 256, 64, 64
+			frame = 0,0,0,0
 
 			loop=false
 			framerate=12

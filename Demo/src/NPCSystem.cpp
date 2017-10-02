@@ -34,6 +34,7 @@ source distribution.
 #include "PacketIDs.hpp"
 #include "MessageIDs.hpp"
 #include "CommandIDs.hpp"
+#include "PowerupSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -495,21 +496,7 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
                 const auto& player = manifold.otherEntity.getComponent<Player>();
                 if (player.playerNumber == npc.bubbleOwner && player.state == Player::State::Jumping)
                 {
-                    npc.state = NPC::State::Dying;
-                    npc.thinkTimer = DieTime;
-
-                    auto position = tx.getPosition();
-                    npc.velocity.x = (position.x > MapBounds.width / 2.f) ? -90.f : 90.f;
-                    npc.velocity.y = (position.y > MapBounds.height / 2.f) ? -300.f : -230.f;
-
-                    entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
-                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask & ~CollisionFlags::Player);
-
-                    //raise message
-                    auto* msg = postMessage<NpcEvent>(MessageID::NpcMessage);
-                    msg->type = NpcEvent::Died;
-                    msg->entityID = entity.getIndex();
-                    msg->playerID = player.playerNumber;
+                    despawn(entity, player.playerNumber);
                 }
             }
                 return;
@@ -625,4 +612,28 @@ void NPCSystem::onEntityAdded(xy::Entity /*entity*/)
     /*entity.getComponent<NPC>().thinkTimer = thinkTimes[m_currentThinkTime];
 
     m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();*/
+}
+
+void NPCSystem::despawn(xy::Entity entity, sf::Uint8 playerNumber)
+{
+    XY_ASSERT(entity.hasComponent<NPC>(), "Not an NPC");
+
+    if (entity.getComponent<Actor>().type == ActorID::Goobly) return;
+    
+    auto& npc = entity.getComponent<NPC>();
+    npc.state = NPC::State::Dying;
+    npc.thinkTimer = DieTime;
+
+    auto position = entity.getComponent<xy::Transform>().getPosition();
+    npc.velocity.x = (position.x > MapBounds.width / 2.f) ? -90.f : 90.f;
+    npc.velocity.y = (position.y > MapBounds.height / 2.f) ? -300.f : -230.f;
+
+    entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask & ~(CollisionFlags::Player | CollisionFlags::Powerup));
+
+    //raise message
+    auto* msg = postMessage<NpcEvent>(MessageID::NpcMessage);
+    msg->type = NpcEvent::Died;
+    msg->entityID = entity.getIndex();
+    msg->playerID = playerNumber;
 }

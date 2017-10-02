@@ -43,9 +43,9 @@
   <object id="67" x="576" y="448" width="256" height="32"/>
   <object id="68" x="560" y="608" width="272" height="32"/>
   <object id="69" x="192" y="608" width="272" height="32"/>
-  <object id="70" x="64" y="768" width="160" height="32"/>
+  <object id="70" x="64" y="768" width="144" height="32"/>
   <object id="71" x="288" y="768" width="96" height="32"/>
   <object id="72" x="640" y="768" width="96" height="32"/>
-  <object id="73" x="800" y="768" width="160" height="32"/>
+  <object id="73" x="816" y="768" width="144" height="32"/>
  </objectgroup>
 </map>

@@ -24,9 +24,9 @@
   <object id="50" x="560" y="416" width="48" height="32"/>
   <object id="51" x="320" y="544" width="384" height="32"/>
   <object id="52" x="224" y="672" width="576" height="32"/>
-  <object id="53" x="128" y="800" width="224" height="32"/>
+  <object id="53" x="144" y="800" width="208" height="32"/>
   <object id="54" x="432" y="800" width="160" height="32"/>
-  <object id="55" x="672" y="800" width="224" height="32"/>
+  <object id="55" x="672" y="800" width="208" height="32"/>
  </objectgroup>
  <objectgroup name="Spawn">
   <object id="44" name="clocksy" x="416" y="352" width="16" height="16"/>

@@ -59,6 +59,7 @@ public:
 
     void process(float) override;
 
+    void despawn(xy::Entity, sf::Uint8);
 private:
 
     xy::NetHost& m_host;
@@ -73,6 +74,7 @@ private:
 
     void updateBubbleState(xy::Entity, float);
     void updateDyingState(xy::Entity, float);
+
 };
 
 #endif //DEMO_NPC_SYSTEM_HPP_

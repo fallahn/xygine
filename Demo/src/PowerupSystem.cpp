@@ -32,11 +32,13 @@ source distribution.
 #include "ClientServerShared.hpp"
 #include "PacketIDs.hpp"
 #include "CommandIDs.hpp"
+#include "NPCSystem.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
+
 #include <xyginext/network/NetHost.hpp>
 
 PowerupSystem::PowerupSystem(xy::MessageBus& mb, xy::NetHost& host)
@@ -65,7 +67,7 @@ void PowerupSystem::process(float dt)
             handleCollision(entity, dt);
             processLightning(entity, dt);
             break;
-        case Powerup::Type::Fire:
+        case Powerup::Type::Flame:
             handleCollision(entity, dt);
             processFire(entity, dt);
             break;
@@ -85,8 +87,8 @@ void PowerupSystem::process(float dt)
     if (timer > 2.f)
     {
         timer = 0.f;
-        spawn(ActorID::LightningOne, 0);
-        spawn(ActorID::LightningTwo, 1);
+        spawn(ActorID::FlameOne, 0);
+        spawn(ActorID::FlameTwo, 1);
     }
 }
 
@@ -102,14 +104,16 @@ void PowerupSystem::processLightning(xy::Entity entity, float dt)
         processIdle(entity, dt);
         break;
     case Powerup::State::Active:
-
+        entity.getComponent<xy::Transform>().move(powerup.velocity * BubbleVerticalVelocity * 6.f * dt);
         break;
     case Powerup::State::Dying:
-
+        powerup.lifetime -= dt;
+        if (powerup.lifetime < 0.f)
+        {
+            despawn(entity);
+        }
         break;
     }
-
-    //TODO set animation state
 }
 
 void PowerupSystem::processFire(xy::Entity entity, float dt)
@@ -159,43 +163,107 @@ void PowerupSystem::processIdle(xy::Entity entity, float dt)
     powerup.lifetime -= dt;
     if (powerup.lifetime < 0)
     {
-        //destroy
-        getScene()->destroyEntity(entity);
-
-        ActorEvent evt;
-        evt.actor = entity.getComponent<Actor>();
-        evt.type = ActorEvent::Died;
-        evt.x = tx.getPosition().x;
-        evt.y = tx.getPosition().y;
-
-        m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+        despawn(entity);
     }
 }
 
 void PowerupSystem::handleCollision(xy::Entity entity, float dt)
 {
+    auto& powerup = entity.getComponent<Powerup>();
+    auto& tx = entity.getComponent<xy::Transform>();
+    const auto& collision = entity.getComponent<CollisionComponent>();
 
+    const auto& hitboxes = collision.getHitboxes();
+    for (const auto& hitbox : hitboxes)
+    {
+        auto count = hitbox.getCollisionCount();
+        for (auto i = 0u; i < count; ++i)
+        {
+            const auto& man = hitbox.getManifolds()[i];
+            switch (man.otherType)
+            {
+            default: break;
+            case CollisionType::Player:
+                //check if our player and switch to active mode
+                if (powerup.state == Powerup::State::Idle)
+                {
+                    if (man.otherEntity.getComponent<Player>().playerNumber == powerup.owner)
+                    {
+                        powerup.state = Powerup::State::Active;
+                        entity.getComponent<AnimationController>().nextAnimation = AnimationController::Walk;
+                    }
+                }
+                break;
+            case CollisionType::Platform:
+                //if not active move along x axis
+                if (powerup.state == Powerup::State::Idle)
+                {
+                    tx.move(man.normal * man.penetration);
+                    tx.move(powerup.velocity * -BubbleVerticalVelocity * dt);
+                }
+                break;
+            case CollisionType::Solid:
+                //if not active move along x axis
+                //otherwise die
+                if (powerup.state == Powerup::State::Idle)
+                {
+                    tx.move(man.normal * man.penetration);
+                    tx.move(powerup.velocity * -BubbleVerticalVelocity * dt);
+                }
+                else if (powerup.state == Powerup::State::Active)
+                {
+                    tx.move(man.normal * man.penetration);
+                    powerup.state = Powerup::State::Dying;
+                    powerup.lifetime = 1.f;
+                    entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+                }
+                break;
+            case CollisionType::NPC:
+                if (powerup.state == Powerup::State::Active)
+                {
+                    tx.move(man.normal * man.penetration);
+                    powerup.state = Powerup::State::Dying;
+                    powerup.lifetime = 1.f;
+                    entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+
+                    getScene()->getSystem<NPCSystem>().despawn(man.otherEntity, powerup.owner);
+                }
+                break;
+            }
+        }
+    }
 }
 
 void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
 {
-    sf::FloatRect bounds = { -BubbleSize / 2.f, -BubbleSize / 2.f, BubbleSize, BubbleSize };
-    
+    sf::FloatRect bounds = { 0.f, 0.f, BubbleSize, BubbleSize };  
     sf::Vector2f spawnPos = (player == 0) ? powerupOneSpawn : powerupTwoSpawn;
+    Powerup::Type type = Powerup::Type::Lightning;
+    switch (actorID)
+    {
+        default: break;
+    case ActorID::FlameOne:
+    case ActorID::FlameTwo:
+        type = Powerup::Type::Flame;
+        break;
+    case ActorID::WaterOne:
+    case ActorID::WaterTwo:
+        type = Powerup::Type::Water;
+        break;
+    }
     
-
-    //spawn one for each player every time
     auto entity = getScene()->createEntity();
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = actorID;
 
     entity.addComponent<xy::Transform>().setPosition(spawnPos);
+    entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
     entity.addComponent<CollisionComponent>().addHitbox(bounds, CollisionType::Powerup);
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Powerup);
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PowerupMask);
 
     entity.addComponent<Powerup>().owner = player;
-    entity.getComponent<Powerup>().type = Powerup::Type::Lightning;
+    entity.getComponent<Powerup>().type = type;
     entity.getComponent<Powerup>().velocity.x = (player == 0) ? -1.f : 1.f;
 
     entity.addComponent<AnimationController>();
@@ -208,6 +276,22 @@ void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
     evt.x = spawnPos.x;
     evt.y = spawnPos.y;
     evt.type = ActorEvent::Spawned;
+
+    m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+}
+
+void PowerupSystem::despawn(xy::Entity entity)
+{
+    const auto& tx = entity.getComponent<xy::Transform>();
+
+    //destroy
+    getScene()->destroyEntity(entity);
+
+    ActorEvent evt;
+    evt.actor = entity.getComponent<Actor>();
+    evt.type = ActorEvent::Died;
+    evt.x = tx.getPosition().x;
+    evt.y = tx.getPosition().y;
 
     m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 }
