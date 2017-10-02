@@ -176,7 +176,7 @@ void PlayerSystem::process(float)
             }
             
             //move with input if not dying
-            if (player.state != Player::State::Dying && player.state != Player::State::Dead)
+            if (player.state == Player::State::Walking || player.state == Player::State::Jumping)
             {
                 auto motion = parseInput(currentMask);
                 tx.move(speed * motion * delta);
@@ -206,10 +206,12 @@ void PlayerSystem::process(float)
             xMotion = tx.getPosition().x - xMotion;
             animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
         }
-        else
+        else if(player.state != Player::State::Disabled)
         {
             animController.nextAnimation = AnimationController::Die;
         }
+
+        //TODO map change animation
 
         //if (m_isServer) std::cout << (int)player.state << std::endl;
     }
@@ -287,7 +289,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
             }
 
 
-            if (player.state != Player::State::Dying && player.state != Player::State::Dead)
+            if (player.state == Player::State::Walking || player.state == Player::State::Jumping)
             {
                 auto motion = parseInput(player.history[idx].mask);
                 tx.move(speed * motion * delta);
@@ -359,6 +361,8 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
     auto& tx = entity.getComponent<xy::Transform>();
     const auto& hitboxes = entity.getComponent<CollisionComponent>().getHitboxes();
     auto count = entity.getComponent<CollisionComponent>().getHitboxCount();
+
+    if (player.state == Player::State::Disabled) return;
 
     //check for collision and resolve
     for (auto i = 0u; i < count; ++i)

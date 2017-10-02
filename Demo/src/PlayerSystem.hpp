@@ -49,7 +49,7 @@ struct Player final
     sf::Uint8 playerNumber = 0;
     enum class State : sf::Uint8
     {
-        Walking, Jumping, Dying, Dead
+        Walking, Jumping, Dying, Dead, Disabled //disable the player during map transitions
     }state = State::Walking;
     sf::Vector2f velocity; //only the Y velocity is actually used in movement - the x value is used to track how much initial velocity to spawn bubble with
     bool canJump = true;

@@ -29,9 +29,11 @@ source distribution.
 #include "MessageIDs.hpp"
 #include "PacketIDs.hpp"
 #include "MapData.hpp"
+#include "CommandIDs.hpp"
 
 #include <xyginext/network/NetHost.hpp>
 #include <xyginext/ecs/Scene.hpp>
+#include <xyginext/ecs/systems/CommandSystem.hpp>
 
 #include <limits>
 
@@ -159,5 +161,13 @@ void InventoryDirector::checkLifeBonus(sf::Uint8 player, sf::Uint32 oldScore)
     {
         m_playerValues[player].lives++;
         sendUpdate(player, std::numeric_limits<sf::Uint32>::max()); //flag to say this is a life update rather than score
+
+        xy::Command cmd;
+        cmd.targetFlags = (player == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
+        cmd.action = [](xy::Entity entity, float)
+        {
+            entity.getComponent<Player>().lives++;
+        };
+        getScene().getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
 }

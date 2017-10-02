@@ -1036,15 +1036,15 @@ void GameState::switchMap(const MapData& data)
 
         //make sure we don't jump mid animation
         //because there's no collision to stop us
-        /*cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+        cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
         cmd.action = [](xy::Entity entity, float)
         {
             if (entity.hasComponent<Player>())
             {
-                entity.getComponent<Player>().state = Player::State::Walking;
+                entity.getComponent<Player>().state = Player::State::Disabled;
             }
         };
-        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);*/
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
         m_scene.setSystemActive<CollisionSystem>(false);
         m_scene.setSystemActive<xy::InterpolationSystem>(false);
