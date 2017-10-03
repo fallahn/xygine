@@ -40,17 +40,25 @@ source distribution.
 #include <xyginext/ecs/components/CommandTarget.hpp>
 
 #include <xyginext/network/NetHost.hpp>
+#include <xyginext/util/Random.hpp>
 
 namespace
 {
     const float flameLifetime = 0.6f; //loosely based on the fact that animation has 7 frames at 12fps
     const sf::Vector2f flameOffset(32.f, 0.f);
     const float flameSpreadTime = 0.5f; //age at which a flame spawns another
+
+    std::array<float, 6u> spawnTimes = { 9.f, 12.f, 10.5f, 9.5f, 12.5f, 11.f };
 }
 
 PowerupSystem::PowerupSystem(xy::MessageBus& mb, xy::NetHost& host)
     : xy::System(mb, typeid(PowerupSystem)),
-    m_host(host)
+    m_host          (host),
+    m_spawnFlags    (255),
+    m_waterTime     (6.f),
+    m_flameTime     (15.f),
+    m_lightningTime (22.f),
+    m_nextSpawnTime (0)
 {
     requireComponent<xy::Transform>();
     requireComponent<Powerup>();
@@ -86,17 +94,56 @@ void PowerupSystem::process(float dt)
     }
     //DPRINT("count", std::to_string(entities.size()));
 
-    //TODO check scene conditions and spawn powerups as necessary
+    //check time and spawn if enabled
+    if (m_flameClock.getElapsedTime().asSeconds() > m_flameTime)
+    {
+        m_flameClock.restart();
+        if (m_spawnFlags & SpawnFlags::Flame)
+        {
+            spawn(ActorID::FlameOne, 0);
+            spawn(ActorID::FlameTwo, 1);
+            m_flameTime = spawnTimes[m_nextSpawnTime];
+            m_nextSpawnTime = (m_nextSpawnTime + 1) % spawnTimes.size();
+        }
+    }
+
+    if (m_waterClock.getElapsedTime().asSeconds() > m_waterTime)
+    {
+        m_waterClock.restart();
+        if (m_spawnFlags & SpawnFlags::Water)
+        {
+            spawn(ActorID::WaterOne, 0);
+            spawn(ActorID::WaterTwo, 1);
+            m_waterTime = spawnTimes[m_nextSpawnTime];
+            m_nextSpawnTime = (m_nextSpawnTime + 1) % spawnTimes.size();
+        }
+    }
+
+    if (m_lightningClock.getElapsedTime().asSeconds() > m_lightningTime)
+    {
+        m_lightningClock.restart();
+        if (m_spawnFlags & SpawnFlags::Lightning)
+        {
+            spawn(ActorID::LightningOne, 0);
+            spawn(ActorID::LightningTwo, 1);
+            m_lightningTime = spawnTimes[m_nextSpawnTime];
+            m_nextSpawnTime = (m_nextSpawnTime + 1) % spawnTimes.size();
+        }
+    }
 
     //temp for testing
-    static float timer = 0.f;
+    /*static float timer = 0.f;
     timer += dt;
-    if (timer > 2.f)
+    if (timer > 5.f)
     {
         timer = 0.f;
-        spawn(ActorID::FlameOne, 0);
-        //spawn(ActorID::FlameTwo, 1);
-    }
+        spawn(ActorID::LightningOne, 0);
+    }*/
+}
+
+void PowerupSystem::setSpawnFlags(sf::Uint8 flags)
+{
+    m_spawnFlags = flags;
 }
 
 //private
@@ -111,7 +158,7 @@ void PowerupSystem::processLightning(xy::Entity entity, float dt)
         processIdle(entity, dt);
         break;
     case Powerup::State::Active:
-        entity.getComponent<xy::Transform>().move(powerup.velocity * BubbleVerticalVelocity * 6.f * dt);
+        entity.getComponent<xy::Transform>().move(powerup.velocity.x * BubbleVerticalVelocity * 6.f * dt, 0.f);
         break;
     case Powerup::State::Dying:
         powerup.lifetime -= dt;
@@ -201,7 +248,7 @@ void PowerupSystem::processWater(xy::Entity entity, float dt)
         processIdle(entity, dt);
         break;
     case Powerup::State::Active:
-
+        despawn(entity);
         break;
     case Powerup::State::Dying:
 
@@ -211,10 +258,12 @@ void PowerupSystem::processWater(xy::Entity entity, float dt)
 
 void PowerupSystem::processIdle(xy::Entity entity, float dt)
 {   
-    auto& tx = entity.getComponent<xy::Transform>();
-    tx.move(0.f, BubbleVerticalVelocity * dt);
+
 
     auto& powerup = entity.getComponent<Powerup>();
+    auto& tx = entity.getComponent<xy::Transform>();
+    tx.move(0.f, powerup.velocity.y * dt);
+
     powerup.lifetime -= dt;
     if (powerup.lifetime < 0)
     {
@@ -255,7 +304,7 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float dt)
                 if (powerup.state == Powerup::State::Idle)
                 {
                     tx.move(man.normal * man.penetration);
-                    tx.move(powerup.velocity * -BubbleVerticalVelocity * dt);
+                    tx.move(powerup.velocity.x * -BubbleVerticalVelocity * dt, 0.f);
                 }
                 break;
             case CollisionType::Solid:
@@ -264,7 +313,7 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float dt)
                 if (powerup.state == Powerup::State::Idle)
                 {
                     tx.move(man.normal * man.penetration);
-                    tx.move(powerup.velocity * -BubbleVerticalVelocity * dt);
+                    tx.move(powerup.velocity.x * -BubbleVerticalVelocity * dt, 0.f);
                 }
                 else if (powerup.state == Powerup::State::Active)
                 {
@@ -331,8 +380,12 @@ void PowerupSystem::fireCollision(xy::Entity entity)
 
 void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
 {
+    bool top = (xy::Util::Random::value(0, 1) == 0);
+    
     sf::FloatRect bounds = { 0.f, 0.f, BubbleSize, BubbleSize };  
     sf::Vector2f spawnPos = (player == 0) ? PowerupOneSpawn : PowerupTwoSpawn;
+    if (top) spawnPos.y -= TopSpawn;
+
     Powerup::Type type = Powerup::Type::Lightning;
     switch (actorID)
     {
@@ -359,7 +412,8 @@ void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
 
     entity.addComponent<Powerup>().owner = player;
     entity.getComponent<Powerup>().type = type;
-    entity.getComponent<Powerup>().velocity.x = (player == 0) ? -1.f : 1.f;
+    entity.getComponent<Powerup>().velocity.x = (player == 0) ? -1.f : 1.f; 
+    entity.getComponent<Powerup>().velocity.y = (top) ? -BubbleVerticalVelocity : BubbleVerticalVelocity;
 
     entity.addComponent<AnimationController>().nextAnimation = AnimationController::Idle;
     entity.addComponent<xy::QuadTreeItem>().setArea(bounds);

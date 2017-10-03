@@ -96,8 +96,9 @@ static const sf::FloatRect MapBounds(0.f, 0.f, 16.f *64.f, 17.f * 64.f);
 static const sf::Vector2f PlayerOneSpawn(96.f, 896.f);
 static const sf::Vector2f PlayerTwoSpawn(928.f, 896.f);
 
-static const sf::Vector2f PowerupOneSpawn(320.f, 896.f);
-static const sf::Vector2f PowerupTwoSpawn(640.f, 896.f);
+static const sf::Vector2f PowerupOneSpawn(320.f, 960.f);
+static const sf::Vector2f PowerupTwoSpawn(640.f, 960.f);
+static const float TopSpawn = 896.f;
 
 //map loading functions shared between client / server
 void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType type);

@@ -935,6 +935,12 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     case ActorID::FlameTwo:
         addSprite(entity, SpriteID::FlameTwo);
         break;
+    case ActorID::WaterOne:
+        addSprite(entity, SpriteID::WaterOne);
+        break;
+    case ActorID::WaterTwo:
+        addSprite(entity, SpriteID::WaterTwo);
+        break;
     }
 }
 

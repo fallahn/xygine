@@ -30,6 +30,8 @@ source distribution.
 
 #include <xyginext/ecs/System.hpp>
 
+#include <SFML/System/Clock.hpp>
+
 namespace xy
 {
     class NetHost;
@@ -69,8 +71,25 @@ public:
 
     void process(float) override;
 
+    enum SpawnFlags
+    {
+        Flame = 0x1,
+        Lightning = 0x2,
+        Water = 0x4
+    };
+    void setSpawnFlags(sf::Uint8);
+
 private:
     xy::NetHost& m_host;
+    sf::Uint8 m_spawnFlags;
+
+    sf::Clock m_waterClock;
+    sf::Clock m_flameClock;
+    sf::Clock m_lightningClock;
+    float m_waterTime;
+    float m_flameTime;
+    float m_lightningTime;
+    std::size_t m_nextSpawnTime;
 
     void processLightning(xy::Entity, float);
     void processFire(xy::Entity, float);
