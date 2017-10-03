@@ -309,7 +309,7 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
     }
         break;
     case NPC::State::Jumping:
-        npc.velocity.y += gravity * dt;
+        npc.velocity.y += Gravity * dt;
         tx.move(npc.velocity * dt);
         break;
 
@@ -601,9 +601,9 @@ void NPCSystem::updateDyingState(xy::Entity entity, float dt)
 
     npc.thinkTimer -= dt;
     tx.move(npc.velocity * dt);
-    if (npc.velocity.y < maxVelocity)
+    if (npc.velocity.y < MaxVelocity)
     {
-        npc.velocity.y += gravity * dt;
+        npc.velocity.y += Gravity * dt;
     }
 }
 

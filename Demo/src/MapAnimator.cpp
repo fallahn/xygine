@@ -82,7 +82,7 @@ void MapAnimatorSystem::process(float dt)
                     cmd.action = [&](xy::Entity entity, float)
                     {
                         auto& animator = entity.getComponent<MapAnimator>();
-                        animator.dest = (entity.getComponent<xy::CommandTarget>().ID & CommandID::PlayerOne) ? playerOneSpawn : playerTwoSpawn;
+                        animator.dest = (entity.getComponent<xy::CommandTarget>().ID & CommandID::PlayerOne) ? PlayerOneSpawn : PlayerTwoSpawn;
                         animator.state = MapAnimator::State::Active;
                     };
                     getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);

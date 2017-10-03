@@ -139,14 +139,14 @@ void PlayerSystem::process(float)
                 }
                 
                 tx.move({ 0.f, player.velocity.y * delta });
-                player.velocity.y += gravity * delta;
-                player.velocity.y = std::min(player.velocity.y, maxVelocity);
+                player.velocity.y += Gravity * delta;
+                player.velocity.y = std::min(player.velocity.y, MaxVelocity);
             }
             else if(player.state == Player::State::Dying)
             {
                 //dying
-                player.velocity.y += gravity * delta;
-                player.velocity.y = std::min(player.velocity.y, maxVelocity);
+                player.velocity.y += Gravity * delta;
+                player.velocity.y = std::min(player.velocity.y, MaxVelocity);
                 tx.move({ 0.f, player.velocity.y * delta });
                 player.canShoot = false;
 
@@ -246,8 +246,8 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
         while (idx != end) //currentInput points to the next free slot in history
         {
             //check the result with the collision world and resolve
-            getScene()->getSystem<CollisionSystem>().queryState(entity);
-            resolveCollision(entity);
+            /*getScene()->getSystem<CollisionSystem>().queryState(entity);
+            resolveCollision(entity);*/
             
             float delta = getDelta(player.history, idx);
             
@@ -276,14 +276,14 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                 }                
                 
                 tx.move({ 0.f, player.velocity.y * delta });
-                player.velocity.y += gravity * delta;
-                player.velocity.y = std::min(player.velocity.y, maxVelocity);
+                player.velocity.y += Gravity * delta;
+                player.velocity.y = std::min(player.velocity.y, MaxVelocity);
             }
             else if(player.state == Player::State::Dying)
             {
                 //dying
-                player.velocity.y += gravity * delta;
-                player.velocity.y = std::min(player.velocity.y, maxVelocity);
+                player.velocity.y += Gravity * delta;
+                player.velocity.y = std::min(player.velocity.y, MaxVelocity);
                 tx.move({ 0.f, player.velocity.y * delta });
 
                 if (!player.lives)
@@ -309,6 +309,9 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                 }
             }
             idx = (idx + 1) % player.history.size();
+
+            getScene()->getSystem<CollisionSystem>().queryState(entity);
+            resolveCollision(entity);
         }
     }
 

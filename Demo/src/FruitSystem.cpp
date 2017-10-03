@@ -178,9 +178,9 @@ void FruitSystem::process(float dt)
             }
 
             tx.move(fruit.velocity * dt);
-            if (fruit.velocity.y < maxVelocity)
+            if (fruit.velocity.y < MaxVelocity)
             {
-                fruit.velocity.y += gravity * dt;
+                fruit.velocity.y += Gravity * dt;
             }
         }
         else

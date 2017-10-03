@@ -50,6 +50,16 @@ struct Powerup final
     sf::Uint8 owner = 0;
     float lifetime = 10.f;
     sf::Vector2f velocity;
+
+    //used in flame and water types to spread around
+    sf::Uint8 generation = 0;
+    static constexpr sf::Uint8 MaxFlameGenerations = 4;
+    static constexpr sf::Uint8 MaxWaterGenerations = 8;
+
+    enum class SpreadDirection
+    {
+        Both, Left, Right
+    }spread = SpreadDirection::Both;
 };
 
 class PowerupSystem final : public xy::System
@@ -67,9 +77,11 @@ private:
     void processWater(xy::Entity, float);
     void processIdle(xy::Entity, float);
 
-    void handleCollision(xy::Entity, float);
+    void defaultCollision(xy::Entity, float);
+    void fireCollision(xy::Entity);
 
     void spawn(sf::Int32 actorID, sf::Uint8 player);
+    void spawnFlame(sf::Vector2f position, sf::Uint8 player, Powerup::SpreadDirection, sf::Uint8 generation);
     void despawn(xy::Entity);
 };
 

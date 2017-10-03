@@ -5,7 +5,7 @@ sprite_sheet power_ups
 
 	sprite player_one_flame
 	{
-		bounds = 0,0,64,64
+		bounds = 0,0,0,0
 
 		animation idle
 		{
@@ -25,6 +25,25 @@ sprite_sheet power_ups
 
 			loop=true
 			framerate = 12
+		}
+
+		animation shoot
+		{
+			frame = 128, 256, 64, 64
+			frame = 64, 256, 64, 64
+			frame = 0, 256, 64, 64
+			frame = 128, 192, 64, 64
+			frame = 64, 192, 64, 64
+			frame = 0, 192, 64, 64
+			frame = 64, 192, 64, 64
+			frame = 128, 192, 64, 64
+			frame = 0, 256, 64, 64
+			frame = 64, 256, 64, 64
+			frame = 128, 256, 64, 64
+			frame = 0,0,0,0
+
+			loop=false
+			framerate = 24
 		}
 
 		animation die

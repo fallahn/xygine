@@ -317,6 +317,7 @@ void GameState::loadAssets()
 
     m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one_flame");
     m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one_flame");
+    m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Shoot] = spriteSheet.getAnimationIndex("shoot", "player_one_flame");
     m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one_flame");
 
     m_animationControllers[SpriteID::FlameTwo].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_two_flame");
@@ -878,7 +879,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     auto addSprite = [&](xy::Entity sprEnt, sf::Int32 id)
     {
         sprEnt.addComponent<xy::Sprite>() = m_sprites[id];
-        sprEnt.addComponent<xy::SpriteAnimation>().play(0);
+        sprEnt.addComponent<xy::SpriteAnimation>();// .play(0);
         sprEnt.getComponent<AnimationController>() = m_animationControllers[id];
         sprEnt.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
     };

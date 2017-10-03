@@ -58,6 +58,7 @@ private:
     {
         BubblePop,
         SpawnNPC,
+        Score,
         Count
     };
 

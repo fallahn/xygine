@@ -39,11 +39,11 @@ struct AnimationController final
     enum Animation
     {
         Idle, Walk, Shoot, Die, JumpUp, JumpDown, TrappedOne, TrappedTwo, Count
-    }currentAnim = Animation::Idle;
+    }currentAnim = Animation::Count;
 
     std::array<std::size_t, Animation::Count> animationMap{};
-    Animation prevAnimation = Animation::Idle;
-    Animation nextAnimation = Animation::Idle;
+    Animation prevAnimation = Animation::Count;
+    Animation nextAnimation = Animation::Count;
     float direction = 1.f;
 };
 

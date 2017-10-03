@@ -89,13 +89,13 @@ GameServer::GameServer()
     m_changingMaps          (false)
 {
     m_clients[0].data.actor.type = ActorID::PlayerOne;
-    m_clients[0].data.spawnX = playerOneSpawn.x;
-    m_clients[0].data.spawnY = playerOneSpawn.y;
+    m_clients[0].data.spawnX = PlayerOneSpawn.x;
+    m_clients[0].data.spawnY = PlayerOneSpawn.y;
     m_clients[0].data.playerNumber = 0;
 
     m_clients[1].data.actor.type = ActorID::PlayerTwo;
-    m_clients[1].data.spawnX = playerTwoSpawn.x;
-    m_clients[1].data.spawnY = playerTwoSpawn.y;
+    m_clients[1].data.spawnX = PlayerTwoSpawn.x;
+    m_clients[1].data.spawnY = PlayerTwoSpawn.y;
     m_clients[1].data.playerNumber = 1;
 }
 
@@ -488,11 +488,11 @@ void GameServer::checkMapStatus(float dt)
         {
             if (entity.getComponent<xy::CommandTarget>().ID & CommandID::PlayerOne)
             {
-                entity.getComponent<xy::Transform>().setPosition(playerOneSpawn);
+                entity.getComponent<xy::Transform>().setPosition(PlayerOneSpawn);
             }
             else
             {
-                entity.getComponent<xy::Transform>().setPosition(playerTwoSpawn);
+                entity.getComponent<xy::Transform>().setPosition(PlayerTwoSpawn);
             }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);

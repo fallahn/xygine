@@ -88,16 +88,16 @@ static constexpr float SmallFruitSize = 64.f;
 static constexpr float LargeFruitSize = 96.f;
 
 static constexpr float TeleportDistance = 950.f;
-static constexpr float gravity = 2200.f;
-static constexpr float maxVelocity = 800.f;
+static constexpr float Gravity = 2200.f;
+static constexpr float MaxVelocity = 800.f;
 
 static const sf::FloatRect MapBounds(0.f, 0.f, 16.f *64.f, 17.f * 64.f);
 
-static const sf::Vector2f playerOneSpawn(96.f, 896.f);
-static const sf::Vector2f playerTwoSpawn(928.f, 896.f);
+static const sf::Vector2f PlayerOneSpawn(96.f, 896.f);
+static const sf::Vector2f PlayerTwoSpawn(928.f, 896.f);
 
-static const sf::Vector2f powerupOneSpawn(320.f, 896.f);
-static const sf::Vector2f powerupTwoSpawn(640.f, 896.f);
+static const sf::Vector2f PowerupOneSpawn(320.f, 896.f);
+static const sf::Vector2f PowerupTwoSpawn(640.f, 896.f);
 
 //map loading functions shared between client / server
 void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType type);

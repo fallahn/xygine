@@ -48,6 +48,7 @@ ParticleDirector::ParticleDirector(xy::TextureResource& tr)
 {
     //load particle presets
     m_settings[SettingsID::BubblePop].loadFromFile("assets/particles/pop.xyp", tr);
+    m_settings[SettingsID::Score].loadFromFile("assets/particles/score.xyp", tr);
     m_settings[SettingsID::SpawnNPC].loadFromFile("assets/particles/spawn.xyp", tr);
 }
 
@@ -66,14 +67,14 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             default: return;
             //case ActorID::BubbleOne:
             //case ActorID::BubbleTwo:
-            
+
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
-                ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
+                ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::Score];
                 ent.getComponent<xy::ParticleEmitter>().settings.colour = bubble;
                 break;
             case ActorID::FruitSmall:
-                ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
+                ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::Score];
                 break;
             case ActorID::Goobly:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::SpawnNPC];
@@ -113,11 +114,25 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
                     || data.oldAnim == AnimationController::TrappedTwo)
                 {
                     auto ent = getNextEntity();
-                    ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
+                    ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::Score];
                     ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
                     ent.getComponent<xy::ParticleEmitter>().start();
                 }
                 break;
+            case ActorID::LightningOne:
+            case ActorID::LightningTwo:
+            case ActorID::FlameOne:
+            case ActorID::FlameTwo:
+            case ActorID::WaterOne:
+            case ActorID::WaterTwo:
+                if (data.newAnim == AnimationController::Walk)
+                {
+                    auto ent = getNextEntity();
+                    ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
+                    ent.getComponent<xy::ParticleEmitter>().settings.colour = bubble;
+                    ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
+                    ent.getComponent<xy::ParticleEmitter>().start();
+                }
             default: break;
             }
         }
