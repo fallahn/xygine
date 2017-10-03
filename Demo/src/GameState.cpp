@@ -729,6 +729,11 @@ sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
     if (name == "platform")
     {
         const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+        if (objs.empty())
+        {
+            return 0;
+        }
+        
         for (const auto& obj : objs)
         {
             createCollisionObject(m_scene, obj, CollisionType::Platform);
@@ -739,6 +744,11 @@ sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
     else if (name == "solid")
     {
         const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+        if (objs.empty())
+        {
+            return 0;
+        }
+        
         for (const auto& obj : objs)
         {
             createCollisionObject(m_scene, obj, CollisionType::Solid);
@@ -760,6 +770,11 @@ sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
 sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, const tmx::Map& map)
 {
     const auto& tilesets = map.getTilesets();
+    if (tilesets.empty())
+    {
+        return 0;
+    }
+
     std::vector<std::unique_ptr<sf::Texture>> textures(tilesets.size());
     for (auto i = 0u; i < tilesets.size(); ++i)
     {
@@ -771,6 +786,11 @@ sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, co
     }
     
     const auto& tiles = dynamic_cast<tmx::TileLayer*>(layer.get())->getTiles();
+    if (tiles.empty())
+    {
+        return 0;
+    }
+
     std::vector<std::pair<sf::Texture*, std::vector<sf::Vertex>>> vertexArrays;
     
     const auto tileCount = map.getTileCount();

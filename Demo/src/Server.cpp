@@ -499,6 +499,7 @@ void GameServer::checkMapStatus(float dt)
 
         m_scene.setSystemActive<NPCSystem>(false);
         m_scene.setSystemActive<CollisionSystem>(false);
+        m_scene.setSystemActive<PowerupSystem>(false);
     }
 }
 
@@ -567,6 +568,8 @@ void GameServer::loadMap()
         std::strcpy(m_mapData.mapName, m_mapFiles[m_currentMap].c_str());
         std::strcpy(m_mapData.mapSha, sha1.c_str());
 
+        m_scene.getSystem<PowerupSystem>().setSpawnFlags(0);
+
         //load collision geometry
         sf::Uint8 flags = 0;
         const auto& layers = map.getLayers();
@@ -582,9 +585,8 @@ void GameServer::loadMap()
                     for (const auto& obj : objs)
                     {
                         createCollisionObject(m_scene, obj, CollisionType::Platform);
+                        flags |= MapFlags::Platform;
                     }
-
-                    flags |= MapFlags::Platform;
                 }
                 else if (name == "solid")
                 {
@@ -592,8 +594,8 @@ void GameServer::loadMap()
                     for (const auto& obj : objs)
                     {
                         createCollisionObject(m_scene, obj, CollisionType::Solid);
-                    }
-                    flags |= MapFlags::Solid;
+                        flags |= MapFlags::Solid;
+                    }                   
                 }
                 else if (name == "teleport")
                 {
@@ -602,6 +604,13 @@ void GameServer::loadMap()
                     {
                         createCollisionObject(m_scene, obj, CollisionType::Teleport);
                     }
+
+                    //only enable powerups if we have 4 spawn points
+                    if (objs.size() == 4)
+                    {
+                        m_scene.getSystem<PowerupSystem>().setSpawnFlags(PowerupSystem::Flame | PowerupSystem::Lightning);
+                    }
+
                     flags |= MapFlags::Teleport;
                 }
                 else if (name == "spawn")
@@ -672,6 +681,7 @@ void GameServer::beginNewRound()
     {
         m_scene.setSystemActive<NPCSystem>(true);
         m_scene.setSystemActive<CollisionSystem>(true);
+        m_scene.setSystemActive<PowerupSystem>(true);
 
         //send initial position of existing actors
         const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
