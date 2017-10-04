@@ -26,11 +26,15 @@ source distribution.
 *********************************************************************/
 
 /*!
-\mainpage XYGINEXT
+\mainpage xyginext
 
-A 2D Game Engine Framework built around SFML, xygineXT implements a scene graph along with an Entity Component System.
-The source for xygineXT is released under the zlib license in the hope that it may be useful for other people - 
+A 2D Game Engine Framework built around SFML, xyginext implements a scene graph along with an Entity Component System.
+The source for xyginext is released under the zlib license in the hope that it may be useful for other people - 
 but offers no warranty that it is fit for any particular purpose, even those for which it was specifically written...
+
+Explanations of systems and examples can be found on <a href="https://github.com/fallahn/xygine/wiki">the xygine wiki</a>.
+
+The older revision of xygine can be found <a href="https://github.com/fallahn/xygine/tree/legacy">in its own branch</a>.
 
 */
 

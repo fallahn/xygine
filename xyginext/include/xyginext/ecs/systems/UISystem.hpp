@@ -37,6 +37,12 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Updates entities with UIHitBox components.
+    Any entity with a UIHitBox component will be processed by this system,
+    which detects user input and activates the appropriate callback as necessary.
+    \see UIHitBox
+    */
     class XY_EXPORT_API UISystem final : public System
     {
     public:

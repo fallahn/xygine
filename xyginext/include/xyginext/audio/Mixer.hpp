@@ -38,13 +38,15 @@ namespace xy
 {
     /*!
     \brief Multichannel Audio mixer class.
-    The AudioMixer allows AudioSource components to group
+    The AudioMixer allows AudioEmitter components to group
     their outputs into one of 16 channels, each of which
     may have their volume adjusted, affecting all of the
-    AudioSources currently routed through that channel.
+    AudioEmitters currently routed through that channel.
     The AudioMixer also has a master volume channel which
     is applied to all subsequent channels. By default
-    AudioSource components are assigned to channel 0
+    AudioEmitter components are assigned to channel 0. For
+    these AudioMixer settings to be applied a scene must
+    have an active AudioSystem.
     \see AudioEmitter::setChannel()
     */
     class XY_EXPORT_API AudioMixer final

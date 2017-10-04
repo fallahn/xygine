@@ -63,7 +63,7 @@ namespace xy
     };
 
     /*!
-    \brief Settings used by the emitter to initialise new particles
+    \brief Settings used by a particle emitter to initialise new particles
     */
     struct XY_EXPORT_API EmitterSettings final
     {

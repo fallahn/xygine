@@ -50,7 +50,7 @@ namespace xy
     /*!
     \brief Encapsulates a single scene.
     The scene class contains everything needed to create a scene graph by encapsulating
-    the ECS and providing factory functions for entities and systems. Multple scenes
+    the ECS and providing factory functions for entities. Multple scenes
     can exist at one time, for instance one to draw the game world, and another to draw
     the HUD. Everything is rendered through renderable systems which, in turn, require
     an ECS - therefore every state which wishes to draw something requires at least a scene,

@@ -65,6 +65,12 @@ and maintaining two versions of it seemed an unnecessary amount of work.
 Tmxlite works easily with any project, and is even used in the demo project
 included in this repository.
 
+###### So I can't use the old version any more?
+Sure you can. From now on the old revision is referred to in the documentation
+as 'legacy', and [can be found in its own branch](https://github.com/fallahn/xygine/tree/legacy).
+The wiki pages remain available, although the doxy generated content is
+offline and will need to be generated from the docs directory using doxygen.
+
 ###### Why xygine?
 The name is simply derived from the fact that this is a 2D framework -
 hence xy, followed by the gine part of engine (although technically

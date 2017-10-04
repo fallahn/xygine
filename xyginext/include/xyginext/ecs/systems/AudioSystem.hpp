@@ -32,6 +32,13 @@ source distribution.
 
 namespace xy
 {
+	/*!
+	\brief Audio System.
+	While AudioEmitter components will still be audible without and active AudioSystem,
+	and AudioSystem instance is required in the scene to update positional audio, as well
+	as apply the values stored in the AudioMixer. It is, therefore, recommended that any
+	scene which employs AudioEmitter components aslo has an AudioSystem.
+	*/
     class XY_EXPORT_API AudioSystem final : public System
     {
     public:

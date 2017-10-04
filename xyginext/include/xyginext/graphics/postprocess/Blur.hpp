@@ -41,7 +41,7 @@ namespace xy
     /*!
     \brief Post process effect which applies a screen-wide gaussian blur.
     This effect can be enabled and disabled as needed via direct call to
-    setEnabled() or via message callbacks. Blur amount is animated when
+    setEnabled(). Blur amount is animated when
     enabling or disabling for a smoother transition.
     */
     class XY_EXPORT_API PostBlur final : public PostProcess

@@ -38,7 +38,7 @@ source distribution.
 namespace xy
 {
     /*!
-    \brief Utilities for reading files from the current file system
+    \brief Utilities for manipulating the current file system
     */
     class XY_EXPORT_API FileSystem final
     {

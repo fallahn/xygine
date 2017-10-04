@@ -53,7 +53,7 @@ namespace xy
     Audio emitter provide points within the scene to play
     audio, either one shot effects or streaming music. If the
     buffer used to supply the audio is mono, and the scene contains
-    an AudioSystem, then the AudioEmitter will be panned spacially
+    an AudioSystem, then the AudioEmitter will be panned spatially
     relative to the current listener (usually the active scene camera),
     unless it has been set to absolute positioning.
     */
