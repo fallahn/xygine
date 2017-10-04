@@ -165,6 +165,38 @@ void MenuState::createMenu()
         }
     });
 
+
+    //quit text
+    entity = m_scene.createEntity();
+    entity.addComponent<xy::Text>(font).setString("QUIT");
+    entity.getComponent<xy::Text>().setCharacterSize(60);
+    entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    bounds = entity.getComponent<xy::Text>().getLocalBounds();
+    auto& tx4 = entity.addComponent<xy::Transform>();
+    tx4.setPosition(200.f, 15.f);
+
+    //quit button
+    entity = m_scene.createEntity();
+    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    bounds = entity.getComponent<xy::Sprite>().getLocalBounds();
+    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
+    entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+    entity.getComponent<xy::Transform>().addChild(tx4);
+    entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
+    entity.getComponent<xy::Transform>().move(0.f, 256.f);
+    tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
+    bounds = entity.getComponent<xy::Sprite>().getLocalBounds(); //these have been updated by setTextureRect
+    entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
+        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity, sf::Uint64 flags)
+    {
+        if (flags & xy::UISystem::LeftMouse)
+        {
+            requestStackClear();
+            xy::App::quit();
+        }
+    });
+
     //apply the default view
     auto view = getContext().defaultView;
     auto& camera = m_scene.getActiveCamera().getComponent<xy::Camera>();

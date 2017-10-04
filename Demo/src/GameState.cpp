@@ -40,6 +40,7 @@ source distribution.
 #include "FXDirector.hpp"
 #include "MapAnimator.hpp"
 #include "ScoreTag.hpp"
+#include "BackgroundShader.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -114,7 +115,7 @@ namespace
                 m_scene.destroyEntity(entity);
 
                 xy::Command cmd;
-                cmd.targetFlags = CommandID::Music;
+                cmd.targetFlags = CommandID::SceneBackground;
                 cmd.action = [](xy::Entity entity, float)
                 {
                     entity.getComponent<xy::AudioEmitter>().play();
@@ -141,16 +142,24 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     loadAssets();
     loadUI();
     m_client.create(2);
+
+    bool connected = false;
     if (sharedData.hostState == SharedStateData::Host)
     {
         sf::Clock joinTimer;
         m_server.start();
         while (!m_server.ready() && joinTimer.getElapsedTime().asSeconds() < 8.f) {}
-        m_client.connect("localhost", 40003);
+        connected = m_client.connect("localhost", 40003);
     }
     else
     {
-        m_client.connect(sharedData.remoteIP, 40003);
+        connected = m_client.connect(sharedData.remoteIP, 40003);
+    }
+
+    if (!connected)
+    {
+        sharedData.error = "Failed to connect to server";
+        requestStackPush(StateID::Error);
     }
 
     //apply the default view
@@ -343,7 +352,14 @@ void GameState::loadAssets()
     ent.getComponent<xy::AudioEmitter>().setLooped(true);
     ent.getComponent<xy::AudioEmitter>().setVolume(0.25f);
     ent.getComponent<xy::AudioEmitter>().setChannel(1);
-    ent.addComponent<xy::CommandTarget>().ID = CommandID::Music;
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::SceneBackground;
+
+    if (m_backgroundShader.loadFromMemory(BackgroundFragment, sf::Shader::Fragment))
+    {
+        m_backgroundShader.setUniform("u_diffuseMap", m_textureResource.get("assets/images/background.png"));
+        ent.getComponent<xy::Sprite>().setShader(&m_backgroundShader);
+        ent.addComponent<xy::Callback>().function = ColourRotator(m_backgroundShader);
+    }
 
     if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile))
     {
@@ -1080,10 +1096,11 @@ void GameState::switchMap(const MapData& data)
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     
-    cmd.targetFlags = CommandID::Music;
+    cmd.targetFlags = CommandID::SceneBackground;
     cmd.action = [](xy::Entity entity, float)
     {
         entity.getComponent<xy::AudioEmitter>().setPitch(1.f);
+        entity.getComponent<xy::Callback>().active = true;
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
@@ -1173,7 +1190,7 @@ void GameState::spawnWarning()
     entity.getComponent<xy::Callback>().function = Flasher(m_scene);
 
     xy::Command cmd;
-    cmd.targetFlags = CommandID::Music;
+    cmd.targetFlags = CommandID::SceneBackground;
     cmd.action = [](xy::Entity entity, float)
     {
         entity.getComponent<xy::AudioEmitter>().pause();

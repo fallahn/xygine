@@ -39,6 +39,7 @@ source distribution.
 #include <SFML/System/Clock.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include "StateIDs.hpp"
 #include "Server.hpp"
@@ -75,6 +76,7 @@ private:
     xy::Scene m_scene;
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
+    sf::Shader m_backgroundShader;
 
     std::array<xy::Sprite, SpriteID::Count> m_sprites;
     std::array<AnimationController, SpriteID::Count> m_animationControllers;
