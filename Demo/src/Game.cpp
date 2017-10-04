@@ -41,7 +41,7 @@ namespace
 
 Game::Game()
     : xy::App   (/*sf::ContextSettings(0, 0, 0, 3, 2, sf::ContextSettings::Core)*/),
-    m_stateStack({ getRenderWindow(), *this })
+    m_stateStack({ *getRenderWindow(), *this })
 {
 
 }
@@ -85,7 +85,8 @@ void Game::initialise()
     registerStates();
     m_stateStack.pushState(StateID::MainMenu);
 
-    getRenderWindow().setKeyRepeatEnabled(false);
+    XY_ASSERT(getRenderWindow(), "no valid window");
+    getRenderWindow()->setKeyRepeatEnabled(false);
 }
 
 void Game::finalise()

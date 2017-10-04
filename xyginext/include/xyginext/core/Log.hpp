@@ -103,9 +103,9 @@ namespace xy
                     std::cerr << outstring << std::endl
                     :
                     std::cout << outstring << std::endl;
-                
+#ifndef NO_UI_LOG
                 Console::print(outstring);
-
+#endif //NO_UI_LOG
                 const std::size_t maxBuffer = 30;
                 buffer().push_back(outstring);
                 if (buffer().size() > maxBuffer)buffer().pop_front(); //no majick here pl0x

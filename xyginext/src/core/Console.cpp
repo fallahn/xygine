@@ -228,7 +228,9 @@ void Console::draw()
             if (nim::MenuItem("Video", nullptr, &showVideoOptions))
             {
                 //select active resolution
-                const auto& size = App::getRenderWindow().getSize();
+                XY_ASSERT(App::getRenderWindow(), "no valid window");
+
+                const auto& size = App::getRenderWindow()->getSize();
                 for (auto i = 0u; i < resolutions.size(); ++i)
                 {
                     if (resolutions[i].x == size.x && resolutions[i].y == size.y)
@@ -286,7 +288,8 @@ void Console::draw()
 
         nim::Combo("Resolution", &currentResolution, resolutionNames.data());
 
-        auto settings = App::getActiveInstance().getVideoSettings();
+        XY_ASSERT(App::getRenderWindow(), "no valid window");
+        auto settings = App::getActiveInstance()->getVideoSettings();
         static bool vSync = settings.VSync;
         nim::Checkbox("V-Sync", &vSync);
 
@@ -302,7 +305,7 @@ void Console::draw()
             settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
             settings.VSync = vSync;
 
-            App::getActiveInstance().applyVideoSettings(settings);
+            App::getActiveInstance()->applyVideoSettings(settings);
         }
         nim::End();
     }
