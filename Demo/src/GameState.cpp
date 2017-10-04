@@ -313,6 +313,8 @@ void GameState::loadAssets()
 
     m_animationControllers[SpriteID::Goobly].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "goobly");
 
+    //dem fruits
+    spriteSheet.loadFromFile("assets/sprites/fruit.spt", m_textureResource);
     m_sprites[SpriteID::FruitSmall] = spriteSheet.getSprite("fruit");
 
     //power ups
@@ -950,7 +952,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         break;
     case ActorID::FruitSmall:
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::FruitSmall];
-        entity.addComponent<xy::SpriteAnimation>().play(xy::Util::Random::value(0, 1));
+        entity.addComponent<xy::SpriteAnimation>().play(xy::Util::Random::value(0, m_sprites[SpriteID::FruitSmall].getAnimationCount() - 1));
         entity.getComponent<xy::Sprite>().setDepth(2);
         entity.getComponent<xy::Transform>().setOrigin(SmallFruitSize / 2.f, SmallFruitSize / 2.f);
         break;

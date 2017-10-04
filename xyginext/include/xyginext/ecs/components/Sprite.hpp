@@ -160,6 +160,13 @@ namespace xy
         */
         sf::Int32 getDepth() const { return m_zDepth; }
 
+        /*!
+        \brief Returns the number of animations for this sprite when loaded
+        from a sprite sheet definition file.
+        */
+        std::size_t getAnimationCount() const { return m_animationCount; }
+
+
     private:
 
         sf::FloatRect m_textureRect;

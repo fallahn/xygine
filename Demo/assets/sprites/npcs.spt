@@ -3,33 +3,14 @@ sprite_sheet npcs
 	src = "assets/images/npcs.png"
 	blendmode = alpha
 
-	sprite fruit
-	{
-		bounds = 256,0,64,64
-
-		animation melon
-		{
-			frame = 256,0,64,64
-			loop = true
-			framerate = 30
-		}
-
-		animation banana
-		{
-			frame = 320,0,64,64
-			loop = true
-			framerate = 30
-		}
-	}
-
 	sprite goobly
 	{
-		bounds = 320, 320, 64, 64
+		bounds = 320, 0, 64, 64
 
 		animation idle
 		{
-			frame = 320, 320, 64, 64
-			frame = 256, 320, 64, 64
+			frame = 320, 0, 64, 64
+			frame = 256, 0, 64, 64
 
 			loop = true
 			framerate = 15

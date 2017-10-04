@@ -1,0 +1,66 @@
+sprite_sheet fruit
+{
+	src = "assets/images/fruit.png"
+	blendmode = alpha	
+
+	sprite fruit
+	{
+		bounds = 0,0,64,64
+
+		animation melon
+		{
+			frame = 0,0,64,64
+			loop = true
+			framerate = 30
+		}
+
+		animation banana
+		{
+			frame = 64,0,64,64
+			loop = true
+			framerate = 30
+		}
+
+		animation pineapple
+		{
+			frame = 128,0,64,64
+			loop = true
+			framerate = 30
+		}
+
+		animation orange
+		{
+			frame = 192,0,64,64
+			loop = true
+			framerate = 30
+		}
+
+		animation lemon
+		{
+			frame = 0,64,64,64
+			loop = true
+			framerate = 30
+		}
+
+		animation apple
+		{
+			frame = 64,64,64,64
+			loop = true
+			framerate = 30
+		}
+
+		animation pear
+		{
+			frame = 128,64,64,64
+			loop = true
+			framerate = 30
+		}
+
+		animation buttfruit
+		{
+			frame = 192,64,64,64
+			loop = true
+			framerate = 30
+		}
+	}
+}
