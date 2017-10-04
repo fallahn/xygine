@@ -12,4 +12,5 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/PlayerSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/PowerupSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/Server.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/sha1.cpp)
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/sha1.cpp
+  PARENT_SCOPE)

@@ -29,6 +29,7 @@ find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system)
 
 # Find xyginext
 find_package(XYGINEXT REQUIRED)
+find_package(TMXLITE REQUIRED)
 
 # X11 is required on unices
 if(UNIX)
@@ -39,14 +40,14 @@ endif()
 include_directories(
   ${XYXT_INCLUDE_DIR}
   ${SFML_INCLUDE_DIR} 
-  ${CMAKE_SOURCE_DIR}/include)
+  ${TMXLITE_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}/../Demo/src)
 
 if(X11_FOUND)
   include_directories(${X11_INCLUDE_DIRS})
 endif()
 
 # Project source files
-add_subdirectory(include)
 add_subdirectory(src)
 
 # Create the actual executable (PROJECT_SRC variable is set inside previous steps)
@@ -56,6 +57,7 @@ add_executable(${PROJECT_NAME} ${PROJECT_SRC})
 target_link_libraries(${PROJECT_NAME}
   ${SFML_LIBRARIES}
   ${SFML_DEPENDENCIES}
+  ${TMXLITE_LIBRARIES}
   ${XYXT_LIBRARIES})
 
 if(X11_FOUND)
