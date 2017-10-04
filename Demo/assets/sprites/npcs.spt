@@ -1,0 +1,143 @@
+sprite_sheet npcs
+{
+	src = "assets/images/npcs.png"
+	blendmode = alpha
+
+	sprite fruit
+	{
+		bounds = 256,0,64,64
+
+		animation melon
+		{
+			frame = 256,0,64,64
+			loop = true
+			framerate = 30
+		}
+
+		animation banana
+		{
+			frame = 320,0,64,64
+			loop = true
+			framerate = 30
+		}
+	}
+
+	sprite goobly
+	{
+		bounds = 320, 320, 64, 64
+
+		animation idle
+		{
+			frame = 320, 320, 64, 64
+			frame = 256, 320, 64, 64
+
+			loop = true
+			framerate = 15
+		}
+	}
+
+	sprite whirlybob
+	{
+		bounds = 0,0,64,64
+
+		animation idle
+		{
+			frame = 0,0,64,64
+			frame = 64,0,64,64
+			frame = 128,0,64,64
+			frame = 192,0,64,64
+
+			framerate = 12
+			loop=true
+		}
+
+		animation die
+		{
+			frame = 256,64,64,64
+			frame = 256,128,64,64
+			frame = 256,192,64,64
+			frame = 256,256,64,64
+
+			framerate = 14
+			loop=true
+		}
+
+		animation bubble_one
+		{
+			frame = 0,64,64,64
+			frame = 64,64,64,64
+			frame = 128,64,64,64
+			frame = 64,64,64,64
+
+			framerate = 12
+			loop=true
+		}
+
+		animation bubble_two
+		{
+			frame = 0,128,64,64
+			frame = 64,128,64,64
+			frame = 128,128,64,64
+			frame = 64,128,64,64
+
+			framerate = 12
+			loop=true
+		}
+	}
+
+	sprite clocksy
+	{
+		bounds = 192,64,64,64
+
+		animation idle
+		{
+			frame = 192,64,64,64
+			loop = true
+			framerate = 25
+		}
+
+		animation walk
+		{
+			frame = 192,64,64,64
+			frame = 192,128,64,64
+			frame = 192,192,64,64
+			frame = 192,256,64,64
+
+			framerate = 10
+			loop=true
+		}
+
+		animation die
+		{
+			frame = 320,64,64,64
+			frame = 320,128,64,64
+			frame = 320,192,64,64
+			frame = 320,256,64,64
+
+			framerate = 14
+			loop=true
+		}
+
+		animation bubble_one
+		{
+			frame = 0,192,64,64
+			frame = 64,192,64,64
+			frame = 128,192,64,64
+			frame = 64,192,64,64
+
+			framerate = 12
+			loop=true
+		}
+
+		animation bubble_two
+		{
+			frame = 0,256,64,64
+			frame = 64,256,64,64
+			frame = 128,256,64,64
+			frame = 64,256,64,64
+
+			framerate = 12
+			loop=true
+		}
+	}
+}

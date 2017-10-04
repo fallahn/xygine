@@ -1,8 +1,8 @@
 /*********************************************************************
-Matt Marchant 2014 - 2016
+(c) Matt Marchant 2017
 http://trederia.blogspot.com
 
-xygine - Zlib license.
+xygineXT - Zlib license.
 
 This software is provided 'as-is', without any express or
 implied warranty. In no event will the authors be held

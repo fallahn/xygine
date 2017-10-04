@@ -1,8 +1,8 @@
 /*********************************************************************
-Matt Marchant 2014 - 2016
+(c) Matt Marchant 2017
 http://trederia.blogspot.com
 
-xygine - Zlib license.
+xygineXT - Zlib license.
 
 This software is provided 'as-is', without any express or
 implied warranty. In no event will the authors be held
@@ -27,8 +27,6 @@ source distribution.
 
 #include <Game.hpp>
 
-#include <xygine/KeyBinds.hpp>
-
 #include <SFML/Window/Event.hpp>
 
 Game::Game()
@@ -45,24 +43,7 @@ void Game::handleEvent(const sf::Event& evt)
 }
 
 void Game::handleMessage(const xy::Message& msg)
-{
-    switch (msg.id)
-    {
-    case xy::Message::Type::UIMessage:
-    {
-        auto& msgData = msg.getData<xy::Message::UIEvent>();
-        switch (msgData.type)
-        {
-        case xy::Message::UIEvent::ResizedWindow:
-            m_stateStack.updateView();
-            break;
-        default: break;
-        }
-        break;
-    }
-    default: break;
-    }
-    
+{    
     m_stateStack.handleMessage(msg);
 }
 
@@ -82,8 +63,6 @@ void Game::initialise()
     //m_stateStack.pushState(MyFirstState);
 
     getRenderWindow().setKeyRepeatEnabled(false);
-
-    if (!xy::Input::load()) xy::Input::save();
 }
 
 void Game::finalise()

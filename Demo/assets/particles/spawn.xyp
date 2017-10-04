@@ -1,0 +1,17 @@
+particle_system spawn
+{
+	blend_mode = add
+	gravity = 0,0
+	velocity = -2.4,-1.1
+	spread = 360
+	lifetime = 0.43
+	lifetime_variance = 0.13
+	colour = 255,255,255,255
+	//rotation_speed = 25
+	scale_affector = 0.6
+	size = 2.0
+	emit_rate = 30
+	emit_count = 2
+	spawn_radius = 35
+	release_count = 10
+}

@@ -1,0 +1,153 @@
+sprite_sheet player
+{
+	src = "assets/images/players.png"
+	blendmode = alpha
+
+	sprite player_one
+	{
+		bounds = 0,0,64,64
+
+		animation idle
+		{
+		    frame = 0,0,64,64
+			frame = 128,0,64,64
+			framerate = 5.5
+			loop=true
+		}
+
+		animation walk
+		{
+			frame = 0,0,64,64
+			frame = 64,0,64,64
+			frame = 128,0,64,64
+			frame = 192,0,64,64
+            frame = 256,0,64,64
+
+			framerate = 18
+			loop = true
+		}
+
+		animation shoot
+		{
+			frame = 0,128,64,64
+			frame = 64,128,64,64
+			frame = 128,128,64,64
+			frame = 64,128,64,64
+			frame = 0,128,64,64
+
+			framerate = 12
+			loop = false
+		}
+
+		animation die
+		{
+
+			frame = 256,128,64,64
+			frame = 320,128,64,64
+			frame = 384,128,64,64
+			frame = 448,128,64,64
+			frame = 256,128,64,64
+			frame = 320,128,64,64
+			frame = 384,128,64,64
+			frame = 448,128,64,64
+
+			frame = 320,0,64,64
+			frame = 320,64,64,64
+			frame = 192,128,64,64
+			frame = 192,192,64,64
+
+			framerate = 12
+			loop = false
+		}
+
+		animation jump_up
+		{
+			frame = 448,0,64,64
+
+			framerate = 25
+			loop = true
+		}
+
+		animation jump_down
+		{
+			frame = 384,0,64,64
+
+			framerate = 25
+			loop = true
+		}
+	}
+
+	sprite player_two
+	{
+		bounds = 0,64,64,64
+
+		animation idle
+		{
+			frame = 0,64,64,64
+			frame = 128,64,64,64
+			framerate = 5.5
+			loop=true
+		}
+
+		animation walk
+		{
+			frame = 0,64,64,64
+			frame = 64,64,64,64
+			frame = 128,64,64,64
+			frame = 192,64,64,64
+			frame = 256,64,64,64
+
+			framerate = 18
+			loop = true
+		}
+
+		animation shoot
+		{
+			frame = 0,192,64,64
+			frame = 64,192,64,64
+			frame = 128,192,64,64
+			frame = 64,192,64,64
+			frame = 0,192,64,64
+
+			framerate = 12
+			loop = false
+		}
+
+		animation die
+		{
+
+			frame = 256,192,64,64
+			frame = 320,192,64,64
+			frame = 384,192,64,64
+			frame = 448,192,64,64
+			frame = 256,192,64,64
+			frame = 320,192,64,64
+			frame = 384,192,64,64
+			frame = 448,192,64,64
+
+			frame = 320,0,64,64
+			frame = 320,64,64,64
+			frame = 192,128,64,64
+			frame = 192,192,64,64		
+
+			framerate = 12
+			loop = false
+		}
+
+		animation jump_up
+		{
+			frame = 448,64,64,64
+			
+			framerate = 25
+			loop = true
+		}
+
+		animation jump_down
+		{
+			frame = 384,64,64,64
+			
+			framerate = 25
+			loop = true
+		}		
+	}
+}

@@ -1,13 +1,1 @@
-Debug
-Release
-*.user
-bin
-obj
-DebugShared
-DebugStatic
-ReleaseStatic
-
-# OSX #
-*.DS_Store
-ReleaseShared
-packages
+x64

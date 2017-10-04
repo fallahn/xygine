@@ -1,0 +1,18 @@
+particle_system score
+{
+	src = "assets/images/star.png"
+	//blendmode = add
+	gravity = 0,90
+	velocity = -200.4,-180.1
+	spread = 360
+	lifetime = 0.3
+	lifetime_variance = 0.3
+	colour = 255,255,255,255
+	rotation_speed = 25
+	scale_affector = 0.6
+	size = 10.0
+	emit_rate = 30
+	emit_count = 8
+	spawn_radius = 4
+	release_count = 16
+}

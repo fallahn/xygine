@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="47">
+ <properties>
+  <property name="round_time" type="float" value="20"/>
+ </properties>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
+  <image source="../images/block.png" width="512" height="512"/>
+ </tileset>
+ <layer name="Blocks" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBhYwALEgmRiFiimxO7hoF8QypdmIBxmUlC11Aw/IShfBsrGhyWhaoWoaD+l+gdD+JGDKbGbWgAAqbME+g==
+  </data>
+ </layer>
+ <objectgroup color="#00aa00" name="Solid">
+  <object id="3" x="64" y="0" width="896" height="160"/>
+  <object id="7" x="64" y="928" width="896" height="112"/>
+  <object id="8" x="960" y="128" width="64" height="832"/>
+  <object id="9" x="0" y="128" width="64" height="832"/>
+ </objectgroup>
+ <objectgroup color="#ff007f" name="Teleport"/>
+ <objectgroup color="#00ff00" name="Platform">
+  <object id="35" x="64" y="448" width="64" height="32"/>
+  <object id="36" x="224" y="448" width="576" height="32"/>
+  <object id="37" x="896" y="448" width="64" height="32"/>
+  <object id="38" x="64" y="608" width="64" height="32"/>
+  <object id="39" x="224" y="608" width="576" height="32"/>
+  <object id="40" x="896" y="608" width="64" height="32"/>
+  <object id="41" x="64" y="768" width="64" height="32"/>
+  <object id="42" x="224" y="768" width="576" height="32"/>
+  <object id="43" x="896" y="768" width="64" height="32"/>
+ </objectgroup>
+ <objectgroup name="Spawn">
+  <object id="44" name="clocksy" x="496" y="368" width="16" height="16"/>
+  <object id="45" name="clocksy" x="496" y="304" width="16" height="16"/>
+  <object id="46" name="clocksy" x="496" y="240" width="16" height="16"/>
+ </objectgroup>
+</map>
