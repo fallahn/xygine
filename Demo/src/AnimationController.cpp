@@ -44,7 +44,7 @@ AnimationControllerSystem::AnimationControllerSystem(xy::MessageBus& mb)
     requireComponent<xy::SpriteAnimation>();
 }
 
-void AnimationControllerSystem::handleMessage(const xy::Message& msg)
+void AnimationControllerSystem::handleMessage(const xy::Message& /*msg*/)
 {
     //THIS IS HANDLED BY SCENE MESSAGE
 

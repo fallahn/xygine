@@ -298,7 +298,7 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float dt)
                         entity.getComponent<AnimationController>().nextAnimation = AnimationController::Walk;
 
                         //kludge to try moving away from walls
-                        if (powerup.velocity.y < 0)
+                        /*if (powerup.velocity.y < 0)
                         {
                             tx.move(0.f, man.penetration);
                         }
@@ -306,7 +306,7 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float dt)
                         {
                             tx.move(0.f, -man.penetration);
                         }
-                        tx.move(man.normal * -man.penetration);
+                        tx.move(man.normal * -man.penetration);*/
                     }
                 }
                 break;

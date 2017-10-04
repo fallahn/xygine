@@ -48,6 +48,9 @@ FXDirector::FXDirector()
     m_soundResource.get("assets/sound/shoot.wav");
     m_soundResource.get("assets/sound/hurry.wav");
     m_soundResource.get("assets/sound/player_die.wav");
+    m_soundResource.get("assets/sound/lightning_die.wav");
+    m_soundResource.get("assets/sound/flame.wav");
+    m_soundResource.get("assets/sound/powerup_pop.wav");
 }
 
 //public
@@ -96,13 +99,25 @@ void FXDirector::handleMessage(const xy::Message& msg)
         case AnimationController::Die:
         {
             const auto& actor = data.entity.getComponent<Actor>();
-            if (actor.type == ActorID::Clocksy || actor.type == ActorID::Whirlybob)
+            switch (actor.type)
             {
+            default: break;
+            case ActorID::Clocksy:
+            case ActorID::Whirlybob:
                 playSound(m_soundResource.get("assets/sound/npc_pop.wav"));
-            }
-            else if (actor.type == ActorID::PlayerOne || actor.type == ActorID::PlayerTwo)
-            {
+                break;
+            case ActorID::PlayerOne:
+            case ActorID::PlayerTwo:
                 playSound(m_soundResource.get("assets/sound/player_die.wav"));
+                break;
+            case ActorID::FlameOne:
+            case ActorID::FlameTwo:
+                playSound(m_soundResource.get("assets/sound/flame.wav"));
+                break;
+            case ActorID::LightningOne:
+            case ActorID::LightningTwo:
+                playSound(m_soundResource.get("assets/sound/lightning_die.wav"));
+                break;
             }
         }
         break;
@@ -111,6 +126,21 @@ void FXDirector::handleMessage(const xy::Message& msg)
             playSound(m_soundResource.get("assets/sound/jump.wav"));
         }
         break;
+        case AnimationController::Walk:
+        {
+            const auto& actor = data.entity.getComponent<Actor>();
+            switch (actor.type)
+            {
+            default: break;
+            case ActorID::FlameOne:
+            case ActorID::FlameTwo:
+            case ActorID::LightningOne:
+            case ActorID::LightningTwo:
+                playSound(m_soundResource.get("assets/sound/powerup_pop.wav"));
+                break;
+            }
+        }
+            break;
         }
     }
         break;
