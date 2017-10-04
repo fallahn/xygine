@@ -70,6 +70,7 @@ namespace xy
             std::array<sf::Vertex, ParticleEmitter::MaxParticles> vertices;
             std::size_t count = 0;
             sf::Texture* texture = nullptr;
+            sf::FloatRect bounds;
         };
 
         std::vector<EmitterArray> m_emitterArrays;

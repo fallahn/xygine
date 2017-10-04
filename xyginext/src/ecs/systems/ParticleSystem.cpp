@@ -80,7 +80,7 @@ namespace
             gl_FragColor = gl_Color * texture2D(u_texture, texCoord + vec2(0.5));
         })";
 
-    const std::size_t MaxParticleSystems = 128; //max VBOs, must be divisible by min count
+    const std::size_t MaxParticleSystems = 64; //max VBOs, must be divisible by min count
     const std::size_t MinParticleSystems = 4; //min amount before resizing. This many are added on resize
 }
 
@@ -115,8 +115,6 @@ ParticleSystem::~ParticleSystem()
 void ParticleSystem::process(float dt)
 {
     m_activeArrayCount = 0;
-    auto view = App::getRenderWindow().getView();
-    sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
 
     auto& entities = getEntities();
     for (auto& entity : entities)
@@ -193,6 +191,7 @@ void ParticleSystem::process(float dt)
         }
         emitter.m_bounds = { minBounds, maxBounds - minBounds };
 
+
         //go over again and remove dead particles with pop/swap
         for (auto i = 0u; i < emitter.m_nextFreeParticle; ++i)
         {
@@ -203,14 +202,13 @@ void ParticleSystem::process(float dt)
             }
         }
 
-        //check if visible and create a vertex array for it
-        //TODO apparently emitter bounds is not calculated correctly. Also the viewable
-        //area is potentially incorrect so culling should be done in the draw function
-        if (/*viewableArea.intersects(emitter.m_bounds) &&*/ m_activeArrayCount < MaxParticleSystems) 
+        //limit max number of active systems and generate actual vert array
+        if (m_activeArrayCount < MaxParticleSystems) 
         {
             auto& vertArray = m_emitterArrays[m_activeArrayCount++];
             vertArray.count = 0;
             vertArray.texture = (emitter.settings.texture) ? emitter.settings.texture : &m_dummyTexture;
+            vertArray.bounds = emitter.m_bounds;
 
             for (auto i = 0u; i < emitter.m_nextFreeParticle; ++i)
             {
@@ -222,10 +220,7 @@ void ParticleSystem::process(float dt)
                 };
             }
         }
-        //DPRINT("Position", std::to_string(emitter.m_particles[0].position.y));
     }
-    //DPRINT("Emitter Count", std::to_string(m_activeArrayCount));
-    //DPRINT("Viewable area", std::to_string(viewableArea.left) + ", " + std::to_string(viewableArea.top) + ", " + std::to_string(viewableArea.width) + ", " + std::to_string(viewableArea.height));
 }
 
 //private
@@ -233,7 +228,7 @@ void ParticleSystem::onEntityAdded(xy::Entity)
 {
     m_arrayCount++;
 
-    if (m_arrayCount == m_emitterArrays.size() && m_emitterArrays.size() < MaxParticleSystems)
+    if (m_arrayCount == m_emitterArrays.size()/* && m_emitterArrays.size() < MaxParticleSystems*/)
     {
         m_emitterArrays.resize(m_emitterArrays.size() + MinParticleSystems);
     }
@@ -251,6 +246,9 @@ void ParticleSystem::onEntityRemoved(xy::Entity)
 
 void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    auto view = rt.getView();
+    sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
+    
     states.shader = &m_shader;
     states.texture = &m_dummyTexture;
     
@@ -258,10 +256,12 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     glCheck(glEnable(GL_POINT_SPRITE));
     for (auto i = 0u; i < m_activeArrayCount; ++i)
     {
-        m_shader.setUniform("u_texture", *m_emitterArrays[i].texture);
-        
-        rt.draw(m_emitterArrays[i].vertices.data(), m_emitterArrays[i].count, sf::Points, states);
-        //DPRINT("Particle Count", std::to_string(m_emitterArrays[i].count));
+        if (m_emitterArrays[i].bounds.intersects(viewableArea))
+        {
+            m_shader.setUniform("u_texture", *m_emitterArrays[i].texture);
+            rt.draw(m_emitterArrays[i].vertices.data(), m_emitterArrays[i].count, sf::Points, states);
+            //DPRINT("Particle Count", std::to_string(m_emitterArrays[i].count));
+        }
     }
     glCheck(glDisable(GL_PROGRAM_POINT_SIZE));
     glCheck(glDisable(GL_POINT_SPRITE));
