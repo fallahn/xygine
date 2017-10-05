@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 
 # Rename this variable to change the project name
-SET(PROJECT_NAME xy_demo_dedicated_server)
+SET(PROJECT_NAME xy_demo_ds)
 
 # Set up the project
 project(${PROJECT_NAME})

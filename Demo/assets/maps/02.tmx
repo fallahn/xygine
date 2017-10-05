@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="56">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="56">
  <properties>
   <property name="round_time" type="float" value="22"/>
  </properties>
@@ -11,12 +11,12 @@
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFUosKgCAM9HP6KQO1Mv3/D8jBBtdSyiI8OPRuD0VnzHjMQMtsafSxPhR6iAVeXeECdQG0gLyV9xgLvHqovcPOPQSuckYv4oOcnt5v7/FXf3qz7eMZSWl6s1yJa58g/6s9mbFozvNmzRWZ/cR7nFXUFvIEeq5bWscI02AesowmZA==
+   eJy1U4sKgCAM3M8E/pSBWVn9/wfUYINruZ50cOjtthk2AxEFwwZovVDxvDz0vBxGC4xCT2OcoD5v7MDLsqaNPdRl0AqODbJHL8vaQe0VJumhSJUznqLcyHnS++13/NWf72z8eMZsNN/ZUvFtnKH/18Z0xgrt5y3SEYvEZ9njrKKOkKewc+1p6zG893YWq+mrN2091StWvCsu
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYoAHEpmRiDSimxG58+s2gmFz9lNjvAMS2SDQ97TfDgWltvwMeu2HYFo9+SuxHt8MBD98Mi35K7CfkZ1yYErupBQBAKhFs
+   eJxjYBhYoAHEpmRiDSimxG58+s2gmFz9lNjvAMS2SDQ97TfDgWltvwMeu2HYFo9+SuxHt8MBD98Mi35K7CfkZ1wYm93SRNgrgsbnhtKSWMzBJgcCMlAaAGJiEho=
   </data>
  </layer>
  <objectgroup color="#00aa00" name="Solid">

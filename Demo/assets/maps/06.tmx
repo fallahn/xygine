@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="62">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="62">
  <properties>
   <property name="round_time" type="float" value="39"/>
  </properties>
@@ -11,12 +11,12 @@
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzNU4sKgCAM3I8qlE2s//+AJkwal0pGUQeH3t18gJPoezihB7oLvl2fuQijMOlI6uXaIGTQBXavGgLoCHqqeJiPgAfr7+w7Q5ZeOvMp4P16921l9h22xrzlrZA5o73mUbNkPKKjP7NmOvdvr+drf6D4f8AOIY0cNA==
+   eJy1U4sKgCAM3M8I/ZRCmWL9/wfkQGmszUfUwaG7u0xwWwBgEWgUXfOlvBnIIWymY7QDOpDvkXtmzExlhaJh1mcGVlfQsyR4VkdWr4LG/RmEyfybczfmpZ/++RX4/Vr31Tz6Dqey17SDeZbUrvixeIloAHd/Yh3g2b+tnpdmoOoIbTZ78yvle7NqhP0FKmAmCg==
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYoAHEpkjYDipuT0DMFKpXg0K7kfWbkYipbT+5+k1JxNS2HwaGaviBALZwAqU79DSHHIbUsh85TGyhcg4ExGDhN9AAAGoDE3g=
+   eJxjYBhYoAHEpkjYDipuT0DMFKpXg0K7kfWbkYipbT+5+k1JxNS2HwaGaviBALZwAqU79DSHHIbUsh85TGyhcg4ExGDhhw0IA7E0Ce7gxqFeCIu5MCADpQGKXxQN
   </data>
  </layer>
  <objectgroup name="Spawn">

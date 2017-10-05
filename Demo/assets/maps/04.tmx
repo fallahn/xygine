@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="83">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="83">
  <properties>
   <property name="round_time" type="float" value="39"/>
  </properties>
@@ -11,12 +11,12 @@
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzNU1sKwCAM60UVxpyv+x9gCC2G0g7dzxYo9pFaI0r0PaKywKZzmof9ASyzJcidKsZ+4UbmITBOHAdHh+71UBZ5A3WDKzqzUbO0aVwPtWPjHNb8FXj3KqgOR+5oaLxUbqCBn3hFrdae0lOcegc/qhmd5vvqNN9cM+oy/80f+ANu6f4glg==
+   eJydUwkKxDAI9CuFfiuBZdMr/3/AIigdBk3THZBGZ9Qa4ioiK9kSxJBjfkniT7XUFJWsmHGMdQL5BWw3axD7ko/5rq2mQ6DfzC8Sg3MzHJM6xflC63PuARfNxtgG3OfFf0T9Z5Ddq+NMNH5HOuNGMcUF52ZfnDWq6TlHwnc4V+rR5X5fXe43dwW89/9nBxSjvRzt30yca0Y5P8KXKWk=
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFUUEKwCAM8yuCH5jzMvX/79oGBkKwnbDBAgWJTZNqCP8iXbVR7YNvxNXBFelNoxjcz8A89VY9kKWs7JaeM7QFfXc8lT8m+iKzo3G+gTdmPd6nTjTR6PH29/wBzW/9HQD/WX7d34O3P2doctZ7b/8VQD/72/7A5ZfeX+EEYTQS4Q==
+   eJzFUUEKgDAM8wd60qMM9gHnLm77/7tUWCGEtu5moFCypmm7afoX8YkD4ux8Ba50LlNt7IHAeoT0Y2/WCxKFNbulxxnqgL45nsxfij5T72DkL+TGqJf7FEUTjBpvf89fwPNbfycQf21+3t+Dtz/OUCnnd2//EYhe+9v2wSXFe1E8dsN7NfgN8nmg/w2B8BNc
   </data>
  </layer>
  <objectgroup name="Solid">
