@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="62">
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="62">
  <properties>
   <property name="round_time" type="float" value="39"/>
  </properties>
  <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
   <image source="../images/block.png" width="512" height="512"/>
  </tileset>
+ <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+  <image source="../images/block_background.png" width="384" height="448"/>
+ </tileset>
+ <layer name="background" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJzNU4sKgCAM3I8qlE2s//+AJkwal0pGUQeH3t18gJPoezihB7oLvl2fuQijMOlI6uXaIGTQBXavGgLoCHqqeJiPgAfr7+w7Q5ZeOvMp4P16921l9h22xrzlrZA5o73mUbNkPKKjP7NmOvdvr+drf6D4f8AOIY0cNA==
+  </data>
+ </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
    eJxjYBhYoAHEpkjYDipuT0DMFKpXg0K7kfWbkYipbT+5+k1JxNS2HwaGaviBALZwAqU79DSHHIbUsh85TGyhcg4ExGDhN9AAAGoDE3g=

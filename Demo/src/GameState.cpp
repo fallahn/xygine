@@ -441,7 +441,7 @@ bool GameState::loadScene(const MapData& data, sf::Vector2f position)
 #endif
     entity.addComponent<xy::Transform>().setPosition(position);
     entity.addComponent<MapAnimator>();
-    if (position.y > 0) entity.getComponent<MapAnimator>().state = MapAnimator::State::Active;
+    if (position.y < 0) entity.getComponent<MapAnimator>().state = MapAnimator::State::Active;
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapBackground;
 
     m_currentMapTexture = (m_currentMapTexture + 1) % m_mapTextures.size();
@@ -515,14 +515,14 @@ void GameState::loadUI()
     spriteSheet.loadFromFile("assets/sprites/ui.spt", m_textureResource);
 
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Transform>().setPosition(10.f, MapBounds.height - 128.f);
+    ent.addComponent<xy::Transform>().setPosition(10.f, MapBounds.height - 96.f);
     ent.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_one_lives");
     ent.getComponent<xy::Sprite>().setDepth(6);
     ent.addComponent<xy::SpriteAnimation>().play(0);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::LivesOne;
 
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Transform>().setPosition(MapBounds.width - 10.f, MapBounds.height - 128.f);
+    ent.addComponent<xy::Transform>().setPosition(MapBounds.width - 10.f, MapBounds.height - 96.f);
     ent.getComponent<xy::Transform>().setScale(-1.f, 1.f);
     ent.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_two_lives");
     ent.getComponent<xy::Sprite>().setDepth(6);
@@ -1120,7 +1120,7 @@ void GameState::switchMap(const MapData& data)
     m_scene.update(0.f); //force the command right away
 
 
-    if (loadScene(data, { 0.f, MapBounds.height - 128.f }))
+    if (loadScene(data, { 0.f, -(MapBounds.height/* + 128.f*/) }))
     {
         //init transition
         xy::Command cmd;
@@ -1131,7 +1131,7 @@ void GameState::switchMap(const MapData& data)
             if (animator.state == MapAnimator::State::Static)
             {
                 animator.state = MapAnimator::State::Active;
-                animator.dest.y = -(MapBounds.height - 128.f);
+                animator.dest.y = (MapBounds.height + 128.f);
             }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
