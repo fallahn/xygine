@@ -25,16 +25,6 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-/*
-TODO
-Currently the server class relies on a Scene instance - which in turn relies on
-a valid RenderWindow. As this is a dedicated server ideally we need to decouple
-the RenderWindow from the Scene somehow so code can remain shared. If all else
-fails the server class itself can have the Scene instance replaced with a custom
-solution, as it technically doesn't need the window dependency even when spawned
-by a graphical client.
-*/
-
 #include <Server.hpp>
 
 #include <SFML/Config.hpp>
@@ -70,7 +60,13 @@ int main()
     thread.launch();
     sf::sleep(sf::milliseconds(100));
     
-    std::cout << "Type Q to quit" << std::endl;
+    std::cout << "Dedicated server is running!" << std::endl;
+    std::cout << "Type Q ";
+#ifdef __linux
+        std::cout << " or ctrl ^ C ";
+#endif
+        std::cout << "to quit." << std::endl;
+    std::cout << std::endl;
 
     while (running)
     {

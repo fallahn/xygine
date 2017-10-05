@@ -152,6 +152,11 @@ namespace xy
         void sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel = 0);
 
 
+        /*!
+        \brief Returns the number of currently connected peers
+        */
+        std::size_t getConnectedPeerCount() const;
+
     private:
 
         _ENetHost* m_host;

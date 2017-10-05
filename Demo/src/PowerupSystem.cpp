@@ -258,8 +258,6 @@ void PowerupSystem::processWater(xy::Entity entity, float dt)
 
 void PowerupSystem::processIdle(xy::Entity entity, float dt)
 {   
-
-
     auto& powerup = entity.getComponent<Powerup>();
     auto& tx = entity.getComponent<xy::Transform>();
     tx.move(0.f, powerup.velocity.y * dt);
