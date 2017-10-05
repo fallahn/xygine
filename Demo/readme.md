@@ -25,9 +25,11 @@ When hosting a game servers expect incoming connections on port 40003
 Maps are simple [Tiled](http://www.mapeditor.org) tmx format maps
 which obey a few simple rules:
 
-One tile layer. Tiles are 64px square, and the total map size is 16x17
+A tile layer. Tiles are 64px square, and the total map size is 16x17
 tiles in size. There are two rows of empty tiles top and bottom to allow
-for teleporting nodes.
+for teleporting nodes. Multiple tile layers may exist, but will be rendered
+to a single layer when the map is loaded and will always appear behind
+other game sprites.
 
 One object layer named 'solid'. Rectangular objects placed on this layer
 mark out solid map geometry which cannot be passed through. Other shapes

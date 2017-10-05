@@ -74,7 +74,7 @@ void PowerupSystem::process(float dt)
     auto& entities = getEntities();
     for (auto entity : entities)
     {
-        const auto& powerup = entity.getComponent<Powerup>();
+        auto& powerup = entity.getComponent<Powerup>();
         switch (powerup.type)
         {
         default:break;
@@ -90,6 +90,17 @@ void PowerupSystem::process(float dt)
             //water collision is handled in processWater()
             processWater(entity, dt);
             break;
+        }
+
+        if (powerup.state == Powerup::State::Active)
+        {
+            //check to see if still in map area
+            if (!MapBounds.contains(entity.getComponent<xy::Transform>().getPosition()))
+            {
+                powerup.state = Powerup::State::Dying;
+                powerup.lifetime = 1.f;
+                entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+            }
         }
     }
     //DPRINT("count", std::to_string(entities.size()));
@@ -294,17 +305,6 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float dt)
                         powerup.state = Powerup::State::Active;
                         powerup.lifetime = 5.f;
                         entity.getComponent<AnimationController>().nextAnimation = AnimationController::Walk;
-
-                        //kludge to try moving away from walls
-                        /*if (powerup.velocity.y < 0)
-                        {
-                            tx.move(0.f, man.penetration);
-                        }
-                        else if (powerup.velocity.y > 0)
-                        {
-                            tx.move(0.f, -man.penetration);
-                        }
-                        tx.move(man.normal * -man.penetration);*/
                     }
                 }
                 break;
@@ -324,13 +324,13 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float dt)
                     tx.move(man.normal * man.penetration);
                     tx.move(powerup.velocity.x * -BubbleVerticalVelocity * dt, 0.f);
                 }
-                else if (powerup.state == Powerup::State::Active)
+                /*else if (powerup.state == Powerup::State::Active)
                 {
                     tx.move(man.normal * man.penetration);
                     powerup.state = Powerup::State::Dying;
                     powerup.lifetime = 1.f;
                     entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
-                }
+                }*/
                 break;
             case CollisionType::NPC:
                 if (powerup.state == Powerup::State::Active)

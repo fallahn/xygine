@@ -363,6 +363,14 @@ void GameState::loadAssets()
         ent.addComponent<xy::Callback>().function = ColourRotator(m_backgroundShader);
     }
 
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/wall.png")).setDepth(5);
+    ent.addComponent<xy::Transform>();
+
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/wall.png")).setDepth(5);
+    ent.addComponent<xy::Transform>().setPosition(0.f, MapBounds.height - ent.getComponent<xy::Sprite>().getSize().y);
+
     if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile))
     {
         //create one
@@ -509,6 +517,7 @@ void GameState::loadUI()
     ent = m_scene.createEntity();
     ent.addComponent<xy::Transform>().setPosition(10.f, MapBounds.height - 128.f);
     ent.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_one_lives");
+    ent.getComponent<xy::Sprite>().setDepth(6);
     ent.addComponent<xy::SpriteAnimation>().play(0);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::LivesOne;
 
@@ -516,6 +525,7 @@ void GameState::loadUI()
     ent.addComponent<xy::Transform>().setPosition(MapBounds.width - 10.f, MapBounds.height - 128.f);
     ent.getComponent<xy::Transform>().setScale(-1.f, 1.f);
     ent.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_two_lives");
+    ent.getComponent<xy::Sprite>().setDepth(6);
     ent.addComponent<xy::SpriteAnimation>().play(0);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::LivesTwo;
 }
