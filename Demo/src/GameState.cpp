@@ -294,6 +294,7 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one");
     m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Shoot] = spriteSheet.getAnimationIndex("shoot", "player_one");
     m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::JumpDown] = spriteSheet.getAnimationIndex("jump_down", "player_one");
+    m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::JumpUp] = spriteSheet.getAnimationIndex("jump_up", "player_one");
     m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one");
 
     //NPCs
@@ -374,7 +375,7 @@ void GameState::loadAssets()
     ent.addComponent<xy::Transform>().setPosition(-ent.getComponent<xy::Sprite>().getSize().x, 0.f);
 
     ent = m_scene.createEntity();
-    ent.addComponent<xy::AudioEmitter>().setSource("assets/sound/music/03.ogg");
+    ent.addComponent<xy::AudioEmitter>().setSource("assets/sound/music/01.ogg");
     ent.getComponent<xy::AudioEmitter>().play();
     ent.getComponent<xy::AudioEmitter>().setLooped(true);
     ent.getComponent<xy::AudioEmitter>().setVolume(0.25f);

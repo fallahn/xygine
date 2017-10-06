@@ -76,8 +76,8 @@ namespace CollisionFlags
     };
 }
 
-static constexpr float PlayerSize = 60.f;
-static constexpr float PlayerSizeOffset = 2.f;
+static constexpr float PlayerSize = 52.f;
+static constexpr float PlayerSizeOffset = 6.f;
 static constexpr float PlayerFootSize = 10.f;
 
 static constexpr float BubbleVerticalVelocity = -100.f;
