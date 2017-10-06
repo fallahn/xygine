@@ -66,6 +66,12 @@ namespace xy
             virtual bool isLooped() const = 0;
 
             virtual sf::Int32 getStatus() const = 0;
+
+            enum class Type
+            {
+                Sound, Music
+            };
+            virtual Type getType() const = 0;
         };
 
         class AudioSound final : public AudioSourceImpl
@@ -94,6 +100,8 @@ namespace xy
             bool isLooped() const override;
 
             sf::Int32 getStatus() const override;
+
+            Type getType() const override { return Type::Sound; }
 
         private:
             sf::Sound m_sound;
@@ -128,6 +136,8 @@ namespace xy
             sf::Int32 getStatus() const override;
 
             bool isValid() const { return m_valid; }
+
+            Type getType() const override { return Type::Music; }
 
         private:
 

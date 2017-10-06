@@ -41,6 +41,7 @@ source distribution.
 #include "MapAnimator.hpp"
 #include "ScoreTag.hpp"
 #include "BackgroundShader.hpp"
+#include "MusicCallback.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -115,7 +116,7 @@ namespace
                 m_scene.destroyEntity(entity);
 
                 xy::Command cmd;
-                cmd.targetFlags = CommandID::SceneBackground;
+                cmd.targetFlags = CommandID::SceneMusic;
                 cmd.action = [](xy::Entity entity, float)
                 {
                     entity.getComponent<xy::AudioEmitter>().play();
@@ -314,8 +315,8 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::Goobly].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "goobly");
 
     //dem fruits
-    spriteSheet.loadFromFile("assets/sprites/fruit.spt", m_textureResource);
-    m_sprites[SpriteID::FruitSmall] = spriteSheet.getSprite("fruit");
+    spriteSheet.loadFromFile("assets/sprites/food.spt", m_textureResource);
+    m_sprites[SpriteID::FruitSmall] = spriteSheet.getSprite("food");
 
     //power ups
     spriteSheet.loadFromFile("assets/sprites/power_ups.spt", m_textureResource);
@@ -349,13 +350,6 @@ void GameState::loadAssets()
     ent.addComponent<xy::Transform>().setScale(4.f, 4.f);
     ent.getComponent<xy::Transform>().setPosition((-(xy::DefaultSceneSize.x / 2.f) + MapBounds.width / 2.f), 0.f);
 
-    ent.addComponent<xy::AudioEmitter>().setSource("assets/sound/music/02.ogg");
-    ent.getComponent<xy::AudioEmitter>().play();
-    ent.getComponent<xy::AudioEmitter>().setLooped(true);
-    ent.getComponent<xy::AudioEmitter>().setVolume(0.25f);
-    ent.getComponent<xy::AudioEmitter>().setChannel(1);
-    ent.addComponent<xy::CommandTarget>().ID = CommandID::SceneBackground;
-
     if (m_backgroundShader.loadFromMemory(BackgroundFragment, sf::Shader::Fragment))
     {
         m_backgroundShader.setUniform("u_diffuseMap", m_textureResource.get("assets/images/background.png"));
@@ -378,6 +372,19 @@ void GameState::loadAssets()
     ent = m_scene.createEntity();
     ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/tower.png")).setDepth(5);
     ent.addComponent<xy::Transform>().setPosition(-ent.getComponent<xy::Sprite>().getSize().x, 0.f);
+
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::AudioEmitter>().setSource("assets/sound/music/03.ogg");
+    ent.getComponent<xy::AudioEmitter>().play();
+    ent.getComponent<xy::AudioEmitter>().setLooped(true);
+    ent.getComponent<xy::AudioEmitter>().setVolume(0.25f);
+    ent.getComponent<xy::AudioEmitter>().setChannel(1);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::SceneMusic;
+
+    ent.addComponent<xy::Callback>().function = MusicCallback();
+    ent.getComponent<xy::Callback>().active = true;
+    ent.addComponent<xy::Transform>();
+
 
     if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile))
     {
@@ -1119,12 +1126,18 @@ void GameState::switchMap(const MapData& data)
     cmd.targetFlags = CommandID::SceneBackground;
     cmd.action = [](xy::Entity entity, float)
     {
-        entity.getComponent<xy::AudioEmitter>().setPitch(1.f);
         entity.getComponent<xy::Callback>().active = true;
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
     
+    cmd.targetFlags = CommandID::SceneMusic;
+    cmd.action = [](xy::Entity entity, float)
+    {
+        entity.getComponent<xy::AudioEmitter>().setPitch(1.f);
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
     m_scene.update(0.f); //force the command right away
 
 
@@ -1210,7 +1223,7 @@ void GameState::spawnWarning()
     entity.getComponent<xy::Callback>().function = Flasher(m_scene);
 
     xy::Command cmd;
-    cmd.targetFlags = CommandID::SceneBackground;
+    cmd.targetFlags = CommandID::SceneMusic;
     cmd.action = [](xy::Entity entity, float)
     {
         entity.getComponent<xy::AudioEmitter>().pause();

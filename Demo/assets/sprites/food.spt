@@ -1,62 +1,62 @@
 sprite_sheet fruit
 {
-	src = "assets/images/fruit.png"
+	src = "assets/images/food.png"
 	blendmode = alpha	
 
-	sprite fruit
+	sprite food
 	{
 		bounds = 0,0,64,64
 
-		animation melon
+		animation doughnut
 		{
 			frame = 0,0,64,64
 			loop = true
 			framerate = 30
 		}
 
-		animation banana
+		animation hotdog
 		{
 			frame = 64,0,64,64
 			loop = true
 			framerate = 30
 		}
 
-		animation pineapple
+		animation burger
 		{
 			frame = 128,0,64,64
 			loop = true
 			framerate = 30
 		}
 
-		animation orange
+		animation lolly
 		{
 			frame = 192,0,64,64
 			loop = true
 			framerate = 30
 		}
 
-		animation lemon
+		animation pizza
 		{
 			frame = 0,64,64,64
 			loop = true
 			framerate = 30
 		}
 
-		animation apple
+		animation cake
 		{
 			frame = 64,64,64,64
 			loop = true
 			framerate = 30
 		}
 
-		animation pear
+		animation egg
 		{
 			frame = 128,64,64,64
 			loop = true
 			framerate = 30
 		}
 
-		animation buttfruit
+		animation beans
 		{
 			frame = 192,64,64,64
 			loop = true

@@ -188,5 +188,8 @@
     <ClInclude Include="src\BackgroundShader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\MusicCallback.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

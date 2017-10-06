@@ -167,6 +167,7 @@
     <ClInclude Include="src\MapData.hpp" />
     <ClInclude Include="src\MenuState.hpp" />
     <ClInclude Include="src\MessageIDs.hpp" />
+    <ClInclude Include="src\MusicCallback.hpp" />
     <ClInclude Include="src\NPCSystem.hpp" />
     <ClInclude Include="src\PacketIDs.hpp" />
     <ClInclude Include="src\ParticleDirector.hpp" />

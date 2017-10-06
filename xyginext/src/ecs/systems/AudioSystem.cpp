@@ -33,6 +33,7 @@ source distribution.
 #include <xyginext/ecs/Scene.hpp>
 
 #include <xyginext/audio/Mixer.hpp>
+#include <xyginext/core/App.hpp>
 
 #include <SFML/Audio/Listener.hpp>
 
