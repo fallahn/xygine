@@ -13,7 +13,7 @@ sprite_sheet npcs
 			frame = 320, 64, 64, 64
 
 			loop = true
-			framerate = 15
+			framerate = 10
 		}
 	}
 
