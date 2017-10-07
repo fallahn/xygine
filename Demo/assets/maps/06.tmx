@@ -21,7 +21,7 @@
  </layer>
  <objectgroup name="Spawn">
   <object id="55" name="clocksy" x="832" y="208" width="16" height="16"/>
-  <object id="56" name="clocksy" x="80" y="384" width="16" height="16"/>
+  <object id="56" name="clocksy" x="112" y="384" width="16" height="16"/>
   <object id="58" name="whirlybob" x="480" y="512" width="16" height="16"/>
   <object id="60" name="whirlybob" x="480" y="192" width="16" height="16"/>
   <object id="61" name="whirlybob" x="480" y="672" width="16" height="16"/>

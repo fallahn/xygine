@@ -9,7 +9,7 @@ particle_system spawn
 	colour = 255,255,255,255
 	//rotation_speed = 25
 	scale_affector = 0.6
-	size = 2.0
+	size = 4.0
 	emit_rate = 30
 	emit_count = 2
 	spawn_radius = 35

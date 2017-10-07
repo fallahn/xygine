@@ -21,9 +21,9 @@
  </layer>
  <objectgroup name="Spawn">
   <object id="55" name="clocksy" x="768" y="384" width="16" height="16"/>
-  <object id="56" name="clocksy" x="208" y="384" width="16" height="16"/>
+  <object id="56" name="clocksy" x="240" y="384" width="16" height="16"/>
   <object id="60" name="whirlybob" x="480" y="192" width="16" height="16"/>
-  <object id="74" name="clocksy" x="208" y="544" width="16" height="16"/>
+  <object id="74" name="clocksy" x="240" y="544" width="16" height="16"/>
   <object id="75" name="clocksy" x="768" y="544" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="Teleport">

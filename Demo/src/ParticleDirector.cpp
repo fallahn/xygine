@@ -65,8 +65,7 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             switch (data.actorID)
             {
             default: return;
-            //case ActorID::BubbleOne:
-            //case ActorID::BubbleTwo:
+            
 
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
@@ -78,6 +77,19 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
                 break;
             case ActorID::Goobly:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::SpawnNPC];
+                break;
+            case ActorID::LightningOne:
+            case ActorID::LightningTwo:
+            case ActorID::FlameOne:
+            case ActorID::FlameTwo:
+            case ActorID::WaterOne:
+            case ActorID::WaterTwo:
+            case ActorID::BubbleOne:
+            case ActorID::BubbleTwo:
+                //if (data.entity.getComponent<AnimationController>().currentAnim == AnimationController::Idle)
+                {
+                    ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
+                }
                 break;
             }
             ent.getComponent<xy::Transform>().setPosition(data.x, data.y);

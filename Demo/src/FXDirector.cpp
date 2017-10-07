@@ -42,6 +42,7 @@ namespace
 FXDirector::FXDirector()
     : m_nextFreeEntity(0)
 {
+    //TODO set up mappign in xygine
     m_soundResource.get("assets/sound/collect.wav");
     m_soundResource.get("assets/sound/jump.wav");
     m_soundResource.get("assets/sound/npc_pop.wav");
@@ -51,6 +52,7 @@ FXDirector::FXDirector()
     m_soundResource.get("assets/sound/lightning_die.wav");
     m_soundResource.get("assets/sound/flame.wav");
     m_soundResource.get("assets/sound/powerup_pop.wav");
+    m_soundResource.get("assets/sound/pop.wav");
 }
 
 //public
@@ -73,6 +75,10 @@ void FXDirector::handleMessage(const xy::Message& msg)
                 playSound(m_soundResource.get("assets/sound/collect.wav"));
             }
             break;
+            case ActorID::BubbleOne:
+            case ActorID::BubbleTwo:
+                playSound(m_soundResource.get("assets/sound/pop.wav"));
+                break;
             }
         }
         else if (data.type == SceneEvent::ActorSpawned)

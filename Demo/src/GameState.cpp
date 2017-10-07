@@ -357,6 +357,7 @@ void GameState::loadAssets()
         ent.getComponent<xy::Sprite>().setShader(&m_backgroundShader);
         ent.addComponent<xy::Callback>().function = ColourRotator(m_backgroundShader);
     }
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::SceneBackground;
 
     ent = m_scene.createEntity();
     ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/wall.png")).setDepth(5);

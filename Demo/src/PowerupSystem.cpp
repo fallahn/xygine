@@ -33,6 +33,7 @@ source distribution.
 #include "PacketIDs.hpp"
 #include "CommandIDs.hpp"
 #include "NPCSystem.hpp"
+#include "MessageIDs.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
@@ -340,7 +341,22 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float dt)
                     powerup.lifetime = 1.f;
                     entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
 
-                    getScene()->getSystem<NPCSystem>().despawn(man.otherEntity, powerup.owner);
+                    sf::Uint8 cause = 0;
+                    switch (powerup.type)
+                    {
+                    default: break;
+                    case Powerup::Type::Flame:
+                        cause = NpcEvent::Flame;
+                        break;
+                    case Powerup::Type::Lightning:
+                        cause = NpcEvent::Lightning;
+                        break;
+                    case Powerup::Type::Water:
+                        cause = NpcEvent::Water;
+                        break;
+                    }
+
+                    getScene()->getSystem<NPCSystem>().despawn(man.otherEntity, powerup.owner, cause);
                 }
                 break;
             }
@@ -378,7 +394,7 @@ void PowerupSystem::fireCollision(xy::Entity entity)
             case CollisionType::NPC:
                 if (powerup.state == Powerup::State::Dying)
                 {
-                    getScene()->getSystem<NPCSystem>().despawn(man.otherEntity, powerup.owner);
+                    getScene()->getSystem<NPCSystem>().despawn(man.otherEntity, powerup.owner, NpcEvent::Flame);
                 }
                 break;
                 //TODO should it kill own player too?

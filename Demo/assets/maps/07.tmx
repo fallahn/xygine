@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="35">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="36">
  <properties>
   <property name="round_time" type="float" value="39"/>
  </properties>
@@ -16,7 +16,7 @@
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYwAHEokhYDiouT0BMFKqXg0K7QVgMCRMCyGqpZT+l+kXRMC6Aro4W4YcrHLGpGSzhBwLoYYMcjrjkaBF+slA5BQJisPCDAVMgdsBhjy0a35SAu2DqzYHYHou8ARDrQ9kAzdAH8A==
+   eJxjYBhYwAHEokhYDiouT0BMFKqXg0K7QVgMCRMCyGrx2Y/N/bjsJxfA9IuiYVwAXR0twg9XOGJTQy37qaEfPWyQwxGXHC3CTxYqp0BADBZ+MGAKxA447LFF45sScBdMvTkQ22ORNwBifSgbAPbTCFc=
   </data>
  </layer>
  <objectgroup color="#00aa00" name="Solid">
@@ -44,6 +44,7 @@
   <object id="11" type="platform" x="768" y="288" width="192" height="32"/>
   <object id="13" type="platform" x="64" y="448" width="256" height="32"/>
   <object id="16" type="platform" x="144" y="768" width="304" height="32"/>
+  <object id="35" x="416" y="320" width="192" height="32"/>
  </objectgroup>
  <objectgroup name="Spawn">
   <object id="28" name="whirlybob" x="128" y="208" width="16" height="16"/>

@@ -40,6 +40,7 @@ source distribution.
 namespace
 {
     const sf::Uint32 NpcScore = 500;
+    const sf::Uint32 PowerupScore = 800;
     const sf::Uint32 GooblyScore = 850;
     const sf::Uint32 SmallFruitScore = 350;
     const sf::Uint32 LargeFruitScore = 1000;
@@ -78,8 +79,10 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             }
             else
             {
-                m_playerValues[data.playerID].score += NpcScore;
-                sendUpdate(data.playerID, NpcScore);
+                auto score = data.causeOfDeath == NpcEvent::Bubble ? NpcScore : PowerupScore;
+                
+                m_playerValues[data.playerID].score += score;
+                sendUpdate(data.playerID, score);
             }            
         }
     }

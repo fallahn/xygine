@@ -756,9 +756,6 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = id;
 
-    entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
-    entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
-    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask);
     entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, NPCSize, NPCSize });
 
     entity.addComponent<AnimationController>();
@@ -775,21 +772,26 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
             xy::Util::Random::value(-1.f, 1.f)
         };
         entity.getComponent<NPC>().velocity = xy::Util::Vector::normalise(entity.getComponent<NPC>().velocity);
-        
+        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
         break;
     case ActorID::Clocksy:
         entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(1, 2) % 2 == 1) ? -1.f : 1.f;
+        
+        entity.addComponent<CollisionComponent>().addHitbox({ ClocksyPadding, ClocksyPadding* 2.f, ClocksySize, ClocksySize }, CollisionType::NPC);
         entity.getComponent<CollisionComponent>().addHitbox(
-        { -PlayerSizeOffset, NPCSize,
-            NPCSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot); //feets!
+        { ClocksyPadding, (ClocksyPadding * 2.f) + ClocksySize,
+            ClocksySize + ClocksyPadding, PlayerFootSize }, CollisionType::Foot); //feets!
+        //{ -PlayerSizeOffset, NPCSize,
+        //    NPCSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot); //feets!
         
         break;
     case ActorID::Goobly:
-        //don't include this in map actors
-        //m_mapData.actorCount--;
+        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
         break;
     }
 
+    entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask);
     
     auto* msg = m_messageBus.post<NpcEvent>(MessageID::NpcMessage);
     msg->type = NpcEvent::Spawned;

@@ -83,6 +83,8 @@ static constexpr float PlayerFootSize = 10.f;
 static constexpr float BubbleVerticalVelocity = -100.f;
 static constexpr float BubbleSize = 64.f;
 static constexpr float NPCSize = 64.f;
+static constexpr float ClocksySize = 52.f;
+static constexpr float ClocksyPadding = 6.f;
 
 static constexpr float SmallFruitSize = 64.f;
 static constexpr float LargeFruitSize = 96.f;

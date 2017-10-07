@@ -41,9 +41,9 @@
   <object id="46" x="848" y="800" width="112" height="32"/>
  </objectgroup>
  <objectgroup name="Spawn">
-  <object id="28" name="clocksy" x="256" y="320" width="16" height="16"/>
-  <object id="30" name="clocksy" x="704" y="320" width="16" height="16"/>
-  <object id="35" name="clocksy" x="256" y="480" width="16" height="16"/>
-  <object id="36" name="clocksy" x="704" y="480" width="16" height="16"/>
+  <object id="28" name="clocksy" x="288" y="320" width="16" height="16"/>
+  <object id="30" name="clocksy" x="736" y="320" width="16" height="16"/>
+  <object id="35" name="clocksy" x="288" y="480" width="16" height="16"/>
+  <object id="36" name="clocksy" x="736" y="480" width="16" height="16"/>
  </objectgroup>
 </map>
