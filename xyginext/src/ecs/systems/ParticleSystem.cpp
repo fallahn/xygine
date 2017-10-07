@@ -52,6 +52,8 @@ namespace
     const std::string VertexShader = R"(
         #version 120    
         
+        uniform float u_screenScale;
+
         varying mat2 v_rotation;
         
         void main()
@@ -64,7 +66,7 @@ namespace
 
             gl_FrontColor = gl_Color;
             gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-            gl_PointSize = rotScale.y;
+            gl_PointSize = rotScale.y * u_screenScale;
         })";
 
     const std::string FragmentShader = R"(
@@ -249,6 +251,10 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     auto view = rt.getView();
     sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
     
+    //scale particles to match screen size
+    float ratio = static_cast<float>(App::getRenderWindow()->getSize().x) / viewableArea.width;
+    m_shader.setUniform("u_screenScale", ratio);
+
     states.shader = &m_shader;
     states.texture = &m_dummyTexture;
     
