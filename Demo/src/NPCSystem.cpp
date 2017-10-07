@@ -189,6 +189,7 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
         if (npc.angry) vel *= angryMultiplier;
         tx.move(vel);
         entity.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
+        entity.getComponent<AnimationController>().direction = (npc.velocity.x > 0) ? -1.f : 1.f;
     }
 }
 

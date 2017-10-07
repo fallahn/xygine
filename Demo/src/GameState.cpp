@@ -1043,14 +1043,12 @@ void GameState::spawnClient(const ClientData& data)
         entity.getComponent<Player>().spawnPosition = { data.spawnX, data.spawnY };
         m_playerInput.setPlayerEntity(entity);
 
-        entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
+        entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset * 2.f, PlayerSize, PlayerSize }, CollisionType::Player);
         entity.getComponent<CollisionComponent>().addHitbox({ -PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
         entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
 
-        //entity.addComponent<xy::Camera>() = m_scene.getActiveCamera().getComponent<xy::Camera>();
-        //m_scene.setActiveCamera(entity);
 
         //temp for now just to flash player when invincible
         entity.addComponent<xy::Callback>().function = 
@@ -1130,8 +1128,7 @@ void GameState::switchMap(const MapData& data)
         entity.getComponent<xy::Callback>().active = true;
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
-
-    
+   
     cmd.targetFlags = CommandID::SceneMusic;
     cmd.action = [](xy::Entity entity, float)
     {
@@ -1167,6 +1164,7 @@ void GameState::switchMap(const MapData& data)
             {
                 entity.getComponent<Player>().state = Player::State::Disabled;
             }
+            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 

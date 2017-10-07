@@ -95,6 +95,7 @@ public:
                 emitter.stop();
                 emitter.setSource(m_trackNames[m_currentTrack]);
                 emitter.play();
+                emitter.setLooped(true);
 
                 m_fadeTime = FadeTime;
                 m_state = State::In;
@@ -116,7 +117,6 @@ private:
 
     State m_state;
 
-    //TODO replace this with IDs from resource manager
     std::array<std::string, 3u> m_trackNames;
     std::size_t m_currentTrack;
 };
