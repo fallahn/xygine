@@ -42,6 +42,7 @@ source distribution.
 #include "ScoreTag.hpp"
 #include "BackgroundShader.hpp"
 #include "MusicCallback.hpp"
+#include "TowerDirector.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -141,6 +142,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 {
     launchLoadingScreen();
     loadAssets();
+    loadTower();
     loadUI();
     m_client.create(2);
 
@@ -279,6 +281,7 @@ void GameState::loadAssets()
     //m_scene.addPostProcess<xy::PostOldSchool>();
     m_scene.addDirector<ParticleDirector>(m_textureResource);
     m_scene.addDirector<FXDirector>();
+    m_scene.addDirector<TowerDirector>();
 
     //preload textures
     xy::SpriteSheet spriteSheet;
@@ -345,6 +348,8 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two_lightning");
     m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_two_lightning");
 
+    
+
     //load background
     auto ent = m_scene.createEntity();
     ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/background.png")).setDepth(-50);
@@ -359,22 +364,7 @@ void GameState::loadAssets()
     }
     ent.addComponent<xy::CommandTarget>().ID = CommandID::SceneBackground;
 
-    ent = m_scene.createEntity();
-    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/wall.png")).setDepth(5);
-    ent.addComponent<xy::Transform>();
-
-    ent = m_scene.createEntity();
-    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/wall.png")).setDepth(5);
-    ent.addComponent<xy::Transform>().setPosition(0.f, MapBounds.height - ent.getComponent<xy::Sprite>().getSize().y);
-
-    ent = m_scene.createEntity();
-    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/tower.png")).setDepth(5);
-    ent.addComponent<xy::Transform>().setPosition(MapBounds.width, 0.f);
-
-    ent = m_scene.createEntity();
-    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/tower.png")).setDepth(5);
-    ent.addComponent<xy::Transform>().setPosition(-ent.getComponent<xy::Sprite>().getSize().x, 0.f);
-
+    //music player
     ent = m_scene.createEntity();
     ent.addComponent<xy::AudioEmitter>().setSource("assets/sound/music/01.ogg");
     ent.getComponent<xy::AudioEmitter>().play();
@@ -470,6 +460,75 @@ bool GameState::loadScene(const MapData& data, sf::Vector2f position)
     m_mapData = data;
 
     return true;
+}
+
+void GameState::loadTower()
+{
+    xy::SpriteSheet princessSpriteSheet;    
+    princessSpriteSheet.loadFromFile("assets/sprites/princess.spt", m_textureResource);
+
+    //xy::SpriteSheet towerSpriteSheet;
+    //towerSpriteSheet.loadFromFile("assets/sprites/tower_sprites.spt", m_textureResource);
+
+    auto ent = m_scene.createEntity();
+    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/wall.png")).setDepth(5);
+    ent.addComponent<xy::Transform>();
+
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/wall_bottom.png")).setDepth(5);
+    ent.addComponent<xy::Transform>().setPosition(0.f, MapBounds.height - ent.getComponent<xy::Sprite>().getSize().y);
+
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/tower.png")).setDepth(5);
+    ent.addComponent<xy::Transform>().setPosition(MapBounds.width, 0.f);
+
+    auto princessEnt = m_scene.createEntity();
+    princessEnt.addComponent<xy::Sprite>() = princessSpriteSheet.getSprite("player_two");
+    princessEnt.getComponent<xy::Sprite>().setDepth(6);
+    ent.getComponent<xy::Transform>().addChild(princessEnt.addComponent<xy::Transform>());
+    princessEnt.getComponent<xy::Transform>().setPosition(128.f, 12.f);
+    princessEnt.addComponent<xy::SpriteAnimation>().play(0);
+    princessEnt.addComponent<xy::CommandTarget>().ID = CommandID::Princess;
+    princessEnt.addComponent<AnimationController>().animationMap[AnimationController::Shoot] = princessSpriteSheet.getAnimationIndex("angry", "player_two");
+    princessEnt.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
+    princessEnt.getComponent<AnimationController>().direction = -1.f;
+    princessEnt.addComponent<Actor>().id = princessEnt.getIndex();
+    princessEnt.getComponent<Actor>().type = ActorID::PrincessTwo;
+
+    /*m_textureResource.get("assets/images/tower_sprites.png").setRepeated(true);
+    auto ladderEnt = m_scene.createEntity();
+    ladderEnt.addComponent<xy::Sprite>() = towerSpriteSheet.getSprite("ladder");
+    ladderEnt.getComponent<xy::Sprite>().setDepth(6);
+    auto rect = ladderEnt.getComponent<xy::Sprite>().getTextureRect();
+    rect.height = xy::DefaultSceneSize.y;
+    ladderEnt.getComponent<xy::Sprite>().setTextureRect(rect);
+    ent.getComponent<xy::Transform>().addChild(ladderEnt.addComponent<xy::Transform>());
+    ladderEnt.getComponent<xy::Transform>().move(128.f, 0.f);*/
+
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/tower.png")).setDepth(5);
+    ent.addComponent<xy::Transform>().setPosition(-ent.getComponent<xy::Sprite>().getSize().x, 0.f);
+
+    princessEnt = m_scene.createEntity();
+    princessEnt.addComponent<xy::Sprite>() = princessSpriteSheet.getSprite("player_one");
+    princessEnt.getComponent<xy::Sprite>().setDepth(6);
+    ent.getComponent<xy::Transform>().addChild(princessEnt.addComponent<xy::Transform>());
+    princessEnt.getComponent<xy::Transform>().setPosition(64.f, 12.f);
+    princessEnt.addComponent<xy::SpriteAnimation>().play(0);
+    princessEnt.addComponent<xy::CommandTarget>().ID = CommandID::Princess;
+    princessEnt.addComponent<AnimationController>().animationMap[AnimationController::Shoot] = princessSpriteSheet.getAnimationIndex("angry", "player_one");
+    princessEnt.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
+    princessEnt.addComponent<Actor>().id = princessEnt.getIndex();
+    princessEnt.getComponent<Actor>().type = ActorID::PrincessOne;
+
+   
+    /*ladderEnt = m_scene.createEntity();
+    ladderEnt.addComponent<xy::Sprite>() = towerSpriteSheet.getSprite("ladder");
+    ladderEnt.getComponent<xy::Sprite>().setDepth(6);
+    rect = ladderEnt.getComponent<xy::Sprite>().getTextureRect();
+    rect.height = xy::DefaultSceneSize.y;
+    ladderEnt.getComponent<xy::Sprite>().setTextureRect(rect);
+    ent.getComponent<xy::Transform>().addChild(ladderEnt.addComponent<xy::Transform>());*/
 }
 
 void GameState::loadUI()
@@ -972,6 +1031,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
             {
                 auto& controller = entity.getComponent<AnimationController>();
                 controller.currentAnim = AnimationController::Shoot;
+                entity.getComponent<xy::SpriteAnimation>().stop(); //rewinds the frame position
                 entity.getComponent<xy::SpriteAnimation>().play(controller.animationMap[AnimationController::Shoot]);
             };
             m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);

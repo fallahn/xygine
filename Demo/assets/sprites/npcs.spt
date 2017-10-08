@@ -124,4 +124,125 @@ sprite_sheet npcs
 			loop=true
 		}
 	}
+
+	sprite squatmo
+	{
+		bounds = 128,448,64,64
+
+		animation idle
+		{
+			frame = 128,448,64,64
+			frame = 192,448,64,64
+			frame = 256,448,64,64
+			frame = 192,448,64,64
+			loop = true
+			framerate = 10
+		}
+
+		animation jump_up
+		{
+			frame = 320,448,64,64
+			loop = true
+			framerate = 25
+		}
+
+		animation jump_down
+		{
+			frame = 384,448,64,64
+			loop = true
+			framerate = 25
+		}
+
+		animation die
+		{
+			frame = 0,384,64,64
+			frame = 64,384,64,64
+			frame = 64,448,64,64
+			frame = 0,448,64,64
+
+			framerate = 14
+			loop=true
+		}
+
+		animation bubble_one
+		{
+			frame = 128,384,64,64
+			frame = 192,384,64,64
+			frame = 256,384,64,64
+			frame = 192,384,64,64
+
+			framerate = 12
+			loop=true
+		}
+
+		animation bubble_two
+		{
+			frame = 320,384,64,64
+			frame = 384,384,64,64
+			frame = 448,384,64,64
+			frame = 384,384,64,64
+
+			framerate = 12
+			loop=true
+		}
+	}
+
+	sprite balldock
+	{
+		bounds = 384,0,64,64
+
+		animation idle
+		{
+			frame = 384,0,64,64
+
+			loop = true
+			framerate = 25
+		}
+
+		animation die
+		{
+			frame = 320,128,64,64
+			frame = 320,192,64,64
+			frame = 320,256,64,64
+			frame = 320,320,64,64
+
+			framerate = 14
+			loop=true
+		}
+
+		animation bubble_one
+		{
+			frame = 448,192,64,64
+			frame = 448,256,64,64
+			frame = 448,320,64,64
+			frame = 448,256,64,64
+
+			framerate = 12
+			loop=true
+		}
+
+		animation bubble_two
+		{
+			frame = 448,0,64,64
+			frame = 448,64,64,64
+			frame = 448,128,64,64
+			frame = 448,64,64,64
+
+			framerate = 12
+			loop=true
+		}
+
+		animation walk
+		{
+			frame = 384,0,64,64
+			frame = 384,64,64,64
+			frame = 384,128,64,64
+			frame = 384,192,64,64	
+			frame = 384,256,64,64	
+			frame = 384,320,64,64	
+
+			framerate = 12
+			loop=true
+		}
+	}
 }

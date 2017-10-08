@@ -46,7 +46,8 @@ namespace ActorID
         FruitLarge,
         FlameOne, FlameTwo,
         LightningOne, LightningTwo,
-        WaterOne, WaterTwo
+        WaterOne, WaterTwo,
+        PrincessOne, PrincessTwo
     };
 }
 

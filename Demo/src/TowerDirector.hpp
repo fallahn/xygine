@@ -25,33 +25,24 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_COMMAND_ID_HPP_
-#define DEMO_GAME_COMMAND_ID_HPP_
+#ifndef DEMO_TOWER_DIRECTOR_HPP_
+#define DEMO_TOWER_DIRECTOR_HPP_
 
-namespace CommandID
+#include <xyginext/ecs/Director.hpp>
+
+class TowerDirector final : public xy::Director
 {
-    enum
-    {
-        NetActor = 0x1,
-        MenuText = 0x2,
-        PlayerOne = 0x4,
-        PlayerTwo = 0x8,
-        NPC = 0x10,
-        //scoreboard/UI
-        ScoreOne = 0x20,
-        ScoreTwo = 0x40,
-        LivesOne = 0x80,
-        LivesTwo = 0x100,
-        Timeout = 0x200,
-        HighScore = 0x400,
-        //map data
-        MapItem = 0x800, //anything with this is removed on map changed
-        MapBackground = 0x1000,
-        SceneBackground = 0x2000,
-        SceneMusic = 0x4000,
-        //UI animations
-        Princess = 0x8000
-    };
-}
+public:
+    TowerDirector();
 
-#endif //DEMO_GAME_COMMAND_ID_HPP_
+    void handleMessage(const xy::Message&) override;
+
+    void handleEvent(const sf::Event&) override;
+
+    void process(float) override;
+
+private:
+
+};
+
+#endif //DEMO_TOWER_DIRECTOR_HPP_

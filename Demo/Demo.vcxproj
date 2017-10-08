@@ -146,6 +146,7 @@
     <ClCompile Include="src\Server.cpp" />
     <ClCompile Include="src\sha1.cpp" />
     <ClCompile Include="src\TextboxDirector.cpp" />
+    <ClCompile Include="src\TowerDirector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ActorSystem.hpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="src\SpriteIDs.hpp" />
     <ClInclude Include="src\StateIDs.hpp" />
     <ClInclude Include="src\TextboxDirector.hpp" />
+    <ClInclude Include="src\TowerDirector.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

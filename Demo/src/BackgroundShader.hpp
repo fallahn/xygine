@@ -69,7 +69,7 @@ public:
     explicit ColourRotator(sf::Shader& shader)
         : m_shader(shader) {}
 
-    void operator () (xy::Entity entity, float dt)
+    void operator () (xy::Entity, float dt)
     {
         m_rotation += dt * 30.f;
         m_shader.setUniform("u_colourAngle", m_rotation);

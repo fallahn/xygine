@@ -95,6 +95,7 @@ private:
 
     void loadAssets();
     bool loadScene(const MapData&, sf::Vector2f = sf::Vector2f());
+    void loadTower();
     void loadUI();
 
     void handlePacket(const xy::NetEvent&);
