@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="64">
+ <properties>
+  <property name="round_time" type="float" value="39"/>
+ </properties>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
+  <image source="../images/block.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+  <image source="../images/block_background.png" width="384" height="448"/>
+ </tileset>
+ <layer name="background" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJzVU8sKgDAM62Wwn9wOTp34/x+ghRZC6MDXxUBZ0kcOo80iks9IFhneHNSiGNVHOcwryhkVohBn7dwxm27GfUZ1h/5m/Zv1CXkoJqo7b3IfONMfzDumILe88IugfuvHnn8E/nUFvVHfDryb9j1DXkwX8KygMcf7zrvPN6C4cqPRPY9uGeuRZ6L8AbtZHPw=
+  </data>
+ </layer>
+ <layer name="Blocks" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBhYwAHEokhYDiouT0BMFKqXA4e5ClAsC8W47EbXD1MrAcSsUCyOZCY+/RJIakFsASDmRxMTR1JPa/3o7qe3/QPtfkr1w9IZOfqxAVz6xaBYAM0umDiyGD+SOLLdpkDsgMNeWzS+KR43Iqs3B2J7LPIGQKwPZQMAwggLZw==
+  </data>
+ </layer>
+ <objectgroup color="#00aa00" name="Solid">
+  <object id="2" x="416" y="0" width="192" height="144"/>
+  <object id="3" x="64" y="0" width="224" height="160"/>
+  <object id="4" x="736" y="0" width="224" height="160"/>
+  <object id="5" x="736" y="928" width="224" height="112"/>
+  <object id="6" x="416" y="928" width="192" height="112"/>
+  <object id="7" x="64" y="928" width="224" height="112"/>
+  <object id="8" x="960" y="128" width="64" height="832"/>
+  <object id="9" x="0" y="128" width="64" height="832"/>
+  <object id="56" x="736" y="320" width="64" height="608"/>
+  <object id="57" x="224" y="320" width="64" height="608"/>
+  <object id="58" x="416" y="224" width="192" height="576"/>
+  <object id="59" x="736" y="288" width="32" height="32"/>
+  <object id="60" x="256" y="288" width="32" height="32"/>
+  <object id="61" x="576" y="896" width="32" height="32"/>
+  <object id="62" x="416" y="896" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup color="#ff007f" name="Teleport">
+  <object id="21" x="288" y="1040" width="128" height="48"/>
+  <object id="22" x="608" y="1040" width="128" height="48"/>
+  <object id="19" x="288" y="0" width="128" height="10"/>
+  <object id="20" x="608" y="0" width="128" height="10"/>
+ </objectgroup>
+ <objectgroup color="#00ff00" name="Platform"/>
+ <objectgroup name="Spawn">
+  <object id="28" name="whirlybob" x="368" y="464" width="16" height="16"/>
+  <object id="29" name="whirlybob" x="656" y="464" width="16" height="16"/>
+  <object id="30" name="clocksy" x="752" y="224" width="16" height="16"/>
+  <object id="31" name="clocksy" x="544" y="864" width="16" height="16"/>
+  <object id="34" name="clocksy" x="480" y="864" width="16" height="16"/>
+  <object id="63" name="clocksy" x="272" y="224" width="16" height="16"/>
+ </objectgroup>
+</map>
