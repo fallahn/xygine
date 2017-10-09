@@ -32,6 +32,8 @@ source distribution.
 
 #include <xyginext/ecs/Entity.hpp>
 
+#include <SFML/Graphics/Color.hpp>
+
 #include <tmxlite/Object.hpp>
 
 namespace xy
@@ -104,6 +106,9 @@ static const float TopSpawn = 896.f;
 
 static const sf::Vector2f TowerSpawnOne(-192.f, 1024.f);
 static const sf::Vector2f TowerSpawnTwo(MapBounds.width + 128.f, 1024.f);
+
+static const sf::Color BubbleColourOne(255, 212, 0);
+static const sf::Color BubbleColourTwo(255, 0, 212);
 
 //map loading functions shared between client / server
 void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType type);

@@ -1,0 +1,19 @@
+particle_system pop
+{
+	//src = "assets/images/star.png"
+	blendmode = alpha
+	gravity = 0,-290
+	velocity = -0.4,-50.1
+	spread = 10
+	lifetime = 0.3
+	lifetime_variance = 0.3
+	colour = 255,255,255,255
+	rotation_speed = 0
+	scale_affector = 0.5
+	size = 3.6
+	emit_rate = 30
+	emit_count = 8
+	spawn_radius = 10
+	spawn_offset = 32,32
+	release_count = 64
+}

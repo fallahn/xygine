@@ -44,7 +44,7 @@ namespace
 }
 
 ParticleDirector::ParticleDirector(xy::TextureResource& tr)
-    :m_nextFreeEmitter  (0)
+    : m_nextFreeEmitter  (0)
 {
     //load particle presets
     m_settings[SettingsID::BubblePop].loadFromFile("assets/particles/pop.xyp", tr);
@@ -97,6 +97,8 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
         }
         else if (data.type == SceneEvent::ActorSpawned)
         {
+            //hm do we want to actually get a new entity
+            //if most cases aren't handled?
             auto ent = getNextEntity();
             switch (data.actorID)
             {
@@ -106,6 +108,10 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             case ActorID::Goobly:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::SpawnNPC];
                 break;
+            /*case ActorID::BubbleOne:
+            case ActorID::BubbleTwo:
+                
+                break;*/
             }
             ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
             ent.getComponent<xy::ParticleEmitter>().start();

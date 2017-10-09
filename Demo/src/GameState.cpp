@@ -384,6 +384,7 @@ void GameState::loadAssets()
     ent.getComponent<xy::Callback>().active = true;
     ent.addComponent<xy::Transform>();
 
+    m_bubbleParticles.loadFromFile("assets/particles/shoot.xyp", m_textureResource);
 
     if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile))
     {
@@ -1044,6 +1045,10 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
         entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
 
+        entity.addComponent<xy::ParticleEmitter>().settings = m_bubbleParticles;
+        entity.getComponent<xy::ParticleEmitter>().settings.colour = (actorEvent.actor.type == ActorID::BubbleOne) ? BubbleColourOne : BubbleColourTwo;
+        entity.getComponent<xy::ParticleEmitter>().start();
+
         {
             xy::Command cmd;
             cmd.targetFlags = (actorEvent.actor.type == ActorID::BubbleOne) ? CommandID::PlayerOne : CommandID::PlayerTwo;
@@ -1143,7 +1148,7 @@ void GameState::spawnClient(const ClientData& data)
         m_playerInput.setPlayerEntity(entity);
 
         entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset * 2.f, PlayerSize, PlayerSize }, CollisionType::Player);
-        entity.getComponent<CollisionComponent>().addHitbox({ -PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot);
+        entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerSize, PlayerFootSize }, CollisionType::Foot);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
         entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());

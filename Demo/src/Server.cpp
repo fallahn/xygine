@@ -727,7 +727,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.getComponent<xy::Transform>().setOrigin((PlayerSize / 2.f) + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f));
 
     entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset * 2.f, PlayerSize, PlayerSize }, CollisionType::Player);
-    entity.getComponent<CollisionComponent>().addHitbox({ -PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot);
+    entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerSize, PlayerFootSize }, CollisionType::Foot);
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
     entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
@@ -780,7 +780,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
         entity.addComponent<CollisionComponent>().addHitbox({ ClocksyPadding, ClocksyPadding* 2.f, ClocksySize, ClocksySize }, CollisionType::NPC);
         entity.getComponent<CollisionComponent>().addHitbox(
         { ClocksyPadding, (ClocksyPadding * 2.f) + ClocksySize,
-            ClocksySize + ClocksyPadding, PlayerFootSize }, CollisionType::Foot); //feets!
+            ClocksySize /*+ ClocksyPadding*/, PlayerFootSize }, CollisionType::Foot); //feets!
 
         entity.getComponent<xy::Transform>().setOrigin((ClocksySize / 2.f) + ClocksyPadding, (ClocksySize / 2.f) + (ClocksyPadding * 2.f));
         break;
