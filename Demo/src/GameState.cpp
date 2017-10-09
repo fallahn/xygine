@@ -1427,8 +1427,29 @@ void GameState::updateUI(const InventoryUpdate& data)
     m_scene.getSystem<xy::CommandSystem>().sendCommand(scoreCmd);
     m_scene.getSystem<xy::CommandSystem>().sendCommand(livesCommand);
 
+    //only show score if there's an amount to see
     if (data.amount)
     {
         m_scene.getSystem<xy::CommandSystem>().sendCommand(textCommand);
+    }
+
+
+    if (data.lives == 0)
+    {
+        //kill the climbing dude :(
+        auto playerNumber = data.playerID;
+
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::TowerDude;
+        cmd.action = [&, playerNumber](xy::Entity entity, float)
+        {
+            auto id = (playerNumber == 0) ? ActorID::TowerOne : ActorID::TowerTwo;
+            if (entity.getComponent<Actor>().type == id)
+            {
+                entity.getComponent<xy::SpriteAnimation>().play(1);
+                entity.getComponent<xy::Callback>().active = true;
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
 }
