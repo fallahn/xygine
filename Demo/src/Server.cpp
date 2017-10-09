@@ -724,7 +724,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.getComponent<Actor>().id = entity.getIndex();
     m_clients[player].data.actor = entity.getComponent<Actor>();
     entity.addComponent<xy::Transform>().setPosition(m_clients[player].data.spawnX, m_clients[player].data.spawnY);
-    entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
+    entity.getComponent<xy::Transform>().setOrigin((PlayerSize / 2.f) + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f));
 
     entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset * 2.f, PlayerSize, PlayerSize }, CollisionType::Player);
     entity.getComponent<CollisionComponent>().addHitbox({ -PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot);
@@ -752,7 +752,6 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
 {
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(pos);
-    entity.getComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = id;
 
@@ -773,6 +772,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
         };
         entity.getComponent<NPC>().velocity = xy::Util::Vector::normalise(entity.getComponent<NPC>().velocity);
         entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
+        entity.getComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
         break;
     case ActorID::Clocksy:
         entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(1, 2) % 2 == 1) ? -1.f : 1.f;
@@ -781,12 +781,12 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
         entity.getComponent<CollisionComponent>().addHitbox(
         { ClocksyPadding, (ClocksyPadding * 2.f) + ClocksySize,
             ClocksySize + ClocksyPadding, PlayerFootSize }, CollisionType::Foot); //feets!
-        //{ -PlayerSizeOffset, NPCSize,
-        //    NPCSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot); //feets!
-        
+
+        entity.getComponent<xy::Transform>().setOrigin((ClocksySize / 2.f) + ClocksyPadding, (ClocksySize / 2.f) + (ClocksyPadding * 2.f));
         break;
     case ActorID::Goobly:
         entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
+        entity.getComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
         break;
     }
 

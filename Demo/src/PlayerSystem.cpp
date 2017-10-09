@@ -366,12 +366,12 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
     auto& player = entity.getComponent<Player>();
     auto& tx = entity.getComponent<xy::Transform>();
     const auto& hitboxes = entity.getComponent<CollisionComponent>().getHitboxes();
-    auto count = entity.getComponent<CollisionComponent>().getHitboxCount();
+    auto hitboxCount = entity.getComponent<CollisionComponent>().getHitboxCount();
 
     if (player.state == Player::State::Disabled) return;
 
     //check for collision and resolve
-    for (auto i = 0u; i < count; ++i)
+    for (auto i = 0u; i < hitboxCount; ++i)
     {
         const auto& hitbox = hitboxes[i];
         if (hitbox.getType() == CollisionType::Player)
@@ -471,8 +471,8 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
             && player.state != Player::State::Dying && player.state != Player::State::Dead)
         {
             //foot sensor
-            auto count = hitbox.getCollisionCount();
-            if (count == 0)
+            auto collisionCount = hitbox.getCollisionCount();
+            if (collisionCount == 0)
             {
                 player.state = Player::State::Jumping; //start falling when nothing underneath
             }

@@ -1003,7 +1003,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     auto addSprite = [&](xy::Entity sprEnt, sf::Int32 id)
     {
         sprEnt.addComponent<xy::Sprite>() = m_sprites[id];
-        sprEnt.addComponent<xy::SpriteAnimation>();// .play(0);
+        sprEnt.addComponent<xy::SpriteAnimation>();
         sprEnt.getComponent<AnimationController>() = m_animationControllers[id];
         sprEnt.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
     };
@@ -1047,6 +1047,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Goobly];
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::Goobly];
+        entity.getComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
         break;
     case ActorID::LightningOne:
         addSprite(entity, SpriteID::LightningOne);
@@ -1090,7 +1091,7 @@ void GameState::spawnClient(const ClientData& data)
         entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerTwo;
     }
 
-    entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
+    entity.getComponent<xy::Transform>().setOrigin((PlayerSize / 2.f) + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f));
     entity.addComponent<xy::SpriteAnimation>().play(0);
     entity.addComponent<MapAnimator>().state = MapAnimator::State::Static;
 
@@ -1262,12 +1263,12 @@ void GameState::spawnMapActors()
         case ActorID::Clocksy:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
+            entity.getComponent<xy::Transform>().setOrigin((ClocksySize / 2.f) + ClocksyPadding, (ClocksySize / 2.f) + (ClocksyPadding * 2.f));
             break;
         }
         entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.addComponent<xy::ParticleEmitter>().settings = emitterSettings;
-        //entity.getComponent<xy::ParticleEmitter>().start();
     }
 }
 
