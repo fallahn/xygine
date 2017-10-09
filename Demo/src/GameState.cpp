@@ -43,6 +43,7 @@ source distribution.
 #include "BackgroundShader.hpp"
 #include "MusicCallback.hpp"
 #include "TowerDirector.hpp"
+#include "TowerGuyCallback.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -348,7 +349,13 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two_lightning");
     m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_two_lightning");
 
-    
+    //dudes to climb tower
+    spriteSheet.loadFromFile("assets/sprites/tower_sprites.spt", m_textureResource);
+    m_sprites[SpriteID::TowerDudeOne] = spriteSheet.getSprite("player_one");
+    m_sprites[SpriteID::TowerDudeTwo] = spriteSheet.getSprite("player_two");
+
+    m_animationControllers[SpriteID::TowerDudeOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one");
+    m_animationControllers[SpriteID::TowerDudeTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two");
 
     //load background
     auto ent = m_scene.createEntity();
@@ -759,6 +766,19 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        
+        cmd.targetFlags = CommandID::TowerDude;
+        cmd.action = [&, actorID](xy::Entity entity, float)
+        {
+            auto id = (actorID == ActorID::PlayerOne) ? ActorID::TowerOne : ActorID::TowerTwo;
+            if (entity.getComponent<Actor>().type == id)
+            {
+                entity.getComponent<xy::SpriteAnimation>().play(1);
+                entity.getComponent<xy::Callback>().active = true;
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
         break;
     case PacketID::InventoryUpdate:
@@ -1079,17 +1099,34 @@ void GameState::spawnClient(const ClientData& data)
     entity.addComponent<xy::Transform>().setPosition(data.spawnX, data.spawnY);
     entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::PlayerOne];
 
+    auto towerEnt = m_scene.createEntity(); //little dude climbing tower
+    towerEnt.addComponent<xy::Transform>();
+
     if (data.actor.type == ActorID::PlayerOne)
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerOne];
         entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
         entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerOne;
+
+        towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeOne];
+        towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnOne);
+        towerEnt.addComponent<Actor>().type = ActorID::TowerOne;
     }
     else
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerTwo];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerTwo;
+
+        towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeTwo];
+        towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnTwo);
+        towerEnt.addComponent<Actor>().type = ActorID::TowerTwo;
     }
+    towerEnt.getComponent<xy::Sprite>().setDepth(6);
+    towerEnt.addComponent<xy::SpriteAnimation>();
+    towerEnt.addComponent<MapAnimator>().state = MapAnimator::State::Static;
+    towerEnt.getComponent<MapAnimator>().speed = 50.f;
+    towerEnt.addComponent<xy::CommandTarget>().ID = CommandID::TowerDude;
+    towerEnt.addComponent<xy::Callback>().function = TowerGuyCallback(m_scene);
 
     entity.getComponent<xy::Transform>().setOrigin((PlayerSize / 2.f) + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f));
     entity.addComponent<xy::SpriteAnimation>().play(0);
@@ -1201,7 +1238,7 @@ void GameState::switchMap(const MapData& data)
     m_scene.update(0.f); //force the command right away
 
 
-    if (loadScene(data, { 0.f, -(MapBounds.height/* + 128.f*/) }))
+    if (loadScene(data, { 0.f, -(MapBounds.height) }))
     {
         //init transition
         xy::Command cmd;
@@ -1227,6 +1264,22 @@ void GameState::switchMap(const MapData& data)
                 entity.getComponent<Player>().state = Player::State::Disabled;
             }
             entity.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        cmd.targetFlags = CommandID::TowerDude;
+        cmd.action = [](xy::Entity entity, float)
+        {
+            const auto& tx = entity.getComponent<xy::Transform>();
+            auto pos = tx.getPosition();
+            const float travel = xy::DefaultSceneSize.y / 25.f; //number of maps before reaching top TODO fix this somewhere
+            if (pos.y > travel)
+            {
+                pos.y -= travel;
+                entity.getComponent<MapAnimator>().dest = pos;
+                entity.getComponent<MapAnimator>().state = MapAnimator::State::Active;
+                entity.getComponent<xy::SpriteAnimation>().play(0);
+            }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 

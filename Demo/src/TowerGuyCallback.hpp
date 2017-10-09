@@ -25,38 +25,35 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_MAP_ANIMATOR_HPP_
-#define DEMO_MAP_ANIMATOR_HPP_
+#ifndef DEMO_TOWERGUY_CALLBACK_HPP_
+#define DEMO_TOWERGUY_CALLBACK_HPP_
 
-#include <xyginext/ecs/System.hpp>
+#include "ClientServerShared.hpp"
 
-struct MapAnimator final
-{
-    enum class State
-    {
-        Active, Static
-    }state = State::Static;
+#include <xyginext/ecs/Entity.hpp>
+#include <xyginext/ecs/Scene.hpp>
+#include <xyginext/ecs/components/Transform.hpp>
 
-    sf::Vector2f dest;
-    float speed = 500.f;
-};
+#include <SFML/System/Vector2.hpp>
 
-//animated map transistions
-class MapAnimatorSystem final : public xy::System
+class TowerGuyCallback final
 {
 public:
-
-    MapAnimatorSystem(xy::MessageBus&);
-
-    void process(float) override;
+    explicit TowerGuyCallback(xy::Scene& scene) : m_scene(scene), m_velocity(-100.f, -100.f) {}
+    
+    void operator () (xy::Entity entity, float dt)
+    {
+        m_velocity.y += Gravity * dt;
+        entity.getComponent<xy::Transform>().move(m_velocity * dt);
+        if (entity.getComponent<xy::Transform>().getPosition().y > xy::DefaultSceneSize.y)
+        {
+            m_scene.destroyEntity(entity);
+        }
+    }
 
 private:
-
-    std::size_t m_lastCount;
-    bool m_counting;
-
-    void onEntityAdded(xy::Entity) override;
-    void onEntityRemoved(xy::Entity) override;
+    xy::Scene& m_scene;
+    sf::Vector2f m_velocity;
 };
 
-#endif //DEMO_MAP_ANIMATOR_HPP_
+#endif //DEMO_TOWERGUY_CALLBACK_HPP_

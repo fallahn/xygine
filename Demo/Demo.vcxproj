@@ -184,6 +184,7 @@
     <ClInclude Include="src\StateIDs.hpp" />
     <ClInclude Include="src\TextboxDirector.hpp" />
     <ClInclude Include="src\TowerDirector.hpp" />
+    <ClInclude Include="src\TowerGuyCallback.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -17,6 +17,13 @@ sprite_sheet tower_sprites
 			framerate = 12
 			loop=true
 		}
+
+		animation die
+		{
+			frame = 192,0,64,64
+			framerate = 25
+			loop = true
+		}
 	}
 
 	sprite player_two
@@ -32,11 +39,14 @@ sprite_sheet tower_sprites
 			
 			framerate = 12
 			loop=true
-		}	
-	}
+		}
 
-	sprite ladder
-	{
-		bounds = 192,0,64,128
+		animation die
+		{
+			frame = 192,64,64,64
+			framerate = 25
+			loop = true
+		}
+
 	}
 }

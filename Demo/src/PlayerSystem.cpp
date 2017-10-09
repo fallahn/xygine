@@ -40,7 +40,6 @@ source distribution.
 #include <xyginext/util/Vector.hpp>
 #include <xyginext/core/App.hpp>
 
-//#include <xyginext/ecs/components/Text.hpp>
 
 namespace
 {
@@ -388,7 +387,7 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                 switch (man.otherType)
                 {
                 default: break;
-                case CollisionType::Bubble:
+                case CollisionType::Bubble:                    
                     //check bubble not in spawn state
                     if (man.otherEntity.hasComponent<Bubble>())
                     {
@@ -397,6 +396,7 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                             break;
                         }
                     }
+                    else break;
                     //else perform the same as if it were a platform
                 case CollisionType::Platform:
                     //only collide when moving downwards (one way plat)

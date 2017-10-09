@@ -33,14 +33,14 @@ source distribution.
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
+#include <xyginext/ecs/components/SpriteAnimation.hpp>
 #include <xyginext/util/Vector.hpp>
 #include <xyginext/core/App.hpp>
 #include <xyginext/ecs/Scene.hpp>
 
 namespace
 {
-    const float minDist = 1000.f; //sqr len
-    const float speed = 500.f;
+    const float minDist = 25.f; //sqr len
 }
 
 MapAnimatorSystem::MapAnimatorSystem(xy::MessageBus& mb)
@@ -71,10 +71,16 @@ void MapAnimatorSystem::process(float dt)
             {
                 tx.setPosition(animator.dest);
                 animator.state = MapAnimator::State::Static;
+
+                if (entity.hasComponent<xy::CommandTarget>() &&
+                    entity.getComponent<xy::CommandTarget>().ID == CommandID::TowerDude)
+                {
+                    entity.getComponent<xy::SpriteAnimation>().pause();
+                }
             }
             else if (l2 > 0)
             {
-                tx.move(xy::Util::Vector::normalise(dist) * speed * dt);
+                tx.move(xy::Util::Vector::normalise(dist) * animator.speed * dt);
 
                 if (l2 < minDist * 2.f) //we assume this is a map movement and tell player sprites to start moving
                 {

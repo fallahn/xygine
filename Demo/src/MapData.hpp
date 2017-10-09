@@ -47,7 +47,8 @@ namespace ActorID
         FlameOne, FlameTwo,
         LightningOne, LightningTwo,
         WaterOne, WaterTwo,
-        PrincessOne, PrincessTwo
+        PrincessOne, PrincessTwo,
+        TowerOne, TowerTwo
     };
 }
 

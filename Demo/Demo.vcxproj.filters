@@ -197,5 +197,8 @@
     <ClInclude Include="src\TowerDirector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\TowerGuyCallback.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

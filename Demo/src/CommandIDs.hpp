@@ -50,7 +50,8 @@ namespace CommandID
         SceneBackground = 0x2000,
         SceneMusic = 0x4000,
         //UI animations
-        Princess = 0x8000
+        Princess = 0x8000,
+        TowerDude = 0x100000
     };
 }
 
