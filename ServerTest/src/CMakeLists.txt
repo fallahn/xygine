@@ -1,3 +1,16 @@
 #add source files used by your project here
 set(PROJECT_SRC
-  ${PROJECT_DIR}/main.cpp)
+  ${PROJECT_SRC}
+  ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/AnimationController.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/BubbleSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/ClientServerShared.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/CollisionSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/FruitSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/InventoryDirector.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/NPCSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/PlayerSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/PowerupSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/Server.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/sha1.cpp
+  PARENT_SCOPE)

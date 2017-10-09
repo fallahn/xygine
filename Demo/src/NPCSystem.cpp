@@ -189,6 +189,7 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
         if (npc.angry) vel *= angryMultiplier;
         tx.move(vel);
         entity.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
+        entity.getComponent<AnimationController>().direction = (npc.velocity.x > 0) ? -1.f : 1.f;
     }
 }
 
@@ -496,7 +497,7 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
                 const auto& player = manifold.otherEntity.getComponent<Player>();
                 if (player.playerNumber == npc.bubbleOwner && player.state == Player::State::Jumping)
                 {
-                    despawn(entity, player.playerNumber);
+                    despawn(entity, player.playerNumber, NpcEvent::Bubble);
                 }
             }
                 return;
@@ -614,7 +615,7 @@ void NPCSystem::onEntityAdded(xy::Entity /*entity*/)
     m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();*/
 }
 
-void NPCSystem::despawn(xy::Entity entity, sf::Uint8 playerNumber)
+void NPCSystem::despawn(xy::Entity entity, sf::Uint8 playerNumber, sf::Uint8 cause)
 {
     XY_ASSERT(entity.hasComponent<NPC>(), "Not an NPC");
 
@@ -636,4 +637,5 @@ void NPCSystem::despawn(xy::Entity entity, sf::Uint8 playerNumber)
     msg->type = NpcEvent::Died;
     msg->entityID = entity.getIndex();
     msg->playerID = playerNumber;
+    msg->causeOfDeath = cause;
 }

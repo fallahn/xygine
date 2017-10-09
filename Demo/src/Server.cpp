@@ -178,13 +178,18 @@ void GameServer::update()
                 handleMessage(msg);
                 m_scene.forwardMessage(msg);
             }
-            m_scene.update(updateRate);
 
-            //check if it's time to make everything angry
-            checkRoundTime(updateRate);
+            //only update the server if clients are connected
+            if (m_host.getConnectedPeerCount() > 0 || m_changingMaps)
+            {
+                m_scene.update(updateRate);
 
-            //check if it's time to change map
-            checkMapStatus(updateRate);
+                //check if it's time to make everything angry
+                checkRoundTime(updateRate);
+
+                //check if it's time to change map
+                checkMapStatus(updateRate);
+            }
         }
 
         //network updates are less frequent than logic updates
@@ -615,25 +620,26 @@ void GameServer::loadMap()
                 }
                 else if (name == "spawn")
                 {
-                    sf::Int32 spawnCount = 0;
-                    
+                    m_mapData.actorCount = 0; //make sure count was reset
+
                     const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
                     for (const auto& obj : objs)
                     {
                         auto name = xy::Util::String::toLower(obj.getName());
                         if (name == "whirlybob")
                         {
-                            spawnNPC(ActorID::Whirlybob, { obj.getPosition().x, obj.getPosition().y });
-                            spawnCount++;
+                            auto entity = spawnNPC(ActorID::Whirlybob, { obj.getPosition().x, obj.getPosition().y });
+                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
                         }
                         else if (name == "clocksy")
                         {
-                            spawnNPC(ActorID::Clocksy, { obj.getPosition().x, obj.getPosition().y });
-                            spawnCount++;
+                            auto entity = spawnNPC(ActorID::Clocksy, { obj.getPosition().x, obj.getPosition().y });
+                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
                         }
                     }
                     //spawnNPC(ActorID::Clocksy, { 220.f, 220.f }); spawnCount++;
-                    flags |= (spawnCount == 0) ? 0 : MapFlags::Spawn;
+                
+                    flags |= (m_mapData.actorCount == 0) ? 0 : MapFlags::Spawn;
                 }
             }
         }
@@ -720,7 +726,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.addComponent<xy::Transform>().setPosition(m_clients[player].data.spawnX, m_clients[player].data.spawnY);
     entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
 
-    entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset, PlayerSize, PlayerSize }, CollisionType::Player);
+    entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset * 2.f, PlayerSize, PlayerSize }, CollisionType::Player);
     entity.getComponent<CollisionComponent>().addHitbox({ -PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot);
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
@@ -750,9 +756,6 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = id;
 
-    entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
-    entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
-    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask);
     entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, NPCSize, NPCSize });
 
     entity.addComponent<AnimationController>();
@@ -769,21 +772,27 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
             xy::Util::Random::value(-1.f, 1.f)
         };
         entity.getComponent<NPC>().velocity = xy::Util::Vector::normalise(entity.getComponent<NPC>().velocity);
+        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
         break;
     case ActorID::Clocksy:
         entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(1, 2) % 2 == 1) ? -1.f : 1.f;
+        
+        entity.addComponent<CollisionComponent>().addHitbox({ ClocksyPadding, ClocksyPadding* 2.f, ClocksySize, ClocksySize }, CollisionType::NPC);
         entity.getComponent<CollisionComponent>().addHitbox(
-        { -PlayerSizeOffset, NPCSize,
-            NPCSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot); //feets!
+        { ClocksyPadding, (ClocksyPadding * 2.f) + ClocksySize,
+            ClocksySize + ClocksyPadding, PlayerFootSize }, CollisionType::Foot); //feets!
+        //{ -PlayerSizeOffset, NPCSize,
+        //    NPCSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot); //feets!
+        
         break;
     case ActorID::Goobly:
-        //don't include this in npc count
-        m_mapData.actorCount--;
+        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
         break;
     }
 
-    m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
-
+    entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask);
+    
     auto* msg = m_messageBus.post<NpcEvent>(MessageID::NpcMessage);
     msg->type = NpcEvent::Spawned;
     msg->entityID = entity.getIndex();

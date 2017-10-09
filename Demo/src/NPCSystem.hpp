@@ -59,7 +59,7 @@ public:
 
     void process(float) override;
 
-    void despawn(xy::Entity, sf::Uint8);
+    void despawn(xy::Entity, sf::Uint8, sf::Uint8);
 private:
 
     xy::NetHost& m_host;

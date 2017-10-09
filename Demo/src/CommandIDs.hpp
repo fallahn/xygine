@@ -47,7 +47,10 @@ namespace CommandID
         //map data
         MapItem = 0x800, //anything with this is removed on map changed
         MapBackground = 0x1000,
-        Music = 0x2000
+        SceneBackground = 0x2000,
+        SceneMusic = 0x4000,
+        //UI animations
+        Princess = 0x8000
     };
 }
 

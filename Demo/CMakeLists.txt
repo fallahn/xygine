@@ -65,7 +65,6 @@ if(X11_FOUND)
     ${X11_LIBRARIES})
 endif()
 
-
 # Install executable
 install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION .)

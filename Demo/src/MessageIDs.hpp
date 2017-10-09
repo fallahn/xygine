@@ -82,6 +82,14 @@ struct NpcEvent final
     }type = Died;
     sf::Int32 entityID = 0;
     sf::Uint8 playerID = 0; //who gets points?
+    enum
+    {
+        Bubble,
+        Lightning,
+        Flame,
+        Water
+    };
+    sf::Uint8 causeOfDeath = Bubble;
 };
 
 //when an item such as fruit or bonus collected

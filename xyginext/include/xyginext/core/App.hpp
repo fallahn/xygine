@@ -197,7 +197,7 @@ namespace xy
         /*!
         \brief Returns a reference to the current render window
         */
-        static sf::RenderWindow& getRenderWindow();
+        static sf::RenderWindow* getRenderWindow();
 
         /*!
         \brief Prints the name/value pair to the stats window
@@ -207,7 +207,7 @@ namespace xy
         /*!
         \brief Returns a reference to the active App instance
         */
-        static App& getActiveInstance();
+        static App* getActiveInstance();
 
     protected:
         /*!

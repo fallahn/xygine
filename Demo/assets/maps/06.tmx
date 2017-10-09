@@ -6,14 +6,22 @@
  <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
   <image source="../images/block.png" width="512" height="512"/>
  </tileset>
+ <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+  <image source="../images/block_background.png" width="384" height="448"/>
+ </tileset>
+ <layer name="background" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJy1U4sKgCAM3M8I/ZRCmWL9/wfkQGmszUfUwaG7u0xwWwBgEWgUXfOlvBnIIWymY7QDOpDvkXtmzExlhaJh1mcGVlfQsyR4VkdWr4LG/RmEyfybczfmpZ/++RX4/Vr31Tz6Dqey17SDeZbUrvixeIloAHd/Yh3g2b+tnpdmoOoIbTZ78yvle7NqhP0FKmAmCg==
+  </data>
+ </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYoAHEpkjYDipuT0DMFKpXg0K7kfWbkYipbT+5+k1JxNS2HwaGaviBALZwAqU79DSHHIbUsh85TGyhcg4ExGDhN9AAAGoDE3g=
+   eJxjYBhYoAHEpkjYDipuT0DMFKpXg0K7kfWbkYipbT+5+k1JxNS2HwaGaviBALZwAqU79DSHHIbUsh85TGyhcg4ExGDhhw0IA7E0Ce7gxqFeCIu5MCADpQGKXxQN
   </data>
  </layer>
  <objectgroup name="Spawn">
   <object id="55" name="clocksy" x="832" y="208" width="16" height="16"/>
-  <object id="56" name="clocksy" x="80" y="384" width="16" height="16"/>
+  <object id="56" name="clocksy" x="112" y="384" width="16" height="16"/>
   <object id="58" name="whirlybob" x="480" y="512" width="16" height="16"/>
   <object id="60" name="whirlybob" x="480" y="192" width="16" height="16"/>
   <object id="61" name="whirlybob" x="480" y="672" width="16" height="16"/>

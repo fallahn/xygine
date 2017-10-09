@@ -44,7 +44,7 @@ AnimationControllerSystem::AnimationControllerSystem(xy::MessageBus& mb)
     requireComponent<xy::SpriteAnimation>();
 }
 
-void AnimationControllerSystem::handleMessage(const xy::Message& msg)
+void AnimationControllerSystem::handleMessage(const xy::Message& /*msg*/)
 {
     //THIS IS HANDLED BY SCENE MESSAGE
 
@@ -80,6 +80,27 @@ void AnimationControllerSystem::process(float)
         xForm.setScale(controller.direction, 1.f);
         auto position = xForm.getPosition();
 
+
+        //if overriding anim such as shooting is playing
+        //check to see if it has stopped
+        if (controller.prevAnimation != controller.currentAnim)
+        {
+            auto& sprAnim = entity.getComponent<xy::SpriteAnimation>();
+            if (sprAnim.stopped())
+            {
+                auto* msg = postMessage<AnimationEvent>(MessageID::AnimationMessage);
+                msg->oldAnim = controller.currentAnim;
+                msg->newAnim = controller.prevAnimation;
+                msg->x = position.x;
+                msg->y = position.y;
+                msg->entity = entity;   
+
+                controller.currentAnim = controller.prevAnimation;
+                sprAnim.play(controller.animationMap[controller.currentAnim]);
+            }
+        }
+
+
         //if animation has changed update it
         if (controller.nextAnimation != controller.currentAnim
             && controller.prevAnimation == controller.currentAnim)
@@ -100,25 +121,6 @@ void AnimationControllerSystem::process(float)
             
             controller.prevAnimation = controller.currentAnim = controller.nextAnimation;
             entity.getComponent<xy::SpriteAnimation>().play(controller.animationMap[controller.currentAnim]);
-        }
-
-        //if overriding anim such as shooting is playing
-        //check to see if it has stopped
-        if (controller.prevAnimation != controller.currentAnim)
-        {
-            auto& sprAnim = entity.getComponent<xy::SpriteAnimation>();
-            if (sprAnim.stopped())
-            {
-                auto* msg = postMessage<AnimationEvent>(MessageID::AnimationMessage);
-                msg->oldAnim = controller.currentAnim;
-                msg->newAnim = controller.prevAnimation;
-                msg->x = position.x;
-                msg->y = position.y;
-                msg->entity = entity;   
-
-                controller.currentAnim = controller.prevAnimation;
-                sprAnim.play(controller.animationMap[controller.currentAnim]);
-            }
         }
     }
 }

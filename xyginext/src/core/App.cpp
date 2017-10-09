@@ -241,7 +241,7 @@ MessageBus& App::getMessageBus()
 
 void App::quit()
 {
-    XY_ASSERT(renderWindow, "no valid window instance");
+    //XY_ASSERT(renderWindow, "no valid window instance");
 
     //renderWindow->close();
     running = false;
@@ -277,10 +277,10 @@ void App::setWindowIcon(const std::string& path)
     }
 }
 
-sf::RenderWindow& App::getRenderWindow()
+sf::RenderWindow* App::getRenderWindow()
 {
-    XY_ASSERT(renderWindow, "Window not created");
-    return *renderWindow;
+    //XY_ASSERT(renderWindow, "Window not created");
+    return renderWindow;
 }
 
 void App::printStat(const std::string& name, const std::string& value)
@@ -289,10 +289,10 @@ void App::printStat(const std::string& name, const std::string& value)
     appInstance->m_debugLines.push_back(name + ":" + value);
 }
 
-App& App::getActiveInstance()
+App* App::getActiveInstance()
 {
-    XY_ASSERT(appInstance, "No active app inastance");
-    return *appInstance;
+    //XY_ASSERT(appInstance, "No active app instance");
+    return appInstance;
 }
 
 //protected

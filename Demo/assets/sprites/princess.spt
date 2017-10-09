@@ -1,0 +1,99 @@
+sprite_sheet princess
+{
+	src = "assets/images/princess.png"
+	blendmode = alpha
+
+	sprite player_one
+	{
+		bounds = 128,256,64,128
+
+		animation idle
+		{
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+
+			frame = 0,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+
+			frame = 0,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 64,256,64,128
+			frame = 128,256,64,128
+
+			framerate = 6
+			loop=true
+		}
+
+		animation angry
+		{
+			frame = 0,0,192,128
+			frame = 192,0,192,128
+			frame = 0,128,192,128
+			frame = 192,128,192,128
+
+			framerate = 12
+			loop = false
+		}
+	}
+
+	sprite player_two
+	{
+		bounds = 192,256,64,128
+
+		animation idle
+		{
+			frame = 320,256,64,128
+			frame = 320,256,64,128
+			frame = 320,256,64,128
+			frame = 320,256,64,128
+
+			frame = 320,256,64,128
+			frame = 192,256,64,128
+			frame = 320,256,64,128
+			frame = 320,256,64,128
+
+			frame = 320,256,64,128
+			frame = 320,256,64,128
+			frame = 320,256,64,128
+			frame = 320,256,64,128
+
+			frame = 320,256,64,128
+			frame = 320,256,64,128
+			frame = 320,256,64,128
+			frame = 192,256,64,128
+
+			frame = 320,256,64,128
+			frame = 256,256,64,128
+			frame = 320,256,64,128
+			frame = 320,256,64,128
+
+			framerate = 6
+			loop=true
+		}
+
+		animation angry
+		{
+			frame = 0,384,192,128
+			frame = 192,384,192,128
+			frame = 0,512,192,128
+			frame = 192,512,192,128
+
+			framerate = 12
+			loop = false
+		}	
+	}
+}

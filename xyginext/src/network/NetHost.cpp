@@ -208,3 +208,7 @@ void NetHost::sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::si
         enet_peer_send(peer.m_peer, channel, createPacket(id, data, size, flags));
     }
 }
+std::size_t NetHost::getConnectedPeerCount() const
+{
+    return (m_host) ? m_host->connectedPeers : 0;
+}

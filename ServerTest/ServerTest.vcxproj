@@ -23,6 +23,7 @@
     <ProjectGuid>{0D0676E2-520A-4C0F-8F72-E947827D7959}</ProjectGuid>
     <RootNamespace>ServerTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <ProjectName>DemoDedicatedServer</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -75,12 +76,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)xyginext\include;$(SolutionDir)extlibs\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG_;_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)xyginext\include;$(SolutionDir)extlibs\include;$(SolutionDir)Demo\src</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NO_UI_LOG;_ITERATOR_DEBUG_LEVEL=0;XY_DEBUG;_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)x64\Debug;$(SolutionDir)extlibs\bin\msvc_x64\sfml\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>xyginext-d.lib;sfml-system-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)x64\Debug;$(SolutionDir)extlibs\bin\msvc_x64\sfml\Debug;$(SolutionDir)extlibs\bin\msvc_x64\tmxlite\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libtmxlite-s-d.lib;xyginext-d.lib;sfml-system-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -110,17 +111,28 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)xyginext\include;$(SolutionDir)extlibs\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)xyginext\include;$(SolutionDir)extlibs\include;$(SolutionDir)Demo\src</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;NO_UI_LOG;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)x64\Release;$(SolutionDir)extlibs\bin\msvc_x64\sfml\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>xyginext.lib;sfml-system.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)x64\Release;$(SolutionDir)extlibs\bin\msvc_x64\sfml\Release;$(SolutionDir)extlibs\bin\msvc_x64\tmxlite\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libtmxlite-s.lib;xyginext.lib;sfml-system.lib;sfml-graphics.lib;sfml-audio.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Demo\src\AnimationController.cpp" />
+    <ClCompile Include="..\Demo\src\BubbleSystem.cpp" />
+    <ClCompile Include="..\Demo\src\ClientServerShared.cpp" />
+    <ClCompile Include="..\Demo\src\CollisionSystem.cpp" />
+    <ClCompile Include="..\Demo\src\FruitSystem.cpp" />
+    <ClCompile Include="..\Demo\src\InventoryDirector.cpp" />
+    <ClCompile Include="..\Demo\src\NPCSystem.cpp" />
+    <ClCompile Include="..\Demo\src\PlayerSystem.cpp" />
+    <ClCompile Include="..\Demo\src\PowerupSystem.cpp" />
+    <ClCompile Include="..\Demo\src\Server.cpp" />
+    <ClCompile Include="..\Demo\src\sha1.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -70,7 +70,7 @@ template <typename T, typename... Args>
 T& Scene::addPostProcess(Args&&... args)
 {
     static_assert(std::is_base_of<PostProcess, T>::value, "Must be a post process type");
-    auto size = App::getRenderWindow().getSize();
+    auto size = App::getRenderWindow()->getSize();
     if (m_postEffects.empty())
     {
         if (m_sceneBuffer.create(size.x, size.y))

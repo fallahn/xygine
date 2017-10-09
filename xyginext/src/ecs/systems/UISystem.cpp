@@ -41,7 +41,8 @@ namespace
 {
     sf::Vector2f toWorldCoords(sf::Int32 x, sf::Int32 y)
     {
-        return App::getRenderWindow().mapPixelToCoords({ x, y });
+        XY_ASSERT(App::getRenderWindow(), "no valid window");
+        return App::getRenderWindow()->mapPixelToCoords({ x, y });
     }
 }
 

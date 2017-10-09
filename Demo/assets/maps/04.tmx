@@ -6,9 +6,17 @@
  <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
   <image source="../images/block.png" width="512" height="512"/>
  </tileset>
+ <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+  <image source="../images/block_background.png" width="384" height="448"/>
+ </tileset>
+ <layer name="background" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJydUwkKxDAI9CuFfiuBZdMr/3/AIigdBk3THZBGZ9Qa4ioiK9kSxJBjfkniT7XUFJWsmHGMdQL5BWw3axD7ko/5rq2mQ6DfzC8Sg3MzHJM6xflC63PuARfNxtgG3OfFf0T9Z5Ddq+NMNH5HOuNGMcUF52ZfnDWq6TlHwnc4V+rR5X5fXe43dwW89/9nBxSjvRzt30yca0Y5P8KXKWk=
+  </data>
+ </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFUUEKwCAM8yuCH5jzMvX/79oGBkKwnbDBAgWJTZNqCP8iXbVR7YNvxNXBFelNoxjcz8A89VY9kKWs7JaeM7QFfXc8lT8m+iKzo3G+gTdmPd6nTjTR6PH29/wBzW/9HQD/WX7d34O3P2doctZ7b/8VQD/72/7A5ZfeX+EEYTQS4Q==
+   eJzFUUEKgDAM8wd60qMM9gHnLm77/7tUWCGEtu5moFCypmm7afoX8YkD4ux8Ba50LlNt7IHAeoT0Y2/WCxKFNbulxxnqgL45nsxfij5T72DkL+TGqJf7FEUTjBpvf89fwPNbfycQf21+3t+Dtz/OUCnnd2//EYhe+9v2wSXFe1E8dsN7NfgN8nmg/w2B8BNc
   </data>
  </layer>
  <objectgroup name="Solid">
@@ -29,10 +37,10 @@
  </objectgroup>
  <objectgroup name="Spawn">
   <object id="75" name="whirlybob" x="496" y="368" width="16" height="16"/>
-  <object id="76" name="whirlybob" x="96" y="192" width="16" height="16"/>
+  <object id="76" name="whirlybob" x="112" y="192" width="16" height="16"/>
   <object id="77" name="whirlybob" x="832" y="192" width="16" height="16"/>
   <object id="78" name="clocksy" x="496" y="864" width="16" height="16"/>
-  <object id="81" name="clocksy" x="208" y="704" width="16" height="16"/>
+  <object id="81" name="clocksy" x="240" y="704" width="16" height="16"/>
   <object id="82" name="clocksy" x="720" y="704" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="Teleport">

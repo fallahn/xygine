@@ -177,13 +177,16 @@ void BubbleSystem::doCollision(xy::Entity entity)
                 break;
             case CollisionType::NPC:
             {
-                auto otherState = man.otherEntity.getComponent<NPC>().state;
-                if (otherState != NPC::State::Bubble && otherState != NPC::State::Dying
-                    && bubble.state == Bubble::Spawning)
+                if (man.otherEntity.hasComponent<NPC>())
                 {
-                    //pop!
-                    killBubble(entity);
-                    return; //only want to hit one entity
+                    auto otherState = man.otherEntity.getComponent<NPC>().state;
+                    if (otherState != NPC::State::Bubble && otherState != NPC::State::Dying
+                        && bubble.state == Bubble::Spawning)
+                    {
+                        //pop!
+                        killBubble(entity);
+                        return; //only want to hit one entity
+                    }
                 }
             }
                 break;

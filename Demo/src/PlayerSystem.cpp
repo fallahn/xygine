@@ -124,6 +124,8 @@ void PlayerSystem::process(float)
                     player.velocity.y = -initialJumpVelocity;
                     player.canJump = false;
 
+                    entity.getComponent<AnimationController>().nextAnimation = AnimationController::JumpUp;
+
                     auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
                     msg->type = PlayerEvent::Jumped;
                     msg->entity = entity;

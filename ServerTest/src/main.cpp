@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/network/NetHost.hpp>
-#include <xyginext/network/NetData.hpp>
+#include <Server.hpp>
 
 #include <SFML/Config.hpp>
 #include <SFML/System/Thread.hpp>
@@ -35,65 +34,39 @@ source distribution.
 #include <iostream>
 #include <string>
 
-struct TestStruct final
-{
-    sf::Uint8 b = 0;
-    sf::Uint32 i = 0;
-    float f = 0.f;
-    char w[6];
-};
+#ifdef __linux
+#include <X11/Xlib.h>
+#endif // __linux
 
 void threadFunc(const bool* running)
 {
-    xy::NetHost host;
-    host.start("", 40003, 2, 2);
+    GameServer server;
+    server.start();
 
-    xy::NetEvent evt;
-    while (*running)
-    {
-        while (host.pollEvent(evt))
-        {
-            switch (evt.type)
-            {
-            default: break;
-            case xy::NetEvent::ClientConnect:
-                std::cout << "Client Connected" << std::endl;
-                break;
-            case xy::NetEvent::ClientDisconnect:
-                std::cout << "Client Disconnected" << std::endl;
-                break;
-            case xy::NetEvent::PacketReceived:
-                std::cout << "Packet received" << std::endl;
-                {
-                    /*auto packet = evt.packet.as<TestStruct>();
-                    std::cout << "ID:" << evt.packet.ID() << ", B: " << packet.b << ", I: " << packet.i << ", F: " << packet.f << std::endl;
-                    std::cout << packet.w << std::endl;
+    while (*running) {}
 
-                    packet.w[0] = 'f';
-                    packet.w[1] = 'l';
-                    packet.w[2] = 'a';
-                    packet.w[3] = 'p';
-                    packet.w[4] = 's';
-                    host.broadcastPacket(5, packet, xy::NetFlag::Reliable);*/
-                    host.sendPacket(evt.peer, 1, TestStruct(), xy::NetFlag::Unreliable);
-                }
-                break;
-            }
-        }
-    }
-    std::cout << "Quitting..." << std::endl;
-    host.stop();
+    server.stop();
 }
 
 int main()
 {
+#ifdef __linux
+    XInitThreads();
+#endif //__linux
+    
     bool running = true;
 
     sf::Thread thread(&threadFunc, &running);
     thread.launch();
     sf::sleep(sf::milliseconds(100));
     
-    std::cout << "Press Q to quit" << std::endl;
+    std::cout << "Dedicated server is running!" << std::endl;
+    std::cout << "Type Q ";
+#ifdef __linux
+        std::cout << " or ctrl ^ C ";
+#endif
+        std::cout << "to quit." << std::endl;
+    std::cout << std::endl;
 
     while (running)
     {

@@ -6,9 +6,17 @@
  <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
   <image source="../images/block.png" width="512" height="512"/>
  </tileset>
+ <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+  <image source="../images/block_background.png" width="384" height="448"/>
+ </tileset>
+ <layer name="background" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJzFk10KgDAMgyt4zQ2Gij/3P4AWVgyxdeKDflB0SezGsL2I9FAdrU3z9JbnZVlT8lEJKj+oJCcjaJxD3zKDXCk1lyBTqrdQD9MQW3u9jdzwjfmh9hV/7o3YHU+k8/k0twZekRj1tloZeiBb8K3q0b+7QoY1cfLcJ5oL5W623s4nP7097H0HSh4gSw==
+  </data>
+ </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYwALEgmRiFiimxO7hoF8QypdmIBxmUlC11Aw/IShfBsrGhyWhaoWoaD+l+gdD+JGDKbGbWgAAqbME+g==
+   eJxjYBhYwALEgmRiFiimxO7hoF8QypdmIBxmUlC11Aw/IShfBsrGhyWhaoWoaD+l+gdD+JGDke02wWGHNhBbE+keHSgNU2+MJm+ERS0ABv4GjA==
   </data>
  </layer>
  <objectgroup color="#00aa00" name="Solid">

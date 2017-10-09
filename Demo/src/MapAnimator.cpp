@@ -32,6 +32,7 @@ source distribution.
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
+#include <xyginext/ecs/components/Callback.hpp>
 #include <xyginext/util/Vector.hpp>
 #include <xyginext/core/App.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -103,6 +104,14 @@ void MapAnimatorSystem::process(float dt)
         auto* msg = postMessage<MapEvent>(MessageID::MapMessage);
         msg->type = MapEvent::AnimationComplete;
         m_counting = false;
+
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::SceneBackground;
+        cmd.action = [](xy::Entity entity, float)
+        {
+            entity.getComponent<xy::Callback>().active = false;
+        };
+        getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
     m_lastCount = count;
 }

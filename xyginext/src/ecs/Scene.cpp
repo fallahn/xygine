@@ -39,15 +39,19 @@ namespace
 {
     sf::FloatRect getDefaultViewport()
     {
-        auto winSize = sf::Vector2f(App::getRenderWindow().getSize());
+        if (App::getRenderWindow())
+        {
+            auto winSize = sf::Vector2f(App::getRenderWindow()->getSize());
 
-        float windowRatio = winSize.x / winSize.y;
-        float viewRatio = DefaultSceneSize.x / DefaultSceneSize.y;
+            float windowRatio = winSize.x / winSize.y;
+            float viewRatio = DefaultSceneSize.x / DefaultSceneSize.y;
 
-        float sizeY = windowRatio / viewRatio;
-        float top = (1.f - sizeY) / 2.f;
+            float sizeY = windowRatio / viewRatio;
+            float top = (1.f - sizeY) / 2.f;
 
-        return { { 0.f, top },{ 1.f, sizeY } };
+            return { { 0.f, top },{ 1.f, sizeY } };
+        }
+        return {};
     }
 }
 
@@ -124,7 +128,9 @@ void Scene::setPostEnabled(bool enabled)
     if (enabled && !m_postEffects.empty())
     {
         currentRenderPath = std::bind(&Scene::postRenderPath, this, std::placeholders::_1, std::placeholders::_2);
-        auto size = App::getRenderWindow().getSize();
+        
+        XY_ASSERT(App::getRenderWindow(), "no valid window");
+        auto size = App::getRenderWindow()->getSize();
         m_sceneBuffer.create(size.x, size.y, true);
         for (auto& p : m_postEffects) p->resizeBuffer(size.x, size.y);
     }
