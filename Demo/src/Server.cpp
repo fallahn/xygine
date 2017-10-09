@@ -74,6 +74,7 @@ namespace
     const float endOfRoundTime = 6.f;
     const float defaultRoundTime = 39.f; //after this everything is angry
     const float roundWarnTime = 2.5f; //allows time for clients to do warning
+    const float watchdogTime = 10.f; //change map this many seconds after round time regardless
 }
 
 GameServer::GameServer()
@@ -453,6 +454,12 @@ void GameServer::checkRoundTime(float dt)
             m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
         }
         
+    }
+
+    //sometimes the actor count gets messed up so we have a fail-safe timeout
+    if (m_currentRoundTime > (m_roundTimeout + watchdogTime))
+    {
+        m_mapData.actorCount = 0;
     }
 }
 

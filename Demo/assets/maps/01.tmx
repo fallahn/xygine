@@ -38,8 +38,8 @@
   <object id="43" x="896" y="768" width="64" height="32"/>
  </objectgroup>
  <objectgroup name="Spawn">
-  <object id="44" name="clocksy" x="496" y="368" width="16" height="16"/>
-  <object id="45" name="clocksy" x="496" y="304" width="16" height="16"/>
-  <object id="46" name="clocksy" x="496" y="240" width="16" height="16"/>
+  <object id="44" name="clocksy" x="896" y="240" width="16" height="16"/>
+  <object id="45" name="clocksy" x="128" y="240" width="16" height="16"/>
+  <object id="46" name="clocksy" x="512" y="256" width="16" height="16"/>
  </objectgroup>
 </map>
