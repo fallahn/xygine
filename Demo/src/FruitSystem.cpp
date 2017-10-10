@@ -64,6 +64,7 @@ void FruitSystem::handleMessage(const xy::Message& msg)
             default:break;
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
+            case ActorID::Balldock:
             {
                 sf::Vector2f initialVelocity;
                 initialVelocity.x = (data.x > MapBounds.width / 2.f) ? -50.f : 50.f;

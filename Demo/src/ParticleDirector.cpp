@@ -69,6 +69,7 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
 
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
+            case ActorID::Balldock:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::Score];
                 ent.getComponent<xy::ParticleEmitter>().settings.colour = bubble;
                 break;
@@ -106,6 +107,7 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
             case ActorID::Goobly:
+            case ActorID::Balldock:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::SpawnNPC];
                 break;
             /*case ActorID::BubbleOne:
@@ -128,6 +130,7 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             {
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
+            case ActorID::Balldock:
                 if (data.oldAnim == AnimationController::TrappedOne
                     || data.oldAnim == AnimationController::TrappedTwo)
                 {

@@ -455,6 +455,12 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
 
                             player.lives--;
 
+                            //remove collision if player has no lives left
+                            if (!player.lives)
+                            {
+                                entity.getComponent<CollisionComponent>().setCollisionMaskBits(0);
+                            }
+
                             //raise dead message
                             auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
                             msg->entity = entity;

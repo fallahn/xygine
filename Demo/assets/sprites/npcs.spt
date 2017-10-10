@@ -194,9 +194,12 @@ sprite_sheet npcs
 		animation idle
 		{
 			frame = 384,0,64,64
+			//frame = 384,64,64,64
+			//frame = 384,128,64,64			
+			//frame = 384,64,64,64
 
 			loop = true
-			framerate = 25
+			framerate = 26
 		}
 
 		animation die

@@ -39,6 +39,8 @@ namespace SpriteID
         WhirlyBob,
         Clocksy,
         Goobly,
+        Balldock,
+        Squatmo,
         FruitSmall,
         LightningOne, LightningTwo,
         FlameOne, FlameTwo,

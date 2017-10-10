@@ -306,6 +306,8 @@ void GameState::loadAssets()
     m_sprites[SpriteID::WhirlyBob] = spriteSheet.getSprite("whirlybob");
     m_sprites[SpriteID::Clocksy] = spriteSheet.getSprite("clocksy");
     m_sprites[SpriteID::Goobly] = spriteSheet.getSprite("goobly");
+    m_sprites[SpriteID::Balldock] = spriteSheet.getSprite("balldock");
+    m_sprites[SpriteID::Squatmo] = spriteSheet.getSprite("squatmo");
 
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "clocksy");
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "clocksy");
@@ -318,6 +320,12 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "whirlybob");
 
     m_animationControllers[SpriteID::Goobly].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "goobly");
+
+    m_animationControllers[SpriteID::Balldock].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "balldock");
+    m_animationControllers[SpriteID::Balldock].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "balldock");
+    m_animationControllers[SpriteID::Balldock].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "balldock");
+    m_animationControllers[SpriteID::Balldock].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "balldock");
+    m_animationControllers[SpriteID::Balldock].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "balldock");
 
     //dem fruits
     spriteSheet.loadFromFile("assets/sprites/food.spt", m_textureResource);
@@ -1322,6 +1330,11 @@ void GameState::spawnMapActors()
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
             entity.getComponent<xy::Transform>().setOrigin(ClocksyOrigin);
+            break;
+        case ActorID::Balldock:
+            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Balldock];
+            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Balldock];
+            entity.getComponent<xy::Transform>().setOrigin(BalldockOrigin);
             break;
         }
         entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles

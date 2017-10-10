@@ -80,7 +80,7 @@ void CollisionSystem::broadPhase(xy::Entity entity)
     const auto& xForm = entity.getComponent<xy::Transform>();
     auto& collisionComponent = entity.getComponent<CollisionComponent>();
 
-    bool isMapGeom = false;
+    //bool isMapGeom = false;
 
     for (auto i = 0u; i < collisionComponent.m_hitboxCount; ++i)
     {
@@ -101,11 +101,11 @@ void CollisionSystem::broadPhase(xy::Entity entity)
         m_vertices.emplace_back(sf::Vector2f(rect.left, rect.top), sf::Color::Transparent);
 #endif
         hitbox.m_collisionCount = 0;
-        auto type = hitbox.getType();
-        isMapGeom = (type == CollisionType::Platform || type == CollisionType::Solid || type == CollisionType::Teleport);
+        //auto type = hitbox.getType();
+        //isMapGeom = (type == CollisionType::Platform || type == CollisionType::Solid || type == CollisionType::Teleport);
     }
 
-    if (isMapGeom) return;
+    //if (isMapGeom) return;
 
     //actual collision testing...
     auto globalBounds = xForm.getTransform().transformRect(collisionComponent.getLocalBounds());

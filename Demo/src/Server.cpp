@@ -552,6 +552,8 @@ void GameServer::initMaplist()
     {
         return std::find(mapFiles.begin(), mapFiles.end(), str) == mapFiles.end();
     }), m_mapFiles.end());
+
+    //m_currentMap = xy::Util::Random::value(0, std::min(5, static_cast<int>(m_mapFiles.size())));
 }
 
 void GameServer::initScene()
@@ -641,6 +643,16 @@ void GameServer::loadMap()
                         else if (name == "clocksy")
                         {
                             auto entity = spawnNPC(ActorID::Clocksy, { obj.getPosition().x, obj.getPosition().y });
+                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+                        }
+                        else if (name == "squatmo")
+                        {
+                            auto entity = spawnNPC(ActorID::Squatmo, { obj.getPosition().x, obj.getPosition().y });
+                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+                        }
+                        else if (name == "balldock")
+                        {
+                            auto entity = spawnNPC(ActorID::Balldock, { obj.getPosition().x, obj.getPosition().y });
                             m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
                         }
                     }
@@ -790,6 +802,15 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     case ActorID::Goobly:
         entity.addComponent<CollisionComponent>().addHitbox(GooblyBounds, CollisionType::NPC);
         entity.getComponent<xy::Transform>().setOrigin(GooblyOrigin);
+        break;
+    case ActorID::Balldock:
+        entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(0, 1) == 1) ? -1.f : 1.f;
+        entity.addComponent<CollisionComponent>().addHitbox(BalldockBounds, CollisionType::NPC);
+        entity.getComponent<CollisionComponent>().addHitbox(BalldockFoot, CollisionType::Foot);
+        entity.getComponent<xy::Transform>().setOrigin(BalldockOrigin);
+        break;
+    case ActorID::Squatmo:
+
         break;
     }
 

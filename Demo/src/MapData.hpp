@@ -37,13 +37,10 @@ namespace ActorID
     enum
     {
         None = -1,
-        PlayerOne,
-        PlayerTwo,
-        Whirlybob, Clocksy, Goobly,
-        BubbleOne,
-        BubbleTwo,
-        FruitSmall,
-        FruitLarge,
+        PlayerOne, PlayerTwo,
+        Whirlybob, Clocksy, Goobly, Balldock, Squatmo,
+        BubbleOne, BubbleTwo,
+        FruitSmall, FruitLarge,
         FlameOne, FlameTwo,
         LightningOne, LightningTwo,
         WaterOne, WaterTwo,

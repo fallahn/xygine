@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="47">
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="47">
  <properties>
   <property name="round_time" type="float" value="20"/>
  </properties>
@@ -40,6 +40,6 @@
  <objectgroup name="Spawn">
   <object id="44" name="clocksy" x="896" y="240" width="16" height="16"/>
   <object id="45" name="clocksy" x="128" y="240" width="16" height="16"/>
-  <object id="46" name="clocksy" x="512" y="256" width="16" height="16"/>
+  <object id="46" name="squatmo" x="512" y="256" width="16" height="16"/>
  </objectgroup>
 </map>
