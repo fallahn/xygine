@@ -457,7 +457,8 @@ void GameServer::checkRoundTime(float dt)
     }
 
     //sometimes the actor count gets messed up so we have a fail-safe timeout
-    if (m_currentRoundTime > (m_roundTimeout + watchdogTime))
+    if (m_currentRoundTime > (m_roundTimeout + watchdogTime)
+        && m_mapData.actorCount <= 2)
     {
         m_mapData.actorCount = 0;
     }

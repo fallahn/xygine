@@ -48,6 +48,9 @@ namespace
     const float minJumpVelocity = -initialJumpVelocity * 0.25f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocit
     const float dyingTime = 2.f;
     const float invincibleTime = 2.f;
+
+    const sf::Uint32 UpMask = CollisionFlags::PlayerMask & ~(CollisionFlags::Bubble/*|CollisionFlags::Platform*/);
+    const sf::Uint32 DownMask = CollisionFlags::PlayerMask;
 }
 
 PlayerSystem::PlayerSystem(xy::MessageBus& mb, bool server)
@@ -125,6 +128,9 @@ void PlayerSystem::process(float)
 
                     entity.getComponent<AnimationController>().nextAnimation = AnimationController::JumpUp;
 
+                    //disable platform and bubble collision
+                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(UpMask);
+
                     auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
                     msg->type = PlayerEvent::Jumped;
                     msg->entity = entity;
@@ -142,6 +148,12 @@ void PlayerSystem::process(float)
                 tx.move({ 0.f, player.velocity.y * delta });
                 player.velocity.y += Gravity * delta;
                 player.velocity.y = std::min(player.velocity.y, MaxVelocity);
+
+                //reenable downward collision
+                if (player.velocity.y > 0)
+                {
+                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(DownMask);
+                }
             }
             else if(player.state == Player::State::Dying)
             {
@@ -245,11 +257,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
         auto end = (player.currentInput + player.history.size() - 1) % player.history.size();
 
         while (idx != end) //currentInput points to the next free slot in history
-        {
-            //check the result with the collision world and resolve
-            /*getScene()->getSystem<CollisionSystem>().queryState(entity);
-            resolveCollision(entity);*/
-            
+        {           
             float delta = getDelta(player.history, idx);
             
             //let go of jump so enable jumping again
@@ -266,6 +274,9 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                 {
                     player.state = Player::State::Jumping;
                     player.velocity.y = -initialJumpVelocity;
+
+                    //disable collision with bubbles and platforms
+                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(UpMask);
                 }
             }
             else if(player.state == Player::State::Jumping)
@@ -279,6 +290,12 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                 tx.move({ 0.f, player.velocity.y * delta });
                 player.velocity.y += Gravity * delta;
                 player.velocity.y = std::min(player.velocity.y, MaxVelocity);
+
+                //reenable downward collision
+                if (player.velocity.y > 0)
+                {
+                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(DownMask);
+                }
             }
             else if(player.state == Player::State::Dying)
             {
@@ -342,12 +359,6 @@ sf::Vector2f PlayerSystem::parseInput(sf::Uint16 mask)
     {
         motion.x += 1.f;
     }
-
-    //normalise if not along one axis
-    /*if (xy::Util::Vector::lengthSquared(motion) > 1)
-    {
-        motion = xy::Util::Vector::normalise(motion);
-    }*/
 
     return motion;
 }

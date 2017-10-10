@@ -37,9 +37,9 @@
   <object id="55" x="672" y="800" width="208" height="32"/>
  </objectgroup>
  <objectgroup name="Spawn">
-  <object id="44" name="clocksy" x="416" y="352" width="16" height="16"/>
-  <object id="45" name="clocksy" x="560" y="352" width="16" height="16"/>
-  <object id="46" name="clocksy" x="448" y="208" width="16" height="16"/>
-  <object id="47" name="clocksy" x="512" y="208" width="16" height="16"/>
+  <object id="44" name="clocksy" x="432" y="352" width="16" height="16"/>
+  <object id="45" name="clocksy" x="576" y="352" width="16" height="16"/>
+  <object id="46" name="squatmo" x="480" y="208" width="16" height="16"/>
+  <object id="47" name="squatmo" x="544" y="208" width="16" height="16"/>
  </objectgroup>
 </map>

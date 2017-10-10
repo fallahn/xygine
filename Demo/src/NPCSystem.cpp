@@ -714,6 +714,7 @@ void NPCSystem::updateSquatmo(xy::Entity entity, float dt)
                             npc.lastVelocity = npc.velocity; //so we can  restore if bubble pops
 
                             npc.state = NPC::State::Bubble;
+                            npc.velocity.x /= SquatmoSpeed;
                             npc.velocity.y = BubbleVerticalVelocity;
                             npc.thinkTimer = BubbleTime;
                             npc.bubbleOwner = bubble.player;

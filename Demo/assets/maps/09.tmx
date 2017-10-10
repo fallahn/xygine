@@ -44,8 +44,8 @@
   <object id="64" x="576" y="800" width="192" height="32"/>
  </objectgroup>
  <objectgroup name="Spawn">
-  <object id="28" name="clocksy" x="224" y="224" width="16" height="16"/>
-  <object id="30" name="clocksy" x="800" y="224" width="16" height="16"/>
+  <object id="28" name="whirlybob" x="224" y="224" width="16" height="16"/>
+  <object id="30" name="whirlybob" x="800" y="224" width="16" height="16"/>
   <object id="35" name="clocksy" x="224" y="480" width="16" height="16"/>
   <object id="36" name="clocksy" x="800" y="480" width="16" height="16"/>
   <object id="49" name="whirlybob" x="512" y="608" width="16" height="16"/>

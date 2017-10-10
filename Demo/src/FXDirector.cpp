@@ -110,6 +110,8 @@ void FXDirector::handleMessage(const xy::Message& msg)
             default: break;
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
+            case ActorID::Balldock:
+            case ActorID::Squatmo:
                 playSound(m_soundResource.get("assets/sound/npc_pop.wav"));
                 break;
             case ActorID::PlayerOne:

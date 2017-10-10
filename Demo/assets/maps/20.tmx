@@ -37,11 +37,11 @@
  </objectgroup>
  <objectgroup name="Spawn">
   <object id="28" name="clocksy" x="288" y="288" width="16" height="16"/>
-  <object id="30" name="clocksy" x="480" y="288" width="16" height="16"/>
-  <object id="35" name="clocksy" x="352" y="288" width="16" height="16"/>
+  <object id="30" name="squatmo" x="480" y="288" width="16" height="16"/>
+  <object id="35" name="squatmo" x="352" y="288" width="16" height="16"/>
   <object id="36" name="clocksy" x="416" y="288" width="16" height="16"/>
   <object id="56" name="clocksy" x="544" y="288" width="16" height="16"/>
-  <object id="57" name="clocksy" x="608" y="288" width="16" height="16"/>
+  <object id="57" name="squatmo" x="608" y="288" width="16" height="16"/>
   <object id="58" name="clocksy" x="672" y="288" width="16" height="16"/>
  </objectgroup>
 </map>

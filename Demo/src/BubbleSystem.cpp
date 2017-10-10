@@ -40,6 +40,7 @@ source distribution.
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/ecs/Scene.hpp>
+#include <xyginext/util/Random.hpp>
 
 namespace
 {
@@ -115,11 +116,11 @@ void BubbleSystem::process(float dt)
         if(bubble.state == Bubble::Spawning)
         {
             bubble.spawntime -= dt;
-            bubble.velocity.x *= 0.99f;
+            bubble.velocity.x *= 0.98f;
             if (bubble.spawntime < 0)
             {
                 bubble.state = Bubble::Normal;
-                bubble.velocity.x *= 0.001f;
+                bubble.velocity.x = 0.f;
                 bubble.velocity.y = BubbleVerticalVelocity;
             }
             break;
@@ -153,6 +154,13 @@ void BubbleSystem::doCollision(xy::Entity entity)
                 if (bubble.state != Bubble::Spawning)
                 {
                     tx.move(man.normal * man.penetration);
+
+                    /*if (man.normal.y != 0 && bubble.velocity.x == 0)
+                    {
+                        bubble.velocity.x = 
+                            (xy::Util::Random::value(0, 1) == 0) ?
+                            -BubbleVerticalVelocity : BubbleVerticalVelocity;
+                    }*/
                 }
                 break;
             case CollisionType::Player:
@@ -162,7 +170,7 @@ void BubbleSystem::doCollision(xy::Entity entity)
                     //player jumps off
                     if (man.normal.y > 0)
                     {                      
-                        if (bubble.lifetime > 1.f) bubble.lifetime = 1.f;
+                        if (bubble.lifetime > 3.f) bubble.lifetime = 3.f;
                         //bubble.velocity.y *= 0.5f;
                     }
                     //tx.move(man.normal * man.penetration);

@@ -72,7 +72,7 @@ namespace CollisionFlags
         Powerup = 0x80,
 
         PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup,
-        NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup,
+        NPCMask = Solid | /*Player |*/ Bubble | Platform | Teleport | Powerup,
         FruitMask = Solid | Platform | Player | Teleport,
         PowerupMask = Platform | Solid | Player | NPC
     };
