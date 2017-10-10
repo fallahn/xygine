@@ -1026,7 +1026,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         sprEnt.addComponent<xy::Sprite>() = m_sprites[id];
         sprEnt.addComponent<xy::SpriteAnimation>();
         sprEnt.getComponent<AnimationController>() = m_animationControllers[id];
-        sprEnt.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
+        sprEnt.getComponent<xy::Transform>().setOrigin(BubbleOrigin);
     };
 
     switch (actorEvent.actor.type)
@@ -1038,12 +1038,12 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
             (actorEvent.actor.type == ActorID::BubbleOne) ? m_sprites[SpriteID::BubbleOne] : m_sprites[SpriteID::BubbleTwo];
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.getComponent<xy::Sprite>().setDepth(-2);
-        entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
+        entity.getComponent<xy::Transform>().setOrigin(BubbleOrigin);
 
-        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
+        entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::Bubble);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
-        entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
+        entity.addComponent<xy::QuadTreeItem>().setArea(BubbleBounds);
 
         entity.addComponent<xy::ParticleEmitter>().settings = m_bubbleParticles;
         entity.getComponent<xy::ParticleEmitter>().settings.colour = (actorEvent.actor.type == ActorID::BubbleOne) ? BubbleColourOne : BubbleColourTwo;
@@ -1066,13 +1066,13 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::FruitSmall];
         entity.addComponent<xy::SpriteAnimation>().play(xy::Util::Random::value(0, m_sprites[SpriteID::FruitSmall].getAnimationCount() - 1));
         entity.getComponent<xy::Sprite>().setDepth(2);
-        entity.getComponent<xy::Transform>().setOrigin(SmallFruitSize / 2.f, SmallFruitSize / 2.f);
+        entity.getComponent<xy::Transform>().setOrigin(SmallFoodOrigin);
         break;
     case ActorID::Goobly:
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Goobly];
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::Goobly];
-        entity.getComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
+        entity.getComponent<xy::Transform>().setOrigin(GooblyOrigin);
         break;
     case ActorID::LightningOne:
         addSprite(entity, SpriteID::LightningOne);
@@ -1133,7 +1133,7 @@ void GameState::spawnClient(const ClientData& data)
     towerEnt.addComponent<xy::CommandTarget>().ID = CommandID::TowerDude;
     towerEnt.addComponent<xy::Callback>().function = TowerGuyCallback(m_scene);
 
-    entity.getComponent<xy::Transform>().setOrigin((PlayerSize / 2.f) + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f));
+    entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
     entity.addComponent<xy::SpriteAnimation>().play(0);
     entity.addComponent<MapAnimator>().state = MapAnimator::State::Static;
 
@@ -1147,8 +1147,8 @@ void GameState::spawnClient(const ClientData& data)
         entity.getComponent<Player>().spawnPosition = { data.spawnX, data.spawnY };
         m_playerInput.setPlayerEntity(entity);
 
-        entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset * 2.f, PlayerSize, PlayerSize }, CollisionType::Player);
-        entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerSize, PlayerFootSize }, CollisionType::Foot);
+        entity.addComponent<CollisionComponent>().addHitbox(PlayerBounds, CollisionType::Player);
+        entity.getComponent<CollisionComponent>().addHitbox(PlayerFoot, CollisionType::Foot);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
         entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
@@ -1301,7 +1301,7 @@ void GameState::spawnMapActors()
     for (auto i = 0; i < m_mapData.actorCount; ++i)
     {
         auto entity = m_scene.createEntity();
-        entity.addComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
+        entity.addComponent<xy::Transform>().setOrigin(WhirlyBobOrigin);
         entity.addComponent<Actor>() = m_mapData.actors[i];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
         entity.addComponent<xy::NetInterpolate>();
@@ -1321,7 +1321,7 @@ void GameState::spawnMapActors()
         case ActorID::Clocksy:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
-            entity.getComponent<xy::Transform>().setOrigin((ClocksySize / 2.f) + ClocksyPadding, (ClocksySize / 2.f) + (ClocksyPadding * 2.f));
+            entity.getComponent<xy::Transform>().setOrigin(ClocksyOrigin);
             break;
         }
         entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles

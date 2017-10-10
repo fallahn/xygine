@@ -731,10 +731,10 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.getComponent<Actor>().id = entity.getIndex();
     m_clients[player].data.actor = entity.getComponent<Actor>();
     entity.addComponent<xy::Transform>().setPosition(m_clients[player].data.spawnX, m_clients[player].data.spawnY);
-    entity.getComponent<xy::Transform>().setOrigin((PlayerSize / 2.f) + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f));
+    entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
 
-    entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset * 2.f, PlayerSize, PlayerSize }, CollisionType::Player);
-    entity.getComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerSize, PlayerFootSize }, CollisionType::Foot);
+    entity.addComponent<CollisionComponent>().addHitbox(PlayerBounds, CollisionType::Player);
+    entity.getComponent<CollisionComponent>().addHitbox(PlayerFoot, CollisionType::Foot);
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
     entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
@@ -762,7 +762,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = id;
 
-    entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, NPCSize, NPCSize });
+    entity.addComponent<xy::QuadTreeItem>().setArea(WhirlyBobBounds);
 
     entity.addComponent<AnimationController>();
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem | CommandID::NPC;
@@ -778,22 +778,18 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
             xy::Util::Random::value(-1.f, 1.f)
         };
         entity.getComponent<NPC>().velocity = xy::Util::Vector::normalise(entity.getComponent<NPC>().velocity);
-        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
-        entity.getComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
+        entity.addComponent<CollisionComponent>().addHitbox(WhirlyBobBounds, CollisionType::NPC);
+        entity.getComponent<xy::Transform>().setOrigin(WhirlyBobOrigin);
         break;
     case ActorID::Clocksy:
-        entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(1, 2) % 2 == 1) ? -1.f : 1.f;
-        
-        entity.addComponent<CollisionComponent>().addHitbox({ ClocksyPadding, ClocksyPadding* 2.f, ClocksySize, ClocksySize }, CollisionType::NPC);
-        entity.getComponent<CollisionComponent>().addHitbox(
-        { ClocksyPadding, (ClocksyPadding * 2.f) + ClocksySize,
-            ClocksySize /*+ ClocksyPadding*/, PlayerFootSize }, CollisionType::Foot); //feets!
-
-        entity.getComponent<xy::Transform>().setOrigin((ClocksySize / 2.f) + ClocksyPadding, (ClocksySize / 2.f) + (ClocksyPadding * 2.f));
+        entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(0, 1) == 1) ? -1.f : 1.f;      
+        entity.addComponent<CollisionComponent>().addHitbox(ClocksyBounds, CollisionType::NPC);
+        entity.getComponent<CollisionComponent>().addHitbox(ClocksyFoot, CollisionType::Foot); //feets!
+        entity.getComponent<xy::Transform>().setOrigin(ClocksyOrigin);
         break;
     case ActorID::Goobly:
-        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
-        entity.getComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
+        entity.addComponent<CollisionComponent>().addHitbox(GooblyBounds, CollisionType::NPC);
+        entity.getComponent<xy::Transform>().setOrigin(GooblyOrigin);
         break;
     }
 

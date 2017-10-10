@@ -73,14 +73,14 @@ void FruitSystem::handleMessage(const xy::Message& msg)
                 auto scene = getScene();
                 auto entity = scene->createEntity();
                 entity.addComponent<xy::Transform>().setPosition(data.x, data.y);
-                entity.getComponent<xy::Transform>().setOrigin(SmallFruitSize / 2.f, SmallFruitSize / 2.f);
+                entity.getComponent<xy::Transform>().setOrigin(SmallFoodOrigin);
                 entity.addComponent<Actor>().id = entity.getIndex();
                 entity.getComponent<Actor>().type = ActorID::FruitSmall;
                 entity.addComponent<Fruit>().velocity = initialVelocity;
-                entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, SmallFruitSize, SmallFruitSize }, CollisionType::Fruit);
+                entity.addComponent<CollisionComponent>().addHitbox(SmallFoodBounds, CollisionType::Fruit);
                 entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Fruit);
                 entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::FruitMask);
-                entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, SmallFruitSize, SmallFruitSize });
+                entity.addComponent<xy::QuadTreeItem>().setArea(SmallFoodBounds);
 
                 entity.addComponent<AnimationController>();
                 entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem; //so we can destroy at whim

@@ -66,23 +66,23 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
         {
             const auto& player = data.entity.getComponent<Player>();
             auto pos = data.entity.getComponent<xy::Transform>().getPosition();
-            pos.y -= PlayerSize / 2.f; //make appear near mouth, not feet
+            pos.y -= PlayerBounds.height / 2.f; //make appear near mouth, not feet
             
             //spawn a bubble
             auto scene = getScene();
             auto entity = scene->createEntity();
             entity.addComponent<xy::Transform>().setPosition(pos);
-            entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
+            entity.getComponent<xy::Transform>().setOrigin(BubbleOrigin);
             entity.addComponent<Actor>().id = entity.getIndex();
             entity.getComponent<Actor>().type = (player.playerNumber == 0) ?  ActorID::BubbleOne : ActorID::BubbleTwo;
             entity.addComponent<Bubble>().player = player.playerNumber;
             //add player current velocity to spawn velocity
             entity.getComponent<Bubble>().velocity.x = (player.direction == Player::Direction::Right) ? spawnVelocity : -spawnVelocity;
             entity.getComponent<Bubble>().velocity.x += player.velocity.x;
-            entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
+            entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::Bubble);
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
             entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC);
-            entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
+            entity.addComponent<xy::QuadTreeItem>().setArea(BubbleBounds);
 
             entity.addComponent<AnimationController>();
             entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem; //so we can destroy at whim

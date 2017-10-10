@@ -406,8 +406,7 @@ void PowerupSystem::fireCollision(xy::Entity entity)
 void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
 {
     bool top = (xy::Util::Random::value(0, 1) == 0);
-    
-    sf::FloatRect bounds = { 0.f, 0.f, BubbleSize, BubbleSize };  
+     
     sf::Vector2f spawnPos = (player == 0) ? PowerupOneSpawn : PowerupTwoSpawn;
     if (top) spawnPos.y -= TopSpawn;
 
@@ -430,8 +429,8 @@ void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
     entity.getComponent<Actor>().type = actorID;
 
     entity.addComponent<xy::Transform>().setPosition(spawnPos);
-    entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
-    entity.addComponent<CollisionComponent>().addHitbox(bounds, CollisionType::Powerup);
+    entity.getComponent<xy::Transform>().setOrigin(BubbleOrigin);
+    entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::Powerup);
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Powerup);
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PowerupMask);
 
@@ -441,7 +440,7 @@ void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
     entity.getComponent<Powerup>().velocity.y = (top) ? -BubbleVerticalVelocity : BubbleVerticalVelocity;
 
     entity.addComponent<AnimationController>().nextAnimation = AnimationController::Idle;
-    entity.addComponent<xy::QuadTreeItem>().setArea(bounds);
+    entity.addComponent<xy::QuadTreeItem>().setArea(BubbleBounds);
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
 
     //broadcast to clients
@@ -457,15 +456,13 @@ void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
 void PowerupSystem::spawnFlame(sf::Vector2f position, sf::Uint8 player, Powerup::SpreadDirection direction, sf::Uint8 generation)
 {
     //doesn't matter which actor id because flame anim the same on both
-    sf::FloatRect bounds = { 0.f, 0.f, BubbleSize, BubbleSize };
-
     auto entity = getScene()->createEntity();
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = ActorID::FlameOne;
 
     entity.addComponent<xy::Transform>().setPosition(position);
-    entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
-    entity.addComponent<CollisionComponent>().addHitbox(bounds, CollisionType::Powerup);
+    entity.getComponent<xy::Transform>().setOrigin(BubbleOrigin);
+    entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::Powerup);
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Powerup);
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PowerupMask);
 
@@ -477,7 +474,7 @@ void PowerupSystem::spawnFlame(sf::Vector2f position, sf::Uint8 player, Powerup:
     entity.getComponent<Powerup>().generation = generation;
 
     entity.addComponent<AnimationController>().nextAnimation = AnimationController::Shoot;
-    entity.addComponent<xy::QuadTreeItem>().setArea(bounds);
+    entity.addComponent<xy::QuadTreeItem>().setArea(BubbleBounds);
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
 
 

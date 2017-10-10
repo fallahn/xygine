@@ -78,24 +78,34 @@ namespace CollisionFlags
     };
 }
 
-static constexpr float PlayerSize = 52.f;
-static constexpr float PlayerSizeOffset = 6.f;
-static constexpr float PlayerFootSize = 10.f;
 
 static constexpr float BubbleVerticalVelocity = -100.f;
-static constexpr float BubbleSize = 64.f;
-static constexpr float NPCSize = 64.f;
-static constexpr float ClocksySize = 52.f;
-static constexpr float ClocksyPadding = 6.f;
+static const sf::FloatRect BubbleBounds(0.f, 0.f, 64.f, 64.f);
+static const sf::Vector2f BubbleOrigin(BubbleBounds.width / 2.f, BubbleBounds.height / 2.f);
 
-static constexpr float SmallFruitSize = 64.f;
+static const sf::FloatRect WhirlyBobBounds(0.f, 0.f, 64.f, 64.f);
+static const sf::Vector2f WhirlyBobOrigin(WhirlyBobBounds.width / 2.f, WhirlyBobBounds.height / 2.f);
+
+static const sf::FloatRect GooblyBounds = WhirlyBobBounds;
+static const sf::Vector2f GooblyOrigin = WhirlyBobOrigin;
+
+static const sf::FloatRect ClocksyBounds(6.f, 12.f, 52.f, 52.f);
+static const sf::FloatRect ClocksyFoot(6.f, 64.f, 52.f, 10.f);
+static const sf::Vector2f ClocksyOrigin(32.f, 38.f);
+
+static const sf::FloatRect PlayerBounds = ClocksyBounds;
+static const sf::FloatRect PlayerFoot = ClocksyFoot;
+static const sf::Vector2f PlayerOrigin(32.f, 64.f);
+
+static const sf::FloatRect SmallFoodBounds(0.f, 0.f, 64.f, 64.f);
+static const sf::Vector2f SmallFoodOrigin(32.f, 32.f);
 static constexpr float LargeFruitSize = 96.f;
 
 static constexpr float TeleportDistance = 950.f;
 static constexpr float Gravity = 2200.f;
 static constexpr float MaxVelocity = 800.f;
 
-static const sf::FloatRect MapBounds(0.f, 0.f, 16.f *64.f, 17.f * 64.f);
+static const sf::FloatRect MapBounds(0.f, 0.f, 16.f * 64.f, 17.f * 64.f);
 
 static const sf::Vector2f PlayerOneSpawn(102.f, 926.f);
 static const sf::Vector2f PlayerTwoSpawn(922.f, 926.f);
