@@ -810,7 +810,9 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
         entity.getComponent<xy::Transform>().setOrigin(BalldockOrigin);
         break;
     case ActorID::Squatmo:
-
+        entity.addComponent<CollisionComponent>().addHitbox(SquatmoBounds, CollisionType::NPC);
+        entity.getComponent<CollisionComponent>().addHitbox(SquatmoFoot, CollisionType::Foot);
+        entity.getComponent<xy::Transform>().setOrigin(SquatmoOrigin);
         break;
     }
 

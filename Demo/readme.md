@@ -51,6 +51,7 @@ should be named for the enemy to spawn, currently these are:
 * whirlybob
 * clocksy
 * balldock
+* squatmo
 
 Other names are ignored.
 

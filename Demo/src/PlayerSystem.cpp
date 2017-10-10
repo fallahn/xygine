@@ -445,28 +445,31 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                     if (player.state != Player::State::Dying
                         && player.timer < 0)
                     {
-                        const auto& npc = man.otherEntity.getComponent<NPC>();
-                        if (npc.state != NPC::State::Bubble && npc.state != NPC::State::Dying)
+                        if (man.otherEntity.hasComponent<NPC>())
                         {
-                            player.state = Player::State::Dying;
-                            player.timer = dyingTime;
-
-                            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
-
-                            player.lives--;
-
-                            //remove collision if player has no lives left
-                            if (!player.lives)
+                            const auto& npc = man.otherEntity.getComponent<NPC>();
+                            if (npc.state != NPC::State::Bubble && npc.state != NPC::State::Dying)
                             {
-                                entity.getComponent<CollisionComponent>().setCollisionMaskBits(0);
+                                player.state = Player::State::Dying;
+                                player.timer = dyingTime;
+
+                                entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+
+                                player.lives--;
+
+                                //remove collision if player has no lives left
+                                if (!player.lives)
+                                {
+                                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(0);
+                                }
+
+                                //raise dead message
+                                auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                                msg->entity = entity;
+                                msg->type = PlayerEvent::Died;
+
+                                return;
                             }
-
-                            //raise dead message
-                            auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
-                            msg->entity = entity;
-                            msg->type = PlayerEvent::Died;
-
-                            return;
                         }
                     }
                     break;

@@ -327,6 +327,13 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::Balldock].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "balldock");
     m_animationControllers[SpriteID::Balldock].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "balldock");
 
+    m_animationControllers[SpriteID::Squatmo].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "squatmo");
+    m_animationControllers[SpriteID::Squatmo].animationMap[AnimationController::JumpDown] = spriteSheet.getAnimationIndex("jump_down", "squatmo");
+    m_animationControllers[SpriteID::Squatmo].animationMap[AnimationController::JumpUp] = spriteSheet.getAnimationIndex("jump_up", "squatmo");
+    m_animationControllers[SpriteID::Squatmo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "squatmo");
+    m_animationControllers[SpriteID::Squatmo].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "squatmo");
+    m_animationControllers[SpriteID::Squatmo].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "squatmo");
+
     //dem fruits
     spriteSheet.loadFromFile("assets/sprites/food.spt", m_textureResource);
     m_sprites[SpriteID::FruitSmall] = spriteSheet.getSprite("food");
@@ -1335,6 +1342,11 @@ void GameState::spawnMapActors()
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Balldock];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Balldock];
             entity.getComponent<xy::Transform>().setOrigin(BalldockOrigin);
+            break;
+        case ActorID::Squatmo:
+            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Squatmo];
+            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Squatmo];
+            entity.getComponent<xy::Transform>().setOrigin(SquatmoOrigin);
             break;
         }
         entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles

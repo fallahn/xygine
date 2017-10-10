@@ -64,9 +64,8 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             auto ent = getNextEntity();
             switch (data.actorID)
             {
-            default: return;
-            
-
+            default: return;            
+            case ActorID::Squatmo:
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
             case ActorID::Balldock:
@@ -108,6 +107,7 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             case ActorID::Whirlybob:
             case ActorID::Goobly:
             case ActorID::Balldock:
+            case ActorID::Squatmo:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::SpawnNPC];
                 break;
             /*case ActorID::BubbleOne:
@@ -131,6 +131,7 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
             case ActorID::Balldock:
+            case ActorID::Squatmo:
                 if (data.oldAnim == AnimationController::TrappedOne
                     || data.oldAnim == AnimationController::TrappedTwo)
                 {

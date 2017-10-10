@@ -93,6 +93,10 @@ static const sf::FloatRect BalldockBounds = WhirlyBobBounds;
 static const sf::Vector2f BalldockOrigin = WhirlyBobOrigin;
 static const sf::FloatRect BalldockFoot(-1.f, 64.f, 66.f, 10.f);
 
+static const sf::FloatRect SquatmoBounds = WhirlyBobBounds;
+static const sf::Vector2f SquatmoOrigin = WhirlyBobOrigin;
+static const sf::FloatRect SquatmoFoot(-1.f, 64.f, 66.f, 10.f);
+
 static const sf::FloatRect ClocksyBounds(6.f, 12.f, 52.f, 52.f);
 static const sf::FloatRect ClocksyFoot(6.f, 64.f, 52.f, 10.f);
 static const sf::Vector2f ClocksyOrigin(32.f, 38.f);
