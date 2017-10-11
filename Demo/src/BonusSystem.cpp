@@ -49,6 +49,8 @@ namespace
     std::array<float, 5u> spawnTimes = { 12.f, 8.f, 14.f, 11.f, 16.f };
 }
 
+std::array<Bonus::Value, 5u> Bonus::valueMap  = {B,O,N,U,S};
+
 BonusSystem::BonusSystem(xy::MessageBus& mb, xy::NetHost& host)
     : xy::System(mb, typeid(BonusSystem)),
     m_host              (host),

@@ -55,7 +55,7 @@ struct Bonus final
     float lifetime = MaxLifeTime;
     sf::Vector2f velocity;
 
-    static constexpr std::array<Value, 5> valueMap = {B,O,N,U,S};
+    static std::array<Value, 5> valueMap;
 };
 
 class BonusSystem final : public xy::System
