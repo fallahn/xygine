@@ -44,6 +44,7 @@ source distribution.
 #include "MusicCallback.hpp"
 #include "TowerDirector.hpp"
 #include "TowerGuyCallback.hpp"
+#include "BonusSystem.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -91,6 +92,12 @@ namespace
 {
     const float clientTimeout = 20.f;
     const std::string scoreFile("scores.txt");
+
+    struct BonusUI final
+    {
+        Bonus::Value value = Bonus::B;
+        sf::Uint8 playerID = 0;
+    };
 
     //flashes text
     class Flasher final
@@ -637,6 +644,29 @@ void GameState::loadUI()
     ent.getComponent<xy::Sprite>().setDepth(6);
     ent.addComponent<xy::SpriteAnimation>().play(0);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::LivesTwo;
+
+
+    //bonus display
+    float startY = (xy::DefaultSceneSize.y / 2.f) - (2.5f * BubbleBounds.height);
+    sf::Vector2f bonusPosition(0.f, startY);
+    for (auto i = 0; i < 2; ++i)
+    {
+        for (auto j = 0; j < 5; ++j)
+        {
+            ent = m_scene.createEntity();
+            ent.addComponent<xy::Transform>().setPosition(bonusPosition);
+            ent.addComponent<xy::Sprite>() = m_sprites[SpriteID::Bonus];
+            ent.getComponent<xy::Sprite>().setDepth(6);
+            ent.getComponent<xy::Sprite>().setColour(sf::Color::Transparent);
+            ent.addComponent<xy::SpriteAnimation>().play(j);
+            ent.addComponent<xy::CommandTarget>().ID = CommandID::BonusBall;
+            ent.addComponent<BonusUI>().value = Bonus::valueMap[j];
+            ent.getComponent<BonusUI>().playerID = i;
+            bonusPosition.y += BubbleBounds.height;
+        }
+        bonusPosition.x += (MapBounds.width - BubbleBounds.width);
+        bonusPosition.y = startY;
+    }
 }
 
 void GameState::handlePacket(const xy::NetEvent& evt)
@@ -1489,4 +1519,24 @@ void GameState::updateUI(const InventoryUpdate& data)
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
+
+
+    xy::Command bonusCommand;
+    bonusCommand.targetFlags = CommandID::BonusBall;
+    bonusCommand.action = [data](xy::Entity entity, float)
+    {
+        const auto& bonus = entity.getComponent<BonusUI>();
+        if (bonus.playerID == data.playerID)
+        {
+            if (bonus.value & data.bonusFlags)
+            {
+                entity.getComponent<xy::Sprite>().setColour(sf::Color::White);
+            }
+            else
+            {
+                entity.getComponent<xy::Sprite>().setColour(sf::Color::Transparent);
+            }
+        }
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(bonusCommand);
 }

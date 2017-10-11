@@ -51,7 +51,8 @@ namespace CommandID
         SceneMusic = 0x4000,
         //UI animations
         Princess = 0x8000,
-        TowerDude = 0x100000
+        TowerDude = 0x10000,
+        BonusBall = 0x20000
     };
 }
 
