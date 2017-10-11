@@ -27,7 +27,7 @@ addons:
 before_script:
  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 90; fi
  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90; fi
- - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install enet; fi
+ - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install enet; fi
 
  - git clone https://github.com/sfml/sfml && cd sfml
  - git checkout tags/2.4.2
