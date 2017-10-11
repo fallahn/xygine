@@ -30,6 +30,7 @@ source distribution.
 #include "PacketIDs.hpp"
 #include "MapData.hpp"
 #include "CommandIDs.hpp"
+#include "BonusSystem.hpp"
 
 #include <xyginext/network/NetHost.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -107,6 +108,12 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         case ActorID::Bonus:
             amount = BonusScore;
             m_playerValues[playerID].bonusFlags = data.player.getComponent<Player>().bonusFlags;
+
+            if (m_playerValues[playerID].bonusFlags == 0) //round change was triggered
+            {
+                amount = BonusCompletionScore;
+            }
+
             break;
         }
      

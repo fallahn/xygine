@@ -254,6 +254,10 @@ void GameServer::update()
                 m_host.broadcastPacket(PacketID::GameOver, 0, xy::NetFlag::Reliable, 1);
             }
             m_gameOver = gameOver;
+
+#ifdef XY_DEBUG
+            m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.actorCount, xy::NetFlag::Unreliable, 0);
+#endif
         }
 
     }
@@ -402,7 +406,7 @@ void GameServer::checkRoundTime(float dt)
         && m_currentRoundTime >= (m_roundTimeout - roundWarnTime))
     {
         //send warning message
-        m_host.broadcastPacket(PacketID::RoundWarning, 0, xy::NetFlag::Reliable, 1);
+        m_host.broadcastPacket(PacketID::RoundWarning, sf::Uint8(0), xy::NetFlag::Reliable, 1);
     }
     else if (lastTime < m_roundTimeout &&
         m_currentRoundTime >= m_roundTimeout && m_mapData.actorCount > 0)
@@ -469,7 +473,6 @@ void GameServer::checkRoundTime(float dt)
 void GameServer::checkMapStatus(float dt)
 {
     m_endOfRoundPauseTime -= dt;
-
 
     if (m_mapData.actorCount == 0
         && m_endOfRoundPauseTime < 0)
@@ -874,6 +877,33 @@ void GameServer::handleMessage(const xy::Message& msg)
 
             //LOG(std::to_string(m_mapData.actorCount), xy::Logger::Type::Info);
             m_endOfRoundPauseTime = endOfRoundTime;
+        }
+    }
+        break;
+    case MessageID::ItemMessage:
+    {
+        const auto& data = msg.getData<ItemEvent>();
+        if (data.actorID == ActorID::Bonus)
+        {
+            //trigger map skip if player has bonus
+            if (data.player.getComponent<Player>().bonusFlags == Bonus::BONUS)
+            {
+                m_mapData.actorCount = 0;
+                m_endOfRoundPauseTime = -1.f;
+                m_mapSkipCount = 4;
+
+
+                //notify clients
+                m_host.broadcastPacket(PacketID::RoundSkip, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+
+                //reset bonus jigger
+                auto player = data.player;
+                player.getComponent<Player>().bonusFlags = 0;
+
+                auto* msg = m_messageBus.post<ItemEvent>(MessageID::ItemMessage);
+                msg->actorID = ActorID::Bonus;
+                msg->player = player;
+            }
         }
     }
         break;

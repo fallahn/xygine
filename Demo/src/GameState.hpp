@@ -115,6 +115,7 @@ private:
     void switchMap(const MapData&);
     void spawnMapActors();
     void spawnWarning();
+    void spawnRoundSkip();
 
     void updateUI(const InventoryUpdate&);
 };

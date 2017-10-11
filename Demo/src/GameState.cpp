@@ -139,6 +139,8 @@ namespace
         float m_flashTime = flashTime;
         sf::Color m_colour = sf::Color::Red;   
     };
+
+    sf::Uint8 debugActorCount = 0;
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
@@ -242,6 +244,8 @@ void GameState::handleMessage(const xy::Message& msg)
 
 bool GameState::update(float dt)
 {   
+    DPRINT("Actor count", std::to_string(debugActorCount));
+    
     xy::NetEvent evt;
     while (m_client.pollEvent(evt))
     {
@@ -674,6 +678,12 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     switch (evt.packet.getID())
     {
     default: break;
+#ifdef XY_DEBUG
+    case PacketID::DebugMapCount:
+        debugActorCount = evt.packet.as<sf::Uint8>();
+        break;
+#endif
+
     case PacketID::ServerMessage:
     {
         sf::Int32 idx = evt.packet.as<sf::Int32>();
@@ -845,6 +855,9 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         break;
     case PacketID::RoundWarning:
         spawnWarning();
+        break;
+    case PacketID::RoundSkip:
+        spawnRoundSkip();
         break;
     case PacketID::GameOver:
     {
@@ -1418,6 +1431,11 @@ void GameState::spawnWarning()
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
     getContext().appInstance.getMessageBus().post<MapEvent>(MessageID::MapMessage)->type = MapEvent::HurryUp;
+}
+
+void GameState::spawnRoundSkip()
+{
+
 }
 
 void GameState::updateUI(const InventoryUpdate& data)
