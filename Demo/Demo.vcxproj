@@ -123,6 +123,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\AnimationController.cpp" />
+    <ClCompile Include="src\BonusSystem.cpp" />
     <ClCompile Include="src\BubbleSystem.cpp" />
     <ClCompile Include="src\ClientServerShared.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="src\ActorSystem.hpp" />
     <ClInclude Include="src\AnimationController.hpp" />
     <ClInclude Include="src\BackgroundShader.hpp" />
+    <ClInclude Include="src\BonusSystem.hpp" />
     <ClInclude Include="src\BubbleSystem.hpp" />
     <ClInclude Include="src\ClientServerShared.hpp" />
     <ClInclude Include="src\CollisionSystem.hpp" />

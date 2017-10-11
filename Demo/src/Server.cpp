@@ -43,6 +43,7 @@ source distribution.
 #include "MessageIDs.hpp"
 #include "InventoryDirector.hpp"
 #include "PowerupSystem.hpp"
+#include "BonusSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -82,6 +83,7 @@ GameServer::GameServer()
     m_running               (false),
     m_thread                (&GameServer::update, this),
     m_scene                 (m_messageBus),
+    m_mapSkipCount          (0),
     m_currentMap            (0),
     m_endOfRoundPauseTime   (3.f),
     m_currentRoundTime      (0.f),
@@ -468,6 +470,7 @@ void GameServer::checkMapStatus(float dt)
 {
     m_endOfRoundPauseTime -= dt;
 
+
     if (m_mapData.actorCount == 0
         && m_endOfRoundPauseTime < 0)
     {
@@ -513,6 +516,7 @@ void GameServer::checkMapStatus(float dt)
         m_scene.setSystemActive<NPCSystem>(false);
         m_scene.setSystemActive<CollisionSystem>(false);
         m_scene.setSystemActive<PowerupSystem>(false);
+        m_scene.setSystemActive<BonusSystem>(false);
     }
 }
 
@@ -566,6 +570,7 @@ void GameServer::initScene()
     m_scene.addSystem<NPCSystem>(m_messageBus, m_host);
     m_scene.addSystem<FruitSystem>(m_messageBus, m_host);
     m_scene.addSystem<PowerupSystem>(m_messageBus, m_host);
+    m_scene.addSystem<BonusSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
@@ -624,6 +629,11 @@ void GameServer::loadMap()
                     if (objs.size() == 4)
                     {
                         m_scene.getSystem<PowerupSystem>().setSpawnFlags(PowerupSystem::Flame | PowerupSystem::Lightning);
+                        m_scene.getSystem<BonusSystem>().setEnabled(true);
+                    }
+                    else
+                    {
+                        m_scene.getSystem<BonusSystem>().setEnabled(false);
                     }
 
                     flags |= MapFlags::Teleport;
@@ -708,31 +718,43 @@ void GameServer::beginNewRound()
         m_scene.setSystemActive<NPCSystem>(true);
         m_scene.setSystemActive<CollisionSystem>(true);
         m_scene.setSystemActive<PowerupSystem>(true);
+        m_scene.setSystemActive<BonusSystem>(true);
 
-        //send initial position of existing actors
-        const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
-        for (const auto& actor : actors)
-        {
-            const auto& actorComponent = actor.getComponent<Actor>();
-            const auto& tx = actor.getComponent<xy::Transform>().getPosition();
-
-            ActorState state;
-            state.actor.id = actorComponent.id;
-            state.actor.type = actorComponent.type;
-            state.x = tx.x;
-            state.y = tx.y;
-
-            m_host.broadcastPacket(PacketID::ActorAbsolute, state, xy::NetFlag::Reliable, 1);
-        }
-
-        m_currentRoundTime = 0.f;
         m_changingMaps = false;
 
-        //check if anyone tried joining mid map change
-        if (m_queuedClient)
+        if (m_mapSkipCount) //someone scored a bonus and skips 5 maps
         {
-            m_host.sendPacket(*m_queuedClient, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
-            m_queuedClient.reset();
+            m_mapData.actorCount = 0;
+            m_endOfRoundPauseTime = -1.f;
+            m_mapSkipCount--;
+        }
+        else
+        {
+            //send initial position of existing actors
+            const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
+            for (const auto& actor : actors)
+            {
+                const auto& actorComponent = actor.getComponent<Actor>();
+                const auto& tx = actor.getComponent<xy::Transform>().getPosition();
+
+                ActorState state;
+                state.actor.id = actorComponent.id;
+                state.actor.type = actorComponent.type;
+                state.x = tx.x;
+                state.y = tx.y;
+
+                m_host.broadcastPacket(PacketID::ActorAbsolute, state, xy::NetFlag::Reliable, 1);
+            }
+
+            m_currentRoundTime = 0.f;
+
+
+            //check if anyone tried joining mid map change
+            if (m_queuedClient)
+            {
+                m_host.sendPacket(*m_queuedClient, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
+                m_queuedClient.reset();
+            }
         }
     }
 }

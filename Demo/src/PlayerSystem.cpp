@@ -34,6 +34,7 @@ source distribution.
 #include "NPCSystem.hpp"
 #include "CollisionSystem.hpp"
 #include "BubbleSystem.hpp"
+#include "CommandIDs.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -472,6 +473,18 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                                 if (!player.lives)
                                 {
                                     entity.getComponent<CollisionComponent>().setCollisionMaskBits(0);
+
+                                    //and kill any chasing goobly
+                                    xy::Command cmd;
+                                    cmd.targetFlags = CommandID::NPC;
+                                    cmd.action = [&,entity](xy::Entity npcEnt, float)
+                                    {
+                                        if (npcEnt.getComponent<NPC>().target == entity)
+                                        {
+                                            getScene()->destroyEntity(npcEnt);
+                                        }
+                                    };
+                                    getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
                                 }
 
                                 //raise dead message

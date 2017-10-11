@@ -45,6 +45,7 @@ namespace SpriteID
         LightningOne, LightningTwo,
         FlameOne, FlameTwo,
         WaterOne, WaterTwo,
+        Bonus,
         TowerDudeOne, TowerDudeTwo,
         Count
     };

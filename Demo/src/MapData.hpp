@@ -44,6 +44,7 @@ namespace ActorID
         FlameOne, FlameTwo,
         LightningOne, LightningTwo,
         WaterOne, WaterTwo,
+        Bonus,
         PrincessOne, PrincessTwo,
         TowerOne, TowerTwo
     };
@@ -142,6 +143,7 @@ struct InventoryUpdate final
     sf::Uint32 score = 0;
     sf::Uint32 amount = 0;
     sf::Uint8 lives = 0;
+    sf::Uint8 bonusFlags = 0;
 };
 
 

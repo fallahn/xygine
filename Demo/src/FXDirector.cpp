@@ -42,7 +42,7 @@ namespace
 FXDirector::FXDirector()
     : m_nextFreeEntity(0)
 {
-    //TODO set up mappign in xygine
+    //TODO set up mapping in xygine
     m_soundResource.get("assets/sound/collect.wav");
     m_soundResource.get("assets/sound/jump.wav");
     m_soundResource.get("assets/sound/npc_pop.wav");
@@ -77,6 +77,7 @@ void FXDirector::handleMessage(const xy::Message& msg)
             break;
             case ActorID::BubbleOne:
             case ActorID::BubbleTwo:
+            case ActorID::Bonus:
                 playSound(m_soundResource.get("assets/sound/pop.wav"));
                 break;
             }

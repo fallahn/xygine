@@ -160,6 +160,10 @@ void BubbleSystem::doCollision(xy::Entity entity)
                         bubble.velocity.x = 
                             (xy::Util::Random::value(0, 1) == 0) ?
                             -BubbleVerticalVelocity : BubbleVerticalVelocity;
+                    }
+                    else if (man.normal.x != 0)
+                    {
+                        bubble.velocity.x = 0.f;
                     }*/
                 }
                 break;

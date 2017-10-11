@@ -70,8 +70,9 @@ namespace CollisionFlags
         NPC = 0x20,
         Fruit = 0x40,
         Powerup = 0x80,
+        Bonus = 0x100,
 
-        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup,
+        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup | Bonus,
         NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup,
         FruitMask = Solid | Platform | Player | Teleport,
         PowerupMask = Platform | Solid | Player | NPC

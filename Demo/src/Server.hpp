@@ -72,6 +72,7 @@ private:
     xy::MessageBus m_messageBus;
     xy::Scene m_scene;
     MapData m_mapData;
+    sf::Uint32 m_mapSkipCount;
 
     std::vector<std::string> m_mapFiles;
     std::size_t m_currentMap;

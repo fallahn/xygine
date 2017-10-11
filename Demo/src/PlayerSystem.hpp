@@ -63,6 +63,8 @@ struct Player final
     sf::Vector2f spawnPosition;
     float timer = 2.f; //times invulnerability when spawning, and time to respawn
     sf::Uint8 lives = 3;
+
+    sf::Uint8 bonusFlags = 0;
 };
 
 class PlayerSystem final : public xy::System

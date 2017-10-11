@@ -272,7 +272,9 @@ void PowerupSystem::processIdle(xy::Entity entity, float dt)
 {   
     auto& powerup = entity.getComponent<Powerup>();
     auto& tx = entity.getComponent<xy::Transform>();
-    tx.move(0.f, powerup.velocity.y * dt);
+    //tx.move(0.f, powerup.velocity.y * dt);
+
+    tx.move(powerup.velocity * dt);
 
     powerup.lifetime -= dt;
     if (powerup.lifetime < 0)
@@ -305,33 +307,29 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float dt)
                     {
                         powerup.state = Powerup::State::Active;
                         powerup.lifetime = 5.f;
+                        powerup.velocity.x = (man.normal.x != 0) ? -man.normal.x : (powerup.owner) == 0 ? -1.f : 1.f;
                         entity.getComponent<AnimationController>().nextAnimation = AnimationController::Walk;
                     }
                 }
                 break;
             case CollisionType::Platform:
-                //if not active move along x axis
-                if (powerup.state == Powerup::State::Idle)
-                {
-                    tx.move(man.normal * man.penetration);
-                    tx.move(powerup.velocity.x * -BubbleVerticalVelocity * dt, 0.f);
-                }
-                break;
             case CollisionType::Solid:
-                //if not active move along x axis
-                //otherwise die
                 if (powerup.state == Powerup::State::Idle)
                 {
                     tx.move(man.normal * man.penetration);
-                    tx.move(powerup.velocity.x * -BubbleVerticalVelocity * dt, 0.f);
+
+                    if (man.normal.y != 0 && powerup.velocity.x == 0)
+                    {
+                        powerup.velocity.x =
+                            (xy::Util::Random::value(0, 1) == 0) ?
+                            -BubbleVerticalVelocity : BubbleVerticalVelocity;
+                    }
+                    else if (man.normal.x != 0)
+                    {
+                        powerup.velocity.x = 0.f;
+                    }
                 }
-                /*else if (powerup.state == Powerup::State::Active)
-                {
-                    tx.move(man.normal * man.penetration);
-                    powerup.state = Powerup::State::Dying;
-                    powerup.lifetime = 1.f;
-                    entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
-                }*/
+
                 break;
             case CollisionType::NPC:
                 if (powerup.state == Powerup::State::Active)
@@ -436,7 +434,7 @@ void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
 
     entity.addComponent<Powerup>().owner = player;
     entity.getComponent<Powerup>().type = type;
-    entity.getComponent<Powerup>().velocity.x = (player == 0) ? -1.f : 1.f; 
+    //entity.getComponent<Powerup>().velocity.x = (player == 0) ? -1.f : 1.f; 
     entity.getComponent<Powerup>().velocity.y = (top) ? -BubbleVerticalVelocity : BubbleVerticalVelocity;
 
     entity.addComponent<AnimationController>().nextAnimation = AnimationController::Idle;

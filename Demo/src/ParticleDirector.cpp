@@ -86,6 +86,7 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             case ActorID::WaterTwo:
             case ActorID::BubbleOne:
             case ActorID::BubbleTwo:
+            case ActorID::Bonus:
                 //if (data.entity.getComponent<AnimationController>().currentAnim == AnimationController::Idle)
                 {
                     ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];

@@ -2,6 +2,7 @@
 set(PROJECT_SRC 
   ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/AnimationController.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/BonusSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/BubbleSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ClientServerShared.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSystem.cpp

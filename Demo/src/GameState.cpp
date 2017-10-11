@@ -372,6 +372,16 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::TowerDudeOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one");
     m_animationControllers[SpriteID::TowerDudeTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two");
 
+    //bonus bubbles
+    spriteSheet.loadFromFile("assets/sprites/ui.spt", m_textureResource);
+    m_sprites[SpriteID::Bonus] = spriteSheet.getSprite("bonus");
+
+    m_animationControllers[SpriteID::Bonus].animationMap[0] = spriteSheet.getAnimationIndex("b", "bonus");
+    m_animationControllers[SpriteID::Bonus].animationMap[1] = spriteSheet.getAnimationIndex("o", "bonus");
+    m_animationControllers[SpriteID::Bonus].animationMap[2] = spriteSheet.getAnimationIndex("n", "bonus");
+    m_animationControllers[SpriteID::Bonus].animationMap[3] = spriteSheet.getAnimationIndex("u", "bonus");
+    m_animationControllers[SpriteID::Bonus].animationMap[4] = spriteSheet.getAnimationIndex("s", "bonus");
+
     //load background
     auto ent = m_scene.createEntity();
     ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/background.png")).setDepth(-50);
@@ -1107,6 +1117,9 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     case ActorID::WaterTwo:
         addSprite(entity, SpriteID::WaterTwo);
         break;
+    case ActorID::Bonus:
+        addSprite(entity, SpriteID::Bonus);
+        break;
     }
 }
 
@@ -1457,7 +1470,6 @@ void GameState::updateUI(const InventoryUpdate& data)
     {
         m_scene.getSystem<xy::CommandSystem>().sendCommand(textCommand);
     }
-
 
     if (data.lives == 0)
     {

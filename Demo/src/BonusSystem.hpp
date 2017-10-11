@@ -25,10 +25,12 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_INVENTORY_DIRECTOR_HPP_
-#define DEMO_INVENTORY_DIRECTOR_HPP_
+#ifndef DEMO_BONUS_SYSTEM_HPP_
+#define DEMO_BONUS_SYSTEM_HPP_
 
-#include <xyginext/ecs/Director.hpp>
+#include <xyginext/ecs/System.hpp>
+
+#include <SFML/System/Vector2.hpp>
 
 #include <array>
 
@@ -37,29 +39,45 @@ namespace xy
     class NetHost;
 }
 
-class InventoryDirector final : public xy::Director
+struct Bonus final
 {
-public:
-    explicit InventoryDirector(xy::NetHost&);
-
-    void handleMessage(const xy::Message&) override;
-    void handleEvent(const sf::Event&) override {}
-    void process(float) override {}
-
-private:
-    xy::NetHost& m_host;
-    
-    struct Inventory final
+    enum Value
     {
-        sf::Uint32 score = 0;
-        sf::Uint8 lives = 0;
-        sf::Uint8 bonusFlags = 0;
-    };
-    std::array<Inventory, 2> m_playerValues{};
+        B = 0x1,
+        O = 0x2,
+        N = 0x4,
+        U = 0x8,
+        S = 0x10,
+        BONUS = B | O | N | U | S
+    }value = B;
 
-    void sendUpdate(sf::Uint8, sf::Uint32);
+    static constexpr float MaxLifeTime = 7.f;
+    float lifetime = MaxLifeTime;
+    sf::Vector2f velocity;
 
-    void checkLifeBonus(sf::Uint8, sf::Uint32);
+    static constexpr std::array<Value, 5> valueMap = {B,O,N,U,S};
 };
 
-#endif //DEMO_INVENTORY_DIRECTOR_HPP_
+class BonusSystem final : public xy::System
+{
+public:
+    BonusSystem(xy::MessageBus&, xy::NetHost&);
+
+    void process(float) override;
+
+    void setEnabled(bool enable) { m_enabled = enable; }
+
+private:
+
+    xy::NetHost& m_host;
+    std::size_t m_currentSpawnTime;
+    float m_spawnTimer;
+
+    bool m_enabled;
+
+    void doCollision(xy::Entity);
+    void kill(xy::Entity);
+    void spawn(float, float);
+};
+
+#endif //DEMO_BONUS_SYSTEM_HPP_

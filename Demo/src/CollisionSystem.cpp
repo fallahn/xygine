@@ -75,7 +75,7 @@ void CollisionSystem::queryState(xy::Entity entity)
 //private
 void CollisionSystem::broadPhase(xy::Entity entity)
 {
-    XY_ASSERT(entity.hasComponent<CollisionComponent>(), "Requirtes collision component!");
+    XY_ASSERT(entity.hasComponent<CollisionComponent>(), "Requires collision component!");
 
     const auto& xForm = entity.getComponent<xy::Transform>();
     auto& collisionComponent = entity.getComponent<CollisionComponent>();
