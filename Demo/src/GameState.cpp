@@ -45,6 +45,7 @@ source distribution.
 #include "TowerDirector.hpp"
 #include "TowerGuyCallback.hpp"
 #include "BonusSystem.hpp"
+#include "ClientNotificationCallbacks.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -97,47 +98,6 @@ namespace
     {
         Bonus::Value value = Bonus::B;
         sf::Uint8 playerID = 0;
-    };
-
-    //flashes text
-    class Flasher final
-    {   
-    private:
-        static constexpr float flashTime = 0.25f;
-
-    public:
-        Flasher(xy::Scene& scene) : m_scene(scene) {}
-        void operator ()(xy::Entity entity, float dt)
-        {
-            m_flashTime -= dt;
-
-            if (m_flashTime < 0)
-            {
-                m_flashTime = flashTime;
-                m_colour.a = (m_colour.a == 255) ? 0 : 255;
-                entity.getComponent<xy::Text>().setFillColour(m_colour);
-            }
-
-            auto& tx = entity.getComponent<xy::Transform>();
-            tx.move(-600.f * dt, 0.f);
-            if (tx.getPosition().x < -1000.f)
-            {
-                m_scene.destroyEntity(entity);
-
-                xy::Command cmd;
-                cmd.targetFlags = CommandID::SceneMusic;
-                cmd.action = [](xy::Entity entity, float)
-                {
-                    entity.getComponent<xy::AudioEmitter>().play();
-                    entity.getComponent<xy::AudioEmitter>().setPitch(1.1f);
-                };
-                m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
-            }
-        }
-    private:
-        xy::Scene& m_scene;
-        float m_flashTime = flashTime;
-        sf::Color m_colour = sf::Color::Red;   
     };
 
     sf::Uint8 debugActorCount = 0;
@@ -196,7 +156,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         {
         default: break;
         /*case sf::Keyboard::Insert:
-            m_client.disconnect();
+            spawnRoundSkip();
             break;
         case sf::Keyboard::Home:
             m_server.stop();
@@ -1435,7 +1395,19 @@ void GameState::spawnWarning()
 
 void GameState::spawnRoundSkip()
 {
-
+    float spacing = MapBounds.width / 5.f;
+    float scale = spacing / BubbleBounds.width;
+    
+    for (auto i = 0; i < 5; ++i)
+    {
+        auto entity = m_scene.createEntity();
+        entity.addComponent<xy::Transform>().setPosition(i * spacing, xy::Util::Random::value(-180.f, 0.f));
+        entity.getComponent<xy::Transform>().setScale(scale, scale);
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Bonus];
+        entity.addComponent<xy::SpriteAnimation>().play(i);
+        entity.addComponent<xy::Callback>().active = true;
+        entity.getComponent<xy::Callback>().function = BallDropper(m_scene);
+    }
 }
 
 void GameState::updateUI(const InventoryUpdate& data)

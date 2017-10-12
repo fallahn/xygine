@@ -155,6 +155,7 @@
     <ClInclude Include="src\BackgroundShader.hpp" />
     <ClInclude Include="src\BonusSystem.hpp" />
     <ClInclude Include="src\BubbleSystem.hpp" />
+    <ClInclude Include="src\ClientNotificationCallbacks.hpp" />
     <ClInclude Include="src\ClientServerShared.hpp" />
     <ClInclude Include="src\CollisionSystem.hpp" />
     <ClInclude Include="src\CommandIDs.hpp" />
