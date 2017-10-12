@@ -38,25 +38,28 @@ source distribution.
 #include <array>
 #include <limits>
 
-enum class CollisionType
+namespace CollisionType
 {
-    None,
-    Player,
-    Foot,
-    Platform,
-    Solid,
-    Teleport,
-    Bubble,
-    NPC,
-    Fruit,
-    Powerup
+    enum ID
+    {
+        None = 0,
+        Player = 0x1,
+        Foot = 0x2,
+        Platform = 0x4,
+        Solid = 0x8,
+        Teleport = 0x10,
+        Bubble = 0x20,
+        NPC = 0x40,
+        Fruit = 0x80,
+        Powerup = 0x100
+    };
 };
 
 struct Manifold final
 {
     float penetration = 0.f;
     sf::Vector2f normal;
-    CollisionType otherType = CollisionType::None;
+    CollisionType::ID otherType = CollisionType::None;
     xy::Entity otherEntity;
 };
 
@@ -65,8 +68,8 @@ class Hitbox final
 public:
     static constexpr sf::Uint32 MaxCollisions = 16;
     
-    CollisionType getType() const { return m_collisionType; }
-    void setType(CollisionType type) { m_collisionType = type; }
+    CollisionType::ID getType() const { return m_collisionType; }
+    void setType(CollisionType::ID type) { m_collisionType = type; }
 
     const std::array<Manifold, MaxCollisions>& getManifolds() const { return m_manifolds; }
     std::size_t getCollisionCount() const { return m_collisionCount; }
@@ -75,7 +78,7 @@ public:
     void setCollisionRect(sf::FloatRect rect) { m_collisionRect = rect; }
 
 private:
-    CollisionType m_collisionType = CollisionType::None;
+    CollisionType::ID m_collisionType = CollisionType::None;
     std::array<Manifold, MaxCollisions> m_manifolds{};
     std::size_t m_collisionCount = 0;
     sf::FloatRect m_collisionRect;
@@ -97,7 +100,7 @@ public:
         m_localBounds.height = -fMax;
     }
 
-    void addHitbox(sf::FloatRect rect, CollisionType type)
+    void addHitbox(sf::FloatRect rect, CollisionType::ID type)
     {
         XY_ASSERT(m_hitboxCount < MaxHitBoxes, "No more hitboxes may be added");
         m_hitboxes[m_hitboxCount].setCollisionRect(rect);

@@ -36,7 +36,7 @@ source distribution.
 
 #include <tmxlite/Object.hpp>
 
-void createCollisionObject(xy::Scene& scene, const tmx::Object& obj, CollisionType type)
+void createCollisionObject(xy::Scene& scene, const tmx::Object& obj, CollisionType::ID type)
 {
     if (obj.getShape() == tmx::Object::Shape::Rectangle)
     {

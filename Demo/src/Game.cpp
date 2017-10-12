@@ -31,6 +31,7 @@ source distribution.
 #include "ErrorState.hpp"
 #include "PauseState.hpp"
 #include "GameOverState.hpp"
+#include "IntroState.hpp"
 
 #include <SFML/Window/Event.hpp>
 
@@ -83,7 +84,11 @@ void Game::draw()
 void Game::initialise()
 {
     registerStates();
+#ifdef XY_DEBUG
     m_stateStack.pushState(StateID::MainMenu);
+#else
+    m_stateStack.pushState(StateID::Intro);
+#endif
 
     XY_ASSERT(getRenderWindow(), "no valid window");
     getRenderWindow()->setKeyRepeatEnabled(false);
@@ -102,4 +107,5 @@ void Game::registerStates()
     m_stateStack.registerState<ErrorState>(StateID::Error, sharedData);
     m_stateStack.registerState<PauseState>(StateID::Pause);
     m_stateStack.registerState<GameoverState>(StateID::GameOver, sharedData);
+    m_stateStack.registerState<IntroState>(StateID::Intro);
 }

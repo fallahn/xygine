@@ -52,6 +52,8 @@ namespace
 
     const sf::Uint32 UpMask = CollisionFlags::PlayerMask & ~(CollisionFlags::Bubble/*|CollisionFlags::Platform*/);
     const sf::Uint32 DownMask = CollisionFlags::PlayerMask;
+
+    const sf::Uint32 FootMask = (CollisionType::Platform | CollisionType::Solid | CollisionType::Bubble);
 }
 
 PlayerSystem::PlayerSystem(xy::MessageBus& mb, bool server)
@@ -515,9 +517,7 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
                 auto& manifolds = hitboxes[i].getManifolds();
                 for (auto j = 0; j < collisionCount; ++j)
                 {
-                    if (manifolds[j].otherType != CollisionType::Platform
-                        && manifolds[j].otherType != CollisionType::Solid
-                        && manifolds[j].otherType != CollisionType::Bubble)
+                    if((manifolds[j].otherType & FootMask) == 0)
                     {
                         player.state = Player::State::Jumping;
                     }

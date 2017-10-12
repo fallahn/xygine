@@ -55,6 +55,8 @@ namespace
     const std::array<float, 10> thinkTimes = { 20.f, 16.f, 12.f, 31.f, 15.4f, 14.9f, 25.f, 12.7f, 13.3f, 18.f };
     const float BubbleTime = 6.f;
     const float DieTime = 1.5f;
+
+    const sf::Uint32 FootMask = (CollisionType::Platform | CollisionType::Solid);
 }
 
 NPCSystem::NPCSystem(xy::MessageBus& mb, xy::NetHost& host)
@@ -303,8 +305,7 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
                 auto& manifolds = hitboxes[i].getManifolds();
                 for (auto j = 0; j < collisionCount; ++j)
                 {
-                    if (manifolds[j].otherType != CollisionType::Platform
-                        && manifolds[j].otherType != CollisionType::Solid)
+                    if ((manifolds[j].otherType & FootMask) == 0)
                     {
                         npc.state = NPC::State::Jumping;
                     }
@@ -608,8 +609,7 @@ void NPCSystem::updateBalldock(xy::Entity entity, float dt)
                 auto& manifolds = hitboxes[i].getManifolds();
                 for (auto j = 0; j < collisionCount; ++j)
                 {
-                    if (manifolds[j].otherType != CollisionType::Platform
-                        && manifolds[j].otherType != CollisionType::Solid)
+                    if ((manifolds[j].otherType & FootMask) == 0)
                     {
                         npc.state = NPC::State::Jumping;
                     }
@@ -774,8 +774,7 @@ void NPCSystem::updateSquatmo(xy::Entity entity, float dt)
                 auto& manifolds = hitboxes[i].getManifolds();
                 for (auto j = 0; j < collisionCount; ++j)
                 {
-                    if (manifolds[j].otherType != CollisionType::Platform
-                        && manifolds[j].otherType != CollisionType::Solid)
+                    if ((manifolds[j].otherType & FootMask) == 0)
                     {
                         npc.state = NPC::State::Jumping;
                     }
@@ -909,6 +908,7 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
         //bubble wasn't burst in time, release NPC (angry mode)
         npc.state = NPC::State::Normal;
         npc.velocity = npc.lastVelocity;
+        npc.velocity.y = 0.f;
         npc.thinkTimer = thinkTimes[m_currentThinkTime];
         npc.angry = true;
         

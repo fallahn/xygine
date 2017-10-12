@@ -130,7 +130,7 @@ static const sf::Color BubbleColourOne(255, 212, 0);
 static const sf::Color BubbleColourTwo(255, 0, 212);
 
 //map loading functions shared between client / server
-void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType type);
+void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType::ID type);
 
 std::string getSha(const std::string&);
 
