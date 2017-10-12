@@ -25,35 +25,59 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_COMMAND_ID_HPP_
-#define DEMO_GAME_COMMAND_ID_HPP_
+#ifndef DEMO_BONUS_SYSTEM_HPP_
+#define DEMO_BONUS_SYSTEM_HPP_
 
-namespace CommandID
+#include <xyginext/ecs/System.hpp>
+
+#include <SFML/System/Vector2.hpp>
+
+#include <array>
+
+namespace xy
 {
-    enum
-    {
-        NetActor = 0x1,
-        MenuText = 0x2,
-        PlayerOne = 0x4,
-        PlayerTwo = 0x8,
-        NPC = 0x10,
-        //scoreboard/UI
-        ScoreOne = 0x20,
-        ScoreTwo = 0x40,
-        LivesOne = 0x80,
-        LivesTwo = 0x100,
-        Timeout = 0x200,
-        HighScore = 0x400,
-        //map data
-        MapItem = 0x800, //anything with this is removed on map changed
-        MapBackground = 0x1000,
-        SceneBackground = 0x2000,
-        SceneMusic = 0x4000,
-        //UI animations
-        Princess = 0x8000,
-        TowerDude = 0x10000,
-        BonusBall = 0x20000
-    };
+    class NetHost;
 }
 
-#endif //DEMO_GAME_COMMAND_ID_HPP_
+struct Bonus final
+{
+    enum Value
+    {
+        B = 0x1,
+        O = 0x2,
+        N = 0x4,
+        U = 0x8,
+        S = 0x10,
+        BONUS = B | O | N | U | S
+    }value = B;
+
+    static constexpr float MaxLifeTime = 7.f;
+    float lifetime = MaxLifeTime;
+    sf::Vector2f velocity;
+
+    static std::array<Value, 5> valueMap;
+};
+
+class BonusSystem final : public xy::System
+{
+public:
+    BonusSystem(xy::MessageBus&, xy::NetHost&);
+
+    void process(float) override;
+
+    void setEnabled(bool enable) { m_enabled = enable; }
+
+private:
+
+    xy::NetHost& m_host;
+    std::size_t m_currentSpawnTime;
+    float m_spawnTimer;
+
+    bool m_enabled;
+
+    void doCollision(xy::Entity);
+    void kill(xy::Entity);
+    void spawn(float, float);
+};
+
+#endif //DEMO_BONUS_SYSTEM_HPP_

@@ -53,7 +53,7 @@ private:
     {
         sf::Uint32 score = 0;
         sf::Uint8 lives = 0;
-        //TODO letters for bonus
+        sf::Uint8 bonusFlags = 0;
     };
     std::array<Inventory, 2> m_playerValues{};
 

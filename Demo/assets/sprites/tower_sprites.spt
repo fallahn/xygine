@@ -14,8 +14,15 @@ sprite_sheet tower_sprites
 			frame = 0,0,64,64
 			frame = 128,0,64,64
 			
-			framerate = 12
+			framerate = 8
 			loop=true
+		}
+
+		animation die
+		{
+			frame = 192,0,64,64
+			framerate = 25
+			loop = true
 		}
 	}
 
@@ -30,13 +37,16 @@ sprite_sheet tower_sprites
 			frame = 0,64,64,64
 			frame = 128,64,64,64
 			
-			framerate = 12
+			framerate = 8
 			loop=true
-		}	
-	}
+		}
 
-	sprite ladder
-	{
-		bounds = 192,0,64,128
+		animation die
+		{
+			frame = 192,64,64,64
+			framerate = 25
+			loop = true
+		}
+
 	}
 }

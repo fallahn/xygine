@@ -49,8 +49,8 @@
  <objectgroup name="Spawn">
   <object id="28" name="whirlybob" x="128" y="208" width="16" height="16"/>
   <object id="29" name="whirlybob" x="832" y="208" width="16" height="16"/>
-  <object id="30" name="clocksy" x="128" y="368" width="16" height="16"/>
-  <object id="31" name="clocksy" x="832" y="368" width="16" height="16"/>
-  <object id="34" name="clocksy" x="496" y="240" width="16" height="16"/>
+  <object id="30" name="balldock" x="128" y="368" width="16" height="16"/>
+  <object id="31" name="balldock" x="832" y="368" width="16" height="16"/>
+  <object id="34" name="whirlybob" x="496" y="240" width="16" height="16"/>
  </objectgroup>
 </map>

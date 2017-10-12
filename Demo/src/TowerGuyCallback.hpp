@@ -25,35 +25,35 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_COMMAND_ID_HPP_
-#define DEMO_GAME_COMMAND_ID_HPP_
+#ifndef DEMO_TOWERGUY_CALLBACK_HPP_
+#define DEMO_TOWERGUY_CALLBACK_HPP_
 
-namespace CommandID
+#include "ClientServerShared.hpp"
+
+#include <xyginext/ecs/Entity.hpp>
+#include <xyginext/ecs/Scene.hpp>
+#include <xyginext/ecs/components/Transform.hpp>
+
+#include <SFML/System/Vector2.hpp>
+
+class TowerGuyCallback final
 {
-    enum
+public:
+    explicit TowerGuyCallback(xy::Scene& scene) : m_scene(scene), m_velocity(-100.f, -100.f) {}
+    
+    void operator () (xy::Entity entity, float dt)
     {
-        NetActor = 0x1,
-        MenuText = 0x2,
-        PlayerOne = 0x4,
-        PlayerTwo = 0x8,
-        NPC = 0x10,
-        //scoreboard/UI
-        ScoreOne = 0x20,
-        ScoreTwo = 0x40,
-        LivesOne = 0x80,
-        LivesTwo = 0x100,
-        Timeout = 0x200,
-        HighScore = 0x400,
-        //map data
-        MapItem = 0x800, //anything with this is removed on map changed
-        MapBackground = 0x1000,
-        SceneBackground = 0x2000,
-        SceneMusic = 0x4000,
-        //UI animations
-        Princess = 0x8000,
-        TowerDude = 0x10000,
-        BonusBall = 0x20000
-    };
-}
+        m_velocity.y += Gravity * dt;
+        entity.getComponent<xy::Transform>().move(m_velocity * dt);
+        if (entity.getComponent<xy::Transform>().getPosition().y > xy::DefaultSceneSize.y)
+        {
+            m_scene.destroyEntity(entity);
+        }
+    }
 
-#endif //DEMO_GAME_COMMAND_ID_HPP_
+private:
+    xy::Scene& m_scene;
+    sf::Vector2f m_velocity;
+};
+
+#endif //DEMO_TOWERGUY_CALLBACK_HPP_

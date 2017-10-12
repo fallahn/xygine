@@ -95,7 +95,7 @@ struct NpcEvent final
 //when an item such as fruit or bonus collected
 struct ItemEvent final
 {
-    sf::Uint8 playerID = 0;
+    xy::Entity player;
     sf::Int32 actorID = -1;
 };
 

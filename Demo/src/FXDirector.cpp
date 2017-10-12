@@ -42,7 +42,7 @@ namespace
 FXDirector::FXDirector()
     : m_nextFreeEntity(0)
 {
-    //TODO set up mappign in xygine
+    //TODO set up mapping in xygine
     m_soundResource.get("assets/sound/collect.wav");
     m_soundResource.get("assets/sound/jump.wav");
     m_soundResource.get("assets/sound/npc_pop.wav");
@@ -77,6 +77,7 @@ void FXDirector::handleMessage(const xy::Message& msg)
             break;
             case ActorID::BubbleOne:
             case ActorID::BubbleTwo:
+            case ActorID::Bonus:
                 playSound(m_soundResource.get("assets/sound/pop.wav"));
                 break;
             }
@@ -104,26 +105,31 @@ void FXDirector::handleMessage(const xy::Message& msg)
         default: break;
         case AnimationController::Die:
         {
-            const auto& actor = data.entity.getComponent<Actor>();
-            switch (actor.type)
+            if (data.entity.hasComponent<Actor>())
             {
-            default: break;
-            case ActorID::Clocksy:
-            case ActorID::Whirlybob:
-                playSound(m_soundResource.get("assets/sound/npc_pop.wav"));
-                break;
-            case ActorID::PlayerOne:
-            case ActorID::PlayerTwo:
-                playSound(m_soundResource.get("assets/sound/player_die.wav"));
-                break;
-            case ActorID::FlameOne:
-            case ActorID::FlameTwo:
-                playSound(m_soundResource.get("assets/sound/flame.wav"));
-                break;
-            case ActorID::LightningOne:
-            case ActorID::LightningTwo:
-                playSound(m_soundResource.get("assets/sound/lightning_die.wav"));
-                break;
+                const auto& actor = data.entity.getComponent<Actor>();
+                switch (actor.type)
+                {
+                default: break;
+                case ActorID::Clocksy:
+                case ActorID::Whirlybob:
+                case ActorID::Balldock:
+                case ActorID::Squatmo:
+                    playSound(m_soundResource.get("assets/sound/npc_pop.wav"));
+                    break;
+                case ActorID::PlayerOne:
+                case ActorID::PlayerTwo:
+                    playSound(m_soundResource.get("assets/sound/player_die.wav"));
+                    break;
+                case ActorID::FlameOne:
+                case ActorID::FlameTwo:
+                    playSound(m_soundResource.get("assets/sound/flame.wav"));
+                    break;
+                case ActorID::LightningOne:
+                case ActorID::LightningTwo:
+                    playSound(m_soundResource.get("assets/sound/lightning_die.wav"));
+                    break;
+                }
             }
         }
         break;

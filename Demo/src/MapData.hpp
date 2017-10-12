@@ -37,17 +37,16 @@ namespace ActorID
     enum
     {
         None = -1,
-        PlayerOne,
-        PlayerTwo,
-        Whirlybob, Clocksy, Goobly,
-        BubbleOne,
-        BubbleTwo,
-        FruitSmall,
-        FruitLarge,
+        PlayerOne, PlayerTwo,
+        Whirlybob, Clocksy, Goobly, Balldock, Squatmo,
+        BubbleOne, BubbleTwo,
+        FruitSmall, FruitLarge,
         FlameOne, FlameTwo,
         LightningOne, LightningTwo,
         WaterOne, WaterTwo,
-        PrincessOne, PrincessTwo
+        Bonus,
+        PrincessOne, PrincessTwo,
+        TowerOne, TowerTwo
     };
 }
 
@@ -144,6 +143,7 @@ struct InventoryUpdate final
     sf::Uint32 score = 0;
     sf::Uint32 amount = 0;
     sf::Uint8 lives = 0;
+    sf::Uint8 bonusFlags = 0;
 };
 
 

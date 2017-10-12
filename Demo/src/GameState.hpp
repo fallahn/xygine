@@ -32,6 +32,7 @@ source distribution.
 #include <xyginext/core/ConfigFile.hpp>
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
+#include <xyginext/ecs/components/ParticleEmitter.hpp>
 #include <xyginext/resources/Resource.hpp>
 
 #include <xyginext/network/NetClient.hpp>
@@ -80,6 +81,7 @@ private:
 
     std::array<xy::Sprite, SpriteID::Count> m_sprites;
     std::array<AnimationController, SpriteID::Count> m_animationControllers;
+    xy::EmitterSettings m_bubbleParticles;
 
     xy::NetClient m_client;
     GameServer m_server;
@@ -113,6 +115,7 @@ private:
     void switchMap(const MapData&);
     void spawnMapActors();
     void spawnWarning();
+    void spawnRoundSkip();
 
     void updateUI(const InventoryUpdate&);
 };

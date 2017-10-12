@@ -39,9 +39,9 @@
  </objectgroup>
  <objectgroup name="Spawn">
   <object id="76" name="clocksy" x="608" y="224" width="16" height="16"/>
-  <object id="96" name="clocksy" x="512" y="384" width="16" height="16"/>
+  <object id="96" name="squatmo" x="512" y="384" width="16" height="16"/>
   <object id="97" name="clocksy" x="416" y="528" width="16" height="16"/>
-  <object id="98" name="clocksy" x="288" y="688" width="16" height="16"/>
+  <object id="98" name="squatmo" x="288" y="688" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="Teleport">
   <object id="73" x="288" y="1056" width="128" height="32"/>

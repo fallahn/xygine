@@ -30,6 +30,7 @@ source distribution.
 #include "PacketIDs.hpp"
 #include "MapData.hpp"
 #include "CommandIDs.hpp"
+#include "BonusSystem.hpp"
 
 #include <xyginext/network/NetHost.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -44,6 +45,8 @@ namespace
     const sf::Uint32 GooblyScore = 850;
     const sf::Uint32 SmallFruitScore = 350;
     const sf::Uint32 LargeFruitScore = 1000;
+    const sf::Uint32 BonusScore = 100;
+    const sf::Uint32 BonusCompletionScore = 1500;
 
     const sf::Uint32 lifeScore = 10000; //extra life is awarded in multiples of this
     const sf::Uint8 maxLives = 6;
@@ -91,6 +94,8 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
     {
         sf::Uint32 amount = 0;
         const auto& data = msg.getData<ItemEvent>();
+        auto playerID = data.player.getComponent<Player>().playerNumber;
+
         switch (data.actorID)
         {
         default: break;
@@ -100,10 +105,20 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         case ActorID::FruitSmall:
             amount = SmallFruitScore;
             break;
-        }
+        case ActorID::Bonus:
+            amount = BonusScore;
+            m_playerValues[playerID].bonusFlags = data.player.getComponent<Player>().bonusFlags;
 
-        m_playerValues[data.playerID].score += amount;
-        sendUpdate(data.playerID, amount);
+            if (m_playerValues[playerID].bonusFlags == 0) //round change was triggered
+            {
+                amount = BonusCompletionScore;
+            }
+
+            break;
+        }
+     
+        m_playerValues[playerID].score += amount;
+        sendUpdate(playerID, amount);
     }
         break;
     case MessageID::PlayerMessage:
@@ -153,6 +168,7 @@ void InventoryDirector::sendUpdate(sf::Uint8 player, sf::Uint32 amount)
         update.score = m_playerValues[player].score;
         update.amount = amount;
         update.playerID = player;
+        update.bonusFlags = m_playerValues[player].bonusFlags;
 
         m_host.broadcastPacket(PacketID::InventoryUpdate, update, xy::NetFlag::Reliable, 1);
 }

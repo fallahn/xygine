@@ -48,6 +48,10 @@ namespace PacketID
         ConsoleMessage, //as server message only contains an arbitrary string (prefer ServerMessage where possible)
         InventoryUpdate, //tells clients to update player inventory display (lives etc)
         RoundWarning, //notifies clients of near time limit
+        RoundSkip, //notifies clients someone collected BONUS
+
+        DebugMapCount, //sends the number of active NPCs for debug printing
+
         Count
     };
 }

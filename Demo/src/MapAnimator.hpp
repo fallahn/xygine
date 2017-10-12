@@ -38,6 +38,7 @@ struct MapAnimator final
     }state = State::Static;
 
     sf::Vector2f dest;
+    float speed = 500.f;
 };
 
 //animated map transistions

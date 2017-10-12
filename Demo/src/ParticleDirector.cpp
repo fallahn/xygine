@@ -44,7 +44,7 @@ namespace
 }
 
 ParticleDirector::ParticleDirector(xy::TextureResource& tr)
-    :m_nextFreeEmitter  (0)
+    : m_nextFreeEmitter  (0)
 {
     //load particle presets
     m_settings[SettingsID::BubblePop].loadFromFile("assets/particles/pop.xyp", tr);
@@ -64,11 +64,11 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             auto ent = getNextEntity();
             switch (data.actorID)
             {
-            default: return;
-            
-
+            default: return;            
+            case ActorID::Squatmo:
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
+            case ActorID::Balldock:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::Score];
                 ent.getComponent<xy::ParticleEmitter>().settings.colour = bubble;
                 break;
@@ -86,6 +86,7 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             case ActorID::WaterTwo:
             case ActorID::BubbleOne:
             case ActorID::BubbleTwo:
+            case ActorID::Bonus:
                 //if (data.entity.getComponent<AnimationController>().currentAnim == AnimationController::Idle)
                 {
                     ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
@@ -97,6 +98,8 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
         }
         else if (data.type == SceneEvent::ActorSpawned)
         {
+            //hm do we want to actually get a new entity
+            //if most cases aren't handled?
             auto ent = getNextEntity();
             switch (data.actorID)
             {
@@ -104,8 +107,14 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
             case ActorID::Goobly:
+            case ActorID::Balldock:
+            case ActorID::Squatmo:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::SpawnNPC];
                 break;
+            /*case ActorID::BubbleOne:
+            case ActorID::BubbleTwo:
+                
+                break;*/
             }
             ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
             ent.getComponent<xy::ParticleEmitter>().start();
@@ -122,6 +131,8 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             {
             case ActorID::Clocksy:
             case ActorID::Whirlybob:
+            case ActorID::Balldock:
+            case ActorID::Squatmo:
                 if (data.oldAnim == AnimationController::TrappedOne
                     || data.oldAnim == AnimationController::TrappedTwo)
                 {

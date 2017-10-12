@@ -49,7 +49,7 @@ namespace
     const sf::Vector2f flameOffset(32.f, 0.f);
     const float flameSpreadTime = 0.5f; //age at which a flame spawns another
 
-    std::array<float, 6u> spawnTimes = { 9.f, 12.f, 10.5f, 9.5f, 12.5f, 11.f };
+    std::array<float, 6u> spawnTimes = { 11.f, 12.f, 10.5f, 13.5f, 12.5f, 14.f };
 }
 
 PowerupSystem::PowerupSystem(xy::MessageBus& mb, xy::NetHost& host)
@@ -272,7 +272,9 @@ void PowerupSystem::processIdle(xy::Entity entity, float dt)
 {   
     auto& powerup = entity.getComponent<Powerup>();
     auto& tx = entity.getComponent<xy::Transform>();
-    tx.move(0.f, powerup.velocity.y * dt);
+    //tx.move(0.f, powerup.velocity.y * dt);
+
+    tx.move(powerup.velocity * dt);
 
     powerup.lifetime -= dt;
     if (powerup.lifetime < 0)
@@ -305,33 +307,29 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float dt)
                     {
                         powerup.state = Powerup::State::Active;
                         powerup.lifetime = 5.f;
+                        powerup.velocity.x = (man.normal.x != 0) ? -man.normal.x : (powerup.owner) == 0 ? -1.f : 1.f;
                         entity.getComponent<AnimationController>().nextAnimation = AnimationController::Walk;
                     }
                 }
                 break;
             case CollisionType::Platform:
-                //if not active move along x axis
-                if (powerup.state == Powerup::State::Idle)
-                {
-                    tx.move(man.normal * man.penetration);
-                    tx.move(powerup.velocity.x * -BubbleVerticalVelocity * dt, 0.f);
-                }
-                break;
             case CollisionType::Solid:
-                //if not active move along x axis
-                //otherwise die
                 if (powerup.state == Powerup::State::Idle)
                 {
                     tx.move(man.normal * man.penetration);
-                    tx.move(powerup.velocity.x * -BubbleVerticalVelocity * dt, 0.f);
+
+                    if (man.normal.y != 0 && powerup.velocity.x == 0)
+                    {
+                        powerup.velocity.x =
+                            (xy::Util::Random::value(0, 1) == 0) ?
+                            -BubbleVerticalVelocity : BubbleVerticalVelocity;
+                    }
+                    else if (man.normal.x != 0)
+                    {
+                        powerup.velocity.x = 0.f;
+                    }
                 }
-                /*else if (powerup.state == Powerup::State::Active)
-                {
-                    tx.move(man.normal * man.penetration);
-                    powerup.state = Powerup::State::Dying;
-                    powerup.lifetime = 1.f;
-                    entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
-                }*/
+
                 break;
             case CollisionType::NPC:
                 if (powerup.state == Powerup::State::Active)
@@ -406,8 +404,7 @@ void PowerupSystem::fireCollision(xy::Entity entity)
 void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
 {
     bool top = (xy::Util::Random::value(0, 1) == 0);
-    
-    sf::FloatRect bounds = { 0.f, 0.f, BubbleSize, BubbleSize };  
+     
     sf::Vector2f spawnPos = (player == 0) ? PowerupOneSpawn : PowerupTwoSpawn;
     if (top) spawnPos.y -= TopSpawn;
 
@@ -430,18 +427,18 @@ void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
     entity.getComponent<Actor>().type = actorID;
 
     entity.addComponent<xy::Transform>().setPosition(spawnPos);
-    entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
-    entity.addComponent<CollisionComponent>().addHitbox(bounds, CollisionType::Powerup);
+    entity.getComponent<xy::Transform>().setOrigin(BubbleOrigin);
+    entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::Powerup);
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Powerup);
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PowerupMask);
 
     entity.addComponent<Powerup>().owner = player;
     entity.getComponent<Powerup>().type = type;
-    entity.getComponent<Powerup>().velocity.x = (player == 0) ? -1.f : 1.f; 
+    //entity.getComponent<Powerup>().velocity.x = (player == 0) ? -1.f : 1.f; 
     entity.getComponent<Powerup>().velocity.y = (top) ? -BubbleVerticalVelocity : BubbleVerticalVelocity;
 
     entity.addComponent<AnimationController>().nextAnimation = AnimationController::Idle;
-    entity.addComponent<xy::QuadTreeItem>().setArea(bounds);
+    entity.addComponent<xy::QuadTreeItem>().setArea(BubbleBounds);
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
 
     //broadcast to clients
@@ -457,15 +454,13 @@ void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
 void PowerupSystem::spawnFlame(sf::Vector2f position, sf::Uint8 player, Powerup::SpreadDirection direction, sf::Uint8 generation)
 {
     //doesn't matter which actor id because flame anim the same on both
-    sf::FloatRect bounds = { 0.f, 0.f, BubbleSize, BubbleSize };
-
     auto entity = getScene()->createEntity();
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = ActorID::FlameOne;
 
     entity.addComponent<xy::Transform>().setPosition(position);
-    entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
-    entity.addComponent<CollisionComponent>().addHitbox(bounds, CollisionType::Powerup);
+    entity.getComponent<xy::Transform>().setOrigin(BubbleOrigin);
+    entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::Powerup);
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Powerup);
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PowerupMask);
 
@@ -477,7 +472,7 @@ void PowerupSystem::spawnFlame(sf::Vector2f position, sf::Uint8 player, Powerup:
     entity.getComponent<Powerup>().generation = generation;
 
     entity.addComponent<AnimationController>().nextAnimation = AnimationController::Shoot;
-    entity.addComponent<xy::QuadTreeItem>().setArea(bounds);
+    entity.addComponent<xy::QuadTreeItem>().setArea(BubbleBounds);
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
 
 

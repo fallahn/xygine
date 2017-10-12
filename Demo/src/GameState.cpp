@@ -43,6 +43,9 @@ source distribution.
 #include "BackgroundShader.hpp"
 #include "MusicCallback.hpp"
 #include "TowerDirector.hpp"
+#include "TowerGuyCallback.hpp"
+#include "BonusSystem.hpp"
+#include "ClientNotificationCallbacks.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -91,46 +94,13 @@ namespace
     const float clientTimeout = 20.f;
     const std::string scoreFile("scores.txt");
 
-    //flashes text
-    class Flasher final
-    {   
-    private:
-        static constexpr float flashTime = 0.25f;
-
-    public:
-        Flasher(xy::Scene& scene) : m_scene(scene) {}
-        void operator ()(xy::Entity entity, float dt)
-        {
-            m_flashTime -= dt;
-
-            if (m_flashTime < 0)
-            {
-                m_flashTime = flashTime;
-                m_colour.a = (m_colour.a == 255) ? 0 : 255;
-                entity.getComponent<xy::Text>().setFillColour(m_colour);
-            }
-
-            auto& tx = entity.getComponent<xy::Transform>();
-            tx.move(-600.f * dt, 0.f);
-            if (tx.getPosition().x < -1000.f)
-            {
-                m_scene.destroyEntity(entity);
-
-                xy::Command cmd;
-                cmd.targetFlags = CommandID::SceneMusic;
-                cmd.action = [](xy::Entity entity, float)
-                {
-                    entity.getComponent<xy::AudioEmitter>().play();
-                    entity.getComponent<xy::AudioEmitter>().setPitch(1.1f);
-                };
-                m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
-            }
-        }
-    private:
-        xy::Scene& m_scene;
-        float m_flashTime = flashTime;
-        sf::Color m_colour = sf::Color::Red;   
+    struct BonusUI final
+    {
+        Bonus::Value value = Bonus::B;
+        sf::Uint8 playerID = 0;
     };
+
+    sf::Uint8 debugActorCount = 0;
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
@@ -186,7 +156,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         {
         default: break;
         /*case sf::Keyboard::Insert:
-            m_client.disconnect();
+            spawnRoundSkip();
             break;
         case sf::Keyboard::Home:
             m_server.stop();
@@ -234,6 +204,8 @@ void GameState::handleMessage(const xy::Message& msg)
 
 bool GameState::update(float dt)
 {   
+    DPRINT("Actor count", std::to_string(debugActorCount));
+    
     xy::NetEvent evt;
     while (m_client.pollEvent(evt))
     {
@@ -305,6 +277,8 @@ void GameState::loadAssets()
     m_sprites[SpriteID::WhirlyBob] = spriteSheet.getSprite("whirlybob");
     m_sprites[SpriteID::Clocksy] = spriteSheet.getSprite("clocksy");
     m_sprites[SpriteID::Goobly] = spriteSheet.getSprite("goobly");
+    m_sprites[SpriteID::Balldock] = spriteSheet.getSprite("balldock");
+    m_sprites[SpriteID::Squatmo] = spriteSheet.getSprite("squatmo");
 
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "clocksy");
     m_animationControllers[SpriteID::Clocksy].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "clocksy");
@@ -317,6 +291,19 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::WhirlyBob].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "whirlybob");
 
     m_animationControllers[SpriteID::Goobly].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "goobly");
+
+    m_animationControllers[SpriteID::Balldock].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "balldock");
+    m_animationControllers[SpriteID::Balldock].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "balldock");
+    m_animationControllers[SpriteID::Balldock].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "balldock");
+    m_animationControllers[SpriteID::Balldock].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "balldock");
+    m_animationControllers[SpriteID::Balldock].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "balldock");
+
+    m_animationControllers[SpriteID::Squatmo].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "squatmo");
+    m_animationControllers[SpriteID::Squatmo].animationMap[AnimationController::JumpDown] = spriteSheet.getAnimationIndex("jump_down", "squatmo");
+    m_animationControllers[SpriteID::Squatmo].animationMap[AnimationController::JumpUp] = spriteSheet.getAnimationIndex("jump_up", "squatmo");
+    m_animationControllers[SpriteID::Squatmo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "squatmo");
+    m_animationControllers[SpriteID::Squatmo].animationMap[AnimationController::TrappedOne] = spriteSheet.getAnimationIndex("bubble_one", "squatmo");
+    m_animationControllers[SpriteID::Squatmo].animationMap[AnimationController::TrappedTwo] = spriteSheet.getAnimationIndex("bubble_two", "squatmo");
 
     //dem fruits
     spriteSheet.loadFromFile("assets/sprites/food.spt", m_textureResource);
@@ -348,7 +335,23 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two_lightning");
     m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_two_lightning");
 
-    
+    //dudes to climb tower
+    spriteSheet.loadFromFile("assets/sprites/tower_sprites.spt", m_textureResource);
+    m_sprites[SpriteID::TowerDudeOne] = spriteSheet.getSprite("player_one");
+    m_sprites[SpriteID::TowerDudeTwo] = spriteSheet.getSprite("player_two");
+
+    m_animationControllers[SpriteID::TowerDudeOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one");
+    m_animationControllers[SpriteID::TowerDudeTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two");
+
+    //bonus bubbles
+    spriteSheet.loadFromFile("assets/sprites/ui.spt", m_textureResource);
+    m_sprites[SpriteID::Bonus] = spriteSheet.getSprite("bonus");
+
+    m_animationControllers[SpriteID::Bonus].animationMap[0] = spriteSheet.getAnimationIndex("b", "bonus");
+    m_animationControllers[SpriteID::Bonus].animationMap[1] = spriteSheet.getAnimationIndex("o", "bonus");
+    m_animationControllers[SpriteID::Bonus].animationMap[2] = spriteSheet.getAnimationIndex("n", "bonus");
+    m_animationControllers[SpriteID::Bonus].animationMap[3] = spriteSheet.getAnimationIndex("u", "bonus");
+    m_animationControllers[SpriteID::Bonus].animationMap[4] = spriteSheet.getAnimationIndex("s", "bonus");
 
     //load background
     auto ent = m_scene.createEntity();
@@ -377,6 +380,7 @@ void GameState::loadAssets()
     ent.getComponent<xy::Callback>().active = true;
     ent.addComponent<xy::Transform>();
 
+    m_bubbleParticles.loadFromFile("assets/particles/shoot.xyp", m_textureResource);
 
     if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile))
     {
@@ -604,6 +608,29 @@ void GameState::loadUI()
     ent.getComponent<xy::Sprite>().setDepth(6);
     ent.addComponent<xy::SpriteAnimation>().play(0);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::LivesTwo;
+
+
+    //bonus display
+    float startY = (xy::DefaultSceneSize.y / 2.f) - (2.5f * BubbleBounds.height);
+    sf::Vector2f bonusPosition(0.f, startY);
+    for (auto i = 0; i < 2; ++i)
+    {
+        for (auto j = 0; j < 5; ++j)
+        {
+            ent = m_scene.createEntity();
+            ent.addComponent<xy::Transform>().setPosition(bonusPosition);
+            ent.addComponent<xy::Sprite>() = m_sprites[SpriteID::Bonus];
+            ent.getComponent<xy::Sprite>().setDepth(6);
+            ent.getComponent<xy::Sprite>().setColour(sf::Color::Transparent);
+            ent.addComponent<xy::SpriteAnimation>().play(j);
+            ent.addComponent<xy::CommandTarget>().ID = CommandID::BonusBall;
+            ent.addComponent<BonusUI>().value = Bonus::valueMap[j];
+            ent.getComponent<BonusUI>().playerID = i;
+            bonusPosition.y += BubbleBounds.height;
+        }
+        bonusPosition.x += (MapBounds.width - BubbleBounds.width);
+        bonusPosition.y = startY;
+    }
 }
 
 void GameState::handlePacket(const xy::NetEvent& evt)
@@ -611,6 +638,12 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     switch (evt.packet.getID())
     {
     default: break;
+#ifdef XY_DEBUG
+    case PacketID::DebugMapCount:
+        debugActorCount = evt.packet.as<sf::Uint8>();
+        break;
+#endif
+
     case PacketID::ServerMessage:
     {
         sf::Int32 idx = evt.packet.as<sf::Int32>();
@@ -759,6 +792,19 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        
+        cmd.targetFlags = CommandID::TowerDude;
+        cmd.action = [&, actorID](xy::Entity entity, float)
+        {
+            auto id = (actorID == ActorID::PlayerOne) ? ActorID::TowerOne : ActorID::TowerTwo;
+            if (entity.getComponent<Actor>().type == id)
+            {
+                entity.getComponent<xy::SpriteAnimation>().play(1);
+                entity.getComponent<xy::Callback>().active = true;
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
         break;
     case PacketID::InventoryUpdate:
@@ -769,6 +815,9 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         break;
     case PacketID::RoundWarning:
         spawnWarning();
+        break;
+    case PacketID::RoundSkip:
+        spawnRoundSkip();
         break;
     case PacketID::GameOver:
     {
@@ -1003,9 +1052,9 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     auto addSprite = [&](xy::Entity sprEnt, sf::Int32 id)
     {
         sprEnt.addComponent<xy::Sprite>() = m_sprites[id];
-        sprEnt.addComponent<xy::SpriteAnimation>();// .play(0);
+        sprEnt.addComponent<xy::SpriteAnimation>();
         sprEnt.getComponent<AnimationController>() = m_animationControllers[id];
-        sprEnt.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
+        sprEnt.getComponent<xy::Transform>().setOrigin(BubbleOrigin);
     };
 
     switch (actorEvent.actor.type)
@@ -1017,12 +1066,16 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
             (actorEvent.actor.type == ActorID::BubbleOne) ? m_sprites[SpriteID::BubbleOne] : m_sprites[SpriteID::BubbleTwo];
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.getComponent<xy::Sprite>().setDepth(-2);
-        entity.getComponent<xy::Transform>().setOrigin(BubbleSize / 2.f, BubbleSize / 2.f);
+        entity.getComponent<xy::Transform>().setOrigin(BubbleOrigin);
 
-        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, BubbleSize, BubbleSize }, CollisionType::Bubble);
+        entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::Bubble);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
-        entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, BubbleSize, BubbleSize });
+        entity.addComponent<xy::QuadTreeItem>().setArea(BubbleBounds);
+
+        entity.addComponent<xy::ParticleEmitter>().settings = m_bubbleParticles;
+        entity.getComponent<xy::ParticleEmitter>().settings.colour = (actorEvent.actor.type == ActorID::BubbleOne) ? BubbleColourOne : BubbleColourTwo;
+        entity.getComponent<xy::ParticleEmitter>().start();
 
         {
             xy::Command cmd;
@@ -1041,12 +1094,13 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::FruitSmall];
         entity.addComponent<xy::SpriteAnimation>().play(xy::Util::Random::value(0, m_sprites[SpriteID::FruitSmall].getAnimationCount() - 1));
         entity.getComponent<xy::Sprite>().setDepth(2);
-        entity.getComponent<xy::Transform>().setOrigin(SmallFruitSize / 2.f, SmallFruitSize / 2.f);
+        entity.getComponent<xy::Transform>().setOrigin(SmallFoodOrigin);
         break;
     case ActorID::Goobly:
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Goobly];
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::Goobly];
+        entity.getComponent<xy::Transform>().setOrigin(GooblyOrigin);
         break;
     case ActorID::LightningOne:
         addSprite(entity, SpriteID::LightningOne);
@@ -1066,6 +1120,9 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     case ActorID::WaterTwo:
         addSprite(entity, SpriteID::WaterTwo);
         break;
+    case ActorID::Bonus:
+        addSprite(entity, SpriteID::Bonus);
+        break;
     }
 }
 
@@ -1078,19 +1135,36 @@ void GameState::spawnClient(const ClientData& data)
     entity.addComponent<xy::Transform>().setPosition(data.spawnX, data.spawnY);
     entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::PlayerOne];
 
+    auto towerEnt = m_scene.createEntity(); //little dude climbing tower
+    towerEnt.addComponent<xy::Transform>();
+
     if (data.actor.type == ActorID::PlayerOne)
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerOne];
         entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
         entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerOne;
+
+        towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeOne];
+        towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnOne);
+        towerEnt.addComponent<Actor>().type = ActorID::TowerOne;
     }
     else
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerTwo];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerTwo;
-    }
 
-    entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
+        towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeTwo];
+        towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnTwo);
+        towerEnt.addComponent<Actor>().type = ActorID::TowerTwo;
+    }
+    towerEnt.getComponent<xy::Sprite>().setDepth(6);
+    towerEnt.addComponent<xy::SpriteAnimation>();
+    towerEnt.addComponent<MapAnimator>().state = MapAnimator::State::Static;
+    towerEnt.getComponent<MapAnimator>().speed = 50.f;
+    towerEnt.addComponent<xy::CommandTarget>().ID = CommandID::TowerDude;
+    towerEnt.addComponent<xy::Callback>().function = TowerGuyCallback(m_scene);
+
+    entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
     entity.addComponent<xy::SpriteAnimation>().play(0);
     entity.addComponent<MapAnimator>().state = MapAnimator::State::Static;
 
@@ -1104,8 +1178,8 @@ void GameState::spawnClient(const ClientData& data)
         entity.getComponent<Player>().spawnPosition = { data.spawnX, data.spawnY };
         m_playerInput.setPlayerEntity(entity);
 
-        entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset * 2.f, PlayerSize, PlayerSize }, CollisionType::Player);
-        entity.getComponent<CollisionComponent>().addHitbox({ -PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot);
+        entity.addComponent<CollisionComponent>().addHitbox(PlayerBounds, CollisionType::Player);
+        entity.getComponent<CollisionComponent>().addHitbox(PlayerFoot, CollisionType::Foot);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
         entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
@@ -1200,7 +1274,7 @@ void GameState::switchMap(const MapData& data)
     m_scene.update(0.f); //force the command right away
 
 
-    if (loadScene(data, { 0.f, -(MapBounds.height/* + 128.f*/) }))
+    if (loadScene(data, { 0.f, -(MapBounds.height) }))
     {
         //init transition
         xy::Command cmd;
@@ -1229,6 +1303,22 @@ void GameState::switchMap(const MapData& data)
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
+        cmd.targetFlags = CommandID::TowerDude;
+        cmd.action = [](xy::Entity entity, float)
+        {
+            const auto& tx = entity.getComponent<xy::Transform>();
+            auto pos = tx.getPosition();
+            const float travel = xy::DefaultSceneSize.y / 25.f; //number of maps before reaching top TODO fix this somewhere
+            if (pos.y > travel)
+            {
+                pos.y -= travel;
+                entity.getComponent<MapAnimator>().dest = pos;
+                entity.getComponent<MapAnimator>().state = MapAnimator::State::Active;
+                entity.getComponent<xy::SpriteAnimation>().play(0);
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
         m_scene.setSystemActive<CollisionSystem>(false);
         m_scene.setSystemActive<xy::InterpolationSystem>(false);
     }
@@ -1242,7 +1332,7 @@ void GameState::spawnMapActors()
     for (auto i = 0; i < m_mapData.actorCount; ++i)
     {
         auto entity = m_scene.createEntity();
-        entity.addComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
+        entity.addComponent<xy::Transform>().setOrigin(WhirlyBobOrigin);
         entity.addComponent<Actor>() = m_mapData.actors[i];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
         entity.addComponent<xy::NetInterpolate>();
@@ -1262,12 +1352,22 @@ void GameState::spawnMapActors()
         case ActorID::Clocksy:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
+            entity.getComponent<xy::Transform>().setOrigin(ClocksyOrigin);
+            break;
+        case ActorID::Balldock:
+            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Balldock];
+            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Balldock];
+            entity.getComponent<xy::Transform>().setOrigin(BalldockOrigin);
+            break;
+        case ActorID::Squatmo:
+            entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Squatmo];
+            entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Squatmo];
+            entity.getComponent<xy::Transform>().setOrigin(SquatmoOrigin);
             break;
         }
         entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.addComponent<xy::ParticleEmitter>().settings = emitterSettings;
-        //entity.getComponent<xy::ParticleEmitter>().start();
     }
 }
 
@@ -1291,6 +1391,23 @@ void GameState::spawnWarning()
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
     getContext().appInstance.getMessageBus().post<MapEvent>(MessageID::MapMessage)->type = MapEvent::HurryUp;
+}
+
+void GameState::spawnRoundSkip()
+{
+    float spacing = MapBounds.width / 5.f;
+    float scale = spacing / BubbleBounds.width;
+    
+    for (auto i = 0; i < 5; ++i)
+    {
+        auto entity = m_scene.createEntity();
+        entity.addComponent<xy::Transform>().setPosition(i * spacing, xy::Util::Random::value(-180.f, 0.f));
+        entity.getComponent<xy::Transform>().setScale(scale, scale);
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Bonus];
+        entity.addComponent<xy::SpriteAnimation>().play(i);
+        entity.addComponent<xy::Callback>().active = true;
+        entity.getComponent<xy::Callback>().function = BallDropper(m_scene);
+    }
 }
 
 void GameState::updateUI(const InventoryUpdate& data)
@@ -1368,8 +1485,48 @@ void GameState::updateUI(const InventoryUpdate& data)
     m_scene.getSystem<xy::CommandSystem>().sendCommand(scoreCmd);
     m_scene.getSystem<xy::CommandSystem>().sendCommand(livesCommand);
 
+    //only show score if there's an amount to see
     if (data.amount)
     {
         m_scene.getSystem<xy::CommandSystem>().sendCommand(textCommand);
     }
+
+    if (data.lives == 0)
+    {
+        //kill the climbing dude :(
+        auto playerNumber = data.playerID;
+
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::TowerDude;
+        cmd.action = [&, playerNumber](xy::Entity entity, float)
+        {
+            auto id = (playerNumber == 0) ? ActorID::TowerOne : ActorID::TowerTwo;
+            if (entity.getComponent<Actor>().type == id)
+            {
+                entity.getComponent<xy::SpriteAnimation>().play(1);
+                entity.getComponent<xy::Callback>().active = true;
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
+
+
+    xy::Command bonusCommand;
+    bonusCommand.targetFlags = CommandID::BonusBall;
+    bonusCommand.action = [data](xy::Entity entity, float)
+    {
+        const auto& bonus = entity.getComponent<BonusUI>();
+        if (bonus.playerID == data.playerID)
+        {
+            if (bonus.value & data.bonusFlags)
+            {
+                entity.getComponent<xy::Sprite>().setColour(sf::Color::White);
+            }
+            else
+            {
+                entity.getComponent<xy::Sprite>().setColour(sf::Color::Transparent);
+            }
+        }
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(bonusCommand);
 }

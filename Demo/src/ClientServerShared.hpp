@@ -32,6 +32,8 @@ source distribution.
 
 #include <xyginext/ecs/Entity.hpp>
 
+#include <SFML/Graphics/Color.hpp>
+
 #include <tmxlite/Object.hpp>
 
 namespace xy
@@ -68,32 +70,51 @@ namespace CollisionFlags
         NPC = 0x20,
         Fruit = 0x40,
         Powerup = 0x80,
+        Bonus = 0x100,
 
-        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup,
+        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup | Bonus,
         NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup,
         FruitMask = Solid | Platform | Player | Teleport,
         PowerupMask = Platform | Solid | Player | NPC
     };
 }
 
-static constexpr float PlayerSize = 52.f;
-static constexpr float PlayerSizeOffset = 6.f;
-static constexpr float PlayerFootSize = 10.f;
 
 static constexpr float BubbleVerticalVelocity = -100.f;
-static constexpr float BubbleSize = 64.f;
-static constexpr float NPCSize = 64.f;
-static constexpr float ClocksySize = 52.f;
-static constexpr float ClocksyPadding = 6.f;
+static const sf::FloatRect BubbleBounds(0.f, 0.f, 64.f, 64.f);
+static const sf::Vector2f BubbleOrigin(BubbleBounds.width / 2.f, BubbleBounds.height / 2.f);
 
-static constexpr float SmallFruitSize = 64.f;
+static const sf::FloatRect WhirlyBobBounds(0.f, 0.f, 64.f, 64.f);
+static const sf::Vector2f WhirlyBobOrigin(WhirlyBobBounds.width / 2.f, WhirlyBobBounds.height / 2.f);
+
+static const sf::FloatRect GooblyBounds = WhirlyBobBounds;
+static const sf::Vector2f GooblyOrigin = WhirlyBobOrigin;
+
+static const sf::FloatRect BalldockBounds = WhirlyBobBounds;
+static const sf::Vector2f BalldockOrigin = WhirlyBobOrigin;
+static const sf::FloatRect BalldockFoot(-1.f, 64.f, 66.f, 10.f);
+
+static const sf::FloatRect SquatmoBounds = WhirlyBobBounds;
+static const sf::Vector2f SquatmoOrigin = WhirlyBobOrigin;
+static const sf::FloatRect SquatmoFoot(-1.f, 64.f, 66.f, 10.f);
+
+static const sf::FloatRect ClocksyBounds(6.f, 12.f, 52.f, 52.f);
+static const sf::FloatRect ClocksyFoot(6.f, 64.f, 52.f, 10.f);
+static const sf::Vector2f ClocksyOrigin(32.f, 38.f);
+
+static const sf::FloatRect PlayerBounds = ClocksyBounds;
+static const sf::FloatRect PlayerFoot = ClocksyFoot;
+static const sf::Vector2f PlayerOrigin(32.f, 64.f);
+
+static const sf::FloatRect SmallFoodBounds(0.f, 0.f, 64.f, 64.f);
+static const sf::Vector2f SmallFoodOrigin(32.f, 32.f);
 static constexpr float LargeFruitSize = 96.f;
 
 static constexpr float TeleportDistance = 950.f;
 static constexpr float Gravity = 2200.f;
 static constexpr float MaxVelocity = 800.f;
 
-static const sf::FloatRect MapBounds(0.f, 0.f, 16.f *64.f, 17.f * 64.f);
+static const sf::FloatRect MapBounds(0.f, 0.f, 16.f * 64.f, 17.f * 64.f);
 
 static const sf::Vector2f PlayerOneSpawn(102.f, 926.f);
 static const sf::Vector2f PlayerTwoSpawn(922.f, 926.f);
@@ -101,6 +122,12 @@ static const sf::Vector2f PlayerTwoSpawn(922.f, 926.f);
 static const sf::Vector2f PowerupOneSpawn(320.f, 960.f);
 static const sf::Vector2f PowerupTwoSpawn(640.f, 960.f);
 static const float TopSpawn = 896.f;
+
+static const sf::Vector2f TowerSpawnOne(-192.f, 1024.f);
+static const sf::Vector2f TowerSpawnTwo(MapBounds.width + 128.f, 1024.f);
+
+static const sf::Color BubbleColourOne(255, 212, 0);
+static const sf::Color BubbleColourTwo(255, 0, 212);
 
 //map loading functions shared between client / server
 void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType type);

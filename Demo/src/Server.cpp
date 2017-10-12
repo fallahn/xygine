@@ -43,6 +43,7 @@ source distribution.
 #include "MessageIDs.hpp"
 #include "InventoryDirector.hpp"
 #include "PowerupSystem.hpp"
+#include "BonusSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -74,6 +75,7 @@ namespace
     const float endOfRoundTime = 6.f;
     const float defaultRoundTime = 39.f; //after this everything is angry
     const float roundWarnTime = 2.5f; //allows time for clients to do warning
+    const float watchdogTime = 10.f; //change map this many seconds after round time regardless
 }
 
 GameServer::GameServer()
@@ -81,6 +83,7 @@ GameServer::GameServer()
     m_running               (false),
     m_thread                (&GameServer::update, this),
     m_scene                 (m_messageBus),
+    m_mapSkipCount          (0),
     m_currentMap            (0),
     m_endOfRoundPauseTime   (3.f),
     m_currentRoundTime      (0.f),
@@ -251,6 +254,10 @@ void GameServer::update()
                 m_host.broadcastPacket(PacketID::GameOver, 0, xy::NetFlag::Reliable, 1);
             }
             m_gameOver = gameOver;
+
+#ifdef XY_DEBUG
+            m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.actorCount, xy::NetFlag::Unreliable, 0);
+#endif
         }
 
     }
@@ -399,7 +406,7 @@ void GameServer::checkRoundTime(float dt)
         && m_currentRoundTime >= (m_roundTimeout - roundWarnTime))
     {
         //send warning message
-        m_host.broadcastPacket(PacketID::RoundWarning, 0, xy::NetFlag::Reliable, 1);
+        m_host.broadcastPacket(PacketID::RoundWarning, sf::Uint8(0), xy::NetFlag::Reliable, 1);
     }
     else if (lastTime < m_roundTimeout &&
         m_currentRoundTime >= m_roundTimeout && m_mapData.actorCount > 0)
@@ -454,6 +461,13 @@ void GameServer::checkRoundTime(float dt)
         }
         
     }
+
+    //sometimes the actor count gets messed up so we have a fail-safe timeout
+    if (m_currentRoundTime > (m_roundTimeout + watchdogTime)
+        && m_mapData.actorCount <= 2)
+    {
+        m_mapData.actorCount = 0;
+    }
 }
 
 void GameServer::checkMapStatus(float dt)
@@ -505,6 +519,7 @@ void GameServer::checkMapStatus(float dt)
         m_scene.setSystemActive<NPCSystem>(false);
         m_scene.setSystemActive<CollisionSystem>(false);
         m_scene.setSystemActive<PowerupSystem>(false);
+        m_scene.setSystemActive<BonusSystem>(false);
     }
 }
 
@@ -545,6 +560,8 @@ void GameServer::initMaplist()
     {
         return std::find(mapFiles.begin(), mapFiles.end(), str) == mapFiles.end();
     }), m_mapFiles.end());
+
+    //m_currentMap = xy::Util::Random::value(0, std::min(5, static_cast<int>(m_mapFiles.size())));
 }
 
 void GameServer::initScene()
@@ -556,6 +573,7 @@ void GameServer::initScene()
     m_scene.addSystem<NPCSystem>(m_messageBus, m_host);
     m_scene.addSystem<FruitSystem>(m_messageBus, m_host);
     m_scene.addSystem<PowerupSystem>(m_messageBus, m_host);
+    m_scene.addSystem<BonusSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
@@ -614,6 +632,11 @@ void GameServer::loadMap()
                     if (objs.size() == 4)
                     {
                         m_scene.getSystem<PowerupSystem>().setSpawnFlags(PowerupSystem::Flame | PowerupSystem::Lightning);
+                        if(xy::Util::Random::value(0, 1) == 0) m_scene.getSystem<BonusSystem>().setEnabled(true);
+                    }
+                    else
+                    {
+                        m_scene.getSystem<BonusSystem>().setEnabled(false);
                     }
 
                     flags |= MapFlags::Teleport;
@@ -634,6 +657,16 @@ void GameServer::loadMap()
                         else if (name == "clocksy")
                         {
                             auto entity = spawnNPC(ActorID::Clocksy, { obj.getPosition().x, obj.getPosition().y });
+                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+                        }
+                        else if (name == "squatmo")
+                        {
+                            auto entity = spawnNPC(ActorID::Squatmo, { obj.getPosition().x, obj.getPosition().y });
+                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+                        }
+                        else if (name == "balldock")
+                        {
+                            auto entity = spawnNPC(ActorID::Balldock, { obj.getPosition().x, obj.getPosition().y });
                             m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
                         }
                     }
@@ -688,31 +721,43 @@ void GameServer::beginNewRound()
         m_scene.setSystemActive<NPCSystem>(true);
         m_scene.setSystemActive<CollisionSystem>(true);
         m_scene.setSystemActive<PowerupSystem>(true);
+        m_scene.setSystemActive<BonusSystem>(true);
 
-        //send initial position of existing actors
-        const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
-        for (const auto& actor : actors)
-        {
-            const auto& actorComponent = actor.getComponent<Actor>();
-            const auto& tx = actor.getComponent<xy::Transform>().getPosition();
-
-            ActorState state;
-            state.actor.id = actorComponent.id;
-            state.actor.type = actorComponent.type;
-            state.x = tx.x;
-            state.y = tx.y;
-
-            m_host.broadcastPacket(PacketID::ActorAbsolute, state, xy::NetFlag::Reliable, 1);
-        }
-
-        m_currentRoundTime = 0.f;
         m_changingMaps = false;
 
-        //check if anyone tried joining mid map change
-        if (m_queuedClient)
+        if (m_mapSkipCount) //someone scored a bonus and skips 5 maps
         {
-            m_host.sendPacket(*m_queuedClient, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
-            m_queuedClient.reset();
+            m_mapData.actorCount = 0;
+            m_endOfRoundPauseTime = -1.f;
+            m_mapSkipCount--;
+        }
+        else
+        {
+            //send initial position of existing actors
+            const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
+            for (const auto& actor : actors)
+            {
+                const auto& actorComponent = actor.getComponent<Actor>();
+                const auto& tx = actor.getComponent<xy::Transform>().getPosition();
+
+                ActorState state;
+                state.actor.id = actorComponent.id;
+                state.actor.type = actorComponent.type;
+                state.x = tx.x;
+                state.y = tx.y;
+
+                m_host.broadcastPacket(PacketID::ActorAbsolute, state, xy::NetFlag::Reliable, 1);
+            }
+
+            m_currentRoundTime = 0.f;
+
+
+            //check if anyone tried joining mid map change
+            if (m_queuedClient)
+            {
+                m_host.sendPacket(*m_queuedClient, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
+                m_queuedClient.reset();
+            }
         }
     }
 }
@@ -724,10 +769,10 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.getComponent<Actor>().id = entity.getIndex();
     m_clients[player].data.actor = entity.getComponent<Actor>();
     entity.addComponent<xy::Transform>().setPosition(m_clients[player].data.spawnX, m_clients[player].data.spawnY);
-    entity.getComponent<xy::Transform>().setOrigin(PlayerSize / 2.f, PlayerSize);
+    entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
 
-    entity.addComponent<CollisionComponent>().addHitbox({ PlayerSizeOffset, PlayerSizeOffset * 2.f, PlayerSize, PlayerSize }, CollisionType::Player);
-    entity.getComponent<CollisionComponent>().addHitbox({ -PlayerSizeOffset, PlayerSize + PlayerSizeOffset, PlayerSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot);
+    entity.addComponent<CollisionComponent>().addHitbox(PlayerBounds, CollisionType::Player);
+    entity.getComponent<CollisionComponent>().addHitbox(PlayerFoot, CollisionType::Foot);
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Player);
     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::PlayerMask);
     entity.addComponent<xy::QuadTreeItem>().setArea(entity.getComponent<CollisionComponent>().getLocalBounds());
@@ -752,11 +797,10 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
 {
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(pos);
-    entity.getComponent<xy::Transform>().setOrigin(NPCSize / 2.f, NPCSize / 2.f);
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = id;
 
-    entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, NPCSize, NPCSize });
+    entity.addComponent<xy::QuadTreeItem>().setArea(WhirlyBobBounds);
 
     entity.addComponent<AnimationController>();
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem | CommandID::NPC;
@@ -772,21 +816,29 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
             xy::Util::Random::value(-1.f, 1.f)
         };
         entity.getComponent<NPC>().velocity = xy::Util::Vector::normalise(entity.getComponent<NPC>().velocity);
-        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
+        entity.addComponent<CollisionComponent>().addHitbox(WhirlyBobBounds, CollisionType::NPC);
+        entity.getComponent<xy::Transform>().setOrigin(WhirlyBobOrigin);
         break;
     case ActorID::Clocksy:
-        entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(1, 2) % 2 == 1) ? -1.f : 1.f;
-        
-        entity.addComponent<CollisionComponent>().addHitbox({ ClocksyPadding, ClocksyPadding* 2.f, ClocksySize, ClocksySize }, CollisionType::NPC);
-        entity.getComponent<CollisionComponent>().addHitbox(
-        { ClocksyPadding, (ClocksyPadding * 2.f) + ClocksySize,
-            ClocksySize + ClocksyPadding, PlayerFootSize }, CollisionType::Foot); //feets!
-        //{ -PlayerSizeOffset, NPCSize,
-        //    NPCSize + (PlayerSizeOffset * 2.f), PlayerFootSize }, CollisionType::Foot); //feets!
-        
+        entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(0, 1) == 1) ? -1.f : 1.f;      
+        entity.addComponent<CollisionComponent>().addHitbox(ClocksyBounds, CollisionType::NPC);
+        entity.getComponent<CollisionComponent>().addHitbox(ClocksyFoot, CollisionType::Foot); //feets!
+        entity.getComponent<xy::Transform>().setOrigin(ClocksyOrigin);
         break;
     case ActorID::Goobly:
-        entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, NPCSize, NPCSize }, CollisionType::NPC);
+        entity.addComponent<CollisionComponent>().addHitbox(GooblyBounds, CollisionType::NPC);
+        entity.getComponent<xy::Transform>().setOrigin(GooblyOrigin);
+        break;
+    case ActorID::Balldock:
+        entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(0, 1) == 1) ? -1.f : 1.f;
+        entity.addComponent<CollisionComponent>().addHitbox(BalldockBounds, CollisionType::NPC);
+        entity.getComponent<CollisionComponent>().addHitbox(BalldockFoot, CollisionType::Foot);
+        entity.getComponent<xy::Transform>().setOrigin(BalldockOrigin);
+        break;
+    case ActorID::Squatmo:
+        entity.addComponent<CollisionComponent>().addHitbox(SquatmoBounds, CollisionType::NPC);
+        entity.getComponent<CollisionComponent>().addHitbox(SquatmoFoot, CollisionType::Foot);
+        entity.getComponent<xy::Transform>().setOrigin(SquatmoOrigin);
         break;
     }
 
@@ -825,6 +877,33 @@ void GameServer::handleMessage(const xy::Message& msg)
 
             //LOG(std::to_string(m_mapData.actorCount), xy::Logger::Type::Info);
             m_endOfRoundPauseTime = endOfRoundTime;
+        }
+    }
+        break;
+    case MessageID::ItemMessage:
+    {
+        const auto& data = msg.getData<ItemEvent>();
+        if (data.actorID == ActorID::Bonus)
+        {
+            //trigger map skip if player has bonus
+            if (data.player.getComponent<Player>().bonusFlags == Bonus::BONUS)
+            {
+                m_mapData.actorCount = 0;
+                m_endOfRoundPauseTime = -1.f;
+                m_mapSkipCount = 4;
+
+
+                //notify clients
+                m_host.broadcastPacket(PacketID::RoundSkip, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+
+                //reset bonus jigger
+                auto player = data.player;
+                player.getComponent<Player>().bonusFlags = 0;
+
+                auto* msg = m_messageBus.post<ItemEvent>(MessageID::ItemMessage);
+                msg->actorID = ActorID::Bonus;
+                msg->player = player;
+            }
         }
     }
         break;

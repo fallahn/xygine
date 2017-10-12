@@ -71,7 +71,7 @@ public:
 
     void operator () (xy::Entity, float dt)
     {
-        m_rotation += dt * 30.f;
+        m_rotation += dt * 35.f;
         m_shader.setUniform("u_colourAngle", m_rotation);
         //m_shader.setUniform("u_diffuseMap", *entity.getComponent<xy::Sprite>().getTexture());
     }
