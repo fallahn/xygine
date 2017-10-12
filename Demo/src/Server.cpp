@@ -314,6 +314,7 @@ void GameServer::handleDisconnect(const xy::NetEvent& evt)
         client->data.peerID = 0;
         client->peer = {};
         client->ready = false;
+        client->level = 1;
     }
 }
 
@@ -339,6 +340,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         m_clients[playerNumber].data.peerID = evt.peer.getID();
         m_clients[playerNumber].peer = evt.peer;
         m_clients[playerNumber].ready = true;
+        m_clients[playerNumber].level = 1;
         m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber].data, xy::NetFlag::Reliable, 1);
 
         //send initial position of existing actors
@@ -520,6 +522,27 @@ void GameServer::checkMapStatus(float dt)
         m_scene.setSystemActive<CollisionSystem>(false);
         m_scene.setSystemActive<PowerupSystem>(false);
         m_scene.setSystemActive<BonusSystem>(false);
+
+        //increase the level count for connected clients and send update
+        auto updateLevel = [&](Client& client)
+        {
+            if (client.data.actor.type != ActorID::None)
+            {
+                client.level++;
+                if (client.level > MapsToWin)
+                {
+                    //game completed tell client
+                    m_host.sendPacket(client.peer, PacketID::GameComplete, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+                }
+                else
+                {
+                    //send value update
+                    m_host.sendPacket(client.peer, PacketID::LevelUpdate, client.level, xy::NetFlag::Reliable, 1);
+                }
+            }
+        };
+        updateLevel(m_clients[0]);
+        updateLevel(m_clients[1]);
     }
 }
 

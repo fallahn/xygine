@@ -44,15 +44,16 @@ namespace CommandID
         LivesTwo = 0x100,
         Timeout = 0x200,
         HighScore = 0x400,
+        LevelCounter = 0x800,
         //map data
-        MapItem = 0x800, //anything with this is removed on map changed
-        MapBackground = 0x1000,
-        SceneBackground = 0x2000,
-        SceneMusic = 0x4000,
+        MapItem = 0x1000, //anything with this is removed on map changed
+        MapBackground = 0x2000,
+        SceneBackground = 0x4000,
+        SceneMusic = 0x8000,
         //UI animations
-        Princess = 0x8000,
-        TowerDude = 0x10000,
-        BonusBall = 0x20000
+        Princess = 0x10000,
+        TowerDude = 0x20000,
+        BonusBall = 0x40000
     };
 }
 

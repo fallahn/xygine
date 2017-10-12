@@ -499,16 +499,6 @@ void GameState::loadTower()
     princessEnt.addComponent<Actor>().id = princessEnt.getIndex();
     princessEnt.getComponent<Actor>().type = ActorID::PrincessTwo;
 
-    /*m_textureResource.get("assets/images/tower_sprites.png").setRepeated(true);
-    auto ladderEnt = m_scene.createEntity();
-    ladderEnt.addComponent<xy::Sprite>() = towerSpriteSheet.getSprite("ladder");
-    ladderEnt.getComponent<xy::Sprite>().setDepth(6);
-    auto rect = ladderEnt.getComponent<xy::Sprite>().getTextureRect();
-    rect.height = xy::DefaultSceneSize.y;
-    ladderEnt.getComponent<xy::Sprite>().setTextureRect(rect);
-    ent.getComponent<xy::Transform>().addChild(ladderEnt.addComponent<xy::Transform>());
-    ladderEnt.getComponent<xy::Transform>().move(128.f, 0.f);*/
-
     ent = m_scene.createEntity();
     ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/tower.png")).setDepth(5);
     ent.addComponent<xy::Transform>().setPosition(-ent.getComponent<xy::Sprite>().getSize().x, 0.f);
@@ -524,15 +514,6 @@ void GameState::loadTower()
     princessEnt.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
     princessEnt.addComponent<Actor>().id = princessEnt.getIndex();
     princessEnt.getComponent<Actor>().type = ActorID::PrincessOne;
-
-   
-    /*ladderEnt = m_scene.createEntity();
-    ladderEnt.addComponent<xy::Sprite>() = towerSpriteSheet.getSprite("ladder");
-    ladderEnt.getComponent<xy::Sprite>().setDepth(6);
-    rect = ladderEnt.getComponent<xy::Sprite>().getTextureRect();
-    rect.height = xy::DefaultSceneSize.y;
-    ladderEnt.getComponent<xy::Sprite>().setTextureRect(rect);
-    ent.getComponent<xy::Transform>().addChild(ladderEnt.addComponent<xy::Transform>());*/
 }
 
 void GameState::loadUI()
@@ -609,6 +590,18 @@ void GameState::loadUI()
     ent.addComponent<xy::SpriteAnimation>().play(0);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::LivesTwo;
 
+    //level counter
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 16.f, MapBounds.height - 108.f);
+    ent.addComponent<xy::Text>(font).setString("1");
+    ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::LevelCounter;
+
+    ent = m_scene.createEntity();
+    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 60.f, MapBounds.height - 148.f);
+    ent.addComponent<xy::Text>(font).setString("LEVEL");
+    ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.getComponent<xy::Text>().setFillColour(sf::Color::Red);
 
     //bonus display
     float startY = (xy::DefaultSceneSize.y / 2.f) - (2.5f * BubbleBounds.height);
@@ -811,6 +804,31 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     {
         auto data = evt.packet.as<InventoryUpdate>();
         updateUI(data);
+    }
+        break;
+    case PacketID::LevelUpdate:
+    {
+        auto level = evt.packet.as<sf::Uint8>();
+
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::LevelCounter;
+        cmd.action = [&,level](xy::Entity entity, float)
+        {
+            entity.getComponent<xy::Text>().setString(std::to_string(level));
+
+            //sending a command 1 frame later allows text time to update bounds
+            xy::Command c;
+            c.targetFlags = CommandID::LevelCounter;
+            c.action = [](xy::Entity ent, float)
+            {
+                auto bounds = ent.getComponent<xy::Text>().getLocalBounds();
+                auto pos = ent.getComponent<xy::Transform>().getPosition();
+                pos.x = (MapBounds.width - bounds.width) / 2.f;
+                ent.getComponent<xy::Transform>().setPosition(pos);
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(c); //meta.
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
         break;
     case PacketID::RoundWarning:
@@ -1308,7 +1326,7 @@ void GameState::switchMap(const MapData& data)
         {
             const auto& tx = entity.getComponent<xy::Transform>();
             auto pos = tx.getPosition();
-            const float travel = xy::DefaultSceneSize.y / 25.f; //number of maps before reaching top TODO fix this somewhere
+            const float travel = xy::DefaultSceneSize.y / MapsToWin;
             if (pos.y > travel)
             {
                 pos.y -= travel;
