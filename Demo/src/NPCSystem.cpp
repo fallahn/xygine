@@ -291,10 +291,24 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
         }
         else //footbox
         {
-            if (hitboxes[i].getCollisionCount() == 0)
+            auto collisionCount = hitboxes[i].getCollisionCount();
+            if (collisionCount == 0)
             {
-                //foots in the air so we're falling
+                //foot's in the air so we're falling
                 npc.state = NPC::State::Jumping;
+            }
+            else
+            {
+                //only want to collide with solid and platform
+                auto& manifolds = hitboxes[i].getManifolds();
+                for (auto j = 0; j < collisionCount; ++j)
+                {
+                    if (manifolds[j].otherType != CollisionType::Platform
+                        && manifolds[j].otherType != CollisionType::Solid)
+                    {
+                        npc.state = NPC::State::Jumping;
+                    }
+                }
             }
         }  
     }
@@ -582,10 +596,24 @@ void NPCSystem::updateBalldock(xy::Entity entity, float dt)
         }
         else //footbox
         {
-            if (hitboxes[i].getCollisionCount() == 0)
+            auto collisionCount = hitboxes[i].getCollisionCount();
+            if (collisionCount == 0)
             {
-                //foots in the air so we're falling
+                //foot's in the air so we're falling
                 npc.state = NPC::State::Jumping;
+            }
+            else
+            {
+                //only want to collide with solid and platform
+                auto& manifolds = hitboxes[i].getManifolds();
+                for (auto j = 0; j < collisionCount; ++j)
+                {
+                    if (manifolds[j].otherType != CollisionType::Platform
+                        && manifolds[j].otherType != CollisionType::Solid)
+                    {
+                        npc.state = NPC::State::Jumping;
+                    }
+                }
             }
         }
     }
@@ -734,10 +762,24 @@ void NPCSystem::updateSquatmo(xy::Entity entity, float dt)
         }
         else //footbox
         {
-            if (hitboxes[i].getCollisionCount() == 0)
+            auto collisionCount = hitboxes[i].getCollisionCount();
+            if (collisionCount == 0)
             {
-                //foots in the air so we're falling
+                //foot's in the air so we're falling
                 npc.state = NPC::State::Jumping;
+            }
+            else
+            {
+                //only want to collide with solid and platform
+                auto& manifolds = hitboxes[i].getManifolds();
+                for (auto j = 0; j < collisionCount; ++j)
+                {
+                    if (manifolds[j].otherType != CollisionType::Platform
+                        && manifolds[j].otherType != CollisionType::Solid)
+                    {
+                        npc.state = NPC::State::Jumping;
+                    }
+                }
             }
         }
     }

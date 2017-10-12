@@ -503,11 +503,25 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
         else if (hitbox.getType() == CollisionType::Foot
             && player.state != Player::State::Dying && player.state != Player::State::Dead)
         {
-            //foot sensor
-            auto collisionCount = hitbox.getCollisionCount();
+            auto collisionCount = hitboxes[i].getCollisionCount();
             if (collisionCount == 0)
             {
-                player.state = Player::State::Jumping; //start falling when nothing underneath
+                //foot's in the air so we're falling
+                player.state = Player::State::Jumping;
+            }
+            else
+            {
+                //only want to collide with solid and platform
+                auto& manifolds = hitboxes[i].getManifolds();
+                for (auto j = 0; j < collisionCount; ++j)
+                {
+                    if (manifolds[j].otherType != CollisionType::Platform
+                        && manifolds[j].otherType != CollisionType::Solid
+                        && manifolds[j].otherType != CollisionType::Bubble)
+                    {
+                        player.state = Player::State::Jumping;
+                    }
+                }
             }
         }
     }
