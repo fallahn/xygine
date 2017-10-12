@@ -53,6 +53,7 @@ FXDirector::FXDirector()
     m_soundResource.get("assets/sound/flame.wav");
     m_soundResource.get("assets/sound/powerup_pop.wav");
     m_soundResource.get("assets/sound/pop.wav");
+    m_soundResource.get("assets/sound/bonus.wav");
 }
 
 //public
@@ -162,6 +163,10 @@ void FXDirector::handleMessage(const xy::Message& msg)
         if (data.type == MapEvent::HurryUp)
         {
             playSound(m_soundResource.get("assets/sound/hurry.wav"));
+        }
+        else if (data.type == MapEvent::BonusSwitch)
+        {
+            playSound(m_soundResource.get("assets/sound/bonus.wav"));
         }
     }
         break;

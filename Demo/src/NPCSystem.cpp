@@ -56,7 +56,7 @@ namespace
     const float BubbleTime = 6.f;
     const float DieTime = 1.5f;
 
-    const sf::Uint32 FootMask = (CollisionType::Platform | CollisionType::Solid);
+    const sf::Uint32 FootMask = (CollisionType::Platform | CollisionType::Solid | CollisionType::Player);
 }
 
 NPCSystem::NPCSystem(xy::MessageBus& mb, xy::NetHost& host)

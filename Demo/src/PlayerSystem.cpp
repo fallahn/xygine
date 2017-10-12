@@ -396,8 +396,15 @@ void PlayerSystem::resolveCollision(xy::Entity entity)
             }
 
             for (auto i = 0u; i < collisionCount; ++i)
-            {
+            {                
                 const auto& man = hitbox.getManifolds()[i];
+                if (man.otherType != CollisionType::Platform //we don't want collision such as bubbles to prevent landing on platforms
+                    /*&& man.normal.y < 0*/)
+                {
+                    player.canLand = true;
+                }
+
+
                 switch (man.otherType)
                 {
                 default: break;

@@ -155,10 +155,10 @@ bool GameState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         default: break;
-        /*case sf::Keyboard::Insert:
+        case sf::Keyboard::Insert:
             spawnRoundSkip();
             break;
-        case sf::Keyboard::Home:
+        /*case sf::Keyboard::Home:
             m_server.stop();
             break;*/
         case sf::Keyboard::P:
@@ -1426,6 +1426,17 @@ void GameState::spawnRoundSkip()
         entity.addComponent<xy::Callback>().active = true;
         entity.getComponent<xy::Callback>().function = BallDropper(m_scene);
     }
+
+    xy::Command cmd;
+    cmd.targetFlags = CommandID::SceneMusic;
+    cmd.action = [](xy::Entity entity, float)
+    {
+        entity.getComponent<xy::AudioEmitter>().pause();
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+    auto* msg = getContext().appInstance.getMessageBus().post<MapEvent>(MessageID::MapMessage);
+    msg->type = MapEvent::BonusSwitch;
 }
 
 void GameState::updateUI(const InventoryUpdate& data)
