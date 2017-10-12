@@ -49,7 +49,7 @@ namespace
     const sf::Vector2f flameOffset(32.f, 0.f);
     const float flameSpreadTime = 0.5f; //age at which a flame spawns another
 
-    std::array<float, 6u> spawnTimes = { 9.f, 12.f, 10.5f, 9.5f, 12.5f, 11.f };
+    std::array<float, 6u> spawnTimes = { 11.f, 12.f, 10.5f, 13.5f, 12.5f, 14.f };
 }
 
 PowerupSystem::PowerupSystem(xy::MessageBus& mb, xy::NetHost& host)

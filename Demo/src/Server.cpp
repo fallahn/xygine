@@ -632,7 +632,7 @@ void GameServer::loadMap()
                     if (objs.size() == 4)
                     {
                         m_scene.getSystem<PowerupSystem>().setSpawnFlags(PowerupSystem::Flame | PowerupSystem::Lightning);
-                        m_scene.getSystem<BonusSystem>().setEnabled(true);
+                        if(xy::Util::Random::value(0, 1) == 0) m_scene.getSystem<BonusSystem>().setEnabled(true);
                     }
                     else
                     {

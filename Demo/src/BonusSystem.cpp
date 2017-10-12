@@ -46,10 +46,10 @@ source distribution.
 
 namespace
 {
-    std::array<float, 5u> spawnTimes = { 12.f, 8.f, 14.f, 11.f, 16.f };
+    std::array<float, 5u> spawnTimes = { 12.f, 15.f, 14.f, 19.f, 16.f };
 }
 
-std::array<Bonus::Value, 5u> Bonus::valueMap  = {B,O,N,U,S};
+std::array<Bonus::Value, 5u> Bonus::valueMap  = {B,O,N,U,S}; //this should be const but g++ complains
 
 BonusSystem::BonusSystem(xy::MessageBus& mb, xy::NetHost& host)
     : xy::System(mb, typeid(BonusSystem)),
