@@ -303,7 +303,7 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
             {
                 //only want to collide with solid and platform
                 auto& manifolds = hitboxes[i].getManifolds();
-                for (auto j = 0; j < collisionCount; ++j)
+                for (auto j = 0u; j < collisionCount; ++j)
                 {
                     if ((manifolds[j].otherType & FootMask) == 0)
                     {
@@ -607,7 +607,7 @@ void NPCSystem::updateBalldock(xy::Entity entity, float dt)
             {
                 //only want to collide with solid and platform
                 auto& manifolds = hitboxes[i].getManifolds();
-                for (auto j = 0; j < collisionCount; ++j)
+                for (auto j = 0u; j < collisionCount; ++j)
                 {
                     if ((manifolds[j].otherType & FootMask) == 0)
                     {
@@ -772,7 +772,7 @@ void NPCSystem::updateSquatmo(xy::Entity entity, float dt)
             {
                 //only want to collide with solid and platform
                 auto& manifolds = hitboxes[i].getManifolds();
-                for (auto j = 0; j < collisionCount; ++j)
+                for (auto j = 0u; j < collisionCount; ++j)
                 {
                     if ((manifolds[j].otherType & FootMask) == 0)
                     {

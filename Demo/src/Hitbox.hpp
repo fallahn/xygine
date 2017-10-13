@@ -40,18 +40,18 @@ source distribution.
 
 namespace CollisionType
 {
-    enum ID
+    enum ID //these are actually in a specific order for collision checks
     {
         None = 0,
         Player = 0x1,
         Foot = 0x2,
-        Platform = 0x4,
-        Solid = 0x8,
-        Teleport = 0x10,
-        Bubble = 0x20,
-        NPC = 0x40,
-        Fruit = 0x80,
-        Powerup = 0x100
+        Solid = 0x4,
+        Teleport = 0x8,
+        NPC = 0x10,
+        Fruit = 0x20,
+        Powerup = 0x40,
+        Platform = 0x80,
+        Bubble = 0x100,
     };
 };
 
