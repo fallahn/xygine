@@ -49,6 +49,7 @@ MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_sharedStateData   (sharedData)
 {
     launchLoadingScreen();
+    createScene();
     createMenu();
     ctx.appInstance.setClearColour({ 1, 0, 10 });
     quitLoadingScreen();
@@ -81,6 +82,25 @@ void MenuState::draw()
 }
 
 //private
+void MenuState::createScene()
+{
+    //background
+    auto entity = m_scene.createEntity();
+    entity.addComponent<xy::Transform>();
+    entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/menu_background.png")).setDepth(-10);
+
+    //TODO load animated sprites
+
+    //grass at front
+    entity = m_scene.createEntity();
+    auto bounds = entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/grass.png")).getLocalBounds();
+    bounds.width = xy::DefaultSceneSize.x;
+    entity.addComponent<xy::Transform>().setPosition(0.f, xy::DefaultSceneSize.y - bounds.height);
+    entity.getComponent<xy::Sprite>().setTextureRect(bounds);
+    m_textureResource.get("assets/images/grass.png").setRepeated(true);
+    entity.getComponent<xy::Sprite>().setDepth(10);
+}
+
 void MenuState::createMenu()
 {
     auto& mb = getContext().appInstance.getMessageBus();

@@ -155,10 +155,10 @@ bool GameState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         default: break;
-        case sf::Keyboard::Insert:
+        /*case sf::Keyboard::Insert:
             spawnRoundSkip();
             break;
-        /*case sf::Keyboard::Home:
+        case sf::Keyboard::Home:
             m_server.stop();
             break;*/
         case sf::Keyboard::P:

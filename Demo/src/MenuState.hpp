@@ -54,6 +54,7 @@ private:
 
     SharedStateData& m_sharedStateData;
 
+    void createScene();
     void createMenu();
 };
 

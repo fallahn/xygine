@@ -552,12 +552,12 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                     break;
                 case CollisionType::Bubble:
                 case CollisionType::Platform:
-                    if ((player.canLand & PlayerClear)&& man.normal.y < 0)
+                    if ((player.canLand & PlayerClear)&& player.velocity.y > 0)
                     {
                         player.state = Player::State::Walking;
                         player.velocity.y = 0.f;
                         tx.move(man.normal * man.penetration);
-                        return;
+                        return; //quit when we change state because this function is no longer valid
                     }
                     player.canLand &= ~BodyClear;
                     break;
