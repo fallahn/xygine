@@ -270,5 +270,8 @@ void MenuDirector::spawnSprite(const Act& act)
         entity.addComponent<xy::ParticleEmitter>().settings = m_particleSettings;
         entity.getComponent<xy::ParticleEmitter>().start();
     }
-
+    else if (act.sprite == MenuSprite::Whirlybob)
+    {
+        entity.getComponent<xy::Sprite>().setDepth(-2);
+    }
 }

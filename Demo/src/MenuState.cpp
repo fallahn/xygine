@@ -174,11 +174,11 @@ void MenuState::createMenu()
     entity = m_scene.createEntity();
     entity.addComponent<xy::Text>(font).setString(m_sharedStateData.remoteIP);
     entity.getComponent<xy::Text>().setCharacterSize(65);
-    bounds.width -= 48.f;
+    bounds.width -= 72.f;
     entity.getComponent<xy::Text>().setCroppingArea(bounds);
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MenuText;
     auto& tx3 = entity.addComponent<xy::Transform>();
-    tx3.setPosition(24.f, 136.f);
+    tx3.setPosition(44.f, 146.f);
 
     //join button
     entity = m_scene.createEntity();
@@ -210,7 +210,7 @@ void MenuState::createMenu()
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     bounds = entity.getComponent<xy::Text>().getLocalBounds();
     auto& tx4 = entity.addComponent<xy::Transform>();
-    tx4.setPosition(200.f, 15.f);
+    tx4.setPosition(136.f, 15.f);
 
     //quit button
     entity = m_scene.createEntity();
