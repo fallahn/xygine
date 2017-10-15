@@ -1,0 +1,133 @@
+sprite_sheet menu_sprites
+{
+	src = "assets/images/menu_sprites.png"
+	blendmode = alpha
+
+	sprite player_one
+	{
+		bounds = 0,0,128,128
+
+		animation one
+		{
+			frame = 0,0,128,128
+			frame = 128,0,128,128
+			frame = 256,0,128,128
+			
+			framerate = 12
+			loop=true
+		}
+
+
+	}
+
+	sprite player_two
+	{
+		bounds = 384,0,128,128
+
+		animation two
+		{
+			frame = 384,0,128,128
+			frame = 512,0,128,128
+			frame = 640,0,128,128
+			framerate = 12
+			loop = true
+		}	
+	}
+
+	sprite clocksy
+	{
+		bounds = 0,128,128,128
+
+		animation walk
+		{
+			frame = 0,128,128,128
+			frame = 128,128,128,128
+			frame = 256,128,128,128
+			frame = 384,128,128,128
+			
+			framerate = 12
+			loop=true
+		}
+	}
+
+	sprite goobly
+	{
+		bounds = 512,128,128,128
+
+		animation walk
+		{
+			frame = 512,128,128,128
+			frame = 640,128,128,128
+			
+			framerate = 12
+			loop=true
+		}
+	}
+
+	sprite balldock
+	{
+		bounds = 0,256,128,128
+
+		animation walk
+		{
+			frame = 0,256,128,128
+			frame = 128,256,128,128
+			frame = 256,256,128,128
+			frame = 384,256,128,128
+			frame = 512,256,128,128
+			frame = 640,256,128,128
+			
+			framerate = 16
+			loop=true
+		}
+	}
+
+	sprite whirlybob
+	{
+		bounds = 0,384,128,128
+
+		animation walk
+		{
+			frame = 0,384,128,128
+			frame = 128,384,128,128
+			frame = 256,384,128,128
+			frame = 128,384,128,128
+			
+			framerate = 12
+			loop=true
+		}
+	}
+
+	sprite princess
+	{
+		bounds = 0,512,128,256
+
+		animation walk
+		{
+			frame = 0,512,128,256
+			frame = 128,512,128,256
+			frame = 256,512,128,256
+			frame = 384,512,128,256
+			frame = 512,512,128,256
+			
+			framerate = 12
+			loop=true
+		}
+	}
+
+	sprite bubble
+	{
+		bounds = 640,384,128,128
+
+		animation idle
+		{
+			frame = 640,384,128,128
+			frame = 640,512,128,128
+			frame = 640,640,128,128
+			frame = 640,512,128,128
+
+			framerate = 12
+			loop=true
+		}
+	}
+}
