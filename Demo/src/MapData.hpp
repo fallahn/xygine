@@ -72,7 +72,7 @@ struct MapData final
     char mapName[MaxChars]{};
     char mapSha[41]{}; //sha1 is always 40 chars long
     Actor actors[MaxActors]{};
-    sf::Uint8 actorCount = 0;
+    sf::Int8 actorCount = 0;
 };
 
 //the actor ID, spawn position and Player number

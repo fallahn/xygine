@@ -77,6 +77,8 @@ private:
     void updateBubbleState(xy::Entity, float);
     void updateDyingState(xy::Entity, float);
 
+    void collisionNormal(xy::Entity);
+    void collisionFalling(xy::Entity);
 };
 
 #endif //DEMO_NPC_SYSTEM_HPP_

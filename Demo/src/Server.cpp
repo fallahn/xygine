@@ -75,7 +75,7 @@ namespace
     const float endOfRoundTime = 6.f;
     const float defaultRoundTime = 39.f; //after this everything is angry
     const float roundWarnTime = 2.5f; //allows time for clients to do warning
-    const float watchdogTime = 10.f; //change map this many seconds after round time regardless
+    const float watchdogTime = 20.f; //change map this many seconds after round time regardless
 }
 
 GameServer::GameServer()
@@ -466,7 +466,7 @@ void GameServer::checkRoundTime(float dt)
 
     //sometimes the actor count gets messed up so we have a fail-safe timeout
     if (m_currentRoundTime > (m_roundTimeout + watchdogTime)
-        && m_mapData.actorCount <= 2)
+        && m_mapData.actorCount <= 1)
     {
         m_mapData.actorCount = 0;
     }
@@ -671,25 +671,28 @@ void GameServer::loadMap()
                     const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
                     for (const auto& obj : objs)
                     {
+                        auto actor = ActorID::None;
                         auto name = xy::Util::String::toLower(obj.getName());
                         if (name == "whirlybob")
                         {
-                            auto entity = spawnNPC(ActorID::Whirlybob, { obj.getPosition().x, obj.getPosition().y });
-                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+                            actor = ActorID::Whirlybob;
                         }
                         else if (name == "clocksy")
                         {
-                            auto entity = spawnNPC(ActorID::Clocksy, { obj.getPosition().x, obj.getPosition().y });
-                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+                            actor = ActorID::Clocksy;
                         }
                         else if (name == "squatmo")
                         {
-                            auto entity = spawnNPC(ActorID::Squatmo, { obj.getPosition().x, obj.getPosition().y });
-                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+                            actor = ActorID::Squatmo;
                         }
                         else if (name == "balldock")
                         {
-                            auto entity = spawnNPC(ActorID::Balldock, { obj.getPosition().x, obj.getPosition().y });
+                            actor = ActorID::Balldock;
+                        }
+
+                        if (actor != ActorID::None)
+                        {
+                            auto entity = spawnNPC(actor, { obj.getPosition().x, obj.getPosition().y });
                             m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
                         }
                     }

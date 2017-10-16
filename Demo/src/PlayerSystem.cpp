@@ -333,10 +333,10 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                 player.velocity.y = std::min(player.velocity.y, MaxVelocity);
                 tx.move({ 0.f, player.velocity.y * delta });
 
-                if (!player.lives)
+                /*if (!player.lives)
                 {
                     player.state = Player::State::Dead;
-                }
+                }*/
             }
 
 
@@ -557,7 +557,7 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                         player.state = Player::State::Walking;
                         player.velocity.y = 0.f;
                         tx.move(man.normal * man.penetration);
-                        return; //quit when we change state because this function is no longer valid
+                        //return; //quit when we change state because this function is no longer valid
                     }
                     else if (man.normal.x != 0)
                     {
