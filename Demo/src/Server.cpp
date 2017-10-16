@@ -889,7 +889,7 @@ void GameServer::handleMessage(const xy::Message& msg)
         if (data.type == NpcEvent::Died)
         {
             //remove from list of actors
-            std::size_t i = 0u;
+            sf::Int8 i = 0;
             for (; i < m_mapData.actorCount; ++i)
             {
                 if (m_mapData.actors[i].id == data.entityID)

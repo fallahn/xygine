@@ -38,6 +38,7 @@ source distribution.
 #include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/ecs/components/UIHitBox.hpp>
 #include <xyginext/ecs/components/AudioEmitter.hpp>
+#include <xyginext/ecs/components/AudioListener.hpp>
 
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
@@ -114,7 +115,9 @@ void MenuState::createScene()
     entity.addComponent<xy::AudioEmitter>().setSource("assets/sound/music/menu.ogg");
     entity.getComponent<xy::AudioEmitter>().setChannel(1);
     entity.getComponent<xy::AudioEmitter>().setLooped(true);
+    entity.getComponent<xy::AudioEmitter>().setVolume(0.25f);
     entity.getComponent<xy::AudioEmitter>().play();
+
 
 
     //grass at front
@@ -125,6 +128,9 @@ void MenuState::createScene()
     entity.getComponent<xy::Sprite>().setTextureRect(bounds);
     m_textureResource.get("assets/images/grass.png").setRepeated(true);
     entity.getComponent<xy::Sprite>().setDepth(10);
+
+
+    m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(1.f);
 }
 
 void MenuState::createMenu()

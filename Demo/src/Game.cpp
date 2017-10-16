@@ -44,7 +44,8 @@ Game::Game()
     : xy::App   (/*sf::ContextSettings(0, 0, 0, 3, 2, sf::ContextSettings::Core)*/),
     m_stateStack({ *getRenderWindow(), *this })
 {
-
+    setWindowIcon("assets/images/icon.png");
+    getRenderWindow()->setTitle("xygine - Castle Clamber");
 }
 
 //private

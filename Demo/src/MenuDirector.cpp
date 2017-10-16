@@ -223,7 +223,7 @@ MenuDirector::MenuDirector(xy::TextureResource& tr)
 }
 
 //public
-void MenuDirector::handleEvent(const sf::Event& evt)
+void MenuDirector::handleEvent(const sf::Event&)
 {
 
 }
