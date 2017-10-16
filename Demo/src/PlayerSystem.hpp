@@ -55,6 +55,7 @@ struct Player final
     bool canJump = true;
     sf::Uint8 canLand = 0; //only for 1 way platforms
     bool canShoot = true;
+    bool canRideBubble = false;
     enum class Direction : sf::Uint8 
     {
         Left, Right

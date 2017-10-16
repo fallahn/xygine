@@ -442,6 +442,11 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                 {
                 default: break;
                 case CollisionType::Bubble:
+                    if (!player.canRideBubble)
+                    {
+                        break;
+                    }
+
                     if (man.otherEntity.hasComponent<Bubble>() &&
                         man.otherEntity.getComponent<Bubble>().state == Bubble::Normal)
                     {
@@ -450,7 +455,7 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                             tx.move(man.normal * man.penetration);
                         }
                     }
-                    //else break;
+
                     break;
                 case CollisionType::Solid:
                 case CollisionType::Platform:
@@ -516,8 +521,10 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
     const auto& hitboxes = entity.getComponent<CollisionComponent>().getHitboxes();
     auto hitboxCount = entity.getComponent<CollisionComponent>().getHitboxCount();
 
-    auto& player = entity.getComponent<Player>();
+    auto& player = entity.getComponent<Player>();    
     auto& tx = entity.getComponent<xy::Transform>();
+
+    player.canRideBubble = false;
 
     //check for collision and resolve
     for (auto i = 0u; i < hitboxCount; ++i)
@@ -551,18 +558,20 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                     player.canLand |= BodyClear;
                     break;
                 case CollisionType::Bubble:
+                    player.canRideBubble = true;
                 case CollisionType::Platform:
-                    if ((player.canLand & PlayerClear)&& player.velocity.y > 0 && man.normal.y < 0)
+                    if (man.normal.x != 0)
+                    {
+                        tx.move(man.normal * man.penetration);
+                    }                    
+                    else if ((player.canLand & PlayerClear)&& player.velocity.y > 0 && man.normal.y < 0)
                     {
                         player.state = Player::State::Walking;
                         player.velocity.y = 0.f;
                         tx.move(man.normal * man.penetration);
                         //return; //quit when we change state because this function is no longer valid
                     }
-                    else if (man.normal.x != 0)
-                    {
-                        tx.move(man.normal * man.penetration);
-                    }
+
                     player.canLand &= ~BodyClear;
                     break;
                 case CollisionType::Solid:
@@ -653,6 +662,10 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                         player.canLand |= FootClear;
                     }
                 }
+                else
+                {
+                    player.canLand &= ~FootClear;
+                }
             }
         }
     }
@@ -677,7 +690,8 @@ void PlayerSystem::collisionDying(xy::Entity entity)
                 {
                     entity.getComponent<xy::Transform>().move(manifolds[j].normal * manifolds[j].penetration);
                     auto& player = entity.getComponent<Player>();
-                    player.velocity.y = -player.velocity.y * 0.6f;
+                    player.velocity.y = 0.f;// -player.velocity.y;// *0.6f;
+                    return;
                 }
             }
         }
