@@ -34,7 +34,7 @@ namespace PacketID
     {
         MapJoin = 0,
         MapChange, //map is changed when client already connected
-        MapReady, //client has load new map and is ready to continue
+        MapReady, //client has loaded new map and is ready to continue
         GameOver, //game ended
         ClientData, //this has been assigned by the server to the client
         ActorAbsolute, //applied to actors immediately rather than interpolated
@@ -49,6 +49,8 @@ namespace PacketID
         InventoryUpdate, //tells clients to update player inventory display (lives etc)
         RoundWarning, //notifies clients of near time limit
         RoundSkip, //notifies clients someone collected BONUS
+        LevelUpdate, //tells client which level they are on
+        GameComplete, //signals client game is complete
 
         DebugMapCount, //sends the number of active NPCs for debug printing
 

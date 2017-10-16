@@ -30,6 +30,7 @@ source distribution.
 
 enum StateID
 {
+    Intro,
     MainMenu,
     Game,
     Error,

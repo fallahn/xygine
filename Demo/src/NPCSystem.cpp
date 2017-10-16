@@ -55,6 +55,8 @@ namespace
     const std::array<float, 10> thinkTimes = { 20.f, 16.f, 12.f, 31.f, 15.4f, 14.9f, 25.f, 12.7f, 13.3f, 18.f };
     const float BubbleTime = 6.f;
     const float DieTime = 1.5f;
+
+    const sf::Uint32 FootMask = (CollisionType::Platform | CollisionType::Solid | CollisionType::Player);
 }
 
 NPCSystem::NPCSystem(xy::MessageBus& mb, xy::NetHost& host)
@@ -206,100 +208,25 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
 {
     auto& tx = entity.getComponent<xy::Transform>();
     auto& npc = entity.getComponent<NPC>();
+    auto& animController = entity.getComponent<AnimationController>();
 
     float xMotion = tx.getPosition().x; //used in animation, see below
-
-    const auto& collision = entity.getComponent<CollisionComponent>();
-    const auto& hitboxes = collision.getHitboxes();
-
-    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
-    {    
-        if (hitboxes[i].getType() == CollisionType::NPC)
-        {
-            auto& manifolds = hitboxes[i].getManifolds();
-            auto collisionCount = hitboxes[i].getCollisionCount();
-
-            if(collisionCount == 0)
-            {
-                npc.canLand = true;
-            }
-
-            for (auto j = 0u; j < collisionCount; ++j)
-            {
-                auto& manifold = manifolds[j];
-                switch (manifold.otherType)
-                {
-                default: break;
-                case CollisionType::Platform:
-                    //collide when falling downwards
-                    if (manifold.normal.y < 0 && npc.canLand)
-                    {
-                        npc.velocity.y = 0.f;
-                        if(xy::Util::Random::value(0, 1) == 0) npc.velocity.x = -npc.velocity.x;
-                        npc.state = NPC::State::Normal;
-
-                        tx.move(manifold.normal * manifold.penetration);
-                        break;
-                    }
-                    npc.canLand = false;
-                    break;
-                case CollisionType::Solid:               
-                    tx.move(manifold.normal * manifold.penetration);
-
-                    if (npc.state == NPC::State::Jumping)
-                    {
-                        if (npc.velocity.y > 0)
-                        {
-                            //moving down
-                            npc.state = NPC::State::Normal;
-                            npc.velocity.y = 0.f;                            
-                        }
-                        else //bonk head
-                        {
-                            npc.velocity.y *= 0.25f;
-                        }
-                    }
-                    npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
-                    break;
-                case CollisionType::Bubble:
-                    //switch to bubble state if bubble in spawn state
-                {
-                    if (manifold.otherEntity.hasComponent<Bubble>())
-                    {
-                        const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
-                        if (bubble.state == Bubble::Spawning)
-                        {
-                            npc.lastVelocity = npc.velocity; //so we can  restore if bubble pops
-
-                            npc.state = NPC::State::Bubble;
-                            npc.velocity.y = BubbleVerticalVelocity;
-                            npc.thinkTimer = BubbleTime;
-                            npc.bubbleOwner = bubble.player;
-                            entity.getComponent<AnimationController>().direction = 1.f;
-                            entity.getComponent<AnimationController>().nextAnimation =
-                                (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
-                            return;
-                        }
-                    }
-                }
-                    break;
-                case CollisionType::Teleport:
-                    tx.move(0.f, -TeleportDistance);
-                    break;
-                }
-            }
-        }
-        else //footbox
-        {
-            if (hitboxes[i].getCollisionCount() == 0)
-            {
-                //foots in the air so we're falling
-                npc.state = NPC::State::Jumping;
-            }
-        }  
-    }
+    auto anim = animController.nextAnimation;
 
     npc.thinkTimer -= dt;
+
+    //collisions may switch state so need to be handled on their own
+    switch (npc.state)
+    {
+    default:break;
+    case NPC::State::Normal:
+    case NPC::State::Thinking:
+        collisionNormal(entity);
+        break;
+    case NPC::State::Jumping:
+        collisionFalling(entity);
+        break;
+    }
 
     switch (npc.state)
     {
@@ -345,17 +272,19 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
         break;
     }
 
-    //update animation state   
-    auto& animController = entity.getComponent<AnimationController>();
+    //update animation state      
     animController.direction = -npc.velocity.x;
-    if (npc.state == NPC::State::Jumping)
+    if (anim == animController.nextAnimation) //only update if collision hasn't changed it
     {
-        animController.nextAnimation = (npc.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
-    }
-    else
-    {
-        xMotion = tx.getPosition().x - xMotion;
-        animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
+        if (npc.state == NPC::State::Jumping)
+        {
+            animController.nextAnimation = (npc.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
+        }
+        else
+        {
+            xMotion = tx.getPosition().x - xMotion;
+            animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
+        }
     }
 }
 
@@ -483,112 +412,24 @@ void NPCSystem::updateBalldock(xy::Entity entity, float dt)
 {
     auto& tx = entity.getComponent<xy::Transform>();
     auto& npc = entity.getComponent<NPC>();
+    auto& animController = entity.getComponent<AnimationController>();
+    auto currAnim = animController.nextAnimation;
 
     float xMotion = tx.getPosition().x; //used in animation, see below
 
-    const auto& collision = entity.getComponent<CollisionComponent>();
-    const auto& hitboxes = collision.getHitboxes();
-
-    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
+    //do collision
+    switch (npc.state)
     {
-        if (hitboxes[i].getType() == CollisionType::NPC)
-        {
-            auto& manifolds = hitboxes[i].getManifolds();
-            auto collisionCount = hitboxes[i].getCollisionCount();
-
-            if (collisionCount == 0)
-            {
-                npc.canLand = true;
-            }
-
-            for (auto j = 0u; j < collisionCount; ++j)
-            {
-                auto& manifold = manifolds[j];
-                switch (manifold.otherType)
-                {
-                default: break;
-                case CollisionType::Platform:
-                    //collide when falling downwards
-                    if (manifold.normal.y < 0 && npc.canLand)
-                    {
-                        if (npc.velocity.y > BalldockBounceVelocity)
-                        {
-                            npc.velocity.y = -npc.velocity.y * 0.4f; //bounce when landing
-                        }
-                        else
-                        {
-                            npc.velocity.y = 0.f;
-                            if (xy::Util::Random::value(0, 1) == 0) npc.velocity.x = -npc.velocity.x;
-                            npc.state = NPC::State::Normal;
-                        }
-                        tx.move(manifold.normal * manifold.penetration);
-                        break;
-                    }
-                    npc.canLand = false;
-                    break;
-                case CollisionType::Solid:
-                    tx.move(manifold.normal * manifold.penetration);
-                    
-                    if (npc.state == NPC::State::Jumping)
-                    {
-                        if (npc.velocity.y > 0)
-                        {
-                            //moving down
-                            if (npc.velocity.y > BalldockBounceVelocity)
-                            {
-                                npc.velocity.y = -npc.velocity.y * 0.4f; //bounce when landing
-                                break; //skip reflecting velocity, below
-                            }
-                            else
-                            {
-                                npc.state = NPC::State::Normal;
-                                npc.velocity.y = 0.f;
-                            }
-                        }
-                        else //bonk head
-                        {
-                            npc.velocity.y *= 0.25f;
-                        }
-                    }
-                    npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
-                    break;
-                case CollisionType::Bubble:
-                    //switch to bubble state if bubble in spawn state
-                {
-                    if (manifold.otherEntity.hasComponent<Bubble>())
-                    {
-                        const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
-                        if (bubble.state == Bubble::Spawning)
-                        {
-                            npc.lastVelocity = npc.velocity; //so we can  restore if bubble pops
-
-                            npc.state = NPC::State::Bubble;
-                            npc.velocity.y = BubbleVerticalVelocity;
-                            npc.thinkTimer = BubbleTime;
-                            npc.bubbleOwner = bubble.player;
-                            entity.getComponent<AnimationController>().direction = 1.f;
-                            entity.getComponent<AnimationController>().nextAnimation =
-                                (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
-                            return;
-                        }
-                    }
-                }
-                break;
-                case CollisionType::Teleport:
-                    tx.move(0.f, -TeleportDistance);
-                    break;
-                }
-            }
-        }
-        else //footbox
-        {
-            if (hitboxes[i].getCollisionCount() == 0)
-            {
-                //foots in the air so we're falling
-                npc.state = NPC::State::Jumping;
-            }
-        }
+    default: break;
+    case NPC::State::Normal:
+    case NPC::State::Thinking:
+        collisionNormal(entity);
+        break;
+    case NPC::State::Jumping:
+        collisionFalling(entity);
+        break;
     }
+
 
     npc.thinkTimer -= dt;
 
@@ -630,17 +471,19 @@ void NPCSystem::updateBalldock(xy::Entity entity, float dt)
         break;
     }
 
-    //update animation state   
-    auto& animController = entity.getComponent<AnimationController>();
+    //update animation state     
     animController.direction = -npc.velocity.x;
-    if (npc.state == NPC::State::Jumping)
+    if (currAnim == animController.nextAnimation)
     {
-        animController.nextAnimation = (npc.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
-    }
-    else
-    {
-        xMotion = tx.getPosition().x - xMotion;
-        animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
+        if (npc.state == NPC::State::Jumping)
+        {
+            animController.nextAnimation = (npc.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
+        }
+        else
+        {
+            xMotion = tx.getPosition().x - xMotion;
+            animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
+        }
     }
 }
 
@@ -648,99 +491,31 @@ void NPCSystem::updateSquatmo(xy::Entity entity, float dt)
 {
     auto& tx = entity.getComponent<xy::Transform>();
     auto& npc = entity.getComponent<NPC>();
+    auto& animController = entity.getComponent<AnimationController>();
+    auto currAnim = animController.nextAnimation;
 
     float xMotion = tx.getPosition().x; //used in animation, see below
 
-    const auto& collision = entity.getComponent<CollisionComponent>();
-    const auto& hitboxes = collision.getHitboxes();
-
-    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
+    //handle collision first as it may affect current state
+    switch (npc.state)
     {
-        if (hitboxes[i].getType() == CollisionType::NPC)
-        {
-            auto& manifolds = hitboxes[i].getManifolds();
-            auto collisionCount = hitboxes[i].getCollisionCount();
-
-            if (collisionCount == 0)
-            {
-                npc.canLand = true;
-            }
-
-            for (auto j = 0u; j < collisionCount; ++j)
-            {
-                auto& manifold = manifolds[j];
-                switch (manifold.otherType)
-                {
-                default: break;
-                case CollisionType::Platform:
-                    //collide when falling downwards
-                    if (manifold.normal.y < 0 && npc.canLand)
-                    {
-                        npc.velocity.y = 0.f;
-                        if (xy::Util::Random::value(0, 1) == 0) npc.velocity.x = -npc.velocity.x;
-                        npc.state = NPC::State::Normal;
-
-                        tx.move(manifold.normal * manifold.penetration);
-                        break;
-                    }
-                    npc.canLand = false;
-                    break;
-                case CollisionType::Solid:
-                    tx.move(manifold.normal * manifold.penetration);
-
-                    if (npc.state == NPC::State::Jumping)
-                    {
-                        if (npc.velocity.y > 0)
-                        {
-                            //moving down
-                            npc.state = NPC::State::Normal;
-                            npc.velocity.y = 0.f;
-                        }
-                        else //bonk head
-                        {
-                            npc.velocity.y *= 0.25f;
-                        }
-                    }
-                    npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
-                    break;
-                case CollisionType::Bubble:
-                    //switch to bubble state if bubble in spawn state
-                {
-                    if (manifold.otherEntity.hasComponent<Bubble>())
-                    {
-                        const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
-                        if (bubble.state == Bubble::Spawning)
-                        {
-                            npc.lastVelocity = npc.velocity; //so we can  restore if bubble pops
-
-                            npc.state = NPC::State::Bubble;
-                            npc.velocity.x /= SquatmoSpeed;
-                            npc.velocity.y = BubbleVerticalVelocity;
-                            npc.thinkTimer = BubbleTime;
-                            npc.bubbleOwner = bubble.player;
-                            entity.getComponent<AnimationController>().direction = 1.f;
-                            entity.getComponent<AnimationController>().nextAnimation =
-                                (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
-                            return;
-                        }
-                    }
-                }
-                break;
-                case CollisionType::Teleport:
-                    tx.move(0.f, -TeleportDistance);
-                    break;
-                }
-            }
-        }
-        else //footbox
-        {
-            if (hitboxes[i].getCollisionCount() == 0)
-            {
-                //foots in the air so we're falling
-                npc.state = NPC::State::Jumping;
-            }
-        }
+    default: break;
+    case NPC::State::Normal:
+    case NPC::State::Thinking:
+        collisionNormal(entity);
+        break;
+    case NPC::State::Jumping:
+        collisionFalling(entity);
+        break;
     }
+
+    if (npc.state == NPC::State::Bubble)
+    {
+        //we've been captured!
+        npc.velocity.x /= SquatmoSpeed;
+        return;
+    }
+
 
     //thinking / motion
     npc.thinkTimer -= dt;
@@ -800,17 +575,19 @@ void NPCSystem::updateSquatmo(xy::Entity entity, float dt)
         break;
     }
 
-    //update animation state   
-    auto& animController = entity.getComponent<AnimationController>();
+    //update animation state    
     animController.direction = (npc.velocity.x < 0) ? 1.f : -1.f;
-    if (npc.state == NPC::State::Jumping)
+    if (currAnim == animController.nextAnimation)
     {
-        animController.nextAnimation = (npc.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
-    }
-    else
-    {
-        xMotion = tx.getPosition().x - xMotion;
-        animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
+        if (npc.state == NPC::State::Jumping)
+        {
+            animController.nextAnimation = (npc.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
+        }
+        else
+        {
+            xMotion = tx.getPosition().x - xMotion;
+            animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
+        }
     }
 }
 
@@ -867,6 +644,7 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
         //bubble wasn't burst in time, release NPC (angry mode)
         npc.state = NPC::State::Normal;
         npc.velocity = npc.lastVelocity;
+        npc.velocity.y = 0.f;
         npc.thinkTimer = thinkTimes[m_currentThinkTime];
         npc.angry = true;
         
@@ -982,4 +760,169 @@ void NPCSystem::despawn(xy::Entity entity, sf::Uint8 playerNumber, sf::Uint8 cau
     msg->entityID = entity.getIndex();
     msg->playerID = playerNumber;
     msg->causeOfDeath = cause;
+}
+
+void NPCSystem::collisionNormal(xy::Entity entity)
+{
+    auto& tx = entity.getComponent<xy::Transform>();
+    auto& npc = entity.getComponent<NPC>();
+    
+    const auto& collision = entity.getComponent<CollisionComponent>();
+    const auto& hitboxes = collision.getHitboxes();
+
+    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
+    {
+        if (hitboxes[i].getType() == CollisionType::NPC)
+        {
+            auto& manifolds = hitboxes[i].getManifolds();
+            auto collisionCount = hitboxes[i].getCollisionCount();
+
+            for (auto j = 0u; j < collisionCount; ++j)
+            {
+                auto& manifold = manifolds[j];
+                switch (manifold.otherType)
+                {
+                default: break;
+                case CollisionType::Platform:
+                    tx.move(manifold.normal * manifold.penetration);
+                    break;
+                case CollisionType::Solid:
+                    tx.move(manifold.normal * manifold.penetration);
+                    npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
+                    break;
+                case CollisionType::Bubble:
+                    //switch to bubble state if bubble in spawn state
+                {
+                    if (manifold.otherEntity.hasComponent<Bubble>())
+                    {
+                        const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
+                        if (bubble.state == Bubble::Spawning)
+                        {
+                            npc.lastVelocity = npc.velocity; //so we can  restore if bubble pops
+
+                            npc.state = NPC::State::Bubble;
+                            npc.velocity.y = BubbleVerticalVelocity;
+                            npc.thinkTimer = BubbleTime;
+                            npc.bubbleOwner = bubble.player;
+                            entity.getComponent<AnimationController>().direction = 1.f;
+                            entity.getComponent<AnimationController>().nextAnimation =
+                                (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
+                            return;
+                        }
+                    }
+                }
+                break;
+                }
+            }
+        }
+        else //footbox
+        {
+            auto collisionCount = hitboxes[i].getCollisionCount();
+            if (collisionCount == 0)
+            {
+                //foot's in the air so we're falling
+                npc.state = NPC::State::Jumping;
+            }
+        }
+    }
+}
+
+void NPCSystem::collisionFalling(xy::Entity entity)
+{
+    auto& tx = entity.getComponent<xy::Transform>();
+    auto& npc = entity.getComponent<NPC>();
+    
+    const auto& collision = entity.getComponent<CollisionComponent>();
+    const auto& hitboxes = collision.getHitboxes();
+
+    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
+    {
+        if (hitboxes[i].getType() == CollisionType::NPC)
+        {
+            auto& manifolds = hitboxes[i].getManifolds();
+            auto collisionCount = hitboxes[i].getCollisionCount();
+
+            if (collisionCount == 0)
+            {
+                npc.canLand = true;
+            }
+
+            for (auto j = 0u; j < collisionCount; ++j)
+            {
+                auto& manifold = manifolds[j];
+                switch (manifold.otherType)
+                {
+                default: break;
+                case CollisionType::Platform:
+                    //collide when falling downwards
+                    if (manifold.normal.y < 0 && npc.canLand)
+                    {
+                        npc.velocity.y = 0.f;
+                        if (xy::Util::Random::value(0, 1) == 0) npc.velocity.x = -npc.velocity.x;
+                        npc.state = NPC::State::Normal;
+
+                        tx.move(manifold.normal * manifold.penetration);
+                        break;
+                    }
+                    npc.canLand = false;
+                    break;
+                case CollisionType::Solid:
+                    tx.move(manifold.normal * manifold.penetration);
+
+                    if (npc.velocity.y > 0)
+                    {
+                        //balls bounce.
+                        if (entity.getComponent<Actor>().type == ActorID::Balldock
+                            && npc.velocity.y > BalldockBounceVelocity)
+                        {
+                            npc.velocity.y = -npc.velocity.y * 0.4f;
+                            break; //skip reflecting velocity, below
+                        }
+                        else
+                        {
+                            //moving down
+                            npc.state = NPC::State::Normal;
+                            npc.velocity.y = 0.f;
+                        }
+                    }
+                    else //bonk head
+                    {
+                        npc.velocity.y *= 0.25f;
+                    }
+
+                    npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
+                    break;
+                case CollisionType::Bubble:
+                    //switch to bubble state if bubble in spawn state
+                {
+                    if (manifold.otherEntity.hasComponent<Bubble>())
+                    {
+                        const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
+                        if (bubble.state == Bubble::Spawning)
+                        {
+                            npc.lastVelocity = npc.velocity; //so we can  restore if bubble pops
+
+                            npc.state = NPC::State::Bubble;
+                            npc.velocity.y = BubbleVerticalVelocity;
+                            npc.thinkTimer = BubbleTime;
+                            npc.bubbleOwner = bubble.player;
+                            entity.getComponent<AnimationController>().direction = 1.f;
+                            entity.getComponent<AnimationController>().nextAnimation =
+                                (npc.bubbleOwner == 0) ? AnimationController::TrappedOne : AnimationController::TrappedTwo;
+                            return;
+                        }
+                    }
+                }
+                break;
+                case CollisionType::Teleport:
+                    tx.move(0.f, -TeleportDistance);
+                    break;
+                }
+            }
+        }
+        //else //footbox
+        //{
+
+        //}
+    }
 }

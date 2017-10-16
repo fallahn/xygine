@@ -53,8 +53,9 @@ struct Player final
     }state = State::Walking;
     sf::Vector2f velocity; //only the Y velocity is actually used in movement - the x value is used to track how much initial velocity to spawn bubble with
     bool canJump = true;
-    bool canLand = false; //only for 1 way platforms
+    sf::Uint8 canLand = 0; //only for 1 way platforms
     bool canShoot = true;
+    bool canRideBubble = false;
     enum class Direction : sf::Uint8 
     {
         Left, Right
@@ -84,6 +85,10 @@ private:
     float getDelta(const History&, std::size_t);
 
     void resolveCollision(xy::Entity);
+
+    void collisionWalking(xy::Entity);
+    void collisionJumping(xy::Entity);
+    void collisionDying(xy::Entity);
 };
 
 #endif //DEMO_PLAYER_SYSTEM_HPP_

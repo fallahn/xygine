@@ -133,9 +133,11 @@
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameOverState.cpp" />
     <ClCompile Include="src\GameState.cpp" />
+    <ClCompile Include="src\IntroState.cpp" />
     <ClCompile Include="src\InventoryDirector.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MapAnimator.cpp" />
+    <ClCompile Include="src\MenuDirector.cpp" />
     <ClCompile Include="src\MenuState.cpp" />
     <ClCompile Include="src\NPCSystem.cpp" />
     <ClCompile Include="src\ParticleDirector.cpp" />
@@ -166,9 +168,11 @@
     <ClInclude Include="src\GameOverState.hpp" />
     <ClInclude Include="src\GameState.hpp" />
     <ClInclude Include="src\Hitbox.hpp" />
+    <ClInclude Include="src\IntroState.hpp" />
     <ClInclude Include="src\InventoryDirector.hpp" />
     <ClInclude Include="src\MapAnimator.hpp" />
     <ClInclude Include="src\MapData.hpp" />
+    <ClInclude Include="src\MenuDirector.hpp" />
     <ClInclude Include="src\MenuState.hpp" />
     <ClInclude Include="src\MessageIDs.hpp" />
     <ClInclude Include="src\MusicCallback.hpp" />

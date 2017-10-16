@@ -25,37 +25,60 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_MENU_STATE_HPP_
-#define DEMO_GAME_MENU_STATE_HPP_
-
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+#ifndef DEMO_INTRO_STATE_HPP_
+#define DEMO_INTRO_STATE_HPP_
 
 #include "StateIDs.hpp"
-#include "SharedStateData.hpp"
 
-class MenuState final : public xy::State
+#include <xyginext/core/State.hpp>
+
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Shader.hpp>
+
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
+
+namespace xy
+{
+    class MessageBus;
+}
+
+class IntroState final : public xy::State
 {
 public:
-    MenuState(xy::StateStack&, xy::State::Context, SharedStateData&);
-
-    xy::StateID stateID() const override { return StateID::MainMenu; }
+    IntroState(xy::StateStack&, Context);
+    ~IntroState() = default;
 
     bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
+    void handleMessage(const xy::Message&) override {}
     bool update(float) override;
     void draw() override;
 
+    xy::StateID stateID() const override { return StateID::Intro; }
+
 private:
-    xy::Scene m_scene;
-    xy::FontResource m_fontResource;
-    xy::TextureResource m_textureResource;
 
-    SharedStateData& m_sharedStateData;
+    sf::Texture m_texture;
+    sf::Sprite m_sprite;
+    sf::RectangleShape m_rectangleShape;
+    sf::Shader m_noiseShader;
+    sf::Shader m_lineShader;
+    float m_windowRatio;
 
-    void createScene();
-    void createMenu();
+    xy::MessageBus& m_messageBus;
+
+    float m_fadeTime;
+    enum class Fade
+    {
+        In,
+        Hold,
+        Out
+    }m_fade;
+
+    sf::SoundBuffer m_soundBuffer;
+    sf::Sound m_sound;
 };
 
-#endif //DEMO_GAME_MENU_STATE_HPP_
+#endif //DEMO_INTRO_STATE_HPP_

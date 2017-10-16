@@ -76,7 +76,7 @@ private:
 
     std::vector<std::string> m_mapFiles;
     std::size_t m_currentMap;
-    float m_endOfRoundPauseTime; //hm, this feels like it should be encapsulated somewhere
+    float m_endOfRoundPauseTime;
     float m_currentRoundTime;
     float m_roundTimeout;
     void checkRoundTime(float);
@@ -102,6 +102,7 @@ private:
         ClientData data;
         xy::NetPeer peer;
         bool ready = false;
+        sf::Uint8 level = 1;
     };
     std::array<Client, 2u> m_clients;
 };

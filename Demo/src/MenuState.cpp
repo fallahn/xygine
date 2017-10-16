@@ -29,6 +29,7 @@ source distribution.
 #include "CommandIDs.hpp"
 #include "StateIDs.hpp"
 #include "TextboxDirector.hpp"
+#include "MenuDirector.hpp"
 
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -36,12 +37,20 @@ source distribution.
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/ecs/components/UIHitBox.hpp>
+#include <xyginext/ecs/components/AudioEmitter.hpp>
 
 #include <xyginext/ecs/systems/SpriteRenderer.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
 #include <xyginext/ecs/systems/UISystem.hpp>
+#include <xyginext/ecs/systems/AudioSystem.hpp>
+#include <xyginext/ecs/systems/CallbackSystem.hpp>
+#include <xyginext/ecs/systems/SpriteAnimator.hpp>
+#include <xyginext/ecs/systems/ParticleSystem.hpp>
 
 #include <SFML/Window/Event.hpp>
+
+#include <array>
+
 
 MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
     : xy::State(stack, ctx),
@@ -49,6 +58,7 @@ MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_sharedStateData   (sharedData)
 {
     launchLoadingScreen();
+    createScene();
     createMenu();
     ctx.appInstance.setClearColour({ 1, 0, 10 });
     quitLoadingScreen();
@@ -81,17 +91,44 @@ void MenuState::draw()
 }
 
 //private
-void MenuState::createMenu()
-{
+void MenuState::createScene()
+{    
     auto& mb = getContext().appInstance.getMessageBus();
+    m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::UISystem>(mb);
+    m_scene.addSystem<xy::CallbackSystem>(mb);
+    m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::SpriteRenderer>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
+    m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addDirector<TextboxDirector>(m_sharedStateData);
+    m_scene.addDirector<MenuDirector>(m_textureResource);
 
     xy::AudioMixer::setLabel("FX", 0);
-    xy::AudioMixer::setLabel("Music", 1);
+    xy::AudioMixer::setLabel("Music", 1);    
+    
+    //background
+    auto entity = m_scene.createEntity();
+    entity.addComponent<xy::Transform>();
+    entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/menu_background.png")).setDepth(-10);
+    entity.addComponent<xy::AudioEmitter>().setSource("assets/sound/music/menu.ogg");
+    entity.getComponent<xy::AudioEmitter>().setChannel(1);
+    entity.getComponent<xy::AudioEmitter>().setLooped(true);
+    entity.getComponent<xy::AudioEmitter>().play();
 
+
+    //grass at front
+    entity = m_scene.createEntity();
+    auto bounds = entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/grass.png")).getLocalBounds();
+    bounds.width = xy::DefaultSceneSize.x;
+    entity.addComponent<xy::Transform>().setPosition(0.f, xy::DefaultSceneSize.y - bounds.height);
+    entity.getComponent<xy::Sprite>().setTextureRect(bounds);
+    m_textureResource.get("assets/images/grass.png").setRepeated(true);
+    entity.getComponent<xy::Sprite>().setDepth(10);
+}
+
+void MenuState::createMenu()
+{
     //host text
     auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");
     auto entity = m_scene.createEntity();
@@ -137,11 +174,11 @@ void MenuState::createMenu()
     entity = m_scene.createEntity();
     entity.addComponent<xy::Text>(font).setString(m_sharedStateData.remoteIP);
     entity.getComponent<xy::Text>().setCharacterSize(65);
-    bounds.width -= 48.f;
+    bounds.width -= 72.f;
     entity.getComponent<xy::Text>().setCroppingArea(bounds);
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MenuText;
     auto& tx3 = entity.addComponent<xy::Transform>();
-    tx3.setPosition(24.f, 136.f);
+    tx3.setPosition(44.f, 146.f);
 
     //join button
     entity = m_scene.createEntity();
@@ -173,7 +210,7 @@ void MenuState::createMenu()
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     bounds = entity.getComponent<xy::Text>().getLocalBounds();
     auto& tx4 = entity.addComponent<xy::Transform>();
-    tx4.setPosition(200.f, 15.f);
+    tx4.setPosition(136.f, 15.f);
 
     //quit button
     entity = m_scene.createEntity();

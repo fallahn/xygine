@@ -283,7 +283,7 @@ void PowerupSystem::processIdle(xy::Entity entity, float dt)
     }
 }
 
-void PowerupSystem::defaultCollision(xy::Entity entity, float dt)
+void PowerupSystem::defaultCollision(xy::Entity entity, float)
 {
     auto& powerup = entity.getComponent<Powerup>();
     auto& tx = entity.getComponent<xy::Transform>();

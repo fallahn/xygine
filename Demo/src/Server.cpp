@@ -75,7 +75,7 @@ namespace
     const float endOfRoundTime = 6.f;
     const float defaultRoundTime = 39.f; //after this everything is angry
     const float roundWarnTime = 2.5f; //allows time for clients to do warning
-    const float watchdogTime = 10.f; //change map this many seconds after round time regardless
+    const float watchdogTime = 20.f; //change map this many seconds after round time regardless
 }
 
 GameServer::GameServer()
@@ -314,6 +314,7 @@ void GameServer::handleDisconnect(const xy::NetEvent& evt)
         client->data.peerID = 0;
         client->peer = {};
         client->ready = false;
+        client->level = 1;
     }
 }
 
@@ -339,6 +340,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         m_clients[playerNumber].data.peerID = evt.peer.getID();
         m_clients[playerNumber].peer = evt.peer;
         m_clients[playerNumber].ready = true;
+        m_clients[playerNumber].level = 1;
         m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber].data, xy::NetFlag::Reliable, 1);
 
         //send initial position of existing actors
@@ -464,7 +466,7 @@ void GameServer::checkRoundTime(float dt)
 
     //sometimes the actor count gets messed up so we have a fail-safe timeout
     if (m_currentRoundTime > (m_roundTimeout + watchdogTime)
-        && m_mapData.actorCount <= 2)
+        && m_mapData.actorCount <= 1)
     {
         m_mapData.actorCount = 0;
     }
@@ -520,6 +522,27 @@ void GameServer::checkMapStatus(float dt)
         m_scene.setSystemActive<CollisionSystem>(false);
         m_scene.setSystemActive<PowerupSystem>(false);
         m_scene.setSystemActive<BonusSystem>(false);
+
+        //increase the level count for connected clients and send update
+        auto updateLevel = [&](Client& client)
+        {
+            if (client.data.actor.type != ActorID::None)
+            {
+                client.level++;
+                if (client.level > MapsToWin)
+                {
+                    //game completed tell client
+                    m_host.sendPacket(client.peer, PacketID::GameComplete, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+                }
+                else
+                {
+                    //send value update
+                    m_host.sendPacket(client.peer, PacketID::LevelUpdate, client.level, xy::NetFlag::Reliable, 1);
+                }
+            }
+        };
+        updateLevel(m_clients[0]);
+        updateLevel(m_clients[1]);
     }
 }
 
@@ -648,25 +671,28 @@ void GameServer::loadMap()
                     const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
                     for (const auto& obj : objs)
                     {
+                        auto actor = ActorID::None;
                         auto name = xy::Util::String::toLower(obj.getName());
                         if (name == "whirlybob")
                         {
-                            auto entity = spawnNPC(ActorID::Whirlybob, { obj.getPosition().x, obj.getPosition().y });
-                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+                            actor = ActorID::Whirlybob;
                         }
                         else if (name == "clocksy")
                         {
-                            auto entity = spawnNPC(ActorID::Clocksy, { obj.getPosition().x, obj.getPosition().y });
-                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+                            actor = ActorID::Clocksy;
                         }
                         else if (name == "squatmo")
                         {
-                            auto entity = spawnNPC(ActorID::Squatmo, { obj.getPosition().x, obj.getPosition().y });
-                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+                            actor = ActorID::Squatmo;
                         }
                         else if (name == "balldock")
                         {
-                            auto entity = spawnNPC(ActorID::Balldock, { obj.getPosition().x, obj.getPosition().y });
+                            actor = ActorID::Balldock;
+                        }
+
+                        if (actor != ActorID::None)
+                        {
+                            auto entity = spawnNPC(actor, { obj.getPosition().x, obj.getPosition().y });
                             m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
                         }
                     }

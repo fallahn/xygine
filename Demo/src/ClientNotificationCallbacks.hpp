@@ -105,13 +105,24 @@ public:
         if (tx.getPosition().y > MapBounds.height)
         {
             m_scene.destroyEntity(entity);
+
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::SceneMusic;
+            cmd.action = [](xy::Entity entity, float)
+            {
+                if (entity.getComponent<xy::AudioEmitter>().getStatus() != xy::AudioEmitter::Playing)
+                {
+                    entity.getComponent<xy::AudioEmitter>().play();
+                }
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
         }
     }
 
 private:
     xy::Scene& m_scene;
     sf::Vector2f m_velocity;
-    sf::Uint8 m_bounce = 2;
+    sf::Uint8 m_bounce = 4;
 };
 
 #endif //DEMO_CLIENTCALLBACKS_HPP_
