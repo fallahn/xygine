@@ -136,7 +136,7 @@ void PlayerSystem::process(float)
                     entity.getComponent<AnimationController>().nextAnimation = AnimationController::JumpUp;
 
                     //disable platform and bubble collision
-                    //entity.getComponent<CollisionComponent>().setCollisionMaskBits(UpMask);
+                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(UpMask);
 
                     auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
                     msg->type = PlayerEvent::Jumped;
@@ -157,10 +157,10 @@ void PlayerSystem::process(float)
                 player.velocity.y = std::min(player.velocity.y, MaxVelocity);
 
                 //reenable downward collision
-                /*if (player.velocity.y > 0)
+                if (player.velocity.y > 0)
                 {
                     entity.getComponent<CollisionComponent>().setCollisionMaskBits(DownMask);
-                }*/
+                }
             }
             else if(player.state == Player::State::Dying)
             {
@@ -233,7 +233,7 @@ void PlayerSystem::process(float)
 
         //TODO map change animation
 #ifdef XY_DEBUG
-        /*if (!m_isServer)
+        if (!m_isServer)
         {
             switch (player.state)
             {
@@ -253,7 +253,7 @@ void PlayerSystem::process(float)
                 DPRINT("Player state", "Walking");
                 break;
             }
-        }*/
+        }
 #endif
 
     }
@@ -305,7 +305,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                     player.velocity.y = -initialJumpVelocity;
 
                     //disable collision with bubbles and platforms
-                    //entity.getComponent<CollisionComponent>().setCollisionMaskBits(UpMask);
+                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(UpMask);
                 }
             }
             else if(player.state == Player::State::Jumping)
@@ -321,10 +321,10 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
                 player.velocity.y = std::min(player.velocity.y, MaxVelocity);
 
                 //reenable downward collision
-                /*if (player.velocity.y > 0)
+                if (player.velocity.y > 0)
                 {
                     entity.getComponent<CollisionComponent>().setCollisionMaskBits(DownMask);
-                }*/
+                }
             }
             else if(player.state == Player::State::Dying)
             {
@@ -552,12 +552,16 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                     break;
                 case CollisionType::Bubble:
                 case CollisionType::Platform:
-                    if ((player.canLand & PlayerClear)&& player.velocity.y > 0)
+                    if ((player.canLand & PlayerClear)&& player.velocity.y > 0 && man.normal.y < 0)
                     {
                         player.state = Player::State::Walking;
                         player.velocity.y = 0.f;
                         tx.move(man.normal * man.penetration);
                         return; //quit when we change state because this function is no longer valid
+                    }
+                    else if (man.normal.x != 0)
+                    {
+                        tx.move(man.normal * man.penetration);
                     }
                     player.canLand &= ~BodyClear;
                     break;
@@ -666,7 +670,7 @@ void PlayerSystem::collisionDying(xy::Entity entity)
         if (hitbox.getType() == CollisionType::Player)
         {
             auto& manifolds = hitbox.getManifolds();
-            auto collisionCount = hitbox.getCollisionCount();
+            auto collisionCount = std::max(std::size_t(1), hitbox.getCollisionCount());
             for (auto j = 0u; j < collisionCount; ++j)
             {
                 if (manifolds[j].otherType & FootMask)
