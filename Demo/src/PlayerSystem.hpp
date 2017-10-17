@@ -84,6 +84,8 @@ private:
     sf::Vector2f parseInput(sf::Uint16);
     float getDelta(const History&, std::size_t);
 
+    void processInput(sf::Uint16, float, xy::Entity);
+
     void resolveCollision(xy::Entity);
 
     void collisionWalking(xy::Entity);

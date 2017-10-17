@@ -1392,7 +1392,7 @@ void GameState::spawnMapActors()
 void GameState::spawnWarning()
 {
     auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Transform>().setPosition(m_scene.getActiveCamera().getComponent<xy::Transform>().getPosition());
+    entity.addComponent<xy::Transform>().setPosition(/*m_scene.getActiveCamera().getComponent<xy::Transform>().getPosition()*/MapBounds.width / 2.f, MapBounds.height /  2.f);
     entity.getComponent<xy::Transform>().move(xy::DefaultSceneSize.x / 1.8f, -180.f);
     entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString("Hurry Up!");
     entity.getComponent<xy::Text>().setCharacterSize(200);
