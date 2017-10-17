@@ -125,6 +125,26 @@ void PlayerSystem::process(float)
 
             processInput(currentMask, delta, entity);
 
+            //probably should be server side only?
+            if (player.state == Player::State::Dying && player.timer < 0) //respawn
+            {
+                if (player.lives)
+                {
+                    tx.setPosition(player.spawnPosition);
+                    player.state = Player::State::Walking;
+                    player.direction =
+                        (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
+
+                    player.timer = invincibleTime;
+                }
+                else
+                {
+                    player.state = Player::State::Dead;
+                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(0); //remove collision
+                }
+                player.velocity.y = 0.f;
+            }
+
             player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();
         }
 
@@ -313,30 +333,6 @@ void PlayerSystem::processInput(sf::Uint16 currentMask, float delta, xy::Entity 
         player.velocity.y = std::min(player.velocity.y, MaxVelocity);
         tx.move({ 0.f, player.velocity.y * delta });
         player.canShoot = false;
-
-        if (player.timer < 0) //respawn
-        {
-            if (player.lives)
-            {
-                tx.setPosition(player.spawnPosition);
-                player.state = Player::State::Walking;
-                player.direction =
-                    (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
-
-                player.timer = invincibleTime;
-
-                //raise message
-                /*auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
-                msg->entity = entity;
-                msg->type = PlayerEvent::Spawned;*/
-            }
-            else
-            {
-                player.state = Player::State::Dead;
-                entity.getComponent<CollisionComponent>().setCollisionMaskBits(0); //remove collision
-            }
-            player.velocity.y = 0.f;
-        }
     }
 
     //move with input if not dying
@@ -436,7 +432,7 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                             //remove collision if player has no lives left
                             if (!player.lives)
                             {
-                                entity.getComponent<CollisionComponent>().setCollisionMaskBits(0);
+                                entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid|CollisionFlags::Platform);
 
                                 //and kill any chasing goobly
                                 xy::Command cmd;
@@ -574,7 +570,7 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                             //remove collision if player has no lives left
                             if (!player.lives)
                             {
-                                entity.getComponent<CollisionComponent>().setCollisionMaskBits(0);
+                                entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Platform|CollisionFlags::Solid);
 
                                 //and kill any chasing goobly
                                 xy::Command cmd;
@@ -641,15 +637,15 @@ void PlayerSystem::collisionDying(xy::Entity entity)
         if (hitbox.getType() == CollisionType::Player)
         {
             auto& manifolds = hitbox.getManifolds();
-            auto collisionCount = std::max(std::size_t(1), hitbox.getCollisionCount());
+            auto collisionCount = hitbox.getCollisionCount();
+
             for (auto j = 0u; j < collisionCount; ++j)
             {
-                if (manifolds[j].otherType & FootMask)
+                const auto& man = manifolds[j];
+                if ((man.otherType & (CollisionType::Solid | CollisionType::Platform)))
                 {
-                    entity.getComponent<xy::Transform>().move(manifolds[j].normal * manifolds[j].penetration);
-                    auto& player = entity.getComponent<Player>();
-                    player.velocity.y = 0.f;// -player.velocity.y;// *0.6f;
-                    return;
+                    entity.getComponent<xy::Transform>().move(man.normal * man.penetration);
+                    entity.getComponent<Player>().velocity.y = 0.f;
                 }
             }
         }

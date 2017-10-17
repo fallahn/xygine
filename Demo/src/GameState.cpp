@@ -147,7 +147,9 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 
     debugShape.setRadius(32.f);
     debugShape.setOrigin(32.f, 64.f);
-    debugShape.setFillColor(sf::Color(255, 255, 255, 200));
+    debugShape.setFillColor(sf::Color(255, 255, 255, 20));
+    debugShape.setOutlineColor(sf::Color::Magenta);
+    debugShape.setOutlineThickness(1.f);
 
     quitLoadingScreen();
 }
@@ -786,7 +788,9 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         const auto& state = evt.packet.as<ClientState>();
 
         debugShape.setPosition(state.x, state.y);
+#ifdef XY_DEBUG
         debugPlayerState = sf::Uint8(state.playerState);
+#endif 
 
         //reconcile
         if (m_playerInput.isEnabled())
