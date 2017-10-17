@@ -28,6 +28,8 @@ source distribution.
 #ifndef DEMO_PLAYER_SYSTEM_HPP_
 #define DEMO_PLAYER_SYSTEM_HPP_
 
+#include "Hitbox.hpp"
+
 #include <xyginext/ecs/System.hpp>
 
 #include <array>
@@ -39,7 +41,13 @@ struct Input final
     sf::Int64 timestamp = 0;
 };
 
-using History = std::array<Input, 120u>;
+struct HistoryState final
+{
+    Input input;
+    CollisionComponent collision;
+};
+
+using History = std::array<HistoryState, 120u>;
 
 struct Player final
 {

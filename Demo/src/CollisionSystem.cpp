@@ -69,7 +69,7 @@ void CollisionSystem::queryState(xy::Entity entity)
 {
     m_collisions.clear();
     broadPhase(entity);
-    narrowPhase();
+    narrowPhaseQuery(entity);
 }
 
 //private
@@ -178,6 +178,67 @@ void CollisionSystem::narrowPhase()
                     if (boxB.m_collisionCount < Hitbox::MaxCollisions)
                     {
                         boxB.m_manifolds[boxB.m_collisionCount++] = manifold;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void CollisionSystem::narrowPhaseQuery(xy::Entity entity)
+{
+    for (auto c : m_collisions)
+    {
+        xy::Entity first;
+        xy::Entity second;
+        if (entity == c.first)
+        {
+            first = c.first;
+            second = c.second;
+        }
+        else
+        {
+            first = c.second;
+            second = c.first;
+        }
+        
+        const auto& txA = first.getComponent<xy::Transform>();
+        const auto& txB = second.getComponent<xy::Transform>();
+
+        auto& ccA = first.getComponent<CollisionComponent>();
+        auto& ccB = second.getComponent<CollisionComponent>();
+
+        for (auto i = 0u; i < ccA.m_hitboxCount; ++i)
+        {
+            auto& boxA = ccA.m_hitboxes[i];
+            auto rectA = txA.getTransform().transformRect(boxA.getCollisionRect());
+
+            for (auto j = 0u; j < ccB.m_hitboxCount; ++j)
+            {
+                auto& boxB = ccB.m_hitboxes[j];
+
+                sf::FloatRect overlap;
+                if (rectA.intersects(txB.getTransform().transformRect(boxB.getCollisionRect()), overlap))
+                {
+                    sf::Vector2f normal = (txB.getPosition() - txB.getOrigin()) - (txA.getPosition() - txA.getOrigin());
+
+                    Manifold manifold;
+                    if (overlap.width < overlap.height)
+                    {
+                        manifold.normal.x = (normal.x < 0) ? 1.f : -1.f;
+                        manifold.penetration = overlap.width;
+                    }
+                    else
+                    {
+                        manifold.normal.y = (normal.y < 0) ? 1.f : -1.f;
+                        manifold.penetration = overlap.height;
+                    }
+                    manifold.otherType = boxB.getType();
+                    manifold.otherEntity = second;
+
+                    if (boxA.m_collisionCount < Hitbox::MaxCollisions)
+                    {
+                        boxA.m_manifolds[boxA.m_collisionCount++] = manifold;
                     }
                 }
             }

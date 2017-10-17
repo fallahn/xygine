@@ -80,6 +80,7 @@ void PlayerSystem::process(float)
 
         auto& player = entity.getComponent<Player>();
         auto& tx = entity.getComponent<xy::Transform>();
+        const auto& collision = entity.getComponent<CollisionComponent>();
 
         float xMotion = tx.getPosition().x; //used for animation, below
 
@@ -98,8 +99,13 @@ void PlayerSystem::process(float)
         {   
             resolveCollision(entity);
             
+            //record the collision state used for this calculation
+            //this isn't strictly correct during reconciliation. What we really need
+            //is to store the state of the collision world at this time so it can be requeried
+            player.history[player.lastUpdatedInput].collision = collision;
+
             auto delta = getDelta(player.history, player.lastUpdatedInput);
-            auto currentMask = player.history[player.lastUpdatedInput].mask;
+            auto currentMask = player.history[player.lastUpdatedInput].input.mask;
 
             //if shoot was pressed but not last frame, raise message
             //note this is NOT reconciled and ammo actors are entirely server side
@@ -181,9 +187,9 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
-        [&state](const Input& input)
+        [&state](const HistoryState& hs)
     {
-        return (state.clientTime == input.timestamp);
+        return (state.clientTime == hs.input.timestamp);
     });
 
     //and reparse inputs
@@ -194,11 +200,12 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
 
         while (idx != end) //currentInput points to the next free slot in history
         {                      
-            getScene()->getSystem<CollisionSystem>().queryState(entity);
+            //restore the collision data from history
+            entity.getComponent<CollisionComponent>() = player.history[idx].collision;
             resolveCollision(entity);
             
             float delta = getDelta(player.history, idx);
-            auto currentMask = player.history[idx].mask;
+            auto currentMask = player.history[idx].input.mask;
             
             processInput(currentMask, delta, entity);
 
@@ -207,7 +214,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
             /*getScene()->getSystem<CollisionSystem>().queryState(entity);
             resolveCollision(entity);*/
         }
-        player.lastUpdatedInput = idx;
+        //player.lastUpdatedInput = idx;
     }
 
     //update resulting animation
@@ -243,7 +250,7 @@ sf::Vector2f PlayerSystem::parseInput(sf::Uint16 mask)
 float PlayerSystem::getDelta(const History& history, std::size_t idx)
 {
     auto prevInput = (idx + history.size() - 1) % history.size();
-    auto delta = history[idx].timestamp - history[prevInput].timestamp;
+    auto delta = history[idx].input.timestamp - history[prevInput].input.timestamp;
 
     return static_cast<float>(delta) / 1000000.f;
 }
@@ -327,8 +334,8 @@ void PlayerSystem::processInput(sf::Uint16 currentMask, float delta, xy::Entity 
             {
                 player.state = Player::State::Dead;
                 entity.getComponent<CollisionComponent>().setCollisionMaskBits(0); //remove collision
-                                                                                   //tx.setPosition(player.spawnPosition);
             }
+            player.velocity.y = 0.f;
         }
     }
 

@@ -237,7 +237,7 @@ void GameServer::update()
                     state.actor.type = c.data.actor.type;
                     state.x = tx.x;
                     state.y = tx.y;
-                    state.clientTime = player.history[player.lastUpdatedInput].timestamp;
+                    state.clientTime = player.history[player.lastUpdatedInput].input.timestamp;
                     state.playerState = player.state;
                     state.playerVelocity = player.velocity.y;
                     state.playerTimer = player.timer;
@@ -372,8 +372,8 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
             auto& player = entity.getComponent<Player>();
 
             //update player input history
-            player.history[player.currentInput].mask = ip.input;
-            player.history[player.currentInput].timestamp = ip.clientTime;
+            player.history[player.currentInput].input.mask = ip.input;
+            player.history[player.currentInput].input.timestamp = ip.clientTime;
             player.currentInput = (player.currentInput + 1) % player.history.size();
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
@@ -515,6 +515,8 @@ void GameServer::checkMapStatus(float dt)
             {
                 entity.getComponent<xy::Transform>().setPosition(PlayerTwoSpawn);
             }
+            entity.getComponent<Player>().state = Player::State::Disabled;
+            entity.getComponent<Player>().velocity.y = 0.f;
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
@@ -777,6 +779,13 @@ void GameServer::beginNewRound()
 
             m_currentRoundTime = 0.f;
 
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+            cmd.action = [](xy::Entity entity, float)
+            {
+                entity.getComponent<Player>().state = Player::State::Walking;
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
             //check if anyone tried joining mid map change
             if (m_queuedClient)

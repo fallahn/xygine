@@ -100,7 +100,11 @@ namespace
         sf::Uint8 playerID = 0;
     };
 
+#ifdef XY_DEBUG
     sf::Uint8 debugActorCount = 0;
+    sf::Uint8 debugPlayerState = 0;
+#endif
+    sf::CircleShape debugShape;
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
@@ -140,6 +144,10 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     auto& camera = m_scene.getActiveCamera().getComponent<xy::Camera>();
     camera.setView(view.getSize());
     camera.setViewport(view.getViewport());
+
+    debugShape.setRadius(32.f);
+    debugShape.setOrigin(32.f, 64.f);
+    debugShape.setFillColor(sf::Color(255, 255, 255, 200));
 
     quitLoadingScreen();
 }
@@ -205,6 +213,27 @@ void GameState::handleMessage(const xy::Message& msg)
 bool GameState::update(float dt)
 {   
     DPRINT("Actor count", std::to_string(debugActorCount));
+    //DPRINT("Player Server State", std::to_string(debugPlayerState));
+#ifdef XY_DEBUG
+    switch (Player::State(debugPlayerState))
+    {
+    default:
+        DPRINT("Player state", std::to_string(debugPlayerState));
+        break;
+    case Player::State::Disabled:
+        DPRINT("Player server state", "Disabled");
+        break;
+    case Player::State::Dying:
+        DPRINT("Player server state", "Dying");
+        break;
+    case Player::State::Jumping:
+        DPRINT("Player server state", "Jumping");
+        break;
+    case Player::State::Walking:
+        DPRINT("Player server state", "Walking");
+        break;
+    }
+#endif //XY_DEBUG
     
     xy::NetEvent evt;
     while (m_client.pollEvent(evt))
@@ -226,6 +255,7 @@ void GameState::draw()
 {
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
+    rw.draw(debugShape);
 }
 
 //private
@@ -755,6 +785,9 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     {
         const auto& state = evt.packet.as<ClientState>();
 
+        debugShape.setPosition(state.x, state.y);
+        debugPlayerState = sf::Uint8(state.playerState);
+
         //reconcile
         if (m_playerInput.isEnabled())
         {
@@ -1119,6 +1152,9 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::Goobly];
         entity.getComponent<xy::Transform>().setOrigin(GooblyOrigin);
+        entity.addComponent<CollisionComponent>().addHitbox(GooblyBounds, CollisionType::NPC);
+        entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
         break;
     case ActorID::LightningOne:
         addSprite(entity, SpriteID::LightningOne);
@@ -1355,6 +1391,11 @@ void GameState::spawnMapActors()
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
         entity.addComponent<xy::NetInterpolate>();
 
+
+        /*
+        Even though these are only actors NPCs require collision with the player to
+        ensure the player state is properly updated during reconciliation
+        */
         switch (m_mapData.actors[i].type)
         {
         default:
@@ -1366,23 +1407,31 @@ void GameState::spawnMapActors()
         case ActorID::Whirlybob:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::WhirlyBob];
+            entity.addComponent<CollisionComponent>().addHitbox(WhirlyBobBounds, CollisionType::NPC);
+            entity.getComponent<xy::Transform>().setOrigin(WhirlyBobOrigin);
             break;
         case ActorID::Clocksy:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
+            entity.addComponent<CollisionComponent>().addHitbox(ClocksyBounds, CollisionType::NPC);
             entity.getComponent<xy::Transform>().setOrigin(ClocksyOrigin);
             break;
         case ActorID::Balldock:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Balldock];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Balldock];
+            entity.addComponent<CollisionComponent>().addHitbox(BalldockBounds, CollisionType::NPC);
             entity.getComponent<xy::Transform>().setOrigin(BalldockOrigin);
             break;
         case ActorID::Squatmo:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Squatmo];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Squatmo];
+            entity.addComponent<CollisionComponent>().addHitbox(SquatmoBounds, CollisionType::NPC);
             entity.getComponent<xy::Transform>().setOrigin(SquatmoOrigin);
             break;
         }
+        entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+
         entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.addComponent<xy::ParticleEmitter>().settings = emitterSettings;
