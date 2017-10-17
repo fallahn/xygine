@@ -25,76 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/components/Sprite.hpp>
+#include <xyginext/ecs/components/Drawable.hpp>
 
-#include <SFML/Graphics/Texture.hpp>
+
 
 using namespace xy;
 
-Sprite::Sprite()
-    : m_dirty       (true),
-    m_animationCount(0),
-    m_zDepth        (0),
-    m_wantsSorting  (false)
-{
-
-}
-
-Sprite::Sprite(const sf::Texture& texture)
-    : m_dirty       (true),
-    m_animationCount(0),
-    m_zDepth        (0),
-    m_wantsSorting  (false)
-{
-    setTexture(texture);
-}
-
-//public
-void Sprite::setTexture(const sf::Texture& texture)
+void Drawable::setTexture(const sf::Texture& texture) 
 {
     m_states.texture = &texture;
-    auto size = static_cast<sf::Vector2f>(texture.getSize());
-    setTextureRect({ sf::Vector2f(), size });
 }
 
-void Sprite::setTextureRect(sf::FloatRect rect)
-{
-    m_textureRect = rect;
-    m_dirty = true;
-}
-
-void Sprite::setColour(sf::Color c)
-{
-    for (auto& v : m_vertices)
-    {
-        v.color = c;
-    }
-    //TODO flag dirty and update verts in system
-}
-
-void Sprite::setShader(sf::Shader* shader)
+void Drawable::setShader(sf::Shader* shader)
 {
     m_states.shader = shader;
 }
 
-void Sprite::setBlendMode(sf::BlendMode mode)
+void Drawable::setBlendMode(sf::BlendMode mode)
 {
     m_states.blendMode = mode;
 }
 
-const sf::Texture* Sprite::getTexture() const
+const sf::Texture* Drawable::getTexture() const
 {
     return m_states.texture;
 }
 
-sf::Color Sprite::getColour() const
-{
-    return m_vertices[0].color;
-    
-}
-
-const sf::Shader* Sprite::getShader() const
+const sf::Shader* Drawable::getShader() const
 {
     return m_states.shader;
 }
-

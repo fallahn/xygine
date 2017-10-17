@@ -140,6 +140,7 @@
     <ClCompile Include="src\ecs\Component.cpp" />
     <ClCompile Include="src\ecs\components\AudioEmitter.cpp" />
     <ClCompile Include="src\ecs\components\Camera.cpp" />
+    <ClCompile Include="src\ecs\components\Drawable.cpp" />
     <ClCompile Include="src\ecs\components\NetInterpolation.cpp" />
     <ClCompile Include="src\ecs\components\ParticleEmitter.cpp" />
     <ClCompile Include="src\ecs\components\QuadTreeItem.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="src\ecs\systems\ParticleSystem.cpp" />
     <ClCompile Include="src\ecs\systems\QuadTree.cpp" />
     <ClCompile Include="src\ecs\systems\QuadTreeNode.cpp" />
+    <ClCompile Include="src\ecs\systems\RenderSystem.cpp" />
     <ClCompile Include="src\ecs\systems\SpriteAnimator.cpp" />
     <ClCompile Include="src\ecs\systems\SpriteRenderer.cpp" />
     <ClCompile Include="src\ecs\systems\TextRenderer.cpp" />
@@ -210,6 +212,7 @@
     <ClInclude Include="include\xyginext\ecs\components\Callback.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\Camera.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\CommandTarget.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\Drawable.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\NetInterpolation.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\ParticleEmitter.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\QuadTreeItem.hpp" />
@@ -229,6 +232,7 @@
     <ClInclude Include="include\xyginext\ecs\systems\InterpolationSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\ParticleSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\QuadTree.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\RenderSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\SpriteAnimator.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\SpriteRenderer.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\TextRenderer.hpp" />

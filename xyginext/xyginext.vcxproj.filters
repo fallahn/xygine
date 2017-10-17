@@ -270,6 +270,12 @@
     <ClCompile Include="src\detail\glad.c">
       <Filter>Source Files\detail</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\components\Drawable.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\RenderSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -481,6 +487,12 @@
     </ClInclude>
     <ClInclude Include="src\detail\GLCheck.hpp">
       <Filter>Header Files\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\Drawable.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\RenderSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
