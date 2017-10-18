@@ -37,10 +37,9 @@ namespace xy
     /*!
     \brief Used to draw all entities which have a Drawable and Transform component.
     The RenderSystem is used to depth sort and draw all entities which have a 
-    Drawable and Transform component attached, and optionally a Text or Sprite component.
-    NOTE multiple components which rely on a Drawable component, such as Text and
-    Sprite components cannot exist on the same entity, as only one set of vertices will
-    be available.
+    Drawable and Transform component attached, and optionally a Sprite component.
+    NOTE multiple components which rely on a Drawable component cannot exist on the same entity,
+    as only one set of vertices will be available.
     */
     class XY_EXPORT_API RenderSystem final : public xy::System, public sf::Drawable 
     {

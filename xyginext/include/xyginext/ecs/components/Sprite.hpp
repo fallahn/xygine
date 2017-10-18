@@ -43,7 +43,8 @@ namespace sf
 namespace xy
 {
     /*!
-    \brief Sprite component optimised to work with the ECS
+    \brief Sprite component optimised to work with the ECS.
+    Sprite components require their entity to also have a Drawable component
     */
     class XY_EXPORT_API Sprite final
     {
