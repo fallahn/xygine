@@ -105,8 +105,9 @@ namespace
 #ifdef XY_DEBUG
     sf::Uint8 debugActorCount = 0;
     sf::Uint8 debugPlayerState = 0;
-#endif
     sf::CircleShape debugShape;
+#endif
+
 }
 
 GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
@@ -147,12 +148,13 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     camera.setView(view.getSize());
     camera.setViewport(view.getViewport());
 
-    debugShape.setRadius(32.f);
-    debugShape.setOrigin(32.f, 64.f);
+#ifdef XY_DEBUG
+    debugShape.setRadius(16.f);
+    debugShape.setOrigin(16.f, 48.f);
     debugShape.setFillColor(sf::Color(255, 255, 255, 20));
     debugShape.setOutlineColor(sf::Color::Magenta);
     debugShape.setOutlineThickness(1.f);
-
+#endif
     quitLoadingScreen();
 }
 
@@ -259,7 +261,9 @@ void GameState::draw()
 {
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
+#ifdef XY_DEBUG
     rw.draw(debugShape);
+#endif
 }
 
 //private
@@ -797,9 +801,9 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::ClientUpdate:
     {
         const auto& state = evt.packet.as<ClientState>();
-
-        debugShape.setPosition(state.x, state.y);
+       
 #ifdef XY_DEBUG
+        debugShape.setPosition(state.x, state.y);
         debugPlayerState = sf::Uint8(state.playerState);
 #endif 
 

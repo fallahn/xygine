@@ -76,6 +76,7 @@ struct Player final
     sf::Uint8 bonusFlags = 0;
 };
 
+struct Manifold;
 class PlayerSystem final : public xy::System
 {
 public:
@@ -99,6 +100,8 @@ private:
     void collisionWalking(xy::Entity);
     void collisionJumping(xy::Entity);
     void collisionDying(xy::Entity);
+
+    void npcCollision(xy::Entity, const Manifold&);
 };
 
 #endif //DEMO_PLAYER_SYSTEM_HPP_

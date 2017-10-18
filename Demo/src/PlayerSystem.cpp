@@ -416,46 +416,7 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                     tx.move(man.normal * man.penetration);
                     break;
                 case CollisionType::NPC:
-                {
-                    if (player.timer < 0 &&  man.otherEntity.hasComponent<NPC>())
-                    {
-                        const auto& npc = man.otherEntity.getComponent<NPC>();
-                        if (npc.state != NPC::State::Bubble && npc.state != NPC::State::Dying)
-                        {
-                            player.state = Player::State::Dying;
-                            player.timer = dyingTime;
-
-                            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
-
-                            player.lives--;
-
-                            //remove collision if player has no lives left
-                            if (!player.lives)
-                            {
-                                entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid|CollisionFlags::Platform);
-
-                                //and kill any chasing goobly
-                                xy::Command cmd;
-                                cmd.targetFlags = CommandID::NPC;
-                                cmd.action = [&, entity](xy::Entity npcEnt, float)
-                                {
-                                    if (npcEnt.getComponent<NPC>().target == entity)
-                                    {
-                                        getScene()->destroyEntity(npcEnt);
-                                    }
-                                };
-                                getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
-                            }
-
-                            //raise dead message
-                            auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
-                            msg->entity = entity;
-                            msg->type = PlayerEvent::Died;
-
-                            return;
-                        }
-                    }
-                }
+                    npcCollision(entity, man);
                     break;
                 }
             }
@@ -555,44 +516,7 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                     }
                     return;
                 case CollisionType::NPC:
-                    if (player.timer < 0 && man.otherEntity.hasComponent<NPC>())
-                    {
-                        const auto& npc = man.otherEntity.getComponent<NPC>();
-                        if (npc.state != NPC::State::Bubble && npc.state != NPC::State::Dying)
-                        {
-                            player.state = Player::State::Dying;
-                            player.timer = dyingTime;
-
-                            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
-
-                            player.lives--;
-
-                            //remove collision if player has no lives left
-                            if (!player.lives)
-                            {
-                                entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Platform|CollisionFlags::Solid);
-
-                                //and kill any chasing goobly
-                                xy::Command cmd;
-                                cmd.targetFlags = CommandID::NPC;
-                                cmd.action = [&, entity](xy::Entity npcEnt, float)
-                                {
-                                    if (npcEnt.getComponent<NPC>().target == entity)
-                                    {
-                                        getScene()->destroyEntity(npcEnt);
-                                    }
-                                };
-                                getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
-                            }
-
-                            //raise dead message
-                            auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
-                            msg->entity = entity;
-                            msg->type = PlayerEvent::Died;
-
-                            return;
-                        }
-                    }
+                    npcCollision(entity, man);
                     break;
                 }
             }
@@ -648,6 +572,49 @@ void PlayerSystem::collisionDying(xy::Entity entity)
                     entity.getComponent<Player>().velocity.y = 0.f;
                 }
             }
+        }
+    }
+}
+
+void PlayerSystem::npcCollision(xy::Entity entity, const Manifold& man)
+{
+    auto& player = entity.getComponent<Player>();
+    if (player.timer < 0 && man.otherEntity.hasComponent<NPC>())
+    {
+        const auto& npc = man.otherEntity.getComponent<NPC>();
+        if (npc.state != NPC::State::Bubble && npc.state != NPC::State::Dying)
+        {
+            player.state = Player::State::Dying;
+            player.timer = dyingTime;
+
+            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+
+            player.lives--;
+
+            //remove collision if player has no lives left
+            if (!player.lives)
+            {
+                entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Platform);
+
+                //and kill any chasing goobly
+                xy::Command cmd;
+                cmd.targetFlags = CommandID::NPC;
+                cmd.action = [&, entity](xy::Entity npcEnt, float)
+                {
+                    if (npcEnt.getComponent<NPC>().target == entity)
+                    {
+                        getScene()->destroyEntity(npcEnt);
+                    }
+                };
+                getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
+            }
+
+            //raise dead message
+            auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+            msg->entity = entity;
+            msg->type = PlayerEvent::Died;
+
+            return;
         }
     }
 }
