@@ -46,13 +46,20 @@ namespace xy
     and custom drawable types in a single drawing pass with variable depth. A Scene
     must have a RenderSystem added to it to enable any drawable entities.
     */
-    class Drawable final
+    class XY_EXPORT_API Drawable final
     {
     public:
+        Drawable() = default;
+        explicit Drawable(const sf::Texture&);
+        
         /*!
         \brief Sets the texture with which to render this drawable.
+        Setting this to nullptr removes the texture. This has no effect
+        when used with Sprite or Text components which supply their own
+        textures.
+        \see Sprite::setTexture()
         */
-        void setTexture(const sf::Texture&);
+        void setTexture(const sf::Texture*);
 
         /*!
         \brief Sets the shader used when drawing.
@@ -113,10 +120,16 @@ namespace xy
 
         /*!
         \brief Returns the local bounds of the Drawable's vertex array.
-        This should be updated by any systems which implement cutom drawables
+        This should be updated by any systems which implement custom drawables
         else culling will failed and drawable will not appear on screen
         */
-        sf::FloatRect getLocalBounds() const { return m_localBounds; }
+        sf::FloatRect getLocalBounds() const;
+
+        /*!
+        \brief Updates the local bounds.
+        This should be called once by a system when it updates the vertex array
+        */
+        void updateLocalBounds();
 
     private:
         sf::PrimitiveType m_primitiveType = sf::Quads;

@@ -64,13 +64,13 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
         return false;
     }
 
-    if (auto* p = sheetFile.findProperty("blendmode"))
+    /*if (auto* p = sheetFile.findProperty("blendmode"))
     {
         std::string mode = p->getValue<std::string>();
         if (mode == "add") blendMode = sf::BlendAdd;
         else if (mode == "multiply") blendMode = sf::BlendMultiply;
         else if (mode == "none") blendMode = sf::BlendNone;
-    }
+    }*/
 
     if (auto* p = sheetFile.findProperty("smooth"))
     {
@@ -92,18 +92,18 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
             Sprite spriteComponent;
             spriteComponent.setTexture(*texture);
 
-            if (auto* p = spr.findProperty("blendmode"))
-            {
-                //override sheet mode
-                std::string mode = p->getValue<std::string>();
-                if (mode == "add") spriteComponent.setBlendMode(sf::BlendAdd);
-                else if (mode == "multiply") spriteComponent.setBlendMode(sf::BlendMultiply);
-                else if (mode == "none") spriteComponent.setBlendMode(sf::BlendNone);
-            }
-            else
-            {
-                spriteComponent.setBlendMode(blendMode);
-            }
+            //if (auto* p = spr.findProperty("blendmode"))
+            //{
+            //    //override sheet mode
+            //    std::string mode = p->getValue<std::string>();
+            //    if (mode == "add") spriteComponent.setBlendMode(sf::BlendAdd);
+            //    else if (mode == "multiply") spriteComponent.setBlendMode(sf::BlendMultiply);
+            //    else if (mode == "none") spriteComponent.setBlendMode(sf::BlendNone);
+            //}
+            //else
+            //{
+            //    spriteComponent.setBlendMode(blendMode);
+            //}
 
             if (auto* p = spr.findProperty("bounds"))
             {

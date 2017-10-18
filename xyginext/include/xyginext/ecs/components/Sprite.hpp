@@ -79,17 +79,6 @@ namespace xy
         void setColour(sf::Color);
 
         /*!
-        \brief Sets the shader used when drawing this sprite.
-        Passing nullptr removes any active shader.
-        */
-        void setShader(sf::Shader*);
-
-        /*!
-        \brief Sets the blend mode used when rendering this sprite
-        */
-        void setBlendMode(sf::BlendMode);
-
-        /*!
         \brief Returns a pointer to the sprite's active texture
         */
         const sf::Texture* getTexture() const;
@@ -105,22 +94,12 @@ namespace xy
         sf::Color getColour() const;
 
         /*!
-        \brief Returns a pointer to the active shader, if any
+        \brief Returns the bounds created by the current texture rect
         */
-        const sf::Shader* getShader() const;
+        sf::FloatRect getTextureBounds() const { return { {}, getSize() }; }
 
         /*!
-        \brief Returns the sprite's current blend mode
-        */
-        sf::BlendMode getBlendMode() const { return m_states.blendMode; }
-
-        /*!
-        \brief Returns the local (pre transform) bounds
-        */
-        sf::FloatRect getLocalBounds() const { return { {}, getSize() }; }
-
-        /*!
-        \brief Returns the size of the sprite
+        \brief Returns the size of the sprite based on the current texture rect
         */
         sf::Vector2f getSize() const { return { m_textureRect.width, m_textureRect.height }; }
 
@@ -146,19 +125,6 @@ namespace xy
             float framerate = 12.f;
         };
 
-        /*!
-        \brief Sets the z-depth of a sprite.
-        The lower the value the further back the sprite is drawn,
-        inversely the greater the value thr further forward it is drawn.
-        Default value is 0.
-        */
-        void setDepth(sf::Int32 depth) { m_zDepth = depth; m_wantsSorting = true; }
-
-        /*!
-        \brief Returns the sprite's Z depth value
-        \see setDepth();
-        */
-        sf::Int32 getDepth() const { return m_zDepth; }
 
         /*!
         \brief Returns the number of animations for this sprite when loaded
@@ -170,17 +136,14 @@ namespace xy
     private:
 
         sf::FloatRect m_textureRect;
-        sf::RenderStates m_states;
-        std::array<sf::Vertex, 4u> m_vertices;
+        const sf::Texture* m_texture;
+        sf::Color m_colour;
         bool m_dirty;
 
         std::size_t m_animationCount;
         std::array<Animation, MaxAnimations> m_animations;
 
-        sf::Int32 m_zDepth;
-        bool m_wantsSorting;
-
-        friend class SpriteRenderer;
+        friend class SpriteSystem;
         friend class SpriteSheet;
         friend class SpriteAnimator;
     };

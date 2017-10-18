@@ -32,19 +32,19 @@ source distribution.
 using namespace xy;
 
 Sprite::Sprite()
-    : m_dirty       (true),
-    m_animationCount(0),
-    m_zDepth        (0),
-    m_wantsSorting  (false)
+    : m_texture     (nullptr),
+    m_colour        (sf::Color::White),
+    m_dirty         (true),
+    m_animationCount(0)
 {
 
 }
 
 Sprite::Sprite(const sf::Texture& texture)
-    : m_dirty       (true),
-    m_animationCount(0),
-    m_zDepth        (0),
-    m_wantsSorting  (false)
+    : m_texture     (nullptr),
+    m_colour        (sf::Color::White),
+    m_dirty         (true),
+    m_animationCount(0)
 {
     setTexture(texture);
 }
@@ -52,7 +52,7 @@ Sprite::Sprite(const sf::Texture& texture)
 //public
 void Sprite::setTexture(const sf::Texture& texture)
 {
-    m_states.texture = &texture;
+    m_texture = &texture;
     auto size = static_cast<sf::Vector2f>(texture.getSize());
     setTextureRect({ sf::Vector2f(), size });
 }
@@ -65,36 +65,17 @@ void Sprite::setTextureRect(sf::FloatRect rect)
 
 void Sprite::setColour(sf::Color c)
 {
-    for (auto& v : m_vertices)
-    {
-        v.color = c;
-    }
-    //TODO flag dirty and update verts in system
-}
-
-void Sprite::setShader(sf::Shader* shader)
-{
-    m_states.shader = shader;
-}
-
-void Sprite::setBlendMode(sf::BlendMode mode)
-{
-    m_states.blendMode = mode;
+    m_colour = c;
+    m_dirty = true;
 }
 
 const sf::Texture* Sprite::getTexture() const
 {
-    return m_states.texture;
+    return m_texture;
 }
 
 sf::Color Sprite::getColour() const
 {
-    return m_vertices[0].color;
+    return m_colour;
     
 }
-
-const sf::Shader* Sprite::getShader() const
-{
-    return m_states.shader;
-}
-

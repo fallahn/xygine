@@ -27,13 +27,18 @@ source distribution.
 
 #include <xyginext/ecs/components/Drawable.hpp>
 
-
+#include <limits>
 
 using namespace xy;
 
-void Drawable::setTexture(const sf::Texture& texture) 
+Drawable::Drawable(const sf::Texture& texture)
 {
     m_states.texture = &texture;
+}
+
+void Drawable::setTexture(const sf::Texture* texture) 
+{
+    m_states.texture = texture;
 }
 
 void Drawable::setShader(sf::Shader* shader)
@@ -54,4 +59,38 @@ const sf::Texture* Drawable::getTexture() const
 const sf::Shader* Drawable::getShader() const
 {
     return m_states.shader;
+}
+
+sf::FloatRect Drawable::getLocalBounds() const
+{
+    return m_localBounds;
+}
+
+void Drawable::updateLocalBounds()
+{
+    m_localBounds.left = std::numeric_limits<float>::max();
+    m_localBounds.top = std::numeric_limits<float>::max();
+    m_localBounds.width = 0.f;
+    m_localBounds.height = 0.f;
+
+    for (auto& v : m_vertices)
+    {
+        if (v.position.x < m_localBounds.left)
+        {
+            m_localBounds.left = v.position.x;
+        }
+        else if (v.position.x - m_localBounds.left > m_localBounds.width)
+        {
+            m_localBounds.width = v.position.x - m_localBounds.left;
+        }
+
+        if (v.position.y < m_localBounds.top)
+        {
+            m_localBounds.top = v.position.y;
+        }
+        else if (v.position.y - m_localBounds.top > m_localBounds.height)
+        {
+            m_localBounds.height = v.position.y - m_localBounds.top;
+        }
+    }
 }

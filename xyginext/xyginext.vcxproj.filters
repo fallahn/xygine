@@ -138,9 +138,6 @@
     <ClCompile Include="src\ecs\components\Sprite.cpp">
       <Filter>Source Files\ecs\components</Filter>
     </ClCompile>
-    <ClCompile Include="src\ecs\systems\SpriteRenderer.cpp">
-      <Filter>Source Files\ecs\systems</Filter>
-    </ClCompile>
     <ClCompile Include="src\ecs\components\Text.cpp">
       <Filter>Source Files\ecs\components</Filter>
     </ClCompile>
@@ -276,6 +273,9 @@
     <ClCompile Include="src\ecs\systems\RenderSystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\systems\SpriteSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -331,9 +331,6 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\resources\ShaderResource.hpp">
       <Filter>Header Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xyginext\ecs\systems\SpriteRenderer.hpp">
-      <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\components\Sprite.hpp">
       <Filter>Header Files\ecs\components</Filter>
@@ -492,6 +489,9 @@
       <Filter>Header Files\ecs\components</Filter>
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\systems\RenderSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\SpriteSystem.hpp">
       <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
   </ItemGroup>

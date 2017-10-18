@@ -29,12 +29,14 @@ source distribution.
 
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Text.hpp>
+#include <xyginext/ecs/components/Drawable.hpp>
 #include <xyginext/ecs/components/UIHitBox.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Camera.hpp>
 
-#include <xyginext/ecs/systems/SpriteRenderer.hpp>
+#include <xyginext/ecs/systems/SpriteSystem.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
+#include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/ecs/systems/UISystem.hpp>
 
 #include <SFML/Window/Event.hpp>
@@ -105,7 +107,8 @@ void PauseState::load()
 {
     auto& mb = getContext().appInstance.getMessageBus();
     m_scene.addSystem<xy::UISystem>(mb);
-    m_scene.addSystem<xy::SpriteRenderer>(mb);
+    m_scene.addSystem<xy::SpriteSystem>(mb);
+    m_scene.addSystem<xy::RenderSystem>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
 
     //background
@@ -125,14 +128,15 @@ void PauseState::load()
     //resume button
     entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_buttonTexture);
-    bounds = entity.getComponent<xy::Sprite>().getLocalBounds();
+    bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
+    entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
     entity.getComponent<xy::Transform>().addChild(tx);
     entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
     entity.getComponent<xy::Transform>().move(0.f, -128.f);
     tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
-    bounds = entity.getComponent<xy::Sprite>().getLocalBounds(); //these have been updated by setTextureRect
+    bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
         m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity, sf::Uint64 flags)
@@ -155,8 +159,9 @@ void PauseState::load()
     //quit button
     entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_buttonTexture);
-    bounds = entity.getComponent<xy::Sprite>().getLocalBounds();
+    bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
+    entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
     entity.getComponent<xy::Transform>().addChild(tx2);
     entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);

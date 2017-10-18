@@ -27,13 +27,8 @@ source distribution.
 
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
-#include <xyginext/ecs/components/Camera.hpp>
-#include <xyginext/ecs/systems/SpriteRenderer.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/core/App.hpp>
-
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
+#include <xyginext/ecs/components/Drawable.hpp>
+#include <xyginext/ecs/systems/SpriteSystem.hpp>
 
 using namespace xy;
 
@@ -43,16 +38,16 @@ namespace
     //const std::size_t MinSprites = 16;
 }
 
-SpriteRenderer::SpriteRenderer(MessageBus& mb)
-    : System        (mb, typeid(SpriteRenderer)),
-    m_wantsSorting  (false)
+SpriteSystem::SpriteSystem(MessageBus& mb)
+    : System        (mb, typeid(SpriteSystem))
 {
     requireComponent<xy::Transform>();
     requireComponent<xy::Sprite>();
+    requireComponent<xy::Drawable>();
 }
 
 //public
-void SpriteRenderer::process(float)
+void SpriteSystem::process(float)
 {
     //update geometry
     auto& entities = getEntities();
@@ -61,9 +56,13 @@ void SpriteRenderer::process(float)
         auto& sprite = entity.getComponent<xy::Sprite>();
         if (sprite.m_dirty)
         {
+            auto& drawable = entity.getComponent<xy::Drawable>();
+            
             //update vert positions
             const auto subRect = sprite.m_textureRect;
-            auto& verts = sprite.m_vertices;
+            auto& verts = drawable.getVertices();
+            verts.resize(4);
+
             verts[0].position = { 0.f, 0.f };
             verts[1].position = { subRect.width, 0.f };
             verts[2].position = { subRect.width, subRect.height };
@@ -75,52 +74,16 @@ void SpriteRenderer::process(float)
             verts[2].texCoords = { subRect.left + subRect.width, subRect.top + subRect.height };
             verts[3].texCoords = { subRect.left, subRect.top + subRect.height };
 
+            //update colour
+            verts[0].color = sprite.m_colour;
+            verts[1].color = sprite.m_colour;
+            verts[2].color = sprite.m_colour;
+            verts[3].color = sprite.m_colour;
+
+            drawable.setTexture(sprite.getTexture());
+            drawable.updateLocalBounds();
+
             sprite.m_dirty = false;
-        }
-
-        if (sprite.m_wantsSorting)
-        {
-            m_wantsSorting = true;
-            sprite.m_wantsSorting = false;
-        }
-    }
-
-    //do Z sorting
-    if (m_wantsSorting)
-    {
-        m_wantsSorting = false;
-
-        std::sort(entities.begin(), entities.end(),
-            [](const Entity& entA, const Entity& entB) 
-        {
-            return entA.getComponent<Sprite>().getDepth() < entB.getComponent<Sprite>().getDepth();
-        });
-    }
-}
-
-//private
-void SpriteRenderer::onEntityAdded(Entity)
-{
-    m_wantsSorting = true;
-}
-
-void SpriteRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
-{
-    //culling only really works here because we may render a single scene
-    //with multiple views, or even with a frame buffer.
-    auto view = rt.getView();
-    sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
-
-    for (auto entity : getEntities())
-    {
-        const auto& sprite = entity.getComponent<xy::Sprite>();
-        const auto& tx = entity.getComponent<xy::Transform>().getWorldTransform();
-        const auto bounds = tx.transformRect(sprite.getLocalBounds());
-        if (bounds.intersects(viewableArea))
-        {
-            states = sprite.m_states;
-            states.transform = tx;
-            rt.draw(sprite.m_vertices.data(), 4, sf::Quads, states);
         }
     }
 }

@@ -32,6 +32,7 @@ source distribution.
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
 #include <xyginext/ecs/components/SpriteAnimation.hpp>
+#include <xyginext/ecs/components/Drawable.hpp>
 #include <xyginext/graphics/SpriteSheet.hpp>
 #include <xyginext/resources/Resource.hpp>
 
@@ -115,6 +116,7 @@ namespace
                 m_timer = 0.f;
                 auto bubbleEnt = m_scene.createEntity();
                 bubbleEnt.addComponent<xy::Sprite>() = m_sprite;
+                bubbleEnt.addComponent<xy::Drawable>();
                 bubbleEnt.addComponent<xy::SpriteAnimation>().play(0);
                 bubbleEnt.addComponent<xy::Transform>().setPosition(entity.getComponent<xy::Transform>().getWorldPosition());
                 bubbleEnt.getComponent<xy::Transform>().setScale(0.f, 0.f);
@@ -246,9 +248,10 @@ void MenuDirector::spawnSprite(const Act& act)
 
     auto entity = scene.createEntity();
     entity.addComponent<xy::Sprite>() = m_sprites[act.sprite].sprite;
+    entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::SpriteAnimation>().play(0);
 
-    auto bounds = m_sprites[act.sprite].sprite.getLocalBounds();
+    auto bounds = m_sprites[act.sprite].sprite.getTextureBounds();
     entity.addComponent<xy::Transform>().setPosition(act.direction > 0 ? -bounds.width : xy::DefaultSceneSize.x,
         (xy::DefaultSceneSize.y - bounds.height) - m_sprites[act.sprite].verticalOffset);
     entity.getComponent<xy::Transform>().setScale(-act.direction, 1.f);
@@ -272,6 +275,6 @@ void MenuDirector::spawnSprite(const Act& act)
     }
     else if (act.sprite == MenuSprite::Whirlybob)
     {
-        entity.getComponent<xy::Sprite>().setDepth(-2);
+        entity.getComponent<xy::Drawable>().setDepth(-2);
     }
 }

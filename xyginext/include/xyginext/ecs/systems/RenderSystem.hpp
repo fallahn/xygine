@@ -42,7 +42,7 @@ namespace xy
     Sprite components cannot exist on the same entity, as only one set of vertices will
     be available.
     */
-    class RenderSystem final : public xy::System, public sf::Drawable 
+    class XY_EXPORT_API RenderSystem final : public xy::System, public sf::Drawable 
     {
     public:
         explicit RenderSystem(xy::MessageBus&);

@@ -25,35 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_SPRITE_RENDERER_HPP_
-#define XY_SPRITE_RENDERER_HPP_
+#ifndef XY_SPRITE_SYSTEM_HPP_
+#define XY_SPRITE_SYSTEM_HPP_
 
 #include <xyginext/ecs/System.hpp>
-
-#include <SFML/Graphics/Vertex.hpp>
-
-#include <array>
 
 namespace xy
 {
     /*!
-    \brief System for rendering sprites
+    \brief System for updating sprites.
+    Entities with Sprite components also require
+    a Drawable components, as well as a Scene with a RenderSystem.
     */
-    class XY_EXPORT_API SpriteRenderer final : public xy::System, public sf::Drawable
+    class XY_EXPORT_API SpriteSystem final : public xy::System
     {
     public:
-        explicit SpriteRenderer(MessageBus&);
+        explicit SpriteSystem(MessageBus&);
 
         void process(float) override;
 
     private:
 
-        bool m_wantsSorting;
-
-        void onEntityAdded(Entity) override;
-
-        void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }
 
-#endif //XY_SPRITE_RENDERER_HPP_
+#endif //XY_SPRITE_SYSTEM_HPP_
