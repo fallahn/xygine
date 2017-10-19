@@ -43,7 +43,7 @@ struct SpringFlower final
     sf::Vector2f restPos;
 
     sf::Vector2f velocity;
-    float mass = 0.5f;
+    float mass = 1.5f;
 
     bool captured = false;
 
@@ -60,6 +60,7 @@ public:
 
 private:
     void onEntityAdded(xy::Entity) override;
+
 };
 
 #endif //DEMO_SPRING_FLOWER_HPP_

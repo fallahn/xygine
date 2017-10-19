@@ -53,7 +53,8 @@ public:
 
 private:
 
-    xy::EmitterSettings m_particleSettings;
+    xy::EmitterSettings m_panicParticleSettings;
+    xy::EmitterSettings m_leafParticleSettings;
 
     enum MenuSprite
     {

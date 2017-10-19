@@ -35,11 +35,12 @@ source distribution.
 #include <xyginext/core/App.hpp>
 
 #include <xyginext/util/Math.hpp>
+#include <xyginext/util/Wavetable.hpp>
 
 namespace
 {
-    constexpr float Stiffness = -16.f;
-    constexpr float Damping = -0.6f;
+    constexpr float Stiffness = -5.f;
+    constexpr float Damping = -1.f;
 }
 
 SpringFlowerSystem::SpringFlowerSystem(xy::MessageBus& mb)
@@ -77,7 +78,6 @@ void SpringFlowerSystem::process(float dt)
             }
         }
 
-
         if (!flower.captured)
         {
             //free to sproing
@@ -114,7 +114,7 @@ void SpringFlowerSystem::process(float dt)
 
         verts[3].position = verts[2].position;
         verts[3].position.x -= flower.textureRect.width;
-        verts[3].texCoords.y = -flower.headPos.y;
+        verts[3].texCoords = { flower.textureRect.left,  -flower.headPos.y };
         verts[3].color = flower.colour;
 
         entity.getComponent<xy::Drawable>().updateLocalBounds();

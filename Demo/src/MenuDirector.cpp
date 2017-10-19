@@ -138,7 +138,8 @@ MenuDirector::MenuDirector(xy::TextureResource& tr)
     m_timer         (5.f),
     m_acts          (19)
 {
-    m_particleSettings.loadFromFile("assets/particles/panic.xyp", tr);
+    m_panicParticleSettings.loadFromFile("assets/particles/panic.xyp", tr);
+    m_leafParticleSettings.loadFromFile("assets/particles/leaves.xyp", tr);
     
     xy::SpriteSheet spriteSheet;
     spriteSheet.loadFromFile("assets/sprites/menu_sprites.spt", tr);
@@ -269,16 +270,21 @@ void MenuDirector::spawnSprite(const Act& act)
         entity.getComponent<xy::Transform>().addChild(spawnEnt.addComponent<xy::Transform>());
         spawnEnt.addComponent<xy::Callback>().active = true;
         spawnEnt.getComponent<xy::Callback>().function = BubbleSpawner(m_sprites[MenuSprite::Bubble].sprite, scene);*/
-        entity.addComponent<xy::ParticleEmitter>().settings = m_particleSettings;
+        entity.addComponent<xy::ParticleEmitter>().settings = m_panicParticleSettings;
         entity.getComponent<xy::ParticleEmitter>().start();
     }
     else if (act.sprite == MenuSprite::Goobly && act.direction > 0)
     {
-        entity.addComponent<xy::ParticleEmitter>().settings = m_particleSettings;
+        entity.addComponent<xy::ParticleEmitter>().settings = m_panicParticleSettings;
         entity.getComponent<xy::ParticleEmitter>().start();
     }
     else if (act.sprite == MenuSprite::Whirlybob)
     {
         entity.getComponent<xy::Drawable>().setDepth(-2);
+    }
+    else if(act.sprite != MenuSprite::Goobly && act.sprite != MenuSprite::Princess)
+    {
+        entity.addComponent<xy::ParticleEmitter>().settings = m_leafParticleSettings;
+        entity.getComponent<xy::ParticleEmitter>().start();
     }
 }

@@ -147,7 +147,7 @@ void MenuState::createScene()
         entity = m_scene.createEntity();
         entity.addComponent<SpringFlower>(-64.f).headPos.x += xy::Util::Random::value(-8.f, 9.f);
         entity.getComponent<SpringFlower>().textureRect = { 20.f, 0.f, 36.f, 64.f };
-        entity.getComponent<SpringFlower>().colour = { 160,160,160 };
+        entity.getComponent<SpringFlower>().colour = { 160,170,160 };
         entity.addComponent<xy::Drawable>(m_textureResource.get("assets/images/grass.png"));
         entity.addComponent<xy::Transform>().setPosition(xPos, xy::DefaultSceneSize.y - xy::Util::Random::value(8.f, 16.f));
 
