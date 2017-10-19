@@ -33,6 +33,7 @@ source distribution.
 #include <xyginext/ecs/components/Callback.hpp>
 #include <xyginext/ecs/components/SpriteAnimation.hpp>
 #include <xyginext/ecs/components/Drawable.hpp>
+#include <xyginext/ecs/components/QuadTreeItem.hpp>
 #include <xyginext/graphics/SpriteSheet.hpp>
 #include <xyginext/resources/Resource.hpp>
 
@@ -255,6 +256,9 @@ void MenuDirector::spawnSprite(const Act& act)
     entity.addComponent<xy::Transform>().setPosition(act.direction > 0 ? -bounds.width : xy::DefaultSceneSize.x,
         (xy::DefaultSceneSize.y - bounds.height) - m_sprites[act.sprite].verticalOffset);
     entity.getComponent<xy::Transform>().setScale(-act.direction, 1.f);
+    //entity.getComponent<xy::Transform>().setOrigin(bounds.width / 2.f, 0.f);
+
+    entity.addComponent<xy::QuadTreeItem>().setArea(bounds);
 
     entity.addComponent<xy::Callback>().active = true;
     entity.getComponent<xy::Callback>().function = Runner(act.direction, scene);

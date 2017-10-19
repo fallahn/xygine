@@ -139,6 +139,60 @@ std::vector<Entity> QuadTree::queryArea(sf::FloatRect area) const
     return m_queryVector;
 }
 
+std::vector<Entity> QuadTree::queryPoint(sf::Vector2f point) const
+{
+    m_queryVector.clear();
+
+    //check entities in outside set
+    for (const auto& entity : m_outsideRoot)
+    {
+        auto rect = entity.getComponent<xy::Transform>().getWorldTransform().transformRect(entity.getComponent<xy::QuadTreeItem>().m_area);
+        if (rect.contains(point))
+        {
+            m_queryVector.push_back(entity);
+        }
+    }
+
+    //walk the tree adding as we go
+    std::vector<QuadTreeNode*> nodeList;
+    nodeList.reserve(MaxLevels);
+    nodeList.push_back(&m_rootNode);
+
+    while (!nodeList.empty())
+    {
+        auto* currentNode = nodeList.back();
+        nodeList.pop_back();
+
+        if (currentNode->getArea().contains(point))
+        {
+            //add any entities in this node
+            for (const auto& entity : currentNode->getEntities())
+            {
+                auto rect = entity.getComponent<xy::Transform>().getWorldTransform().transformRect(entity.getComponent<xy::QuadTreeItem>().m_area);
+                if (rect.contains(point))
+                {
+                    m_queryVector.push_back(entity);
+                }
+            }
+
+            //check any child nodes
+            if (currentNode->hasChildren())
+            {
+                const auto& children = currentNode->getChildNodes();
+                for (const auto& c : children)
+                {
+                    if (c && c->getNumEntsBelow() > 0)
+                    {
+                        nodeList.push_back(c.get());
+                    }
+                }
+            }
+        }
+    }
+
+    return m_queryVector;
+}
+
 sf::FloatRect QuadTree::getRootArea() const
 {
     return m_rootNode.getArea();

@@ -30,6 +30,7 @@ source distribution.
 #include "StateIDs.hpp"
 #include "TextboxDirector.hpp"
 #include "MenuDirector.hpp"
+#include "SpringFlower.hpp"
 
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -49,6 +50,10 @@ source distribution.
 #include <xyginext/ecs/systems/CallbackSystem.hpp>
 #include <xyginext/ecs/systems/SpriteAnimator.hpp>
 #include <xyginext/ecs/systems/ParticleSystem.hpp>
+#include <xyginext/ecs/systems/QuadTree.hpp>
+
+#include <xyginext/util/Random.hpp>
+#include <xyginext/util/Math.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -100,8 +105,10 @@ void MenuState::createScene()
     m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::UISystem>(mb);
     m_scene.addSystem<xy::CallbackSystem>(mb);
+    m_scene.addSystem<xy::QuadTree>(mb, sf::FloatRect(sf::Vector2f(), xy::DefaultSceneSize)); //actually this only needs to cover the bottom of the screen
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::SpriteSystem>(mb);
+    m_scene.addSystem<SpringFlowerSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
@@ -123,7 +130,6 @@ void MenuState::createScene()
     entity.getComponent<xy::AudioEmitter>().play();
 
 
-
     //grass at front
     entity = m_scene.createEntity();
     auto bounds = entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/grass.png")).getTextureBounds();
@@ -133,6 +139,48 @@ void MenuState::createScene()
     m_textureResource.get("assets/images/grass.png").setRepeated(true);
     entity.addComponent<xy::Drawable>().setDepth(10);
 
+
+    //springy grass
+    float xPos = xy::Util::Random::value(80.f, 112.f);
+    for (auto i = 0; i < 20; ++i)
+    {
+        entity = m_scene.createEntity();
+        entity.addComponent<SpringFlower>(-64.f).headPos.x += xy::Util::Random::value(-8.f, 9.f);
+        entity.getComponent<SpringFlower>().textureRect = { 20.f, 0.f, 36.f, 64.f };
+        entity.getComponent<SpringFlower>().colour = { 160,160,160 };
+        entity.addComponent<xy::Drawable>(m_textureResource.get("assets/images/grass.png"));
+        entity.addComponent<xy::Transform>().setPosition(xPos, xy::DefaultSceneSize.y - xy::Util::Random::value(8.f, 16.f));
+
+        xPos += xy::Util::Random::value(80.f, 112.f);
+    }
+
+    //and a couple of flowers
+    xPos = xy::Util::Random::value(10.f, 20.f);
+    sf::Uint8 darkness = 140;
+    sf::Int32 depth = -3;
+    for (auto i = 0; i < 12; ++i)
+    {
+        entity = m_scene.createEntity();
+        entity.addComponent<SpringFlower>(-256.f).headPos.x += xy::Util::Random::value(-12.f, 14.f);
+        entity.getComponent<SpringFlower>().textureRect = { 0.f, 0.f, 64.f, 256.f };
+        entity.getComponent<SpringFlower>().colour = { darkness, darkness, darkness };
+        entity.addComponent<xy::Drawable>(m_textureResource.get("assets/images/flower.png")).setDepth(depth);
+        entity.addComponent<xy::Transform>().setPosition(xPos, xy::DefaultSceneSize.y + xy::Util::Random::value(0.f, 64.f));
+
+        if ((i%4) == 0)
+        {
+            xPos += xy::Util::Random::value(400.f, 560.f);
+            darkness = 160;
+            depth = -3;
+        }
+        else
+        {
+            auto value = xy::Util::Random::value(20.f, 80.f);
+            xPos += value;
+            darkness = xy::Util::Math::clamp(sf::Uint8(darkness + static_cast<sf::Uint8>(value - 20.f)), sf::Uint8(140), sf::Uint8(255));
+            depth+=2;
+        }
+    }
 
     m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(1.f);
 }
