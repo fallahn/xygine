@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="72">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="99">
  <properties>
   <property name="round_time" type="float" value="56"/>
  </properties>
@@ -11,43 +11,56 @@
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJydUwsKhTAM62WEXWqCTp+f+x/AFVrIy1uf00DZkjRzYJdEJFENUOylhhf1oRf1KEaobBVx1AXypdYMXrF1qrVArgB3qLbaHr1i6wzZHiwNrTf7Fut9yytssN87M0/voud+Hmb4GwdxvffZ8FlX+P9lzWdsk+95y/KL0/TD9jiryDP0OXiuI86eInpv/7QWv3vT7Dm/AK68KgM=
+   eJy1U4sKhDAM688I+6kdnHPn4/8/4Cy0kIur7gQDYUvSTsUuiUgiDkDOUiOL6jCLahQvYDZGGn2B/rJzhKzY+t45QV8B7VCv2h6zYusIvT2YGl5v713U65JbmGG/PPQMPffzZw9/70pa33tr5Owr/P+y5zM2y++8ZTliM3+1Pc4q6gx1Dp7rSHOmiO7bmdfSV3eaM9df7JEpng==
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYoAHEpmRiDSimxG4QtiVDrwOa/SC+Lpr77IDYHk1MD8k+ZP0WJNhtjqbfjgz99lS035YM/Q5o9oPcow/EZgSwAQPEvwwM1It/O0IKsQD08KPEfkJ+xoWx2S1NhL0iaHxuKC2JxRxsciAgA6UB4dwTaA==
+   eJxjYBhYoAHEpgQwDNijiWtAMSV249PvAMS2eGha20+JflMiaFrY78CAP8yQ6cEWfsSEGTJNLfvNCGAYcEATx2a3NBH2iqDxuaG0JBZzsMmBgAyUBgB+YhDD
   </data>
  </layer>
  <objectgroup color="#00aa00" name="Solid">
-  <object id="3" x="64" y="96" width="896" height="64"/>
-  <object id="7" x="64" y="928" width="896" height="64"/>
+  <object id="3" x="64" y="0" width="512" height="160"/>
+  <object id="7" x="64" y="928" width="512" height="160"/>
   <object id="8" x="960" y="128" width="64" height="832"/>
   <object id="9" x="0" y="128" width="64" height="832"/>
-  <object id="56" x="832" y="352" width="16" height="320"/>
-  <object id="57" x="176" y="352" width="16" height="320"/>
+  <object id="72" x="736" y="0" width="224" height="160"/>
+  <object id="74" x="736" y="928" width="224" height="160"/>
  </objectgroup>
- <objectgroup color="#ff007f" name="Teleport"/>
+ <objectgroup color="#ff007f" name="Teleport">
+  <object id="75" x="576" y="0" width="160" height="16"/>
+  <object id="76" x="576" y="1072" width="160" height="16"/>
+ </objectgroup>
  <objectgroup color="#00ff00" name="Platform">
-  <object id="58" x="192" y="320" width="288" height="32"/>
-  <object id="59" x="544" y="320" width="288" height="32"/>
-  <object id="60" x="192" y="672" width="640" height="32"/>
-  <object id="61" x="928" y="288" width="32" height="32"/>
-  <object id="62" x="928" y="448" width="32" height="32"/>
-  <object id="63" x="928" y="608" width="32" height="32"/>
-  <object id="64" x="928" y="768" width="32" height="32"/>
-  <object id="65" x="64" y="288" width="32" height="32"/>
-  <object id="66" x="64" y="448" width="32" height="32"/>
-  <object id="67" x="64" y="608" width="32" height="32"/>
-  <object id="68" x="64" y="768" width="32" height="32"/>
+  <object id="77" x="480" y="288" width="48" height="32"/>
+  <object id="78" x="608" y="288" width="48" height="32"/>
+  <object id="79" x="736" y="288" width="48" height="32"/>
+  <object id="80" x="864" y="288" width="64" height="32"/>
+  <object id="81" x="384" y="448" width="48" height="32"/>
+  <object id="82" x="512" y="448" width="48" height="32"/>
+  <object id="83" x="640" y="448" width="48" height="32"/>
+  <object id="84" x="768" y="448" width="48" height="32"/>
+  <object id="85" x="896" y="448" width="64" height="32"/>
+  <object id="86" x="288" y="608" width="48" height="32"/>
+  <object id="88" x="416" y="608" width="48" height="32"/>
+  <object id="89" x="544" y="608" width="48" height="32"/>
+  <object id="90" x="672" y="608" width="48" height="32"/>
+  <object id="91" x="800" y="608" width="48" height="32"/>
+  <object id="92" x="928" y="608" width="32" height="32"/>
+  <object id="93" x="192" y="768" width="48" height="32"/>
+  <object id="94" x="320" y="768" width="48" height="32"/>
+  <object id="95" x="448" y="768" width="48" height="32"/>
+  <object id="96" x="576" y="768" width="48" height="32"/>
+  <object id="97" x="704" y="768" width="48" height="32"/>
+  <object id="98" x="832" y="768" width="48" height="32"/>
  </objectgroup>
  <objectgroup name="Spawn">
-  <object id="44" name="whirlybob" x="512" y="384" width="16" height="16"/>
-  <object id="45" name="whirlybob" x="480" y="448" width="16" height="16"/>
-  <object id="46" name="whirlybob" x="480" y="512" width="16" height="16"/>
-  <object id="47" name="whirlybob" x="544" y="448" width="16" height="16"/>
-  <object id="69" name="whirlybob" x="544" y="512" width="16" height="16"/>
-  <object id="70" name="whirlybob" x="480" y="576" width="16" height="16"/>
-  <object id="71" name="whirlybob" x="544" y="576" width="16" height="16"/>
+  <object id="44" name="whirlybob" x="784" y="704" width="16" height="16"/>
+  <object id="45" name="whirlybob" x="384" y="704" width="16" height="16"/>
+  <object id="46" name="squatmo" x="640" y="224" width="16" height="16"/>
+  <object id="47" name="squatmo" x="896" y="224" width="16" height="16"/>
+  <object id="69" name="balldock" x="800" y="384" width="16" height="16"/>
+  <object id="70" name="clocksy" x="576" y="544" width="16" height="16"/>
+  <object id="71" name="balldock" x="544" y="384" width="16" height="16"/>
  </objectgroup>
 </map>

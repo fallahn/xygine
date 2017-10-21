@@ -472,11 +472,11 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                 case CollisionType::Bubble:
                     player.canRideBubble = true;
                 case CollisionType::Platform:
-                    if (man.normal.x != 0)
+                    /*if (man.normal.x != 0)
                     {
                         tx.move(man.normal * man.penetration);
                     }                    
-                    else if ((player.canLand & PlayerClear)&& player.velocity.y > 0 && man.normal.y < 0)
+                    else*/ if ((player.canLand & PlayerClear)&& player.velocity.y > 0 && man.normal.y < 0)
                     {
                         player.state = Player::State::Walking;
                         player.velocity.y = 0.f;
