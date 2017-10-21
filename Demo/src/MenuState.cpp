@@ -31,6 +31,7 @@ source distribution.
 #include "TextboxDirector.hpp"
 #include "MenuDirector.hpp"
 #include "SpringFlower.hpp"
+#include "LoadingScreen.hpp"
 
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -60,10 +61,11 @@ source distribution.
 #include <array>
 
 
-MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
+MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData, LoadingScreen& ls)
     : xy::State(stack, ctx),
     m_scene             (ctx.appInstance.getMessageBus()),
-    m_sharedStateData   (sharedData)
+    m_sharedStateData   (sharedData),
+    m_loadingScreen     (ls)
 {
     launchLoadingScreen();
     createScene();
@@ -300,4 +302,10 @@ void MenuState::createMenu()
     auto& camera = m_scene.getActiveCamera().getComponent<xy::Camera>();
     camera.setView(view.getSize());
     camera.setViewport(view.getViewport());
+}
+
+void MenuState::updateLoadingScreen(float dt, sf::RenderWindow& rw)
+{
+    m_loadingScreen.update(dt);
+    rw.draw(m_loadingScreen);
 }

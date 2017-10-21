@@ -46,6 +46,7 @@ source distribution.
 #include "TowerGuyCallback.hpp"
 #include "BonusSystem.hpp"
 #include "ClientNotificationCallbacks.hpp"
+#include "LoadingScreen.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -110,10 +111,11 @@ namespace
 
 }
 
-GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
+GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData, LoadingScreen& ls)
     : xy::State         (stack, ctx),
     m_scene             (ctx.appInstance.getMessageBus()),
     m_sharedData        (sharedData),
+    m_loadingScreen     (ls),
     m_playerInput       (m_client),
     m_currentMapTexture (0)
 {
@@ -1644,4 +1646,10 @@ void GameState::updateUI(const InventoryUpdate& data)
         }
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(bonusCommand);
+}
+
+void GameState::updateLoadingScreen(float dt, sf::RenderWindow& rw)
+{
+    m_loadingScreen.update(dt);
+    rw.draw(m_loadingScreen);
 }

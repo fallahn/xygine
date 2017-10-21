@@ -14,6 +14,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/GameState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/IntroState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/InventoryDirector.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/LoadingScreen.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MapAnimator.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MenuState.cpp

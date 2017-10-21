@@ -114,6 +114,7 @@ void PauseState::load()
     //background
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>(m_backgroundTexture);
+    entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setScale(xy::DefaultSceneSize);
 
     //resume text

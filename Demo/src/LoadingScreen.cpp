@@ -25,37 +25,52 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef GAME_HPP_
-#define GAME_HPP_
-
 #include "LoadingScreen.hpp"
 
-#include <xyginext/core/App.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
 
-class Game final : public xy::App
+#include <array>
+
+namespace
 {
-public:
-    Game();
-    ~Game() = default;
-    Game(const Game&) = delete;
-    Game& operator = (const Game&) = delete;
+    constexpr float frametime = 1.f / 12.f;
+    float currFrametime = 0.f;
 
-private:
+    const std::array<sf::IntRect, 5> frames =
+    {
+        sf::IntRect( 0,512,128,256 ),
+        { 128,512,128,256 },
+        { 256,512,128,256 },
+        { 384,512,128,256 },
+        { 512,512,128,256 }
+    };
+}
 
-    LoadingScreen m_loadingScreen;
+LoadingScreen::LoadingScreen()
+    : m_frame(0)
+{
+    m_texture.loadFromFile("assets/images/menu_sprites.png");
+    m_sprite.setTexture(m_texture);
+    m_sprite.setTextureRect(frames[0]);
+    m_sprite.setScale(-1.f, 1.f);
+    m_sprite.setPosition(148.f, 20.f);
+}
 
-    xy::StateStack m_stateStack;
+//public
+void LoadingScreen::update(float dt)
+{
+    currFrametime += dt;
+    if (currFrametime > frametime)
+    {
+        currFrametime = 0.f;
+        m_frame = (m_frame + 1) % frames.size();
+        m_sprite.setTextureRect(frames[m_frame]);
+    }
+}
 
-    void handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-
-    void registerStates() override;
-    void updateApp(float dt) override;
-    void draw() override;
-
-    void initialise() override;
-    void finalise() override;
-};
-
-
-#endif //GAME_HPP_
+//private
+void LoadingScreen::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    rt.draw(m_sprite, states);
+}

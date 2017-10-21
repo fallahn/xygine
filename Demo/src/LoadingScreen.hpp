@@ -25,42 +25,27 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_MENU_STATE_HPP_
-#define DEMO_GAME_MENU_STATE_HPP_
+#ifndef  DEMO_LOADING_SCREEN_HPP_
+#define DEMO_LOADING_SCREEN_HPP_
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
-#include "StateIDs.hpp"
-#include "SharedStateData.hpp"
-
-class LoadingScreen;
-
-class MenuState final : public xy::State
+class LoadingScreen final : public sf::Drawable
 {
 public:
-    MenuState(xy::StateStack&, xy::State::Context, SharedStateData&, LoadingScreen&);
+    LoadingScreen();
 
-    xy::StateID stateID() const override { return StateID::MainMenu; }
-
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+    void update(float);
 
 private:
-    xy::Scene m_scene;
-    xy::FontResource m_fontResource;
-    xy::TextureResource m_textureResource;
+    sf::Texture m_texture;
+    std::size_t m_frame;
+    sf::Sprite m_sprite;
 
-    SharedStateData& m_sharedStateData;
-    LoadingScreen& m_loadingScreen;
-
-    void createScene();
-    void createMenu();
-
-    void updateLoadingScreen(float, sf::RenderWindow&) override;
+    void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };
 
-#endif //DEMO_GAME_MENU_STATE_HPP_
+
+#endif //DEMO_LOADING_SCREEN_HPP_

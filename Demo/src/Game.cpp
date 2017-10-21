@@ -45,7 +45,7 @@ Game::Game()
     m_stateStack({ *getRenderWindow(), *this })
 {
     setWindowIcon("assets/images/icon.png");
-    getRenderWindow()->setTitle("xygine - Castle Clamber");
+    getRenderWindow()->setTitle("xygine - Castle Clamber (F1 for Options)");
 }
 
 //private
@@ -103,8 +103,8 @@ void Game::finalise()
 
 void Game::registerStates()
 {
-    m_stateStack.registerState<GameState>(StateID::Game, sharedData);
-    m_stateStack.registerState<MenuState>(StateID::MainMenu, sharedData);
+    m_stateStack.registerState<GameState>(StateID::Game, sharedData, m_loadingScreen);
+    m_stateStack.registerState<MenuState>(StateID::MainMenu, sharedData, m_loadingScreen);
     m_stateStack.registerState<ErrorState>(StateID::Error, sharedData);
     m_stateStack.registerState<PauseState>(StateID::Pause);
     m_stateStack.registerState<GameoverState>(StateID::GameOver, sharedData);
