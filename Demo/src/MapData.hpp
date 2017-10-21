@@ -149,5 +149,11 @@ struct InventoryUpdate final
     sf::Uint8 bonusFlags = 0;
 };
 
+struct CollisionFlagsUpdate final
+{
+    sf::Int16 actor = -1;
+    sf::Uint32 newflags = 0;
+};
+
 
 #endif //DEMO_GAME_MAP_DATA_HPP_

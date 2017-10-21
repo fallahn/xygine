@@ -188,10 +188,10 @@ void GameServer::update()
                 m_scene.update(updateRate);
 
                 //check if it's time to make everything angry
-                //checkRoundTime(updateRate);
+                checkRoundTime(updateRate);
 
                 //check if it's time to change map
-                //checkMapStatus(updateRate);
+                checkMapStatus(updateRate);
             }
         }
 

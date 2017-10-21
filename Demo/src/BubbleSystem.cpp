@@ -122,7 +122,14 @@ void BubbleSystem::process(float dt)
                 bubble.state = Bubble::Normal;
                 bubble.velocity.x = 0.f;
                 bubble.velocity.y = BubbleVerticalVelocity;
-                entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC);
+
+                sf::Uint32 flags = CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC;
+                entity.getComponent<CollisionComponent>().setCollisionMaskBits(flags);
+
+                CollisionFlagsUpdate update;
+                update.actor = entity.getComponent<Actor>().id;
+                update.newflags = flags;
+                m_host.broadcastPacket(PacketID::CollisionFlag, update, xy::NetFlag::Reliable, 1);
             }
             break;
         }

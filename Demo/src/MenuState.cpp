@@ -155,7 +155,7 @@ void MenuState::createScene()
     }
 
     //and a couple of flowers
-    xPos = xy::Util::Random::value(10.f, 20.f);
+    xPos = xy::Util::Random::value(60.f, 90.f);
     sf::Uint8 darkness = 140;
     sf::Int32 depth = -3;
     for (auto i = 0; i < 12; ++i)

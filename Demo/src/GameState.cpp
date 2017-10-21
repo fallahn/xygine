@@ -901,6 +901,21 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         m_client.disconnect();
         requestStackPush(StateID::GameOver);
         break;
+    case PacketID::CollisionFlag:
+    {
+        auto data = evt.packet.as<CollisionFlagsUpdate>();
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::NetActor;
+        cmd.action = [data](xy::Entity entity, float)
+        {
+            if (entity.getComponent<Actor>().id == data.actor)
+            {
+                entity.getComponent<CollisionComponent>().setCollisionMaskBits(data.newflags);
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
+        break;
     }
 }
 
@@ -1141,7 +1156,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
 
         entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::Bubble);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
-        entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(/*CollisionFlags::Player*/0);
         entity.addComponent<xy::QuadTreeItem>().setArea(BubbleBounds);
 
         entity.addComponent<xy::ParticleEmitter>().settings = m_bubbleParticles;
