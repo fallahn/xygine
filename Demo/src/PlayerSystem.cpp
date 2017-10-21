@@ -195,8 +195,6 @@ void PlayerSystem::process(float)
 
 void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
 {
-    //DPRINT("Reconcile to: ", std::to_string(x) + ", " + std::to_string(y));
-
     auto& player = entity.getComponent<Player>();
     auto& tx = entity.getComponent<xy::Transform>();
 
@@ -204,6 +202,9 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     player.state = state.playerState;
     player.velocity.y = state.playerVelocity;
     player.timer = state.playerTimer;
+    player.canJump = state.playerCanJump;
+    player.canLand = state.playerCanLand;
+    player.canRideBubble = state.playerCanRideBubble;
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
@@ -215,7 +216,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     //and reparse inputs
     if (ip != player.history.rend())
     {
-        std::size_t idx =  std::distance(player.history.begin(), ip.base()) - 1;
+        std::size_t idx = std::distance(player.history.begin(), ip.base()) -1;
         auto end = (player.currentInput + player.history.size() - 1) % player.history.size();
 
         while (idx != end) //currentInput points to the next free slot in history
@@ -230,11 +231,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
             processInput(currentMask, delta, entity);
 
             idx = (idx + 1) % player.history.size();
-
-            /*getScene()->getSystem<CollisionSystem>().queryState(entity);
-            resolveCollision(entity);*/
         }
-        //player.lastUpdatedInput = idx;
     }
 
     //update resulting animation

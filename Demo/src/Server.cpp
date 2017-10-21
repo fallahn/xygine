@@ -188,10 +188,10 @@ void GameServer::update()
                 m_scene.update(updateRate);
 
                 //check if it's time to make everything angry
-                checkRoundTime(updateRate);
+                //checkRoundTime(updateRate);
 
                 //check if it's time to change map
-                checkMapStatus(updateRate);
+                //checkMapStatus(updateRate);
             }
         }
 
@@ -241,6 +241,9 @@ void GameServer::update()
                     state.playerState = player.state;
                     state.playerVelocity = player.velocity.y;
                     state.playerTimer = player.timer;
+                    state.playerCanJump = player.canJump;
+                    state.playerCanLand = player.canLand;
+                    state.playerCanRideBubble = player.canRideBubble;
 
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
 
@@ -673,7 +676,7 @@ void GameServer::loadMap()
                     const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
                     for (const auto& obj : objs)
                     {
-                        auto actor = ActorID::None;
+                        /*auto actor = ActorID::None;
                         auto name = xy::Util::String::toLower(obj.getName());
                         if (name == "whirlybob")
                         {
@@ -696,11 +699,11 @@ void GameServer::loadMap()
                         {
                             auto entity = spawnNPC(actor, { obj.getPosition().x, obj.getPosition().y });
                             m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
-                        }
+                        }*/
                     }
                     //spawnNPC(ActorID::Clocksy, { 220.f, 220.f }); spawnCount++;
                 
-                    flags |= (m_mapData.actorCount == 0) ? 0 : MapFlags::Spawn;
+                    flags |= /*(m_mapData.actorCount == 0) ? 0 :*/ MapFlags::Spawn;
                 }
             }
         }
