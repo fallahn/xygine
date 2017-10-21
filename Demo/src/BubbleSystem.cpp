@@ -82,7 +82,7 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
             entity.getComponent<Bubble>().velocity.x += player.velocity.x;
             entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::Bubble);
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
-            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::NPC);
             entity.addComponent<xy::QuadTreeItem>().setArea(BubbleBounds);
 
             entity.addComponent<AnimationController>();
@@ -122,6 +122,7 @@ void BubbleSystem::process(float dt)
                 bubble.state = Bubble::Normal;
                 bubble.velocity.x = 0.f;
                 bubble.velocity.y = BubbleVerticalVelocity;
+                entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC);
             }
             break;
         }
