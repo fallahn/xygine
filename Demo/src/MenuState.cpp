@@ -347,7 +347,7 @@ void MenuState::createHelp()
     //clicker
     auto entity = m_helpScene.createEntity();
     entity.addComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
-        m_helpScene.getSystem<xy::UISystem>().addCallback([&mb](xy::Entity entity, sf::Uint64 flags)
+        m_helpScene.getSystem<xy::UISystem>().addCallback([&mb](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {

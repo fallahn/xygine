@@ -77,6 +77,10 @@ private:
 
 class HelpBackgroundCallback final
 {
+private:
+    static constexpr float MaxTime = 0.5f;
+    static constexpr float MaxAlpha = 102.f;
+
 public:
     HelpBackgroundCallback(const bool& shown)
         : m_shown(shown)
@@ -88,7 +92,7 @@ public:
     {
         if (m_shown)
         {
-            m_currentTime = std::min(m_currentTime + dt, MaxTime);       
+            m_currentTime = std::min(m_currentTime + dt, 0.5f); //TODO find out why g++ things MaxTime is undef ref
         }
         else
         {
@@ -105,9 +109,6 @@ private:
     const bool& m_shown;
 
     float m_currentTime = 0.f;
-
-    static constexpr float MaxTime = 0.5f;
-    static constexpr float MaxAlpha = 102.f;
 };
 
 #endif //DEMO_MENU_CALLBACKS_HPP_

@@ -38,20 +38,20 @@ source distribution.
 namespace
 {
     SharedStateData sharedData;
-    sf::Cursor cursor;
+    //sf::Cursor cursor;
 }
 
 Game::Game()
     : xy::App   (/*sf::ContextSettings(0, 0, 0, 3, 2, sf::ContextSettings::Core)*/),
     m_stateStack({ *getRenderWindow(), *this })
 {
-    sf::Image img;
+    /*sf::Image img;
     img.loadFromFile("assets/images/cursor.png");
 
     if (cursor.loadFromPixels(img.getPixelsPtr(), img.getSize(), { 0,0 }))
     {
         getRenderWindow()->setMouseCursor(cursor);
-    }
+    }*/
 
     setWindowIcon("assets/images/icon.png");
     getRenderWindow()->setTitle("xygine - Castle Clamber (F1 for Options)");
