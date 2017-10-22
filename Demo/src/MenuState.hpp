@@ -35,6 +35,11 @@ source distribution.
 #include "StateIDs.hpp"
 #include "SharedStateData.hpp"
 
+namespace xy
+{
+    class PostBlur;
+}
+
 class LoadingScreen;
 
 class MenuState final : public xy::State
@@ -51,14 +56,20 @@ public:
 
 private:
     xy::Scene m_scene;
+    xy::Scene m_helpScene;
     xy::FontResource m_fontResource;
     xy::TextureResource m_textureResource;
 
     SharedStateData& m_sharedStateData;
     LoadingScreen& m_loadingScreen;
 
+    bool m_helpShown;
+    xy::PostBlur* m_blurEffect;
+
     void createScene();
     void createMenu();
+    void createHelp();
+    void showHelpMenu();
 
     void updateLoadingScreen(float, sf::RenderWindow&) override;
 };

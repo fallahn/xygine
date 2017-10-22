@@ -233,5 +233,8 @@
     <ClInclude Include="src\LoadingScreen.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\MenuCallbacks.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

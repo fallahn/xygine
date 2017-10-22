@@ -32,6 +32,8 @@ source distribution.
 #include "MenuDirector.hpp"
 #include "SpringFlower.hpp"
 #include "LoadingScreen.hpp"
+#include "MessageIDs.hpp"
+#include "MenuCallbacks.hpp"
 
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -42,6 +44,7 @@ source distribution.
 #include <xyginext/ecs/components/UIHitBox.hpp>
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/components/AudioListener.hpp>
+#include <xyginext/ecs/components/Callback.hpp>
 
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
@@ -52,6 +55,8 @@ source distribution.
 #include <xyginext/ecs/systems/SpriteAnimator.hpp>
 #include <xyginext/ecs/systems/ParticleSystem.hpp>
 #include <xyginext/ecs/systems/QuadTree.hpp>
+
+#include <xyginext/graphics/postprocess/Blur.hpp>
 
 #include <xyginext/util/Random.hpp>
 #include <xyginext/util/Math.hpp>
@@ -64,12 +69,16 @@ source distribution.
 MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData, LoadingScreen& ls)
     : xy::State(stack, ctx),
     m_scene             (ctx.appInstance.getMessageBus()),
+    m_helpScene         (ctx.appInstance.getMessageBus()),
     m_sharedStateData   (sharedData),
-    m_loadingScreen     (ls)
+    m_loadingScreen     (ls),
+    m_helpShown         (false),
+    m_blurEffect        (nullptr)
 {
     launchLoadingScreen();
     createScene();
     createMenu();
+    createHelp();
     ctx.appInstance.setClearColour({ 1, 0, 10 });
     quitLoadingScreen();
 }
@@ -79,17 +88,32 @@ bool MenuState::handleEvent(const sf::Event& evt)
 {
     m_scene.getSystem<xy::UISystem>().handleEvent(evt);
     m_scene.forwardEvent(evt);
+
+    m_helpScene.getSystem<xy::UISystem>().handleEvent(evt);
+    m_helpScene.forwardEvent(evt);
+
     return true;
 }
 
 void MenuState::handleMessage(const xy::Message& msg)
 {
     m_scene.forwardMessage(msg);
+    m_helpScene.forwardMessage(msg);
+
+    if (msg.id == MessageID::MenuMessage)
+    {
+        const auto& data = msg.getData<MenuEvent>();
+        if (data.action == MenuEvent::HelpButtonClicked)
+        {
+            showHelpMenu();
+        }
+    }
 }
 
 bool MenuState::update(float dt)
 {
     m_scene.update(dt);
+    m_helpScene.update(dt);
     return true;
 }
 
@@ -98,6 +122,7 @@ void MenuState::draw()
     auto& rt = getContext().renderWindow;
 
     rt.draw(m_scene);
+    rt.draw(m_helpScene);
 }
 
 //private
@@ -116,6 +141,9 @@ void MenuState::createScene()
     m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addDirector<TextboxDirector>(m_sharedStateData);
     m_scene.addDirector<MenuDirector>(m_textureResource);
+
+    m_blurEffect = &m_scene.addPostProcess<xy::PostBlur>();
+    m_blurEffect->setFadeSpeed(2.5f);
 
     xy::AudioMixer::setLabel("FX", 0);
     xy::AudioMixer::setLabel("Music", 1);    
@@ -305,6 +333,76 @@ void MenuState::createMenu()
     auto& camera = m_scene.getActiveCamera().getComponent<xy::Camera>();
     camera.setView(view.getSize());
     camera.setViewport(view.getViewport());
+}
+
+void MenuState::createHelp()
+{
+    auto& mb = getContext().appInstance.getMessageBus();
+    m_helpScene.addSystem<xy::UISystem>(mb);
+    m_helpScene.addSystem<xy::CallbackSystem>(mb);
+    m_helpScene.addSystem<xy::SpriteSystem>(mb);
+    m_helpScene.addSystem<xy::RenderSystem>(mb);
+
+    //clicker
+    auto entity = m_helpScene.createEntity();
+    entity.addComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
+        m_helpScene.getSystem<xy::UISystem>().addCallback([&mb](xy::Entity entity, sf::Uint64 flags)
+    {
+        if (flags & xy::UISystem::LeftMouse)
+        {
+            auto* msg = mb.post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::HelpButtonClicked;
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().area = { 0.f, 0.f, 52.f, 52.f };
+    auto& tx = entity.addComponent<xy::Transform>();
+    tx.setPosition(670.f, 968.f);
+
+    //help menu
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/help.png"));
+    entity.addComponent<xy::Drawable>();
+    entity.addComponent<xy::Transform>().setPosition(430.f, HelpMenuCallback::HidePosition);
+    entity.getComponent<xy::Transform>().addChild(tx);
+    entity.addComponent<xy::Callback>().active = true;
+    entity.getComponent<xy::Callback>().function = HelpMenuCallback(m_helpShown);
+
+    //background
+    entity = m_helpScene.createEntity();
+    m_textureResource.setFallbackColour(sf::Color::White);
+    auto size = entity.addComponent<xy::Sprite>(m_textureResource.get("help_background")).getSize();
+    entity.addComponent<xy::Transform>().setScale(xy::DefaultSceneSize.x / size.x, xy::DefaultSceneSize.y / size.y);
+    entity.addComponent<xy::Drawable>().setDepth(-1);
+    entity.getComponent<xy::Sprite>().setColour(sf::Color::Transparent);
+    entity.addComponent<xy::Callback>().active = true;
+    entity.getComponent<xy::Callback>().function = HelpBackgroundCallback(m_helpShown);
+
+    //apply the default view
+    auto view = getContext().defaultView;
+    auto& camera = m_helpScene.getActiveCamera().getComponent<xy::Camera>();
+    camera.setView(view.getSize());
+    camera.setViewport(view.getViewport());
+}
+
+void MenuState::showHelpMenu()
+{
+    XY_ASSERT(m_blurEffect, "Missing Post Process");
+    
+    if (m_helpShown)
+    {
+        //hide it
+        m_blurEffect->setEnabled(false);
+
+        m_scene.setSystemActive<xy::UISystem>(true);
+    }
+    else
+    {
+        //show it
+        m_blurEffect->setEnabled(true);
+        m_scene.setSystemActive<xy::UISystem>(false);
+    }
+    
+    m_helpShown = !m_helpShown;
 }
 
 void MenuState::updateLoadingScreen(float dt, sf::RenderWindow& rw)
