@@ -52,6 +52,8 @@ GameoverState::GameoverState(xy::StateStack& stack, xy::State::Context ctx, cons
     m_backgroundTexture.loadFromImage(img);
 
     load(data);
+
+    ctx.renderWindow.setMouseCursorVisible(true);
 }
 
 bool GameoverState::handleEvent(const sf::Event& evt)

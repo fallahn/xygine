@@ -80,6 +80,7 @@ MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     createMenu();
     createHelp();
     ctx.appInstance.setClearColour({ 1, 0, 10 });
+    ctx.renderWindow.setMouseCursorVisible(true);
     quitLoadingScreen();
 }
 

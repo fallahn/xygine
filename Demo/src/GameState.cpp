@@ -151,6 +151,8 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     camera.setView(view.getSize());
     camera.setViewport(view.getViewport());
 
+    ctx.renderWindow.setMouseCursorVisible(false);
+
 #ifdef XY_DEBUG
     debugShape.setRadius(16.f);
     debugShape.setOrigin(16.f, 48.f);

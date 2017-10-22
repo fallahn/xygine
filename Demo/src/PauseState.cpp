@@ -53,6 +53,13 @@ PauseState::PauseState(xy::StateStack& stack, xy::State::Context ctx)
     m_backgroundTexture.loadFromImage(img);
 
     load();
+
+    ctx.renderWindow.setMouseCursorVisible(true);
+}
+
+PauseState::~PauseState()
+{
+    getContext().renderWindow.setMouseCursorVisible(false);
 }
 
 bool PauseState::handleEvent(const sf::Event& evt)
