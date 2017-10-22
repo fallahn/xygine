@@ -136,7 +136,7 @@ void MenuState::createScene()
     entity = m_scene.createEntity();
     auto bounds = entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/grass.png")).getTextureBounds();
     bounds.width = xy::DefaultSceneSize.x;
-    entity.addComponent<xy::Transform>().setPosition(0.f, xy::DefaultSceneSize.y - bounds.height);
+    entity.addComponent<xy::Transform>().setPosition(0.f, xy::DefaultSceneSize.y - (bounds.height * 0.9f));
     entity.getComponent<xy::Sprite>().setTextureRect(bounds);
     m_textureResource.get("assets/images/grass.png").setRepeated(true);
     entity.addComponent<xy::Drawable>().setDepth(10);
@@ -150,8 +150,11 @@ void MenuState::createScene()
         entity.addComponent<SpringFlower>(-64.f).headPos.x += xy::Util::Random::value(-8.f, 9.f);
         entity.getComponent<SpringFlower>().textureRect = { 20.f, 0.f, 36.f, 64.f };
         entity.getComponent<SpringFlower>().colour = { 160,170,160 };
+        entity.getComponent<SpringFlower>().mass = 0.4f;
+        entity.getComponent<SpringFlower>().stiffness = -28.f;
+        entity.getComponent<SpringFlower>().damping = -0.4f;
         entity.addComponent<xy::Drawable>(m_textureResource.get("assets/images/grass.png"));
-        entity.addComponent<xy::Transform>().setPosition(xPos, xy::DefaultSceneSize.y - xy::Util::Random::value(8.f, 16.f));
+        entity.addComponent<xy::Transform>().setPosition(xPos, xy::DefaultSceneSize.y - xy::Util::Random::value(5.f, 11.f));
 
         xPos += xy::Util::Random::value(80.f, 112.f);
     }

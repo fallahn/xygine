@@ -33,6 +33,8 @@ source distribution.
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
 
+#include <vector>
+
 struct SpringFlower final
 {
     SpringFlower(float length = -80.f)
@@ -41,11 +43,12 @@ struct SpringFlower final
     sf::Vector2f rootPos;
     sf::Vector2f headPos;
     sf::Vector2f restPos;
+    sf::Vector2f externalForce;
 
     sf::Vector2f velocity;
-    float mass = 1.5f;
-
-    bool captured = false;
+    float mass = 1.f;
+    float stiffness = -5.f;
+    float damping = -1.f;
 
     sf::FloatRect textureRect;
     sf::Color colour = sf::Color::White;
@@ -61,6 +64,11 @@ public:
 private:
     void onEntityAdded(xy::Entity) override;
 
+    std::vector<float> m_windTable;
+    std::size_t m_windIndex;
+
+    std::vector<float> m_windModulator;
+    std::size_t m_modulatorIndex;
 };
 
 #endif //DEMO_SPRING_FLOWER_HPP_

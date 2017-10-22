@@ -47,6 +47,7 @@ source distribution.
 #include "BonusSystem.hpp"
 #include "ClientNotificationCallbacks.hpp"
 #include "LoadingScreen.hpp"
+#include "SpringFlower.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -280,6 +281,7 @@ void GameState::loadAssets()
     m_scene.addSystem<AnimationControllerSystem>(mb);
     m_scene.addSystem<MapAnimatorSystem>(mb);
     m_scene.addSystem<ScoreTagSystem>(mb);
+    m_scene.addSystem<SpringFlowerSystem>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
@@ -395,11 +397,13 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::Bonus].animationMap[4] = spriteSheet.getAnimationIndex("s", "bonus");
 
     //load background
+    float startX = (-(xy::DefaultSceneSize.x / 2.f) + MapBounds.width / 2.f);
+
     auto ent = m_scene.createEntity();
     ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/background.png"));
     ent.addComponent<xy::Drawable>().setDepth(-50);
     ent.addComponent<xy::Transform>().setScale(4.f, 4.f);
-    ent.getComponent<xy::Transform>().setPosition((-(xy::DefaultSceneSize.x / 2.f) + MapBounds.width / 2.f), 0.f);
+    ent.getComponent<xy::Transform>().setPosition(startX, 0.f);
 
     if (m_backgroundShader.loadFromMemory(BackgroundFragment, sf::Shader::Fragment))
     {
@@ -409,6 +413,33 @@ void GameState::loadAssets()
         ent.addComponent<xy::Callback>().function = ColourRotator(m_backgroundShader);
     }
     ent.addComponent<xy::CommandTarget>().ID = CommandID::SceneBackground;
+
+    //flowers
+    float flowerPos = startX + xy::Util::Random::value(20.f, 36.f);
+    for (auto i = 0; i < 2; ++i)
+    {
+        for (auto j = 0; j < 4; ++j)
+        {
+            ent = m_scene.createEntity();
+            ent.addComponent<SpringFlower>(-192.f).headPos.x += xy::Util::Random::value(-15.f, 15.f);
+            ent.getComponent<SpringFlower>().colour = { 120, 120, 120 };
+            ent.getComponent<SpringFlower>().textureRect = { 0.f, 0.f, 64.f, 192.f };
+            ent.getComponent<SpringFlower>().stiffness += xy::Util::Random::value(-2.f, 2.f);
+            ent.addComponent<xy::Drawable>(m_textureResource.get("assets/images/flower.png")).setDepth(-5);
+            ent.addComponent<xy::Transform>().setPosition(flowerPos, xy::DefaultSceneSize.y + xy::Util::Random::value(12.f, 27.f));
+            flowerPos += xy::Util::Random::value(60.f, 90.f);
+        }
+        flowerPos += MapBounds.width * 1.3f;
+    }
+
+    //grass
+    ent = m_scene.createEntity();
+    m_textureResource.get("assets/images/grass.png").setRepeated(true);
+    auto spriteSize = ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/grass.png")).getSize();
+    ent.getComponent<xy::Sprite>().setColour({ 120, 120 ,120 });
+    ent.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, xy::DefaultSceneSize.x, spriteSize.y });
+    ent.addComponent<xy::Drawable>();
+    ent.addComponent<xy::Transform>().setPosition(startX, xy::DefaultSceneSize.y - spriteSize.y);
 
     //music player
     ent = m_scene.createEntity();

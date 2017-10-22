@@ -39,16 +39,25 @@ source distribution.
 
 namespace
 {
-    constexpr float Stiffness = -5.f;
-    constexpr float Damping = -1.f;
+    constexpr float WindStrength = 3.f;
 }
 
 SpringFlowerSystem::SpringFlowerSystem(xy::MessageBus& mb)
-    : xy::System(mb, typeid(SpringFlowerSystem))
+    : xy::System(mb, typeid(SpringFlowerSystem)),
+    m_windIndex (0),
+    m_modulatorIndex(0)
 {
     requireComponent<SpringFlower>();
     requireComponent<xy::Transform>();
     requireComponent<xy::Drawable>();
+
+    m_windTable = xy::Util::Wavetable::sine(0.125f, WindStrength);
+    m_windModulator = xy::Util::Wavetable::sine(0.01f);
+    for (auto& f : m_windModulator)
+    {
+        f += 1.f;
+        f /= 2.f;
+    }
 }
 
 //public
@@ -58,7 +67,6 @@ void SpringFlowerSystem::process(float dt)
     for (auto& entity : entities)
     {
         auto& flower = entity.getComponent<SpringFlower>();
-        flower.captured = false;
 
         const auto& tx = entity.getComponent<xy::Transform>();
 
@@ -70,30 +78,29 @@ void SpringFlowerSystem::process(float dt)
             auto otherPos = other.getComponent<xy::Transform>().getPosition();
             if (std::abs(otherPos.x - worldPos.x) < 15.f)
             {
-                flower.captured = true;
-                auto localPos = tx.getInverseTransform().transformPoint(otherPos);
-                auto amount = xy::Util::Math::clamp(localPos.x, -3.f, 3.f);
-
-                flower.headPos.x += amount;// *(1.f - (std::abs(amount) / 15.f));
+                auto amount = other.getComponent<xy::Transform>().getScale().x * -150.f;
+                flower.externalForce.x += amount;
             }
         }
 
-        if (!flower.captured)
-        {
-            //free to sproing
+        
+        //add wind (would look icer with noise but hey)
+        flower.externalForce.x += (m_windTable[m_windIndex] + WindStrength) * m_windModulator[m_modulatorIndex];
 
-            //F = -kx
-            sf::Vector2f fSpring = Stiffness * ((flower.headPos - flower.rootPos) - flower.restPos);
+        //F = -kx
+        sf::Vector2f fSpring = flower.stiffness * ((flower.headPos - flower.rootPos) - flower.restPos);
+        fSpring += flower.externalForce;
+        flower.externalForce *= 0.9f;
 
-            //- bv
-            sf::Vector2f fDamp = Damping * flower.velocity;
+        //- bv
+        sf::Vector2f fDamp = flower.damping * flower.velocity;
 
-            //a = f/m
-            sf::Vector2f acceleration = (fSpring + fDamp) / flower.mass;
+        //a = f/m
+        sf::Vector2f acceleration = (fSpring + fDamp) / flower.mass;
 
-            flower.velocity += acceleration * dt;
-            flower.headPos += flower.velocity * dt;
-        }
+        flower.velocity += acceleration * dt;
+        flower.headPos += flower.velocity * dt;
+        
 
         //update vertices
         auto& verts = entity.getComponent<xy::Drawable>().getVertices();
@@ -119,6 +126,10 @@ void SpringFlowerSystem::process(float dt)
 
         entity.getComponent<xy::Drawable>().updateLocalBounds();
     }
+
+    //update this once per frame, not once per ent DUH
+    m_windIndex = (m_windIndex + 1) % m_windTable.size();
+    m_modulatorIndex = (m_modulatorIndex + 1) % m_windModulator.size();
 }
 
 
