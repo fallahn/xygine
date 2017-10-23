@@ -24,6 +24,7 @@ and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any
 source distribution.
 *********************************************************************/
+
 #include "Server.hpp"
 #include "MapData.hpp"
 #include "PacketIDs.hpp"
@@ -713,6 +714,24 @@ void GameServer::loadMap()
             return;
         }
 
+        //create hard edges - we could probably only do this once
+        //as they don't change, but let's stick with the flow
+        std::array<sf::FloatRect, 2u> bounds = 
+        {
+            sf::FloatRect(0.f, 0.f, 64.f, MapBounds.height),
+            sf::FloatRect(MapBounds.width - 64.f, 0.f, 64.f, MapBounds.height)
+        };
+        for (auto rect : bounds)
+        {
+            auto entity = m_scene.createEntity();
+            entity.addComponent<xy::Transform>().setPosition(rect.left, rect.top);
+            entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, rect.width, rect.height }, CollisionType::HardBounds);
+            entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, rect.width, rect.height });
+            entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
+            entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::HardBounds);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Bubble);
+        }
+
         //check if map has a round time associated with it
         const auto& properties = map.getProperties();
         auto result = std::find_if(properties.begin(), properties.end(),
@@ -785,7 +804,10 @@ void GameServer::beginNewRound()
             cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
             cmd.action = [](xy::Entity entity, float)
             {
-                entity.getComponent<Player>().state = Player::State::Walking;
+                if (entity.getComponent<Player>().lives > 0)
+                {
+                    entity.getComponent<Player>().state = Player::State::Walking;
+                }
             };
             m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
@@ -843,6 +865,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem | CommandID::NPC;
 
     entity.addComponent<NPC>();
+    sf::Uint32 collisionFlags = CollisionFlags::NPCMask;
     switch (id)
     {
     default: break;
@@ -865,6 +888,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     case ActorID::Goobly:
         entity.addComponent<CollisionComponent>().addHitbox(GooblyBounds, CollisionType::NPC);
         entity.getComponent<xy::Transform>().setOrigin(GooblyOrigin);
+        collisionFlags &= CollisionFlags::Solid;
         break;
     case ActorID::Balldock:
         entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(0, 1) == 1) ? -1.f : 1.f;
@@ -880,7 +904,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     }
 
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
-    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask);
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(collisionFlags);
     
     auto* msg = m_messageBus.post<NpcEvent>(MessageID::NpcMessage);
     msg->type = NpcEvent::Spawned;
