@@ -50,6 +50,11 @@ endif()
 # Project source files
 add_subdirectory(src)
 
+# Add XY_DEBUG on Debug builds
+if (CMAKE_BUILD_TYPE MATCHES Debug) 
+  add_definitions(-DXY_DEBUG)
+endif()
+
 # Create the actual executable (PROJECT_SRC variable is set inside previous steps)
 add_executable(${PROJECT_NAME} ${PROJECT_SRC})
 

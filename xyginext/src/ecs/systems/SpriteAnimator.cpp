@@ -53,6 +53,8 @@ void SpriteAnimator::process(float dt)
             animation.m_currentFrameTime -= dt;
             if (animation.m_currentFrameTime < 0)
             {
+                XY_ASSERT(sprite.m_animations[animation.m_id].framerate > 0, "Illegal Frame Rate");
+                XY_ASSERT(sprite.m_animations[animation.m_id].frameCount > 0, "Illegal Frame Count");
                 animation.m_currentFrameTime += (1.f / sprite.m_animations[animation.m_id].framerate);
 
                 auto lastFrame = animation.m_frameID;

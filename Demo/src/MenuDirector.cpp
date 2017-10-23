@@ -266,10 +266,6 @@ void MenuDirector::spawnSprite(const Act& act)
 
     if ((act.sprite == MenuSprite::PlayerOne || act.sprite == MenuSprite::PlayerTwo) && act.direction < 0)
     {
-        /*auto spawnEnt = scene.createEntity();
-        entity.getComponent<xy::Transform>().addChild(spawnEnt.addComponent<xy::Transform>());
-        spawnEnt.addComponent<xy::Callback>().active = true;
-        spawnEnt.getComponent<xy::Callback>().function = BubbleSpawner(m_sprites[MenuSprite::Bubble].sprite, scene);*/
         entity.addComponent<xy::ParticleEmitter>().settings = m_panicParticleSettings;
         entity.getComponent<xy::ParticleEmitter>().start();
     }
