@@ -221,6 +221,17 @@ void MenuState::createScene()
 
 void MenuState::createMenu()
 {
+    auto selectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
+        [](xy::Entity entity) 
+    {
+        entity.getComponent<xy::Sprite>().setColour({ 240, 185, 10 });
+    });
+    auto unselectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
+        [](xy::Entity entity)
+    {
+        entity.getComponent<xy::Sprite>().setColour(sf::Color::White);
+    });
+    
     //host text
     auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");
     auto entity = m_scene.createEntity();
@@ -245,7 +256,7 @@ void MenuState::createMenu()
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] = 
-        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -254,6 +265,18 @@ void MenuState::createMenu()
             requestStackPush(StateID::Game);
         }
     });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
+        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
+    {
+        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
+        {
+            m_sharedStateData.hostState = SharedStateData::Host;
+            requestStackClear();
+            requestStackPush(StateID::Game);
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
 
     //join text
     entity = m_scene.createEntity();
@@ -286,7 +309,7 @@ void MenuState::createMenu()
     tx2.move(0.f, -64.f);
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -295,7 +318,18 @@ void MenuState::createMenu()
             requestStackPush(StateID::Game);
         }
     });
-
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
+        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
+    {
+        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
+        {
+            m_sharedStateData.hostState = SharedStateData::Client;
+            requestStackClear();
+            requestStackPush(StateID::Game);
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
 
     //quit text
     entity = m_scene.createEntity();
@@ -320,7 +354,7 @@ void MenuState::createMenu()
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -328,6 +362,17 @@ void MenuState::createMenu()
             xy::App::quit();
         }
     });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
+        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
+    {
+        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
+        {
+            requestStackClear();
+            xy::App::quit();
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
 
     //apply the default view
     auto view = getContext().defaultView;
@@ -347,7 +392,7 @@ void MenuState::createHelp()
     //clicker
     auto entity = m_helpScene.createEntity();
     entity.addComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
-        m_helpScene.getSystem<xy::UISystem>().addCallback([&mb](xy::Entity, sf::Uint64 flags)
+        m_helpScene.getSystem<xy::UISystem>().addMouseButtonCallback([&mb](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {

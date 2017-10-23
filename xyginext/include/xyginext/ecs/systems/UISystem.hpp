@@ -32,6 +32,7 @@ source distribution.
 
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Window/Keyboard.hpp>
 
 #include <functional>
 
@@ -50,6 +51,8 @@ namespace xy
         //which contain the input which triggered it. Use the Flags enum to find the input type
         using ButtonCallback = std::function<void(Entity, sf::Uint64 flags)>;
         using MovementCallback = std::function<void(Entity, sf::Vector2f)>;
+        using KeyboardCallback = std::function<void(Entity, sf::Keyboard::Key)>;
+        using SelectionChangedCallback = std::function<void(Entity)>;
 
         explicit UISystem(MessageBus&);
 
@@ -69,21 +72,44 @@ namespace xy
         void handleMessage(const Message&) override;
 
         /*!
-        \brief Adds a button event callback.
+        \brief Adds a mouse button event callback.
         \returns ID of the callback. This should be used to assigned the callback
         to the relative callback slot of a UIInput component. eg:
         auto id = system.addCallback(cb);
         component.callbacks[UIInput::MouseDown] = id;
+        Note that a single callback ID may be assigned to multiple UIHitbox components
         */
-        sf::Uint32 addCallback(const ButtonCallback&);
+        sf::Uint32 addMouseButtonCallback(const ButtonCallback&);
 
         /*!
         \brief Adds a mouse or touch input movement callback.
         This is similar to button even callbacks, only the movement delta is
         passed in as a parameter instead of a button ID. These are also used for
         mouse enter/exit events
+        Note that a single callback ID may be assigned to multiple UIHitbox components
         */
-        sf::Uint32 addCallback(const MovementCallback&);
+        sf::Uint32 addMouseMoveCallback(const MovementCallback&);
+
+        /*!
+        \brief Adds a KeyEvent callback.
+        \param callback KeyboardCallback which provides the current entity and the 
+        SFML key which triggered the event
+        \returns ID of the callback. This should be used to assigned the callback
+        to the relative callback slot of a UIInput component. eg:
+        auto id = system.addCallback(cb);
+        component.callbacks[UIInput::KeyDown] = id;
+        Note that a single callback ID may be assigned to multiple UIHitbox components
+        */
+        sf::Uint32 addKeyCallback(const KeyboardCallback&);
+
+        /*!
+        \brief Adds a selection changed callback.
+        This is raised for each UIHitbox compnent as it either either
+        selected or unselected. The callback function passes in the entity
+        which is affected by the callback.
+        Note that a single callback ID may be assigned to multiple UIHitbox components
+        */
+        sf::Uint32 addSelectionCallback(const SelectionChangedCallback&);
 
         /*!
         \brief Input flags.
@@ -97,18 +123,38 @@ namespace xy
             Finger = 0x8
         };
 
+        /*!
+        \brief Selects the input at the given index if it exists
+        */
+        void selectInput(std::size_t);
+
     private:
 
         std::vector<ButtonCallback> m_buttonCallbacks;
         std::vector<MovementCallback> m_movementCallbacks;
+        std::vector<KeyboardCallback> m_keyboardCallbacks;
+        std::vector<SelectionChangedCallback> m_selectionCallbacks;
 
         sf::Vector2f m_prevMousePosition;
         sf::Vector2f m_previousEventPosition; //in screen coords
         sf::Vector2f m_eventPosition;
         sf::Vector2f m_movementDelta; //in world coords
 
-        std::vector<Flags> m_downEvents;
-        std::vector<Flags> m_upEvents;
+        std::vector<Flags> m_mouseDownEvents;
+        std::vector<Flags> m_mouseUpEvents;
+
+        std::size_t m_selectedIndex;
+        std::vector<sf::Keyboard::Key> m_keyDownEvents;
+        std::vector<sf::Keyboard::Key> m_keyUpEvents;
+
+        void selectNext();
+        void selectPrev();
+
+        void unselect(std::size_t);
+        void select(std::size_t);
+
+        void onEntityAdded(xy::Entity) override;
+        void onEntityRemoved(xy::Entity) override;
     };
 }
 

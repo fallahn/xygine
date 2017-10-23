@@ -124,6 +124,18 @@ void PauseState::load()
     entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setScale(xy::DefaultSceneSize);
 
+    //button callbacks
+    auto selectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
+        [](xy::Entity entity)
+    {
+        entity.getComponent<xy::Sprite>().setColour({ 240, 185, 10 });
+    });
+    auto unselectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
+        [](xy::Entity entity)
+    {
+        entity.getComponent<xy::Sprite>().setColour(sf::Color::White);
+    });
+
     //resume text
     entity = m_scene.createEntity();
     entity.addComponent<xy::Text>(m_font).setString("RESUME");
@@ -147,13 +159,23 @@ void PauseState::load()
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
             requestStackPop();
         }
     });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
+        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
+    {
+        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
+        {
+            requestStackPop();
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
 
     //quit text
     entity = m_scene.createEntity();
@@ -176,16 +198,29 @@ void PauseState::load()
     tx2.setPosition(entity.getComponent<xy::Transform>().getOrigin());
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
-            entity.getComponent<xy::Sprite>().setColour(sf::Color(200, 200, 200));
+            entity.getComponent<xy::Sprite>().setColour(sf::Color(220, 100, 100));
             
             requestStackClear();
             requestStackPush(StateID::MainMenu);
         }
     });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
+        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity entity, sf::Keyboard::Key key)
+    {
+        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
+        {
+            entity.getComponent<xy::Sprite>().setColour(sf::Color(220, 100, 100));
+
+            requestStackClear();
+            requestStackPush(StateID::MainMenu);
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
 
     //apply the default view
     auto view = getContext().defaultView;

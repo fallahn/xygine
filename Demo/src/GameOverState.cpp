@@ -134,7 +134,7 @@ void GameoverState::load(const SharedStateData& data)
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -142,7 +142,15 @@ void GameoverState::load(const SharedStateData& data)
             requestStackPush(StateID::MainMenu);
         }
     });
-
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
+        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
+    {
+        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
+        {
+            requestStackClear();
+            requestStackPush(StateID::MainMenu);
+        }
+    });
     
 
     //apply the default view

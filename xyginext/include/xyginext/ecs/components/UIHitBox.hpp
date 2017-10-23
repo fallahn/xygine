@@ -50,6 +50,10 @@ namespace xy
             MouseDown,
             MouseUp,
             MouseMotion,
+            KeyDown,
+            KeyUp,
+            Selected,
+            Unselected,
             Count
         };
 
