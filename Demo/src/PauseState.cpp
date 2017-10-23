@@ -41,6 +41,11 @@ source distribution.
 
 #include <SFML/Window/Event.hpp>
 
+namespace
+{
+    const sf::Color ButtonActiveColour(220, 100, 100);
+}
+
 PauseState::PauseState(xy::StateStack& stack, xy::State::Context ctx)
     : xy::State(stack, ctx),
     m_scene(ctx.appInstance.getMessageBus())
@@ -128,12 +133,18 @@ void PauseState::load()
     auto selectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
         [](xy::Entity entity)
     {
-        entity.getComponent<xy::Sprite>().setColour({ 240, 185, 10 });
+        auto& sprite = entity.getComponent<xy::Sprite>();
+        auto rect = sprite.getTextureRect();
+        rect.top = 256.f;
+        sprite.setTextureRect(rect);
     });
     auto unselectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
         [](xy::Entity entity)
     {
-        entity.getComponent<xy::Sprite>().setColour(sf::Color::White);
+        auto& sprite = entity.getComponent<xy::Sprite>();
+        auto rect = sprite.getTextureRect();
+        rect.top = 0.f;
+        sprite.setTextureRect(rect);
     });
 
     //resume text
@@ -149,7 +160,7 @@ void PauseState::load()
     entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_buttonTexture);
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
-    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
+    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
     entity.getComponent<xy::Transform>().addChild(tx);
@@ -174,6 +185,14 @@ void PauseState::load()
             requestStackPop();
         }
     });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+    {
+        if (button == 0)
+        {
+            requestStackPop();
+        }
+    });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
 
@@ -190,7 +209,7 @@ void PauseState::load()
     entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_buttonTexture);
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
-    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
+    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
     entity.getComponent<xy::Transform>().addChild(tx2);
@@ -202,7 +221,7 @@ void PauseState::load()
     {
         if (flags & xy::UISystem::LeftMouse)
         {
-            entity.getComponent<xy::Sprite>().setColour(sf::Color(220, 100, 100));
+            entity.getComponent<xy::Sprite>().setColour(ButtonActiveColour);
             
             requestStackClear();
             requestStackPush(StateID::MainMenu);
@@ -213,7 +232,18 @@ void PauseState::load()
     {
         if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
         {
-            entity.getComponent<xy::Sprite>().setColour(sf::Color(220, 100, 100));
+            entity.getComponent<xy::Sprite>().setColour(ButtonActiveColour);
+
+            requestStackClear();
+            requestStackPush(StateID::MainMenu);
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity entity, sf::Uint32, sf::Uint32 button)
+    {
+        if (button == 0)
+        {
+            entity.getComponent<xy::Sprite>().setColour(ButtonActiveColour);
 
             requestStackClear();
             requestStackPush(StateID::MainMenu);

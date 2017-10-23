@@ -124,7 +124,7 @@ void GameoverState::load(const SharedStateData& data)
     entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_buttonTexture);
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
-    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
+    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 256.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
     entity.getComponent<xy::Transform>().addChild(tx);
@@ -146,6 +146,15 @@ void GameoverState::load(const SharedStateData& data)
         m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
     {
         if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
+        {
+            requestStackClear();
+            requestStackPush(StateID::MainMenu);
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+    {
+        if (button == 0)
         {
             requestStackClear();
             requestStackPush(StateID::MainMenu);

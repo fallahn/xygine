@@ -57,10 +57,12 @@ UISystem::UISystem(MessageBus& mb)
     requireComponent<UIHitBox>();
     requireComponent<Transform>();
 
-    m_buttonCallbacks.push_back([](Entity, sf::Uint64) {}); //default callback for components which don't have one assigned
+    //default callbacks for components which don't have one assigned
+    m_buttonCallbacks.push_back([](Entity, sf::Uint64) {}); 
     m_movementCallbacks.push_back([](Entity, sf::Vector2f) {});
     m_keyboardCallbacks.push_back([](Entity, sf::Keyboard::Key) {});
     m_selectionCallbacks.push_back([](Entity) {});
+    m_controllerCallbacks.push_back([](Entity, sf::Uint32, sf::Uint32) {});
 }
 
 void UISystem::handleEvent(const sf::Event& evt)
@@ -148,24 +150,25 @@ void UISystem::handleEvent(const sf::Event& evt)
         case sf::Joystick::X:
             if (evt.joystickMove.position > DeadZone)
             {
-                m_controllerMask |= ControllerBits::Right;
+                m_controllerMask |= ControllerBits::Left;
             }
             else if (evt.joystickMove.position < -DeadZone)
             {
-                m_controllerMask |= ControllerBits::Left;
+                m_controllerMask |= ControllerBits::Right;
             }
             break;
         case sf::Joystick::PovY:
         case sf::Joystick::Y:
             if (evt.joystickMove.position > DeadZone)
             {
-                m_controllerMask |= ControllerBits::Up;
+                m_controllerMask |= ControllerBits::Down;
             }
             else if (evt.joystickMove.position < -DeadZone)
             {
-                m_controllerMask |= ControllerBits::Down;
+                m_controllerMask |= ControllerBits::Up;
             }
             break;
+        default: break;
         }
         break;
     }

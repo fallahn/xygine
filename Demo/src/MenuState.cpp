@@ -224,12 +224,18 @@ void MenuState::createMenu()
     auto selectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
         [](xy::Entity entity) 
     {
-        entity.getComponent<xy::Sprite>().setColour({ 240, 185, 10 });
+        auto& sprite = entity.getComponent<xy::Sprite>();
+        auto rect = sprite.getTextureRect();
+        rect.top = 256.f;
+        sprite.setTextureRect(rect);
     });
     auto unselectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
         [](xy::Entity entity)
     {
-        entity.getComponent<xy::Sprite>().setColour(sf::Color::White);
+        auto& sprite = entity.getComponent<xy::Sprite>();
+        auto rect = sprite.getTextureRect();
+        rect.top = 0.f;
+        sprite.setTextureRect(rect);
     });
     
     //host text
@@ -246,7 +252,7 @@ void MenuState::createMenu()
     entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
-    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
+    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
     entity.getComponent<xy::Transform>().addChild(tx);
@@ -269,6 +275,16 @@ void MenuState::createMenu()
         m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
     {
         if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
+        {
+            m_sharedStateData.hostState = SharedStateData::Host;
+            requestStackClear();
+            requestStackPush(StateID::Game);
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+    {
+        if (button == 0)
         {
             m_sharedStateData.hostState = SharedStateData::Host;
             requestStackClear();
@@ -299,6 +315,8 @@ void MenuState::createMenu()
     //join button
     entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
+    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
     entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
     entity.getComponent<xy::Transform>().addChild(tx2);
@@ -328,6 +346,16 @@ void MenuState::createMenu()
             requestStackPush(StateID::Game);
         }
     });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+    {
+        if (button == 0)
+        {
+            m_sharedStateData.hostState = SharedStateData::Client;
+            requestStackClear();
+            requestStackPush(StateID::Game);
+        }
+    });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
 
@@ -344,7 +372,7 @@ void MenuState::createMenu()
     entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
-    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
+    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
     entity.getComponent<xy::Transform>().addChild(tx4);
@@ -366,6 +394,15 @@ void MenuState::createMenu()
         m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
     {
         if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
+        {
+            requestStackClear();
+            xy::App::quit();
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+    {
+        if (button == 0)
         {
             requestStackClear();
             xy::App::quit();
