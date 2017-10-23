@@ -54,6 +54,8 @@ namespace xy
             KeyUp,
             Selected,
             Unselected,
+            ControllerButtonDown,
+            ControllerButtonUp,
             Count
         };
 

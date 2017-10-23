@@ -44,11 +44,15 @@ namespace
         XY_ASSERT(App::getRenderWindow(), "no valid window");
         return App::getRenderWindow()->mapPixelToCoords({ x, y });
     }
+
+    const float DeadZone = 20.f;
 }
 
 UISystem::UISystem(MessageBus& mb)
     : System    (mb, typeid(UISystem)),
-    m_selectedIndex(0)
+    m_selectedIndex     (0),
+    m_controllerMask    (0),
+    m_prevControllerMask(0)
 {
     requireComponent<UIHitBox>();
     requireComponent<Transform>();
@@ -131,11 +135,73 @@ void UISystem::handleEvent(const sf::Event& evt)
             break;
         }
         break;
+    case sf::Event::JoystickButtonPressed:
+        m_controllerDownEvents.push_back(std::make_pair(evt.joystickButton.joystickId, evt.joystickButton.button));
+        break;
+    case sf::Event::JoystickButtonReleased:
+        m_controllerUpEvents.push_back(std::make_pair(evt.joystickButton.joystickId, evt.joystickButton.button));
+        break;
+    case sf::Event::JoystickMoved:
+        switch (evt.joystickMove.axis)
+        {
+        case sf::Joystick::PovX:
+        case sf::Joystick::X:
+            if (evt.joystickMove.position > DeadZone)
+            {
+                m_controllerMask |= ControllerBits::Right;
+            }
+            else if (evt.joystickMove.position < -DeadZone)
+            {
+                m_controllerMask |= ControllerBits::Left;
+            }
+            break;
+        case sf::Joystick::PovY:
+        case sf::Joystick::Y:
+            if (evt.joystickMove.position > DeadZone)
+            {
+                m_controllerMask |= ControllerBits::Up;
+            }
+            else if (evt.joystickMove.position < -DeadZone)
+            {
+                m_controllerMask |= ControllerBits::Down;
+            }
+            break;
+        }
+        break;
     }
 }
 
 void UISystem::process(float)
 {    
+    //parse any controller events
+    auto diff = m_prevControllerMask ^ m_controllerMask;
+    for (auto i = 0; i < 4; ++i)
+    {
+        auto flag = (1 << i);
+        if (diff & flag)
+        {
+            //something changed
+            if (m_controllerMask & flag)
+            {
+                //axis was pressed
+                switch (flag)
+                {
+                default: break;
+                case ControllerBits::Left:
+                case ControllerBits::Up:
+                    selectNext();
+                    break;
+                case ControllerBits::Right:
+                case ControllerBits::Down:
+                    selectPrev();
+                    break;
+                }
+            }
+        }
+    }
+    m_prevControllerMask = m_controllerMask;
+    m_controllerMask = 0;
+    
     //TODO we probably want some partitioning? Checking every entity for a collision could be a bit pants
     std::size_t currentIndex = 0;
     auto& entities = getEntities();
@@ -183,7 +249,7 @@ void UISystem::process(float)
         }
 
 
-        //----Keyboard input----//
+        //----Keyboard / Controller input----//
         if (currentIndex == m_selectedIndex)
         {
             for (auto key : m_keyDownEvents)
@@ -195,12 +261,22 @@ void UISystem::process(float)
             {
                 m_keyboardCallbacks[input.callbacks[UIHitBox::KeyUp]](e, key);
             }
+
+            for (auto pair : m_controllerDownEvents)
+            {
+                m_controllerCallbacks[input.callbacks[UIHitBox::ControllerButtonDown]](e, pair.first, pair.second);
+            }
+
+            for (auto pair : m_controllerUpEvents)
+            {
+                m_controllerCallbacks[input.callbacks[UIHitBox::ControllerButtonUp]](e, pair.first, pair.second);
+            }
         }
         currentIndex++;
     }
 
     //DPRINT("Window Pos", std::to_string(m_eventPosition.x) + ", " + std::to_string(m_eventPosition.y));
-    DPRINT("Selected Index", std::to_string(m_selectedIndex));
+    //DPRINT("Selected Index", std::to_string(m_selectedIndex));
 
     m_previousEventPosition = m_eventPosition;
     m_mouseUpEvents.clear();
@@ -209,6 +285,9 @@ void UISystem::process(float)
 
     m_keyDownEvents.clear();
     m_keyUpEvents.clear();
+
+    m_controllerDownEvents.clear();
+    m_controllerUpEvents.clear();
 }
 
 void UISystem::handleMessage(const Message&)
@@ -216,7 +295,7 @@ void UISystem::handleMessage(const Message&)
 
 }
 
-sf::Uint32 UISystem::addMouseButtonCallback(const ButtonCallback& cb)
+sf::Uint32 UISystem::addMouseButtonCallback(const MouseButtonCallback& cb)
 {
     m_buttonCallbacks.push_back(cb);
     return static_cast<sf::Uint32>(m_buttonCallbacks.size() - 1);
@@ -238,6 +317,12 @@ sf::Uint32 UISystem::addSelectionCallback(const SelectionChangedCallback& cb)
 {
     m_selectionCallbacks.push_back(cb);
     return static_cast<sf::Uint32>(m_selectionCallbacks.size() - 1);
+}
+
+sf::Uint32 UISystem::addControllerCallback(const ControllerCallback& cb)
+{
+    m_controllerCallbacks.push_back(cb);
+    return static_cast<sf::Uint32>(m_controllerCallbacks.size() - 1);
 }
 
 void UISystem::selectInput(std::size_t idx)

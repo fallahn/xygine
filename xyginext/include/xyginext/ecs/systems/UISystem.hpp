@@ -49,10 +49,11 @@ namespace xy
     public:
         //passes in the entity for whom the callback was triggered and a copy of the flags
         //which contain the input which triggered it. Use the Flags enum to find the input type
-        using ButtonCallback = std::function<void(Entity, sf::Uint64 flags)>;
+        using MouseButtonCallback = std::function<void(Entity, sf::Uint64 flags)>;
         using MovementCallback = std::function<void(Entity, sf::Vector2f)>;
         using KeyboardCallback = std::function<void(Entity, sf::Keyboard::Key)>;
         using SelectionChangedCallback = std::function<void(Entity)>;
+        using ControllerCallback = std::function<void(Entity, sf::Uint32, sf::Uint32)>;
 
         explicit UISystem(MessageBus&);
 
@@ -79,7 +80,7 @@ namespace xy
         component.callbacks[UIInput::MouseDown] = id;
         Note that a single callback ID may be assigned to multiple UIHitbox components
         */
-        sf::Uint32 addMouseButtonCallback(const ButtonCallback&);
+        sf::Uint32 addMouseButtonCallback(const MouseButtonCallback&);
 
         /*!
         \brief Adds a mouse or touch input movement callback.
@@ -104,12 +105,19 @@ namespace xy
 
         /*!
         \brief Adds a selection changed callback.
-        This is raised for each UIHitbox compnent as it either either
+        This is raised for each UIHitbox component as it either either
         selected or unselected. The callback function passes in the entity
         which is affected by the callback.
         Note that a single callback ID may be assigned to multiple UIHitbox components
         */
         sf::Uint32 addSelectionCallback(const SelectionChangedCallback&);
+
+        /*!
+        \brief Adds a Controller Button callback.
+        The callback passes in the entity which is affects, as well as the controller
+        ID and Button ID which triggered the event
+        */
+        sf::Uint32 addControllerCallback(const ControllerCallback&);
 
         /*!
         \brief Input flags.
@@ -130,10 +138,11 @@ namespace xy
 
     private:
 
-        std::vector<ButtonCallback> m_buttonCallbacks;
+        std::vector<MouseButtonCallback> m_buttonCallbacks;
         std::vector<MovementCallback> m_movementCallbacks;
         std::vector<KeyboardCallback> m_keyboardCallbacks;
         std::vector<SelectionChangedCallback> m_selectionCallbacks;
+        std::vector<ControllerCallback> m_controllerCallbacks;
 
         sf::Vector2f m_prevMousePosition;
         sf::Vector2f m_previousEventPosition; //in screen coords
@@ -146,6 +155,15 @@ namespace xy
         std::size_t m_selectedIndex;
         std::vector<sf::Keyboard::Key> m_keyDownEvents;
         std::vector<sf::Keyboard::Key> m_keyUpEvents;
+
+        std::vector<std::pair<sf::Uint32, sf::Uint32>> m_controllerDownEvents;
+        std::vector<std::pair<sf::Uint32, sf::Uint32>> m_controllerUpEvents;
+        sf::Uint8 m_controllerMask;
+        sf::Uint8 m_prevControllerMask;
+        enum ControllerBits
+        {
+            Up = 0x1, Down = 0x2, Left = 0x4, Right = 0x8
+        };
 
         void selectNext();
         void selectPrev();
