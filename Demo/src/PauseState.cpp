@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include "PauseState.hpp"
+#include "MessageIDs.hpp"
 
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Text.hpp>
@@ -223,8 +224,8 @@ void PauseState::load()
         {
             entity.getComponent<xy::Sprite>().setColour(ButtonActiveColour);
             
-            requestStackClear();
-            requestStackPush(StateID::MainMenu);
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::QuitGameClicked;
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
@@ -234,8 +235,8 @@ void PauseState::load()
         {
             entity.getComponent<xy::Sprite>().setColour(ButtonActiveColour);
 
-            requestStackClear();
-            requestStackPush(StateID::MainMenu);
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::QuitGameClicked;
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
@@ -245,8 +246,8 @@ void PauseState::load()
         {
             entity.getComponent<xy::Sprite>().setColour(ButtonActiveColour);
 
-            requestStackClear();
-            requestStackPush(StateID::MainMenu);
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::QuitGameClicked;
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;

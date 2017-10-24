@@ -217,6 +217,22 @@ void GameState::handleMessage(const xy::Message& msg)
             m_client.sendPacket(PacketID::MapReady, m_clientData.actor.type, xy::NetFlag::Reliable, 1);
         }
     }
+    else if (msg.id == MessageID::MenuMessage)
+    {
+        const auto& data = msg.getData<MenuEvent>();
+        if (data.action == MenuEvent::QuitGameClicked)
+        {
+            m_client.disconnect();
+            requestStackClear();
+            requestStackPush(StateID::MainMenu);            
+            
+            //kill server if we're hosting
+            if (m_sharedData.hostState == SharedStateData::Host)
+            {
+                m_server.stop();
+            }
+        }
+    }
 
     m_scene.forwardMessage(msg);
 }

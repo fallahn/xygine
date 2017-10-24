@@ -265,6 +265,7 @@ void GameServer::update()
 
     }
 
+    //cleanly disconnect any clients
     m_host.stop();
 }
 
