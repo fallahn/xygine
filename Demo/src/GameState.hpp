@@ -120,6 +120,7 @@ private:
     void spawnRoundSkip();
 
     void updateUI(const InventoryUpdate&);
+    void updateLevelDisplay(sf::Uint8);
 
     void updateLoadingScreen(float, sf::RenderWindow&) override;
 };

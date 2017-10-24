@@ -133,7 +133,8 @@ struct MenuEvent final
     enum
     {
         HelpButtonClicked,
-        QuitGameClicked
+        QuitGameClicked,
+        ContinueGameClicked
     }action;
 };
 

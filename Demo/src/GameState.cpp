@@ -232,6 +232,32 @@ void GameState::handleMessage(const xy::Message& msg)
                 m_server.stop();
             }
         }
+        else if (data.action == MenuEvent::ContinueGameClicked)
+        {
+            requestStackPop();
+
+            //try reconnecting
+            bool connected = false;
+            if (m_sharedData.hostState == SharedStateData::Host)
+            {
+                connected = m_client.connect("localhost", 40003);
+            }
+            else
+            {
+                connected = m_client.connect(m_sharedData.remoteIP, 40003);
+            }
+
+            if (!connected)
+            {
+                m_sharedData.error = "Failed to connect to server";
+                requestStackPush(StateID::Error);
+            }
+            else
+            {
+                //reset UI
+                updateLevelDisplay(1);
+            }
+        }
     }
 
     m_scene.forwardMessage(msg);
@@ -912,26 +938,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::LevelUpdate:
     {
         auto level = evt.packet.as<sf::Uint8>();
-
-        xy::Command cmd;
-        cmd.targetFlags = CommandID::LevelCounter;
-        cmd.action = [&,level](xy::Entity entity, float)
-        {
-            entity.getComponent<xy::Text>().setString(std::to_string(level));
-
-            //sending a command 1 frame later allows text time to update bounds
-            xy::Command c;
-            c.targetFlags = CommandID::LevelCounter;
-            c.action = [](xy::Entity ent, float)
-            {
-                auto bounds = ent.getComponent<xy::Text>().getLocalBounds();
-                auto pos = ent.getComponent<xy::Transform>().getPosition();
-                pos.x = (MapBounds.width - bounds.width) / 2.f;
-                ent.getComponent<xy::Transform>().setPosition(pos);
-            };
-            m_scene.getSystem<xy::CommandSystem>().sendCommand(c); //meta.
-        };
-        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+        updateLevelDisplay(level);
     }
         break;
     case PacketID::RoundWarning:
@@ -1695,6 +1702,29 @@ void GameState::updateUI(const InventoryUpdate& data)
         }
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(bonusCommand);
+}
+
+void GameState::updateLevelDisplay(sf::Uint8 level)
+{
+    xy::Command cmd;
+    cmd.targetFlags = CommandID::LevelCounter;
+    cmd.action = [&, level](xy::Entity entity, float)
+    {
+        entity.getComponent<xy::Text>().setString(std::to_string(level));
+
+        //sending a command 1 frame later allows text time to update bounds
+        xy::Command c;
+        c.targetFlags = CommandID::LevelCounter;
+        c.action = [](xy::Entity ent, float)
+        {
+            auto bounds = ent.getComponent<xy::Text>().getLocalBounds();
+            auto pos = ent.getComponent<xy::Transform>().getPosition();
+            pos.x = (MapBounds.width - bounds.width) / 2.f;
+            ent.getComponent<xy::Transform>().setPosition(pos);
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(c); //meta.
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 }
 
 void GameState::updateLoadingScreen(float dt, sf::RenderWindow& rw)
