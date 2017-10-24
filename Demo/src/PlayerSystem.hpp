@@ -28,6 +28,8 @@ source distribution.
 #ifndef DEMO_PLAYER_SYSTEM_HPP_
 #define DEMO_PLAYER_SYSTEM_HPP_
 
+#include "Hitbox.hpp"
+
 #include <xyginext/ecs/System.hpp>
 
 #include <array>
@@ -39,7 +41,13 @@ struct Input final
     sf::Int64 timestamp = 0;
 };
 
-using History = std::array<Input, 120u>;
+struct HistoryState final
+{
+    Input input;
+    CollisionComponent collision;
+};
+
+using History = std::array<HistoryState, 120u>;
 
 struct Player final
 {
@@ -68,6 +76,7 @@ struct Player final
     sf::Uint8 bonusFlags = 0;
 };
 
+struct Manifold;
 class PlayerSystem final : public xy::System
 {
 public:
@@ -84,11 +93,15 @@ private:
     sf::Vector2f parseInput(sf::Uint16);
     float getDelta(const History&, std::size_t);
 
+    void processInput(sf::Uint16, float, xy::Entity);
+
     void resolveCollision(xy::Entity);
 
     void collisionWalking(xy::Entity);
     void collisionJumping(xy::Entity);
     void collisionDying(xy::Entity);
+
+    void npcCollision(xy::Entity, const Manifold&);
 };
 
 #endif //DEMO_PLAYER_SYSTEM_HPP_

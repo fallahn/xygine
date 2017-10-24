@@ -40,6 +40,7 @@ class PauseState final : public xy::State
 {
 public:
     PauseState(xy::StateStack&, xy::State::Context);
+    ~PauseState();
 
     xy::StateID stateID() const override { return StateID::Pause; }
     bool handleEvent(const sf::Event&) override;

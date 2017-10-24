@@ -154,7 +154,7 @@ void PlayerInput::update()
     input.timestamp = m_clientTimer.getElapsedTime().asMicroseconds();
 
     //update player input history
-    player.history[player.currentInput] = input;
+    player.history[player.currentInput].input = input;
     player.currentInput = (player.currentInput + 1) % player.history.size();
 
     //send input to server

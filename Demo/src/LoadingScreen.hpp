@@ -25,45 +25,27 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UI_HITBOX_HPP_
-#define XY_UI_HITBOX_HPP_
+#ifndef  DEMO_LOADING_SCREEN_HPP_
+#define DEMO_LOADING_SCREEN_HPP_
 
-#include <xyginext/Config.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
-#include <SFML/Config.hpp>
-#include <SFML/Graphics/Rect.hpp>
-
-#include <array>
-
-namespace xy
+class LoadingScreen final : public sf::Drawable
 {
-    /*!
-    \brief Used to trigger callbacks when hit events occur in the component's area
-    */
-    class XY_EXPORT_API UIHitBox final
-    {
-    public:
-        enum CallbackID
-        {
-            MouseEnter = 1,
-            MouseExit,
-            MouseDown,
-            MouseUp,
-            MouseMotion,
-            KeyDown,
-            KeyUp,
-            Selected,
-            Unselected,
-            ControllerButtonDown,
-            ControllerButtonUp,
-            Count
-        };
+public:
+    LoadingScreen();
 
-        sf::FloatRect area;
-        bool active;
-        std::array<sf::Uint32, CallbackID::Count> callbacks{};
-        sf::Int32 ID = -1;
-    };
-}
+    void update(float);
 
-#endif //XY_UI_HITBOX_HPP_
+private:
+    sf::Texture m_texture;
+    std::size_t m_frame;
+    sf::Sprite m_sprite;
+
+    void draw(sf::RenderTarget&, sf::RenderStates) const override;
+};
+
+
+#endif //DEMO_LOADING_SCREEN_HPP_

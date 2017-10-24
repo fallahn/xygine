@@ -119,9 +119,16 @@ namespace xy
         /*!
         \brief Queries the QuadTree with the given area.
         Returns a vector of entities whose QuadTreeItems are contained
-        in or intersect the given area.
+        in tree nodes which intersect the given area.
         */
         std::vector<xy::Entity> queryArea(sf::FloatRect area) const;
+
+        /*!
+        \brief Queris the quad tree with the given position.
+        Returns a vector of entities whose QuadTreeItems are contained
+        in tree nodes which also contain the given point
+        */
+        std::vector<xy::Entity> queryPoint(sf::Vector2f) const;
 
         /*!
         \brief Returns the area with which the QuadTree was created

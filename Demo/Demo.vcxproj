@@ -135,6 +135,7 @@
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\IntroState.cpp" />
     <ClCompile Include="src\InventoryDirector.cpp" />
+    <ClCompile Include="src\LoadingScreen.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MapAnimator.cpp" />
     <ClCompile Include="src\MenuDirector.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="src\ScoreTag.cpp" />
     <ClCompile Include="src\Server.cpp" />
     <ClCompile Include="src\sha1.cpp" />
+    <ClCompile Include="src\SpringFlower.cpp" />
     <ClCompile Include="src\TextboxDirector.cpp" />
     <ClCompile Include="src\TowerDirector.cpp" />
   </ItemGroup>
@@ -170,8 +172,10 @@
     <ClInclude Include="src\Hitbox.hpp" />
     <ClInclude Include="src\IntroState.hpp" />
     <ClInclude Include="src\InventoryDirector.hpp" />
+    <ClInclude Include="src\LoadingScreen.hpp" />
     <ClInclude Include="src\MapAnimator.hpp" />
     <ClInclude Include="src\MapData.hpp" />
+    <ClInclude Include="src\MenuCallbacks.hpp" />
     <ClInclude Include="src\MenuDirector.hpp" />
     <ClInclude Include="src\MenuState.hpp" />
     <ClInclude Include="src\MessageIDs.hpp" />
@@ -187,6 +191,7 @@
     <ClInclude Include="src\Server.hpp" />
     <ClInclude Include="src\ServerMessages.hpp" />
     <ClInclude Include="src\SharedStateData.hpp" />
+    <ClInclude Include="src\SpringFlower.hpp" />
     <ClInclude Include="src\SpriteIDs.hpp" />
     <ClInclude Include="src\StateIDs.hpp" />
     <ClInclude Include="src\TextboxDirector.hpp" />

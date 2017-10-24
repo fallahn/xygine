@@ -71,9 +71,10 @@ namespace CollisionFlags
         Fruit = 0x40,
         Powerup = 0x80,
         Bonus = 0x100,
+        HardBounds = 0x200,
 
         PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup | Bonus,
-        NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup,
+        NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup | HardBounds,
         FruitMask = Solid | Platform | Player | Teleport,
         PowerupMask = Platform | Solid | Player | NPC
     };
@@ -94,9 +95,9 @@ static const sf::FloatRect BalldockBounds = WhirlyBobBounds;
 static const sf::Vector2f BalldockOrigin = WhirlyBobOrigin;
 static const sf::FloatRect BalldockFoot(-1.f, 64.f, 66.f, 10.f);
 
-static const sf::FloatRect SquatmoBounds = WhirlyBobBounds;
-static const sf::Vector2f SquatmoOrigin = WhirlyBobOrigin;
-static const sf::FloatRect SquatmoFoot(-1.f, 64.f, 66.f, 10.f);
+static const sf::FloatRect SquatmoBounds = { 6.f, 0.f, 52.f, 64.f };
+static const sf::Vector2f SquatmoOrigin = { SquatmoBounds.width / 2.f, SquatmoBounds.height / 2.f };
+static const sf::FloatRect SquatmoFoot(-5.f, 64.f, 54.f, 10.f);
 
 static const sf::FloatRect ClocksyBounds(6.f, 12.f, 52.f, 52.f);
 static const sf::FloatRect ClocksyFoot(6.f, 64.f, 52.f, 10.f);
@@ -119,8 +120,8 @@ static const sf::FloatRect MapBounds(0.f, 0.f, 16.f * 64.f, 17.f * 64.f);
 static const sf::Vector2f PlayerOneSpawn(102.f, 926.f);
 static const sf::Vector2f PlayerTwoSpawn(922.f, 926.f);
 
-static const sf::Vector2f PowerupOneSpawn(320.f, 960.f);
-static const sf::Vector2f PowerupTwoSpawn(640.f, 960.f);
+static const sf::Vector2f PowerupOneSpawn(352.f, 960.f);
+static const sf::Vector2f PowerupTwoSpawn(672.f, 960.f);
 static const float TopSpawn = 896.f;
 
 static const sf::Vector2f TowerSpawnOne(-192.f, 1024.f);
@@ -129,7 +130,7 @@ static const sf::Vector2f TowerSpawnTwo(MapBounds.width + 128.f, 1024.f);
 static const sf::Color BubbleColourOne(255, 212, 0);
 static const sf::Color BubbleColourTwo(255, 0, 212);
 
-static const sf::Uint8 MapsToWin = 25;
+static const sf::Uint8 MapsToWin = 24; //divisible by 4 for colour cycle
 
 //map loading functions shared between client / server
 void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType::ID type);

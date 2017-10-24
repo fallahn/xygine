@@ -51,6 +51,7 @@ namespace PacketID
         RoundSkip, //notifies clients someone collected BONUS
         LevelUpdate, //tells client which level they are on
         GameComplete, //signals client game is complete
+        CollisionFlag, //and actor wit hthe given ID should have its client side collison flags updated
 
         DebugMapCount, //sends the number of active NPCs for debug printing
 

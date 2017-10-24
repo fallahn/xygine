@@ -25,45 +25,52 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UI_HITBOX_HPP_
-#define XY_UI_HITBOX_HPP_
+#include "LoadingScreen.hpp"
 
-#include <xyginext/Config.hpp>
-
-#include <SFML/Config.hpp>
-#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
 
 #include <array>
 
-namespace xy
+namespace
 {
-    /*!
-    \brief Used to trigger callbacks when hit events occur in the component's area
-    */
-    class XY_EXPORT_API UIHitBox final
-    {
-    public:
-        enum CallbackID
-        {
-            MouseEnter = 1,
-            MouseExit,
-            MouseDown,
-            MouseUp,
-            MouseMotion,
-            KeyDown,
-            KeyUp,
-            Selected,
-            Unselected,
-            ControllerButtonDown,
-            ControllerButtonUp,
-            Count
-        };
+    constexpr float frametime = 1.f / 12.f;
+    float currFrametime = 0.f;
 
-        sf::FloatRect area;
-        bool active;
-        std::array<sf::Uint32, CallbackID::Count> callbacks{};
-        sf::Int32 ID = -1;
+    const std::array<sf::IntRect, 5> frames =
+    {
+        sf::IntRect( 0,512,128,256 ),
+        { 128,512,128,256 },
+        { 256,512,128,256 },
+        { 384,512,128,256 },
+        { 512,512,128,256 }
     };
 }
 
-#endif //XY_UI_HITBOX_HPP_
+LoadingScreen::LoadingScreen()
+    : m_frame(0)
+{
+    m_texture.loadFromFile("assets/images/menu_sprites.png");
+    m_sprite.setTexture(m_texture);
+    m_sprite.setTextureRect(frames[0]);
+    m_sprite.setScale(-1.f, 1.f);
+    m_sprite.setPosition(148.f, 20.f);
+}
+
+//public
+void LoadingScreen::update(float dt)
+{
+    currFrametime += dt;
+    if (currFrametime > frametime)
+    {
+        currFrametime = 0.f;
+        m_frame = (m_frame + 1) % frames.size();
+        m_sprite.setTextureRect(frames[m_frame]);
+    }
+}
+
+//private
+void LoadingScreen::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    rt.draw(m_sprite, states);
+}

@@ -237,10 +237,13 @@ void GameServer::update()
                     state.actor.type = c.data.actor.type;
                     state.x = tx.x;
                     state.y = tx.y;
-                    state.clientTime = player.history[player.lastUpdatedInput].timestamp;
+                    state.clientTime = player.history[player.lastUpdatedInput].input.timestamp;
                     state.playerState = player.state;
                     state.playerVelocity = player.velocity.y;
                     state.playerTimer = player.timer;
+                    state.playerCanJump = player.canJump;
+                    state.playerCanLand = player.canLand;
+                    state.playerCanRideBubble = player.canRideBubble;
 
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
 
@@ -262,6 +265,7 @@ void GameServer::update()
 
     }
 
+    //cleanly disconnect any clients
     m_host.stop();
 }
 
@@ -372,8 +376,8 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
             auto& player = entity.getComponent<Player>();
 
             //update player input history
-            player.history[player.currentInput].mask = ip.input;
-            player.history[player.currentInput].timestamp = ip.clientTime;
+            player.history[player.currentInput].input.mask = ip.input;
+            player.history[player.currentInput].input.timestamp = ip.clientTime;
             player.currentInput = (player.currentInput + 1) % player.history.size();
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
@@ -515,6 +519,8 @@ void GameServer::checkMapStatus(float dt)
             {
                 entity.getComponent<xy::Transform>().setPosition(PlayerTwoSpawn);
             }
+            entity.getComponent<Player>().state = Player::State::Disabled;
+            entity.getComponent<Player>().velocity.y = 0.f;
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
@@ -709,6 +715,24 @@ void GameServer::loadMap()
             return;
         }
 
+        //create hard edges - we could probably only do this once
+        //as they don't change, but let's stick with the flow
+        std::array<sf::FloatRect, 2u> bounds = 
+        {
+            sf::FloatRect(0.f, 0.f, 64.f, MapBounds.height),
+            sf::FloatRect(MapBounds.width - 64.f, 0.f, 64.f, MapBounds.height)
+        };
+        for (auto rect : bounds)
+        {
+            auto entity = m_scene.createEntity();
+            entity.addComponent<xy::Transform>().setPosition(rect.left, rect.top);
+            entity.addComponent<CollisionComponent>().addHitbox({ 0.f, 0.f, rect.width, rect.height }, CollisionType::HardBounds);
+            entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, rect.width, rect.height });
+            entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
+            entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::HardBounds);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Bubble);
+        }
+
         //check if map has a round time associated with it
         const auto& properties = map.getProperties();
         auto result = std::find_if(properties.begin(), properties.end(),
@@ -777,6 +801,16 @@ void GameServer::beginNewRound()
 
             m_currentRoundTime = 0.f;
 
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+            cmd.action = [](xy::Entity entity, float)
+            {
+                if (entity.getComponent<Player>().lives > 0)
+                {
+                    entity.getComponent<Player>().state = Player::State::Walking;
+                }
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
             //check if anyone tried joining mid map change
             if (m_queuedClient)
@@ -832,6 +866,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem | CommandID::NPC;
 
     entity.addComponent<NPC>();
+    sf::Uint32 collisionFlags = CollisionFlags::NPCMask;
     switch (id)
     {
     default: break;
@@ -854,6 +889,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     case ActorID::Goobly:
         entity.addComponent<CollisionComponent>().addHitbox(GooblyBounds, CollisionType::NPC);
         entity.getComponent<xy::Transform>().setOrigin(GooblyOrigin);
+        collisionFlags &= ~CollisionFlags::Solid;
         break;
     case ActorID::Balldock:
         entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(0, 1) == 1) ? -1.f : 1.f;
@@ -869,7 +905,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     }
 
     entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
-    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::NPCMask);
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(collisionFlags);
     
     auto* msg = m_messageBus.post<NpcEvent>(MessageID::NpcMessage);
     msg->type = NpcEvent::Spawned;
@@ -889,7 +925,7 @@ void GameServer::handleMessage(const xy::Message& msg)
         if (data.type == NpcEvent::Died)
         {
             //remove from list of actors
-            std::size_t i = 0u;
+            sf::Int8 i = 0;
             for (; i < m_mapData.actorCount; ++i)
             {
                 if (m_mapData.actors[i].id == data.entityID)

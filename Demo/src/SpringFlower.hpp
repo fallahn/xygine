@@ -25,35 +25,50 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_SPRITE_RENDERER_HPP_
-#define XY_SPRITE_RENDERER_HPP_
+#ifndef DEMO_SPRING_FLOWER_HPP_
+#define DEMO_SPRING_FLOWER_HPP_
 
 #include <xyginext/ecs/System.hpp>
 
-#include <SFML/Graphics/Vertex.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Color.hpp>
 
-#include <array>
+#include <vector>
 
-namespace xy
+struct SpringFlower final
 {
-    /*!
-    \brief System for rendering sprites
-    */
-    class XY_EXPORT_API SpriteRenderer final : public xy::System, public sf::Drawable
-    {
-    public:
-        explicit SpriteRenderer(MessageBus&);
+    SpringFlower(float length = -80.f)
+        : headPos(0.f, length), restPos(headPos) {}
 
-        void process(float) override;
+    sf::Vector2f rootPos;
+    sf::Vector2f headPos;
+    sf::Vector2f restPos;
+    sf::Vector2f externalForce;
 
-    private:
+    sf::Vector2f velocity;
+    float mass = 1.f;
+    float stiffness = -5.f;
+    float damping = -1.f;
 
-        bool m_wantsSorting;
+    sf::FloatRect textureRect;
+    sf::Color colour = sf::Color::White;
+};
 
-        void onEntityAdded(Entity) override;
+class SpringFlowerSystem final : public xy::System
+{
+public:
+    explicit SpringFlowerSystem(xy::MessageBus&);
 
-        void draw(sf::RenderTarget&, sf::RenderStates) const override;
-    };
-}
+    void process(float) override;
 
-#endif //XY_SPRITE_RENDERER_HPP_
+private:
+    void onEntityAdded(xy::Entity) override;
+
+    std::vector<float> m_windTable;
+    std::size_t m_windIndex;
+
+    std::vector<float> m_windModulator;
+    std::size_t m_modulatorIndex;
+};
+
+#endif //DEMO_SPRING_FLOWER_HPP_

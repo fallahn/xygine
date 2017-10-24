@@ -45,7 +45,6 @@ source distribution.
 namespace xy
 {
     class MessageBus;
-    class Renderable;
 
     /*!
     \brief Encapsulates a single scene.

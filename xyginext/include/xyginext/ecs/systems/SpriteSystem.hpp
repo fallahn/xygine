@@ -25,45 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UI_HITBOX_HPP_
-#define XY_UI_HITBOX_HPP_
+#ifndef XY_SPRITE_SYSTEM_HPP_
+#define XY_SPRITE_SYSTEM_HPP_
 
-#include <xyginext/Config.hpp>
-
-#include <SFML/Config.hpp>
-#include <SFML/Graphics/Rect.hpp>
-
-#include <array>
+#include <xyginext/ecs/System.hpp>
 
 namespace xy
 {
     /*!
-    \brief Used to trigger callbacks when hit events occur in the component's area
+    \brief System for updating sprites.
+    Entities with Sprite components also require
+    a Drawable component, as well as a Scene with a RenderSystem.
     */
-    class XY_EXPORT_API UIHitBox final
+    class XY_EXPORT_API SpriteSystem final : public xy::System
     {
     public:
-        enum CallbackID
-        {
-            MouseEnter = 1,
-            MouseExit,
-            MouseDown,
-            MouseUp,
-            MouseMotion,
-            KeyDown,
-            KeyUp,
-            Selected,
-            Unselected,
-            ControllerButtonDown,
-            ControllerButtonUp,
-            Count
-        };
+        explicit SpriteSystem(MessageBus&);
 
-        sf::FloatRect area;
-        bool active;
-        std::array<sf::Uint32, CallbackID::Count> callbacks{};
-        sf::Int32 ID = -1;
+        void process(float) override;
+
+    private:
+
     };
 }
 
-#endif //XY_UI_HITBOX_HPP_
+#endif //XY_SPRITE_SYSTEM_HPP_

@@ -38,13 +38,23 @@ source distribution.
 namespace
 {
     SharedStateData sharedData;
+    //sf::Cursor cursor;
 }
 
 Game::Game()
     : xy::App   (/*sf::ContextSettings(0, 0, 0, 3, 2, sf::ContextSettings::Core)*/),
     m_stateStack({ *getRenderWindow(), *this })
 {
+    /*sf::Image img;
+    img.loadFromFile("assets/images/cursor.png");
 
+    if (cursor.loadFromPixels(img.getPixelsPtr(), img.getSize(), { 0,0 }))
+    {
+        getRenderWindow()->setMouseCursor(cursor);
+    }*/
+
+    setWindowIcon("assets/images/icon.png");
+    getRenderWindow()->setTitle("xygine - Castle Clamber (F1 for Options)");
 }
 
 //private
@@ -102,8 +112,8 @@ void Game::finalise()
 
 void Game::registerStates()
 {
-    m_stateStack.registerState<GameState>(StateID::Game, sharedData);
-    m_stateStack.registerState<MenuState>(StateID::MainMenu, sharedData);
+    m_stateStack.registerState<GameState>(StateID::Game, sharedData, m_loadingScreen);
+    m_stateStack.registerState<MenuState>(StateID::MainMenu, sharedData, m_loadingScreen);
     m_stateStack.registerState<ErrorState>(StateID::Error, sharedData);
     m_stateStack.registerState<PauseState>(StateID::Pause);
     m_stateStack.registerState<GameoverState>(StateID::GameOver, sharedData);

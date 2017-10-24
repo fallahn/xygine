@@ -26,6 +26,7 @@ set(PROJECT_SRC
 
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/AudioEmitter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/Camera.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/Drawable.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/NetInterpolation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/ParticleEmitter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/QuadTreeItem.cpp
@@ -41,8 +42,9 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/ParticleSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/QuadTree.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/QuadTreeNode.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/RenderSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/SpriteAnimator.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/SpriteRenderer.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/SpriteSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/TextRenderer.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/UISystem.cpp
 

@@ -76,10 +76,11 @@ void PlayerSystem::process(float)
     auto& entities = getEntities();
     for (auto& entity : entities)
     {
-        resolveCollision(entity);
+        //resolveCollision(entity);
 
         auto& player = entity.getComponent<Player>();
         auto& tx = entity.getComponent<xy::Transform>();
+        const auto& collision = entity.getComponent<CollisionComponent>();
 
         float xMotion = tx.getPosition().x; //used for animation, below
 
@@ -96,14 +97,15 @@ void PlayerSystem::process(float)
         //parse any outstanding inputs
         while (player.lastUpdatedInput != idx)
         {   
-            auto delta = getDelta(player.history, player.lastUpdatedInput);
-            auto currentMask = player.history[player.lastUpdatedInput].mask;
+            resolveCollision(entity);
+            
+            //record the collision state used for this calculation
+            //this isn't strictly correct during reconciliation. What we really need
+            //is to store the state of the collision world at this time so it can be requeried
+            player.history[player.lastUpdatedInput].collision = collision;
 
-            //let go of jump so enable jumping again
-            if ((currentMask & InputFlag::Up) == 0)
-            {
-                player.canJump = true;
-            }
+            auto delta = getDelta(player.history, player.lastUpdatedInput);
+            auto currentMask = player.history[player.lastUpdatedInput].input.mask;
 
             //if shoot was pressed but not last frame, raise message
             //note this is NOT reconciled and ammo actors are entirely server side
@@ -121,96 +123,28 @@ void PlayerSystem::process(float)
                 player.canShoot = true;
             }
 
+            processInput(currentMask, delta, entity);
 
-            //state specific...
-            player.timer -= delta;
-            if (player.state == Player::State::Walking)
+            //probably should be server side only?
+            if (player.state == Player::State::Dying && player.timer < 0) //respawn
             {
-                if ((currentMask & InputFlag::Up)
-                    && player.canJump)
+                if (player.lives)
                 {
-                    player.state = Player::State::Jumping;
-                    player.velocity.y = -initialJumpVelocity;
-                    player.canJump = false;
+                    tx.setPosition(player.spawnPosition);
+                    player.state = Player::State::Walking;
+                    player.direction =
+                        (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
 
-                    entity.getComponent<AnimationController>().nextAnimation = AnimationController::JumpUp;
-
-                    //disable platform and bubble collision
-                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(UpMask);
-
-                    auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
-                    msg->type = PlayerEvent::Jumped;
-                    msg->entity = entity;
+                    player.timer = invincibleTime;
                 }
+                else
+                {
+                    player.state = Player::State::Dead;
+                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(0); //remove collision
+                }
+                player.velocity.y = 0.f;
             }
-            else if(player.state == Player::State::Jumping)
-            {
-                //variable jump height
-                if ((currentMask & InputFlag::Up) == 0
-                    && player.velocity.y < minJumpVelocity)
-                {
-                    player.velocity.y = minJumpVelocity;
-                }
-                
-                tx.move({ 0.f, player.velocity.y * delta });
-                player.velocity.y += Gravity * delta;
-                player.velocity.y = std::min(player.velocity.y, MaxVelocity);
 
-                //reenable downward collision
-                if (player.velocity.y > 0)
-                {
-                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(DownMask);
-                }
-            }
-            else if(player.state == Player::State::Dying)
-            {
-                //dying
-                player.velocity.y += Gravity * delta;
-                player.velocity.y = std::min(player.velocity.y, MaxVelocity);
-                tx.move({ 0.f, player.velocity.y * delta });
-                player.canShoot = false;
-
-                if (player.timer < 0) //respawn
-                {
-                    if (player.lives)
-                    {
-                        tx.setPosition(player.spawnPosition);
-                        player.state = Player::State::Walking;
-                        player.direction =
-                            (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
-
-                        player.timer = invincibleTime;
-
-                        //raise message
-                        /*auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
-                        msg->entity = entity;
-                        msg->type = PlayerEvent::Spawned;*/
-                    }
-                    else
-                    {
-                        player.state = Player::State::Dead;
-                        entity.getComponent<CollisionComponent>().setCollisionMaskBits(0); //remove collision
-                        //tx.setPosition(player.spawnPosition);
-                    }
-                }
-            }
-            
-            //move with input if not dying
-            if (player.state == Player::State::Walking || player.state == Player::State::Jumping)
-            {
-                auto motion = parseInput(currentMask);
-                tx.move(speed * motion * delta);
-                player.velocity.x = speed * motion.x; //used to decide how much velocity to add to bubble spawn
-
-                if (motion.x > 0)
-                {
-                    player.direction = Player::Direction::Right;
-                }
-                else if (motion.x < 0)
-                {
-                    player.direction = Player::Direction::Left;
-                }
-            }
             player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();
         }
 
@@ -261,8 +195,6 @@ void PlayerSystem::process(float)
 
 void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
 {
-    //DPRINT("Reconcile to: ", std::to_string(x) + ", " + std::to_string(y));
-
     auto& player = entity.getComponent<Player>();
     auto& tx = entity.getComponent<xy::Transform>();
 
@@ -270,94 +202,35 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     player.state = state.playerState;
     player.velocity.y = state.playerVelocity;
     player.timer = state.playerTimer;
+    player.canJump = state.playerCanJump;
+    player.canLand = state.playerCanLand;
+    player.canRideBubble = state.playerCanRideBubble;
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
-        [&state](const Input& input)
+        [&state](const HistoryState& hs)
     {
-        return (state.clientTime == input.timestamp);
+        return (state.clientTime == hs.input.timestamp);
     });
 
     //and reparse inputs
     if (ip != player.history.rend())
     {
-        std::size_t idx =  std::distance(player.history.begin(), ip.base()) - 1;
+        std::size_t idx = std::distance(player.history.begin(), ip.base()) -1;
         auto end = (player.currentInput + player.history.size() - 1) % player.history.size();
 
         while (idx != end) //currentInput points to the next free slot in history
         {                      
-            float delta = getDelta(player.history, idx);
-            auto currentMask = player.history[idx].mask;
-            
-            //let go of jump so enable jumping again
-            if ((currentMask & InputFlag::Up) == 0)
-            {
-                player.canJump = true;
-            }
-
-            player.timer -= delta;
-            if (player.state == Player::State::Walking)
-            {
-                if (currentMask & InputFlag::Up
-                    && player.canJump)
-                {
-                    player.state = Player::State::Jumping;
-                    player.velocity.y = -initialJumpVelocity;
-
-                    //disable collision with bubbles and platforms
-                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(UpMask);
-                }
-            }
-            else if(player.state == Player::State::Jumping)
-            {
-                if ((currentMask & InputFlag::Up) == 0
-                    && player.velocity.y < minJumpVelocity)
-                {
-                    player.velocity.y = minJumpVelocity;
-                }                
-                
-                tx.move({ 0.f, player.velocity.y * delta });
-                player.velocity.y += Gravity * delta;
-                player.velocity.y = std::min(player.velocity.y, MaxVelocity);
-
-                //reenable downward collision
-                if (player.velocity.y > 0)
-                {
-                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(DownMask);
-                }
-            }
-            else if(player.state == Player::State::Dying)
-            {
-                //dying
-                player.velocity.y += Gravity * delta;
-                player.velocity.y = std::min(player.velocity.y, MaxVelocity);
-                tx.move({ 0.f, player.velocity.y * delta });
-
-                /*if (!player.lives)
-                {
-                    player.state = Player::State::Dead;
-                }*/
-            }
-
-
-            if (player.state == Player::State::Walking || player.state == Player::State::Jumping)
-            {
-                auto motion = parseInput(currentMask);
-                tx.move(speed * motion * delta);
-                player.velocity.x = speed * motion.x;
-                if (motion.x > 0)
-                {
-                    player.direction = Player::Direction::Right;
-                }
-                else if (motion.x < 0)
-                {
-                    player.direction = Player::Direction::Left;
-                }
-            }
-            idx = (idx + 1) % player.history.size();
-
-            getScene()->getSystem<CollisionSystem>().queryState(entity);
+            //restore the collision data from history
+            entity.getComponent<CollisionComponent>() = player.history[idx].collision;
             resolveCollision(entity);
+            
+            float delta = getDelta(player.history, idx);
+            auto currentMask = player.history[idx].input.mask;
+            
+            processInput(currentMask, delta, entity);
+
+            idx = (idx + 1) % player.history.size();
         }
     }
 
@@ -394,9 +267,87 @@ sf::Vector2f PlayerSystem::parseInput(sf::Uint16 mask)
 float PlayerSystem::getDelta(const History& history, std::size_t idx)
 {
     auto prevInput = (idx + history.size() - 1) % history.size();
-    auto delta = history[idx].timestamp - history[prevInput].timestamp;
+    auto delta = history[idx].input.timestamp - history[prevInput].input.timestamp;
 
     return static_cast<float>(delta) / 1000000.f;
+}
+
+void PlayerSystem::processInput(sf::Uint16 currentMask, float delta, xy::Entity entity)
+{
+    auto& player = entity.getComponent<Player>();
+    auto& tx = entity.getComponent<xy::Transform>();
+    
+    //let go of jump so enable jumping again
+    if ((currentMask & InputFlag::Up) == 0)
+    {
+        player.canJump = true;
+    }
+
+    //state specific...
+    player.timer -= delta;
+    if (player.state == Player::State::Walking)
+    {
+        if ((currentMask & InputFlag::Up)
+            && player.canJump)
+        {
+            player.state = Player::State::Jumping;
+            player.velocity.y = -initialJumpVelocity;
+            player.canJump = false;
+
+            entity.getComponent<AnimationController>().nextAnimation = AnimationController::JumpUp;
+
+            //disable platform and bubble collision
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(UpMask);
+
+            auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+            msg->type = PlayerEvent::Jumped;
+            msg->entity = entity;
+        }
+    }
+    else if (player.state == Player::State::Jumping)
+    {
+        //variable jump height
+        if ((currentMask & InputFlag::Up) == 0
+            && player.velocity.y < minJumpVelocity)
+        {
+            player.velocity.y = minJumpVelocity;
+        }
+
+        tx.move({ 0.f, player.velocity.y * delta });
+        player.velocity.y += Gravity * delta;
+        player.velocity.y = std::min(player.velocity.y, MaxVelocity);
+
+        //reenable downward collision
+        if (player.velocity.y > 0)
+        {
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(DownMask);
+        }
+    }
+    else if (player.state == Player::State::Dying)
+    {
+        //dying
+        player.velocity.y += Gravity * delta;
+        player.velocity.y = std::min(player.velocity.y, MaxVelocity);
+        tx.move({ 0.f, player.velocity.y * delta });
+        player.canShoot = false;
+    }
+
+    //move with input if not dying
+    if (player.state == Player::State::Walking || player.state == Player::State::Jumping)
+    {
+        auto motion = parseInput(currentMask);
+        tx.move(speed * motion * delta);
+        player.velocity.x = speed * motion.x; //used to decide how much velocity to add to bubble spawn
+
+        if (motion.x > 0)
+        {
+            player.direction = Player::Direction::Right;
+        }
+        else if (motion.x < 0)
+        {
+            player.direction = Player::Direction::Left;
+        }
+    }
 }
 
 void PlayerSystem::resolveCollision(xy::Entity entity)
@@ -462,46 +413,7 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                     tx.move(man.normal * man.penetration);
                     break;
                 case CollisionType::NPC:
-                {
-                    if (player.timer < 0 &&  man.otherEntity.hasComponent<NPC>())
-                    {
-                        const auto& npc = man.otherEntity.getComponent<NPC>();
-                        if (npc.state != NPC::State::Bubble && npc.state != NPC::State::Dying)
-                        {
-                            player.state = Player::State::Dying;
-                            player.timer = dyingTime;
-
-                            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
-
-                            player.lives--;
-
-                            //remove collision if player has no lives left
-                            if (!player.lives)
-                            {
-                                entity.getComponent<CollisionComponent>().setCollisionMaskBits(0);
-
-                                //and kill any chasing goobly
-                                xy::Command cmd;
-                                cmd.targetFlags = CommandID::NPC;
-                                cmd.action = [&, entity](xy::Entity npcEnt, float)
-                                {
-                                    if (npcEnt.getComponent<NPC>().target == entity)
-                                    {
-                                        getScene()->destroyEntity(npcEnt);
-                                    }
-                                };
-                                getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
-                            }
-
-                            //raise dead message
-                            auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
-                            msg->entity = entity;
-                            msg->type = PlayerEvent::Died;
-
-                            return;
-                        }
-                    }
-                }
+                    npcCollision(entity, man);
                     break;
                 }
             }
@@ -560,16 +472,16 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                 case CollisionType::Bubble:
                     player.canRideBubble = true;
                 case CollisionType::Platform:
-                    if (man.normal.x != 0)
+                    /*if (man.normal.x != 0)
                     {
                         tx.move(man.normal * man.penetration);
                     }                    
-                    else if ((player.canLand & PlayerClear)&& player.velocity.y > 0 && man.normal.y < 0)
+                    else*/ if ((player.canLand & PlayerClear)&& player.velocity.y > 0 && man.normal.y < 0)
                     {
                         player.state = Player::State::Walking;
                         player.velocity.y = 0.f;
                         tx.move(man.normal * man.penetration);
-                        //return; //quit when we change state because this function is no longer valid
+                        return; //quit when we change state because this function is no longer valid
                     }
 
                     player.canLand &= ~BodyClear;
@@ -601,44 +513,7 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                     }
                     return;
                 case CollisionType::NPC:
-                    if (player.timer < 0 && man.otherEntity.hasComponent<NPC>())
-                    {
-                        const auto& npc = man.otherEntity.getComponent<NPC>();
-                        if (npc.state != NPC::State::Bubble && npc.state != NPC::State::Dying)
-                        {
-                            player.state = Player::State::Dying;
-                            player.timer = dyingTime;
-
-                            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
-
-                            player.lives--;
-
-                            //remove collision if player has no lives left
-                            if (!player.lives)
-                            {
-                                entity.getComponent<CollisionComponent>().setCollisionMaskBits(0);
-
-                                //and kill any chasing goobly
-                                xy::Command cmd;
-                                cmd.targetFlags = CommandID::NPC;
-                                cmd.action = [&, entity](xy::Entity npcEnt, float)
-                                {
-                                    if (npcEnt.getComponent<NPC>().target == entity)
-                                    {
-                                        getScene()->destroyEntity(npcEnt);
-                                    }
-                                };
-                                getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
-                            }
-
-                            //raise dead message
-                            auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
-                            msg->entity = entity;
-                            msg->type = PlayerEvent::Died;
-
-                            return;
-                        }
-                    }
+                    npcCollision(entity, man);
                     break;
                 }
             }
@@ -683,17 +558,60 @@ void PlayerSystem::collisionDying(xy::Entity entity)
         if (hitbox.getType() == CollisionType::Player)
         {
             auto& manifolds = hitbox.getManifolds();
-            auto collisionCount = std::max(std::size_t(1), hitbox.getCollisionCount());
+            auto collisionCount = hitbox.getCollisionCount();
+
             for (auto j = 0u; j < collisionCount; ++j)
             {
-                if (manifolds[j].otherType & FootMask)
+                const auto& man = manifolds[j];
+                if ((man.otherType & (CollisionType::Solid | CollisionType::Platform)))
                 {
-                    entity.getComponent<xy::Transform>().move(manifolds[j].normal * manifolds[j].penetration);
-                    auto& player = entity.getComponent<Player>();
-                    player.velocity.y = 0.f;// -player.velocity.y;// *0.6f;
-                    return;
+                    entity.getComponent<xy::Transform>().move(man.normal * man.penetration);
+                    entity.getComponent<Player>().velocity.y = 0.f;
                 }
             }
+        }
+    }
+}
+
+void PlayerSystem::npcCollision(xy::Entity entity, const Manifold& man)
+{
+    auto& player = entity.getComponent<Player>();
+    if (player.timer < 0 && man.otherEntity.hasComponent<NPC>())
+    {
+        const auto& npc = man.otherEntity.getComponent<NPC>();
+        if (npc.state != NPC::State::Bubble && npc.state != NPC::State::Dying)
+        {
+            player.state = Player::State::Dying;
+            player.timer = dyingTime;
+
+            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+
+            player.lives--;
+
+            //remove collision if player has no lives left
+            if (!player.lives)
+            {
+                entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Platform);
+
+                //and kill any chasing goobly
+                xy::Command cmd;
+                cmd.targetFlags = CommandID::NPC;
+                cmd.action = [&, entity](xy::Entity npcEnt, float)
+                {
+                    if (npcEnt.getComponent<NPC>().target == entity)
+                    {
+                        getScene()->destroyEntity(npcEnt);
+                    }
+                };
+                getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
+            }
+
+            //raise dead message
+            auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+            msg->entity = entity;
+            msg->type = PlayerEvent::Died;
+
+            return;
         }
     }
 }

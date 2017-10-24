@@ -55,6 +55,7 @@ private:
     
     void broadPhase(xy::Entity);
     void narrowPhase();
+    void narrowPhaseQuery(xy::Entity); //as narrow phase but doesn't alter the state of other entities
 
     bool passesFilter(xy::Entity, xy::Entity);
     std::set<std::pair<xy::Entity, xy::Entity>> m_collisions;

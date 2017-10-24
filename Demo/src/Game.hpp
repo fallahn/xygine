@@ -28,6 +28,8 @@ source distribution.
 #ifndef GAME_HPP_
 #define GAME_HPP_
 
+#include "LoadingScreen.hpp"
+
 #include <xyginext/core/App.hpp>
 
 class Game final : public xy::App
@@ -39,6 +41,8 @@ public:
     Game& operator = (const Game&) = delete;
 
 private:
+
+    LoadingScreen m_loadingScreen;
 
     xy::StateStack m_stateStack;
 

@@ -1,0 +1,18 @@
+particle_system leave
+{
+	src = "assets/images/leaf.png"
+	blend_mode = alpha
+	gravity = 0,-100
+	velocity = -12.4,-20.1
+	spread = 86
+	lifetime = 0.83
+	lifetime_variance = 0.13
+	colour = 250,255,205,255
+	scale_affector = 1.08
+	size = 10.0
+	rotation_speed = 2
+	emit_rate = 4
+	emit_count = 2
+	spawn_radius = 15
+	spawn_offset = 64,96
+}

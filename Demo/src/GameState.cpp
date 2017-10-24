@@ -46,6 +46,8 @@ source distribution.
 #include "TowerGuyCallback.hpp"
 #include "BonusSystem.hpp"
 #include "ClientNotificationCallbacks.hpp"
+#include "LoadingScreen.hpp"
+#include "SpringFlower.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -53,6 +55,7 @@ source distribution.
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Text.hpp>
+#include <xyginext/ecs/components/Drawable.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/ecs/components/NetInterpolation.hpp>
 #include <xyginext/ecs/components/SpriteAnimation.hpp>
@@ -63,8 +66,9 @@ source distribution.
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/components/AudioListener.hpp>
 
-#include <xyginext/ecs/systems/SpriteRenderer.hpp>
+#include <xyginext/ecs/systems/SpriteSystem.hpp>
 #include <xyginext/ecs/systems/TextRenderer.hpp>
+#include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/ecs/systems/CommandSystem.hpp>
 #include <xyginext/ecs/systems/InterpolationSystem.hpp>
 #include <xyginext/ecs/systems/SpriteAnimator.hpp>
@@ -100,13 +104,19 @@ namespace
         sf::Uint8 playerID = 0;
     };
 
+#ifdef XY_DEBUG
     sf::Uint8 debugActorCount = 0;
+    sf::Uint8 debugPlayerState = 0;
+    sf::CircleShape debugShape;
+#endif
+
 }
 
-GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData)
+GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData, LoadingScreen& ls)
     : xy::State         (stack, ctx),
     m_scene             (ctx.appInstance.getMessageBus()),
     m_sharedData        (sharedData),
+    m_loadingScreen     (ls),
     m_playerInput       (m_client),
     m_currentMapTexture (0)
 {
@@ -141,6 +151,15 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     camera.setView(view.getSize());
     camera.setViewport(view.getViewport());
 
+    ctx.renderWindow.setMouseCursorVisible(false);
+
+#ifdef XY_DEBUG
+    debugShape.setRadius(16.f);
+    debugShape.setOrigin(16.f, 48.f);
+    debugShape.setFillColor(sf::Color(255, 255, 255, 20));
+    debugShape.setOutlineColor(sf::Color::Magenta);
+    debugShape.setOutlineThickness(1.f);
+#endif
     quitLoadingScreen();
 }
 
@@ -198,6 +217,22 @@ void GameState::handleMessage(const xy::Message& msg)
             m_client.sendPacket(PacketID::MapReady, m_clientData.actor.type, xy::NetFlag::Reliable, 1);
         }
     }
+    else if (msg.id == MessageID::MenuMessage)
+    {
+        const auto& data = msg.getData<MenuEvent>();
+        if (data.action == MenuEvent::QuitGameClicked)
+        {
+            m_client.disconnect();
+            requestStackClear();
+            requestStackPush(StateID::MainMenu);            
+            
+            //kill server if we're hosting
+            if (m_sharedData.hostState == SharedStateData::Host)
+            {
+                m_server.stop();
+            }
+        }
+    }
 
     m_scene.forwardMessage(msg);
 }
@@ -205,6 +240,27 @@ void GameState::handleMessage(const xy::Message& msg)
 bool GameState::update(float dt)
 {   
     DPRINT("Actor count", std::to_string(debugActorCount));
+    //DPRINT("Player Server State", std::to_string(debugPlayerState));
+#ifdef XY_DEBUG
+    switch (Player::State(debugPlayerState))
+    {
+    default:
+        DPRINT("Player state", std::to_string(debugPlayerState));
+        break;
+    case Player::State::Disabled:
+        DPRINT("Player server state", "Disabled");
+        break;
+    case Player::State::Dying:
+        DPRINT("Player server state", "Dying");
+        break;
+    case Player::State::Jumping:
+        DPRINT("Player server state", "Jumping");
+        break;
+    case Player::State::Walking:
+        DPRINT("Player server state", "Walking");
+        break;
+    }
+#endif //XY_DEBUG
     
     xy::NetEvent evt;
     while (m_client.pollEvent(evt))
@@ -226,6 +282,9 @@ void GameState::draw()
 {
     auto& rw = getContext().renderWindow;
     rw.draw(m_scene);
+#ifdef XY_DEBUG
+    rw.draw(debugShape);
+#endif
 }
 
 //private
@@ -240,12 +299,14 @@ void GameState::loadAssets()
     m_scene.addSystem<AnimationControllerSystem>(mb);
     m_scene.addSystem<MapAnimatorSystem>(mb);
     m_scene.addSystem<ScoreTagSystem>(mb);
+    m_scene.addSystem<SpringFlowerSystem>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::CommandSystem>(mb);
     m_scene.addSystem<xy::CallbackSystem>(mb);
-    m_scene.addSystem<xy::SpriteRenderer>(mb);
+    m_scene.addSystem<xy::SpriteSystem>(mb);
+    m_scene.addSystem<xy::RenderSystem>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
@@ -354,18 +415,49 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::Bonus].animationMap[4] = spriteSheet.getAnimationIndex("s", "bonus");
 
     //load background
+    float startX = (-(xy::DefaultSceneSize.x / 2.f) + MapBounds.width / 2.f);
+
     auto ent = m_scene.createEntity();
-    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/background.png")).setDepth(-50);
+    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/background.png"));
+    ent.addComponent<xy::Drawable>().setDepth(-50);
     ent.addComponent<xy::Transform>().setScale(4.f, 4.f);
-    ent.getComponent<xy::Transform>().setPosition((-(xy::DefaultSceneSize.x / 2.f) + MapBounds.width / 2.f), 0.f);
+    ent.getComponent<xy::Transform>().setPosition(startX, 0.f);
 
     if (m_backgroundShader.loadFromMemory(BackgroundFragment, sf::Shader::Fragment))
     {
         m_backgroundShader.setUniform("u_diffuseMap", m_textureResource.get("assets/images/background.png"));
-        ent.getComponent<xy::Sprite>().setShader(&m_backgroundShader);
+        ent.getComponent<xy::Sprite>();
+        ent.getComponent<xy::Drawable>().setShader(&m_backgroundShader);
         ent.addComponent<xy::Callback>().function = ColourRotator(m_backgroundShader);
     }
     ent.addComponent<xy::CommandTarget>().ID = CommandID::SceneBackground;
+
+    //flowers
+    float flowerPos = startX + xy::Util::Random::value(20.f, 36.f);
+    for (auto i = 0; i < 2; ++i)
+    {
+        for (auto j = 0; j < 4; ++j)
+        {
+            ent = m_scene.createEntity();
+            ent.addComponent<SpringFlower>(-192.f).headPos.x += xy::Util::Random::value(-15.f, 15.f);
+            ent.getComponent<SpringFlower>().colour = { 120, 120, 120 };
+            ent.getComponent<SpringFlower>().textureRect = { 0.f, 0.f, 64.f, 192.f };
+            ent.getComponent<SpringFlower>().stiffness += xy::Util::Random::value(-2.f, 2.f);
+            ent.addComponent<xy::Drawable>(m_textureResource.get("assets/images/flower.png")).setDepth(-5);
+            ent.addComponent<xy::Transform>().setPosition(flowerPos, xy::DefaultSceneSize.y + xy::Util::Random::value(12.f, 27.f));
+            flowerPos += xy::Util::Random::value(60.f, 90.f);
+        }
+        flowerPos += MapBounds.width * 1.3f;
+    }
+
+    //grass
+    ent = m_scene.createEntity();
+    m_textureResource.get("assets/images/grass.png").setRepeated(true);
+    auto spriteSize = ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/grass.png")).getSize();
+    ent.getComponent<xy::Sprite>().setColour({ 120, 120 ,120 });
+    ent.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, xy::DefaultSceneSize.x, spriteSize.y });
+    ent.addComponent<xy::Drawable>();
+    ent.addComponent<xy::Transform>().setPosition(startX, xy::DefaultSceneSize.y - spriteSize.y);
 
     //music player
     ent = m_scene.createEntity();
@@ -446,7 +538,7 @@ bool GameState::loadScene(const MapData& data, sf::Vector2f position)
     //create the map sprite
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_mapTextures[m_currentMapTexture].getTexture());
-    entity.getComponent<xy::Sprite>().setDepth(-10);
+    entity.addComponent<xy::Drawable>().setDepth(-10);
 #ifdef DDRAW
     entity.getComponent<xy::Sprite>().setColour({ 255,255,255,120 });
 #endif
@@ -475,20 +567,24 @@ void GameState::loadTower()
     //towerSpriteSheet.loadFromFile("assets/sprites/tower_sprites.spt", m_textureResource);
 
     auto ent = m_scene.createEntity();
-    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/wall.png")).setDepth(5);
+    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/wall.png"));
+    ent.addComponent<xy::Drawable>().setDepth(5);
     ent.addComponent<xy::Transform>();
 
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/wall_bottom.png")).setDepth(5);
+    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/wall_bottom.png"));
+    ent.addComponent<xy::Drawable>().setDepth(5);
     ent.addComponent<xy::Transform>().setPosition(0.f, MapBounds.height - ent.getComponent<xy::Sprite>().getSize().y);
 
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/tower.png")).setDepth(5);
+    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/tower.png"));
+    ent.addComponent<xy::Drawable>().setDepth(5);
     ent.addComponent<xy::Transform>().setPosition(MapBounds.width, 0.f);
 
     auto princessEnt = m_scene.createEntity();
     princessEnt.addComponent<xy::Sprite>() = princessSpriteSheet.getSprite("player_two");
-    princessEnt.getComponent<xy::Sprite>().setDepth(6);
+    princessEnt.getComponent<xy::Sprite>();
+    princessEnt.addComponent<xy::Drawable>().setDepth(6);
     ent.getComponent<xy::Transform>().addChild(princessEnt.addComponent<xy::Transform>());
     princessEnt.getComponent<xy::Transform>().setPosition(128.f, 12.f);
     princessEnt.addComponent<xy::SpriteAnimation>().play(0);
@@ -500,12 +596,14 @@ void GameState::loadTower()
     princessEnt.getComponent<Actor>().type = ActorID::PrincessTwo;
 
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/tower.png")).setDepth(5);
+    ent.addComponent<xy::Sprite>(m_textureResource.get("assets/images/tower.png"));
+    ent.addComponent<xy::Drawable>().setDepth(5);
     ent.addComponent<xy::Transform>().setPosition(-ent.getComponent<xy::Sprite>().getSize().x, 0.f);
 
     princessEnt = m_scene.createEntity();
     princessEnt.addComponent<xy::Sprite>() = princessSpriteSheet.getSprite("player_one");
-    princessEnt.getComponent<xy::Sprite>().setDepth(6);
+    princessEnt.getComponent<xy::Sprite>();
+    princessEnt.addComponent<xy::Drawable>().setDepth(6);
     ent.getComponent<xy::Transform>().addChild(princessEnt.addComponent<xy::Transform>());
     princessEnt.getComponent<xy::Transform>().setPosition(64.f, 12.f);
     princessEnt.addComponent<xy::SpriteAnimation>().play(0);
@@ -578,7 +676,7 @@ void GameState::loadUI()
     ent = m_scene.createEntity();
     ent.addComponent<xy::Transform>().setPosition(10.f, MapBounds.height - 96.f);
     ent.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_one_lives");
-    ent.getComponent<xy::Sprite>().setDepth(6);
+    ent.addComponent<xy::Drawable>().setDepth(6);
     ent.addComponent<xy::SpriteAnimation>().play(0);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::LivesOne;
 
@@ -586,7 +684,7 @@ void GameState::loadUI()
     ent.addComponent<xy::Transform>().setPosition(MapBounds.width - 10.f, MapBounds.height - 96.f);
     ent.getComponent<xy::Transform>().setScale(-1.f, 1.f);
     ent.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_two_lives");
-    ent.getComponent<xy::Sprite>().setDepth(6);
+    ent.addComponent<xy::Drawable>().setDepth(6);
     ent.addComponent<xy::SpriteAnimation>().play(0);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::LivesTwo;
 
@@ -613,7 +711,7 @@ void GameState::loadUI()
             ent = m_scene.createEntity();
             ent.addComponent<xy::Transform>().setPosition(bonusPosition);
             ent.addComponent<xy::Sprite>() = m_sprites[SpriteID::Bonus];
-            ent.getComponent<xy::Sprite>().setDepth(6);
+            ent.addComponent<xy::Drawable>().setDepth(6);
             ent.getComponent<xy::Sprite>().setColour(sf::Color::Transparent);
             ent.addComponent<xy::SpriteAnimation>().play(j);
             ent.addComponent<xy::CommandTarget>().ID = CommandID::BonusBall;
@@ -754,6 +852,11 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::ClientUpdate:
     {
         const auto& state = evt.packet.as<ClientState>();
+       
+#ifdef XY_DEBUG
+        debugShape.setPosition(state.x, state.y);
+        debugPlayerState = sf::Uint8(state.playerState);
+#endif 
 
         //reconcile
         if (m_playerInput.isEnabled())
@@ -848,6 +951,21 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
         m_client.disconnect();
         requestStackPush(StateID::GameOver);
+        break;
+    case PacketID::CollisionFlag:
+    {
+        auto data = evt.packet.as<CollisionFlagsUpdate>();
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::NetActor;
+        cmd.action = [data](xy::Entity entity, float)
+        {
+            if (entity.getComponent<Actor>().id == data.actor)
+            {
+                entity.getComponent<CollisionComponent>().setCollisionMaskBits(data.newflags);
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
         break;
     }
 }
@@ -1070,6 +1188,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     auto addSprite = [&](xy::Entity sprEnt, sf::Int32 id)
     {
         sprEnt.addComponent<xy::Sprite>() = m_sprites[id];
+        sprEnt.addComponent<xy::Drawable>();
         sprEnt.addComponent<xy::SpriteAnimation>();
         sprEnt.getComponent<AnimationController>() = m_animationControllers[id];
         sprEnt.getComponent<xy::Transform>().setOrigin(BubbleOrigin);
@@ -1083,12 +1202,12 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.addComponent<xy::Sprite>() =
             (actorEvent.actor.type == ActorID::BubbleOne) ? m_sprites[SpriteID::BubbleOne] : m_sprites[SpriteID::BubbleTwo];
         entity.addComponent<xy::SpriteAnimation>().play(0);
-        entity.getComponent<xy::Sprite>().setDepth(-2);
+        entity.addComponent<xy::Drawable>().setDepth(-2);
         entity.getComponent<xy::Transform>().setOrigin(BubbleOrigin);
 
         entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::Bubble);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
-        entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(/*CollisionFlags::Player*/0);
         entity.addComponent<xy::QuadTreeItem>().setArea(BubbleBounds);
 
         entity.addComponent<xy::ParticleEmitter>().settings = m_bubbleParticles;
@@ -1111,14 +1230,18 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     case ActorID::FruitSmall:
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::FruitSmall];
         entity.addComponent<xy::SpriteAnimation>().play(xy::Util::Random::value(0, m_sprites[SpriteID::FruitSmall].getAnimationCount() - 1));
-        entity.getComponent<xy::Sprite>().setDepth(2);
+        entity.addComponent<xy::Drawable>().setDepth(2);
         entity.getComponent<xy::Transform>().setOrigin(SmallFoodOrigin);
         break;
     case ActorID::Goobly:
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Goobly];
+        entity.addComponent<xy::Drawable>();
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::Goobly];
         entity.getComponent<xy::Transform>().setOrigin(GooblyOrigin);
+        entity.addComponent<CollisionComponent>().addHitbox(GooblyBounds, CollisionType::NPC);
+        entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
         break;
     case ActorID::LightningOne:
         addSprite(entity, SpriteID::LightningOne);
@@ -1175,7 +1298,7 @@ void GameState::spawnClient(const ClientData& data)
         towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnTwo);
         towerEnt.addComponent<Actor>().type = ActorID::TowerTwo;
     }
-    towerEnt.getComponent<xy::Sprite>().setDepth(6);
+    towerEnt.addComponent<xy::Drawable>().setDepth(6);
     towerEnt.addComponent<xy::SpriteAnimation>();
     towerEnt.addComponent<MapAnimator>().state = MapAnimator::State::Static;
     towerEnt.getComponent<MapAnimator>().speed = 50.f;
@@ -1185,6 +1308,7 @@ void GameState::spawnClient(const ClientData& data)
     entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
     entity.addComponent<xy::SpriteAnimation>().play(0);
     entity.addComponent<MapAnimator>().state = MapAnimator::State::Static;
+    entity.addComponent<xy::Drawable>();
 
     if (data.peerID == m_client.getPeer().getID())
     {
@@ -1355,6 +1479,10 @@ void GameState::spawnMapActors()
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
         entity.addComponent<xy::NetInterpolate>();
 
+        /*
+        Even though these are only actors NPCs require collision with the player to
+        ensure the player state is properly updated during reconciliation
+        */
         switch (m_mapData.actors[i].type)
         {
         default:
@@ -1366,24 +1494,32 @@ void GameState::spawnMapActors()
         case ActorID::Whirlybob:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::WhirlyBob];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::WhirlyBob];
+            entity.addComponent<CollisionComponent>().addHitbox(WhirlyBobBounds, CollisionType::NPC);
+            entity.getComponent<xy::Transform>().setOrigin(WhirlyBobOrigin);
             break;
         case ActorID::Clocksy:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Clocksy];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
+            entity.addComponent<CollisionComponent>().addHitbox(ClocksyBounds, CollisionType::NPC);
             entity.getComponent<xy::Transform>().setOrigin(ClocksyOrigin);
             break;
         case ActorID::Balldock:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Balldock];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Balldock];
+            entity.addComponent<CollisionComponent>().addHitbox(BalldockBounds, CollisionType::NPC);
             entity.getComponent<xy::Transform>().setOrigin(BalldockOrigin);
             break;
         case ActorID::Squatmo:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Squatmo];
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Squatmo];
+            entity.addComponent<CollisionComponent>().addHitbox(SquatmoBounds, CollisionType::NPC);
             entity.getComponent<xy::Transform>().setOrigin(SquatmoOrigin);
             break;
         }
-        entity.getComponent<xy::Sprite>().setDepth(-3); //behind bubbles
+        entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+
+        entity.addComponent<xy::Drawable>().setDepth(-3); //behind bubbles
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.addComponent<xy::ParticleEmitter>().settings = emitterSettings;
     }
@@ -1392,7 +1528,7 @@ void GameState::spawnMapActors()
 void GameState::spawnWarning()
 {
     auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Transform>().setPosition(m_scene.getActiveCamera().getComponent<xy::Transform>().getPosition());
+    entity.addComponent<xy::Transform>().setPosition(/*m_scene.getActiveCamera().getComponent<xy::Transform>().getPosition()*/MapBounds.width / 2.f, MapBounds.height /  2.f);
     entity.getComponent<xy::Transform>().move(xy::DefaultSceneSize.x / 1.8f, -180.f);
     entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString("Hurry Up!");
     entity.getComponent<xy::Text>().setCharacterSize(200);
@@ -1422,6 +1558,7 @@ void GameState::spawnRoundSkip()
         entity.addComponent<xy::Transform>().setPosition(i * spacing, xy::Util::Random::value(-180.f, 0.f));
         entity.getComponent<xy::Transform>().setScale(scale, scale);
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Bonus];
+        entity.addComponent<xy::Drawable>();
         entity.addComponent<xy::SpriteAnimation>().play(i);
         entity.addComponent<xy::Callback>().active = true;
         entity.getComponent<xy::Callback>().function = BallDropper(m_scene);
@@ -1558,4 +1695,10 @@ void GameState::updateUI(const InventoryUpdate& data)
         }
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(bonusCommand);
+}
+
+void GameState::updateLoadingScreen(float dt, sf::RenderWindow& rw)
+{
+    m_loadingScreen.update(dt);
+    rw.draw(m_loadingScreen);
 }

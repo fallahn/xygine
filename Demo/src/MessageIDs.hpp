@@ -43,7 +43,8 @@ namespace MessageID
         NpcMessage,
         ItemMessage,
         MapMessage,
-        NetworkMessage
+        NetworkMessage,
+        MenuMessage
     };
 }
 
@@ -125,6 +126,15 @@ struct NetworkEvent final
         Connected, Disconnected
     }type = Connected;
     sf::Uint8 playerID = 0;
+};
+
+struct MenuEvent final
+{
+    enum
+    {
+        HelpButtonClicked,
+        QuitGameClicked
+    }action;
 };
 
 #endif //DEMO_MESSAGE_IDS_HPP_

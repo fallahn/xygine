@@ -32,6 +32,8 @@ source distribution.
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
 #include <xyginext/ecs/components/SpriteAnimation.hpp>
+#include <xyginext/ecs/components/Drawable.hpp>
+#include <xyginext/ecs/components/QuadTreeItem.hpp>
 #include <xyginext/graphics/SpriteSheet.hpp>
 #include <xyginext/resources/Resource.hpp>
 
@@ -115,6 +117,7 @@ namespace
                 m_timer = 0.f;
                 auto bubbleEnt = m_scene.createEntity();
                 bubbleEnt.addComponent<xy::Sprite>() = m_sprite;
+                bubbleEnt.addComponent<xy::Drawable>();
                 bubbleEnt.addComponent<xy::SpriteAnimation>().play(0);
                 bubbleEnt.addComponent<xy::Transform>().setPosition(entity.getComponent<xy::Transform>().getWorldPosition());
                 bubbleEnt.getComponent<xy::Transform>().setScale(0.f, 0.f);
@@ -135,7 +138,8 @@ MenuDirector::MenuDirector(xy::TextureResource& tr)
     m_timer         (5.f),
     m_acts          (19)
 {
-    m_particleSettings.loadFromFile("assets/particles/panic.xyp", tr);
+    m_panicParticleSettings.loadFromFile("assets/particles/panic.xyp", tr);
+    m_leafParticleSettings.loadFromFile("assets/particles/leaves.xyp", tr);
     
     xy::SpriteSheet spriteSheet;
     spriteSheet.loadFromFile("assets/sprites/menu_sprites.spt", tr);
@@ -223,7 +227,7 @@ MenuDirector::MenuDirector(xy::TextureResource& tr)
 }
 
 //public
-void MenuDirector::handleEvent(const sf::Event& evt)
+void MenuDirector::handleEvent(const sf::Event&)
 {
 
 }
@@ -246,32 +250,37 @@ void MenuDirector::spawnSprite(const Act& act)
 
     auto entity = scene.createEntity();
     entity.addComponent<xy::Sprite>() = m_sprites[act.sprite].sprite;
+    entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::SpriteAnimation>().play(0);
 
-    auto bounds = m_sprites[act.sprite].sprite.getLocalBounds();
+    auto bounds = m_sprites[act.sprite].sprite.getTextureBounds();
     entity.addComponent<xy::Transform>().setPosition(act.direction > 0 ? -bounds.width : xy::DefaultSceneSize.x,
         (xy::DefaultSceneSize.y - bounds.height) - m_sprites[act.sprite].verticalOffset);
     entity.getComponent<xy::Transform>().setScale(-act.direction, 1.f);
+    //entity.getComponent<xy::Transform>().setOrigin(bounds.width / 2.f, 0.f);
+
+    entity.addComponent<xy::QuadTreeItem>().setArea(bounds);
 
     entity.addComponent<xy::Callback>().active = true;
     entity.getComponent<xy::Callback>().function = Runner(act.direction, scene);
 
     if ((act.sprite == MenuSprite::PlayerOne || act.sprite == MenuSprite::PlayerTwo) && act.direction < 0)
     {
-        /*auto spawnEnt = scene.createEntity();
-        entity.getComponent<xy::Transform>().addChild(spawnEnt.addComponent<xy::Transform>());
-        spawnEnt.addComponent<xy::Callback>().active = true;
-        spawnEnt.getComponent<xy::Callback>().function = BubbleSpawner(m_sprites[MenuSprite::Bubble].sprite, scene);*/
-        entity.addComponent<xy::ParticleEmitter>().settings = m_particleSettings;
+        entity.addComponent<xy::ParticleEmitter>().settings = m_panicParticleSettings;
         entity.getComponent<xy::ParticleEmitter>().start();
     }
     else if (act.sprite == MenuSprite::Goobly && act.direction > 0)
     {
-        entity.addComponent<xy::ParticleEmitter>().settings = m_particleSettings;
+        entity.addComponent<xy::ParticleEmitter>().settings = m_panicParticleSettings;
         entity.getComponent<xy::ParticleEmitter>().start();
     }
     else if (act.sprite == MenuSprite::Whirlybob)
     {
-        entity.getComponent<xy::Sprite>().setDepth(-2);
+        entity.getComponent<xy::Drawable>().setDepth(-2);
+    }
+    else if(act.sprite != MenuSprite::Goobly && act.sprite != MenuSprite::Princess)
+    {
+        entity.addComponent<xy::ParticleEmitter>().settings = m_leafParticleSettings;
+        entity.getComponent<xy::ParticleEmitter>().start();
     }
 }

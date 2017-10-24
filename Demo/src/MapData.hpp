@@ -104,6 +104,9 @@ struct ClientState final : public ActorState
     Player::State playerState = Player::State::Walking;
     float playerVelocity = 0.f;
     float playerTimer = 0.f;
+    bool playerCanJump = false;
+    sf::Uint8 playerCanLand = 0;
+    bool playerCanRideBubble = false;
 };
 
 //actor events for spawn/despawn etc
@@ -144,6 +147,12 @@ struct InventoryUpdate final
     sf::Uint32 amount = 0;
     sf::Uint8 lives = 0;
     sf::Uint8 bonusFlags = 0;
+};
+
+struct CollisionFlagsUpdate final
+{
+    sf::Int16 actor = -1;
+    sf::Uint32 newflags = 0;
 };
 
 

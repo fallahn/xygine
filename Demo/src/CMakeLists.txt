@@ -14,6 +14,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/GameState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/IntroState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/InventoryDirector.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/LoadingScreen.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MapAnimator.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MenuState.cpp
@@ -26,6 +27,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/PowerupSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ScoreTag.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Server.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/SpringFlower.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sha1.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/TextboxDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/TowerDirector.cpp

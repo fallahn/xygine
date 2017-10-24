@@ -59,11 +59,12 @@ namespace tmx
 
 struct ActorEvent;
 struct ClientData;
+class LoadingScreen;
 
 class GameState final : public xy::State
 {
 public:
-    GameState(xy::StateStack&, xy::State::Context, SharedStateData&);
+    GameState(xy::StateStack&, xy::State::Context, SharedStateData&, LoadingScreen&);
 
     xy::StateID stateID() const override { return StateID::Game; }
 
@@ -87,6 +88,7 @@ private:
     GameServer m_server;
     sf::Clock m_clientTimeout;
     SharedStateData& m_sharedData;
+    LoadingScreen& m_loadingScreen;
 
     ClientData m_clientData;
     PlayerInput m_playerInput;
@@ -118,6 +120,8 @@ private:
     void spawnRoundSkip();
 
     void updateUI(const InventoryUpdate&);
+
+    void updateLoadingScreen(float, sf::RenderWindow&) override;
 };
 
 #endif //DEMO_GAME_STATE_HPP_

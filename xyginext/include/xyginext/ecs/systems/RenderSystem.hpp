@@ -25,45 +25,35 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UI_HITBOX_HPP_
-#define XY_UI_HITBOX_HPP_
+#ifndef XY_RENDER_SYSTEM_HPP_
+#define XY_RENDER_SYSTEM_HPP_
 
-#include <xyginext/Config.hpp>
+#include <xyginext/ecs/System.hpp>
 
-#include <SFML/Config.hpp>
-#include <SFML/Graphics/Rect.hpp>
-
-#include <array>
+#include <SFML/Graphics/Drawable.hpp>
 
 namespace xy
 {
     /*!
-    \brief Used to trigger callbacks when hit events occur in the component's area
+    \brief Used to draw all entities which have a Drawable and Transform component.
+    The RenderSystem is used to depth sort and draw all entities which have a 
+    Drawable and Transform component attached, and optionally a Sprite component.
+    NOTE multiple components which rely on a Drawable component cannot exist on the same entity,
+    as only one set of vertices will be available.
     */
-    class XY_EXPORT_API UIHitBox final
+    class XY_EXPORT_API RenderSystem final : public xy::System, public sf::Drawable 
     {
     public:
-        enum CallbackID
-        {
-            MouseEnter = 1,
-            MouseExit,
-            MouseDown,
-            MouseUp,
-            MouseMotion,
-            KeyDown,
-            KeyUp,
-            Selected,
-            Unselected,
-            ControllerButtonDown,
-            ControllerButtonUp,
-            Count
-        };
+        explicit RenderSystem(xy::MessageBus&);
 
-        sf::FloatRect area;
-        bool active;
-        std::array<sf::Uint32, CallbackID::Count> callbacks{};
-        sf::Int32 ID = -1;
+        void process(float) override;
+
+    private:
+        bool m_wantsSorting;
+
+        void onEntityAdded(xy::Entity) override;
+        void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }
 
-#endif //XY_UI_HITBOX_HPP_
+#endif //XY_RENDER_SYSTEM_HPP_

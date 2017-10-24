@@ -46,7 +46,7 @@ source distribution.
 
 namespace
 {
-    std::array<float, 5u> spawnTimes = { 12.f, 15.f, 14.f, 19.f, 16.f };
+    std::array<float, 5u> spawnTimes = { 11.f, 14.f, 13.f, 17.f, 14.f };
 }
 
 std::array<Bonus::Value, 5u> Bonus::valueMap  = {B,O,N,U,S}; //this should be const but g++ complains
