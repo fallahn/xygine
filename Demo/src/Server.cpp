@@ -888,7 +888,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     case ActorID::Goobly:
         entity.addComponent<CollisionComponent>().addHitbox(GooblyBounds, CollisionType::NPC);
         entity.getComponent<xy::Transform>().setOrigin(GooblyOrigin);
-        collisionFlags &= CollisionFlags::Solid;
+        collisionFlags &= ~CollisionFlags::Solid;
         break;
     case ActorID::Balldock:
         entity.getComponent<NPC>().velocity.x = (xy::Util::Random::value(0, 1) == 1) ? -1.f : 1.f;
