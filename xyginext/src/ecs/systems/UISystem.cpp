@@ -214,8 +214,10 @@ void UISystem::process(float)
         auto tx = e.getComponent<Transform>().getWorldTransform();
         auto& input = e.getComponent<UIHitBox>();
 
+        //-----movement input-----//
         auto area = tx.transformRect(input.area);
-        if (area.contains(m_eventPosition))
+        bool contains = false;
+        if (contains = area.contains(m_eventPosition))
         {
             if (!input.active)
             {
@@ -245,19 +247,21 @@ void UISystem::process(float)
         }
 
 
-        //----Keyboard / Controller input----//
+        //----button input----//
         if (currentIndex == m_selectedIndex)
         {
-            for (auto f : m_mouseDownEvents)
+            if (contains)
             {
-                m_buttonCallbacks[input.callbacks[UIHitBox::MouseDown]](e, f);
-            }
+                for (auto f : m_mouseDownEvents)
+                {
+                    m_buttonCallbacks[input.callbacks[UIHitBox::MouseDown]](e, f);
+                }
 
-            for (auto f : m_mouseUpEvents)
-            {
-                m_buttonCallbacks[input.callbacks[UIHitBox::MouseUp]](e, f);
+                for (auto f : m_mouseUpEvents)
+                {
+                    m_buttonCallbacks[input.callbacks[UIHitBox::MouseUp]](e, f);
+                }
             }
-            
             for (auto key : m_keyDownEvents)
             {
                 m_keyboardCallbacks[input.callbacks[UIHitBox::KeyDown]](e, key);
