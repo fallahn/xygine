@@ -228,14 +228,7 @@ void UISystem::process(float)
                 m_selectedIndex = currentIndex;
                 select(m_selectedIndex);
             }
-            for (auto f : m_mouseDownEvents)
-            {
-                m_buttonCallbacks[input.callbacks[UIHitBox::MouseDown]](e, f);
-            }
-            for (auto f : m_mouseUpEvents)
-            {
-                m_buttonCallbacks[input.callbacks[UIHitBox::MouseUp]](e, f);
-            }
+
             if (Util::Vector::lengthSquared(m_movementDelta) > 0)
             {
                 m_movementCallbacks[input.callbacks[UIHitBox::MouseMotion]](e, m_movementDelta);
@@ -255,6 +248,16 @@ void UISystem::process(float)
         //----Keyboard / Controller input----//
         if (currentIndex == m_selectedIndex)
         {
+            for (auto f : m_mouseDownEvents)
+            {
+                m_buttonCallbacks[input.callbacks[UIHitBox::MouseDown]](e, f);
+            }
+
+            for (auto f : m_mouseUpEvents)
+            {
+                m_buttonCallbacks[input.callbacks[UIHitBox::MouseUp]](e, f);
+            }
+            
             for (auto key : m_keyDownEvents)
             {
                 m_keyboardCallbacks[input.callbacks[UIHitBox::KeyDown]](e, key);
@@ -282,9 +285,10 @@ void UISystem::process(float)
     //DPRINT("Selected Index", std::to_string(m_selectedIndex));
 
     m_previousEventPosition = m_eventPosition;
+    m_movementDelta = {};
+
     m_mouseUpEvents.clear();
     m_mouseDownEvents.clear();
-    m_movementDelta = {};
 
     m_keyDownEvents.clear();
     m_keyUpEvents.clear();
