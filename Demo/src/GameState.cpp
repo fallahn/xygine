@@ -404,8 +404,8 @@ void GameState::loadAssets()
     spriteSheet.loadFromFile("assets/sprites/power_ups.spt", m_textureResource);
     m_sprites[SpriteID::FlameOne] = spriteSheet.getSprite("player_one_flame");
     m_sprites[SpriteID::FlameTwo] = spriteSheet.getSprite("player_two_flame");
-    m_sprites[SpriteID::LightningOne] = spriteSheet.getSprite("player_one_lightning");
-    m_sprites[SpriteID::LightningTwo] = spriteSheet.getSprite("player_two_lightning");
+    m_sprites[SpriteID::LightningOne] = spriteSheet.getSprite("player_one_star");
+    m_sprites[SpriteID::LightningTwo] = spriteSheet.getSprite("player_two_star");
     m_sprites[SpriteID::WaterOne] = spriteSheet.getSprite("player_one_water");
     m_sprites[SpriteID::WaterTwo] = spriteSheet.getSprite("player_two_water");
 
@@ -418,13 +418,13 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::FlameTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two_flame");
     m_animationControllers[SpriteID::FlameTwo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_two_flame");
 
-    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one_lightning");
-    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one_lightning");
-    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one_lightning");
+    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one_star");
+    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one_star");
+    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one_star");
 
-    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_two_lightning");
-    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two_lightning");
-    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_two_lightning");
+    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_two_star");
+    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two_star");
+    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_two_star");
 
     //dudes to climb tower
     spriteSheet.loadFromFile("assets/sprites/tower_sprites.spt", m_textureResource);
