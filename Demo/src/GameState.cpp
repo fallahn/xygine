@@ -235,9 +235,11 @@ void GameState::handleMessage(const xy::Message& msg)
         else if (data.action == MenuEvent::ContinueGameClicked)
         {
             requestStackPop();
+           
+            auto actor = m_playerInput.getPlayerEntity().getComponent<Actor>();
+            m_client.sendPacket(PacketID::ClientContinue, actor.id, xy::NetFlag::Reliable, 1);
 
-            auto id = m_playerInput.getPlayerEntity().getComponent<Actor>().id;
-            m_client.sendPacket(PacketID::ClientContinue, id, xy::NetFlag::Reliable, 1);
+            spawnTowerDude(actor.type);
         }
     }
 
@@ -249,7 +251,7 @@ bool GameState::update(float dt)
     DPRINT("Actor count", std::to_string(debugActorCount));
     //DPRINT("Player Server State", std::to_string(debugPlayerState));
 #ifdef XY_DEBUG
-    switch (Player::State(debugPlayerState))
+    /*switch (Player::State(debugPlayerState))
     {
     default:
         DPRINT("Player state", std::to_string(debugPlayerState));
@@ -266,7 +268,7 @@ bool GameState::update(float dt)
     case Player::State::Walking:
         DPRINT("Player server state", "Walking");
         break;
-    }
+    }*/
 #endif //XY_DEBUG
     
     xy::NetEvent evt;
@@ -1255,39 +1257,24 @@ void GameState::spawnClient(const ClientData& data)
     entity.addComponent<xy::Transform>().setPosition(data.spawnX, data.spawnY);
     entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::PlayerOne];
 
-    auto towerEnt = m_scene.createEntity(); //little dude climbing tower
-    towerEnt.addComponent<xy::Transform>();
-
     if (data.actor.type == ActorID::PlayerOne)
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerOne];
         entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
         entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerOne;
-
-        towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeOne];
-        towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnOne);
-        towerEnt.addComponent<Actor>().type = ActorID::TowerOne;
     }
     else
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerTwo];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerTwo;
-
-        towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeTwo];
-        towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnTwo);
-        towerEnt.addComponent<Actor>().type = ActorID::TowerTwo;
     }
-    towerEnt.addComponent<xy::Drawable>().setDepth(6);
-    towerEnt.addComponent<xy::SpriteAnimation>();
-    towerEnt.addComponent<MapAnimator>().state = MapAnimator::State::Static;
-    towerEnt.getComponent<MapAnimator>().speed = 50.f;
-    towerEnt.addComponent<xy::CommandTarget>().ID = CommandID::TowerDude;
-    towerEnt.addComponent<xy::Callback>().function = TowerGuyCallback(m_scene);
 
     entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
     entity.addComponent<xy::SpriteAnimation>().play(0);
     entity.addComponent<MapAnimator>().state = MapAnimator::State::Static;
     entity.addComponent<xy::Drawable>();
+
+    spawnTowerDude(data.actor.type);
 
     if (data.peerID == m_client.getPeer().getID())
     {
@@ -1553,6 +1540,31 @@ void GameState::spawnRoundSkip()
 
     auto* msg = getContext().appInstance.getMessageBus().post<MapEvent>(MessageID::MapMessage);
     msg->type = MapEvent::BonusSwitch;
+}
+
+void GameState::spawnTowerDude(sf::Int16 actorType)
+{
+    auto towerEnt = m_scene.createEntity(); //little dude climbing tower
+    towerEnt.addComponent<xy::Transform>();
+
+    if (actorType == ActorID::PlayerOne)
+    {
+        towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeOne];
+        towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnOne);
+        towerEnt.addComponent<Actor>().type = ActorID::TowerOne;
+    }
+    else
+    {
+        towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeTwo];
+        towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnTwo);
+        towerEnt.addComponent<Actor>().type = ActorID::TowerTwo;
+    }
+    towerEnt.addComponent<xy::Drawable>().setDepth(6);
+    towerEnt.addComponent<xy::SpriteAnimation>();
+    towerEnt.addComponent<MapAnimator>().state = MapAnimator::State::Static;
+    towerEnt.getComponent<MapAnimator>().speed = 50.f;
+    towerEnt.addComponent<xy::CommandTarget>().ID = CommandID::TowerDude;
+    towerEnt.addComponent<xy::Callback>().function = TowerGuyCallback(m_scene);
 }
 
 void GameState::updateUI(const InventoryUpdate& data)

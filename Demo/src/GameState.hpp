@@ -118,6 +118,7 @@ private:
     void spawnMapActors();
     void spawnWarning();
     void spawnRoundSkip();
+    void spawnTowerDude(sf::Int16);
 
     void updateUI(const InventoryUpdate&);
     void updateLevelDisplay(sf::Uint8);

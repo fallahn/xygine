@@ -166,7 +166,7 @@ void PlayerSystem::process(float)
 
         //TODO map change animation
 #ifdef XY_DEBUG
-        if (!m_isServer)
+        /*if (!m_isServer)
         {
             switch (player.state)
             {
@@ -186,7 +186,7 @@ void PlayerSystem::process(float)
                 DPRINT("Player state", "Walking");
                 break;
             }
-        }
+        }*/
 #endif
 
     }

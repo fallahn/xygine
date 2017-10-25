@@ -260,7 +260,7 @@ void GameServer::update()
             m_gameOver = gameOver;
 
 #ifdef XY_DEBUG
-            m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.actorCount, xy::NetFlag::Unreliable, 0);
+            //m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.actorCount, xy::NetFlag::Unreliable, 0);
 #endif
         }
     }
@@ -401,6 +401,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
 
                 player.timer = PlayerInvincibleTime;
                 player.lives = PlayerStartLives;
+                player.bonusFlags = 0;
 
                 auto* msg = m_messageBus.post<GameEvent>(MessageID::GameMessage);
                 msg->action = GameEvent::Restarted;
