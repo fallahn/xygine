@@ -44,7 +44,8 @@ namespace MessageID
         ItemMessage,
         MapMessage,
         NetworkMessage,
-        MenuMessage
+        MenuMessage,
+        GameMessage
     };
 }
 
@@ -136,6 +137,15 @@ struct MenuEvent final
         QuitGameClicked,
         ContinueGameClicked
     }action;
+};
+
+struct GameEvent final
+{
+    enum
+    {
+        Restarted
+    }action;
+    sf::Uint8 playerID = 0;
 };
 
 #endif //DEMO_MESSAGE_IDS_HPP_

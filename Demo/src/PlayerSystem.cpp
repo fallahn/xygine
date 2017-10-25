@@ -48,7 +48,6 @@ namespace
     const float initialJumpVelocity = 840.f;
     const float minJumpVelocity = -initialJumpVelocity * 0.25f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocit
     const float dyingTime = 2.f;
-    const float invincibleTime = 2.f;
 
     const sf::Uint32 UpMask = CollisionFlags::PlayerMask & ~(CollisionFlags::Bubble/*|CollisionFlags::Platform*/);
     const sf::Uint32 DownMask = CollisionFlags::PlayerMask;
@@ -135,7 +134,7 @@ void PlayerSystem::process(float)
                     player.direction =
                         (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
 
-                    player.timer = invincibleTime;
+                    player.timer = PlayerInvincibleTime;
                 }
                 else
                 {

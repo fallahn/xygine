@@ -155,8 +155,8 @@ void GameoverState::load(const SharedStateData& data)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
-            requestStackClear();
-            requestStackPush(StateID::MainMenu);
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::QuitGameClicked;
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
@@ -164,8 +164,8 @@ void GameoverState::load(const SharedStateData& data)
     {
         if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
         {
-            requestStackClear();
-            requestStackPush(StateID::MainMenu);
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::QuitGameClicked;
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
@@ -173,8 +173,8 @@ void GameoverState::load(const SharedStateData& data)
     {
         if (button == 0)
         {
-            requestStackClear();
-            requestStackPush(StateID::MainMenu);
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::QuitGameClicked;
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;

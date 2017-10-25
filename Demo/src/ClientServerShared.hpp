@@ -119,6 +119,8 @@ static const sf::FloatRect MapBounds(0.f, 0.f, 16.f * 64.f, 17.f * 64.f);
 
 static const sf::Vector2f PlayerOneSpawn(102.f, 926.f);
 static const sf::Vector2f PlayerTwoSpawn(922.f, 926.f);
+static const float PlayerInvincibleTime = 2.f;
+static const sf::Uint8 PlayerStartLives = 3;
 
 static const sf::Vector2f PowerupOneSpawn(352.f, 960.f);
 static const sf::Vector2f PowerupTwoSpawn(672.f, 960.f);

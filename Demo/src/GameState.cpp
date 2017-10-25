@@ -236,27 +236,8 @@ void GameState::handleMessage(const xy::Message& msg)
         {
             requestStackPop();
 
-            //try reconnecting
-            bool connected = false;
-            if (m_sharedData.hostState == SharedStateData::Host)
-            {
-                connected = m_client.connect("localhost", 40003);
-            }
-            else
-            {
-                connected = m_client.connect(m_sharedData.remoteIP, 40003);
-            }
-
-            if (!connected)
-            {
-                m_sharedData.error = "Failed to connect to server";
-                requestStackPush(StateID::Error);
-            }
-            else
-            {
-                //reset UI
-                updateLevelDisplay(1);
-            }
+            auto id = m_playerInput.getPlayerEntity().getComponent<Actor>().id;
+            m_client.sendPacket(PacketID::ClientContinue, id, xy::NetFlag::Reliable, 1);
         }
     }
 
@@ -948,15 +929,6 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         spawnRoundSkip();
         break;
     case PacketID::GameOver:
-    {
-        xy::Command cmd;
-        cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
-        cmd.action = [&](xy::Entity entity, float) {m_scene.destroyEntity(entity); };
-        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
-        m_playerInput.setPlayerEntity({ 0,0 });
-    }
-
-        m_client.disconnect();
         requestStackPush(StateID::GameOver);
         break;
     case PacketID::CollisionFlag:

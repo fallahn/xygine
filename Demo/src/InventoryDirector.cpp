@@ -31,6 +31,7 @@ source distribution.
 #include "MapData.hpp"
 #include "CommandIDs.hpp"
 #include "BonusSystem.hpp"
+#include "ClientServerShared.hpp"
 
 #include <xyginext/network/NetHost.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -68,6 +69,19 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
     switch (msg.id)
     {
     default: break;
+    case MessageID::GameMessage:
+    {
+        const auto& data = msg.getData<GameEvent>();
+        if (data.action == GameEvent::Restarted)
+        {
+            m_playerValues[data.playerID].bonusFlags = 0;
+            m_playerValues[data.playerID].lives = PlayerStartLives;
+            m_playerValues[data.playerID].score = 0;
+
+            sendUpdate(data.playerID, 0);
+        }
+    }
+        break;
     case MessageID::NpcMessage:
     {
         const auto& data = msg.getData<NpcEvent>();

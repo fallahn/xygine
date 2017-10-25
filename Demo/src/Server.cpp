@@ -183,7 +183,8 @@ void GameServer::update()
             }
 
             //only update the server if clients are connected
-            if (m_host.getConnectedPeerCount() > 0 || m_changingMaps)
+            if ((m_host.getConnectedPeerCount() > 0 || m_changingMaps)
+                && !m_gameOver)
             {
                 m_scene.update(updateRate);
 
@@ -262,7 +263,6 @@ void GameServer::update()
             m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.actorCount, xy::NetFlag::Unreliable, 0);
 #endif
         }
-
     }
 
     //cleanly disconnect any clients
@@ -381,6 +381,35 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
             player.currentInput = (player.currentInput + 1) % player.history.size();
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
+        break;
+    case PacketID::ClientContinue:
+    {
+        auto id = evt.packet.as<sf::Int16>();
+        auto entity = m_scene.getEntity(id);
+
+        //reset the player info
+        if (entity.getComponent<Actor>().id == id)
+        {
+            auto& player = entity.getComponent<Player>();
+            if (player.state == Player::State::Dead)
+            {
+                entity.getComponent<xy::Transform>().setPosition(player.spawnPosition);
+                player.state = Player::State::Walking;
+                player.direction =
+                    (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
+
+                player.timer = PlayerInvincibleTime;
+                player.lives = PlayerStartLives;
+
+                auto* msg = m_messageBus.post<GameEvent>(MessageID::GameMessage);
+                msg->action = GameEvent::Restarted;
+                msg->playerID = player.playerNumber;
+
+                m_clients[player.playerNumber].level = 1;
+                m_host.sendPacket(m_clients[player.playerNumber].peer, PacketID::LevelUpdate, m_clients[player.playerNumber].level, xy::NetFlag::Reliable, 1);
+            }
+        }
     }
         break;
     case PacketID::MapReady:
