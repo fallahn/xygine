@@ -90,8 +90,8 @@ private:
     SharedStateData& m_sharedData;
     LoadingScreen& m_loadingScreen;
 
-    ClientData m_clientData;
-    PlayerInput m_playerInput;
+    std::array<ClientData,2u> m_clientData;
+    std::array<PlayerInput, 2u> m_playerInputs;
 
     xy::ConfigFile m_scores;
 

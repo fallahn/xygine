@@ -330,6 +330,8 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         //if client loaded send initial positions
     case PacketID::ClientReady:
     {
+        sf::Uint8 playerCount = evt.packet.as<sf::Uint8>();
+        
         std::size_t playerNumber = 0;
         if (m_clients[0].data.actor.id != ActorID::None)
         {

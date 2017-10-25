@@ -41,6 +41,7 @@ struct SharedStateData
     std::string error;
 
     std::string score;
+    std::size_t playerCount = 1;
 };
 
 #endif //DEMO_GAME_SHARED_STATE_DATA_HPP_

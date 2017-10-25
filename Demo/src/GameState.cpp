@@ -117,7 +117,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_scene             (ctx.appInstance.getMessageBus()),
     m_sharedData        (sharedData),
     m_loadingScreen     (ls),
-    m_playerInput       (m_client),
+    m_playerInputs      ({ PlayerInput(m_client), PlayerInput(m_client) }),
     m_currentMapTexture (0)
 {
     launchLoadingScreen();
@@ -166,7 +166,11 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 //public
 bool GameState::handleEvent(const sf::Event& evt)
 {
-    m_playerInput.handleEvent(evt);
+    for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+    {
+        m_playerInputs[i].handleEvent(evt);
+    }
+
     m_scene.forwardEvent(evt);
 
     if (evt.type == sf::Event::KeyReleased)
@@ -189,7 +193,7 @@ bool GameState::handleEvent(const sf::Event& evt)
     }
     else if (evt.type == sf::Event::JoystickButtonReleased)
     {
-        if (evt.joystickButton.joystickId == 0)
+        //if (evt.joystickButton.joystickId == 0)
         {
             if (evt.joystickButton.button == 7) //start on xbox
             {
@@ -209,12 +213,18 @@ void GameState::handleMessage(const xy::Message& msg)
         {
             spawnMapActors();
             
-            m_playerInput.setEnabled(true);
+            for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+            {
+                m_playerInputs[i].setEnabled(true);
+            }
             m_scene.setSystemActive<CollisionSystem>(true);
             m_scene.setSystemActive<xy::InterpolationSystem>(true);
 
             //send OK to server to continue game
-            m_client.sendPacket(PacketID::MapReady, m_clientData.actor.type, xy::NetFlag::Reliable, 1);
+            for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+            {
+                m_client.sendPacket(PacketID::MapReady, m_clientData[i].actor.type, xy::NetFlag::Reliable, 1);
+            }
         }
     }
     else if (msg.id == MessageID::MenuMessage)
@@ -236,10 +246,18 @@ void GameState::handleMessage(const xy::Message& msg)
         {
             requestStackPop();
            
-            auto actor = m_playerInput.getPlayerEntity().getComponent<Actor>();
+            for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+            {
+                auto actor = m_playerInputs[i].getPlayerEntity().getComponent<Actor>();
+                m_client.sendPacket(PacketID::ClientContinue, actor.id, xy::NetFlag::Reliable, 1);
+
+                spawnTowerDude(actor.type);
+            }
+
+            /*auto actor = m_playerInput.getPlayerEntity().getComponent<Actor>();
             m_client.sendPacket(PacketID::ClientContinue, actor.id, xy::NetFlag::Reliable, 1);
 
-            spawnTowerDude(actor.type);
+            spawnTowerDude(actor.type);*/
         }
     }
 
@@ -282,7 +300,10 @@ bool GameState::update(float dt)
     }
     handleTimeout();
     
-    m_playerInput.update();
+    for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+    {
+        m_playerInputs[i].update();
+    }
     m_scene.update(dt);
     return false;
 }
@@ -843,8 +864,12 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             spawnMapActors();
 
             //send ready signal
-            m_client.sendPacket(PacketID::ClientReady, 0, xy::NetFlag::Reliable, 1);
-            m_playerInput.setEnabled(true);
+            m_client.sendPacket(PacketID::ClientReady, sf::Uint8(m_sharedData.playerCount), xy::NetFlag::Reliable, 1);
+            
+            for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+            {
+                m_playerInputs[i].setEnabled(true);
+            }
         }
         else
         {
@@ -866,11 +891,14 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         debugShape.setPosition(state.x, state.y);
         debugPlayerState = sf::Uint8(state.playerState);
 #endif 
-
-        //reconcile
-        if (m_playerInput.isEnabled())
+        
+        //reconcile - seems a bit contrived, but must match the player input with 2 local players
+        for (auto i = 0u; i < m_sharedData.playerCount; ++i)
         {
-            m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
+            if(m_clientData[i].actor.id == state.actor.id && m_playerInputs[i].isEnabled())
+            {
+                m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInputs[i].getPlayerEntity());
+            }
         }
     }
         break;
@@ -1257,6 +1285,7 @@ void GameState::spawnClient(const ClientData& data)
     entity.addComponent<xy::Transform>().setPosition(data.spawnX, data.spawnY);
     entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::PlayerOne];
 
+    std::size_t playerIndex = 0; //index of the client/player input array
     if (data.actor.type == ActorID::PlayerOne)
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerOne];
@@ -1267,6 +1296,11 @@ void GameState::spawnClient(const ClientData& data)
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerTwo];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerTwo;
+
+        if (m_sharedData.playerCount == 2)
+        {
+            playerIndex = 1;
+        }
     }
 
     entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
@@ -1279,12 +1313,12 @@ void GameState::spawnClient(const ClientData& data)
     if (data.peerID == m_client.getPeer().getID())
     {
         //this is us, stash the info
-        m_clientData = data;
+        m_clientData[playerIndex] = data;
 
         //add a local controller
         entity.addComponent<Player>().playerNumber = (data.actor.type == ActorID::PlayerOne) ? 0 : 1;
         entity.getComponent<Player>().spawnPosition = { data.spawnX, data.spawnY };
-        m_playerInput.setPlayerEntity(entity);
+        m_playerInputs[playerIndex].setPlayerEntity(entity);
 
         entity.addComponent<CollisionComponent>().addHitbox(PlayerBounds, CollisionType::Player);
         entity.getComponent<CollisionComponent>().addHitbox(PlayerFoot, CollisionType::Foot);
@@ -1353,7 +1387,10 @@ void GameState::killActor(const ActorEvent& actorEvent)
 
 void GameState::switchMap(const MapData& data)
 {
-    m_playerInput.setEnabled(false);
+    for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+    {
+        m_playerInputs[i].setEnabled(false);
+    }
 
     //clear remaining actors (should just be collectables / bubbles)
     //as well as any geometry
@@ -1576,7 +1613,7 @@ void GameState::updateUI(const InventoryUpdate& data)
     };
 
     //keep a copy of our score for the scoreboard
-    if (data.playerID == m_clientData.playerNumber)
+    if (data.playerID == m_clientData[0].playerNumber)
     {
         m_sharedData.score = std::to_string(data.score);
     }
