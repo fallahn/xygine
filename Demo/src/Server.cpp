@@ -79,6 +79,8 @@ namespace
     const float MaxPauseTime = 5.f * 60.f;
 }
 
+std::bitset<4> GameServer::GameOverOrPaused = { (1 << GameOver) | (1 << Paused) }; //should be constexpr but makes g++ cry
+
 GameServer::GameServer()
     : m_ready               (false),
     m_running               (false),

@@ -153,7 +153,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 
     ctx.renderWindow.setMouseCursorVisible(false);
 
-    sharedData.playerCount = 2;
+    //sharedData.playerCount = 2;
 
 #ifdef XY_DEBUG
     debugShape.setRadius(16.f);
