@@ -29,6 +29,7 @@ source distribution.
 #define DEMO_GAME_MENU_STATE_HPP_
 
 #include <xyginext/core/State.hpp>
+#include <xyginext/core/ConfigFile.hpp>
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/resources/Resource.hpp>
 
@@ -65,6 +66,8 @@ private:
 
     bool m_helpShown;
     xy::PostBlur* m_blurEffect;
+
+    xy::ConfigFile m_keyBinds;
 
     void loadKeybinds();
     void createScene();

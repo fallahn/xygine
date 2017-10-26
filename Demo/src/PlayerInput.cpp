@@ -170,8 +170,6 @@ void PlayerInput::checkControllerInput()
 
     auto startInput = m_currentInput;
 
-    m_prevPad = 0; 
-
     //DPad
     if (sf::Joystick::getAxisPosition(m_inputBinding.controllerID, sf::Joystick::PovX) < -deadZone)
     {
@@ -197,7 +195,6 @@ void PlayerInput::checkControllerInput()
     }
 
     
-    m_prevStick = 0;
     //left stick (xbox controller)
     if (sf::Joystick::getAxisPosition(m_inputBinding.controllerID, sf::Joystick::X) < -deadZone)
     {

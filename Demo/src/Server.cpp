@@ -373,7 +373,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
     case PacketID::ClientReady:
     {
         sf::Uint8 playerCount = evt.packet.as<sf::Uint8>();
-        std::cout << (int)playerCount << std::endl;
+
         for (auto i = 0; i < playerCount; ++i)
         {
             std::size_t playerNumber = 0;
@@ -888,6 +888,10 @@ void GameServer::beginNewRound()
                 if (entity.getComponent<Player>().lives > 0)
                 {
                     entity.getComponent<Player>().state = Player::State::Walking;
+                }
+                else //we have to set this else player remains 'disabled'
+                {
+                    entity.getComponent<Player>().state = Player::State::Dead;
                 }
             };
             m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);

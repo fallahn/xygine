@@ -117,7 +117,7 @@ void PlayerSystem::process(float)
                 player.canShoot = false;
             }
             else if ((currentMask & InputFlag::Shoot) == 0
-                && player.state != Player::State::Dying)
+                && (player.state == Player::State::Walking || player.state == Player::State::Jumping))
             {
                 player.canShoot = true;
             }
@@ -159,9 +159,14 @@ void PlayerSystem::process(float)
             xMotion = tx.getPosition().x - xMotion;
             animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
         }
-        else if(player.state != Player::State::Disabled)
+        else if(player.state == Player::State::Dying)
         {
             animController.nextAnimation = AnimationController::Die;
+        }
+        else if (player.state == Player::State::Dead /*|| 
+            (player.state == Player::State::Disabled && player.lives <= 0)*/)
+        {
+            animController.nextAnimation = AnimationController::Dead;
         }
 
         //TODO map change animation

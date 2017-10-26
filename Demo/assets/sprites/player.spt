@@ -61,6 +61,14 @@ sprite_sheet player
 			loop = false
 		}
 
+		animation dead
+		{
+			frame = 0,0,0,0
+
+			framerate = 22
+			loop = true
+		}
+
 		animation jump_up
 		{
 			frame = 320,0,64,64
@@ -134,6 +142,14 @@ sprite_sheet player
 
 			framerate = 12
 			loop = false
+		}
+
+		animation dead
+		{
+			frame = 0,0,0,0
+
+			framerate = 22
+			loop = true
 		}
 
 		animation jump_up

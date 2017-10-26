@@ -63,7 +63,6 @@ source distribution.
 #include <xyginext/util/Math.hpp>
 
 #include <xyginext/core/FileSystem.hpp>
-#include <xyginext/core/ConfigFile.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -137,11 +136,10 @@ void MenuState::loadKeybinds()
     //check user cfg exists
     auto usrDir = xy::FileSystem::getConfigDirectory(dataDir);
     const std::string fileName("keybinds.cfg");
-    xy::ConfigFile keyBinds;
 
-    auto setP1Defaults = [&keyBinds]()
+    auto setP1Defaults = [&]()
     {
-        auto* p1 = keyBinds.addObject("player_one");
+        auto* p1 = m_keyBinds.addObject("player_one");
         p1->addProperty("left", std::to_string(sf::Keyboard::A));
         p1->addProperty("right", std::to_string(sf::Keyboard::D));
         p1->addProperty("jump", std::to_string(sf::Keyboard::W));
@@ -151,9 +149,9 @@ void MenuState::loadKeybinds()
         p1->addProperty("controller_shoot", "1");
     };
 
-    auto setP2Defaults = [&keyBinds]()
+    auto setP2Defaults = [&]()
     {
-        auto* p2 = keyBinds.addObject("player_two");
+        auto* p2 = m_keyBinds.addObject("player_two");
         p2->addProperty("left", std::to_string(sf::Keyboard::Left));
         p2->addProperty("right", std::to_string(sf::Keyboard::Right));
         p2->addProperty("jump", std::to_string(sf::Keyboard::Up));
@@ -163,30 +161,143 @@ void MenuState::loadKeybinds()
         p2->addProperty("controller_shoot", "1");
     };
 
-    keyBinds.loadFromFile(usrDir + fileName);
+    m_keyBinds.loadFromFile(usrDir + fileName);
 
-    if (!keyBinds.findObjectWithName("player_one"))
+    if (!m_keyBinds.findObjectWithName("player_one"))
     {
         setP1Defaults();
-        keyBinds.save(usrDir + fileName);
+        m_keyBinds.save(usrDir + fileName);
     }
 
-    if (!keyBinds.findObjectWithName("player_two"))
+    if (!m_keyBinds.findObjectWithName("player_two"))
     {
         setP2Defaults();
-        keyBinds.save(usrDir + fileName);
+        m_keyBinds.save(usrDir + fileName);
     }
 
-    m_sharedStateData.inputBindings[0].controllerID = 0;
-    m_sharedStateData.inputBindings[0].keys[InputBinding::Left] = sf::Keyboard::A;
-    m_sharedStateData.inputBindings[0].keys[InputBinding::Right] = sf::Keyboard::D;
-    m_sharedStateData.inputBindings[0].keys[InputBinding::Jump] = sf::Keyboard::W;
-    m_sharedStateData.inputBindings[0].keys[InputBinding::Shoot] = sf::Keyboard::Space;
+    bool needsUpdate = false;
+    auto* binds = m_keyBinds.findObjectWithName("player_one");
+    xy::ConfigProperty* property = nullptr;
 
-    m_sharedStateData.inputBindings[1].keys[InputBinding::Left] = sf::Keyboard::Left;
-    m_sharedStateData.inputBindings[1].keys[InputBinding::Right] = sf::Keyboard::Right;
-    m_sharedStateData.inputBindings[1].keys[InputBinding::Jump] = sf::Keyboard::Up;
-    m_sharedStateData.inputBindings[1].keys[InputBinding::Shoot] = sf::Keyboard::Numpad0;
+    //-----player one-----//
+    if (property = binds->findProperty("controller_id"))
+    {
+        m_sharedStateData.inputBindings[0].controllerID = property->getValue<sf::Int32>();
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[0].controllerID = 0;
+        binds->addProperty("controller_id", "0");
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("left"))
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Left] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Left] = sf::Keyboard::A;
+        binds->addProperty("left", std::to_string(sf::Keyboard::A));
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("right"))
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Right] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Right] = sf::Keyboard::D;
+        binds->addProperty("right", std::to_string(sf::Keyboard::D));
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("jump"))
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Jump] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Jump] = sf::Keyboard::W;
+        binds->addProperty("jump", std::to_string(sf::Keyboard::W));
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("shoot"))
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Shoot] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Shoot] = sf::Keyboard::Space;
+        binds->addProperty("shoot", std::to_string(sf::Keyboard::Space));
+        needsUpdate = true;
+    }
+
+
+    //-----player two-----//
+    binds = m_keyBinds.findObjectWithName("player_two");
+    if (property = binds->findProperty("controller_id"))
+    {
+        m_sharedStateData.inputBindings[1].controllerID = property->getValue<sf::Int32>();
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[1].controllerID = 1;
+        binds->addProperty("controller_id", "1");
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("left"))
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Left] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Left] = sf::Keyboard::Left;
+        binds->addProperty("left", std::to_string(sf::Keyboard::Left));
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("right"))
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Right] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Right] = sf::Keyboard::Right;
+        binds->addProperty("right", std::to_string(sf::Keyboard::Right));
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("jump"))
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Jump] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Jump] = sf::Keyboard::Up;
+        binds->addProperty("jump", std::to_string(sf::Keyboard::Up));
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("shoot"))
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Shoot] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Shoot] = sf::Keyboard::RControl;
+        binds->addProperty("shoot", std::to_string(sf::Keyboard::RControl));
+        needsUpdate = true;
+    }
+
+
+    if (needsUpdate)
+    {
+        m_keyBinds.save(usrDir + fileName);
+    }
 }
 
 void MenuState::createScene()
