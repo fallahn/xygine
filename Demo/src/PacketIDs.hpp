@@ -55,6 +55,7 @@ namespace PacketID
         ClientContinue, //player with ent ID requested continue
         RequestServerPause, //client request server pause game - 0 to pause, 1 to unpause
         RequestClientPause, //server paused, request client to display pause state - 0 to pause, 1 to unpause
+        ServerFull,
 
         DebugMapCount, //sends the number of active NPCs for debug printing
 

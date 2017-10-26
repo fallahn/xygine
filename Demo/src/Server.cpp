@@ -185,7 +185,7 @@ void GameServer::update()
             //only update the server if clients are connected
             //and not paused
             if ((m_host.getConnectedPeerCount() > 0 || m_stateFlags.test(ChangingMaps))
-                && !m_stateFlags.test(GameOver) && !m_stateFlags.test(Paused))
+                && /*!m_stateFlags.test(GameOver) && !m_stateFlags.test(Paused)*/((m_stateFlags & GameOverOrPaused) == 0))
             {
                 m_scene.update(updateRate);
 
@@ -292,7 +292,13 @@ void GameServer::handleConnect(const xy::NetEvent& evt)
 {
     LOG("Client connected from " + evt.peer.getAddress(), xy::Logger::Type::Info);
 
-    //TODO check not existing client? what if we want 2 local players?
+    //if already hosting 2 players on same client, send rejection
+    if (m_clients[0].data.actor.id != ActorID::None
+        && m_clients[1].data.actor.id != ActorID::None)
+    {
+        m_host.sendPacket(evt.peer, PacketID::ServerFull, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+        return;
+    }
 
     if (!m_stateFlags.test(ChangingMaps))
     {
@@ -367,24 +373,30 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
     case PacketID::ClientReady:
     {
         sf::Uint8 playerCount = evt.packet.as<sf::Uint8>();
-        
-        std::size_t playerNumber = 0;
-        if (m_clients[0].data.actor.id != ActorID::None)
+        std::cout << (int)playerCount << std::endl;
+        for (auto i = 0; i < playerCount; ++i)
         {
-            playerNumber = 1;
-            //send existing client data
-            m_host.sendPacket(evt.peer, PacketID::ClientData, m_clients[0].data, xy::NetFlag::Reliable, 1);
+            std::size_t playerNumber = 0;
+            if (m_clients[0].data.actor.id != ActorID::None)
+            {
+                playerNumber = 1;
+
+                if (playerCount == 1)
+                {
+                    //send existing client data
+                    m_host.sendPacket(evt.peer, PacketID::ClientData, m_clients[0].data, xy::NetFlag::Reliable, 1);
+                }
+            }
+            //add the player actor to the scene
+            spawnPlayer(playerNumber);
+
+            //send the client info
+            m_clients[playerNumber].data.peerID = evt.peer.getID();
+            m_clients[playerNumber].peer = evt.peer;
+            m_clients[playerNumber].ready = true;
+            m_clients[playerNumber].level = 1;
+            m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber].data, xy::NetFlag::Reliable, 1);
         }
-        //add the player actor to the scene
-        spawnPlayer(playerNumber);
-
-        //send the client info
-        m_clients[playerNumber].data.peerID = evt.peer.getID();
-        m_clients[playerNumber].peer = evt.peer;
-        m_clients[playerNumber].ready = true;
-        m_clients[playerNumber].level = 1;
-        m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber].data, xy::NetFlag::Reliable, 1);
-
         //send initial position of existing actors
         const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
         for (const auto& actor : actors)
@@ -883,7 +895,15 @@ void GameServer::beginNewRound()
             //check if anyone tried joining mid map change
             if (m_queuedClient)
             {
-                m_host.sendPacket(*m_queuedClient, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
+                if (m_clients[0].data.actor.id != ActorID::None
+                    && m_clients[1].data.actor.id != ActorID::None)
+                {
+                    m_host.sendPacket(*m_queuedClient, PacketID::ServerFull, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+                }
+                else
+                {
+                    m_host.sendPacket(*m_queuedClient, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
+                }
                 m_queuedClient.reset();
             }
         }

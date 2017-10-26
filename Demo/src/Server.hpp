@@ -94,6 +94,7 @@ private:
         Count
     };
     std::bitset<StateFlags::Count> m_stateFlags;
+    static constexpr std::bitset<StateFlags::Count> GameOverOrPaused = { (1 << GameOver) | (1 << Paused) };
 
     void initMaplist();
     void initScene();

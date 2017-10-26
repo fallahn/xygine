@@ -153,6 +153,8 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 
     ctx.renderWindow.setMouseCursorVisible(false);
 
+    //sharedData.playerCount = 2;
+
 #ifdef XY_DEBUG
     debugShape.setRadius(16.f);
     debugShape.setOrigin(16.f, 48.f);
@@ -767,6 +769,10 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         debugActorCount = evt.packet.as<sf::Uint8>();
         break;
 #endif
+    case PacketID::ServerFull:
+        m_sharedData.error = "Could not connect to server, reason: Server full";
+        requestStackPush(StateID::Error);
+        return;
     case PacketID::RequestClientPause: //other player paused server
     {
         auto pause = evt.packet.as<sf::Uint8>();
