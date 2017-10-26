@@ -25,28 +25,22 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_SHARED_STATE_DATA_HPP_
-#define DEMO_GAME_SHARED_STATE_DATA_HPP_
+#ifndef DEMO_INPUT_BINDING_HPP_
+#define DEMO_INPUT_BINDING_HPP_
 
-#include "InputBinding.hpp"
+#include <SFML/Window/Keyboard.hpp>
 
-#include <string>
 #include <array>
 
-struct SharedStateData final
+struct InputBinding final
 {
     enum
     {
-        Host,
-        Client
-    }hostState = Client;
-    std::string remoteIP = "127.0.0.1";
-    std::string error;
-
-    std::string score;
-    std::size_t playerCount = 1;
-
-    std::array<InputBinding, 2u> inputBindings;
+        Jump, Shoot, Left, Right, Count
+    };
+    std::array<sf::Keyboard::Key, Count> keys{};
+    std::array<sf::Uint32, 2u> buttons = { 0, 1 };
+    sf::Uint32 controllerID = 100;
 };
 
-#endif //DEMO_GAME_SHARED_STATE_DATA_HPP_
+#endif //DEMO_INPUT_BINDING_HPP_

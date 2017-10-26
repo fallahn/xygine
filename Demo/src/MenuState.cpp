@@ -34,6 +34,7 @@ source distribution.
 #include "LoadingScreen.hpp"
 #include "MessageIDs.hpp"
 #include "MenuCallbacks.hpp"
+#include "ClientServerShared.hpp"
 
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -61,6 +62,9 @@ source distribution.
 #include <xyginext/util/Random.hpp>
 #include <xyginext/util/Math.hpp>
 
+#include <xyginext/core/FileSystem.hpp>
+#include <xyginext/core/ConfigFile.hpp>
+
 #include <SFML/Window/Event.hpp>
 
 #include <array>
@@ -76,6 +80,7 @@ MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_blurEffect        (nullptr)
 {
     launchLoadingScreen();
+    loadKeybinds();
     createScene();
     createMenu();
     createHelp();
@@ -127,6 +132,63 @@ void MenuState::draw()
 }
 
 //private
+void MenuState::loadKeybinds()
+{
+    //check user cfg exists
+    auto usrDir = xy::FileSystem::getConfigDirectory(dataDir);
+    const std::string fileName("keybinds.cfg");
+    xy::ConfigFile keyBinds;
+
+    auto setP1Defaults = [&keyBinds]()
+    {
+        auto* p1 = keyBinds.addObject("player_one");
+        p1->addProperty("left", std::to_string(sf::Keyboard::A));
+        p1->addProperty("right", std::to_string(sf::Keyboard::D));
+        p1->addProperty("jump", std::to_string(sf::Keyboard::W));
+        p1->addProperty("shoot", std::to_string(sf::Keyboard::Space));
+        p1->addProperty("controller_id", "0");
+        p1->addProperty("controller_jump", "0");
+        p1->addProperty("controller_shoot", "1");
+    };
+
+    auto setP2Defaults = [&keyBinds]()
+    {
+        auto* p2 = keyBinds.addObject("player_two");
+        p2->addProperty("left", std::to_string(sf::Keyboard::Left));
+        p2->addProperty("right", std::to_string(sf::Keyboard::Right));
+        p2->addProperty("jump", std::to_string(sf::Keyboard::Up));
+        p2->addProperty("shoot", std::to_string(sf::Keyboard::Numpad0));
+        p2->addProperty("controller_id", "1");
+        p2->addProperty("controller_jump", "0");
+        p2->addProperty("controller_shoot", "1");
+    };
+
+    keyBinds.loadFromFile(usrDir + fileName);
+
+    if (!keyBinds.findObjectWithName("player_one"))
+    {
+        setP1Defaults();
+        keyBinds.save(usrDir + fileName);
+    }
+
+    if (!keyBinds.findObjectWithName("player_two"))
+    {
+        setP2Defaults();
+        keyBinds.save(usrDir + fileName);
+    }
+
+    m_sharedStateData.inputBindings[0].controllerID = 0;
+    m_sharedStateData.inputBindings[0].keys[InputBinding::Left] = sf::Keyboard::A;
+    m_sharedStateData.inputBindings[0].keys[InputBinding::Right] = sf::Keyboard::D;
+    m_sharedStateData.inputBindings[0].keys[InputBinding::Jump] = sf::Keyboard::W;
+    m_sharedStateData.inputBindings[0].keys[InputBinding::Shoot] = sf::Keyboard::Space;
+
+    m_sharedStateData.inputBindings[1].keys[InputBinding::Left] = sf::Keyboard::Left;
+    m_sharedStateData.inputBindings[1].keys[InputBinding::Right] = sf::Keyboard::Right;
+    m_sharedStateData.inputBindings[1].keys[InputBinding::Jump] = sf::Keyboard::Up;
+    m_sharedStateData.inputBindings[1].keys[InputBinding::Shoot] = sf::Keyboard::Numpad0;
+}
+
 void MenuState::createScene()
 {    
     auto& mb = getContext().appInstance.getMessageBus();

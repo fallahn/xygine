@@ -41,11 +41,14 @@ namespace
     const float deadZone = 20.f;
 }
 
-PlayerInput::PlayerInput(xy::NetClient& nc)
+PlayerInput::PlayerInput(xy::NetClient& nc, const InputBinding& ib)
     : m_netClient   (nc),
     m_currentInput  (0),
+    m_prevPad       (0),
+    m_prevStick     (0),
     m_enabled       (false),
-    m_playerEntity  (0,0)
+    m_playerEntity  (0,0),
+    m_inputBinding  (ib)
 {
 
 }
@@ -56,67 +59,51 @@ void PlayerInput::handleEvent(const sf::Event& evt)
     //apply to input mask
     if (evt.type == sf::Event::KeyPressed)
     {
-        switch (evt.key.code)
+        if (evt.key.code == m_inputBinding.keys[InputBinding::Jump])
         {
-        default: break;
-        case sf::Keyboard::W:
-        case sf::Keyboard::Up:
             m_currentInput |= InputFlag::Up;
-            break;
-        case sf::Keyboard::S:
-        case sf::Keyboard::Down:
-            m_currentInput |= InputFlag::Down;
-            break;
-        case sf::Keyboard::A:
-        case sf::Keyboard::Left:
-            m_currentInput |= InputFlag::Left;
-                break;
-        case sf::Keyboard::D:
-        case sf::Keyboard::Right:
-            m_currentInput |= InputFlag::Right;
-            break;
-        case sf::Keyboard::Space:
-            m_currentInput |= InputFlag::Shoot;
-            break;
         }
-
+        else if (evt.key.code == m_inputBinding.keys[InputBinding::Left])
+        {
+            m_currentInput |= InputFlag::Left;
+        }
+        else if (evt.key.code == m_inputBinding.keys[InputBinding::Right])
+        {
+            m_currentInput |= InputFlag::Right;
+        }
+        else if (evt.key.code == m_inputBinding.keys[InputBinding::Shoot])
+        {
+            m_currentInput |= InputFlag::Shoot;
+        }
     }
     else if (evt.type == sf::Event::KeyReleased)
     {
-        switch (evt.key.code)
+        if (evt.key.code == m_inputBinding.keys[InputBinding::Jump])
         {
-        default: break;
-        case sf::Keyboard::W:
-        case sf::Keyboard::Up:
             m_currentInput &= ~InputFlag::Up;
-            break;
-        case sf::Keyboard::S:
-        case sf::Keyboard::Down:
-            m_currentInput &= ~InputFlag::Down;
-            break;
-        case sf::Keyboard::A:
-        case sf::Keyboard::Left:
+        }
+        else if (evt.key.code == m_inputBinding.keys[InputBinding::Left])
+        {
             m_currentInput &= ~InputFlag::Left;
-            break;
-        case sf::Keyboard::D:
-        case sf::Keyboard::Right:
+        }
+        else if (evt.key.code == m_inputBinding.keys[InputBinding::Right])
+        {
             m_currentInput &= ~InputFlag::Right;
-            break;
-        case sf::Keyboard::Space:
+        }
+        else if (evt.key.code == m_inputBinding.keys[InputBinding::Shoot])
+        {
             m_currentInput &= ~InputFlag::Shoot;
-            break;
         }
     }
     else if (evt.type == sf::Event::JoystickButtonPressed)
     {
-        if (evt.joystickButton.joystickId == 0)
+        if (evt.joystickButton.joystickId == m_inputBinding.controllerID)
         {
-            if (evt.joystickButton.button == 0)
+            if (evt.joystickButton.button == m_inputBinding.buttons[InputBinding::Jump])
             {
-                //A button on xbox controller
                 m_currentInput |= InputFlag::Up;
             }
-            else if (evt.joystickButton.button == 1)
+            else if (evt.joystickButton.button == m_inputBinding.buttons[InputBinding::Shoot])
             {
                 m_currentInput |= InputFlag::Shoot;
             }
@@ -124,14 +111,13 @@ void PlayerInput::handleEvent(const sf::Event& evt)
     }
     else if (evt.type == sf::Event::JoystickButtonReleased)
     {
-        if (evt.joystickButton.joystickId == 0)
+        if (evt.joystickButton.joystickId == m_inputBinding.controllerID)
         {
-            if (evt.joystickButton.button == 0)
+            if (evt.joystickButton.button == m_inputBinding.buttons[InputBinding::Jump])
             {
-                //A button on xbox controller
                 m_currentInput &= ~InputFlag::Up;
             }
-            else if (evt.joystickButton.button == 1)
+            else if (evt.joystickButton.button == m_inputBinding.buttons[InputBinding::Shoot])
             {
                 m_currentInput &= ~InputFlag::Shoot;
             }
@@ -180,57 +166,58 @@ xy::Entity PlayerInput::getPlayerEntity() const
 //private
 void PlayerInput::checkControllerInput()
 {
+    if (m_inputBinding.controllerID > sf::Joystick::Count) return;
+
     auto startInput = m_currentInput;
 
-    //TODO replace static vars with members if we decide to have local multiplayer
-    static sf::Uint16 prevPad = 0; 
+    m_prevPad = 0; 
 
     //DPad
-    if (sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) < -deadZone)
+    if (sf::Joystick::getAxisPosition(m_inputBinding.controllerID, sf::Joystick::PovX) < -deadZone)
     {
         m_currentInput |= InputFlag::Left;
     }
-    else if (prevPad & InputFlag::Left)
+    else if (m_prevPad & InputFlag::Left)
     {
         m_currentInput &= ~InputFlag::Left;
     }
 
-    if (sf::Joystick::getAxisPosition(0, sf::Joystick::PovX) > deadZone)
+    if (sf::Joystick::getAxisPosition(m_inputBinding.controllerID, sf::Joystick::PovX) > deadZone)
     {
         m_currentInput |= InputFlag::Right;
     }
-    else if (prevPad & InputFlag::Right)
+    else if (m_prevPad & InputFlag::Right)
     {
         m_currentInput &= ~InputFlag::Right;
     }
     if (startInput ^ m_currentInput)
     {
-        prevPad = m_currentInput;
+        m_prevPad = m_currentInput;
         return; //prevent analogue stick overwriting state
     }
 
     
-    static sf::Uint16 prevStick = 0;
+    m_prevStick = 0;
     //left stick (xbox controller)
-    if (sf::Joystick::getAxisPosition(0, sf::Joystick::X) < -deadZone)
+    if (sf::Joystick::getAxisPosition(m_inputBinding.controllerID, sf::Joystick::X) < -deadZone)
     {
         m_currentInput |= InputFlag::Left;
     }
-    else if (prevStick & InputFlag::Left)
+    else if (m_prevStick & InputFlag::Left)
     {
         m_currentInput &= ~InputFlag::Left;
     }
 
-    if (sf::Joystick::getAxisPosition(0, sf::Joystick::X) > deadZone)
+    if (sf::Joystick::getAxisPosition(m_inputBinding.controllerID, sf::Joystick::X) > deadZone)
     {
         m_currentInput |= InputFlag::Right;
     }
-    else if (prevStick & InputFlag::Right)
+    else if (m_prevStick & InputFlag::Right)
     {
         m_currentInput &= ~InputFlag::Right;
     }
     if (startInput ^ m_currentInput)
     {
-        prevStick = m_currentInput;
+        m_prevStick = m_currentInput;
     }
 }

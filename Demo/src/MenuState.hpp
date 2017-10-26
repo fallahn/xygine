@@ -66,6 +66,7 @@ private:
     bool m_helpShown;
     xy::PostBlur* m_blurEffect;
 
+    void loadKeybinds();
     void createScene();
     void createMenu();
     void createHelp();

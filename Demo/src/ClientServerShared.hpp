@@ -36,6 +36,8 @@ source distribution.
 
 #include <tmxlite/Object.hpp>
 
+#include <string>
+
 namespace xy
 {
     class Scene;
@@ -80,6 +82,7 @@ namespace CollisionFlags
     };
 }
 
+static const std::string dataDir("demo_game");
 
 static constexpr float BubbleVerticalVelocity = -100.f;
 static const sf::FloatRect BubbleBounds(0.f, 0.f, 64.f, 64.f);

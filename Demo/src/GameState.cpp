@@ -117,7 +117,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_scene             (ctx.appInstance.getMessageBus()),
     m_sharedData        (sharedData),
     m_loadingScreen     (ls),
-    m_playerInputs      ({ PlayerInput(m_client), PlayerInput(m_client) }),
+    m_playerInputs      ({ PlayerInput(m_client, sharedData.inputBindings[0]), PlayerInput(m_client, sharedData.inputBindings[1]) }),
     m_currentMapTexture (0)
 {
     launchLoadingScreen();
@@ -153,7 +153,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 
     ctx.renderWindow.setMouseCursorVisible(false);
 
-    //sharedData.playerCount = 2;
+    sharedData.playerCount = 2;
 
 #ifdef XY_DEBUG
     debugShape.setRadius(16.f);
@@ -411,8 +411,6 @@ void GameState::loadAssets()
     m_sprites[SpriteID::FlameTwo] = spriteSheet.getSprite("player_two_flame");
     m_sprites[SpriteID::LightningOne] = spriteSheet.getSprite("player_one_star");
     m_sprites[SpriteID::LightningTwo] = spriteSheet.getSprite("player_two_star");
-    m_sprites[SpriteID::WaterOne] = spriteSheet.getSprite("player_one_water");
-    m_sprites[SpriteID::WaterTwo] = spriteSheet.getSprite("player_two_water");
 
     m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one_flame");
     m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one_flame");
@@ -509,11 +507,11 @@ void GameState::loadAssets()
 
     m_bubbleParticles.loadFromFile("assets/particles/shoot.xyp", m_textureResource);
 
-    if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile))
+    if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory(dataDir) + scoreFile))
     {
         //create one
         m_scores.addProperty("hiscore", "0");
-        m_scores.save(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile);
+        m_scores.save(xy::FileSystem::getConfigDirectory(dataDir) + scoreFile);
     }
 }
 
@@ -1293,12 +1291,6 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     case ActorID::FlameTwo:
         addSprite(entity, SpriteID::FlameTwo);
         break;
-    case ActorID::WaterOne:
-        addSprite(entity, SpriteID::WaterOne);
-        break;
-    case ActorID::WaterTwo:
-        addSprite(entity, SpriteID::WaterTwo);
-        break;
     case ActorID::Bonus:
         addSprite(entity, SpriteID::Bonus);
         break;
@@ -1651,7 +1643,7 @@ void GameState::updateUI(const InventoryUpdate& data)
     if (data.score > m_scores.getProperties()[0].getValue<sf::Int32>())
     {
         m_scores.findProperty("hiscore")->setValue(static_cast<sf::Int32>(data.score));
-        m_scores.save(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile);
+        m_scores.save(xy::FileSystem::getConfigDirectory(dataDir) + scoreFile);
 
         xy::Command cmd;
         cmd.targetFlags = CommandID::HighScore;

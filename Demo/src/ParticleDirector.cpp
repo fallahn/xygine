@@ -82,8 +82,6 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             case ActorID::LightningTwo:
             case ActorID::FlameOne:
             case ActorID::FlameTwo:
-            case ActorID::WaterOne:
-            case ActorID::WaterTwo:
             case ActorID::BubbleOne:
             case ActorID::BubbleTwo:
             case ActorID::Bonus:
@@ -146,8 +144,6 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             case ActorID::LightningTwo:
             case ActorID::FlameOne:
             case ActorID::FlameTwo:
-            case ActorID::WaterOne:
-            case ActorID::WaterTwo:
                 if (data.newAnim == AnimationController::Walk)
                 {
                     auto ent = getNextEntity();

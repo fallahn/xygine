@@ -171,6 +171,7 @@
     <ClInclude Include="src\GameOverState.hpp" />
     <ClInclude Include="src\GameState.hpp" />
     <ClInclude Include="src\Hitbox.hpp" />
+    <ClInclude Include="src\InputBinding.hpp" />
     <ClInclude Include="src\IntroState.hpp" />
     <ClInclude Include="src\InventoryDirector.hpp" />
     <ClInclude Include="src\LoadingScreen.hpp" />

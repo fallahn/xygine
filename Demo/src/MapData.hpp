@@ -43,7 +43,6 @@ namespace ActorID
         FruitSmall, FruitLarge,
         FlameOne, FlameTwo,
         LightningOne, LightningTwo,
-        WaterOne, WaterTwo,
         Bonus,
         PrincessOne, PrincessTwo,
         TowerOne, TowerTwo
