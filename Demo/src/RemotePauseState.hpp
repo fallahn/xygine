@@ -25,38 +25,36 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_PAUSE_STATE_HPP_
-#define DEMO_PAUSE_STATE_HPP_
+#ifndef DEMO_REMOTE_PAUSE_STATE_HPP_
+#define DEMO_REMOTE_PAUSE_STATE_HPP_
 
 #include "StateIDs.hpp"
 
 #include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
-class PauseState final : public xy::State
+class RemotePauseState final : public xy::State
 {
 public:
-    PauseState(xy::StateStack&, xy::State::Context);
-    ~PauseState();
+    RemotePauseState(xy::StateStack&, xy::State::Context);
 
-    xy::StateID stateID() const override { return StateID::Pause; }
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
+    xy::StateID stateID() const override { return StateID::RemotePause; }
+    bool handleEvent(const sf::Event&) override { return false; }
+    void handleMessage(const xy::Message&) override {}
+    bool update(float) override { return true; }
     void draw() override;
 
 private:
 
-    xy::Scene m_scene;
     sf::Font m_font;
-    sf::Texture m_buttonTexture;
     sf::Texture m_backgroundTexture;
 
-    void load();
-    void unpause();
+    sf::Text m_text;
+    sf::Sprite m_sprite;
 };
 
-#endif //DEMO_PAUSE_STATE_HPP_
+#endif //DEMO_REMOTE_PAUSE_STATE_HPP_

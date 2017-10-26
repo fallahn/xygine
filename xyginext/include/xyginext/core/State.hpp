@@ -154,6 +154,11 @@ namespace xy
         */
         void requestStackClear();
         /*!
+        \brief Returns the current number of states on the active state stack
+        */
+        std::size_t getStackSize() const;
+
+        /*!
         \brief Returns a copy of the state's current context
         */
         Context getContext() const;

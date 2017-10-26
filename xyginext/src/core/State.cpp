@@ -77,6 +77,11 @@ void State::requestStackClear()
     m_stateStack.clearStates();
 }
 
+std::size_t State::getStackSize() const
+{
+    return m_stateStack.getStackSize();
+}
+
 State::Context State::getContext() const
 {
     return m_context;

@@ -188,6 +188,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         case sf::Keyboard::Escape:
         case sf::Keyboard::Pause:
             requestStackPush(StateID::Pause);
+            m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
             break;
         }
     }
@@ -198,6 +199,7 @@ bool GameState::handleEvent(const sf::Event& evt)
             if (evt.joystickButton.button == 7) //start on xbox
             {
                 requestStackPush(StateID::Pause);
+                m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
             }
         }
     }
@@ -230,8 +232,10 @@ void GameState::handleMessage(const xy::Message& msg)
     else if (msg.id == MessageID::MenuMessage)
     {
         const auto& data = msg.getData<MenuEvent>();
-        if (data.action == MenuEvent::QuitGameClicked)
+        switch (data.action)
         {
+        default: break;
+        case MenuEvent::QuitGameClicked:
             m_client.disconnect();
             requestStackClear();
             requestStackPush(StateID::MainMenu);            
@@ -241,9 +245,8 @@ void GameState::handleMessage(const xy::Message& msg)
             {
                 m_server.stop();
             }
-        }
-        else if (data.action == MenuEvent::ContinueGameClicked)
-        {
+            break;
+        case MenuEvent::ContinueGameClicked:
             requestStackPop();
            
             for (auto i = 0u; i < m_sharedData.playerCount; ++i)
@@ -253,11 +256,11 @@ void GameState::handleMessage(const xy::Message& msg)
 
                 spawnTowerDude(actor.type);
             }
-
-            /*auto actor = m_playerInput.getPlayerEntity().getComponent<Actor>();
-            m_client.sendPacket(PacketID::ClientContinue, actor.id, xy::NetFlag::Reliable, 1);
-
-            spawnTowerDude(actor.type);*/
+            break;
+        case MenuEvent::UnpauseGame:
+            requestStackPop();
+            m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
+            break;
         }
     }
 
@@ -764,7 +767,27 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         debugActorCount = evt.packet.as<sf::Uint8>();
         break;
 #endif
-
+    case PacketID::RequestClientPause: //other player paused server
+    {
+        auto pause = evt.packet.as<sf::Uint8>();
+        if (pause == 0)
+        {
+            //show screen
+            if (getStackSize() == 1)
+            {
+                requestStackPush(StateID::RemotePause);
+            }
+        }
+        else
+        {
+            auto size = getStackSize();
+            while (size > 1)
+            {
+                requestStackPop();
+            }
+        }
+    }
+        break;
     case PacketID::ServerMessage:
     {
         sf::Int32 idx = evt.packet.as<sf::Int32>();

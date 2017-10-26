@@ -146,6 +146,7 @@
     <ClCompile Include="src\PlayerInput.cpp" />
     <ClCompile Include="src\PlayerSystem.cpp" />
     <ClCompile Include="src\PowerupSystem.cpp" />
+    <ClCompile Include="src\RemotePauseState.cpp" />
     <ClCompile Include="src\ScoreTag.cpp" />
     <ClCompile Include="src\Server.cpp" />
     <ClCompile Include="src\sha1.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="src\PlayerInput.hpp" />
     <ClInclude Include="src\PlayerSystem.hpp" />
     <ClInclude Include="src\PowerupSystem.hpp" />
+    <ClInclude Include="src\RemotePauseState.hpp" />
     <ClInclude Include="src\ScoreTag.hpp" />
     <ClInclude Include="src\Server.hpp" />
     <ClInclude Include="src\ServerMessages.hpp" />

@@ -76,6 +76,7 @@ namespace
     const float defaultRoundTime = 39.f; //after this everything is angry
     const float roundWarnTime = 2.5f; //allows time for clients to do warning
     const float watchdogTime = 20.f; //change map this many seconds after round time regardless
+    const float MaxPauseTime = 5.f * 60.f;
 }
 
 GameServer::GameServer()
@@ -87,9 +88,7 @@ GameServer::GameServer()
     m_currentMap            (0),
     m_endOfRoundPauseTime   (3.f),
     m_currentRoundTime      (0.f),
-    m_roundTimeout          (defaultRoundTime),
-    m_gameOver              (false),
-    m_changingMaps          (false)
+    m_roundTimeout          (defaultRoundTime)
 {
     m_clients[0].data.actor.type = ActorID::PlayerOne;
     m_clients[0].data.spawnX = PlayerOneSpawn.x;
@@ -140,6 +139,7 @@ void GameServer::update()
     sf::Clock clock;
     float tickAccumulator = 0.f;
     float updateAccumulator = 0.f;
+    float pauseTimeout = 0.f;
 
     initScene();
     loadMap();
@@ -183,8 +183,9 @@ void GameServer::update()
             }
 
             //only update the server if clients are connected
-            if ((m_host.getConnectedPeerCount() > 0 || m_changingMaps)
-                && !m_gameOver)
+            //and not paused
+            if ((m_host.getConnectedPeerCount() > 0 || m_stateFlags.test(ChangingMaps))
+                && !m_stateFlags.test(GameOver) && !m_stateFlags.test(Paused))
             {
                 m_scene.update(updateRate);
 
@@ -193,6 +194,24 @@ void GameServer::update()
 
                 //check if it's time to change map
                 checkMapStatus(updateRate);
+
+                //check to see if client requested pause
+                if (!m_stateFlags.test(ChangingMaps) && m_stateFlags.test(PendingPause))
+                {
+                    m_stateFlags.set(Paused, m_stateFlags.test(PendingPause));
+                    m_stateFlags.set(PendingPause, false);
+                    pauseTimeout = 0.f;
+
+                    //broadcast paused to clients
+                    m_host.broadcastPacket(PacketID::RequestClientPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+                }               
+            }
+            //and unpause if client is idling
+            pauseTimeout += dt;
+            if (pauseTimeout > MaxPauseTime)
+            {
+                m_stateFlags.set(Paused, false);
+                m_host.broadcastPacket(PacketID::RequestClientPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
             }
         }
 
@@ -252,12 +271,12 @@ void GameServer::update()
                 }
             }
 
-            if (gameOver && !m_gameOver)
+            if (gameOver && !m_stateFlags.test(GameOver))
             {
                 //state changed, send message
                 m_host.broadcastPacket(PacketID::GameOver, 0, xy::NetFlag::Reliable, 1);
             }
-            m_gameOver = gameOver;
+            m_stateFlags.set(GameOver, gameOver);
 
 #ifdef XY_DEBUG
             //m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.actorCount, xy::NetFlag::Unreliable, 0);
@@ -275,7 +294,7 @@ void GameServer::handleConnect(const xy::NetEvent& evt)
 
     //TODO check not existing client? what if we want 2 local players?
 
-    if (!m_changingMaps)
+    if (!m_stateFlags.test(ChangingMaps))
     {
         //send map name, list of actor ID's up to count
         m_host.sendPacket(evt.peer, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
@@ -327,6 +346,23 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
     switch (evt.packet.getID())
     {
     default: break;
+    case PacketID::RequestServerPause:
+    {
+        auto pause = evt.packet.as<sf::Uint8>();
+        if (pause == 0 && !m_stateFlags.test(Paused))
+        {
+            m_stateFlags.set(PendingPause, true);
+        }
+        else
+        {
+            if (m_stateFlags.test(Paused))
+            {
+                m_stateFlags.set(Paused, false);
+                m_host.broadcastPacket(PacketID::RequestClientPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
+            }
+        }
+    }
+        break;
         //if client loaded send initial positions
     case PacketID::ClientReady:
     {
@@ -435,7 +471,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
 
 void GameServer::checkRoundTime(float dt)
 {
-    if (m_changingMaps || m_mapData.actorCount == 0) return;
+    if (m_stateFlags.test(ChangingMaps) || m_mapData.actorCount == 0) return;
     
     float lastTime = m_currentRoundTime;
     m_currentRoundTime += dt;
@@ -537,7 +573,7 @@ void GameServer::checkMapStatus(float dt)
         //set clients to not ready
         m_clients[0].ready = false;
         m_clients[1].ready = false;
-        m_changingMaps = true;
+        m_stateFlags.set(ChangingMaps, true);
 
         //move players to spawn point ready for next map
         cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
@@ -805,7 +841,7 @@ void GameServer::beginNewRound()
         m_scene.setSystemActive<PowerupSystem>(true);
         m_scene.setSystemActive<BonusSystem>(true);
 
-        m_changingMaps = false;
+        m_stateFlags.set(ChangingMaps, false);
 
         if (m_mapSkipCount) //someone scored a bonus and skips 5 maps
         {

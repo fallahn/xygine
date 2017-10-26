@@ -158,7 +158,8 @@ void UISystem::handleEvent(const sf::Event& evt)
             }
             break;
         case sf::Joystick::PovY:
-        case sf::Joystick::Y:
+            //sadly needs a special case on windows
+#ifdef _WIN32
             if (evt.joystickMove.position > DeadZone)
             {
                 m_controllerMask |= ControllerBits::Down;
@@ -166,6 +167,17 @@ void UISystem::handleEvent(const sf::Event& evt)
             else if (evt.joystickMove.position < -DeadZone)
             {
                 m_controllerMask |= ControllerBits::Up;
+            }
+            break;
+#endif
+        case sf::Joystick::Y:
+            if (evt.joystickMove.position > DeadZone)
+            {
+                m_controllerMask |= ControllerBits::Up;
+            }
+            else if (evt.joystickMove.position < -DeadZone)
+            {
+                m_controllerMask |= ControllerBits::Down;
             }
             break;
         default: break;

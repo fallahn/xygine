@@ -25,38 +25,36 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_PAUSE_STATE_HPP_
-#define DEMO_PAUSE_STATE_HPP_
+#include "RemotePauseState.hpp"
 
-#include "StateIDs.hpp"
+#include <SFML/Graphics/RenderWindow.hpp>
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/Texture.hpp>
-
-class PauseState final : public xy::State
+RemotePauseState::RemotePauseState(xy::StateStack& stack, xy::State::Context ctx)
+    : xy::State(stack, ctx)
 {
-public:
-    PauseState(xy::StateStack&, xy::State::Context);
-    ~PauseState();
+    m_font.loadFromFile("assets/fonts/Cave-Story.ttf");
+    m_text.setFont(m_font);
+    m_text.setString("Other Player Paused The Game");
+    m_text.setFillColor(sf::Color::Red);
+    m_text.setCharacterSize(120);
+    auto bounds = m_text.getLocalBounds();
+    m_text.setOrigin(bounds.width / 2.f, (bounds.height / 2.f) + bounds.top);
+    m_text.setPosition(xy::DefaultSceneSize / 2.f);
 
-    xy::StateID stateID() const override { return StateID::Pause; }
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+    sf::Image img;
+    img.create(1, 1, sf::Color(0, 0, 0, 180));
+    m_backgroundTexture.loadFromImage(img);
+    m_sprite.setTexture(m_backgroundTexture);
+    m_sprite.setScale(xy::DefaultSceneSize);
+}
 
-private:
+//public
+void RemotePauseState::draw()
+{
+    auto view = getContext().defaultView;
+    auto& rt = getContext().renderWindow;
+    rt.setView(view);
 
-    xy::Scene m_scene;
-    sf::Font m_font;
-    sf::Texture m_buttonTexture;
-    sf::Texture m_backgroundTexture;
-
-    void load();
-    void unpause();
-};
-
-#endif //DEMO_PAUSE_STATE_HPP_
+    rt.draw(m_sprite);
+    rt.draw(m_text);
+}

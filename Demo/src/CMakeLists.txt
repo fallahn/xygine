@@ -25,6 +25,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/PlayerInput.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/PlayerSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/PowerupSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/RemotePauseState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ScoreTag.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Server.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/SpringFlower.cpp

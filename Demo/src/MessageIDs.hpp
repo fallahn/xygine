@@ -135,7 +135,8 @@ struct MenuEvent final
     {
         HelpButtonClicked,
         QuitGameClicked,
-        ContinueGameClicked
+        ContinueGameClicked,
+        UnpauseGame
     }action;
 };
 
