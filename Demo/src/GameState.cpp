@@ -1611,14 +1611,12 @@ void GameState::spawnTowerDude(sf::Int16 actorType)
         towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeOne];
         towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnOne);
         towerEnt.addComponent<Actor>().type = ActorID::TowerOne;
-        std::cout << "tower one " << std::endl;
     }
     else
     {
         towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeTwo];
         towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnTwo);
         towerEnt.addComponent<Actor>().type = ActorID::TowerTwo;
-        std::cout << "tower two" << std::endl;
     }
     towerEnt.addComponent<xy::Drawable>().setDepth(5);
     towerEnt.addComponent<xy::SpriteAnimation>();
@@ -1724,7 +1722,6 @@ void GameState::updateUI(const InventoryUpdate& data)
                 entity.getComponent<xy::SpriteAnimation>().play(1);
                 entity.getComponent<xy::Callback>().active = true;
             }
-            std::cout << (int)playerNumber << std::endl;
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
