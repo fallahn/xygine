@@ -29,15 +29,19 @@ source distribution.
 #define DEMO_MENU_CALLBACKS_HPP_
 
 #include <xyginext/ecs/Entity.hpp>
+#include <xyginext/ecs/Scene.hpp>
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
 
+#include <xyginext/ecs/systems/UISystem.hpp>
+
 class HelpMenuCallback final
 {
 public:
-    HelpMenuCallback(const bool& shown)
-        : m_shown(shown)
+    HelpMenuCallback(const bool& shown, xy::Scene& scene)
+        : m_shown(shown),
+        m_scene(scene)
     {
 
     }
@@ -51,18 +55,24 @@ public:
             target = HidePosition;
         }
         
-        auto position = entity.getComponent<xy::Transform>().getPosition();
-        position.y = target - position.y;
+        static int buns = 0;
+
+        auto movement = entity.getComponent<xy::Transform>().getPosition();
+        movement.y = target - movement.y;
         
-        if (std::abs(position.y) < 3.f)
+        if (std::abs(movement.y) < 3.f)
         {
-            position.y = target;
-            entity.getComponent<xy::Transform>().setPosition(position);
+            if (movement.y != 0)
+            {
+                movement.y = target;
+                entity.getComponent<xy::Transform>().setPosition(movement);
+                m_scene.setSystemActive<xy::UISystem>(!m_shown);
+            }
         }
         else
         {
-            position.x = 0.f;
-            entity.getComponent<xy::Transform>().move(position * Speed * dt);
+            movement.x = 0.f;
+            entity.getComponent<xy::Transform>().move(movement * Speed * dt);
         }
     }
 
@@ -71,6 +81,7 @@ public:
 
 private:
     const bool& m_shown;
+    xy::Scene& m_scene; //actually the main scene, not the help scene
 
     static constexpr float Speed = 5.f;
 };

@@ -67,6 +67,8 @@ UISystem::UISystem(MessageBus& mb)
 
 void UISystem::handleEvent(const sf::Event& evt)
 {
+    if (!isActive()) return;
+
     switch (evt.type)
     {
     default: break;

@@ -621,7 +621,7 @@ void MenuState::createHelp()
     entity.addComponent<xy::Transform>().setPosition(430.f, HelpMenuCallback::HidePosition);
     entity.getComponent<xy::Transform>().addChild(tx);
     entity.addComponent<xy::Callback>().active = true;
-    entity.getComponent<xy::Callback>().function = HelpMenuCallback(m_helpShown);
+    entity.getComponent<xy::Callback>().function = HelpMenuCallback(m_helpShown, m_scene);
 
     //background
     entity = m_helpScene.createEntity();
@@ -648,7 +648,6 @@ void MenuState::showHelpMenu()
     {
         //hide it
         m_blurEffect->setEnabled(false);
-        m_scene.setSystemActive<xy::UISystem>(true);
     }
     else
     {
