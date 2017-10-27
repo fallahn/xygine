@@ -63,10 +63,14 @@ sprite_sheet player
 
 		animation dead
 		{
-			frame = 0,0,0,0
-
-			framerate = 22
-			loop = true
+		    frame = 0,384,64,64
+			frame = 64,384,64,64
+			frame = 128,384,64,64
+			frame = 192,384,64,64
+			frame = 256,384,64,64
+			frame = 320,384,64,64
+			framerate = 10
+			loop=true
 		}
 
 		animation jump_up
@@ -146,10 +150,14 @@ sprite_sheet player
 
 		animation dead
 		{
-			frame = 0,0,0,0
-
-			framerate = 22
-			loop = true
+		    frame = 0,384,64,64
+			frame = 64,384,64,64
+			frame = 128,384,64,64
+			frame = 192,384,64,64
+			frame = 256,384,64,64
+			frame = 320,384,64,64
+			framerate = 10
+			loop=true
 		}
 
 		animation jump_up
@@ -167,5 +175,82 @@ sprite_sheet player
 			framerate = 25
 			loop = true
 		}		
+	}
+
+	sprite crown
+	{
+		bounds = 0,512,64,64
+
+		animation idle
+		{
+		    frame = 0,512,64,64
+			frame = 64,512,64,64
+			frame = 128,512,64,64
+			frame = 192,512,64,64
+			framerate = 10
+			loop=true
+		}
+
+		animation walk
+		{
+			frame = 0,448,64,64
+			frame = 64,448,64,64
+			frame = 128,448,64,64
+			//frame = 64,448,64,64
+
+			framerate = 14
+			loop = true
+		}
+
+		animation shoot
+		{
+			frame = 0,576,64,64
+			frame = 64,576,64,64
+			frame = 128,576,64,64
+			frame = 192,576,64,64
+
+			framerate = 8
+			loop = false
+		}
+
+		animation die
+		{
+
+			frame = 256,512,64,64
+			frame = 320,512,64,64
+			frame = 320,576,64,64
+			frame = 256,576,64,64
+
+			frame = 256,512,64,64
+			frame = 320,512,64,64
+			frame = 320,576,64,64
+			frame = 256,576,64,64
+
+			framerate = 12
+			loop = true
+		}
+
+		animation dead
+		{
+		    frame = 256,448,64,64
+			framerate = 22
+			loop=true
+		}
+
+		animation jump_up
+		{
+			frame = 320,448,64,64
+
+			framerate = 25
+			loop = true
+		}
+
+		animation jump_down
+		{
+			frame = 256,448,64,64
+
+			framerate = 25
+			loop = true
+		}
 	}
 }

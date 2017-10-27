@@ -157,7 +157,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     bounds = entity.getComponent<xy::Text>().getLocalBounds();
     auto& tx4 = entity.addComponent<xy::Transform>();
-    tx4.setPosition(136.f, 15.f);
+    tx4.setPosition(142.f, 15.f);
 
     //quit button
     entity = m_scene.createEntity();
@@ -327,7 +327,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     bounds = entity.getComponent<xy::Text>().getLocalBounds();
     auto& tx4 = entity.addComponent<xy::Transform>();
-    tx4.setPosition(140.f, 15.f);
+    tx4.setPosition(144.f, 15.f);
 
     //back button
     entity = m_scene.createEntity();
@@ -382,7 +382,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
     auto& tx = entity.addComponent<xy::Transform>();
-    tx.setOrigin(50.f, 45.f);
+    tx.setOrigin(44.f, 45.f);
 
     //host button
     entity = m_scene.createEntity();
@@ -437,7 +437,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto& tx2 = entity.addComponent<xy::Transform>();
-    tx2.setOrigin(50.f, 45.f);
+    tx2.setOrigin(46.f, 45.f);
 
     //ip text
     entity = m_scene.createEntity();
@@ -505,7 +505,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     bounds = entity.getComponent<xy::Text>().getLocalBounds();
     auto& tx4 = entity.addComponent<xy::Transform>();
-    tx4.setPosition(140.f, 15.f);
+    tx4.setPosition(144.f, 15.f);
 
     //back button
     entity = m_scene.createEntity();
