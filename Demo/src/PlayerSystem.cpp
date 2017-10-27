@@ -75,8 +75,6 @@ void PlayerSystem::process(float)
     auto& entities = getEntities();
     for (auto& entity : entities)
     {
-        //resolveCollision(entity);
-
         auto& player = entity.getComponent<Player>();
         auto& tx = entity.getComponent<xy::Transform>();
         const auto& collision = entity.getComponent<CollisionComponent>();
@@ -163,8 +161,7 @@ void PlayerSystem::process(float)
         {
             animController.nextAnimation = AnimationController::Die;
         }
-        else if (player.state == Player::State::Dead /*|| 
-            (player.state == Player::State::Disabled && player.lives <= 0)*/)
+        else if (player.state == Player::State::Dead)
         {
             animController.nextAnimation = AnimationController::Dead;
         }
@@ -209,6 +206,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     player.canJump = state.playerCanJump;
     player.canLand = state.playerCanLand;
     player.canRideBubble = state.playerCanRideBubble;
+    player.lives = state.playerLives;
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
@@ -245,10 +243,18 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     {
         animController.nextAnimation = (player.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
     }
-    else
+    else if(player.state == Player::State::Walking)
     {
         float xMotion = tx.getPosition().x - state.x;
         animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
+    }
+    else if (player.state == Player::State::Dying)
+    {
+        animController.nextAnimation = AnimationController::Die;
+    }
+    else if (player.state == Player::State::Dead)
+    {
+        animController.nextAnimation = AnimationController::Dead;
     }
 }
 

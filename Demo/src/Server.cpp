@@ -266,6 +266,7 @@ void GameServer::update()
                     state.playerCanJump = player.canJump;
                     state.playerCanLand = player.canLand;
                     state.playerCanRideBubble = player.canRideBubble;
+                    state.playerLives = player.lives;
 
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
 

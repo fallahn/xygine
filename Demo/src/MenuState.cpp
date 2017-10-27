@@ -648,7 +648,6 @@ void MenuState::showHelpMenu()
     {
         //hide it
         m_blurEffect->setEnabled(false);
-
         m_scene.setSystemActive<xy::UISystem>(true);
     }
     else

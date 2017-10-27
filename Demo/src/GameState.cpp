@@ -1466,7 +1466,9 @@ void GameState::switchMap(const MapData& data)
             {
                 entity.getComponent<Player>().state = Player::State::Disabled;
             }
-            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
+            entity.getComponent<AnimationController>().nextAnimation = 
+                (entity.getComponent<AnimationController>().currentAnim == AnimationController::Dead) ? 
+                AnimationController::Dead : AnimationController::Idle;
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 

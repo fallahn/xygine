@@ -92,7 +92,7 @@ public:
     {
         if (m_shown)
         {
-            m_currentTime = std::min(m_currentTime + dt, 0.5f); //TODO find out why g++ things MaxTime is undef ref
+            m_currentTime = std::min(m_currentTime + dt, 0.5f); //TODO find out why g++ thinks MaxTime is undef ref
         }
         else
         {

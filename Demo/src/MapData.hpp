@@ -106,6 +106,7 @@ struct ClientState final : public ActorState
     bool playerCanJump = false;
     sf::Uint8 playerCanLand = 0;
     bool playerCanRideBubble = false;
+    sf::Uint8 playerLives = 3;
 };
 
 //actor events for spawn/despawn etc
