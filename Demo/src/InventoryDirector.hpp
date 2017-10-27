@@ -44,7 +44,7 @@ public:
 
     void handleMessage(const xy::Message&) override;
     void handleEvent(const sf::Event&) override {}
-    void process(float) override {}
+    void process(float) override;
 
 private:
     xy::NetHost& m_host;
@@ -56,6 +56,9 @@ private:
         sf::Uint8 bonusFlags = 0;
     };
     std::array<Inventory, 2> m_playerValues{};
+
+    std::array<std::pair<sf::Uint8, sf::Uint32>, 12> m_updateQueue;
+    std::size_t m_queuePos;
 
     void sendUpdate(sf::Uint8, sf::Uint32);
 
