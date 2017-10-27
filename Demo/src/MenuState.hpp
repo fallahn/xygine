@@ -39,6 +39,7 @@ source distribution.
 namespace xy
 {
     class PostBlur;
+    class Transform;
 }
 
 class LoadingScreen;
@@ -69,11 +70,17 @@ private:
 
     xy::ConfigFile m_keyBinds;
 
+    sf::Vector2f m_menuTarget;
+
     void loadKeybinds();
     void createScene();
     void createMenu();
     void createHelp();
     void showHelpMenu();
+
+    void createFirstMenu(xy::Transform&, sf::Uint32, sf::Uint32, sf::Font&);
+    void createSecondMenu(xy::Transform&, sf::Uint32, sf::Uint32, sf::Font&);
+    void createThirdMenu(xy::Transform&, sf::Uint32, sf::Uint32, sf::Font&);
 
     void updateLoadingScreen(float, sf::RenderWindow&) override;
 };

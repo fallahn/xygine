@@ -17,6 +17,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/LoadingScreen.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MapAnimator.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/MapCreation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MenuState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MenuDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/NPCSystem.cpp

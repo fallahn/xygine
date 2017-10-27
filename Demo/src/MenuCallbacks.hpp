@@ -36,6 +36,8 @@ source distribution.
 
 #include <xyginext/ecs/systems/UISystem.hpp>
 
+#include <xyginext/util/Vector.hpp>
+
 class HelpMenuCallback final
 {
 public:
@@ -55,8 +57,6 @@ public:
             target = HidePosition;
         }
         
-        static int buns = 0;
-
         auto movement = entity.getComponent<xy::Transform>().getPosition();
         movement.y = target - movement.y;
         
@@ -120,6 +120,39 @@ private:
     const bool& m_shown;
 
     float m_currentTime = 0.f;
+};
+
+class MenuSliderCallback final
+{
+public:
+    explicit MenuSliderCallback(const sf::Vector2f& target)
+        : m_target(target)
+    {
+
+    }
+
+    void operator()(xy::Entity entity, float dt)
+    {
+        auto movement = m_target - entity.getComponent<xy::Transform>().getPosition();
+        auto dist = xy::Util::Vector::lengthSquared(movement);
+        
+        if (dist < 9.f)
+        {
+            if (dist != 0)
+            {
+                entity.getComponent<xy::Transform>().setPosition(m_target);
+                //TODO optional signal to say we finished moving
+            }
+        }
+        else
+        {
+            entity.getComponent<xy::Transform>().move(movement * Speed * dt);
+        }
+    }
+
+private:
+    const sf::Vector2f& m_target;
+    static constexpr float Speed = 5.f;
 };
 
 #endif //DEMO_MENU_CALLBACKS_HPP_

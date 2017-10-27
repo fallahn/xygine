@@ -138,6 +138,7 @@
     <ClCompile Include="src\LoadingScreen.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MapAnimator.cpp" />
+    <ClCompile Include="src\MenuCreation.cpp" />
     <ClCompile Include="src\MenuDirector.cpp" />
     <ClCompile Include="src\MenuState.cpp" />
     <ClCompile Include="src\NPCSystem.cpp" />
