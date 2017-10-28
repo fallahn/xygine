@@ -389,6 +389,23 @@ void MenuState::createScene()
         }
     }
 
+    //help sign
+    entity = m_scene.createEntity();
+    bounds = entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/help_sign.png")).getTextureBounds();
+    entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize.x - (bounds.width + 202.f), xy::DefaultSceneSize.y - bounds.height);
+    entity.addComponent<xy::Drawable>().setDepth(9);
+    entity.addComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([&mb](xy::Entity, sf::Uint64 flags)
+    {
+        if (flags & xy::UISystem::LeftMouse)
+        {
+            auto* msg = mb.post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::HelpButtonClicked;
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().area = bounds;
+
+
     m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(1.f);
 }
 
@@ -436,6 +453,7 @@ void MenuState::createHelp()
     m_helpScene.addSystem<xy::CallbackSystem>(mb);
     m_helpScene.addSystem<xy::SpriteSystem>(mb);
     m_helpScene.addSystem<xy::RenderSystem>(mb);
+    m_helpScene.addSystem<xy::TextRenderer>(mb);
 
     //clicker
     auto entity = m_helpScene.createEntity();
@@ -448,15 +466,19 @@ void MenuState::createHelp()
             msg->action = MenuEvent::HelpButtonClicked;
         }
     });
-    entity.getComponent<xy::UIHitBox>().area = { 0.f, 0.f, 52.f, 52.f };
+    entity.getComponent<xy::UIHitBox>().area = { 0.f, 0.f, 64.f, 64.f };
     auto& tx = entity.addComponent<xy::Transform>();
-    tx.setPosition(670.f, 968.f);
+    tx.setPosition(1518.f, 20.f);
+    /*entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString("X");
+    entity.getComponent<xy::Text>().setCharacterSize(56);
+    entity.getComponent<xy::Text>().setFillColour({ 200, 10, 220, 110 });*/
+
 
     //help menu
     entity = m_helpScene.createEntity();
     entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/help.png"));
     entity.addComponent<xy::Drawable>();
-    entity.addComponent<xy::Transform>().setPosition(430.f, HelpMenuCallback::HidePosition);
+    entity.addComponent<xy::Transform>().setPosition(0.f, HelpMenuCallback::HidePosition);
     entity.getComponent<xy::Transform>().addChild(tx);
     entity.addComponent<xy::Callback>().active = true;
     entity.getComponent<xy::Callback>().function = HelpMenuCallback(m_helpShown, m_scene);

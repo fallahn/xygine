@@ -90,7 +90,7 @@ class HelpBackgroundCallback final
 {
 private:
     static constexpr float MaxTime = 0.5f;
-    static constexpr float MaxAlpha = 102.f;
+    static constexpr float MaxAlpha = 82.f;
 
 public:
     HelpBackgroundCallback(const bool& shown)
