@@ -43,7 +43,7 @@ struct SharedStateData final
     std::string remoteIP = "127.0.0.1";
     std::string error;
 
-    std::string score;
+    std::array<std::string, 2u> scores;
     std::size_t playerCount = 1;
 
     std::array<InputBinding, 2u> inputBindings;

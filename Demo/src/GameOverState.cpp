@@ -105,12 +105,33 @@ void GameoverState::load(const SharedStateData& data)
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
 
     //score text
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    entity.getComponent<xy::Transform>().move(-360.f, -180.f);
-    entity.addComponent<xy::Text>(m_font).setString("Score: " + data.score);
-    entity.getComponent<xy::Text>().setCharacterSize(140);
-    entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    for (auto i = 0u; i < data.playerCount; ++i)
+    {
+        entity = m_scene.createEntity();
+        entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);       
+        entity.addComponent<xy::Text>(m_font).setFillColour(sf::Color::Red);
+
+        if (data.playerCount == 1)
+        {
+            entity.getComponent<xy::Transform>().move(-360.f, -180.f);
+            entity.getComponent<xy::Text>().setString("Score: " + data.scores[0]);
+            entity.getComponent<xy::Text>().setCharacterSize(140);
+        }
+        else
+        {
+            entity.getComponent<xy::Text>().setCharacterSize(100);
+            if (i == 0)
+            {
+                entity.getComponent<xy::Transform>().move(-400.f, -180.f);
+                entity.getComponent<xy::Text>().setString("Player One Score: " + data.scores[0]);
+            }
+            else
+            {
+                entity.getComponent<xy::Transform>().move(-400.f, -100.f);
+                entity.getComponent<xy::Text>().setString("Player Two Score: " + data.scores[1]);
+            }
+        }
+    }
 
     auto selectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
         [](xy::Entity entity)

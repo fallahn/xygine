@@ -1638,9 +1638,16 @@ void GameState::updateUI(const InventoryUpdate& data)
     };
 
     //keep a copy of our score for the scoreboard
-    if (data.playerID == m_clientData[0].playerNumber)
+    if (m_sharedData.playerCount == 1)
     {
-        m_sharedData.score = std::to_string(data.score);
+        if (data.playerID == m_clientData[0].playerNumber)
+        {
+            m_sharedData.scores[0] = std::to_string(data.score);
+        }
+    }
+    else
+    {
+        m_sharedData.scores[data.playerID] = std::to_string(data.score);
     }
 
     //check if greater than high score and update
