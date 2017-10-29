@@ -817,7 +817,24 @@ void NPCSystem::collisionNormal(xy::Entity entity)
         }
         else //footbox
         {
-            auto collisionCount = hitboxes[i].getCollisionCount();
+            //ignore types which should still allow freefall
+            auto collisionCount = hitboxes[i].getCollisionCount();          
+            auto loopCount = collisionCount;
+            auto& manifolds = hitboxes[i].getManifolds();
+            for (auto j = 0u; j < loopCount; ++j)
+            {
+                const auto& man = manifolds[j];
+                switch (man.otherType)
+                {
+                default: break;
+                case CollisionType::Fruit:
+                case CollisionType::NPC:
+                case CollisionType::Powerup:
+                    collisionCount--;
+                    break;
+                }
+            }
+            
             if (collisionCount == 0)
             {
                 //foot's in the air so we're falling

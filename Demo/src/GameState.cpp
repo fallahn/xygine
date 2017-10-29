@@ -292,6 +292,7 @@ bool GameState::update(float dt)
         DPRINT("Player server state", "Walking");
         break;
     }*/
+
 #endif //XY_DEBUG
     
     xy::NetEvent evt;
@@ -1620,7 +1621,7 @@ void GameState::spawnTowerDude(sf::Int16 actorType)
         towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnTwo);
         towerEnt.addComponent<Actor>().type = ActorID::TowerTwo;
     }
-    towerEnt.addComponent<xy::Drawable>().setDepth(5);
+    towerEnt.addComponent<xy::Drawable>().setDepth(10);
     towerEnt.addComponent<xy::SpriteAnimation>();
     towerEnt.addComponent<MapAnimator>().state = MapAnimator::State::Static;
     towerEnt.getComponent<MapAnimator>().speed = 50.f;

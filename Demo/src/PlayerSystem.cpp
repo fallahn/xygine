@@ -430,7 +430,37 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
         }
         else if (hitbox.getType() == CollisionType::Foot)
         {
-            if (hitbox.getCollisionCount() == 0)
+            //remove any collisions which should still
+            //let the player enter freefall
+            auto collisionCount = hitbox.getCollisionCount();
+            auto loopCount = collisionCount;
+            auto& manifolds = hitbox.getManifolds();
+            for (auto j = 0u; j < loopCount; ++j)
+            {
+                const auto& man = manifolds[j];
+                switch (man.otherType)
+                {
+                default: break;
+                case CollisionType::Fruit:
+                case CollisionType::NPC:
+                case CollisionType::Powerup:
+                case CollisionType::Bubble:
+                    if (man.otherEntity.hasComponent<Bubble>())
+                    {
+                        const auto& bubble = man.otherEntity.getComponent<Bubble>();
+                        //skip if this is our bubble
+                        if (bubble.player == player.playerNumber)
+                        {
+                            break;
+                        }
+                    }
+
+                    collisionCount--;
+                    break;
+                }
+            }
+            
+            if (collisionCount == 0)
             {
                 entity.getComponent<Player>().state = Player::State::Jumping; //enter freefall
             }

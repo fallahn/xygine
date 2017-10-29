@@ -223,6 +223,7 @@ void QuadTree::onEntityAdded(xy::Entity entity)
     if (Util::Rectangle::contains(m_rootNode.getArea(), rect))
     {
         m_rootNode.addEntity(entity);
+        item.m_node->update(entity);
     }
     else
     {
