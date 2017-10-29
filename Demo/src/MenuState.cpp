@@ -46,6 +46,7 @@ source distribution.
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/components/AudioListener.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
+#include <xyginext/ecs/components/SpriteAnimation.hpp>
 
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
@@ -58,6 +59,7 @@ source distribution.
 #include <xyginext/ecs/systems/QuadTree.hpp>
 
 #include <xyginext/graphics/postprocess/Blur.hpp>
+#include <xyginext/graphics/SpriteSheet.hpp>
 
 #include <xyginext/util/Random.hpp>
 #include <xyginext/util/Math.hpp>
@@ -451,6 +453,7 @@ void MenuState::createHelp()
     auto& mb = getContext().appInstance.getMessageBus();
     m_helpScene.addSystem<xy::UISystem>(mb);
     m_helpScene.addSystem<xy::CallbackSystem>(mb);
+    m_helpScene.addSystem<xy::SpriteAnimator>(mb);
     m_helpScene.addSystem<xy::SpriteSystem>(mb);
     m_helpScene.addSystem<xy::RenderSystem>(mb);
     m_helpScene.addSystem<xy::TextRenderer>(mb);
@@ -493,6 +496,106 @@ void MenuState::createHelp()
     entity.addComponent<xy::Callback>().active = true;
     entity.getComponent<xy::Callback>().function = HelpBackgroundCallback(m_helpShown);
 
+    //left tower
+    static const std::array<sf::Vector2f, 4u> positions = 
+    {
+        sf::Vector2f(160.f, 96.f),
+        {160.f, 352.f},
+        {160.f, 608.f},
+        {160.f, 864.f}
+    };
+    xy::SpriteSheet spriteSheet;
+    spriteSheet.loadFromFile("assets/sprites/player.spt", m_textureResource);
+
+    auto towerEnt = m_helpScene.createEntity();
+    auto bounds = towerEnt.addComponent<xy::Sprite>(m_textureResource.get("assets/images/keybinds.png")).getTextureBounds();
+    towerEnt.addComponent<xy::Drawable>().setDepth(1);
+    auto& towerLeftTx = towerEnt.addComponent<xy::Transform>();
+    towerEnt.addComponent<xy::Callback>().function = MenuSliderCallback(m_leftMenuTarget);
+    towerEnt.getComponent<xy::Callback>().active = true;
+    m_leftMenuTarget.x = -bounds.width;
+    towerLeftTx.setPosition(m_leftMenuTarget);
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_one");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerLeftTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[0]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("jump_up", "player_one"));
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_one");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerLeftTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[1]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("shoot", "player_one"));
+    entity.getComponent<xy::Sprite>().getAnimations()[spriteSheet.getAnimationIndex("shoot", "player_one")].looped = true;
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_one");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerLeftTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[2]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("walk", "player_one"));
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_one");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerLeftTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[3]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("walk", "player_one"));
+
+    //right tower
+    towerEnt = m_helpScene.createEntity();
+    bounds = towerEnt.addComponent<xy::Sprite>(m_textureResource.get("assets/images/keybinds.png")).getTextureBounds();
+    towerEnt.addComponent<xy::Drawable>().setDepth(1);
+    auto& towerRightTx = towerEnt.addComponent<xy::Transform>();
+    towerEnt.addComponent<xy::Callback>().function = MenuSliderCallback(m_rightMenuTarget);
+    towerEnt.getComponent<xy::Callback>().active = true;
+    m_rightMenuTarget.x = xy::DefaultSceneSize.x;
+    towerRightTx.setPosition(m_rightMenuTarget);
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_two");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerRightTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[0]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("jump_up", "player_two"));
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_two");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerRightTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[1]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("shoot", "player_two"));
+    entity.getComponent<xy::Sprite>().getAnimations()[spriteSheet.getAnimationIndex("shoot", "player_two")].looped = true;
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_two");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerRightTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[2]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("walk", "player_two"));
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_two");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerRightTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[3]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("walk", "player_two"));
+
     //apply the default view
     auto view = getContext().defaultView;
     auto& camera = m_helpScene.getActiveCamera().getComponent<xy::Camera>();
@@ -508,12 +611,16 @@ void MenuState::showHelpMenu()
     {
         //hide it
         m_blurEffect->setEnabled(false);
+        m_leftMenuTarget.x = -320.f;
+        m_rightMenuTarget.x = xy::DefaultSceneSize.x;
     }
     else
     {
         //show it
         m_blurEffect->setEnabled(true);
         m_scene.setSystemActive<xy::UISystem>(false);
+        m_leftMenuTarget.x = 0.f;
+        m_rightMenuTarget.x = xy::DefaultSceneSize.x - 320.f;
     }
     
     m_helpShown = !m_helpShown;

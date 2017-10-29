@@ -71,6 +71,8 @@ private:
     xy::ConfigFile m_keyBinds;
 
     sf::Vector2f m_menuTarget;
+    sf::Vector2f m_leftMenuTarget;
+    sf::Vector2f m_rightMenuTarget;
 
     void loadKeybinds();
     void createScene();
