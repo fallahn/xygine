@@ -61,4 +61,4 @@ private:
     std::string m_cfgName;
 };
 
-#endif DEMO_KEYMAP_DIRECTOR_HPP_
+#endif //DEMO_KEYMAP_DIRECTOR_HPP_
