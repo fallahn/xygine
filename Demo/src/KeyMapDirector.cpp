@@ -74,19 +74,19 @@ void KeyMapDirector::handleEvent(const sf::Event& evt)
             {
             default: break;
             case 0:
-                kb.buttons[InputBinding::Jump] = evt.key.code;
+                kb.keys[InputBinding::Jump] = evt.key.code;
                 cfg->findProperty("jump")->setValue(std::to_string(evt.key.code));
                 break;
             case 1:
-                kb.buttons[InputBinding::Shoot] = evt.key.code;
+                kb.keys[InputBinding::Shoot] = evt.key.code;
                 cfg->findProperty("shoot")->setValue(std::to_string(evt.key.code));
                 break;
             case 2:
-                kb.buttons[InputBinding::Left] = evt.key.code;
+                kb.keys[InputBinding::Left] = evt.key.code;
                 cfg->findProperty("left")->setValue(std::to_string(evt.key.code));
                 break;
             case 3:
-                kb.buttons[InputBinding::Right] = evt.key.code;
+                kb.keys[InputBinding::Right] = evt.key.code;
                 cfg->findProperty("right")->setValue(std::to_string(evt.key.code));
                 break;
             }

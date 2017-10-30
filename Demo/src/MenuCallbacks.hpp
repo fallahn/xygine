@@ -113,7 +113,7 @@ public:
         float target = m_currentTime / MaxTime;
         sf::Uint8 targetAlpha = static_cast<sf::Uint8>(target * MaxAlpha);
 
-        entity.getComponent<xy::Sprite>().setColour({ 255, 255, 255, targetAlpha });
+        entity.getComponent<xy::Sprite>().setColour({ 5, 25, 55, targetAlpha });
     }
 
 private:
