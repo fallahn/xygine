@@ -161,6 +161,18 @@ void Transform::addChild(Transform& child)
     m_children.push_back(&child);
 }
 
+void Transform::removeChild(Transform& tx)
+{
+    if (tx.m_parent != this) return;
+
+    tx.m_parent = nullptr;
+    m_children.erase(std::remove_if(m_children.begin(), m_children.end(), 
+        [&tx](const Transform* ptr)
+    {
+        return ptr == &tx;
+    }), m_children.end());
+}
+
 sf::Transform Transform::getWorldTransform() const
 {
     if (m_parent)

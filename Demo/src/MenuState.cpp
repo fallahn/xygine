@@ -36,6 +36,7 @@ source distribution.
 #include "MenuCallbacks.hpp"
 #include "ClientServerShared.hpp"
 #include "KeyMapDirector.hpp"
+#include "Swarm.hpp"
 
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -313,6 +314,7 @@ void MenuState::createScene()
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::SpriteSystem>(mb);
     m_scene.addSystem<SpringFlowerSystem>(mb);
+    m_scene.addSystem<SwarmSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
@@ -346,6 +348,13 @@ void MenuState::createScene()
     m_textureResource.get("assets/images/grass.png").setRepeated(true);
     entity.addComponent<xy::Drawable>().setDepth(10);
 
+    //glow flies
+    entity = m_scene.createEntity();
+    entity.addComponent<Swarm>();
+    entity.addComponent<xy::Transform>().setPosition(40.f, 300.f);
+    entity.addComponent<xy::Drawable>().setPrimitiveType(sf::Points);
+    entity.getComponent<xy::Drawable>().setDepth(2);
+    entity.getComponent<xy::Drawable>().setBlendMode(sf::BlendAdd);
 
     //springy grass
     float xPos = xy::Util::Random::value(80.f, 112.f);
