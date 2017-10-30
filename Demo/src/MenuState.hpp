@@ -84,6 +84,8 @@ private:
     void createSecondMenu(xy::Transform&, sf::Uint32, sf::Uint32, sf::Font&);
     void createThirdMenu(xy::Transform&, sf::Uint32, sf::Uint32, sf::Font&);
 
+    void createKeybindInputs(xy::Entity, sf::Uint8);
+
     void updateLoadingScreen(float, sf::RenderWindow&) override;
 };
 

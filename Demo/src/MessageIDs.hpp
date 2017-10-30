@@ -135,8 +135,11 @@ struct MenuEvent final
         HelpButtonClicked,
         QuitGameClicked,
         ContinueGameClicked,
-        UnpauseGame
+        UnpauseGame,
+        KeybindClicked
     }action;
+    sf::Uint8 index = 0;
+    sf::Uint8 player = 0;
 };
 
 struct GameEvent final

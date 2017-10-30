@@ -35,6 +35,7 @@ source distribution.
 #include "MessageIDs.hpp"
 #include "MenuCallbacks.hpp"
 #include "ClientServerShared.hpp"
+#include "KeyMapDirector.hpp"
 
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -457,6 +458,7 @@ void MenuState::createHelp()
     m_helpScene.addSystem<xy::SpriteSystem>(mb);
     m_helpScene.addSystem<xy::RenderSystem>(mb);
     m_helpScene.addSystem<xy::TextRenderer>(mb);
+    m_helpScene.addDirector<KeyMapDirector>(m_sharedStateData, m_keyBinds);
 
     //clicker
     auto entity = m_helpScene.createEntity();
@@ -552,6 +554,8 @@ void MenuState::createHelp()
     entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
     entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("walk", "player_one"));
 
+    createKeybindInputs(towerEnt, 0);
+
     //right tower
     towerEnt = m_helpScene.createEntity();
     bounds = towerEnt.addComponent<xy::Sprite>(m_textureResource.get("assets/images/keybinds.png")).getTextureBounds();
@@ -595,6 +599,8 @@ void MenuState::createHelp()
     entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
     entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
     entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("walk", "player_two"));
+
+    createKeybindInputs(towerEnt, 1);
 
     //apply the default view
     auto view = getContext().defaultView;

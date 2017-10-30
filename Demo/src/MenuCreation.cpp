@@ -27,6 +27,9 @@ source distribution.
 
 #include "MenuState.hpp"
 #include "CommandIDs.hpp"
+#include "KeyMapping.hpp"
+#include "MessageIDs.hpp"
+#include "KeyMapDirector.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -547,4 +550,68 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
     parentTx.addChild(entity.getComponent<xy::Transform>());
+}
+
+void MenuState::createKeybindInputs(xy::Entity towerEnt, sf::Uint8 player)
+{
+    static const std::array<sf::Vector2f, 4u> buttonPositions =
+    {
+        sf::Vector2f(0.f, 128.f),
+        sf::Vector2f(0.f, 384.f),
+        sf::Vector2f(0.f, 640.f),
+        sf::Vector2f(0.f, 896.f)
+    };
+
+    static const std::array<sf::Vector2f, 4u> textPositions =
+    {
+        sf::Vector2f(82.f, 194.f),
+        sf::Vector2f(82.f, 450.f),
+        sf::Vector2f(82.f, 706.f),
+        sf::Vector2f(82.f, 962.f)
+    };
+
+    auto& towerTx = towerEnt.getComponent<xy::Transform>();
+    auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");
+
+    for (auto i = 0u; i < 4u; ++i)
+    {
+        auto entity = m_helpScene.createEntity();
+        entity.addComponent<xy::Transform>().setPosition(buttonPositions[i]);
+        towerTx.addChild(entity.getComponent<xy::Transform>());
+        entity.addComponent<xy::UIHitBox>().area = { 0.f, 0.f, 64.f, 64.f };
+        entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
+            m_helpScene.getSystem<xy::UISystem>().addMouseButtonCallback([&, i, player](
+                xy::Entity buttonEnt, sf::Uint64 flags)
+        {
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::KeybindClicked;
+            msg->index = i;
+            msg->player = player;
+        });
+
+        entity = m_helpScene.createEntity();
+        entity.addComponent<xy::Transform>().setPosition(textPositions[i]);
+        towerTx.addChild(entity.getComponent<xy::Transform>());
+        entity.addComponent<xy::Text>(font).setCharacterSize(36);
+        
+        switch (i)
+        {
+        default: break;
+        case 0:
+            entity.getComponent<xy::Text>().setString(KeyMap.at(m_sharedStateData.inputBindings[player].keys[InputBinding::Jump]));
+            break;
+        case 1:
+            entity.getComponent<xy::Text>().setString(KeyMap.at(m_sharedStateData.inputBindings[player].keys[InputBinding::Shoot]));
+            break;
+        case 2:
+            entity.getComponent<xy::Text>().setString(KeyMap.at(m_sharedStateData.inputBindings[player].keys[InputBinding::Left]));
+            break;
+        case 3:
+            entity.getComponent<xy::Text>().setString(KeyMap.at(m_sharedStateData.inputBindings[player].keys[InputBinding::Right]));
+            break;
+        }
+        entity.addComponent<xy::CommandTarget>().ID = CommandID::KeybindInput;
+        entity.addComponent<KeyMapInput>().player = player;
+        entity.getComponent<KeyMapInput>().index = i;
+    }
 }
