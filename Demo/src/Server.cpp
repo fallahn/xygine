@@ -268,7 +268,15 @@ void GameServer::update()
                     state.playerCanRideBubble = player.canRideBubble;
                     state.playerLives = player.lives;
 
+                    //auto collisionState = ent.getComponent<CollisionComponent>().serialise();
+                    //std::vector<sf::Uint8> data(sizeof(ClientState) + collisionState.size()); //TODO recycle this to save on reallocations
+                    //auto ptr = data.data();
+                    //std::memcpy(ptr, &state, sizeof(state));
+                    //ptr += sizeof(state);
+                    //std::memcpy(ptr, collisionState.data(), collisionState.size());
+
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
+                    //m_host.sendPacket(c.peer, PacketID::ClientUpdate, data.data(), data.size(), xy::NetFlag::Unreliable);
 
                     gameOver = (gameOver && player.state == Player::State::Dead);
                 }
@@ -578,9 +586,13 @@ void GameServer::checkMapStatus(float dt)
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
         m_scene.update(0.f); //force the command right away
 
+        //log the map time - TODO remove this when done
+        xy::Logger::log("Map: " + m_mapFiles[m_currentMap] + ", Time: " + std::to_string(m_currentRoundTime), xy::Logger::Type::Info, xy::Logger::Output::File);
+
         //load next map
         m_currentMap = (m_currentMap + 1) % m_mapFiles.size();
         loadMap(); //TODO we need to check this was successful
+        
 
         //tell clients to do map change
         m_host.broadcastPacket(PacketID::MapChange, m_mapData, xy::NetFlag::Reliable, 1);

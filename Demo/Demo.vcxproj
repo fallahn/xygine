@@ -126,6 +126,7 @@
     <ClCompile Include="src\BonusSystem.cpp" />
     <ClCompile Include="src\BubbleSystem.cpp" />
     <ClCompile Include="src\ClientServerShared.cpp" />
+    <ClCompile Include="src\CollisionComponent.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
     <ClCompile Include="src\ErrorState.cpp" />
     <ClCompile Include="src\FruitSystem.cpp" />

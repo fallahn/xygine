@@ -93,6 +93,8 @@ source distribution.
 #include <tmxlite/TileLayer.hpp>
 #include <tmxlite/ObjectGroup.hpp>
 
+#include <cstring>
+
 namespace
 {
     const float clientTimeout = 20.f;
@@ -915,6 +917,11 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::ClientUpdate:
     {
         const auto& state = evt.packet.as<ClientState>();
+        /*ClientState state;
+        std::memcpy(&state, evt.packet.getData(), sizeof(state));
+        auto size = evt.packet.getSize() - sizeof(state);
+        std::vector<sf::Uint8> collisionData(size);
+        std::memcpy(collisionData.data(), (sf::Uint8*)evt.packet.getData() + sizeof(state), size);*/
        
 #ifdef XY_DEBUG
         debugShape.setPosition(state.x, state.y);

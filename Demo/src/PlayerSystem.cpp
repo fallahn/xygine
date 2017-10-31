@@ -232,7 +232,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
             
             processInput(currentMask, delta, entity);
 
-            idx = (idx + 1) % player.history.size();
+            idx = (idx + 1) % player.history.size();        
         }
     }
 
