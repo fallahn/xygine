@@ -162,10 +162,31 @@ void TextRenderer::process(float)
             text.m_localBounds.width = maxX - minX;
             text.m_localBounds.height = maxY - minY;
 
+
+            //check for alignment
+            float offset = 0.f;
+            if (text.m_alignment == Text::Alignment::Centre)
+            {
+                offset = text.m_localBounds.width / 2.f;
+            }
+            else if (text.m_alignment == Text::Alignment::Right)
+            {
+                offset = text.m_localBounds.width;
+            }
+            if (offset > 0)
+            {
+                for (auto& v : text.m_vertices)
+                {
+                    v.position.x -= offset;
+                }
+                text.m_localBounds.left -= offset;
+            }
+
             //use the local bounds to see if we want cropping or not
             text.m_cropped = !Util::Rectangle::contains(text.m_croppingArea, text.m_localBounds);
         }
 
+        //TODO - shouldn't this be in the dirty loop above?
         const auto& xForm = entity.getComponent<Transform>().getWorldTransform();
 
         //update world positions

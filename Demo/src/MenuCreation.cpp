@@ -445,12 +445,14 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     //ip text
     entity = m_scene.createEntity();
     entity.addComponent<xy::Text>(font).setString(m_sharedStateData.remoteIP);
-    entity.getComponent<xy::Text>().setCharacterSize(65);
+    entity.getComponent<xy::Text>().setCharacterSize(58);
+    entity.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     bounds.width -= 72.f;
+    bounds.left -= 148.f;
     entity.getComponent<xy::Text>().setCroppingArea(bounds);
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MenuText;
     auto& tx3 = entity.addComponent<xy::Transform>();
-    tx3.setPosition(44.f, 146.f);
+    tx3.setPosition(192.f, 146.f);
 
     //join button
     entity = m_scene.createEntity();
@@ -564,10 +566,10 @@ void MenuState::createKeybindInputs(xy::Entity towerEnt, sf::Uint8 player)
 
     static const std::array<sf::Vector2f, 4u> textPositions =
     {
-        sf::Vector2f(82.f, 194.f),
-        sf::Vector2f(82.f, 450.f),
-        sf::Vector2f(82.f, 706.f),
-        sf::Vector2f(82.f, 962.f)
+        sf::Vector2f(160.f, 194.f),
+        sf::Vector2f(160.f, 450.f),
+        sf::Vector2f(160.f, 706.f),
+        sf::Vector2f(160.f, 962.f)
     };
 
     auto& towerTx = towerEnt.getComponent<xy::Transform>();
@@ -593,6 +595,7 @@ void MenuState::createKeybindInputs(xy::Entity towerEnt, sf::Uint8 player)
         entity.addComponent<xy::Transform>().setPosition(textPositions[i]);
         towerTx.addChild(entity.getComponent<xy::Transform>());
         entity.addComponent<xy::Text>(font).setCharacterSize(36);
+        entity.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
         
         switch (i)
         {

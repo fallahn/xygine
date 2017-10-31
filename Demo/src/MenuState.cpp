@@ -348,6 +348,7 @@ void MenuState::createScene()
     m_textureResource.get("assets/images/grass.png").setRepeated(true);
     entity.addComponent<xy::Drawable>().setDepth(10);
 
+#ifndef XY_DEBUG
     //glow flies
     entity = m_scene.createEntity();
     entity.addComponent<Swarm>();
@@ -355,6 +356,7 @@ void MenuState::createScene()
     entity.addComponent<xy::Drawable>().setPrimitiveType(sf::Points);
     entity.getComponent<xy::Drawable>().setDepth(2);
     entity.getComponent<xy::Drawable>().setBlendMode(sf::BlendAdd);
+#endif
 
     //springy grass
     float xPos = xy::Util::Random::value(80.f, 112.f);
