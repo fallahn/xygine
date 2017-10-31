@@ -39,10 +39,10 @@
   <object id="151" name="squatmo" x="704" y="544" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="Teleport">
-  <object id="73" x="288" y="1056" width="128" height="32"/>
-  <object id="74" x="608" y="1056" width="128" height="32"/>
-  <object id="71" x="288" y="0" width="128" height="10"/>
-  <object id="72" x="608" y="0" width="128" height="10"/>
+  <object id="73" x="288" y="1024" width="128" height="64"/>
+  <object id="74" x="608" y="1024" width="128" height="64"/>
+  <object id="71" x="288" y="0" width="128" height="32"/>
+  <object id="72" x="608" y="0" width="128" height="32"/>
  </objectgroup>
  <objectgroup name="Platform">
   <object id="142" x="224" y="320" width="160" height="32"/>

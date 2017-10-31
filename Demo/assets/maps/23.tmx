@@ -27,10 +27,10 @@
   <object id="89" name="clocksy" x="512" y="608" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="Teleport">
-  <object id="53" x="608" y="1056" width="128" height="32"/>
-  <object id="54" x="288" y="1056" width="128" height="32"/>
-  <object id="51" x="288" y="0" width="128" height="10"/>
-  <object id="52" x="608" y="0" width="128" height="10"/>
+  <object id="53" x="608" y="1024" width="128" height="64"/>
+  <object id="54" x="288" y="1024" width="128" height="64"/>
+  <object id="51" x="288" y="0" width="128" height="32"/>
+  <object id="52" x="608" y="0" width="128" height="32"/>
  </objectgroup>
  <objectgroup name="Solid">
   <object id="4" x="64" y="0" width="224" height="160"/>

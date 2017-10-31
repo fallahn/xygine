@@ -47,10 +47,10 @@
   <object id="55" x="480" y="864" width="64" height="64"/>
  </objectgroup>
  <objectgroup color="#ff007f" name="Teleport">
-  <object id="21" x="288" y="1040" width="128" height="48"/>
-  <object id="22" x="608" y="1040" width="128" height="48"/>
-  <object id="19" x="288" y="0" width="128" height="10"/>
-  <object id="20" x="608" y="0" width="128" height="10"/>
+  <object id="21" x="288" y="1024" width="128" height="64"/>
+  <object id="22" x="608" y="1024" width="128" height="64"/>
+  <object id="19" x="288" y="0" width="128" height="32"/>
+  <object id="20" x="608" y="0" width="128" height="32"/>
  </objectgroup>
  <objectgroup color="#00ff00" name="Platform">
   <object id="52" x="736" y="704" width="144" height="32"/>

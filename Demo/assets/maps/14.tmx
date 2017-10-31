@@ -28,8 +28,8 @@
   <object id="74" x="736" y="928" width="224" height="160"/>
  </objectgroup>
  <objectgroup color="#ff007f" name="Teleport">
-  <object id="75" x="576" y="0" width="160" height="16"/>
-  <object id="76" x="576" y="1072" width="160" height="16"/>
+  <object id="75" x="576" y="0" width="160" height="32"/>
+  <object id="76" x="576" y="1024" width="160" height="64"/>
  </objectgroup>
  <objectgroup color="#00ff00" name="Platform">
   <object id="77" x="480" y="288" width="48" height="32"/>
