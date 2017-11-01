@@ -220,11 +220,12 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     {
         std::size_t idx = std::distance(player.history.begin(), ip.base()) -1;
         auto end = (player.currentInput + player.history.size() - 1) % player.history.size();
+        
+        //restore the collision data from history
+        entity.getComponent<CollisionComponent>() = player.history[idx].collision;
 
         while (idx != end) //currentInput points to the next free slot in history
-        {                      
-            //restore the collision data from history
-            entity.getComponent<CollisionComponent>() = player.history[idx].collision;
+        {                                        
             resolveCollision(entity);
             
             float delta = getDelta(player.history, idx);
@@ -232,7 +233,9 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
             
             processInput(currentMask, delta, entity);
 
-            idx = (idx + 1) % player.history.size();        
+            idx = (idx + 1) % player.history.size();
+
+            getScene()->getSystem<CollisionSystem>().queryState(entity);
         }
     }
 
