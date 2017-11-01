@@ -504,9 +504,8 @@ void GameServer::checkRoundTime(float dt)
     {
         //send warning message
         m_host.broadcastPacket(PacketID::RoundWarning, sf::Uint8(0), xy::NetFlag::Reliable, 1);
-#ifdef XY_DEBUG
+
         xy::Logger::log("Round warning, Map: " + m_mapFiles[m_currentMap], xy::Logger::Type::Info, xy::Logger::Output::File);
-#endif
     }
     else if (lastTime < m_roundTimeout &&
         m_currentRoundTime >= m_roundTimeout && m_mapData.actorCount > 0)

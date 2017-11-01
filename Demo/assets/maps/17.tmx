@@ -36,9 +36,9 @@
  <objectgroup name="Spawn">
   <object id="76" name="whirlybob" x="800" y="304" width="16" height="16"/>
   <object id="96" name="clocksy" x="512" y="736" width="16" height="16"/>
-  <object id="97" name="squatmo" x="288" y="304" width="16" height="16"/>
+  <object id="97" name="balldock" x="256" y="192" width="16" height="16"/>
   <object id="98" name="whirlybob" x="208" y="304" width="16" height="16"/>
-  <object id="121" name="squatmo" x="720" y="304" width="16" height="16"/>
+  <object id="121" name="balldock" x="720" y="192" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="Teleport">
   <object id="73" x="288" y="1024" width="128" height="64"/>

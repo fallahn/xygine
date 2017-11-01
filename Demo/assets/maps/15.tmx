@@ -47,9 +47,9 @@
  <objectgroup name="Spawn">
   <object id="28" name="whirlybob" x="368" y="464" width="16" height="16"/>
   <object id="29" name="whirlybob" x="656" y="464" width="16" height="16"/>
-  <object id="30" name="balldock" x="816" y="176" width="16" height="16"/>
+  <object id="30" name="balldock" x="448" y="640" width="16" height="16"/>
   <object id="31" name="balldock" x="896" y="176" width="16" height="16"/>
-  <object id="34" name="Balldock" x="656" y="176" width="16" height="16"/>
+  <object id="34" name="Balldock" x="320" y="640" width="16" height="16"/>
   <object id="63" name="balldock" x="736" y="176" width="16" height="16"/>
  </objectgroup>
 </map>
