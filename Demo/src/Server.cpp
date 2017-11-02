@@ -504,8 +504,6 @@ void GameServer::checkRoundTime(float dt)
     {
         //send warning message
         m_host.broadcastPacket(PacketID::RoundWarning, sf::Uint8(0), xy::NetFlag::Reliable, 1);
-
-        xy::Logger::log("Round warning, Map: " + m_mapFiles[m_currentMap], xy::Logger::Type::Info, xy::Logger::Output::File);
     }
     else if (lastTime < m_roundTimeout &&
         m_currentRoundTime >= m_roundTimeout && m_mapData.actorCount > 0)
@@ -588,8 +586,6 @@ void GameServer::checkMapStatus(float dt)
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
         m_scene.update(0.f); //force the command right away
 
-        //log the map time - TODO remove this when done
-        xy::Logger::log("Map: " + m_mapFiles[m_currentMap] + ", Time: " + std::to_string(m_currentRoundTime), xy::Logger::Type::Info, xy::Logger::Output::File);
 
         //load next map
         m_currentMap = (m_currentMap + 1) % m_mapFiles.size();

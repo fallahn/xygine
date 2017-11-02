@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="126">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="129">
  <properties>
-  <property name="round_time" type="float" value="45"/>
+  <property name="round_time" type="float" value="26"/>
  </properties>
  <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
   <image source="../images/block.png" width="512" height="512"/>
@@ -19,7 +19,7 @@
    eJxjYBhYoALEhkjYCipuTUDMEKpXhUK7YfqNsGBLILbBIYeunxL7ibETm/io/6lvP7H+x2W/MR77TIiwH6Yf2V5LJP3o9iMDASx2yuNwixgOcXEkNj8R5gMA0UIWxA==
   </data>
  </layer>
- <objectgroup name="Solid">
+ <objectgroup color="#005500" name="Solid">
   <object id="4" x="64" y="0" width="224" height="160"/>
   <object id="7" x="64" y="928" width="224" height="128"/>
   <object id="8" x="960" y="128" width="64" height="832"/>
@@ -30,6 +30,9 @@
   <object id="50" x="736" y="928" width="224" height="128"/>
   <object id="121" x="736" y="832" width="32" height="96"/>
   <object id="122" x="256" y="832" width="32" height="96"/>
+  <object id="126" x="288" y="0" width="128" height="16"/>
+  <object id="127" x="608" y="0" width="128" height="16"/>
+  <object id="128" x="64" y="1056" width="896" height="32"/>
  </objectgroup>
  <objectgroup name="Spawn">
   <object id="75" name="whirlybob" x="784" y="224" width="16" height="16"/>
@@ -40,11 +43,11 @@
   <object id="123" name="balldock" x="160" y="608" width="16" height="16"/>
   <object id="124" name="balldock" x="864" y="608" width="16" height="16"/>
  </objectgroup>
- <objectgroup name="Teleport">
-  <object id="73" x="288" y="1024" width="128" height="64"/>
-  <object id="74" x="608" y="1024" width="128" height="64"/>
-  <object id="71" x="288" y="0" width="128" height="32"/>
-  <object id="72" x="608" y="0" width="128" height="32"/>
+ <objectgroup color="#ff007f" name="Teleport">
+  <object id="73" x="288" y="1024" width="128" height="32"/>
+  <object id="74" x="608" y="1024" width="128" height="32"/>
+  <object id="71" x="288" y="16" width="128" height="16"/>
+  <object id="72" x="608" y="16" width="128" height="16"/>
  </objectgroup>
  <objectgroup name="Platform">
   <object id="109" x="144" y="288" width="320" height="32"/>
