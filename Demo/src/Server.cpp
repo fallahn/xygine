@@ -76,7 +76,10 @@ namespace
     const float defaultRoundTime = 39.f; //after this everything is angry
     const float roundWarnTime = 2.5f; //allows time for clients to do warning
     const float watchdogTime = 20.f; //change map this many seconds after round time regardless
+    const float MaxPauseTime = 5.f * 60.f;
 }
+
+std::bitset<4> GameServer::GameOverOrPaused = { (1 << GameOver) | (1 << Paused) }; //should be constexpr but makes g++ cry
 
 GameServer::GameServer()
     : m_ready               (false),
@@ -87,9 +90,7 @@ GameServer::GameServer()
     m_currentMap            (0),
     m_endOfRoundPauseTime   (3.f),
     m_currentRoundTime      (0.f),
-    m_roundTimeout          (defaultRoundTime),
-    m_gameOver              (false),
-    m_changingMaps          (false)
+    m_roundTimeout          (defaultRoundTime)
 {
     m_clients[0].data.actor.type = ActorID::PlayerOne;
     m_clients[0].data.spawnX = PlayerOneSpawn.x;
@@ -140,6 +141,7 @@ void GameServer::update()
     sf::Clock clock;
     float tickAccumulator = 0.f;
     float updateAccumulator = 0.f;
+    float pauseTimeout = 0.f;
 
     initScene();
     loadMap();
@@ -183,7 +185,9 @@ void GameServer::update()
             }
 
             //only update the server if clients are connected
-            if (m_host.getConnectedPeerCount() > 0 || m_changingMaps)
+            //and not paused
+            if ((m_host.getConnectedPeerCount() > 0 || m_stateFlags.test(ChangingMaps))
+                && /*!m_stateFlags.test(GameOver) && !m_stateFlags.test(Paused)*/((m_stateFlags & GameOverOrPaused) == 0))
             {
                 m_scene.update(updateRate);
 
@@ -192,6 +196,24 @@ void GameServer::update()
 
                 //check if it's time to change map
                 checkMapStatus(updateRate);
+
+                //check to see if client requested pause
+                if (!m_stateFlags.test(ChangingMaps) && m_stateFlags.test(PendingPause))
+                {
+                    m_stateFlags.set(Paused, m_stateFlags.test(PendingPause));
+                    m_stateFlags.set(PendingPause, false);
+                    pauseTimeout = 0.f;
+
+                    //broadcast paused to clients
+                    m_host.broadcastPacket(PacketID::RequestClientPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+                }               
+            }
+            //and unpause if client is idling
+            pauseTimeout += dt;
+            if (pauseTimeout > MaxPauseTime)
+            {
+                m_stateFlags.set(Paused, false);
+                m_host.broadcastPacket(PacketID::RequestClientPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
             }
         }
 
@@ -244,25 +266,33 @@ void GameServer::update()
                     state.playerCanJump = player.canJump;
                     state.playerCanLand = player.canLand;
                     state.playerCanRideBubble = player.canRideBubble;
+                    state.playerLives = player.lives;
+
+                    //auto collisionState = ent.getComponent<CollisionComponent>().serialise();
+                    //std::vector<sf::Uint8> data(sizeof(ClientState) + collisionState.size()); //TODO recycle this to save on reallocations
+                    //auto ptr = data.data();
+                    //std::memcpy(ptr, &state, sizeof(state));
+                    //ptr += sizeof(state);
+                    //std::memcpy(ptr, collisionState.data(), collisionState.size());
 
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
+                    //m_host.sendPacket(c.peer, PacketID::ClientUpdate, data.data(), data.size(), xy::NetFlag::Unreliable);
 
                     gameOver = (gameOver && player.state == Player::State::Dead);
                 }
             }
 
-            if (gameOver && !m_gameOver)
+            if (gameOver && !m_stateFlags.test(GameOver))
             {
                 //state changed, send message
                 m_host.broadcastPacket(PacketID::GameOver, 0, xy::NetFlag::Reliable, 1);
             }
-            m_gameOver = gameOver;
+            m_stateFlags.set(GameOver, gameOver);
 
 #ifdef XY_DEBUG
             m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.actorCount, xy::NetFlag::Unreliable, 0);
 #endif
         }
-
     }
 
     //cleanly disconnect any clients
@@ -273,9 +303,15 @@ void GameServer::handleConnect(const xy::NetEvent& evt)
 {
     LOG("Client connected from " + evt.peer.getAddress(), xy::Logger::Type::Info);
 
-    //TODO check not existing client? what if we want 2 local players?
+    //if already hosting 2 players on same client, send rejection
+    if (m_clients[0].data.actor.id != ActorID::None
+        && m_clients[1].data.actor.id != ActorID::None)
+    {
+        m_host.sendPacket(evt.peer, PacketID::ServerFull, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+        return;
+    }
 
-    if (!m_changingMaps)
+    if (!m_stateFlags.test(ChangingMaps))
     {
         //send map name, list of actor ID's up to count
         m_host.sendPacket(evt.peer, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
@@ -327,26 +363,51 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
     switch (evt.packet.getID())
     {
     default: break;
+    case PacketID::RequestServerPause:
+    {
+        auto pause = evt.packet.as<sf::Uint8>();
+        if (pause == 0 && !m_stateFlags.test(Paused))
+        {
+            m_stateFlags.set(PendingPause, true);
+        }
+        else
+        {
+            if (m_stateFlags.test(Paused))
+            {
+                m_stateFlags.set(Paused, false);
+                m_host.broadcastPacket(PacketID::RequestClientPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
+            }
+        }
+    }
+        break;
         //if client loaded send initial positions
     case PacketID::ClientReady:
     {
-        std::size_t playerNumber = 0;
-        if (m_clients[0].data.actor.id != ActorID::None)
+        sf::Uint8 playerCount = evt.packet.as<sf::Uint8>();
+
+        for (auto i = 0; i < playerCount; ++i)
         {
-            playerNumber = 1;
-            //send existing client data
-            m_host.sendPacket(evt.peer, PacketID::ClientData, m_clients[0].data, xy::NetFlag::Reliable, 1);
+            std::size_t playerNumber = 0;
+            if (m_clients[0].data.actor.id != ActorID::None)
+            {
+                playerNumber = 1;
+
+                if (playerCount == 1)
+                {
+                    //send existing client data
+                    m_host.sendPacket(evt.peer, PacketID::ClientData, m_clients[0].data, xy::NetFlag::Reliable, 1);
+                }
+            }
+            //add the player actor to the scene
+            spawnPlayer(playerNumber);
+
+            //send the client info
+            m_clients[playerNumber].data.peerID = evt.peer.getID();
+            m_clients[playerNumber].peer = evt.peer;
+            m_clients[playerNumber].ready = true;
+            m_clients[playerNumber].level = 1;
+            m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber].data, xy::NetFlag::Reliable, 1);
         }
-        //add the player actor to the scene
-        spawnPlayer(playerNumber);
-
-        //send the client info
-        m_clients[playerNumber].data.peerID = evt.peer.getID();
-        m_clients[playerNumber].peer = evt.peer;
-        m_clients[playerNumber].ready = true;
-        m_clients[playerNumber].level = 1;
-        m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber].data, xy::NetFlag::Reliable, 1);
-
         //send initial position of existing actors
         const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
         for (const auto& actor : actors)
@@ -383,6 +444,36 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
         break;
+    case PacketID::ClientContinue:
+    {
+        auto id = evt.packet.as<sf::Int16>();
+        auto entity = m_scene.getEntity(id);
+
+        //reset the player info
+        if (entity.getComponent<Actor>().id == id)
+        {
+            auto& player = entity.getComponent<Player>();
+            if (player.state == Player::State::Dead)
+            {
+                entity.getComponent<xy::Transform>().setPosition(player.spawnPosition);
+                player.state = Player::State::Walking;
+                player.direction =
+                    (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
+
+                player.timer = PlayerInvincibleTime;
+                player.lives = PlayerStartLives;
+                player.bonusFlags = 0;
+
+                auto* msg = m_messageBus.post<GameEvent>(MessageID::GameMessage);
+                msg->action = GameEvent::Restarted;
+                msg->playerID = player.playerNumber;
+
+                m_clients[player.playerNumber].level = 1;
+                m_host.sendPacket(m_clients[player.playerNumber].peer, PacketID::LevelUpdate, m_clients[player.playerNumber].level, xy::NetFlag::Reliable, 1);
+            }
+        }
+    }
+        break;
     case PacketID::MapReady:
     {
         sf::Int16 actor = evt.packet.as<sf::Int16>();
@@ -403,7 +494,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
 
 void GameServer::checkRoundTime(float dt)
 {
-    if (m_changingMaps || m_mapData.actorCount == 0) return;
+    if (m_stateFlags.test(ChangingMaps) || m_mapData.actorCount == 0) return;
     
     float lastTime = m_currentRoundTime;
     m_currentRoundTime += dt;
@@ -495,9 +586,11 @@ void GameServer::checkMapStatus(float dt)
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
         m_scene.update(0.f); //force the command right away
 
+
         //load next map
         m_currentMap = (m_currentMap + 1) % m_mapFiles.size();
         loadMap(); //TODO we need to check this was successful
+        
 
         //tell clients to do map change
         m_host.broadcastPacket(PacketID::MapChange, m_mapData, xy::NetFlag::Reliable, 1);
@@ -505,7 +598,7 @@ void GameServer::checkMapStatus(float dt)
         //set clients to not ready
         m_clients[0].ready = false;
         m_clients[1].ready = false;
-        m_changingMaps = true;
+        m_stateFlags.set(ChangingMaps, true);
 
         //move players to spawn point ready for next map
         cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
@@ -773,7 +866,7 @@ void GameServer::beginNewRound()
         m_scene.setSystemActive<PowerupSystem>(true);
         m_scene.setSystemActive<BonusSystem>(true);
 
-        m_changingMaps = false;
+        m_stateFlags.set(ChangingMaps, false);
 
         if (m_mapSkipCount) //someone scored a bonus and skips 5 maps
         {
@@ -809,13 +902,25 @@ void GameServer::beginNewRound()
                 {
                     entity.getComponent<Player>().state = Player::State::Walking;
                 }
+                else //we have to set this else player remains 'disabled'
+                {
+                    entity.getComponent<Player>().state = Player::State::Dead;
+                }
             };
             m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
             //check if anyone tried joining mid map change
             if (m_queuedClient)
             {
-                m_host.sendPacket(*m_queuedClient, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
+                if (m_clients[0].data.actor.id != ActorID::None
+                    && m_clients[1].data.actor.id != ActorID::None)
+                {
+                    m_host.sendPacket(*m_queuedClient, PacketID::ServerFull, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+                }
+                else
+                {
+                    m_host.sendPacket(*m_queuedClient, PacketID::MapJoin, m_mapData, xy::NetFlag::Reliable, 1);
+                }
                 m_queuedClient.reset();
             }
         }

@@ -78,7 +78,7 @@ bool PauseState::handleEvent(const sf::Event& evt)
         case sf::Keyboard::Escape:
         case sf::Keyboard::P:
         case sf::Keyboard::Pause:
-            requestStackPop();
+            unpause();
             break;
         }
     }
@@ -88,7 +88,7 @@ bool PauseState::handleEvent(const sf::Event& evt)
         {
             if (evt.joystickButton.button == 7) //start on xbox
             {
-                requestStackPop();
+                unpause();
             }
         }
     }
@@ -175,7 +175,7 @@ void PauseState::load()
     {
         if (flags & xy::UISystem::LeftMouse)
         {
-            requestStackPop();
+            unpause();
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
@@ -183,7 +183,7 @@ void PauseState::load()
     {
         if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
         {
-            requestStackPop();
+            unpause();
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
@@ -191,7 +191,7 @@ void PauseState::load()
     {
         if (button == 0)
         {
-            requestStackPop();
+            unpause();
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
@@ -258,4 +258,10 @@ void PauseState::load()
     auto& camera = m_scene.getActiveCamera().getComponent<xy::Camera>();
     camera.setView(view.getSize());
     camera.setViewport(view.getViewport());
+}
+
+void PauseState::unpause() 
+{
+    auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+    msg->action = MenuEvent::UnpauseGame;
 }

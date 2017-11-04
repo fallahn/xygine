@@ -82,9 +82,19 @@ private:
     void checkRoundTime(float);
     void checkMapStatus(float);
 
-    bool m_gameOver;
-    bool m_changingMaps;
+
     std::unique_ptr<xy::NetPeer> m_queuedClient;
+
+    enum StateFlags
+    {
+        GameOver,
+        ChangingMaps,
+        Paused,
+        PendingPause,
+        Count
+    };
+    std::bitset<StateFlags::Count> m_stateFlags;
+    static std::bitset<StateFlags::Count> GameOverOrPaused;
 
     void initMaplist();
     void initScene();

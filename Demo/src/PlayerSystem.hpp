@@ -101,7 +101,7 @@ private:
     void collisionJumping(xy::Entity);
     void collisionDying(xy::Entity);
 
-    void npcCollision(xy::Entity, const Manifold&);
+    bool npcCollision(xy::Entity, const Manifold&); //returns true if this caused a state change
 };
 
 #endif //DEMO_PLAYER_SYSTEM_HPP_

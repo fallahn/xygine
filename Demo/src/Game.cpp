@@ -32,6 +32,7 @@ source distribution.
 #include "PauseState.hpp"
 #include "GameOverState.hpp"
 #include "IntroState.hpp"
+#include "RemotePauseState.hpp"
 
 #include <SFML/Window/Event.hpp>
 
@@ -118,4 +119,5 @@ void Game::registerStates()
     m_stateStack.registerState<PauseState>(StateID::Pause);
     m_stateStack.registerState<GameoverState>(StateID::GameOver, sharedData);
     m_stateStack.registerState<IntroState>(StateID::Intro);
+    m_stateStack.registerState<RemotePauseState>(StateID::RemotePause);
 }

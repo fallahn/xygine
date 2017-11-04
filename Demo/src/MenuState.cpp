@@ -34,6 +34,9 @@ source distribution.
 #include "LoadingScreen.hpp"
 #include "MessageIDs.hpp"
 #include "MenuCallbacks.hpp"
+#include "ClientServerShared.hpp"
+#include "KeyMapDirector.hpp"
+#include "Swarm.hpp"
 
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -45,6 +48,7 @@ source distribution.
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/components/AudioListener.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
+#include <xyginext/ecs/components/SpriteAnimation.hpp>
 
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
@@ -57,9 +61,12 @@ source distribution.
 #include <xyginext/ecs/systems/QuadTree.hpp>
 
 #include <xyginext/graphics/postprocess/Blur.hpp>
+#include <xyginext/graphics/SpriteSheet.hpp>
 
 #include <xyginext/util/Random.hpp>
 #include <xyginext/util/Math.hpp>
+
+#include <xyginext/core/FileSystem.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -76,6 +83,7 @@ MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_blurEffect        (nullptr)
 {
     launchLoadingScreen();
+    loadKeybinds();
     createScene();
     createMenu();
     createHelp();
@@ -127,6 +135,175 @@ void MenuState::draw()
 }
 
 //private
+void MenuState::loadKeybinds()
+{
+    //check user cfg exists
+    auto usrDir = xy::FileSystem::getConfigDirectory(dataDir);
+    const std::string fileName("keybinds.cfg");
+
+    auto setP1Defaults = [&]()
+    {
+        auto* p1 = m_keyBinds.addObject("player_one");
+        p1->addProperty("left", std::to_string(sf::Keyboard::A));
+        p1->addProperty("right", std::to_string(sf::Keyboard::D));
+        p1->addProperty("jump", std::to_string(sf::Keyboard::W));
+        p1->addProperty("shoot", std::to_string(sf::Keyboard::Space));
+        p1->addProperty("controller_id", "0");
+        p1->addProperty("controller_jump", "0");
+        p1->addProperty("controller_shoot", "1");
+    };
+
+    auto setP2Defaults = [&]()
+    {
+        auto* p2 = m_keyBinds.addObject("player_two");
+        p2->addProperty("left", std::to_string(sf::Keyboard::Left));
+        p2->addProperty("right", std::to_string(sf::Keyboard::Right));
+        p2->addProperty("jump", std::to_string(sf::Keyboard::Up));
+        p2->addProperty("shoot", std::to_string(sf::Keyboard::Numpad0));
+        p2->addProperty("controller_id", "1");
+        p2->addProperty("controller_jump", "0");
+        p2->addProperty("controller_shoot", "1");
+    };
+
+    m_keyBinds.loadFromFile(usrDir + fileName);
+
+    if (!m_keyBinds.findObjectWithName("player_one"))
+    {
+        setP1Defaults();
+        m_keyBinds.save(usrDir + fileName);
+    }
+
+    if (!m_keyBinds.findObjectWithName("player_two"))
+    {
+        setP2Defaults();
+        m_keyBinds.save(usrDir + fileName);
+    }
+
+    bool needsUpdate = false;
+    auto* binds = m_keyBinds.findObjectWithName("player_one");
+    xy::ConfigProperty* property = nullptr;
+
+    //-----player one-----//
+    if (property = binds->findProperty("controller_id"))
+    {
+        m_sharedStateData.inputBindings[0].controllerID = property->getValue<sf::Int32>();
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[0].controllerID = 0;
+        binds->addProperty("controller_id", "0");
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("left"))
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Left] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Left] = sf::Keyboard::A;
+        binds->addProperty("left", std::to_string(sf::Keyboard::A));
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("right"))
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Right] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Right] = sf::Keyboard::D;
+        binds->addProperty("right", std::to_string(sf::Keyboard::D));
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("jump"))
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Jump] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Jump] = sf::Keyboard::W;
+        binds->addProperty("jump", std::to_string(sf::Keyboard::W));
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("shoot"))
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Shoot] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Shoot] = sf::Keyboard::Space;
+        binds->addProperty("shoot", std::to_string(sf::Keyboard::Space));
+        needsUpdate = true;
+    }
+
+
+    //-----player two-----//
+    binds = m_keyBinds.findObjectWithName("player_two");
+    if (property = binds->findProperty("controller_id"))
+    {
+        m_sharedStateData.inputBindings[1].controllerID = property->getValue<sf::Int32>();
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[1].controllerID = 1;
+        binds->addProperty("controller_id", "1");
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("left"))
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Left] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Left] = sf::Keyboard::Left;
+        binds->addProperty("left", std::to_string(sf::Keyboard::Left));
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("right"))
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Right] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Right] = sf::Keyboard::Right;
+        binds->addProperty("right", std::to_string(sf::Keyboard::Right));
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("jump"))
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Jump] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Jump] = sf::Keyboard::Up;
+        binds->addProperty("jump", std::to_string(sf::Keyboard::Up));
+        needsUpdate = true;
+    }
+
+    if (property = binds->findProperty("shoot"))
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Shoot] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+    }
+    else
+    {
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Shoot] = sf::Keyboard::RControl;
+        binds->addProperty("shoot", std::to_string(sf::Keyboard::RControl));
+        needsUpdate = true;
+    }
+
+
+    if (needsUpdate)
+    {
+        m_keyBinds.save(usrDir + fileName);
+    }
+}
+
 void MenuState::createScene()
 {    
     auto& mb = getContext().appInstance.getMessageBus();
@@ -137,6 +314,7 @@ void MenuState::createScene()
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::SpriteSystem>(mb);
     m_scene.addSystem<SpringFlowerSystem>(mb);
+    m_scene.addSystem<SwarmSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
@@ -170,6 +348,15 @@ void MenuState::createScene()
     m_textureResource.get("assets/images/grass.png").setRepeated(true);
     entity.addComponent<xy::Drawable>().setDepth(10);
 
+#ifndef XY_DEBUG
+    //glow flies
+    entity = m_scene.createEntity();
+    entity.addComponent<Swarm>();
+    entity.addComponent<xy::Transform>().setPosition(40.f, 300.f);
+    entity.addComponent<xy::Drawable>().setPrimitiveType(sf::Points);
+    entity.getComponent<xy::Drawable>().setDepth(2);
+    entity.getComponent<xy::Drawable>().setBlendMode(sf::BlendAdd);
+#endif
 
     //springy grass
     float xPos = xy::Util::Random::value(80.f, 112.f);
@@ -216,6 +403,23 @@ void MenuState::createScene()
         }
     }
 
+    //help sign
+    entity = m_scene.createEntity();
+    bounds = entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/help_sign.png")).getTextureBounds();
+    entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize.x - (bounds.width + 202.f), xy::DefaultSceneSize.y - bounds.height);
+    entity.addComponent<xy::Drawable>().setDepth(9);
+    entity.addComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([&mb](xy::Entity, sf::Uint64 flags)
+    {
+        if (flags & xy::UISystem::LeftMouse)
+        {
+            auto* msg = mb.post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::HelpButtonClicked;
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().area = bounds;
+
+
     m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(1.f);
 }
 
@@ -238,178 +442,16 @@ void MenuState::createMenu()
         sprite.setTextureRect(rect);
     });
     
-    //host text
+
     auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");
-    auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("HOST");
-    entity.getComponent<xy::Text>().setCharacterSize(60);
-    entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
-    auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
-    auto& tx = entity.addComponent<xy::Transform>();
-    tx.setOrigin(52.f, 45.f);
+    auto parentEnt = m_scene.createEntity();
+    auto& tx = parentEnt.addComponent<xy::Transform>();
+    parentEnt.addComponent<xy::Callback>().active = true;
+    parentEnt.getComponent<xy::Callback>().function = MenuSliderCallback(m_menuTarget);
 
-    //host button
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
-    bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
-    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
-    entity.addComponent<xy::Drawable>();
-    entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
-    entity.getComponent<xy::Transform>().addChild(tx);
-    entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    entity.getComponent<xy::Transform>().move(0.f, -128.f);
-    tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
-    bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
-    entity.addComponent<xy::UIHitBox>().area = bounds;
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] = 
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
-    {
-        if (flags & xy::UISystem::LeftMouse)
-        {
-            m_sharedStateData.hostState = SharedStateData::Host;
-            requestStackClear();
-            requestStackPush(StateID::Game);
-        }
-    });
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
-        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
-    {
-        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
-        {
-            m_sharedStateData.hostState = SharedStateData::Host;
-            requestStackClear();
-            requestStackPush(StateID::Game);
-        }
-    });
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
-    {
-        if (button == 0)
-        {
-            m_sharedStateData.hostState = SharedStateData::Host;
-            requestStackClear();
-            requestStackPush(StateID::Game);
-        }
-    });
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
-
-    //join text
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("JOIN");
-    entity.getComponent<xy::Text>().setCharacterSize(60);
-    entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
-    auto& tx2 = entity.addComponent<xy::Transform>();
-    tx2.setOrigin(54.f, 45.f);
-
-    //ip text
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString(m_sharedStateData.remoteIP);
-    entity.getComponent<xy::Text>().setCharacterSize(65);
-    bounds.width -= 72.f;
-    entity.getComponent<xy::Text>().setCroppingArea(bounds);
-    entity.addComponent<xy::CommandTarget>().ID = CommandID::MenuText;
-    auto& tx3 = entity.addComponent<xy::Transform>();
-    tx3.setPosition(44.f, 146.f);
-
-    //join button
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
-    bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
-    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
-    entity.addComponent<xy::Drawable>();
-    entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
-    entity.getComponent<xy::Transform>().addChild(tx2);
-    entity.getComponent<xy::Transform>().addChild(tx3);
-    entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    entity.getComponent<xy::Transform>().move(0.f, 64.f);
-    tx2.setPosition(entity.getComponent<xy::Transform>().getOrigin());
-    tx2.move(0.f, -64.f);
-    entity.addComponent<xy::UIHitBox>().area = bounds;
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
-    {
-        if (flags & xy::UISystem::LeftMouse)
-        {
-            m_sharedStateData.hostState = SharedStateData::Client;
-            requestStackClear();
-            requestStackPush(StateID::Game);
-        }
-    });
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
-        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
-    {
-        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
-        {
-            m_sharedStateData.hostState = SharedStateData::Client;
-            requestStackClear();
-            requestStackPush(StateID::Game);
-        }
-    });
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
-    {
-        if (button == 0)
-        {
-            m_sharedStateData.hostState = SharedStateData::Client;
-            requestStackClear();
-            requestStackPush(StateID::Game);
-        }
-    });
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
-
-    //quit text
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("QUIT");
-    entity.getComponent<xy::Text>().setCharacterSize(60);
-    entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
-    bounds = entity.getComponent<xy::Text>().getLocalBounds();
-    auto& tx4 = entity.addComponent<xy::Transform>();
-    tx4.setPosition(136.f, 15.f);
-
-    //quit button
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
-    bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
-    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
-    entity.addComponent<xy::Drawable>();
-    entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
-    entity.getComponent<xy::Transform>().addChild(tx4);
-    entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    entity.getComponent<xy::Transform>().move(0.f, 256.f);
-    tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
-    bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
-    entity.addComponent<xy::UIHitBox>().area = bounds;
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
-    {
-        if (flags & xy::UISystem::LeftMouse)
-        {
-            requestStackClear();
-            xy::App::quit();
-        }
-    });
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
-        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
-    {
-        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
-        {
-            requestStackClear();
-            xy::App::quit();
-        }
-    });
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
-    {
-        if (button == 0)
-        {
-            requestStackClear();
-            xy::App::quit();
-        }
-    });
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
+    createFirstMenu(tx, selectedID, unselectedID, font);
+    createSecondMenu(tx, selectedID, unselectedID, font);
+    createThirdMenu(tx, selectedID, unselectedID, font);
 
     //apply the default view
     auto view = getContext().defaultView;
@@ -423,8 +465,11 @@ void MenuState::createHelp()
     auto& mb = getContext().appInstance.getMessageBus();
     m_helpScene.addSystem<xy::UISystem>(mb);
     m_helpScene.addSystem<xy::CallbackSystem>(mb);
+    m_helpScene.addSystem<xy::SpriteAnimator>(mb);
     m_helpScene.addSystem<xy::SpriteSystem>(mb);
     m_helpScene.addSystem<xy::RenderSystem>(mb);
+    m_helpScene.addSystem<xy::TextRenderer>(mb);
+    m_helpScene.addDirector<KeyMapDirector>(m_sharedStateData, m_keyBinds);
 
     //clicker
     auto entity = m_helpScene.createEntity();
@@ -437,18 +482,22 @@ void MenuState::createHelp()
             msg->action = MenuEvent::HelpButtonClicked;
         }
     });
-    entity.getComponent<xy::UIHitBox>().area = { 0.f, 0.f, 52.f, 52.f };
+    entity.getComponent<xy::UIHitBox>().area = { 0.f, 0.f, 64.f, 64.f };
     auto& tx = entity.addComponent<xy::Transform>();
-    tx.setPosition(670.f, 968.f);
+    tx.setPosition(1518.f, 20.f);
+    /*entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString("X");
+    entity.getComponent<xy::Text>().setCharacterSize(56);
+    entity.getComponent<xy::Text>().setFillColour({ 200, 10, 220, 110 });*/
+
 
     //help menu
     entity = m_helpScene.createEntity();
     entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/help.png"));
     entity.addComponent<xy::Drawable>();
-    entity.addComponent<xy::Transform>().setPosition(430.f, HelpMenuCallback::HidePosition);
+    entity.addComponent<xy::Transform>().setPosition(0.f, HelpMenuCallback::HidePosition);
     entity.getComponent<xy::Transform>().addChild(tx);
     entity.addComponent<xy::Callback>().active = true;
-    entity.getComponent<xy::Callback>().function = HelpMenuCallback(m_helpShown);
+    entity.getComponent<xy::Callback>().function = HelpMenuCallback(m_helpShown, m_scene);
 
     //background
     entity = m_helpScene.createEntity();
@@ -459,6 +508,110 @@ void MenuState::createHelp()
     entity.getComponent<xy::Sprite>().setColour(sf::Color::Transparent);
     entity.addComponent<xy::Callback>().active = true;
     entity.getComponent<xy::Callback>().function = HelpBackgroundCallback(m_helpShown);
+
+    //left tower
+    static const std::array<sf::Vector2f, 4u> positions = 
+    {
+        sf::Vector2f(160.f, 96.f),
+        {160.f, 352.f},
+        {160.f, 608.f},
+        {160.f, 864.f}
+    };
+    xy::SpriteSheet spriteSheet;
+    spriteSheet.loadFromFile("assets/sprites/player.spt", m_textureResource);
+
+    auto towerEnt = m_helpScene.createEntity();
+    auto bounds = towerEnt.addComponent<xy::Sprite>(m_textureResource.get("assets/images/keybinds.png")).getTextureBounds();
+    towerEnt.addComponent<xy::Drawable>().setDepth(1);
+    auto& towerLeftTx = towerEnt.addComponent<xy::Transform>();
+    towerEnt.addComponent<xy::Callback>().function = MenuSliderCallback(m_leftMenuTarget);
+    towerEnt.getComponent<xy::Callback>().active = true;
+    m_leftMenuTarget.x = -bounds.width;
+    towerLeftTx.setPosition(m_leftMenuTarget);
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_one");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerLeftTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[0]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("jump_up", "player_one"));
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_one");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerLeftTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[1]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("shoot", "player_one"));
+    entity.getComponent<xy::Sprite>().getAnimations()[spriteSheet.getAnimationIndex("shoot", "player_one")].looped = true;
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_one");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerLeftTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[2]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("walk", "player_one"));
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_one");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerLeftTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[3]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("walk", "player_one"));
+
+    createKeybindInputs(towerEnt, 0);
+
+    //right tower
+    towerEnt = m_helpScene.createEntity();
+    bounds = towerEnt.addComponent<xy::Sprite>(m_textureResource.get("assets/images/keybinds.png")).getTextureBounds();
+    towerEnt.addComponent<xy::Drawable>().setDepth(1);
+    auto& towerRightTx = towerEnt.addComponent<xy::Transform>();
+    towerEnt.addComponent<xy::Callback>().function = MenuSliderCallback(m_rightMenuTarget);
+    towerEnt.getComponent<xy::Callback>().active = true;
+    m_rightMenuTarget.x = xy::DefaultSceneSize.x;
+    towerRightTx.setPosition(m_rightMenuTarget);
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_two");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerRightTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[0]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("jump_up", "player_two"));
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_two");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerRightTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[1]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("shoot", "player_two"));
+    entity.getComponent<xy::Sprite>().getAnimations()[spriteSheet.getAnimationIndex("shoot", "player_two")].looped = true;
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_two");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerRightTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[2]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("walk", "player_two"));
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("player_two");
+    entity.addComponent<xy::Drawable>().setDepth(2);
+    towerRightTx.addChild(entity.addComponent<xy::Transform>());
+    entity.getComponent<xy::Transform>().setPosition(positions[3]);
+    entity.getComponent<xy::Transform>().setOrigin(32.f, 0.f);
+    entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
+    entity.addComponent<xy::SpriteAnimation>().play(spriteSheet.getAnimationIndex("walk", "player_two"));
+
+    createKeybindInputs(towerEnt, 1);
 
     //apply the default view
     auto view = getContext().defaultView;
@@ -475,14 +628,16 @@ void MenuState::showHelpMenu()
     {
         //hide it
         m_blurEffect->setEnabled(false);
-
-        m_scene.setSystemActive<xy::UISystem>(true);
+        m_leftMenuTarget.x = -320.f;
+        m_rightMenuTarget.x = xy::DefaultSceneSize.x;
     }
     else
     {
         //show it
         m_blurEffect->setEnabled(true);
         m_scene.setSystemActive<xy::UISystem>(false);
+        m_leftMenuTarget.x = 0.f;
+        m_rightMenuTarget.x = xy::DefaultSceneSize.x - 320.f;
     }
     
     m_helpShown = !m_helpShown;

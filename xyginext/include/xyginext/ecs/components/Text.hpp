@@ -140,6 +140,23 @@ namespace xy
         */
         sf::FloatRect getCroppingArea() const { return m_croppingArea; }
 
+        enum class Alignment
+        {
+            Left, Right, Centre
+        };
+        
+        /*!
+        \brief Sets whether the text should be aligned
+        left, right or centrally about the origin.
+        Only affects the X axis
+        */
+        void setAlignment(Alignment);
+
+        /*!
+        \brief Returns the text's current alignment
+        */
+        Alignment getAlignment() const { return m_alignment; }
+
     private:
 
         sf::String m_string;
@@ -151,6 +168,7 @@ namespace xy
         sf::FloatRect m_globalBounds;
         bool m_dirty;
         sf::RenderStates m_states;
+        Alignment m_alignment;
 
         sf::FloatRect m_croppingArea;
         sf::FloatRect m_croppingWorldArea;

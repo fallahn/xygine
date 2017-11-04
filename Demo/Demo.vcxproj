@@ -69,7 +69,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>clamber</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -126,6 +128,7 @@
     <ClCompile Include="src\BonusSystem.cpp" />
     <ClCompile Include="src\BubbleSystem.cpp" />
     <ClCompile Include="src\ClientServerShared.cpp" />
+    <ClCompile Include="src\CollisionComponent.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
     <ClCompile Include="src\ErrorState.cpp" />
     <ClCompile Include="src\FruitSystem.cpp" />
@@ -135,9 +138,11 @@
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\IntroState.cpp" />
     <ClCompile Include="src\InventoryDirector.cpp" />
+    <ClCompile Include="src\KeyMapDirector.cpp" />
     <ClCompile Include="src\LoadingScreen.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MapAnimator.cpp" />
+    <ClCompile Include="src\MenuCreation.cpp" />
     <ClCompile Include="src\MenuDirector.cpp" />
     <ClCompile Include="src\MenuState.cpp" />
     <ClCompile Include="src\NPCSystem.cpp" />
@@ -146,10 +151,12 @@
     <ClCompile Include="src\PlayerInput.cpp" />
     <ClCompile Include="src\PlayerSystem.cpp" />
     <ClCompile Include="src\PowerupSystem.cpp" />
+    <ClCompile Include="src\RemotePauseState.cpp" />
     <ClCompile Include="src\ScoreTag.cpp" />
     <ClCompile Include="src\Server.cpp" />
     <ClCompile Include="src\sha1.cpp" />
     <ClCompile Include="src\SpringFlower.cpp" />
+    <ClCompile Include="src\SwarmSystem.cpp" />
     <ClCompile Include="src\TextboxDirector.cpp" />
     <ClCompile Include="src\TowerDirector.cpp" />
   </ItemGroup>
@@ -170,8 +177,11 @@
     <ClInclude Include="src\GameOverState.hpp" />
     <ClInclude Include="src\GameState.hpp" />
     <ClInclude Include="src\Hitbox.hpp" />
+    <ClInclude Include="src\InputBinding.hpp" />
     <ClInclude Include="src\IntroState.hpp" />
     <ClInclude Include="src\InventoryDirector.hpp" />
+    <ClInclude Include="src\KeyMapDirector.hpp" />
+    <ClInclude Include="src\KeyMapping.hpp" />
     <ClInclude Include="src\LoadingScreen.hpp" />
     <ClInclude Include="src\MapAnimator.hpp" />
     <ClInclude Include="src\MapData.hpp" />
@@ -187,6 +197,7 @@
     <ClInclude Include="src\PlayerInput.hpp" />
     <ClInclude Include="src\PlayerSystem.hpp" />
     <ClInclude Include="src\PowerupSystem.hpp" />
+    <ClInclude Include="src\RemotePauseState.hpp" />
     <ClInclude Include="src\ScoreTag.hpp" />
     <ClInclude Include="src\Server.hpp" />
     <ClInclude Include="src\ServerMessages.hpp" />
@@ -194,6 +205,7 @@
     <ClInclude Include="src\SpringFlower.hpp" />
     <ClInclude Include="src\SpriteIDs.hpp" />
     <ClInclude Include="src\StateIDs.hpp" />
+    <ClInclude Include="src\Swarm.hpp" />
     <ClInclude Include="src\TextboxDirector.hpp" />
     <ClInclude Include="src\TowerDirector.hpp" />
     <ClInclude Include="src\TowerGuyCallback.hpp" />

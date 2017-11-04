@@ -53,7 +53,8 @@ namespace CommandID
         //UI animations
         Princess = 0x10000,
         TowerDude = 0x20000,
-        BonusBall = 0x40000
+        BonusBall = 0x40000,
+        KeybindInput = 0x80000
     };
 }
 

@@ -28,9 +28,12 @@ source distribution.
 #ifndef DEMO_GAME_SHARED_STATE_DATA_HPP_
 #define DEMO_GAME_SHARED_STATE_DATA_HPP_
 
-#include <string>
+#include "InputBinding.hpp"
 
-struct SharedStateData
+#include <string>
+#include <array>
+
+struct SharedStateData final
 {
     enum
     {
@@ -40,7 +43,10 @@ struct SharedStateData
     std::string remoteIP = "127.0.0.1";
     std::string error;
 
-    std::string score;
+    std::array<std::string, 2u> scores;
+    std::size_t playerCount = 1;
+
+    std::array<InputBinding, 2u> inputBindings;
 };
 
 #endif //DEMO_GAME_SHARED_STATE_DATA_HPP_

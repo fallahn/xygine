@@ -67,6 +67,8 @@ UISystem::UISystem(MessageBus& mb)
 
 void UISystem::handleEvent(const sf::Event& evt)
 {
+    if (!isActive()) return;
+
     switch (evt.type)
     {
     default: break;
@@ -158,7 +160,8 @@ void UISystem::handleEvent(const sf::Event& evt)
             }
             break;
         case sf::Joystick::PovY:
-        case sf::Joystick::Y:
+            //sadly needs a special case on windows
+#ifdef _WIN32
             if (evt.joystickMove.position > DeadZone)
             {
                 m_controllerMask |= ControllerBits::Down;
@@ -166,6 +169,17 @@ void UISystem::handleEvent(const sf::Event& evt)
             else if (evt.joystickMove.position < -DeadZone)
             {
                 m_controllerMask |= ControllerBits::Up;
+            }
+            break;
+#endif
+        case sf::Joystick::Y:
+            if (evt.joystickMove.position > DeadZone)
+            {
+                m_controllerMask |= ControllerBits::Up;
+            }
+            else if (evt.joystickMove.position < -DeadZone)
+            {
+                m_controllerMask |= ControllerBits::Down;
             }
             break;
         default: break;
@@ -214,8 +228,10 @@ void UISystem::process(float)
         auto tx = e.getComponent<Transform>().getWorldTransform();
         auto& input = e.getComponent<UIHitBox>();
 
+        //-----movement input-----//
         auto area = tx.transformRect(input.area);
-        if (area.contains(m_eventPosition))
+        bool contains = false;
+        if (contains = area.contains(m_eventPosition))
         {
             if (!input.active)
             {
@@ -245,19 +261,21 @@ void UISystem::process(float)
         }
 
 
-        //----Keyboard / Controller input----//
+        //----button input----//
         if (currentIndex == m_selectedIndex)
         {
-            for (auto f : m_mouseDownEvents)
+            if (contains)
             {
-                m_buttonCallbacks[input.callbacks[UIHitBox::MouseDown]](e, f);
-            }
+                for (auto f : m_mouseDownEvents)
+                {
+                    m_buttonCallbacks[input.callbacks[UIHitBox::MouseDown]](e, f);
+                }
 
-            for (auto f : m_mouseUpEvents)
-            {
-                m_buttonCallbacks[input.callbacks[UIHitBox::MouseUp]](e, f);
+                for (auto f : m_mouseUpEvents)
+                {
+                    m_buttonCallbacks[input.callbacks[UIHitBox::MouseUp]](e, f);
+                }
             }
-            
             for (auto key : m_keyDownEvents)
             {
                 m_keyboardCallbacks[input.callbacks[UIHitBox::KeyDown]](e, key);

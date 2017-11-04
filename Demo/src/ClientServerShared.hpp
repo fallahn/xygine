@@ -36,6 +36,8 @@ source distribution.
 
 #include <tmxlite/Object.hpp>
 
+#include <string>
+
 namespace xy
 {
     class Scene;
@@ -80,6 +82,7 @@ namespace CollisionFlags
     };
 }
 
+static const std::string dataDir("demo_game");
 
 static constexpr float BubbleVerticalVelocity = -100.f;
 static const sf::FloatRect BubbleBounds(0.f, 0.f, 64.f, 64.f);
@@ -111,7 +114,7 @@ static const sf::FloatRect SmallFoodBounds(0.f, 0.f, 64.f, 64.f);
 static const sf::Vector2f SmallFoodOrigin(32.f, 32.f);
 static constexpr float LargeFruitSize = 96.f;
 
-static constexpr float TeleportDistance = 950.f;
+static constexpr float TeleportDistance = 886.f;
 static constexpr float Gravity = 2200.f;
 static constexpr float MaxVelocity = 800.f;
 
@@ -119,6 +122,8 @@ static const sf::FloatRect MapBounds(0.f, 0.f, 16.f * 64.f, 17.f * 64.f);
 
 static const sf::Vector2f PlayerOneSpawn(102.f, 926.f);
 static const sf::Vector2f PlayerTwoSpawn(922.f, 926.f);
+static const float PlayerInvincibleTime = 2.f;
+static const sf::Uint8 PlayerStartLives = 3;
 
 static const sf::Vector2f PowerupOneSpawn(352.f, 960.f);
 static const sf::Vector2f PowerupTwoSpawn(672.f, 960.f);

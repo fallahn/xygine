@@ -5,6 +5,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/BonusSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/BubbleSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ClientServerShared.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/CollisionComponent.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ErrorState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/FruitSystem.cpp
@@ -14,9 +15,11 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/GameState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/IntroState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/InventoryDirector.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KeyMapDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/LoadingScreen.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MapAnimator.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/MenuCreation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MenuState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MenuDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/NPCSystem.cpp
@@ -25,9 +28,11 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/PlayerInput.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/PlayerSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/PowerupSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/RemotePauseState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ScoreTag.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Server.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/SpringFlower.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/SwarmSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sha1.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/TextboxDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/TowerDirector.cpp

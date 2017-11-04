@@ -25,44 +25,22 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_INVENTORY_DIRECTOR_HPP_
-#define DEMO_INVENTORY_DIRECTOR_HPP_
+#ifndef DEMO_INPUT_BINDING_HPP_
+#define DEMO_INPUT_BINDING_HPP_
 
-#include <xyginext/ecs/Director.hpp>
+#include <SFML/Window/Keyboard.hpp>
 
 #include <array>
 
-namespace xy
+struct InputBinding final
 {
-    class NetHost;
-}
-
-class InventoryDirector final : public xy::Director
-{
-public:
-    explicit InventoryDirector(xy::NetHost&);
-
-    void handleMessage(const xy::Message&) override;
-    void handleEvent(const sf::Event&) override {}
-    void process(float) override;
-
-private:
-    xy::NetHost& m_host;
-    
-    struct Inventory final
+    enum
     {
-        sf::Uint32 score = 0;
-        sf::Uint8 lives = 0;
-        sf::Uint8 bonusFlags = 0;
+        Jump, Shoot, Left, Right, Count
     };
-    std::array<Inventory, 2> m_playerValues{};
-
-    std::array<std::pair<sf::Uint8, sf::Uint32>, 12> m_updateQueue;
-    std::size_t m_queuePos;
-
-    void sendUpdate(sf::Uint8, sf::Uint32);
-
-    void checkLifeBonus(sf::Uint8, sf::Uint32);
+    std::array<sf::Keyboard::Key, Count> keys{};
+    std::array<sf::Uint32, 2u> buttons = { 0, 1 };
+    sf::Uint32 controllerID = 100;
 };
 
-#endif //DEMO_INVENTORY_DIRECTOR_HPP_
+#endif //DEMO_INPUT_BINDING_HPP_

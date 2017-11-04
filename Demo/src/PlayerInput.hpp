@@ -28,6 +28,8 @@ source distribution.
 #ifndef DEMO_PLAYER_INPUT_HPP_
 #define DEMO_PLAYER_INPUT_HPP_
 
+#include "InputBinding.hpp"
+
 #include <xyginext/ecs/Entity.hpp>
 
 #include <SFML/Config.hpp>
@@ -50,7 +52,7 @@ current player, along with the client timestamp.
 class PlayerInput final
 {
 public:
-    explicit PlayerInput(xy::NetClient&);
+    explicit PlayerInput(xy::NetClient&, const InputBinding&);
 
     void handleEvent(const sf::Event&);
     void update();
@@ -68,9 +70,14 @@ private:
     sf::Uint16 m_currentInput;
     sf::Clock m_clientTimer;
 
+    sf::Uint16 m_prevPad;
+    sf::Uint16 m_prevStick;
+
     bool m_enabled;
 
     xy::Entity m_playerEntity;
+
+    InputBinding m_inputBinding;
 
     void checkControllerInput();
 };

@@ -56,6 +56,7 @@ private:
     sf::Texture m_backgroundTexture;
 
     void load();
+    void unpause();
 };
 
 #endif //DEMO_PAUSE_STATE_HPP_

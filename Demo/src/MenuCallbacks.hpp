@@ -29,15 +29,21 @@ source distribution.
 #define DEMO_MENU_CALLBACKS_HPP_
 
 #include <xyginext/ecs/Entity.hpp>
+#include <xyginext/ecs/Scene.hpp>
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
 
+#include <xyginext/ecs/systems/UISystem.hpp>
+
+#include <xyginext/util/Vector.hpp>
+
 class HelpMenuCallback final
 {
 public:
-    HelpMenuCallback(const bool& shown)
-        : m_shown(shown)
+    HelpMenuCallback(const bool& shown, xy::Scene& scene)
+        : m_shown(shown),
+        m_scene(scene)
     {
 
     }
@@ -51,18 +57,22 @@ public:
             target = HidePosition;
         }
         
-        auto position = entity.getComponent<xy::Transform>().getPosition();
-        position.y = target - position.y;
+        auto movement = entity.getComponent<xy::Transform>().getPosition();
+        movement.y = target - movement.y;
         
-        if (std::abs(position.y) < 3.f)
+        if (std::abs(movement.y) < 3.f)
         {
-            position.y = target;
-            entity.getComponent<xy::Transform>().setPosition(position);
+            if (movement.y != 0)
+            {
+                movement.y = target;
+                entity.getComponent<xy::Transform>().setPosition(movement);
+                m_scene.setSystemActive<xy::UISystem>(!m_shown);
+            }
         }
         else
         {
-            position.x = 0.f;
-            entity.getComponent<xy::Transform>().move(position * Speed * dt);
+            movement.x = 0.f;
+            entity.getComponent<xy::Transform>().move(movement * Speed * dt);
         }
     }
 
@@ -71,6 +81,7 @@ public:
 
 private:
     const bool& m_shown;
+    xy::Scene& m_scene; //actually the main scene, not the help scene
 
     static constexpr float Speed = 5.f;
 };
@@ -79,7 +90,7 @@ class HelpBackgroundCallback final
 {
 private:
     static constexpr float MaxTime = 0.5f;
-    static constexpr float MaxAlpha = 102.f;
+    static constexpr float MaxAlpha = 82.f;
 
 public:
     HelpBackgroundCallback(const bool& shown)
@@ -92,7 +103,7 @@ public:
     {
         if (m_shown)
         {
-            m_currentTime = std::min(m_currentTime + dt, 0.5f); //TODO find out why g++ things MaxTime is undef ref
+            m_currentTime = std::min(m_currentTime + dt, 0.5f); //TODO find out why g++ thinks MaxTime is undef ref
         }
         else
         {
@@ -102,13 +113,46 @@ public:
         float target = m_currentTime / MaxTime;
         sf::Uint8 targetAlpha = static_cast<sf::Uint8>(target * MaxAlpha);
 
-        entity.getComponent<xy::Sprite>().setColour({ 255, 255, 255, targetAlpha });
+        entity.getComponent<xy::Sprite>().setColour({ 5, 25, 55, targetAlpha });
     }
 
 private:
     const bool& m_shown;
 
     float m_currentTime = 0.f;
+};
+
+class MenuSliderCallback final
+{
+public:
+    explicit MenuSliderCallback(const sf::Vector2f& target)
+        : m_target(target)
+    {
+
+    }
+
+    void operator()(xy::Entity entity, float dt)
+    {
+        auto movement = m_target - entity.getComponent<xy::Transform>().getPosition();
+        auto dist = xy::Util::Vector::lengthSquared(movement);
+        
+        if (dist < 9.f)
+        {
+            if (dist != 0)
+            {
+                entity.getComponent<xy::Transform>().setPosition(m_target);
+                //TODO optional signal to say we finished moving
+            }
+        }
+        else
+        {
+            entity.getComponent<xy::Transform>().move(movement * Speed * dt);
+        }
+    }
+
+private:
+    const sf::Vector2f& m_target;
+    static constexpr float Speed = 5.f;
 };
 
 #endif //DEMO_MENU_CALLBACKS_HPP_

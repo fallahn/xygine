@@ -93,6 +93,8 @@ source distribution.
 #include <tmxlite/TileLayer.hpp>
 #include <tmxlite/ObjectGroup.hpp>
 
+#include <cstring>
+
 namespace
 {
     const float clientTimeout = 20.f;
@@ -107,6 +109,7 @@ namespace
 #ifdef XY_DEBUG
     sf::Uint8 debugActorCount = 0;
     sf::Uint8 debugPlayerState = 0;
+    sf::Uint8 debugActorUpdate = 0;
     sf::CircleShape debugShape;
 #endif
 
@@ -117,7 +120,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_scene             (ctx.appInstance.getMessageBus()),
     m_sharedData        (sharedData),
     m_loadingScreen     (ls),
-    m_playerInput       (m_client),
+    m_playerInputs      ({ PlayerInput(m_client, sharedData.inputBindings[0]), PlayerInput(m_client, sharedData.inputBindings[1]) }),
     m_currentMapTexture (0)
 {
     launchLoadingScreen();
@@ -153,6 +156,8 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 
     ctx.renderWindow.setMouseCursorVisible(false);
 
+    //sharedData.playerCount = 2;
+
 #ifdef XY_DEBUG
     debugShape.setRadius(16.f);
     debugShape.setOrigin(16.f, 48.f);
@@ -166,7 +171,11 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 //public
 bool GameState::handleEvent(const sf::Event& evt)
 {
-    m_playerInput.handleEvent(evt);
+    for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+    {
+        m_playerInputs[i].handleEvent(evt);
+    }
+
     m_scene.forwardEvent(evt);
 
     if (evt.type == sf::Event::KeyReleased)
@@ -184,16 +193,18 @@ bool GameState::handleEvent(const sf::Event& evt)
         case sf::Keyboard::Escape:
         case sf::Keyboard::Pause:
             requestStackPush(StateID::Pause);
+            m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
             break;
         }
     }
     else if (evt.type == sf::Event::JoystickButtonReleased)
     {
-        if (evt.joystickButton.joystickId == 0)
+        //if (evt.joystickButton.joystickId == 0)
         {
             if (evt.joystickButton.button == 7) //start on xbox
             {
                 requestStackPush(StateID::Pause);
+                m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
             }
         }
     }
@@ -209,19 +220,27 @@ void GameState::handleMessage(const xy::Message& msg)
         {
             spawnMapActors();
             
-            m_playerInput.setEnabled(true);
+            for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+            {
+                m_playerInputs[i].setEnabled(true);
+            }
             m_scene.setSystemActive<CollisionSystem>(true);
             m_scene.setSystemActive<xy::InterpolationSystem>(true);
 
             //send OK to server to continue game
-            m_client.sendPacket(PacketID::MapReady, m_clientData.actor.type, xy::NetFlag::Reliable, 1);
+            for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+            {
+                m_client.sendPacket(PacketID::MapReady, m_clientData[i].actor.type, xy::NetFlag::Reliable, 1);
+            }
         }
     }
     else if (msg.id == MessageID::MenuMessage)
     {
         const auto& data = msg.getData<MenuEvent>();
-        if (data.action == MenuEvent::QuitGameClicked)
+        switch (data.action)
         {
+        default: break;
+        case MenuEvent::QuitGameClicked:
             m_client.disconnect();
             requestStackClear();
             requestStackPush(StateID::MainMenu);            
@@ -231,6 +250,22 @@ void GameState::handleMessage(const xy::Message& msg)
             {
                 m_server.stop();
             }
+            break;
+        case MenuEvent::ContinueGameClicked:
+            requestStackPop();
+           
+            for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+            {
+                auto actor = m_playerInputs[i].getPlayerEntity().getComponent<Actor>();
+                m_client.sendPacket(PacketID::ClientContinue, actor.id, xy::NetFlag::Reliable, 1);
+
+                spawnTowerDude(actor.type);
+            }
+            break;
+        case MenuEvent::UnpauseGame:
+            requestStackPop();
+            m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
+            break;
         }
     }
 
@@ -240,9 +275,11 @@ void GameState::handleMessage(const xy::Message& msg)
 bool GameState::update(float dt)
 {   
     DPRINT("Actor count", std::to_string(debugActorCount));
+    DPRINT("Actor Update Count", std::to_string(debugActorUpdate));
     //DPRINT("Player Server State", std::to_string(debugPlayerState));
 #ifdef XY_DEBUG
-    switch (Player::State(debugPlayerState))
+    debugActorUpdate = 0;
+    /*switch (Player::State(debugPlayerState))
     {
     default:
         DPRINT("Player state", std::to_string(debugPlayerState));
@@ -259,7 +296,8 @@ bool GameState::update(float dt)
     case Player::State::Walking:
         DPRINT("Player server state", "Walking");
         break;
-    }
+    }*/
+
 #endif //XY_DEBUG
     
     xy::NetEvent evt;
@@ -273,7 +311,10 @@ bool GameState::update(float dt)
     }
     handleTimeout();
     
-    m_playerInput.update();
+    for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+    {
+        m_playerInputs[i].update();
+    }
     m_scene.update(dt);
     return false;
 }
@@ -332,6 +373,7 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::JumpDown] = spriteSheet.getAnimationIndex("jump_down", "player_one");
     m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::JumpUp] = spriteSheet.getAnimationIndex("jump_up", "player_one");
     m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one");
+    m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Dead] = spriteSheet.getAnimationIndex("dead", "player_one");
 
     //NPCs
     spriteSheet.loadFromFile("assets/sprites/npcs.spt", m_textureResource);
@@ -374,10 +416,8 @@ void GameState::loadAssets()
     spriteSheet.loadFromFile("assets/sprites/power_ups.spt", m_textureResource);
     m_sprites[SpriteID::FlameOne] = spriteSheet.getSprite("player_one_flame");
     m_sprites[SpriteID::FlameTwo] = spriteSheet.getSprite("player_two_flame");
-    m_sprites[SpriteID::LightningOne] = spriteSheet.getSprite("player_one_lightning");
-    m_sprites[SpriteID::LightningTwo] = spriteSheet.getSprite("player_two_lightning");
-    m_sprites[SpriteID::WaterOne] = spriteSheet.getSprite("player_one_water");
-    m_sprites[SpriteID::WaterTwo] = spriteSheet.getSprite("player_two_water");
+    m_sprites[SpriteID::LightningOne] = spriteSheet.getSprite("player_one_star");
+    m_sprites[SpriteID::LightningTwo] = spriteSheet.getSprite("player_two_star");
 
     m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one_flame");
     m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one_flame");
@@ -388,13 +428,13 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::FlameTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two_flame");
     m_animationControllers[SpriteID::FlameTwo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_two_flame");
 
-    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one_lightning");
-    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one_lightning");
-    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one_lightning");
+    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one_star");
+    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one_star");
+    m_animationControllers[SpriteID::LightningOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one_star");
 
-    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_two_lightning");
-    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two_lightning");
-    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_two_lightning");
+    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_two_star");
+    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two_star");
+    m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_two_star");
 
     //dudes to climb tower
     spriteSheet.loadFromFile("assets/sprites/tower_sprites.spt", m_textureResource);
@@ -474,11 +514,11 @@ void GameState::loadAssets()
 
     m_bubbleParticles.loadFromFile("assets/particles/shoot.xyp", m_textureResource);
 
-    if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile))
+    if (!m_scores.loadFromFile(xy::FileSystem::getConfigDirectory(dataDir) + scoreFile))
     {
         //create one
         m_scores.addProperty("hiscore", "0");
-        m_scores.save(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile);
+        m_scores.save(xy::FileSystem::getConfigDirectory(dataDir) + scoreFile);
     }
 }
 
@@ -734,7 +774,31 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         debugActorCount = evt.packet.as<sf::Uint8>();
         break;
 #endif
-
+    case PacketID::ServerFull:
+        m_sharedData.error = "Could not connect to server, reason: Server full";
+        requestStackPush(StateID::Error);
+        return;
+    case PacketID::RequestClientPause: //other player paused server
+    {
+        auto pause = evt.packet.as<sf::Uint8>();
+        if (pause == 0)
+        {
+            //show screen
+            if (getStackSize() == 1)
+            {
+                requestStackPush(StateID::RemotePause);
+            }
+        }
+        else
+        {
+            auto size = getStackSize();
+            while (size-- > 1)
+            {
+                requestStackPop();
+            }
+        }
+    }
+        break;
     case PacketID::ServerMessage:
     {
         sf::Int32 idx = evt.packet.as<sf::Int32>();
@@ -822,6 +886,10 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+#ifdef XY_DEBUG
+        debugActorUpdate++;
+#endif
     }
         break;
     case PacketID::MapJoin:
@@ -834,8 +902,12 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             spawnMapActors();
 
             //send ready signal
-            m_client.sendPacket(PacketID::ClientReady, 0, xy::NetFlag::Reliable, 1);
-            m_playerInput.setEnabled(true);
+            m_client.sendPacket(PacketID::ClientReady, sf::Uint8(m_sharedData.playerCount), xy::NetFlag::Reliable, 1);
+            
+            for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+            {
+                m_playerInputs[i].setEnabled(true);
+            }
         }
         else
         {
@@ -852,16 +924,24 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::ClientUpdate:
     {
         const auto& state = evt.packet.as<ClientState>();
+        /*ClientState state;
+        std::memcpy(&state, evt.packet.getData(), sizeof(state));
+        auto size = evt.packet.getSize() - sizeof(state);
+        std::vector<sf::Uint8> collisionData(size);
+        std::memcpy(collisionData.data(), (sf::Uint8*)evt.packet.getData() + sizeof(state), size);*/
        
 #ifdef XY_DEBUG
         debugShape.setPosition(state.x, state.y);
         debugPlayerState = sf::Uint8(state.playerState);
 #endif 
-
-        //reconcile
-        if (m_playerInput.isEnabled())
+        
+        //reconcile - seems a bit contrived, but must match the player input with 2 local players
+        for (auto i = 0u; i < m_sharedData.playerCount; ++i)
         {
-            m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInput.getPlayerEntity());
+            if(m_clientData[i].actor.id == state.actor.id && m_playerInputs[i].isEnabled())
+            {
+                m_scene.getSystem<PlayerSystem>().reconcile(state, m_playerInputs[i].getPlayerEntity());
+            }
         }
     }
         break;
@@ -912,26 +992,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::LevelUpdate:
     {
         auto level = evt.packet.as<sf::Uint8>();
-
-        xy::Command cmd;
-        cmd.targetFlags = CommandID::LevelCounter;
-        cmd.action = [&,level](xy::Entity entity, float)
-        {
-            entity.getComponent<xy::Text>().setString(std::to_string(level));
-
-            //sending a command 1 frame later allows text time to update bounds
-            xy::Command c;
-            c.targetFlags = CommandID::LevelCounter;
-            c.action = [](xy::Entity ent, float)
-            {
-                auto bounds = ent.getComponent<xy::Text>().getLocalBounds();
-                auto pos = ent.getComponent<xy::Transform>().getPosition();
-                pos.x = (MapBounds.width - bounds.width) / 2.f;
-                ent.getComponent<xy::Transform>().setPosition(pos);
-            };
-            m_scene.getSystem<xy::CommandSystem>().sendCommand(c); //meta.
-        };
-        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+        updateLevelDisplay(level);
     }
         break;
     case PacketID::RoundWarning:
@@ -941,15 +1002,6 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         spawnRoundSkip();
         break;
     case PacketID::GameOver:
-    {
-        xy::Command cmd;
-        cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
-        cmd.action = [&](xy::Entity entity, float) {m_scene.destroyEntity(entity); };
-        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
-        m_playerInput.setPlayerEntity({ 0,0 });
-    }
-
-        m_client.disconnect();
         requestStackPush(StateID::GameOver);
         break;
     case PacketID::CollisionFlag:
@@ -1255,12 +1307,6 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     case ActorID::FlameTwo:
         addSprite(entity, SpriteID::FlameTwo);
         break;
-    case ActorID::WaterOne:
-        addSprite(entity, SpriteID::WaterOne);
-        break;
-    case ActorID::WaterTwo:
-        addSprite(entity, SpriteID::WaterTwo);
-        break;
     case ActorID::Bonus:
         addSprite(entity, SpriteID::Bonus);
         break;
@@ -1276,49 +1322,40 @@ void GameState::spawnClient(const ClientData& data)
     entity.addComponent<xy::Transform>().setPosition(data.spawnX, data.spawnY);
     entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::PlayerOne];
 
-    auto towerEnt = m_scene.createEntity(); //little dude climbing tower
-    towerEnt.addComponent<xy::Transform>();
-
+    std::size_t playerIndex = 0; //index of the client/player input array
     if (data.actor.type == ActorID::PlayerOne)
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerOne];
         entity.getComponent<xy::Transform>().setScale(-1.f, 1.f);
         entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerOne;
-
-        towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeOne];
-        towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnOne);
-        towerEnt.addComponent<Actor>().type = ActorID::TowerOne;
     }
     else
     {
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::PlayerTwo];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::PlayerTwo;
 
-        towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeTwo];
-        towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnTwo);
-        towerEnt.addComponent<Actor>().type = ActorID::TowerTwo;
+        if (m_sharedData.playerCount == 2)
+        {
+            playerIndex = 1;
+        }
     }
-    towerEnt.addComponent<xy::Drawable>().setDepth(6);
-    towerEnt.addComponent<xy::SpriteAnimation>();
-    towerEnt.addComponent<MapAnimator>().state = MapAnimator::State::Static;
-    towerEnt.getComponent<MapAnimator>().speed = 50.f;
-    towerEnt.addComponent<xy::CommandTarget>().ID = CommandID::TowerDude;
-    towerEnt.addComponent<xy::Callback>().function = TowerGuyCallback(m_scene);
 
     entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
     entity.addComponent<xy::SpriteAnimation>().play(0);
     entity.addComponent<MapAnimator>().state = MapAnimator::State::Static;
     entity.addComponent<xy::Drawable>();
 
+    spawnTowerDude(data.actor.type);
+
     if (data.peerID == m_client.getPeer().getID())
     {
         //this is us, stash the info
-        m_clientData = data;
+        m_clientData[playerIndex] = data;
 
         //add a local controller
         entity.addComponent<Player>().playerNumber = (data.actor.type == ActorID::PlayerOne) ? 0 : 1;
         entity.getComponent<Player>().spawnPosition = { data.spawnX, data.spawnY };
-        m_playerInput.setPlayerEntity(entity);
+        m_playerInputs[playerIndex].setPlayerEntity(entity);
 
         entity.addComponent<CollisionComponent>().addHitbox(PlayerBounds, CollisionType::Player);
         entity.getComponent<CollisionComponent>().addHitbox(PlayerFoot, CollisionType::Foot);
@@ -1387,7 +1424,10 @@ void GameState::killActor(const ActorEvent& actorEvent)
 
 void GameState::switchMap(const MapData& data)
 {
-    m_playerInput.setEnabled(false);
+    for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+    {
+        m_playerInputs[i].setEnabled(false);
+    }
 
     //clear remaining actors (should just be collectables / bubbles)
     //as well as any geometry
@@ -1441,7 +1481,9 @@ void GameState::switchMap(const MapData& data)
             {
                 entity.getComponent<Player>().state = Player::State::Disabled;
             }
-            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Idle;
+            entity.getComponent<AnimationController>().nextAnimation = 
+                (entity.getComponent<AnimationController>().currentAnim == AnimationController::Dead) ? 
+                AnimationController::Dead : AnimationController::Idle;
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
@@ -1576,6 +1618,31 @@ void GameState::spawnRoundSkip()
     msg->type = MapEvent::BonusSwitch;
 }
 
+void GameState::spawnTowerDude(sf::Int16 actorType)
+{
+    auto towerEnt = m_scene.createEntity(); //little dude climbing tower
+    towerEnt.addComponent<xy::Transform>();
+
+    if (actorType == ActorID::PlayerOne)
+    {
+        towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeOne];
+        towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnOne);
+        towerEnt.addComponent<Actor>().type = ActorID::TowerOne;
+    }
+    else
+    {
+        towerEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::TowerDudeTwo];
+        towerEnt.getComponent<xy::Transform>().setPosition(TowerSpawnTwo);
+        towerEnt.addComponent<Actor>().type = ActorID::TowerTwo;
+    }
+    towerEnt.addComponent<xy::Drawable>().setDepth(10);
+    towerEnt.addComponent<xy::SpriteAnimation>();
+    towerEnt.addComponent<MapAnimator>().state = MapAnimator::State::Static;
+    towerEnt.getComponent<MapAnimator>().speed = 50.f;
+    towerEnt.addComponent<xy::CommandTarget>().ID = CommandID::TowerDude;
+    towerEnt.addComponent<xy::Callback>().function = TowerGuyCallback(m_scene);
+}
+
 void GameState::updateUI(const InventoryUpdate& data)
 {
     xy::Command scoreCmd;
@@ -1585,16 +1652,23 @@ void GameState::updateUI(const InventoryUpdate& data)
     };
 
     //keep a copy of our score for the scoreboard
-    if (data.playerID == m_clientData.playerNumber)
+    if (m_sharedData.playerCount == 1)
     {
-        m_sharedData.score = std::to_string(data.score);
+        if (data.playerID == m_clientData[0].playerNumber)
+        {
+            m_sharedData.scores[0] = std::to_string(data.score);
+        }
+    }
+    else
+    {
+        m_sharedData.scores[data.playerID] = std::to_string(data.score);
     }
 
     //check if greater than high score and update
     if (data.score > m_scores.getProperties()[0].getValue<sf::Int32>())
     {
         m_scores.findProperty("hiscore")->setValue(static_cast<sf::Int32>(data.score));
-        m_scores.save(xy::FileSystem::getConfigDirectory("demo_game") + scoreFile);
+        m_scores.save(xy::FileSystem::getConfigDirectory(dataDir) + scoreFile);
 
         xy::Command cmd;
         cmd.targetFlags = CommandID::HighScore;
@@ -1695,6 +1769,29 @@ void GameState::updateUI(const InventoryUpdate& data)
         }
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(bonusCommand);
+}
+
+void GameState::updateLevelDisplay(sf::Uint8 level)
+{
+    xy::Command cmd;
+    cmd.targetFlags = CommandID::LevelCounter;
+    cmd.action = [&, level](xy::Entity entity, float)
+    {
+        entity.getComponent<xy::Text>().setString(std::to_string(level));
+
+        //sending a command 1 frame later allows text time to update bounds
+        xy::Command c;
+        c.targetFlags = CommandID::LevelCounter;
+        c.action = [](xy::Entity ent, float)
+        {
+            auto bounds = ent.getComponent<xy::Text>().getLocalBounds();
+            auto pos = ent.getComponent<xy::Transform>().getPosition();
+            pos.x = (MapBounds.width - bounds.width) / 2.f;
+            ent.getComponent<xy::Transform>().setPosition(pos);
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(c); //meta.
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 }
 
 void GameState::updateLoadingScreen(float dt, sf::RenderWindow& rw)

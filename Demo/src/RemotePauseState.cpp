@@ -25,44 +25,36 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_INVENTORY_DIRECTOR_HPP_
-#define DEMO_INVENTORY_DIRECTOR_HPP_
+#include "RemotePauseState.hpp"
 
-#include <xyginext/ecs/Director.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
-#include <array>
-
-namespace xy
+RemotePauseState::RemotePauseState(xy::StateStack& stack, xy::State::Context ctx)
+    : xy::State(stack, ctx)
 {
-    class NetHost;
+    m_font.loadFromFile("assets/fonts/Cave-Story.ttf");
+    m_text.setFont(m_font);
+    m_text.setString("Other Player Paused The Game");
+    m_text.setFillColor(sf::Color::Red);
+    m_text.setCharacterSize(120);
+    auto bounds = m_text.getLocalBounds();
+    m_text.setOrigin(bounds.width / 2.f, (bounds.height / 2.f) + bounds.top);
+    m_text.setPosition(xy::DefaultSceneSize / 2.f);
+
+    sf::Image img;
+    img.create(1, 1, sf::Color(0, 0, 0, 180));
+    m_backgroundTexture.loadFromImage(img);
+    m_sprite.setTexture(m_backgroundTexture);
+    m_sprite.setScale(xy::DefaultSceneSize);
 }
 
-class InventoryDirector final : public xy::Director
+//public
+void RemotePauseState::draw()
 {
-public:
-    explicit InventoryDirector(xy::NetHost&);
+    auto view = getContext().defaultView;
+    auto& rt = getContext().renderWindow;
+    rt.setView(view);
 
-    void handleMessage(const xy::Message&) override;
-    void handleEvent(const sf::Event&) override {}
-    void process(float) override;
-
-private:
-    xy::NetHost& m_host;
-    
-    struct Inventory final
-    {
-        sf::Uint32 score = 0;
-        sf::Uint8 lives = 0;
-        sf::Uint8 bonusFlags = 0;
-    };
-    std::array<Inventory, 2> m_playerValues{};
-
-    std::array<std::pair<sf::Uint8, sf::Uint32>, 12> m_updateQueue;
-    std::size_t m_queuePos;
-
-    void sendUpdate(sf::Uint8, sf::Uint32);
-
-    void checkLifeBonus(sf::Uint8, sf::Uint32);
-};
-
-#endif //DEMO_INVENTORY_DIRECTOR_HPP_
+    rt.draw(m_sprite);
+    rt.draw(m_text);
+}

@@ -27,6 +27,7 @@ source distribution.
 
 #include "ErrorState.hpp"
 #include "SharedStateData.hpp"
+#include "MessageIDs.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/gui/Gui.hpp>
@@ -58,8 +59,9 @@ ErrorState::ErrorState(xy::StateStack& stack, xy::State::Context ctx, const Shar
         xy::Nim::text(m_message);
         if (xy::Nim::button("OK", 40.f, 16.f))
         {
-            requestStackClear();
-            requestStackPush(StateID::MainMenu);
+            /*requestStackClear();
+            requestStackPush(StateID::MainMenu);*/
+            getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage)->action = MenuEvent::QuitGameClicked;
         }
         xy::Nim::end();
     });

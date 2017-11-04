@@ -41,7 +41,7 @@ struct Powerup final
 {
     enum class Type
     {
-        Lightning, Flame, Water
+        Lightning, Flame
     }type = Type::Lightning;
 
     enum class State
@@ -83,17 +83,14 @@ private:
     xy::NetHost& m_host;
     sf::Uint8 m_spawnFlags;
 
-    sf::Clock m_waterClock;
     sf::Clock m_flameClock;
     sf::Clock m_lightningClock;
-    float m_waterTime;
     float m_flameTime;
     float m_lightningTime;
     std::size_t m_nextSpawnTime;
 
     void processLightning(xy::Entity, float);
     void processFire(xy::Entity, float);
-    void processWater(xy::Entity, float);
     void processIdle(xy::Entity, float);
 
     void defaultCollision(xy::Entity, float);

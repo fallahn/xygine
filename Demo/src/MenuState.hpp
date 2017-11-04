@@ -29,6 +29,7 @@ source distribution.
 #define DEMO_GAME_MENU_STATE_HPP_
 
 #include <xyginext/core/State.hpp>
+#include <xyginext/core/ConfigFile.hpp>
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/resources/Resource.hpp>
 
@@ -38,6 +39,7 @@ source distribution.
 namespace xy
 {
     class PostBlur;
+    class Transform;
 }
 
 class LoadingScreen;
@@ -66,10 +68,23 @@ private:
     bool m_helpShown;
     xy::PostBlur* m_blurEffect;
 
+    xy::ConfigFile m_keyBinds;
+
+    sf::Vector2f m_menuTarget;
+    sf::Vector2f m_leftMenuTarget;
+    sf::Vector2f m_rightMenuTarget;
+
+    void loadKeybinds();
     void createScene();
     void createMenu();
     void createHelp();
     void showHelpMenu();
+
+    void createFirstMenu(xy::Transform&, sf::Uint32, sf::Uint32, sf::Font&);
+    void createSecondMenu(xy::Transform&, sf::Uint32, sf::Uint32, sf::Font&);
+    void createThirdMenu(xy::Transform&, sf::Uint32, sf::Uint32, sf::Font&);
+
+    void createKeybindInputs(xy::Entity, sf::Uint8);
 
     void updateLoadingScreen(float, sf::RenderWindow&) override;
 };

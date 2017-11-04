@@ -95,8 +95,6 @@ void MapAnimatorSystem::process(float dt)
                     getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
                 }
             }
-
-            //DPRINT("L2", std::to_string(l2));
         }
         else
         {

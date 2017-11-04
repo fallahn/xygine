@@ -58,6 +58,12 @@ namespace xy
         void addChild(Transform&);
 
         /*!
+        \brief Removes the given child transform from this one,
+        if it exists, else does nothing.
+        */
+        void removeChild(Transform&);
+
+        /*!
         \brief Returns the world position of this transform by
         multiplying it with any parent transforms it may have
         */

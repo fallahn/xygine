@@ -35,6 +35,7 @@ enum StateID
     Game,
     Error,
     Pause,
+    RemotePause,
     GameOver
 };
 

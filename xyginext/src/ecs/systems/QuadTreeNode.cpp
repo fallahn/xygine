@@ -47,7 +47,7 @@ QuadTreeNode::QuadTreeNode(sf::FloatRect area, sf::Int32 level, QuadTreeNode* pa
 
 //public
 void QuadTreeNode::addEntity(xy::Entity entity)
-{
+{    
     //add to children if it fits
     if (m_hasChildren)
     {
@@ -85,8 +85,8 @@ void QuadTreeNode::update(xy::Entity entity)
     //TODO we don't really want to call this on entities which
     //haven't changed, as we're basically removing it from the 
     //node then adding it back again, only with spurious checks
-    m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(),
-        [entity](const Entity& ent) {return ent == entity; }), m_entities.end());
+    m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), entity), m_entities.end());
+    entity.getComponent<xy::QuadTreeItem>().m_node = nullptr;
 
     auto entBounds = entity.getComponent<xy::Transform>().getWorldTransform().transformRect(entity.getComponent<xy::QuadTreeItem>().m_area);
 
@@ -111,7 +111,7 @@ void QuadTreeNode::update(xy::Entity entity)
         if (std::find(outsideSet.begin(), outsideSet.end(), entity) == outsideSet.end())
         {
             outsideSet.push_back(entity);
-            entity.getComponent<xy::QuadTreeItem>().m_node = nullptr;
+            //entity.getComponent<xy::QuadTreeItem>().m_node = nullptr;
         }
     }
     else
@@ -122,7 +122,20 @@ void QuadTreeNode::update(xy::Entity entity)
 
 void QuadTreeNode::removeEntity(xy::Entity entity)
 {
-    m_entities.erase(std::find(m_entities.begin(), m_entities.end(), entity));
+    auto result = std::find(m_entities.begin(), m_entities.end(), entity);
+    if (result == m_entities.end())
+    {
+        auto node = entity.getComponent<xy::QuadTreeItem>().m_node;
+        entity.getComponent<xy::QuadTreeItem>().m_node = nullptr;
+        
+        //xy::Logger::log("Entity not found in quad tree node when removing " + std::to_string(entity.getIndex()), Logger::Type::Error, Logger::Output::All);
+        return;
+    }
+    
+    entity.getComponent<xy::QuadTreeItem>().m_node = nullptr;
+    m_entities.erase(result, m_entities.end());
+    
+    //m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), entity));
 
     auto* currentNode = this;
     while (currentNode)

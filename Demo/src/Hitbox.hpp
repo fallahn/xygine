@@ -85,6 +85,7 @@ private:
     sf::FloatRect m_collisionRect;
 
     friend class CollisionSystem;
+    friend class CollisionComponent;
 };
 
 class CollisionComponent final
@@ -92,39 +93,10 @@ class CollisionComponent final
 public:
     static constexpr sf::Uint32 MaxHitBoxes = 2;
 
-    CollisionComponent()
-    {
-        float fMax = std::numeric_limits<float>::max();
-        m_localBounds.left = fMax;
-        m_localBounds.top = fMax;
-        m_localBounds.width = -fMax;
-        m_localBounds.height = -fMax;
-    }
+    CollisionComponent();
 
-    void addHitbox(sf::FloatRect rect, CollisionType::ID type)
-    {
-        XY_ASSERT(m_hitboxCount < MaxHitBoxes, "No more hitboxes may be added");
-        m_hitboxes[m_hitboxCount].setCollisionRect(rect);
-        m_hitboxes[m_hitboxCount].setType(type);
-        m_hitboxCount++;
-        //merge boxes for broad phase culling
-        if (m_localBounds.left > rect.left)
-        {
-            m_localBounds.left = rect.left;
-        }
-        if (m_localBounds.top > rect.top)
-        {
-            m_localBounds.top = rect.top;
-        }
-        if (m_localBounds.width < (rect.left + rect.width))
-        {
-            m_localBounds.width = (rect.left + rect.width);
-        }
-        if (m_localBounds.height < (rect.top + rect.height))
-        {
-            m_localBounds.height = (rect.top + rect.height);
-        }
-    }
+    void addHitbox(sf::FloatRect rect, CollisionType::ID type);
+
     std::size_t getHitboxCount() const { return m_hitboxCount; }
 
     const std::array<Hitbox, MaxHitBoxes>& getHitboxes() const { return m_hitboxes; }
@@ -135,6 +107,10 @@ public:
     void setCollisionCategoryBits(sf::Uint32 bits) { m_categoryBits = bits; }
 
     void setCollisionMaskBits(sf::Uint32 bits) { m_maskBits = bits; }
+
+    std::vector<sf::Uint8> serialise() const;
+
+    void deserialise(const std::vector<sf::Uint8>&);
 
 private:
     std::size_t m_hitboxCount = 0;

@@ -25,44 +25,40 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_INVENTORY_DIRECTOR_HPP_
-#define DEMO_INVENTORY_DIRECTOR_HPP_
+#ifndef DEMO_KEYMAP_DIRECTOR_HPP_
+#define DEMO_KEYMAP_DIRECTOR_HPP_
+
+#include "SharedStateData.hpp"
 
 #include <xyginext/ecs/Director.hpp>
 
-#include <array>
+#include <string>
 
 namespace xy
 {
-    class NetHost;
+    class ConfigObject;
 }
 
-class InventoryDirector final : public xy::Director
+struct KeyMapInput final
+{
+    sf::Int8 player = -1;
+    sf::Uint8 index = 0;
+};
+
+class KeyMapDirector final : public xy::Director
 {
 public:
-    explicit InventoryDirector(xy::NetHost&);
+    KeyMapDirector(SharedStateData&, xy::ConfigObject&);
 
+    void handleEvent(const sf::Event&) override;
     void handleMessage(const xy::Message&) override;
-    void handleEvent(const sf::Event&) override {}
     void process(float) override;
 
 private:
-    xy::NetHost& m_host;
-    
-    struct Inventory final
-    {
-        sf::Uint32 score = 0;
-        sf::Uint8 lives = 0;
-        sf::Uint8 bonusFlags = 0;
-    };
-    std::array<Inventory, 2> m_playerValues{};
-
-    std::array<std::pair<sf::Uint8, sf::Uint32>, 12> m_updateQueue;
-    std::size_t m_queuePos;
-
-    void sendUpdate(sf::Uint8, sf::Uint32);
-
-    void checkLifeBonus(sf::Uint8, sf::Uint32);
+    KeyMapInput m_activeInput;
+    SharedStateData& m_sharedData;
+    xy::ConfigObject& m_config;
+    std::string m_cfgName;
 };
 
-#endif //DEMO_INVENTORY_DIRECTOR_HPP_
+#endif //DEMO_KEYMAP_DIRECTOR_HPP_

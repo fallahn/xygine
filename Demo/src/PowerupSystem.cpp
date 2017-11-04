@@ -56,7 +56,6 @@ PowerupSystem::PowerupSystem(xy::MessageBus& mb, xy::NetHost& host)
     : xy::System(mb, typeid(PowerupSystem)),
     m_host          (host),
     m_spawnFlags    (255),
-    m_waterTime     (6.f),
     m_flameTime     (15.f),
     m_lightningTime (22.f),
     m_nextSpawnTime (0)
@@ -87,10 +86,6 @@ void PowerupSystem::process(float dt)
             //fire collision in handled in processFire()
             processFire(entity, dt);
             break;
-        case Powerup::Type::Water:
-            //water collision is handled in processWater()
-            processWater(entity, dt);
-            break;
         }
 
         if (powerup.state == Powerup::State::Active)
@@ -115,18 +110,6 @@ void PowerupSystem::process(float dt)
             spawn(ActorID::FlameOne, 0);
             spawn(ActorID::FlameTwo, 1);
             m_flameTime = spawnTimes[m_nextSpawnTime];
-            m_nextSpawnTime = (m_nextSpawnTime + 1) % spawnTimes.size();
-        }
-    }
-
-    if (m_waterClock.getElapsedTime().asSeconds() > m_waterTime)
-    {
-        m_waterClock.restart();
-        if (m_spawnFlags & SpawnFlags::Water)
-        {
-            spawn(ActorID::WaterOne, 0);
-            spawn(ActorID::WaterTwo, 1);
-            m_waterTime = spawnTimes[m_nextSpawnTime];
             m_nextSpawnTime = (m_nextSpawnTime + 1) % spawnTimes.size();
         }
     }
@@ -248,26 +231,6 @@ void PowerupSystem::processFire(xy::Entity entity, float dt)
     }
 }
 
-void PowerupSystem::processWater(xy::Entity entity, float dt)
-{
-    auto& powerup = entity.getComponent<Powerup>();
-
-    switch (powerup.state)
-    {
-    default: break;
-    case Powerup::State::Idle:
-        defaultCollision(entity, dt);
-        processIdle(entity, dt);
-        break;
-    case Powerup::State::Active:
-        despawn(entity);
-        break;
-    case Powerup::State::Dying:
-
-        break;
-    }
-}
-
 void PowerupSystem::processIdle(xy::Entity entity, float dt)
 {   
     auto& powerup = entity.getComponent<Powerup>();
@@ -349,9 +312,6 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float)
                     case Powerup::Type::Lightning:
                         cause = NpcEvent::Lightning;
                         break;
-                    case Powerup::Type::Water:
-                        cause = NpcEvent::Water;
-                        break;
                     }
 
                     getScene()->getSystem<NPCSystem>().despawn(man.otherEntity, powerup.owner, cause);
@@ -415,10 +375,6 @@ void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
     case ActorID::FlameOne:
     case ActorID::FlameTwo:
         type = Powerup::Type::Flame;
-        break;
-    case ActorID::WaterOne:
-    case ActorID::WaterTwo:
-        type = Powerup::Type::Water;
         break;
     }
     

@@ -25,44 +25,36 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_INVENTORY_DIRECTOR_HPP_
-#define DEMO_INVENTORY_DIRECTOR_HPP_
+#ifndef DEMO_REMOTE_PAUSE_STATE_HPP_
+#define DEMO_REMOTE_PAUSE_STATE_HPP_
 
-#include <xyginext/ecs/Director.hpp>
+#include "StateIDs.hpp"
 
-#include <array>
+#include <xyginext/core/State.hpp>
 
-namespace xy
-{
-    class NetHost;
-}
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
-class InventoryDirector final : public xy::Director
+class RemotePauseState final : public xy::State
 {
 public:
-    explicit InventoryDirector(xy::NetHost&);
+    RemotePauseState(xy::StateStack&, xy::State::Context);
 
-    void handleMessage(const xy::Message&) override;
-    void handleEvent(const sf::Event&) override {}
-    void process(float) override;
+    xy::StateID stateID() const override { return StateID::RemotePause; }
+    bool handleEvent(const sf::Event&) override { return false; }
+    void handleMessage(const xy::Message&) override {}
+    bool update(float) override { return true; }
+    void draw() override;
 
 private:
-    xy::NetHost& m_host;
-    
-    struct Inventory final
-    {
-        sf::Uint32 score = 0;
-        sf::Uint8 lives = 0;
-        sf::Uint8 bonusFlags = 0;
-    };
-    std::array<Inventory, 2> m_playerValues{};
 
-    std::array<std::pair<sf::Uint8, sf::Uint32>, 12> m_updateQueue;
-    std::size_t m_queuePos;
+    sf::Font m_font;
+    sf::Texture m_backgroundTexture;
 
-    void sendUpdate(sf::Uint8, sf::Uint32);
-
-    void checkLifeBonus(sf::Uint8, sf::Uint32);
+    sf::Text m_text;
+    sf::Sprite m_sprite;
 };
 
-#endif //DEMO_INVENTORY_DIRECTOR_HPP_
+#endif //DEMO_REMOTE_PAUSE_STATE_HPP_

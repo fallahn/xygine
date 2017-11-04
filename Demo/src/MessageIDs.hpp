@@ -44,7 +44,8 @@ namespace MessageID
         ItemMessage,
         MapMessage,
         NetworkMessage,
-        MenuMessage
+        MenuMessage,
+        GameMessage
     };
 }
 
@@ -87,8 +88,7 @@ struct NpcEvent final
     {
         Bubble,
         Lightning,
-        Flame,
-        Water
+        Flame
     };
     sf::Uint8 causeOfDeath = Bubble;
 };
@@ -133,8 +133,22 @@ struct MenuEvent final
     enum
     {
         HelpButtonClicked,
-        QuitGameClicked
+        QuitGameClicked,
+        ContinueGameClicked,
+        UnpauseGame,
+        KeybindClicked
     }action;
+    sf::Uint8 index = 0;
+    sf::Uint8 player = 0;
+};
+
+struct GameEvent final
+{
+    enum
+    {
+        Restarted
+    }action;
+    sf::Uint8 playerID = 0;
 };
 
 #endif //DEMO_MESSAGE_IDS_HPP_

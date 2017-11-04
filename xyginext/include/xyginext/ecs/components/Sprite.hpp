@@ -133,6 +133,17 @@ namespace xy
         */
         std::size_t getAnimationCount() const { return m_animationCount; }
 
+        /*!
+        /brief Returns a reference to the sprites animation array.
+        Use getAnimationCount() to check how many of the animations are valid
+        */
+        std::array<Animation, MaxAnimations>& getAnimations() { return m_animations; }
+
+        /*!
+        /brief Returns a const reference to the sprites animation array.
+        Use getAnimationCount() to check how many of the animations are valid
+        */
+        const std::array<Animation, MaxAnimations>& getAnimations() const { return m_animations; }
 
     private:
 

@@ -34,7 +34,8 @@ Text::Text()
     m_charSize      (30),
     m_fillColour    (sf::Color::White),
     m_dirty         (true),
-    m_croppingArea  (sf::Vector2f(), DefaultSceneSize),
+    m_alignment     (Alignment::Left),
+    m_croppingArea  (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
     m_cropped       (false)
 {
 
@@ -45,7 +46,8 @@ Text::Text(const sf::Font& font)
     m_charSize      (30),
     m_fillColour    (sf::Color::White),
     m_dirty         (true),
-    m_croppingArea  (sf::Vector2f(), DefaultSceneSize),
+    m_alignment     (Alignment::Left),
+    m_croppingArea  (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
     m_cropped       (false)
 {
     setFont(font);
@@ -140,6 +142,12 @@ sf::FloatRect Text::getLocalBounds() const
 void Text::setCroppingArea(sf::FloatRect area)
 {
     m_croppingArea = area;
+    m_dirty = true;
+}
+
+void Text::setAlignment(Text::Alignment alignment)
+{
+    m_alignment = alignment;
     m_dirty = true;
 }
 

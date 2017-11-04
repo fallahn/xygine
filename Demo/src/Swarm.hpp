@@ -25,44 +25,35 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_INVENTORY_DIRECTOR_HPP_
-#define DEMO_INVENTORY_DIRECTOR_HPP_
+#ifndef DEMO_SWARM_HPP_
+#define DEMO_SWARM_HPP_
 
-#include <xyginext/ecs/Director.hpp>
+#include <xyginext/ecs/System.hpp>
+
+#include <SFML/System/Vector2.hpp>
 
 #include <array>
 
-namespace xy
+struct Bug final
 {
-    class NetHost;
-}
-
-class InventoryDirector final : public xy::Director
-{
-public:
-    explicit InventoryDirector(xy::NetHost&);
-
-    void handleMessage(const xy::Message&) override;
-    void handleEvent(const sf::Event&) override {}
-    void process(float) override;
-
-private:
-    xy::NetHost& m_host;
-    
-    struct Inventory final
-    {
-        sf::Uint32 score = 0;
-        sf::Uint8 lives = 0;
-        sf::Uint8 bonusFlags = 0;
-    };
-    std::array<Inventory, 2> m_playerValues{};
-
-    std::array<std::pair<sf::Uint8, sf::Uint32>, 12> m_updateQueue;
-    std::size_t m_queuePos;
-
-    void sendUpdate(sf::Uint8, sf::Uint32);
-
-    void checkLifeBonus(sf::Uint8, sf::Uint32);
+    float brightness = 1.f;
+    sf::Vector2f velocity;
+    sf::Vector2f position;
 };
 
-#endif //DEMO_INVENTORY_DIRECTOR_HPP_
+struct Swarm final
+{
+    std::array<Bug, 20u> bugs;
+    
+    Swarm();
+};
+
+class SwarmSystem final : public xy::System
+{
+public:
+    explicit SwarmSystem(xy::MessageBus&);
+
+    void process(float) override;
+};
+
+#endif //DEMO_SWARM_HPP_

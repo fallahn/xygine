@@ -48,7 +48,6 @@ namespace
     const float initialJumpVelocity = 840.f;
     const float minJumpVelocity = -initialJumpVelocity * 0.25f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocit
     const float dyingTime = 2.f;
-    const float invincibleTime = 2.f;
 
     const sf::Uint32 UpMask = CollisionFlags::PlayerMask & ~(CollisionFlags::Bubble/*|CollisionFlags::Platform*/);
     const sf::Uint32 DownMask = CollisionFlags::PlayerMask;
@@ -76,8 +75,6 @@ void PlayerSystem::process(float)
     auto& entities = getEntities();
     for (auto& entity : entities)
     {
-        //resolveCollision(entity);
-
         auto& player = entity.getComponent<Player>();
         auto& tx = entity.getComponent<xy::Transform>();
         const auto& collision = entity.getComponent<CollisionComponent>();
@@ -118,7 +115,7 @@ void PlayerSystem::process(float)
                 player.canShoot = false;
             }
             else if ((currentMask & InputFlag::Shoot) == 0
-                && player.state != Player::State::Dying)
+                && (player.state == Player::State::Walking || player.state == Player::State::Jumping))
             {
                 player.canShoot = true;
             }
@@ -135,7 +132,7 @@ void PlayerSystem::process(float)
                     player.direction =
                         (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
 
-                    player.timer = invincibleTime;
+                    player.timer = PlayerInvincibleTime;
                 }
                 else
                 {
@@ -160,14 +157,18 @@ void PlayerSystem::process(float)
             xMotion = tx.getPosition().x - xMotion;
             animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
         }
-        else if(player.state != Player::State::Disabled)
+        else if(player.state == Player::State::Dying)
         {
             animController.nextAnimation = AnimationController::Die;
+        }
+        else if (player.state == Player::State::Dead)
+        {
+            animController.nextAnimation = AnimationController::Dead;
         }
 
         //TODO map change animation
 #ifdef XY_DEBUG
-        if (!m_isServer)
+        /*if (!m_isServer)
         {
             switch (player.state)
             {
@@ -187,7 +188,7 @@ void PlayerSystem::process(float)
                 DPRINT("Player state", "Walking");
                 break;
             }
-        }
+        }*/
 #endif
 
     }
@@ -205,6 +206,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     player.canJump = state.playerCanJump;
     player.canLand = state.playerCanLand;
     player.canRideBubble = state.playerCanRideBubble;
+    player.lives = state.playerLives;
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
@@ -218,11 +220,13 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     {
         std::size_t idx = std::distance(player.history.begin(), ip.base()) -1;
         auto end = (player.currentInput + player.history.size() - 1) % player.history.size();
+        
+        //restore the collision data from history
+        entity.getComponent<CollisionComponent>() = player.history[idx].collision;
 
         while (idx != end) //currentInput points to the next free slot in history
-        {                      
-            //restore the collision data from history
-            entity.getComponent<CollisionComponent>() = player.history[idx].collision;
+        {                                        
+            //entity.getComponent<CollisionComponent>() = player.history[idx].collision;
             resolveCollision(entity);
             
             float delta = getDelta(player.history, idx);
@@ -231,6 +235,8 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
             processInput(currentMask, delta, entity);
 
             idx = (idx + 1) % player.history.size();
+
+            getScene()->getSystem<CollisionSystem>().queryState(entity);
         }
     }
 
@@ -241,10 +247,18 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     {
         animController.nextAnimation = (player.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
     }
-    else
+    else if(player.state == Player::State::Walking)
     {
         float xMotion = tx.getPosition().x - state.x;
         animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
+    }
+    else if (player.state == Player::State::Dying)
+    {
+        animController.nextAnimation = AnimationController::Die;
+    }
+    else if (player.state == Player::State::Dead)
+    {
+        animController.nextAnimation = AnimationController::Dead;
     }
 }
 
@@ -413,14 +427,44 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                     tx.move(man.normal * man.penetration);
                     break;
                 case CollisionType::NPC:
-                    npcCollision(entity, man);
+                    if(npcCollision(entity, man)) return; //this killed us so stop with walking collisions
                     break;
                 }
             }
         }
         else if (hitbox.getType() == CollisionType::Foot)
         {
-            if (hitbox.getCollisionCount() == 0)
+            //remove any collisions which should still
+            //let the player enter freefall
+            auto collisionCount = hitbox.getCollisionCount();
+            auto loopCount = collisionCount;
+            auto& manifolds = hitbox.getManifolds();
+            for (auto j = 0u; j < loopCount; ++j)
+            {
+                const auto& man = manifolds[j];
+                switch (man.otherType)
+                {
+                default: break;
+                case CollisionType::Fruit:
+                case CollisionType::NPC:
+                case CollisionType::Powerup:
+                case CollisionType::Bubble:
+                    if (man.otherEntity.hasComponent<Bubble>())
+                    {
+                        const auto& bubble = man.otherEntity.getComponent<Bubble>();
+                        //skip if this is our bubble
+                        if (bubble.player == player.playerNumber)
+                        {
+                            break;
+                        }
+                    }
+
+                    collisionCount--;
+                    break;
+                }
+            }
+            
+            if (collisionCount == 0)
             {
                 entity.getComponent<Player>().state = Player::State::Jumping; //enter freefall
             }
@@ -513,7 +557,7 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                     }
                     return;
                 case CollisionType::NPC:
-                    npcCollision(entity, man);
+                    if(npcCollision(entity, man)) return; //this killed us so stop with jumping collision
                     break;
                 }
             }
@@ -573,7 +617,7 @@ void PlayerSystem::collisionDying(xy::Entity entity)
     }
 }
 
-void PlayerSystem::npcCollision(xy::Entity entity, const Manifold& man)
+bool PlayerSystem::npcCollision(xy::Entity entity, const Manifold& man)
 {
     auto& player = entity.getComponent<Player>();
     if (player.timer < 0 && man.otherEntity.hasComponent<NPC>())
@@ -611,7 +655,8 @@ void PlayerSystem::npcCollision(xy::Entity entity, const Manifold& man)
             msg->entity = entity;
             msg->type = PlayerEvent::Died;
 
-            return;
+            return true;
         }
     }
+    return false;
 }

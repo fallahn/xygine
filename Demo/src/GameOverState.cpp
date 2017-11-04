@@ -27,6 +27,7 @@ source distribution.
 
 #include "GameOverState.hpp"
 #include "SharedStateData.hpp"
+#include "MessageIDs.hpp"
 
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Text.hpp>
@@ -99,37 +100,74 @@ void GameoverState::load(const SharedStateData& data)
     entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
     entity.getComponent<xy::Transform>().move(-490.f, -460.f);
-    entity.addComponent<xy::Text>(m_font).setString("GAME OVER");
+    entity.addComponent<xy::Text>(m_font).setString("CONTINUE?");
     entity.getComponent<xy::Text>().setCharacterSize(260);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
 
     //score text
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    entity.getComponent<xy::Transform>().move(-360.f, -180.f);
-    entity.addComponent<xy::Text>(m_font).setString("Score: " + data.score);
-    entity.getComponent<xy::Text>().setCharacterSize(140);
-    entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    for (auto i = 0u; i < data.playerCount; ++i)
+    {
+        entity = m_scene.createEntity();
+        entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);       
+        entity.addComponent<xy::Text>(m_font).setFillColour(sf::Color::Red);
 
-    //button text
+        if (data.playerCount == 1)
+        {
+            entity.getComponent<xy::Transform>().move(-360.f, -180.f);
+            entity.getComponent<xy::Text>().setString("Score: " + data.scores[0]);
+            entity.getComponent<xy::Text>().setCharacterSize(140);
+        }
+        else
+        {
+            entity.getComponent<xy::Text>().setCharacterSize(100);
+            if (i == 0)
+            {
+                entity.getComponent<xy::Transform>().move(-400.f, -180.f);
+                entity.getComponent<xy::Text>().setString("Player One Score: " + data.scores[0]);
+            }
+            else
+            {
+                entity.getComponent<xy::Transform>().move(-400.f, -100.f);
+                entity.getComponent<xy::Text>().setString("Player Two Score: " + data.scores[1]);
+            }
+        }
+    }
+
+    auto selectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
+        [](xy::Entity entity)
+    {
+        auto& sprite = entity.getComponent<xy::Sprite>();
+        auto rect = sprite.getTextureRect();
+        rect.top = 256.f;
+        sprite.setTextureRect(rect);
+    });
+    auto unselectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
+        [](xy::Entity entity)
+    {
+        auto& sprite = entity.getComponent<xy::Sprite>();
+        auto rect = sprite.getTextureRect();
+        rect.top = 0.f;
+        sprite.setTextureRect(rect);
+    });
+
+    //NO button text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(m_font).setString("OK");
+    entity.addComponent<xy::Text>(m_font).setString("NO");
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
-    auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
     auto& tx = entity.addComponent<xy::Transform>();
     tx.setOrigin(32.f, 45.f);
 
-    //button
+    // NO button
     entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_buttonTexture);
-    bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
+    auto bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 256.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
     entity.getComponent<xy::Transform>().addChild(tx);
     entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    entity.getComponent<xy::Transform>().move(0.f, 128.f);
+    entity.getComponent<xy::Transform>().move(bounds.width / 2.f, 128.f);
     tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
@@ -138,8 +176,8 @@ void GameoverState::load(const SharedStateData& data)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
-            requestStackClear();
-            requestStackPush(StateID::MainMenu);
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::QuitGameClicked;
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
@@ -147,8 +185,8 @@ void GameoverState::load(const SharedStateData& data)
     {
         if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
         {
-            requestStackClear();
-            requestStackPush(StateID::MainMenu);
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::QuitGameClicked;
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
@@ -156,11 +194,63 @@ void GameoverState::load(const SharedStateData& data)
     {
         if (button == 0)
         {
-            requestStackClear();
-            requestStackPush(StateID::MainMenu);
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::QuitGameClicked;
         }
     });
-    
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
+
+    //YES button text
+    entity = m_scene.createEntity();
+    entity.addComponent<xy::Text>(m_font).setString("YES");
+    entity.getComponent<xy::Text>().setCharacterSize(60);
+    entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    auto& tx2 = entity.addComponent<xy::Transform>();
+    tx2.setOrigin(38.f, 45.f);
+
+    //YES button
+    entity = m_scene.createEntity();
+    entity.addComponent<xy::Sprite>().setTexture(m_buttonTexture);
+    bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
+    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 256.f, bounds.width, bounds.height / 4.f });
+    entity.addComponent<xy::Drawable>();
+    entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+    entity.getComponent<xy::Transform>().addChild(tx2);
+    entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
+    entity.getComponent<xy::Transform>().move(-bounds.width / 2.f, 128.f);
+    tx2.setPosition(entity.getComponent<xy::Transform>().getOrigin());
+    bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
+    entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+    {
+        if (flags & xy::UISystem::LeftMouse)
+        {
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::ContinueGameClicked;
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
+        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
+    {
+        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
+        {
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::ContinueGameClicked;
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+    {
+        if (button == 0)
+        {
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::ContinueGameClicked;
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
 
     //apply the default view
     auto view = getContext().defaultView;
