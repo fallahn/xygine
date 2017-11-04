@@ -109,6 +109,7 @@ namespace
 #ifdef XY_DEBUG
     sf::Uint8 debugActorCount = 0;
     sf::Uint8 debugPlayerState = 0;
+    sf::Uint8 debugActorUpdate = 0;
     sf::CircleShape debugShape;
 #endif
 
@@ -274,8 +275,10 @@ void GameState::handleMessage(const xy::Message& msg)
 bool GameState::update(float dt)
 {   
     DPRINT("Actor count", std::to_string(debugActorCount));
+    DPRINT("Actor Update Count", std::to_string(debugActorUpdate));
     //DPRINT("Player Server State", std::to_string(debugPlayerState));
 #ifdef XY_DEBUG
+    debugActorUpdate = 0;
     /*switch (Player::State(debugPlayerState))
     {
     default:
@@ -883,6 +886,10 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+#ifdef XY_DEBUG
+        debugActorUpdate++;
+#endif
     }
         break;
     case PacketID::MapJoin:

@@ -290,7 +290,7 @@ void GameServer::update()
             m_stateFlags.set(GameOver, gameOver);
 
 #ifdef XY_DEBUG
-            //m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.actorCount, xy::NetFlag::Unreliable, 0);
+            m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.actorCount, xy::NetFlag::Unreliable, 0);
 #endif
         }
     }

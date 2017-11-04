@@ -226,6 +226,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
 
         while (idx != end) //currentInput points to the next free slot in history
         {                                        
+            //entity.getComponent<CollisionComponent>() = player.history[idx].collision;
             resolveCollision(entity);
             
             float delta = getDelta(player.history, idx);
@@ -426,7 +427,7 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                     tx.move(man.normal * man.penetration);
                     break;
                 case CollisionType::NPC:
-                    npcCollision(entity, man);
+                    if(npcCollision(entity, man)) return; //this killed us so stop with walking collisions
                     break;
                 }
             }
@@ -556,7 +557,7 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                     }
                     return;
                 case CollisionType::NPC:
-                    npcCollision(entity, man);
+                    if(npcCollision(entity, man)) return; //this killed us so stop with jumping collision
                     break;
                 }
             }
@@ -616,7 +617,7 @@ void PlayerSystem::collisionDying(xy::Entity entity)
     }
 }
 
-void PlayerSystem::npcCollision(xy::Entity entity, const Manifold& man)
+bool PlayerSystem::npcCollision(xy::Entity entity, const Manifold& man)
 {
     auto& player = entity.getComponent<Player>();
     if (player.timer < 0 && man.otherEntity.hasComponent<NPC>())
@@ -654,7 +655,8 @@ void PlayerSystem::npcCollision(xy::Entity entity, const Manifold& man)
             msg->entity = entity;
             msg->type = PlayerEvent::Died;
 
-            return;
+            return true;
         }
     }
+    return false;
 }

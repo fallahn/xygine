@@ -114,7 +114,7 @@ static const sf::FloatRect SmallFoodBounds(0.f, 0.f, 64.f, 64.f);
 static const sf::Vector2f SmallFoodOrigin(32.f, 32.f);
 static constexpr float LargeFruitSize = 96.f;
 
-static constexpr float TeleportDistance = 950.f;
+static constexpr float TeleportDistance = 886.f;
 static constexpr float Gravity = 2200.f;
 static constexpr float MaxVelocity = 800.f;
 

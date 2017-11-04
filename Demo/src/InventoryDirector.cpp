@@ -79,7 +79,6 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             m_playerValues[data.playerID].lives = PlayerStartLives;
             m_playerValues[data.playerID].score = 0;
 
-            //sendUpdate(data.playerID, 0);
             m_updateQueue[m_queuePos++] = std::make_pair(data.playerID, 0);
         }
     }
@@ -94,7 +93,6 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             if (actor == ActorID::Goobly)
             {
                 m_playerValues[data.playerID].score += GooblyScore;
-                //sendUpdate(data.playerID, GooblyScore);
                 m_updateQueue[m_queuePos++] = std::make_pair(data.playerID, GooblyScore);
             }
             else
@@ -102,7 +100,6 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
                 auto score = data.causeOfDeath == NpcEvent::Bubble ? NpcScore : PowerupScore;
                 
                 m_playerValues[data.playerID].score += score;
-                //sendUpdate(data.playerID, score);
                 m_updateQueue[m_queuePos++] = std::make_pair(data.playerID, score);
             }            
         }
@@ -136,7 +133,6 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         }
      
         m_playerValues[playerID].score += amount;
-        //sendUpdate(playerID, amount);
         m_updateQueue[m_queuePos++] = std::make_pair(playerID, amount);
     }
         break;
@@ -151,8 +147,6 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             m_playerValues[player.playerNumber].score = 0;
 
             //send info on both, in case new player has joined
-            //sendUpdate(0, 0);
-            //sendUpdate(1, 0);
             m_updateQueue[m_queuePos++] = std::make_pair(0, 0);
             m_updateQueue[m_queuePos++] = std::make_pair(1, 0);
         }
@@ -160,7 +154,6 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         {
             const auto& player = data.entity.getComponent<Player>();
             m_playerValues[player.playerNumber].lives = player.lives;
-            //sendUpdate(player.playerNumber, 0);
             m_updateQueue[m_queuePos++] = std::make_pair(player.playerNumber, 0);
         }
     }
@@ -172,7 +165,6 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         {
             m_playerValues[data.playerID].lives = 0;
             m_playerValues[data.playerID].score = 0;
-            //sendUpdate(data.playerID, 0);
             m_updateQueue[m_queuePos++] = std::make_pair(data.playerID, 0);
         }
     }
