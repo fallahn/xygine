@@ -839,6 +839,7 @@ void NPCSystem::collisionNormal(xy::Entity entity)
             {
                 //foot's in the air so we're falling
                 npc.state = NPC::State::Jumping;
+                return;
             }
         }
     }
@@ -900,6 +901,7 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                             //moving down
                             npc.state = NPC::State::Normal;
                             npc.velocity.y = 0.f;
+                            return;
                         }
                     }
                     else //bonk head

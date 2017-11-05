@@ -57,6 +57,11 @@ GameoverState::GameoverState(xy::StateStack& stack, xy::State::Context ctx, cons
     ctx.renderWindow.setMouseCursorVisible(true);
 }
 
+GameoverState::~GameoverState()
+{
+    getContext().renderWindow.setMouseCursorVisible(false);
+}
+
 bool GameoverState::handleEvent(const sf::Event& evt)
 {
     m_scene.getSystem<xy::UISystem>().handleEvent(evt);
