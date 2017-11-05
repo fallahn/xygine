@@ -35,7 +35,7 @@ using namespace xy;
 
 AudioEmitter::AudioEmitter()
     : m_mixerChannel(0),
-    m_volume(1.f)
+    m_volume(0.f)
 {
 
 }

@@ -558,10 +558,10 @@ void MenuState::createKeybindInputs(xy::Entity towerEnt, sf::Uint8 player)
 {
     static const std::array<sf::Vector2f, 4u> buttonPositions =
     {
-        sf::Vector2f(0.f, 128.f),
-        sf::Vector2f(0.f, 384.f),
-        sf::Vector2f(0.f, 640.f),
-        sf::Vector2f(0.f, 896.f)
+        sf::Vector2f(64.f, 192.f),
+        sf::Vector2f(64.f, 448.f),
+        sf::Vector2f(64.f, 704.f),
+        sf::Vector2f(64.f, 960.f)
     };
 
     static const std::array<sf::Vector2f, 4u> textPositions =
@@ -580,7 +580,7 @@ void MenuState::createKeybindInputs(xy::Entity towerEnt, sf::Uint8 player)
         auto entity = m_helpScene.createEntity();
         entity.addComponent<xy::Transform>().setPosition(buttonPositions[i]);
         towerTx.addChild(entity.getComponent<xy::Transform>());
-        entity.addComponent<xy::UIHitBox>().area = { 0.f, 0.f, 64.f, 64.f };
+        entity.addComponent<xy::UIHitBox>().area = { 0.f, 0.f, 192.f, 64.f };
         entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
             m_helpScene.getSystem<xy::UISystem>().addMouseButtonCallback([&, i, player](
                 xy::Entity buttonEnt, sf::Uint64 flags)
