@@ -53,6 +53,8 @@ sprite_sheet menu_sprites
 			frame = 128,128,128,128
 			frame = 256,128,128,128
 			frame = 384,128,128,128
+			frame = 512,128,128,128
+			frame = 640,128,128,128			
 			
 			framerate = 12
 			loop=true
@@ -65,8 +67,8 @@ sprite_sheet menu_sprites
 
 		animation walk
 		{
-			frame = 512,128,128,128
-			frame = 640,128,128,128
+			frame = 384,384,128,128
+			frame = 512,384,128,128
 			
 			framerate = 12
 			loop=true
