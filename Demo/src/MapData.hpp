@@ -45,7 +45,8 @@ namespace ActorID
         LightningOne, LightningTwo,
         Bonus,
         PrincessOne, PrincessTwo,
-        TowerOne, TowerTwo
+        TowerOne, TowerTwo,
+        MagicHat
     };
 }
 

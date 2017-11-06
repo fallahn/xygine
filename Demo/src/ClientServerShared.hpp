@@ -74,8 +74,9 @@ namespace CollisionFlags
         Powerup = 0x80,
         Bonus = 0x100,
         HardBounds = 0x200,
+        MagicHat = 0x400,
 
-        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup | Bonus,
+        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup | Bonus | MagicHat,
         NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup | HardBounds,
         FruitMask = Solid | Platform | Player | Teleport,
         PowerupMask = Platform | Solid | Player | NPC

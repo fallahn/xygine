@@ -134,8 +134,10 @@
     <ClCompile Include="src\FruitSystem.cpp" />
     <ClCompile Include="src\FXDirector.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\GameCompleteState.cpp" />
     <ClCompile Include="src\GameOverState.cpp" />
     <ClCompile Include="src\GameState.cpp" />
+    <ClCompile Include="src\HatSystem.cpp" />
     <ClCompile Include="src\IntroState.cpp" />
     <ClCompile Include="src\InventoryDirector.cpp" />
     <ClCompile Include="src\KeyMapDirector.cpp" />
@@ -174,8 +176,10 @@
     <ClInclude Include="src\FruitSystem.hpp" />
     <ClInclude Include="src\FXDirector.hpp" />
     <ClInclude Include="src\Game.hpp" />
+    <ClInclude Include="src\GameCompleteState.hpp" />
     <ClInclude Include="src\GameOverState.hpp" />
     <ClInclude Include="src\GameState.hpp" />
+    <ClInclude Include="src\HatSystem.hpp" />
     <ClInclude Include="src\Hitbox.hpp" />
     <ClInclude Include="src\InputBinding.hpp" />
     <ClInclude Include="src\IntroState.hpp" />

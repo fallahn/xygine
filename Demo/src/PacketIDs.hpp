@@ -58,6 +58,7 @@ namespace PacketID
         ServerFull,
 
         DebugMapCount, //sends the number of active NPCs for debug printing
+        DebugCrownVelocity,
 
         Count
     };

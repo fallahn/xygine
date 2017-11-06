@@ -25,19 +25,36 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_STATE_IDS_HPP_
-#define DEMO_STATE_IDS_HPP_
+#ifndef DEMO_HAT_SYSTEM_HPP_
+#define DEMO_HAT_SYSTEM_HPP_
 
-enum StateID
+#include <xyginext/ecs/System.hpp>
+
+namespace xy
 {
-    Intro,
-    MainMenu,
-    Game,
-    Error,
-    Pause,
-    RemotePause,
-    GameOver,
-    GameComplete
+    class NetHost;
+}
+
+struct MagicHat final
+{
+    enum
+    {
+        Active, Idle
+    }state = Active;
+    sf::Vector2f velocity;
 };
 
-#endif //DEMO_STATE_IDS_HPP_
+class HatSystem final : public xy::System
+{
+public:
+    HatSystem(xy::MessageBus&, xy::NetHost&);
+
+    void handleMessage(const xy::Message&) override;
+
+    void process(float) override;
+
+private:
+    xy::NetHost& m_host;
+};
+
+#endif //DEMO_HAT_SYSTEM_HPP_

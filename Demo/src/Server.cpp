@@ -44,6 +44,7 @@ source distribution.
 #include "InventoryDirector.hpp"
 #include "PowerupSystem.hpp"
 #include "BonusSystem.hpp"
+#include "HatSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -355,6 +356,13 @@ void GameServer::handleDisconnect(const xy::NetEvent& evt)
         client->peer = {};
         client->ready = false;
         client->level = 1;
+
+        //unpause the game if it is paused so remaining player can continue
+        if (m_stateFlags.test(Paused))
+        {
+            m_stateFlags.set(Paused, false);
+            m_host.broadcastPacket(PacketID::RequestClientPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
+        }
     }
 }
 
@@ -696,6 +704,7 @@ void GameServer::initScene()
     m_scene.addSystem<FruitSystem>(m_messageBus, m_host);
     m_scene.addSystem<PowerupSystem>(m_messageBus, m_host);
     m_scene.addSystem<BonusSystem>(m_messageBus, m_host);
+    m_scene.addSystem<HatSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);

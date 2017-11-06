@@ -52,7 +52,8 @@ namespace CollisionType
         Powerup = 0x40,
         Platform = 0x80,
         Bubble = 0x100,
-        HardBounds = 0x200
+        HardBounds = 0x200,
+        MagicHat = 0x400
     };
 };
 

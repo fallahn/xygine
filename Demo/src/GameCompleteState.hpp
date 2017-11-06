@@ -25,19 +25,36 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_STATE_IDS_HPP_
-#define DEMO_STATE_IDS_HPP_
+#ifndef DEMO_COMPLETE_STATE_HPP_
+#define DEMO_COMPLETE_STATE_HPP_
 
-enum StateID
+#include "StateIDs.hpp"
+
+#include <xyginext/core/State.hpp>
+#include <xyginext/ecs/Scene.hpp>
+#include <xyginext/resources/Resource.hpp>
+
+struct SharedStateData;
+
+class GameCompleteState final : public xy::State
 {
-    Intro,
-    MainMenu,
-    Game,
-    Error,
-    Pause,
-    RemotePause,
-    GameOver,
-    GameComplete
+public:
+    GameCompleteState(xy::StateStack&, xy::State::Context, SharedStateData&);
+
+    xy::StateID stateID() const override { return StateID::GameComplete; }
+
+    bool handleEvent(const sf::Event&) override;
+    void handleMessage(const xy::Message&) override;
+    bool update(float) override;
+    void draw() override;
+
+private:
+
+    SharedStateData& m_sharedData;
+
+    xy::Scene m_scene;
+    xy::TextureResource m_textureResource;
+    xy::FontResource m_fontResource;
 };
 
-#endif //DEMO_STATE_IDS_HPP_
+#endif //DEMO_COMPLETE_STATE_HPP_

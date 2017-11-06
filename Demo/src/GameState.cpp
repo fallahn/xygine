@@ -110,6 +110,7 @@ namespace
     sf::Uint8 debugActorCount = 0;
     sf::Uint8 debugPlayerState = 0;
     sf::Uint8 debugActorUpdate = 0;
+    sf::Vector2f debugCrownVel;
     sf::CircleShape debugShape;
 #endif
 
@@ -277,6 +278,8 @@ bool GameState::update(float dt)
     DPRINT("Actor count", std::to_string(debugActorCount));
     DPRINT("Actor Update Count", std::to_string(debugActorUpdate));
     //DPRINT("Player Server State", std::to_string(debugPlayerState));
+    DPRINT("Crown Vel", std::to_string(debugCrownVel.x) + ", " + std::to_string(debugCrownVel.y));
+
 #ifdef XY_DEBUG
     debugActorUpdate = 0;
     /*switch (Player::State(debugPlayerState))
@@ -374,6 +377,15 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::JumpUp] = spriteSheet.getAnimationIndex("jump_up", "player_one");
     m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_one");
     m_animationControllers[SpriteID::PlayerOne].animationMap[AnimationController::Dead] = spriteSheet.getAnimationIndex("dead", "player_one");
+
+    m_sprites[SpriteID::MagicHat] = spriteSheet.getSprite("crown");
+    m_animationControllers[SpriteID::MagicHat].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "crown");
+    m_animationControllers[SpriteID::MagicHat].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "crown");
+    m_animationControllers[SpriteID::MagicHat].animationMap[AnimationController::Shoot] = spriteSheet.getAnimationIndex("shoot", "crown");
+    m_animationControllers[SpriteID::MagicHat].animationMap[AnimationController::JumpUp] = spriteSheet.getAnimationIndex("jump_up", "crown");
+    m_animationControllers[SpriteID::MagicHat].animationMap[AnimationController::JumpDown] = spriteSheet.getAnimationIndex("jump_down", "crown");
+    m_animationControllers[SpriteID::MagicHat].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "crown");
+    m_animationControllers[SpriteID::MagicHat].animationMap[AnimationController::Dead] = spriteSheet.getAnimationIndex("dead", "crown");
 
     //NPCs
     spriteSheet.loadFromFile("assets/sprites/npcs.spt", m_textureResource);
@@ -773,6 +785,9 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::DebugMapCount:
         debugActorCount = evt.packet.as<sf::Uint8>();
         break;
+    case PacketID::DebugCrownVelocity:
+        debugCrownVel = evt.packet.as<sf::Vector2f>();
+        break;
 #endif
     case PacketID::ServerFull:
         m_sharedData.error = "Could not connect to server, reason: Server full";
@@ -1019,6 +1034,11 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
         break;
+    case PacketID::GameComplete:
+        m_client.disconnect();
+        //TODO set off some fireworks before pushing state?
+        requestStackPush(StateID::GameComplete);
+        break;
     }
 }
 
@@ -1249,6 +1269,12 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     switch (actorEvent.actor.type)
     {
     default: break;
+    case ActorID::MagicHat:
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::MagicHat];
+        entity.addComponent<xy::Drawable>();
+        entity.addComponent<xy::SpriteAnimation>();
+        entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::MagicHat];
+        break;
     case ActorID::BubbleOne:
     case ActorID::BubbleTwo:
         entity.addComponent<xy::Sprite>() =

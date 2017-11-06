@@ -11,8 +11,10 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/FruitSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/FXDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Game.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/GameCompleteState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/GameOverState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/GameState.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/HatSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/IntroState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/InventoryDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KeyMapDirector.cpp
