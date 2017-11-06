@@ -832,7 +832,7 @@ void GameServer::loadMap()
             entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, rect.width, rect.height });
             entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::HardBounds);
-            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Bubble);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Bubble | CollisionFlags::MagicHat);
         }
 
         //check if map has a round time associated with it

@@ -56,8 +56,7 @@ struct PlayerEvent final
         Spawned,
         FiredWeapon,
         Jumped,
-        Died,
-        DroppedHat
+        Died
     }type;
     xy::Entity entity;
 };

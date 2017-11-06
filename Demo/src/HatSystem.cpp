@@ -60,7 +60,7 @@ void HatSystem::handleMessage(const xy::Message& msg)
     if (msg.id == MessageID::PlayerMessage)
     {
         const auto& data = msg.getData<PlayerEvent>();
-        if (data.type == PlayerEvent::Died) //TODO change this to 'DroppedHat'
+        if (data.type == PlayerEvent::Died) //TODO check if player has a hat
         {
             auto position = data.entity.getComponent<xy::Transform>().getPosition();
 
@@ -71,13 +71,14 @@ void HatSystem::handleMessage(const xy::Message& msg)
             //entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
             entity.addComponent<Actor>().id = entity.getIndex();
             entity.getComponent<Actor>().type = ActorID::MagicHat;
-            entity.addComponent<MagicHat>().velocity.y = xy::Util::Random::value(-860.f, -720.f);
-            entity.getComponent<MagicHat>().velocity.x = xy::Util::Random::value(-400.f, 400.f);
+            entity.addComponent<MagicHat>().velocity.y = xy::Util::Random::value(-660.f, -520.f);
+            entity.getComponent<MagicHat>().velocity.x = xy::Util::Random::value(-500.f, 500.f);
+            entity.getComponent<MagicHat>().state = MagicHat::Dying;
 
-            entity.addComponent<CollisionComponent>().addHitbox(PlayerBounds, CollisionType::MagicHat);
+            entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::MagicHat);
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::MagicHat);
             entity.getComponent<CollisionComponent>().setCollisionMaskBits(
-                CollisionFlags::Solid | CollisionFlags::Platform | CollisionFlags::HardBounds | CollisionFlags::Player | CollisionFlags::Teleport);
+                /*CollisionFlags::Solid | CollisionFlags::Platform | */CollisionFlags::HardBounds/* | CollisionFlags::Player | CollisionFlags::Teleport*/);
             entity.addComponent<xy::QuadTreeItem>().setArea(BubbleBounds);
 
             entity.addComponent<AnimationController>();
@@ -102,11 +103,11 @@ void HatSystem::process(float dt)
     for (auto& entity : entities)
     {
         auto& hat = entity.getComponent<MagicHat>();
-        if (hat.state == MagicHat::Active)
+        if (hat.state == MagicHat::Dying)
         {
             auto& tx = entity.getComponent<xy::Transform>();
 
-            hat.velocity.y = std::min(hat.velocity.y + (Gravity * dt), MaxVelocity);
+            hat.velocity.y = std::min(hat.velocity.y + (Gravity * dt * 0.7f), MaxVelocity);
             tx.move(hat.velocity * dt);
 
 #ifdef XY_DEBUG
@@ -121,42 +122,17 @@ void HatSystem::process(float dt)
                 for (auto j = 0; j < hitbox.getCollisionCount(); ++j)
                 {
                     const auto& man = hitbox.getManifolds()[j];
-                    if (man.otherType == CollisionType::Solid ||
-                        man.otherType == CollisionType::Platform)
+                    if (man.otherType == CollisionType::HardBounds)
                     {
                         tx.move(man.normal * man.penetration);
                         hat.velocity = xy::Util::Vector::reflect(hat.velocity, man.normal);
-                        hat.velocity *= 0.995f;
-                    }
-                    else if (man.otherType == CollisionType::Teleport)
-                    {
-                        if (man.normal.y < 0)
-                        {
-                            //move up
-                            tx.move(0.f, -TeleportDistance);
-                        }
-                        else
-                        {
-                            //move down
-                            tx.move(0.f, TeleportDistance);
-                        }
+                        hat.velocity *= 0.99f;
                     }
                 }
             }
 
             entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
-
-            //TODO this needs a foot sensor
-            /*if (xy::Util::Vector::lengthSquared(hat.velocity) < 25.f)
-            {
-                hat.state = MagicHat::Idle;
-            }*/
         }
-        else
-        {
-            //TODO kill if touching a player and raise event
 
-            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Dead;
-        }
     }
 }

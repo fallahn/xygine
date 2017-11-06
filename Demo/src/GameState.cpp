@@ -1271,7 +1271,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     default: break;
     case ActorID::MagicHat:
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::MagicHat];
-        entity.addComponent<xy::Drawable>();
+        entity.addComponent<xy::Drawable>().setDepth(7);
         entity.addComponent<xy::SpriteAnimation>();
         entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::MagicHat];
         break;

@@ -39,8 +39,8 @@ struct MagicHat final
 {
     enum
     {
-        Active, Idle
-    }state = Active;
+        Spawning, Dying, Idle //Spawning when created, Dying when dropped by player
+    }state = Spawning;
     sf::Vector2f velocity;
 };
 
