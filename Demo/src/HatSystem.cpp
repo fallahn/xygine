@@ -68,7 +68,7 @@ void HatSystem::handleMessage(const xy::Message& msg)
     if (msg.id == MessageID::PlayerMessage)
     {
         const auto& data = msg.getData<PlayerEvent>();
-        if (data.type == PlayerEvent::Died) //TODO check if player has a hat
+        if (data.type == PlayerEvent::LostHat)
         {
             auto position = data.entity.getComponent<xy::Transform>().getPosition();
 
@@ -237,7 +237,8 @@ void HatSystem::updateIdle(xy::Entity entity)
         for (auto j = 0; j < hitbox.getCollisionCount(); ++j)
         {
             const auto& man = hitbox.getManifolds()[j];
-            if (man.otherType == CollisionType::Player)
+            if (man.otherType == CollisionType::Player
+                && !man.otherEntity.getComponent<Player>().hasHat)
             {
                 destroy(entity);
                 return;
@@ -289,6 +290,8 @@ void HatSystem::updateDying(xy::Entity entity, float dt)
 
 void HatSystem::destroy(xy::Entity entity)
 {
+    XY_ASSERT(entity.hasComponent<MagicHat>(), "Not a hat entity");
+    
     const auto& tx = entity.getComponent<xy::Transform>();
     getScene()->destroyEntity(entity);
 

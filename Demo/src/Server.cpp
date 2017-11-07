@@ -268,6 +268,7 @@ void GameServer::update()
                     state.playerCanLand = player.canLand;
                     state.playerCanRideBubble = player.canRideBubble;
                     state.playerLives = player.lives;
+                    state.playerHasHat = player.hasHat;
 
                     //auto collisionState = ent.getComponent<CollisionComponent>().serialise();
                     //std::vector<sf::Uint8> data(sizeof(ClientState) + collisionState.size()); //TODO recycle this to save on reallocations
@@ -1084,6 +1085,21 @@ void GameServer::handleMessage(const xy::Message& msg)
                 msg->actorID = ActorID::Bonus;
                 msg->player = player;
             }
+        }
+    }
+        break;
+    case MessageID::PlayerMessage:
+    {
+        const auto& data = msg.getData<PlayerEvent>();
+        if (data.type == PlayerEvent::GotHat)
+        {
+            auto type = (data.entity.getComponent<Player>().playerNumber == 0) ? HatFlag::OneOn : HatFlag::TwoOn;
+            m_host.broadcastPacket(PacketID::HatChange, sf::Uint8(type), xy::NetFlag::Reliable, 1);
+        }
+        else if (data.type == PlayerEvent::LostHat)
+        {
+            auto type = (data.entity.getComponent<Player>().playerNumber == 0) ? HatFlag::OneOff : HatFlag::TwoOff;
+            m_host.broadcastPacket(PacketID::HatChange, sf::Uint8(type), xy::NetFlag::Reliable, 1);
         }
     }
         break;

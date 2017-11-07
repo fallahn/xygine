@@ -48,6 +48,7 @@ source distribution.
 #include "ClientNotificationCallbacks.hpp"
 #include "LoadingScreen.hpp"
 #include "SpringFlower.hpp"
+#include "HatSystem.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -793,6 +794,26 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         m_sharedData.error = "Could not connect to server, reason: Server full";
         requestStackPush(StateID::Error);
         return;
+    case PacketID::HatChange:
+    {
+        auto info = evt.packet.as<sf::Uint8>();
+        switch (info)
+        {
+        case HatFlag::OneOff:
+            std::cout << "Hat off" << std::endl;
+            break;
+        case HatFlag::OneOn:
+            std::cout << "Hat on" << std::endl;
+            break;
+        case HatFlag::TwoOff:
+
+            break;
+        case HatFlag::TwoOn:
+
+            break;
+        }
+    }
+        break;
     case PacketID::RequestClientPause: //other player paused server
     {
         auto pause = evt.packet.as<sf::Uint8>();

@@ -74,6 +74,7 @@ struct Player final
     sf::Uint8 lives = 3;
 
     sf::Uint8 bonusFlags = 0;
+    bool hasHat = false;
 };
 
 struct Manifold;

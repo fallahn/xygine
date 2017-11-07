@@ -35,6 +35,7 @@ source distribution.
 #include "CollisionSystem.hpp"
 #include "BubbleSystem.hpp"
 #include "CommandIDs.hpp"
+#include "HatSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -207,6 +208,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     player.canLand = state.playerCanLand;
     player.canRideBubble = state.playerCanRideBubble;
     player.lives = state.playerLives;
+    player.hasHat = state.playerHasHat;
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
@@ -406,6 +408,16 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                 switch (man.otherType)
                 {
                 default: break;
+                case CollisionType::MagicHat:
+                    if (!player.hasHat)
+                    {
+                        player.hasHat = true;
+                        
+                        auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                        msg->type = PlayerEvent::GotHat;
+                        msg->entity = entity;
+                    }
+                    break;
                 case CollisionType::Bubble:
                     if (!player.canRideBubble)
                     {
@@ -513,6 +525,15 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                 default: 
                     player.canLand |= BodyClear;
                     break;
+                case CollisionType::MagicHat:
+                    if (!player.hasHat)
+                    {
+                        player.hasHat = true;
+
+                        auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                        msg->type = PlayerEvent::GotHat;
+                        msg->entity = entity;
+                    }
                 case CollisionType::Bubble:
                     player.canRideBubble = true;
                 case CollisionType::Platform:
@@ -625,37 +646,52 @@ bool PlayerSystem::npcCollision(xy::Entity entity, const Manifold& man)
         const auto& npc = man.otherEntity.getComponent<NPC>();
         if (npc.state != NPC::State::Bubble && npc.state != NPC::State::Dying)
         {
-            player.state = Player::State::Dying;
-            player.timer = dyingTime;
-
-            entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
-
-            player.lives--;
-
-            //remove collision if player has no lives left
-            if (!player.lives)
+            if (player.hasHat)
             {
-                entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Platform);
+                player.timer = PlayerInvincibleTime;
 
-                //and kill any chasing goobly
-                xy::Command cmd;
-                cmd.targetFlags = CommandID::NPC;
-                cmd.action = [&, entity](xy::Entity npcEnt, float)
-                {
-                    if (npcEnt.getComponent<NPC>().target == entity)
-                    {
-                        getScene()->destroyEntity(npcEnt);
-                    }
-                };
-                getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
+                //raise message to lose hat
+                auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                msg->type = PlayerEvent::LostHat;
+                msg->entity = entity;
+
+                player.hasHat = false;
+                return false;
             }
+            else
+            {
+                player.state = Player::State::Dying;
+                player.timer = dyingTime;
 
-            //raise dead message
-            auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
-            msg->entity = entity;
-            msg->type = PlayerEvent::Died;
+                entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
 
-            return true;
+                player.lives--;
+
+                //remove collision if player has no lives left
+                if (!player.lives)
+                {
+                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Platform);
+
+                    //and kill any chasing goobly
+                    xy::Command cmd;
+                    cmd.targetFlags = CommandID::NPC;
+                    cmd.action = [&, entity](xy::Entity npcEnt, float)
+                    {
+                        if (npcEnt.getComponent<NPC>().target == entity)
+                        {
+                            getScene()->destroyEntity(npcEnt);
+                        }
+                    };
+                    getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
+                }
+
+                //raise dead message
+                auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                msg->entity = entity;
+                msg->type = PlayerEvent::Died;
+
+                return true;
+            }
         }
     }
     return false;

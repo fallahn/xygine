@@ -108,6 +108,7 @@ struct ClientState final : public ActorState
     sf::Uint8 playerCanLand = 0;
     bool playerCanRideBubble = false;
     sf::Uint8 playerLives = 3;
+    bool playerHasHat = false; //TODO pack bools into bitmask
 };
 
 //actor events for spawn/despawn etc

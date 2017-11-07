@@ -35,6 +35,11 @@ namespace xy
     class NetHost;
 }
 
+enum HatFlag
+{
+    OneOn, OneOff, TwoOn, TwoOff
+};
+
 struct MagicHat final
 {
     enum
@@ -63,6 +68,7 @@ private:
     void updateDying(xy::Entity, float);
 
     void destroy(xy::Entity);
+
 };
 
 #endif //DEMO_HAT_SYSTEM_HPP_
