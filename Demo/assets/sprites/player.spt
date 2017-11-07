@@ -200,9 +200,11 @@ sprite_sheet player
 			frame = 0,448,64,64
 			frame = 64,448,64,64
 			frame = 128,448,64,64
-			//frame = 64,448,64,64
+			frame = 0,448,64,64
+			frame = 64,448,64,64
+			frame = 128,448,64,64
 
-			framerate = 14
+			framerate = 16
 			loop = true
 		}
 
