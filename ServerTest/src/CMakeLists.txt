@@ -6,6 +6,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/BonusSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/BubbleSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/ClientServerShared.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/CollisionComponent.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/CollisionSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/FruitSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/HatSystem.cpp
