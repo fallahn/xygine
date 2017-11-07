@@ -115,7 +115,8 @@ struct MapEvent final
     {
         AnimationComplete,
         HurryUp,
-        BonusSwitch
+        BonusSwitch,
+        MapChangeComplete
     }type;
 };
 

@@ -1274,6 +1274,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.addComponent<xy::Drawable>().setDepth(7);
         entity.addComponent<xy::SpriteAnimation>();
         entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::MagicHat];
+        entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
         break;
     case ActorID::BubbleOne:
     case ActorID::BubbleTwo:

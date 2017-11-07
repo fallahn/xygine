@@ -55,6 +55,14 @@ public:
 
 private:
     xy::NetHost& m_host;
+    bool m_hatActive;
+    float m_nextHatTime;
+
+    void updateSpawning(xy::Entity, float);
+    void updateIdle(xy::Entity);
+    void updateDying(xy::Entity, float);
+
+    void destroy(xy::Entity);
 };
 
 #endif //DEMO_HAT_SYSTEM_HPP_

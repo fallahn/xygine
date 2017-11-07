@@ -932,6 +932,10 @@ void GameServer::beginNewRound()
                 }
                 m_queuedClient.reset();
             }
+
+            //raise message to say new map started
+            auto* msg = m_messageBus.post<MapEvent>(MessageID::MapMessage);
+            msg->type = MapEvent::MapChangeComplete;
         }
     }
 }
