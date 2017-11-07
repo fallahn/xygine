@@ -8,6 +8,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/ClientServerShared.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/CollisionSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/FruitSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/HatSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/InventoryDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/NPCSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/PlayerSystem.cpp
