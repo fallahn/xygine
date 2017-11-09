@@ -800,16 +800,16 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         switch (info)
         {
         case HatFlag::OneOff:
-            std::cout << "Hat off" << std::endl;
+            takeHat(0);
             break;
         case HatFlag::OneOn:
-            std::cout << "Hat on" << std::endl;
+            giveHat(0);
             break;
         case HatFlag::TwoOff:
-
+            takeHat(1);
             break;
         case HatFlag::TwoOn:
-
+            giveHat(1);
             break;
         }
     }
@@ -1817,6 +1817,60 @@ void GameState::updateUI(const InventoryUpdate& data)
         }
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(bonusCommand);
+}
+
+void GameState::giveHat(sf::Uint8 player)
+{
+    xy::Command cmd;
+    cmd.targetFlags = player == 0 ? CommandID::PlayerOne : CommandID::PlayerTwo;
+    cmd.action = [&](xy::Entity entity, float)
+    {
+        auto hatEnt = m_scene.createEntity();
+        hatEnt.addComponent<xy::Transform>();// .setOrigin(PlayerOrigin);
+        hatEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::MagicHat];
+        hatEnt.addComponent<xy::Drawable>();
+        hatEnt.addComponent<xy::SpriteAnimation>();
+        hatEnt.addComponent<xy::CommandTarget>().ID = CommandID::Hat | CommandID::MapItem;
+        hatEnt.addComponent<AnimationController>() = m_animationControllers[SpriteID::MagicHat];
+        hatEnt.addComponent<xy::Callback>().active = true;
+        hatEnt.getComponent<xy::Callback>().function = [entity](xy::Entity hat, float)
+        {
+            hat.getComponent<AnimationController>().nextAnimation = entity.getComponent<AnimationController>().nextAnimation;
+            hat.getComponent<AnimationController>().direction = entity.getComponent<AnimationController>().direction;
+        };
+        hatEnt.addComponent<Actor>().id = hatEnt.getIndex();
+        hatEnt.getComponent<Actor>().type = ActorID::MagicHat;
+
+        entity.getComponent<xy::Transform>().addChild(hatEnt.getComponent<xy::Transform>());
+
+        //let the world know what happened
+        auto* msg = getContext().appInstance.getMessageBus().post<PlayerEvent>(MessageID::PlayerMessage);
+        msg->entity = entity;
+        msg->type = PlayerEvent::GotHat;
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+}
+
+void GameState::takeHat(sf::Uint8 player)
+{
+    xy::Command cmd;
+    cmd.targetFlags = player == 0 ? CommandID::PlayerOne : CommandID::PlayerTwo;
+    cmd.action = [&](xy::Entity entity, float)
+    {
+        //let the world know what happened
+        auto* msg = getContext().appInstance.getMessageBus().post<PlayerEvent>(MessageID::PlayerMessage);
+        msg->entity = entity;
+        msg->type = PlayerEvent::GotHat;
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+    //delete hat
+    cmd.targetFlags = CommandID::Hat;
+    cmd.action = [&](xy::Entity entity, float)
+    {
+        m_scene.destroyEntity(entity);
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 }
 
 void GameState::updateLevelDisplay(sf::Uint8 level)

@@ -238,7 +238,7 @@ void HatSystem::updateIdle(xy::Entity entity)
         {
             const auto& man = hitbox.getManifolds()[j];
             if (man.otherType == CollisionType::Player
-                && !man.otherEntity.getComponent<Player>().hasHat)
+                /*&& !man.otherEntity.getComponent<Player>().hasHat*/)
             {
                 destroy(entity);
                 return;

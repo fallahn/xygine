@@ -123,6 +123,9 @@ private:
     void updateUI(const InventoryUpdate&);
     void updateLevelDisplay(sf::Uint8);
 
+    void giveHat(sf::Uint8);
+    void takeHat(sf::Uint8);
+
     void updateLoadingScreen(float, sf::RenderWindow&) override;
 };
 

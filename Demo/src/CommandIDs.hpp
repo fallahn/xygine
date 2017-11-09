@@ -37,24 +37,25 @@ namespace CommandID
         PlayerOne = 0x4,
         PlayerTwo = 0x8,
         NPC = 0x10,
+        Hat = 0x20,
         //scoreboard/UI
-        ScoreOne = 0x20,
-        ScoreTwo = 0x40,
-        LivesOne = 0x80,
-        LivesTwo = 0x100,
-        Timeout = 0x200,
-        HighScore = 0x400,
-        LevelCounter = 0x800,
+        ScoreOne = 0x40,
+        ScoreTwo = 0x80,
+        LivesOne = 0x100,
+        LivesTwo = 0x200,
+        Timeout = 0x400,
+        HighScore = 0x800,
+        LevelCounter = 0x1000,
         //map data
-        MapItem = 0x1000, //anything with this is removed on map changed
-        MapBackground = 0x2000,
-        SceneBackground = 0x4000,
-        SceneMusic = 0x8000,
+        MapItem = 0x2000, //anything with this is removed on map changed
+        MapBackground = 0x4000,
+        SceneBackground = 0x8000,
+        SceneMusic = 0x10000,
         //UI animations
-        Princess = 0x10000,
-        TowerDude = 0x20000,
-        BonusBall = 0x40000,
-        KeybindInput = 0x80000
+        Princess = 0x20000,
+        TowerDude = 0x40000,
+        BonusBall = 0x80000,
+        KeybindInput = 0x100000
     };
 }
 
