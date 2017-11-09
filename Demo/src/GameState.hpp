@@ -123,6 +123,7 @@ private:
     void updateUI(const InventoryUpdate&);
     void updateLevelDisplay(sf::Uint8);
 
+    xy::EmitterSettings m_hatEmitter;
     void giveHat(sf::Uint8);
     void takeHat(sf::Uint8);
 

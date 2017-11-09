@@ -54,6 +54,8 @@ FXDirector::FXDirector()
     m_soundResource.get("assets/sound/powerup_pop.wav");
     m_soundResource.get("assets/sound/pop.wav");
     m_soundResource.get("assets/sound/bonus.wav");
+    m_soundResource.get("assets/sound/get_hat.wav");
+    m_soundResource.get("assets/sound/hat_land.wav");
 }
 
 //public
@@ -62,6 +64,19 @@ void FXDirector::handleMessage(const xy::Message& msg)
     switch (msg.id)
     {
     default: break;
+    case MessageID::PlayerMessage:
+    {
+        const auto& data = msg.getData<PlayerEvent>();
+        if (data.type == PlayerEvent::GotHat)
+        {
+            playSound(m_soundResource.get("assets/sound/get_hat.wav"));
+        }
+        else if (data.type == PlayerEvent::LostHat)
+        {
+            playSound(m_soundResource.get("assets/sound/hat_land.wav"));
+        }
+    }
+        break;
     case MessageID::SceneMessage:
     {
         const auto& data = msg.getData<SceneEvent>();
@@ -94,6 +109,9 @@ void FXDirector::handleMessage(const xy::Message& msg)
                 playSound(m_soundResource.get("assets/sound/shoot.wav"));
             }
             break;
+            case ActorID::MagicHat:
+                playSound(m_soundResource.get("assets/sound/pop.wav"));
+            break;
             }
         }
     }
@@ -104,6 +122,21 @@ void FXDirector::handleMessage(const xy::Message& msg)
         switch (data.newAnim)
         {
         default: break;
+        case AnimationController::Dead:
+            {
+            if (data.entity.hasComponent<Actor>())
+            {
+                const auto& actor = data.entity.getComponent<Actor>();
+                switch (actor.type)
+                {
+                default: break;
+                case ActorID::MagicHat:
+                    playSound(m_soundResource.get("assets/sound/hat_land.wav"));
+                    break;
+                }
+            }
+            }
+                break;
         case AnimationController::Die:
         {
             if (data.entity.hasComponent<Actor>())

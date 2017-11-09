@@ -449,6 +449,8 @@ void GameState::loadAssets()
     m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_two_star");
     m_animationControllers[SpriteID::LightningTwo].animationMap[AnimationController::Die] = spriteSheet.getAnimationIndex("die", "player_two_star");
 
+    m_hatEmitter.loadFromFile("assets/particles/magic_hat.xyp", m_textureResource);
+
     //dudes to climb tower
     spriteSheet.loadFromFile("assets/sprites/tower_sprites.spt", m_textureResource);
     m_sprites[SpriteID::TowerDudeOne] = spriteSheet.getSprite("player_one");
@@ -1296,6 +1298,8 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.addComponent<xy::SpriteAnimation>();
         entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::MagicHat];
         entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
+        //entity.addComponent<xy::ParticleEmitter>().settings = m_hatEmitter;
+        //entity.getComponent<xy::ParticleEmitter>().start();
         break;
     case ActorID::BubbleOne:
     case ActorID::BubbleTwo:
@@ -1307,7 +1311,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
 
         entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::Bubble);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
-        entity.getComponent<CollisionComponent>().setCollisionMaskBits(/*CollisionFlags::Player*/0);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(0); //collision is added later
         entity.addComponent<xy::QuadTreeItem>().setArea(BubbleBounds);
 
         entity.addComponent<xy::ParticleEmitter>().settings = m_bubbleParticles;
@@ -1392,6 +1396,8 @@ void GameState::spawnClient(const ClientData& data)
     entity.addComponent<xy::SpriteAnimation>().play(0);
     entity.addComponent<MapAnimator>().state = MapAnimator::State::Static;
     entity.addComponent<xy::Drawable>();
+    entity.addComponent<xy::ParticleEmitter>().settings = m_hatEmitter;
+    //entity.getComponent<xy::ParticleEmitter>().start();
 
     spawnTowerDude(data.actor.type);
 
@@ -1498,6 +1504,13 @@ void GameState::switchMap(const MapData& data)
     cmd.action = [](xy::Entity entity, float)
     {
         entity.getComponent<xy::AudioEmitter>().setPitch(1.f);
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+    cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+    cmd.action = [&](xy::Entity entity, float)
+    {
+        entity.getComponent<xy::ParticleEmitter>().stop();
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
@@ -1836,12 +1849,12 @@ void GameState::giveHat(sf::Uint8 player)
         hatEnt.getComponent<xy::Callback>().function = [entity](xy::Entity hat, float)
         {
             hat.getComponent<AnimationController>().nextAnimation = entity.getComponent<AnimationController>().nextAnimation;
-            hat.getComponent<AnimationController>().direction = entity.getComponent<AnimationController>().direction;
         };
         hatEnt.addComponent<Actor>().id = hatEnt.getIndex();
         hatEnt.getComponent<Actor>().type = ActorID::MagicHat;
 
         entity.getComponent<xy::Transform>().addChild(hatEnt.getComponent<xy::Transform>());
+        entity.getComponent<xy::ParticleEmitter>().start();
 
         //let the world know what happened
         auto* msg = getContext().appInstance.getMessageBus().post<PlayerEvent>(MessageID::PlayerMessage);
@@ -1860,7 +1873,9 @@ void GameState::takeHat(sf::Uint8 player)
         //let the world know what happened
         auto* msg = getContext().appInstance.getMessageBus().post<PlayerEvent>(MessageID::PlayerMessage);
         msg->entity = entity;
-        msg->type = PlayerEvent::GotHat;
+        msg->type = PlayerEvent::LostHat;
+
+        entity.getComponent<xy::ParticleEmitter>().stop();
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 

@@ -225,7 +225,7 @@ void HatSystem::updateSpawning(xy::Entity entity, float dt)
         }
     }
 
-    entity.getComponent<AnimationController>().nextAnimation = AnimationController::Dead;
+    entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
 }
 
 void HatSystem::updateIdle(xy::Entity entity)
