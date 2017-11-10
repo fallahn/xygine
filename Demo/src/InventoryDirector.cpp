@@ -48,14 +48,18 @@ namespace
     const sf::Uint32 LargeFruitScore = 1000;
     const sf::Uint32 BonusScore = 100;
     const sf::Uint32 BonusCompletionScore = 1500;
+    const sf::Uint32 HatPickUpScore = 50;
 
     const sf::Uint32 lifeScore = 10000; //extra life is awarded in multiples of this
     const sf::Uint8 maxLives = 6;
+
+    const float HatAwardTime = 5.f;
 }
 
 InventoryDirector::InventoryDirector(xy::NetHost& host)
-    : m_host(host),
-    m_queuePos(0)
+    : m_host    (host),
+    m_queuePos  (0),
+    m_hatTime   (HatAwardTime)
 {
 
 }
@@ -78,6 +82,7 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             m_playerValues[data.playerID].bonusFlags = 0;
             m_playerValues[data.playerID].lives = PlayerStartLives;
             m_playerValues[data.playerID].score = 0;
+            m_playerValues[data.playerID].hat = false;
 
             m_updateQueue[m_queuePos++] = std::make_pair(data.playerID, 0);
         }
@@ -145,6 +150,7 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             const auto& player = data.entity.getComponent<Player>();
             m_playerValues[player.playerNumber].lives = player.lives;
             m_playerValues[player.playerNumber].score = 0;
+            m_playerValues[player.playerNumber].hat = false;
 
             //send info on both, in case new player has joined
             m_updateQueue[m_queuePos++] = std::make_pair(0, 0);
@@ -155,6 +161,17 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             const auto& player = data.entity.getComponent<Player>();
             m_playerValues[player.playerNumber].lives = player.lives;
             m_updateQueue[m_queuePos++] = std::make_pair(player.playerNumber, 0);
+        }
+        else if (data.type == PlayerEvent::GotHat)
+        {
+            const auto& player = data.entity.getComponent<Player>();
+            m_playerValues[player.playerNumber].hat = true;
+            m_updateQueue[m_queuePos++] = std::make_pair(player.playerNumber, HatPickUpScore);
+            m_hatTime = HatAwardTime;
+        }
+        else if (data.type == PlayerEvent::LostHat)
+        {
+            m_playerValues[data.entity.getComponent<Player>().playerNumber].hat = false;
         }
     }
         break;
@@ -175,8 +192,22 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
     checkLifeBonus(1, p2Old);
 }
 
-void InventoryDirector::process(float)
+void InventoryDirector::process(float dt)
 {
+    m_hatTime -= dt;
+
+    if (m_hatTime < 0)
+    {
+        m_hatTime = HatAwardTime;
+        for (auto i = 0u; i < m_playerValues.size(); ++i)
+        {
+            if (m_playerValues[i].hat)
+            {
+                sendUpdate(i, HatPickUpScore / 10);
+            }
+        }
+    }
+
     for (auto i = 0u; i < m_queuePos; ++i)
     {
         sendUpdate(m_updateQueue[i].first, m_updateQueue[i].second);

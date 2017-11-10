@@ -38,6 +38,7 @@ source distribution.
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
+#include <xyginext/ecs/systems/CommandSystem.hpp>
 #include <xyginext/ecs/Scene.hpp>
 
 #include <xyginext/network/NetHost.hpp>
@@ -122,6 +123,7 @@ void HatSystem::process(float dt)
         switch (hat.state)
         {
         case MagicHat::Spawning:
+            hat.spawnTime -= dt;
             updateSpawning(entity, dt);
             break;
         case MagicHat::Dying:
@@ -144,7 +146,7 @@ void HatSystem::process(float dt)
             m_hatActive = true;
 
             sf::Vector2f position(xy::Util::Random::value(128.f, MapBounds.width - 128.f),
-                xy::Util::Random::value(256.f, MapBounds.height - 256.f));
+                xy::Util::Random::value(256.f, 512.f));
 
             //spawn a hat
             auto scene = getScene();
@@ -201,13 +203,15 @@ void HatSystem::updateSpawning(xy::Entity entity, float dt)
         for (auto j = 0; j < hitbox.getCollisionCount(); ++j)
         {
             const auto& man = hitbox.getManifolds()[j];
-            if ((man.otherType == CollisionType::Platform || man.otherType == CollisionType::Solid)
-                && man.normal.y < 0)
+            if ((man.otherType == CollisionType::Platform || man.otherType == CollisionType::Solid))
             {
                 tx.move(man.normal * man.penetration);
-                hat.velocity = {};
-                hat.state = MagicHat::Idle;
-                return;
+                if (hat.spawnTime < 0 && man.normal.y < 0)
+                { 
+                    hat.velocity = {};
+                    hat.state = MagicHat::Idle;
+                    return;
+                }
             }
             else if (man.otherType == CollisionType::Teleport)
             {
@@ -237,11 +241,31 @@ void HatSystem::updateIdle(xy::Entity entity)
         for (auto j = 0; j < hitbox.getCollisionCount(); ++j)
         {
             const auto& man = hitbox.getManifolds()[j];
-            if (man.otherType == CollisionType::Player
-                /*&& !man.otherEntity.getComponent<Player>().hasHat*/)
+            if (man.otherType == CollisionType::Player)
             {
+                xy::Command cmd;
+                cmd.targetFlags = 
+                    (man.otherEntity.getComponent<Player>().playerNumber == 0) 
+                    ? CommandID::PlayerOne : CommandID::PlayerTwo;
+                cmd.action = [&](xy::Entity playerEnt, float)
+                {
+                    auto& player = playerEnt.getComponent<Player>();
+                    if (!player.hasHat)
+                    {
+                        player.hasHat = true;
+                        auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
+                        msg->type = PlayerEvent::GotHat;
+                        msg->entity = playerEnt;
+                    }
+                };
+                getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
+                
                 destroy(entity);
                 return;
+            }
+            else
+            {
+                entity.getComponent<xy::Transform>().move(man.normal * man.penetration);
             }
         }
     }
@@ -259,8 +283,16 @@ void HatSystem::updateDying(xy::Entity entity, float dt)
 
     if (tx.getPosition().y > xy::DefaultSceneSize.y)
     {
-        destroy(entity);
-        m_hatActive = false;
+        /*destroy(entity);
+        m_hatActive = false;*/
+        tx.setPosition(tx.getPosition().x, 256.f);
+        hat.state = MagicHat::Spawning;
+        hat.spawnTime = xy::Util::Random::value(0.3f, 0.5f);
+        hat.velocity.x = 0.f;
+
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(
+            CollisionFlags::Solid | CollisionFlags::Platform | CollisionFlags::Teleport | CollisionFlags::Player);
+
         return;
     }
 

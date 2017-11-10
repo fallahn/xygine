@@ -408,7 +408,7 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                 switch (man.otherType)
                 {
                 default: break;
-                case CollisionType::MagicHat:
+                /*case CollisionType::MagicHat:
                     if (!player.hasHat)
                     {
                         player.hasHat = true;
@@ -417,7 +417,7 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                         msg->type = PlayerEvent::GotHat;
                         msg->entity = entity;
                     }
-                    break;
+                    break;*/
                 case CollisionType::Bubble:
                     if (!player.canRideBubble)
                     {
@@ -525,7 +525,7 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                 default: 
                     player.canLand |= BodyClear;
                     break;
-                case CollisionType::MagicHat:
+                /*case CollisionType::MagicHat:
                     if (!player.hasHat)
                     {
                         player.hasHat = true;
@@ -533,7 +533,7 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                         auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
                         msg->type = PlayerEvent::GotHat;
                         msg->entity = entity;
-                    }
+                    }*/
                 case CollisionType::Bubble:
                     player.canRideBubble = true;
                 case CollisionType::Platform:

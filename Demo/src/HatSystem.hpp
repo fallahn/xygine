@@ -47,6 +47,7 @@ struct MagicHat final
         Spawning, Dying, Idle //Spawning when created, Dying when dropped by player
     }state = Spawning;
     sf::Vector2f velocity;
+    float spawnTime = 0.6f;
 };
 
 class HatSystem final : public xy::System

@@ -611,7 +611,7 @@ void GameServer::checkMapStatus(float dt)
 
         //move players to spawn point ready for next map
         cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
-        cmd.action = [](xy::Entity entity, float)
+        cmd.action = [&](xy::Entity entity, float)
         {
             if (entity.getComponent<xy::CommandTarget>().ID & CommandID::PlayerOne)
             {
@@ -623,6 +623,14 @@ void GameServer::checkMapStatus(float dt)
             }
             entity.getComponent<Player>().state = Player::State::Disabled;
             entity.getComponent<Player>().velocity.y = 0.f;
+            if (entity.getComponent<Player>().hasHat)
+            {
+                auto* msg = m_messageBus.post<PlayerEvent>(MessageID::PlayerMessage);
+                msg->type = PlayerEvent::LostHat;
+                msg->entity = entity;
+
+                entity.getComponent<Player>().hasHat = false;
+            }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
@@ -1095,6 +1103,8 @@ void GameServer::handleMessage(const xy::Message& msg)
         {
             auto type = (data.entity.getComponent<Player>().playerNumber == 0) ? HatFlag::OneOn : HatFlag::TwoOn;
             m_host.broadcastPacket(PacketID::HatChange, sf::Uint8(type), xy::NetFlag::Reliable, 1);
+            static int funt = 0;
+            std::cout << "buns " << funt++ << std::endl;
         }
         else if (data.type == PlayerEvent::LostHat)
         {
