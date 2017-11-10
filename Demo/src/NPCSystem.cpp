@@ -101,6 +101,8 @@ void NPCSystem::process(float dt)
     auto entities = getEntities();
     for (auto& entity : entities)
     {
+        checkBounds(entity, dt);
+
         switch(entity.getComponent<NPC>().state)
         {
         case NPC::State::Bubble:
@@ -943,5 +945,42 @@ void NPCSystem::collisionFalling(xy::Entity entity)
         //{
 
         //}
+    }
+}
+
+void NPCSystem::checkBounds(xy::Entity entity, float dt)
+{
+    const auto& tx = entity.getComponent<xy::Transform>();
+
+    if (!MapBounds.contains(tx.getPosition()))
+    {
+        entity.getComponent<NPC>().failSafeTimer -= dt;
+
+        LOG("NPC out of bounds: " + std::to_string(entity.getComponent<NPC>().failSafeTimer), xy::Logger::Type::Info);
+
+        if (entity.getComponent<NPC>().failSafeTimer < 0)
+        {
+            getScene()->destroyEntity(entity);
+
+            //broadcast to client
+            ActorEvent evt;
+            evt.actor.id = entity.getIndex();
+            evt.actor.type = entity.getComponent<Actor>().type;
+            evt.x = tx.getPosition().x;
+            evt.y = tx.getPosition().y;
+            evt.type = ActorEvent::Died;
+
+            m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+
+            //raise message
+            auto* msg = postMessage<SceneEvent>(MessageID::SceneMessage);
+            msg->actorID = evt.actor.type;
+            msg->type = SceneEvent::ActorRemoved;
+            msg->entity = entity;
+            msg->x = evt.x;
+            msg->y = evt.y;
+
+            LOG("NPC out of bounds DESTROYED", xy::Logger::Type::Info);
+        }
     }
 }
