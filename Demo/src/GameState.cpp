@@ -1294,7 +1294,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     default: break;
     case ActorID::MagicHat:
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::MagicHat];
-        entity.addComponent<xy::Drawable>().setDepth(7);
+        entity.addComponent<xy::Drawable>().setDepth(3);
         entity.addComponent<xy::SpriteAnimation>();
         entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::MagicHat];
         entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
@@ -1755,6 +1755,7 @@ void GameState::updateUI(const InventoryUpdate& data)
         auto scoreEnt = m_scene.createEntity();
         scoreEnt.addComponent<xy::Transform>().setPosition(pos);
         scoreEnt.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf"));
+        scoreEnt.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
 
         if (data.amount == std::numeric_limits<sf::Uint32>::max())
         {
@@ -1841,7 +1842,7 @@ void GameState::giveHat(sf::Uint8 player)
         auto hatEnt = m_scene.createEntity();
         hatEnt.addComponent<xy::Transform>();// .setOrigin(PlayerOrigin);
         hatEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::MagicHat];
-        hatEnt.addComponent<xy::Drawable>();
+        hatEnt.addComponent<xy::Drawable>().setDepth(3);
         hatEnt.addComponent<xy::SpriteAnimation>();
         hatEnt.addComponent<xy::CommandTarget>().ID = CommandID::Hat | CommandID::MapItem;
         hatEnt.addComponent<AnimationController>() = m_animationControllers[SpriteID::MagicHat];

@@ -47,8 +47,8 @@ source distribution.
 
 namespace
 {
-    const float MinHatTime = 2;// 30.f;
-    const float MaxHatTime = 3;// 48.f;
+    const float MinHatTime = 30.f;
+    const float MaxHatTime = 48.f;
 }
 
 HatSystem::HatSystem(xy::MessageBus& mb, xy::NetHost& host)
@@ -69,7 +69,7 @@ void HatSystem::handleMessage(const xy::Message& msg)
     if (msg.id == MessageID::PlayerMessage)
     {
         const auto& data = msg.getData<PlayerEvent>();
-        if (data.type == PlayerEvent::LostHat)
+        if (data.type == PlayerEvent::LostHat && m_hatActive)
         {
             auto position = data.entity.getComponent<xy::Transform>().getPosition();
 
@@ -107,7 +107,7 @@ void HatSystem::handleMessage(const xy::Message& msg)
     else if (msg.id == MessageID::MapMessage)
     {
         const auto& data = msg.getData<MapEvent>();
-        if (data.type == MapEvent::MapChangeComplete)
+        if (data.type == MapEvent::MapChangeStarted)
         {
             m_hatActive = false; //assumes any active hats are destroyed as a MapItem
         }
@@ -250,7 +250,7 @@ void HatSystem::updateIdle(xy::Entity entity)
                 cmd.action = [&](xy::Entity playerEnt, float)
                 {
                     auto& player = playerEnt.getComponent<Player>();
-                    if (!player.hasHat)
+                    if (!player.hasHat && (player.state == Player::State::Jumping || player.state == Player::State::Walking))
                     {
                         player.hasHat = true;
                         auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);

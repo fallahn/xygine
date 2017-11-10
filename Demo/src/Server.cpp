@@ -638,6 +638,10 @@ void GameServer::checkMapStatus(float dt)
         m_scene.setSystemActive<CollisionSystem>(false);
         m_scene.setSystemActive<PowerupSystem>(false);
         m_scene.setSystemActive<BonusSystem>(false);
+        m_scene.setSystemActive<HatSystem>(false);
+
+        auto* msg = m_messageBus.post<MapEvent>(MessageID::MapMessage);
+        msg->type = MapEvent::MapChangeStarted;
 
         //increase the level count for connected clients and send update
         auto updateLevel = [&](Client& client)
@@ -883,6 +887,7 @@ void GameServer::beginNewRound()
         m_scene.setSystemActive<CollisionSystem>(true);
         m_scene.setSystemActive<PowerupSystem>(true);
         m_scene.setSystemActive<BonusSystem>(true);
+        m_scene.setSystemActive<HatSystem>(true);
 
         m_stateFlags.set(ChangingMaps, false);
 
@@ -1103,8 +1108,6 @@ void GameServer::handleMessage(const xy::Message& msg)
         {
             auto type = (data.entity.getComponent<Player>().playerNumber == 0) ? HatFlag::OneOn : HatFlag::TwoOn;
             m_host.broadcastPacket(PacketID::HatChange, sf::Uint8(type), xy::NetFlag::Reliable, 1);
-            static int funt = 0;
-            std::cout << "buns " << funt++ << std::endl;
         }
         else if (data.type == PlayerEvent::LostHat)
         {
