@@ -25,43 +25,53 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_COMPLETE_STATE_HPP_
-#define DEMO_COMPLETE_STATE_HPP_
+#ifndef DEMO_ENDING_MESSAGES_HPP_
+#define DEMO_ENDING_MESSAGES_HPP_
 
-#include "StateIDs.hpp"
+#include <xyginext/core/Message.hpp>
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
-
-struct SharedStateData;
-
-class GameCompleteState final : public xy::State
+namespace Messages
 {
-public:
-    GameCompleteState(xy::StateStack&, xy::State::Context, SharedStateData&);
+    enum
+    {
+        SpeechMessage = xy::Message::Count,
+        SpriteMessage
+    };
+}
 
-    xy::StateID stateID() const override { return StateID::GameComplete; }
+namespace Command
+{
+    enum
+    {
+        Princess = 0x1,
+        Player = 0x2,
+        Clearable = 0x4
+    };
+}
 
-    bool handleEvent(const sf::Event&) override;
-    void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
-
-private:
-
-    SharedStateData& m_sharedData;
-
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
-    xy::SoundResource m_soundResource;
-    bool m_summaryShown;
-
-    void loadAssets();
-    void loadScene();
-    void loadUI();
-    void showSummary();
+struct SpeechEvent final
+{
+    enum Food
+    {
+        Burger,
+        Pizza,
+        Icecream,
+        Cake,
+        Pause
+    }id;
 };
 
-#endif //DEMO_COMPLETE_STATE_HPP_
+struct SpriteEvent final
+{
+    enum Action
+    {
+        ReachedTop,
+        BurgerTaken,
+        PizzaTaken,
+        IcecreamTaken,
+        Shout,
+        ReachedBottom
+    }event;
+};
+
+#endif //DEMO_ENDING MESSAGES_HPP_

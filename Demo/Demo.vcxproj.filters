@@ -126,6 +126,9 @@
     <ClCompile Include="src\HatSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\EndingDirector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.hpp">
@@ -276,6 +279,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\HatSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EndingDirector.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EndingMessages.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

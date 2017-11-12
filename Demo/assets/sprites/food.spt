@@ -1,4 +1,4 @@
-sprite_sheet fruit
+sprite_sheet food
 {
 	src = "assets/images/food.png"
 	blendmode = alpha	

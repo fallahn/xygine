@@ -7,6 +7,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/ClientServerShared.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/CollisionComponent.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/EndingDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ErrorState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/FruitSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/FXDirector.cpp

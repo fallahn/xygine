@@ -28,8 +28,12 @@ source distribution.
 #include "GameCompleteState.hpp"
 #include "SharedStateData.hpp"
 #include "StateIDs.hpp"
+#include "EndingDirector.hpp"
+#include "EndingMessages.hpp"
+#include "SpringFlower.hpp"
 
 #include <xyginext/ecs/components/AudioEmitter.hpp>
+#include <xyginext/ecs/components/AudioListener.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
@@ -45,6 +49,7 @@ source distribution.
 #include <xyginext/ecs/systems/CallbackSystem.hpp>
 #include <xyginext/ecs/systems/CommandSystem.hpp>
 #include <xyginext/ecs/systems/ParticleSystem.hpp>
+#include <xyginext/ecs/systems/QuadTree.hpp>
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/ecs/systems/SpriteAnimator.hpp>
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
@@ -57,9 +62,10 @@ source distribution.
 #include <SFML/Window/Event.hpp>
 
 GameCompleteState::GameCompleteState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sd)
-    : xy::State (stack, ctx),
-    m_sharedData(sd),
-    m_scene     (ctx.appInstance.getMessageBus())
+    : xy::State     (stack, ctx),
+    m_sharedData    (sd),
+    m_scene         (ctx.appInstance.getMessageBus()),
+    m_summaryShown  (false)
 {
     loadAssets();
     loadScene();
@@ -72,21 +78,33 @@ bool GameCompleteState::handleEvent(const sf::Event& evt)
     if (evt.type == sf::Event::KeyReleased
         || evt.type == sf::Event::JoystickButtonReleased)
     {
-        //TODO make this skip ending and display summary
-
-        requestStackClear();
-        requestStackPush(StateID::MainMenu);
+        //skips to end screen
+        if (!m_summaryShown)
+        {
+            auto* msg = getContext().appInstance.getMessageBus().post<SpriteEvent>(Messages::SpriteMessage);
+            msg->event = SpriteEvent::ReachedBottom;
+        }
     }
     
     //forward scene event
     m_scene.forwardEvent(evt);
 
-    //TODO forward UI event
+    //forward UI event
+    m_scene.getSystem<xy::UISystem>().handleEvent(evt);
     return false;
 }
 
 void GameCompleteState::handleMessage(const xy::Message& msg)
 {
+    if (msg.id == Messages::SpriteMessage)
+    {
+        const auto& data = msg.getData<SpriteEvent>();
+        if (data.event == SpriteEvent::ReachedBottom)
+        {
+            showSummary();
+        }
+    }
+    
     m_scene.forwardMessage(msg);
 }
 
@@ -107,12 +125,20 @@ void GameCompleteState::draw()
 void GameCompleteState::loadAssets()
 {
     auto& mb = getContext().appInstance.getMessageBus();
+    m_scene.addSystem<SpringFlowerSystem>(mb);
+    m_scene.addSystem<xy::QuadTree>(mb, sf::FloatRect({}, xy::DefaultSceneSize));
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CallbackSystem>(mb);
+    m_scene.addSystem<xy::UISystem>(mb);
     m_scene.addSystem<xy::SpriteSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
+    m_scene.addSystem<xy::AudioSystem>(mb);
+
+    m_scene.addDirector<EndingDirector>(m_soundResource, m_textureResource, mb);
+
+    m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(1.f);
 }
 
 void GameCompleteState::loadScene()
@@ -155,6 +181,8 @@ void GameCompleteState::loadScene()
     entity.getComponent<xy::Transform>().setPosition(1090.f, 560.f);
     entity.getComponent<xy::Transform>().setScale(4.f, 4.f);
     entity.addComponent<xy::ParticleEmitter>().settings.loadFromFile("assets/particles/heart.xyp", m_textureResource);
+    entity.addComponent<xy::CommandTarget>().ID = Command::Princess | Command::Clearable;
+    entity.addComponent<xy::Callback>(); //used later by ending director
 
     auto princessEnt = entity;
 
@@ -167,7 +195,7 @@ void GameCompleteState::loadScene()
     entity.getComponent<xy::Transform>().setPosition(720.f, 980.f);
     entity.addComponent<xy::Callback>().active = true;
     entity.getComponent<xy::Callback>().function = 
-        [princessEnt](xy::Entity playerEnt, float dt) mutable
+        [&, princessEnt](xy::Entity playerEnt, float dt) mutable
     {
         static const float target = 340.f;
         playerEnt.getComponent<xy::Transform>().move(0.f, -140.f * dt);
@@ -182,8 +210,20 @@ void GameCompleteState::loadScene()
             princessEnt.getComponent<xy::ParticleEmitter>().start();
 
             playerEnt.getComponent<xy::Callback>().active = false;
+
+            auto* msg = getContext().appInstance.getMessageBus().post<SpriteEvent>(Messages::SpriteMessage);
+            msg->event = SpriteEvent::ReachedTop;
         }
     };
+    entity.addComponent<xy::CommandTarget>().ID = Command::Player | Command::Clearable;
+    entity.addComponent<sf::Vector2f>(-300.f, -200.f); //used for fall velocity
+
+    entity = m_scene.createEntity();
+    entity.addComponent<xy::Transform>();
+    entity.addComponent<xy::AudioEmitter>().setSource("assets/sound/music/night.ogg");
+    entity.getComponent<xy::AudioEmitter>().setVolume(0.7f);
+    entity.getComponent<xy::AudioEmitter>().setLooped(true);
+    entity.getComponent<xy::AudioEmitter>().play();
 
     //apply the default view
     auto view = getContext().defaultView;
@@ -198,8 +238,115 @@ void GameCompleteState::loadUI()
 
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize.x / 2.f, 1000.f);
-    entity.addComponent<xy::Text>(font).setString("Press Any Key To Continue");
+    entity.addComponent<xy::Text>(font).setString("Press Any Key To Skip");
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
+    entity.addComponent<xy::CommandTarget>().ID = Command::Clearable;
+}
+
+void GameCompleteState::showSummary()
+{
+    //show score
+    auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");
+
+    //score text
+    for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+    {
+        auto entity = m_scene.createEntity();
+        entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
+        entity.addComponent<xy::Text>(font).setFillColour(sf::Color::Red);
+
+        if (m_sharedData.playerCount == 1)
+        {
+            entity.getComponent<xy::Transform>().move(-360.f, -180.f);
+            entity.getComponent<xy::Text>().setString("Score: " + m_sharedData.scores[0]);
+            entity.getComponent<xy::Text>().setCharacterSize(140);
+        }
+        else
+        {
+            entity.getComponent<xy::Text>().setCharacterSize(100);
+            if (i == 0)
+            {
+                entity.getComponent<xy::Transform>().move(-400.f, -180.f);
+                entity.getComponent<xy::Text>().setString("Player One Score: " + m_sharedData.scores[0]);
+            }
+            else
+            {
+                entity.getComponent<xy::Transform>().move(-400.f, -100.f);
+                entity.getComponent<xy::Text>().setString("Player Two Score: " + m_sharedData.scores[1]);
+            }
+        }
+    }
+
+    auto selectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
+        [](xy::Entity entity)
+    {
+        auto& sprite = entity.getComponent<xy::Sprite>();
+        auto rect = sprite.getTextureRect();
+        rect.top = 256.f;
+        sprite.setTextureRect(rect);
+    });
+    auto unselectedID = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
+        [](xy::Entity entity)
+    {
+        auto& sprite = entity.getComponent<xy::Sprite>();
+        auto rect = sprite.getTextureRect();
+        rect.top = 0.f;
+        sprite.setTextureRect(rect);
+    });
+
+    //OK button text
+    auto entity = m_scene.createEntity();
+    entity.addComponent<xy::Text>(font).setString("OK");
+    entity.getComponent<xy::Text>().setCharacterSize(60);
+    entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    auto& tx = entity.addComponent<xy::Transform>();
+    tx.setOrigin(32.f, 45.f);
+
+    //OK button
+    entity = m_scene.createEntity();
+    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    auto bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
+    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 256.f, bounds.width, bounds.height / 4.f });
+    entity.addComponent<xy::Drawable>().setDepth(12);
+    entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+    entity.getComponent<xy::Transform>().addChild(tx);
+    entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
+    entity.getComponent<xy::Transform>().move(0.f, 256.f);
+    tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
+    bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
+    entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+    {
+        if (flags & xy::UISystem::LeftMouse)
+        {
+            requestStackClear();
+            requestStackPush(StateID::MainMenu);
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
+        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
+    {
+        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
+        {
+            requestStackClear();
+            requestStackPush(StateID::MainMenu);
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+    {
+        if (button == 0)
+        {
+            requestStackClear();
+            requestStackPush(StateID::MainMenu);
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
+
+
+    m_summaryShown = true;
 }

@@ -1,0 +1,18 @@
+particle_system hit
+{
+	blend_mode = add
+	gravity = 0,200
+	velocity = -0.4,-180.1
+	spread = 26
+	rotation_speed = 6;
+	lifetime = 1.03
+	lifetime_variance = 0.13
+	colour = 200,200,255,155
+	scale_affector = 1.2
+	size = 5.0
+	emit_rate = 25
+	emit_count = 4
+	spawn_radius = 5
+	//spawn_offset = 64,28
+	release_count = 16
+}

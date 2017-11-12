@@ -25,43 +25,44 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_COMPLETE_STATE_HPP_
-#define DEMO_COMPLETE_STATE_HPP_
+#ifndef DEMO_ENDING_DIRECTOR_HPP_
+#define DEMO_ENDING_DIRECTOR_HPP_
 
-#include "StateIDs.hpp"
+#include <xyginext/ecs/Director.hpp>
+#include <xyginext/ecs/Entity.hpp>
+#include <xyginext/graphics/SpriteSheet.hpp>
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/Resource.hpp>
+namespace xy
+{
+    class SoundResource;
+    class TextureResource;
+}
 
-struct SharedStateData;
-
-class GameCompleteState final : public xy::State
+class EndingDirector final : public xy::Director
 {
 public:
-    GameCompleteState(xy::StateStack&, xy::State::Context, SharedStateData&);
+    EndingDirector(xy::SoundResource&, xy::TextureResource&, xy::MessageBus&);
 
-    xy::StateID stateID() const override { return StateID::GameComplete; }
-
-    bool handleEvent(const sf::Event&) override;
     void handleMessage(const xy::Message&) override;
-    bool update(float) override;
-    void draw() override;
+    void handleEvent(const sf::Event&) override;
+    void process(float) override;
 
 private:
+    xy::SoundResource& m_soundResource;
+    xy::TextureResource& m_textureResource;
+    xy::MessageBus& m_messageBus;
+    xy::SpriteSheet m_spriteSheet;
+    xy::Sprite m_playerSprite;
 
-    SharedStateData& m_sharedData;
+    void spawnBubble(sf::Uint32);
+    void spawnFood(sf::Uint32);
+    void spawnPause();
+    void spawnWideShot();
 
-    xy::Scene m_scene;
-    xy::TextureResource m_textureResource;
-    xy::FontResource m_fontResource;
-    xy::SoundResource m_soundResource;
-    bool m_summaryShown;
-
-    void loadAssets();
-    void loadScene();
-    void loadUI();
-    void showSummary();
+    enum SoundID
+    {
+        Collect, Pop, Land
+    };
+    void playSound(sf::Uint32, xy::Entity);
 };
-
-#endif //DEMO_COMPLETE_STATE_HPP_
+#endif //DEMO_ENDING_DIRECOTR_HPP_
