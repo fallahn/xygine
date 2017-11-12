@@ -55,6 +55,10 @@ private:
     xy::Scene m_scene;
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
+
+    void loadAssets();
+    void loadScene();
+    void loadUI();
 };
 
 #endif //DEMO_COMPLETE_STATE_HPP_

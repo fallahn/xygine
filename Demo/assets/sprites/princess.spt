@@ -48,6 +48,33 @@ sprite_sheet princess
 			framerate = 12
 			loop = false
 		}
+
+		animation idle_2
+		{
+
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+
+			frame = 0,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 0,256,64,128
+			frame = 128,256,64,128
+
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128
+			frame = 128,256,64,128			
+
+			framerate = 6
+			loop = true		
+		}
 	}
 
 	sprite player_two

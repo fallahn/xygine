@@ -97,7 +97,7 @@ void Game::initialise()
 {
     registerStates();
 #ifdef XY_DEBUG
-    m_stateStack.pushState(StateID::MainMenu);
+    m_stateStack.pushState(StateID::GameComplete);
 #else
     m_stateStack.pushState(StateID::Intro);
 #endif

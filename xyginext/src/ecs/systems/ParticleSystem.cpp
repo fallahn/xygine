@@ -145,7 +145,7 @@ void ParticleSystem::process(float dt)
                     p.lifetime = settings.lifetime + xy::Util::Random::value(-settings.lifetimeVariance, settings.lifetimeVariance + epsilon);
                     p.maxLifetime = p.lifetime;
                     p.velocity = Util::Vector::rotate(settings.initialVelocity, rotation + Util::Random::value(-settings.spread, (settings.spread + epsilon)));
-                    p.rotation = Util::Random::value(-Util::Const::TAU, Util::Const::TAU);
+                    p.rotation = (settings.randomInitialRotation) ?  Util::Random::value(-Util::Const::TAU, Util::Const::TAU) : 0.f;
                     p.scale = settings.size;
 
                     //spawn particle in world position

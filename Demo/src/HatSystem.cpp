@@ -47,8 +47,8 @@ source distribution.
 
 namespace
 {
-    const float MinHatTime = 30.f;
-    const float MaxHatTime = 48.f;
+    const float MinHatTime = 3.f;
+    const float MaxHatTime = 4.8f;
 }
 
 HatSystem::HatSystem(xy::MessageBus& mb, xy::NetHost& host)

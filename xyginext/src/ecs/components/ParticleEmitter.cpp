@@ -113,6 +113,10 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             {
                 colour = p.getValue<sf::Color>();
             }
+            else if (name == "random_initial_rotation")
+            {
+                randomInitialRotation = p.getValue<bool>();
+            }
             else if (name == "rotation_speed")
             {
                 rotationSpeed = p.getValue<float>();

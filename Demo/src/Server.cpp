@@ -723,6 +723,8 @@ void GameServer::initScene()
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
 
     m_scene.addDirector<InventoryDirector>(m_host);
+
+    m_scene.setSystemActive<HatSystem>(false); //no hats on first level plz
 }
 
 void GameServer::loadMap()
@@ -887,7 +889,11 @@ void GameServer::beginNewRound()
         m_scene.setSystemActive<CollisionSystem>(true);
         m_scene.setSystemActive<PowerupSystem>(true);
         m_scene.setSystemActive<BonusSystem>(true);
-        m_scene.setSystemActive<HatSystem>(true);
+        
+        if (xy::Util::Random::value(0, 2) == 2)
+        {
+            m_scene.setSystemActive<HatSystem>(true);
+        }
 
         m_stateFlags.set(ChangingMaps, false);
 

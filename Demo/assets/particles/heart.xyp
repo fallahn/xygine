@@ -1,0 +1,18 @@
+particle_system spawn
+{
+	src = "assets/images/heart.png"
+	blend_mode = alpha
+	gravity = 0,-80
+	velocity = 0.0,-50.1
+	spread = 26
+	lifetime = 3.83
+	lifetime_variance = 0.53
+	colour = 255,255,255,255
+	//scale_affector = 0.8
+	size = 64.0
+	emit_rate = 1.1
+	emit_count = 1
+	spawn_radius = 16
+	spawn_offset = 64, 64
+	random_initial_rotation = false
+}
