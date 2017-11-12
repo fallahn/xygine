@@ -1060,7 +1060,18 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     case PacketID::GameComplete:
         m_client.disconnect();
         //TODO set off some fireworks before pushing state?
+        requestStackPop(); //old state tries to handle invalid messages - either remove state or fix message IDs
         requestStackPush(StateID::GameComplete);
+
+        /*{
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::SceneMusic;
+            cmd.action = [](xy::Entity entity, float)
+            {
+                entity.getComponent<xy::AudioEmitter>().setVolume(0.05f);
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+        }*/
         break;
     }
 }

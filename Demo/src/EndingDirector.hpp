@@ -61,7 +61,8 @@ private:
 
     enum SoundID
     {
-        Collect, Pop, Land
+        Collect, Pop, Land,
+        Q1, Q2, Q3, Shout, Angry
     };
     void playSound(sf::Uint32, xy::Entity);
 };

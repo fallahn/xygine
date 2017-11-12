@@ -136,7 +136,7 @@ static const sf::Vector2f TowerSpawnTwo(MapBounds.width + 128.f, 1024.f);
 static const sf::Color BubbleColourOne(255, 212, 0);
 static const sf::Color BubbleColourTwo(255, 0, 212);
 
-static const sf::Uint8 MapsToWin = 24; //divisible by 4 for colour cycle
+static const sf::Uint8 MapsToWin = 2;// 4; //divisible by 4 for colour cycle
 
 //map loading functions shared between client / server
 void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType::ID type);

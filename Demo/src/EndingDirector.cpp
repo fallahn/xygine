@@ -70,10 +70,12 @@ namespace
 
         void operator()(xy::Entity entity, float dt)
         {
+            auto oldTime = m_currentTime;
             m_currentTime += dt;
-            if (m_currentTime > 0.6f)
+            if (m_currentTime > 0.6f && oldTime < 0.6f)
             {
                 entity.getComponent<xy::Transform>().setScale(4.f, 4.f);
+                entity.getComponent<xy::AudioEmitter>().play();
             }
             if (m_currentTime > MaxTime)
             {
@@ -153,6 +155,11 @@ void EndingDirector::handleMessage(const xy::Message& msg)
                 entity.getComponent<xy::Callback>().active = true;
             };
             sendCommand(cmd);
+
+            auto entity = getScene().createEntity();
+            entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
+            entity.addComponent<xy::CommandTarget>().ID = Command::Clearable;
+            playSound(SoundID::Shout, entity);
         }
             break;
         case SpriteEvent::ReachedBottom:
@@ -186,6 +193,7 @@ void EndingDirector::process(float) {}
 void EndingDirector::spawnBubble(sf::Uint32 id)
 {
     auto& scene = getScene();
+    auto bubbleEnt = scene.createEntity();
 
     auto foodEnt = scene.createEntity();
     foodEnt.addComponent<xy::Drawable>().setDepth(2);
@@ -195,19 +203,25 @@ void EndingDirector::spawnBubble(sf::Uint32 id)
     default:break;
     case SpeechEvent::Burger:
         foodEnt.addComponent<xy::Sprite>() = m_spriteSheet.getSprite("burger");
+        bubbleEnt.addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/q1.wav"));
         break;
     case SpeechEvent::Pizza:
         foodEnt.addComponent<xy::Sprite>() = m_spriteSheet.getSprite("pizza");
+        bubbleEnt.addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/q2.wav"));
         break;
     case SpeechEvent::Icecream:
         foodEnt.addComponent<xy::Sprite>() = m_spriteSheet.getSprite("icecream");
+        bubbleEnt.addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/q1.wav"));
         break;
     case SpeechEvent::Cake:
         foodEnt.addComponent<xy::Sprite>() = m_spriteSheet.getSprite("cake");
+        bubbleEnt.addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/q3.wav"));
         break;
     }
+    bubbleEnt.getComponent<xy::AudioEmitter>().setVolume(80.f);
+    bubbleEnt.getComponent<xy::AudioEmitter>().setMinDistance(1920.f);
 
-    auto bubbleEnt = scene.createEntity();
+    
     bubbleEnt.addComponent<xy::Transform>().setPosition(PrincessPosition);
     bubbleEnt.getComponent<xy::Transform>().setScale(0.f, 4.f);
     bubbleEnt.getComponent<xy::Transform>().addChild(foodEnt.getComponent<xy::Transform>());
@@ -350,6 +364,11 @@ void EndingDirector::spawnPause()
                     }
                 };
                 princessEnt.getComponent<xy::Callback>().active = true;
+
+                auto soundEnt = getScene().createEntity();
+                soundEnt.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
+                soundEnt.addComponent<xy::CommandTarget>().ID = Command::Clearable;
+                playSound(SoundID::Angry, soundEnt);
             };
             sendCommand(cmd);
         }
@@ -460,6 +479,21 @@ void EndingDirector::playSound(sf::Uint32 id, xy::Entity entity)
         break;
     case SoundID::Pop:
         entity.addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/pop.wav"));
+        break;
+    case SoundID::Q1:
+        entity.addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/q1.wav"));
+        break;
+    case SoundID::Q2:
+        entity.addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/q2.wav"));
+        break;
+    case SoundID::Q3:
+        entity.addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/q3.wav"));
+        break;
+    case SoundID::Shout:
+        entity.addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/shout.wav"));
+        break;
+    case SoundID::Angry:
+        entity.addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("assets/sound/angry.wav"));
         break;
     }    
     
