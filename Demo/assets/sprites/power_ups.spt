@@ -3,6 +3,11 @@ sprite_sheet power_ups
 	src = "assets/images/power_ups.png"
 	blendmode = alpha
 
+	sprite crate
+	{
+		bounds = 384, 192, 64, 64
+	}
+
 	sprite player_one_flame
 	{
 		bounds = 0,0,0,0
