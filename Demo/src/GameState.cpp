@@ -1576,11 +1576,11 @@ void GameState::spawnMapActors()
     xy::EmitterSettings emitterSettings;
     emitterSettings.loadFromFile("assets/particles/angry.xyp", m_textureResource);
     
-    for (auto i = 0; i < m_mapData.actorCount; ++i)
+    for (auto i = 0; i < m_mapData.NPCCount; ++i)
     {
         auto entity = m_scene.createEntity();
         entity.addComponent<xy::Transform>().setOrigin(WhirlyBobOrigin);
-        entity.addComponent<Actor>() = m_mapData.actors[i];
+        entity.addComponent<Actor>() = m_mapData.NPCs[i];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
         entity.addComponent<xy::NetInterpolate>();
 
@@ -1588,7 +1588,7 @@ void GameState::spawnMapActors()
         Even though these are only actors NPCs require collision with the player to
         ensure the player state is properly updated during reconciliation
         */
-        switch (m_mapData.actors[i].type)
+        switch (m_mapData.NPCs[i].type)
         {
         default:
             //add missing texture or placeholder

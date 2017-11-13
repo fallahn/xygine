@@ -60,7 +60,7 @@ namespace MapFlags
     };
 }
 
-namespace CollisionFlags
+namespace CollisionFlags //used in broad phase culling
 {
     enum
     {
@@ -75,11 +75,13 @@ namespace CollisionFlags
         Bonus = 0x100,
         HardBounds = 0x200,
         MagicHat = 0x400,
+        Crate = 0x800,
 
-        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup | Bonus | MagicHat,
-        NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup | HardBounds,
+        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup | Bonus | MagicHat | Crate,
+        NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup | HardBounds | Crate,
         FruitMask = Solid | Platform | Player | Teleport,
-        PowerupMask = Platform | Solid | Player | NPC
+        PowerupMask = Platform | Solid | Player | NPC | Crate,
+        CrateMask = Platform | Solid | Player | NPC | Powerup | Teleport
     };
 }
 
@@ -113,7 +115,9 @@ static const sf::Vector2f PlayerOrigin(32.f, 64.f);
 
 static const sf::FloatRect SmallFoodBounds(0.f, 0.f, 64.f, 64.f);
 static const sf::Vector2f SmallFoodOrigin(32.f, 32.f);
-static constexpr float LargeFruitSize = 96.f;
+
+static const sf::FloatRect CrateBounds(2.f, 2.f, 60.f, 62.f);
+static const sf::FloatRect CrateFoot = ClocksyFoot;
 
 static constexpr float TeleportDistance = 886.f;
 static constexpr float Gravity = 2200.f;

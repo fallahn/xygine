@@ -204,11 +204,11 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     player.state = state.playerState;
     player.velocity.y = state.playerVelocity;
     player.timer = state.playerTimer;
-    player.canJump = state.playerCanJump;
+    player.canJump = (state.boolFlags & ClientState::JumpFlag);
     player.canLand = state.playerCanLand;
-    player.canRideBubble = state.playerCanRideBubble;
+    player.canRideBubble = (state.boolFlags & ClientState::BubbleFlag);
     player.lives = state.playerLives;
-    player.hasHat = state.playerHasHat;
+    player.hasHat = (state.boolFlags & ClientState::HatFlag);
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),

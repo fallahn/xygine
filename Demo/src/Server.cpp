@@ -264,11 +264,12 @@ void GameServer::update()
                     state.playerState = player.state;
                     state.playerVelocity = player.velocity.y;
                     state.playerTimer = player.timer;
-                    state.playerCanJump = player.canJump;
                     state.playerCanLand = player.canLand;
-                    state.playerCanRideBubble = player.canRideBubble;
                     state.playerLives = player.lives;
-                    state.playerHasHat = player.hasHat;
+                    if (player.canJump) state.boolFlags |= ClientState::JumpFlag;
+                    if (player.canRideBubble) state.boolFlags |= ClientState::BubbleFlag;
+                    if (player.hasHat)state.boolFlags |= ClientState::HatFlag;
+
 
                     //auto collisionState = ent.getComponent<CollisionComponent>().serialise();
                     //std::vector<sf::Uint8> data(sizeof(ClientState) + collisionState.size()); //TODO recycle this to save on reallocations
@@ -292,7 +293,7 @@ void GameServer::update()
             m_stateFlags.set(GameOver, gameOver);
 
 #ifdef XY_DEBUG
-            m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.actorCount, xy::NetFlag::Unreliable, 0);
+            m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.NPCCount, xy::NetFlag::Unreliable, 0);
 #endif
         }
     }
@@ -503,7 +504,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
 
 void GameServer::checkRoundTime(float dt)
 {
-    if (m_stateFlags.test(ChangingMaps) || m_mapData.actorCount == 0) return;
+    if (m_stateFlags.test(ChangingMaps) || m_mapData.NPCCount == 0) return;
     
     float lastTime = m_currentRoundTime;
     m_currentRoundTime += dt;
@@ -515,7 +516,7 @@ void GameServer::checkRoundTime(float dt)
         m_host.broadcastPacket(PacketID::RoundWarning, sf::Uint8(0), xy::NetFlag::Reliable, 1);
     }
     else if (lastTime < m_roundTimeout &&
-        m_currentRoundTime >= m_roundTimeout && m_mapData.actorCount > 0)
+        m_currentRoundTime >= m_roundTimeout && m_mapData.NPCCount > 0)
     {
         //make everything angry
         xy::Command cmd;
@@ -570,9 +571,9 @@ void GameServer::checkRoundTime(float dt)
 
     //sometimes the actor count gets messed up so we have a fail-safe timeout
     if (m_currentRoundTime > (m_roundTimeout + watchdogTime)
-        && m_mapData.actorCount <= 1)
+        && m_mapData.NPCCount <= 1)
     {
-        m_mapData.actorCount = 0;
+        m_mapData.NPCCount = 0;
     }
 }
 
@@ -580,7 +581,7 @@ void GameServer::checkMapStatus(float dt)
 {
     m_endOfRoundPauseTime -= dt;
 
-    if (m_mapData.actorCount == 0
+    if (m_mapData.NPCCount == 0
         && m_endOfRoundPauseTime < 0)
     {
         //clear remaining actors (should just be collectables / bubbles)
@@ -731,6 +732,9 @@ void GameServer::initScene()
 
 void GameServer::loadMap()
 {
+    m_mapData.NPCCount = 0; //make sure count was reset
+    m_mapData.crateCount = 0;
+
     tmx::Map map;
     if (map.load("assets/maps/" + m_mapFiles[m_currentMap]))
     {
@@ -791,26 +795,24 @@ void GameServer::loadMap()
                 }
                 else if (name == "spawn")
                 {
-                    m_mapData.actorCount = 0; //make sure count was reset
-
                     const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
                     for (const auto& obj : objs)
                     {
                         auto actor = ActorID::None;
-                        auto name = xy::Util::String::toLower(obj.getName());
-                        if (name == "whirlybob")
+                        auto objName = xy::Util::String::toLower(obj.getName());
+                        if (objName == "whirlybob")
                         {
                             actor = ActorID::Whirlybob;
                         }
-                        else if (name == "clocksy")
+                        else if (objName == "clocksy")
                         {
                             actor = ActorID::Clocksy;
                         }
-                        else if (name == "squatmo")
+                        else if (objName == "squatmo")
                         {
                             actor = ActorID::Squatmo;
                         }
-                        else if (name == "balldock")
+                        else if (objName == "balldock")
                         {
                             actor = ActorID::Balldock;
                         }
@@ -818,12 +820,31 @@ void GameServer::loadMap()
                         if (actor != ActorID::None)
                         {
                             auto entity = spawnNPC(actor, { obj.getPosition().x, obj.getPosition().y });
-                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+                            m_mapData.NPCs[m_mapData.NPCCount++] = entity.getComponent<Actor>();
                         }
                     }
                     //spawnNPC(ActorID::Clocksy, { 220.f, 220.f }); spawnCount++;
                 
-                    flags |= (m_mapData.actorCount == 0) ? 0 : MapFlags::Spawn;
+                    flags |= (m_mapData.NPCCount == 0) ? 0 : MapFlags::Spawn;
+                }
+                else if (name == "crates")
+                {
+                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
+                    for (const auto& obj : objs)
+                    {
+                        if (xy::Util::String::toLower(obj.getName()) == "crate")
+                        {
+                            bool explosive = false;
+                            const auto& properties = obj.getProperties();
+                            if (!properties.empty() && 
+                                xy::Util::String::toLower(properties[0].getName()) == "explosive")
+                            {
+                                explosive = properties[0].getBoolValue();
+                            }
+
+                            //TODO create ent / actor with explosive parameter
+                        }
+                    }
                 }
             }
         }
@@ -901,7 +922,7 @@ void GameServer::beginNewRound()
 
         if (m_mapSkipCount) //someone scored a bonus and skips 5 maps
         {
-            m_mapData.actorCount = 0;
+            m_mapData.NPCCount = 0;
             m_endOfRoundPauseTime = -1.f;
             m_mapSkipCount--;
         }
@@ -1066,16 +1087,16 @@ void GameServer::handleMessage(const xy::Message& msg)
         {
             //remove from list of actors
             sf::Int8 i = 0;
-            for (; i < m_mapData.actorCount; ++i)
+            for (; i < m_mapData.NPCCount; ++i)
             {
-                if (m_mapData.actors[i].id == data.entityID)
+                if (m_mapData.NPCs[i].id == data.entityID)
                 {
                     break;
                 }
             }
 
-            m_mapData.actorCount--;
-            m_mapData.actors[i] = m_mapData.actors[m_mapData.actorCount];
+            m_mapData.NPCCount--;
+            m_mapData.NPCs[i] = m_mapData.NPCs[m_mapData.NPCCount];
 
             //LOG(std::to_string(m_mapData.actorCount), xy::Logger::Type::Info);
             m_endOfRoundPauseTime = endOfRoundTime;
@@ -1090,7 +1111,7 @@ void GameServer::handleMessage(const xy::Message& msg)
             //trigger map skip if player has bonus
             if (data.player.getComponent<Player>().bonusFlags == Bonus::BONUS)
             {
-                m_mapData.actorCount = 0;
+                m_mapData.NPCCount = 0;
                 m_endOfRoundPauseTime = -1.f;
                 m_mapSkipCount = 4;
 

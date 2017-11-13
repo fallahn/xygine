@@ -53,7 +53,8 @@ namespace CollisionType
         Platform = 0x80,
         Bubble = 0x100,
         HardBounds = 0x200,
-        MagicHat = 0x400
+        MagicHat = 0x400,
+        Crate = 0x800
     };
 };
 
