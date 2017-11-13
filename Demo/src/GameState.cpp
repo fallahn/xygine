@@ -676,7 +676,7 @@ void GameState::loadUI()
     ent.addComponent<xy::Transform>().setPosition(-410.f, 1010.f);
     ent.addComponent<xy::Text>(m_fontResource.get("assets/fonts/VeraMono.ttf"));
     ent.getComponent<xy::Text>().setFillColour(sf::Color::Red);
-    ent.addComponent<xy::CommandTarget>().ID = CommandID::Timeout;
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::Timeout | CommandID::UIElement;
 
     //title texts
     auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");
@@ -686,6 +686,7 @@ void GameState::loadUI()
     ent.getComponent<xy::Text>().setFillColour(sf::Color(255, 212, 0));
     ent.getComponent<xy::Text>().setString("PLAYER ONE");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
     
     ent = m_scene.createEntity();
     ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 140.f, 10.f);
@@ -693,6 +694,7 @@ void GameState::loadUI()
     ent.getComponent<xy::Text>().setFillColour(sf::Color::Red);
     ent.getComponent<xy::Text>().setString("HIGH SCORE");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
     
     ent = m_scene.createEntity();
     ent.addComponent<xy::Transform>().setPosition(MapBounds.width - 260.f, 10.f);
@@ -700,6 +702,7 @@ void GameState::loadUI()
     ent.getComponent<xy::Text>().setFillColour(sf::Color(255, 0, 212));
     ent.getComponent<xy::Text>().setString("PLAYER TWO");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
     
     //score texts
     ent = m_scene.createEntity();
@@ -707,21 +710,21 @@ void GameState::loadUI()
     ent.addComponent<xy::Text>(font);
     ent.getComponent<xy::Text>().setString("0");
     ent.getComponent<xy::Text>().setCharacterSize(60);
-    ent.addComponent<xy::CommandTarget>().ID = CommandID::ScoreOne;
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::ScoreOne | CommandID::UIElement;
 
     ent = m_scene.createEntity();
     ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 140.f, 46.f);
     ent.addComponent<xy::Text>(font);
     ent.getComponent<xy::Text>().setString(m_scores.getProperties()[0].getValue<std::string>());
     ent.getComponent<xy::Text>().setCharacterSize(60);
-    ent.addComponent<xy::CommandTarget>().ID = CommandID::HighScore;
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::HighScore | CommandID::UIElement;
 
     ent = m_scene.createEntity();
     ent.addComponent<xy::Transform>().setPosition(MapBounds.width - 260.f, 46.f);
     ent.addComponent<xy::Text>(font);
     ent.getComponent<xy::Text>().setString("0");
     ent.getComponent<xy::Text>().setCharacterSize(60);
-    ent.addComponent<xy::CommandTarget>().ID = CommandID::ScoreTwo;
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::ScoreTwo | CommandID::UIElement;
 
 
     //lives display
@@ -748,13 +751,14 @@ void GameState::loadUI()
     ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 16.f, MapBounds.height - 108.f);
     ent.addComponent<xy::Text>(font).setString("1");
     ent.getComponent<xy::Text>().setCharacterSize(60);
-    ent.addComponent<xy::CommandTarget>().ID = CommandID::LevelCounter;
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::LevelCounter | CommandID::UIElement;
 
     ent = m_scene.createEntity();
     ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 60.f, MapBounds.height - 148.f);
     ent.addComponent<xy::Text>(font).setString("LEVEL");
     ent.getComponent<xy::Text>().setCharacterSize(60);
     ent.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
 
     //bonus display
     float startY = (xy::DefaultSceneSize.y / 2.f) - (2.5f * BubbleBounds.height);
@@ -1058,20 +1062,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     }
         break;
     case PacketID::GameComplete:
-        m_client.disconnect();
-        //TODO set off some fireworks before pushing state?
-        requestStackPop(); //old state tries to handle invalid messages - either remove state or fix message IDs
-        requestStackPush(StateID::GameComplete);
-
-        /*{
-            xy::Command cmd;
-            cmd.targetFlags = CommandID::SceneMusic;
-            cmd.action = [](xy::Entity entity, float)
-            {
-                entity.getComponent<xy::AudioEmitter>().setVolume(0.05f);
-            };
-            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
-        }*/
+        transitionToEnd();
         break;
     }
 }
@@ -1927,4 +1918,59 @@ void GameState::updateLoadingScreen(float dt, sf::RenderWindow& rw)
 {
     m_loadingScreen.update(dt);
     rw.draw(m_loadingScreen);
+}
+
+void GameState::transitionToEnd()
+{
+    m_client.disconnect();
+    
+    //fade to black
+    auto entity = m_scene.createEntity();
+    m_textureResource.setFallbackColour(sf::Color::Black);
+    auto bounds = entity.addComponent<xy::Sprite>(m_textureResource.get("black")).getTextureBounds();
+    entity.getComponent<xy::Sprite>().setColour({ 255,255,255,0 });
+
+    entity.addComponent<xy::Transform>().setPosition(m_scene.getActiveCamera().getComponent<xy::Transform>().getPosition());
+    entity.getComponent<xy::Transform>().setScale(xy::DefaultSceneSize.x / bounds.width, xy::DefaultSceneSize.y / bounds.height);
+    entity.getComponent<xy::Transform>().move(-xy::DefaultSceneSize / 2.f);
+    entity.addComponent<xy::Drawable>().setDepth(12);
+
+    entity.addComponent<xy::Callback>().active = true;
+    entity.getComponent<xy::Callback>().function = 
+        [&](xy::Entity ent, float dt)
+    {
+        static const float fadeTime = 2.f;
+        static float currentTime = 0.f;
+
+        currentTime += dt;
+        float alpha = std::min(1.f, currentTime / fadeTime);
+        
+        sf::Uint8 alphaB = static_cast<sf::Uint8>(alpha * 255.f);
+        ent.getComponent<xy::Sprite>().setColour({ 255,255,255,alphaB });
+
+        if (alphaB == 255)
+        {
+            requestStackPop();
+            requestStackPush(StateID::GameComplete);
+        }
+        
+        //fade out music
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::SceneMusic;
+        cmd.action = [alpha](xy::Entity soundEnt, float)
+        {
+            soundEnt.getComponent<xy::AudioEmitter>().setVolume((1.f - alpha) * 0.25f);
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+        //and text
+        cmd.targetFlags = CommandID::UIElement;
+        cmd.action = [alphaB](xy::Entity textEnt, float)
+        {
+            auto colour = textEnt.getComponent<xy::Text>().getFillColour();
+            colour.a = 255 - alphaB;
+            textEnt.getComponent<xy::Text>().setFillColour(colour);
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    };
 }

@@ -602,7 +602,7 @@ void GameServer::checkMapStatus(float dt)
         
 
         //tell clients to do map change
-        m_host.broadcastPacket(PacketID::MapChange, m_mapData, xy::NetFlag::Reliable, 1);
+        //m_host.broadcastPacket(PacketID::MapChange, m_mapData, xy::NetFlag::Reliable, 1);
 
         //set clients to not ready
         m_clients[0].ready = false;
@@ -658,6 +658,8 @@ void GameServer::checkMapStatus(float dt)
                 {
                     //send value update
                     m_host.sendPacket(client.peer, PacketID::LevelUpdate, client.level, xy::NetFlag::Reliable, 1);
+                    //and inform of next map
+                    m_host.sendPacket(client.peer, PacketID::MapChange, m_mapData, xy::NetFlag::Reliable, 1);
                 }
             }
         };

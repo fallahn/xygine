@@ -61,12 +61,19 @@ source distribution.
 
 #include <SFML/Window/Event.hpp>
 
+namespace
+{
+    float inputDelay = 0.f;
+}
+
 GameCompleteState::GameCompleteState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sd)
     : xy::State     (stack, ctx),
     m_sharedData    (sd),
     m_scene         (ctx.appInstance.getMessageBus()),
     m_summaryShown  (false)
 {
+    inputDelay = 0.f;
+    
     loadAssets();
     loadScene();
     loadUI();
@@ -78,7 +85,8 @@ GameCompleteState::GameCompleteState(xy::StateStack& stack, xy::State::Context c
 bool GameCompleteState::handleEvent(const sf::Event& evt)
 {
     if (evt.type == sf::Event::KeyReleased
-        || evt.type == sf::Event::JoystickButtonReleased)
+        || evt.type == sf::Event::JoystickButtonReleased
+        && inputDelay > 2.f)
     {
         //skips to end screen
         if (!m_summaryShown)
@@ -112,6 +120,7 @@ void GameCompleteState::handleMessage(const xy::Message& msg)
 
 bool GameCompleteState::update(float dt)
 {
+    inputDelay += dt;
     m_scene.update(dt);
     return false;
 }
@@ -161,7 +170,7 @@ void GameCompleteState::loadScene()
     {
         static const float fadeTime = 5.f;
         static float currentTime = fadeTime;
-        currentTime -= dt;
+        
         float alpha = std::max(0.f, 255.f * (currentTime / fadeTime));
         ent.getComponent<xy::Sprite>().setColour({ 255, 255, 255, static_cast<sf::Uint8>(alpha) });
 
@@ -169,6 +178,7 @@ void GameCompleteState::loadScene()
         {
             ent.getComponent<xy::Callback>().active = false;
         }
+        currentTime -= dt;
     };
 
     //characters

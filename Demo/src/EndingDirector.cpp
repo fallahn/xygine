@@ -198,6 +198,7 @@ void EndingDirector::spawnBubble(sf::Uint32 id)
     auto foodEnt = scene.createEntity();
     foodEnt.addComponent<xy::Drawable>().setDepth(2);
     foodEnt.addComponent<xy::Transform>().setPosition(FoodPosition);
+    foodEnt.addComponent<xy::CommandTarget>().ID = Command::Clearable;
     switch (id)
     {
     default:break;
@@ -220,6 +221,7 @@ void EndingDirector::spawnBubble(sf::Uint32 id)
     }
     bubbleEnt.getComponent<xy::AudioEmitter>().setVolume(80.f);
     bubbleEnt.getComponent<xy::AudioEmitter>().setMinDistance(1920.f);
+    bubbleEnt.addComponent<xy::CommandTarget>().ID = Command::Clearable;
 
     
     bubbleEnt.addComponent<xy::Transform>().setPosition(PrincessPosition);
@@ -248,6 +250,7 @@ void EndingDirector::spawnFood(sf::Uint32 id)
     entity.addComponent<xy::Transform>().setPosition(PlayerPosition);
     entity.getComponent<xy::Transform>().setScale(2.f, 2.f);
     entity.addComponent<xy::Drawable>().setDepth(2);
+    entity.addComponent<xy::CommandTarget>().ID = Command::Clearable;
 
     switch (id)
     {
@@ -281,7 +284,7 @@ void EndingDirector::spawnFood(sf::Uint32 id)
             //create particle / sound effect
             auto particleEnt = scene.createEntity();
             particleEnt.addComponent<xy::Transform>().setPosition(foodEnt.getComponent<xy::Transform>().getPosition() + sf::Vector2f(32.f, 32.f));
-            particleEnt.addComponent<xy::ParticleEmitter>().settings.loadFromFile("assets/particles/pop.xyp", m_textureResource);
+            particleEnt.addComponent<xy::ParticleEmitter>().settings.loadFromFile("assets/particles/score.xyp", m_textureResource);
             particleEnt.getComponent<xy::ParticleEmitter>().start();
             particleEnt.addComponent<xy::CommandTarget>().ID = Command::Clearable;
             playSound(SoundID::Pop, particleEnt);
@@ -311,6 +314,7 @@ void EndingDirector::spawnPause()
 {
     auto& scene = getScene();
     auto entity = scene.createEntity();
+    entity.addComponent<xy::CommandTarget>().ID = Command::Clearable;
     entity.addComponent<xy::Transform>().setPosition(PausePosition);
     entity.getComponent<xy::Transform>().setScale(4.f, 4.f);
     auto bounds = entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/speech.png")).getTextureBounds();

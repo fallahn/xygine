@@ -128,6 +128,8 @@ private:
     void takeHat(sf::Uint8);
 
     void updateLoadingScreen(float, sf::RenderWindow&) override;
+
+    void transitionToEnd();
 };
 
 #endif //DEMO_GAME_STATE_HPP_
