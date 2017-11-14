@@ -32,27 +32,38 @@ source distribution.
 
 #include <xyginext/ecs/System.hpp>
 
+namespace xy
+{
+    class NetHost;
+}
+
 struct Crate final
 {
     enum
     {
         Ground, Falling, Breaking
-    }state = Ground;
+    }state = Falling;
     bool explosive = false;
     sf::Vector2f velocity;
+    bool groundContact = false;
+    bool lethal = false;
+    sf::Uint8 lastOwner = 3;
 };
 
 class CrateSystem final : public xy::System
 {
 public:
-    explicit CrateSystem(xy::MessageBus&);
+    CrateSystem(xy::MessageBus&, xy::NetHost&);
 
     void process(float) override;
 
 private:
 
+    xy::NetHost& m_host;
+
     void groundCollision(xy::Entity);
     void airCollision(xy::Entity);
+    void destroy(xy::Entity);
 };
 
 #endif //DEMO_CRATE_SYSTEM_HPP_

@@ -789,6 +789,7 @@ void NPCSystem::collisionNormal(xy::Entity entity)
                     tx.move(manifold.normal * manifold.penetration);
                     break;
                 case CollisionType::Solid:
+                case CollisionType::Crate:
                     tx.move(manifold.normal * manifold.penetration);
                     npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
                     break;
@@ -887,6 +888,7 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                     npc.canLand = false;
                     break;
                 case CollisionType::Solid:
+                case CollisionType::Crate:
                     tx.move(manifold.normal * manifold.penetration);
 
                     if (npc.velocity.y > 0)

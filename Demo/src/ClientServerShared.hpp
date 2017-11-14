@@ -81,7 +81,7 @@ namespace CollisionFlags //used in broad phase culling
         NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup | HardBounds | Crate,
         FruitMask = Solid | Platform | Player | Teleport,
         PowerupMask = Platform | Solid | Player | NPC | Crate,
-        CrateMask = Platform | Solid | Player | NPC | Powerup | Teleport
+        CrateMask = Platform | Solid | Player | NPC | Powerup | Teleport | Crate
     };
 }
 

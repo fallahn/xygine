@@ -714,7 +714,7 @@ void GameServer::initScene()
     m_scene.addSystem<PowerupSystem>(m_messageBus, m_host);
     m_scene.addSystem<BonusSystem>(m_messageBus, m_host);
     m_scene.addSystem<HatSystem>(m_messageBus, m_host);
-    m_scene.addSystem<CrateSystem>(m_messageBus);
+    m_scene.addSystem<CrateSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);

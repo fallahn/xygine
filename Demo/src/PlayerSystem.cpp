@@ -432,6 +432,9 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                 case CollisionType::Platform:
                     tx.move(man.normal * man.penetration);
                     break;
+                case CollisionType::Crate:
+                    tx.move(man.normal * man.penetration / 2.f);
+                    break;
                 case CollisionType::NPC:
                     if(npcCollision(entity, man)) return; //this killed us so stop with walking collisions
                     break;
@@ -547,6 +550,7 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                     player.sync.canLand &= ~BodyClear;
                     break;
                 case CollisionType::Solid:
+                case CollisionType::Crate:
                     if (man.normal.y < 0 && player.sync.velocity.y > 0)
                     {
                         player.sync.state = Player::State::Walking;
