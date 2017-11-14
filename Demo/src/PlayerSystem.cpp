@@ -129,7 +129,7 @@ void PlayerSystem::process(float)
                 if (player.sync.lives)
                 {
                     tx.setPosition(player.spawnPosition);
-                    player.sync.state = Player::State::Walking;
+                    player.sync.state = Player::State::Jumping;
                     player.sync.direction =
                         (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
 
@@ -217,7 +217,8 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
         auto end = (player.currentInput + player.history.size() - 1) % player.history.size();
         
         //restore the collision data from history
-        entity.getComponent<CollisionComponent>() = player.history[idx].collision;
+        //entity.getComponent<CollisionComponent>() = player.history[idx].collision;
+        getScene()->getSystem<CollisionSystem>().queryState(entity);
 
         while (idx != end) //currentInput points to the next free slot in history
         {                                        

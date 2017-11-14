@@ -949,7 +949,7 @@ void GameServer::beginNewRound()
             {
                 if (entity.getComponent<Player>().sync.lives > 0)
                 {
-                    entity.getComponent<Player>().sync.state = Player::State::Walking;
+                    entity.getComponent<Player>().sync.state = Player::State::Jumping;
                 }
                 else //we have to set this else player remains 'disabled'
                 {
