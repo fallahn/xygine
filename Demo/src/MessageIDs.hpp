@@ -90,7 +90,8 @@ struct NpcEvent final
     {
         Bubble,
         Lightning,
-        Flame
+        Flame,
+        Crate
     };
     sf::Uint8 causeOfDeath = Bubble;
 };

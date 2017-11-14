@@ -59,6 +59,7 @@ private:
         BubblePop,
         SpawnNPC,
         Score,
+        BreakCrate,
         Count
     };
 

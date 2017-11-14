@@ -39,8 +39,8 @@ source distribution.
 namespace
 {
     const float MinVelocity = 25.f; //min len sqr
-    const float PushAcceleration = 14.f;
-    const float LethalVelocity = 100.f;
+    const float PushAcceleration = 10.f;
+    const float LethalVelocity = 700000.f; //vel sqr before box becomes lethal
 }
 
 CrateSystem::CrateSystem(xy::MessageBus& mb, xy::NetHost& nh)
@@ -62,7 +62,7 @@ void CrateSystem::process(float dt)
         {
         default:break;
         case Crate::Ground:
-            crate.velocity *= 0.93f; //friction
+            crate.velocity *= 0.89f; //friction
             groundCollision(entity);
             break;
         case Crate::Falling:
@@ -181,7 +181,10 @@ void CrateSystem::airCollision(xy::Entity entity)
                     || manifolds[j].otherType == CollisionType::Player)
                 {
                     //SQUISH
-                    destroy(entity);
+                    if ((crate.velocity.y * 2.f) > std::abs(crate.velocity.x))
+                    {
+                        destroy(entity);
+                    }
                     return;
                 }
                 else

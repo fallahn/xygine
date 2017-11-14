@@ -35,6 +35,7 @@ source distribution.
 #include "MessageIDs.hpp"
 #include "CommandIDs.hpp"
 #include "PowerupSystem.hpp"
+#include "CrateSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -789,9 +790,22 @@ void NPCSystem::collisionNormal(xy::Entity entity)
                     tx.move(manifold.normal * manifold.penetration);
                     break;
                 case CollisionType::Solid:
+                    tx.move(manifold.normal * manifold.penetration);
+                    npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
+                    break;
                 case CollisionType::Crate:
                     tx.move(manifold.normal * manifold.penetration);
                     npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
+
+                    if (manifold.otherEntity.hasComponent<Crate>())
+                    {
+                        if (manifold.penetration > (ClocksyBounds.width / 2.f))
+                        {
+                            const auto& crate = manifold.otherEntity.getComponent<Crate>();
+                            despawn(entity, crate.lastOwner, NpcEvent::Crate);
+                        }
+                    }
+
                     break;
                 case CollisionType::Bubble:
                     //switch to bubble state if bubble in spawn state
@@ -888,7 +902,6 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                     npc.canLand = false;
                     break;
                 case CollisionType::Solid:
-                case CollisionType::Crate:
                     tx.move(manifold.normal * manifold.penetration);
 
                     if (npc.velocity.y > 0)
@@ -914,6 +927,41 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                     }
 
                     npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
+                    break;
+                case CollisionType::Crate:
+                    tx.move(manifold.normal * manifold.penetration);
+                    if (npc.velocity.y > 0)
+                    {
+                        //balls bounce.
+                        if (entity.getComponent<Actor>().type == ActorID::Balldock
+                            && npc.velocity.y > BalldockBounceVelocity)
+                        {
+                            npc.velocity.y = -npc.velocity.y * 0.4f;
+                            break; //skip reflecting velocity, below
+                        }
+                        else
+                        {
+                            //moving down
+                            npc.state = NPC::State::Normal;
+                            npc.velocity.y = 0.f;
+                            return;
+                        }
+                    }
+                    else //bonk head
+                    {
+                        npc.velocity.y *= 0.25f;
+                    }
+
+                    if (manifold.otherEntity.hasComponent<Crate>())
+                    {
+                        if (manifold.penetration > (ClocksyBounds.width / 2.f)
+                            && manifold.normal.y >= 0)
+                        {
+                            const auto& crate = manifold.otherEntity.getComponent<Crate>();
+                            despawn(entity, crate.lastOwner, NpcEvent::Crate);
+                        }
+                    }
+
                     break;
                 case CollisionType::Bubble:
                     //switch to bubble state if bubble in spawn state

@@ -56,6 +56,7 @@ FXDirector::FXDirector()
     m_soundResource.get("assets/sound/bonus.wav");
     m_soundResource.get("assets/sound/get_hat.wav");
     m_soundResource.get("assets/sound/hat_land.wav");
+    m_soundResource.get("assets/sound/crate_break.wav");
 }
 
 //public
@@ -95,6 +96,9 @@ void FXDirector::handleMessage(const xy::Message& msg)
             case ActorID::BubbleTwo:
             case ActorID::Bonus:
                 playSound(m_soundResource.get("assets/sound/pop.wav"));
+                break;
+            case ActorID::Crate:
+                playSound(m_soundResource.get("assets/sound/crate_break.wav"));
                 break;
             }
         }

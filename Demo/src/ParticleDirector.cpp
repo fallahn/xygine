@@ -50,6 +50,7 @@ ParticleDirector::ParticleDirector(xy::TextureResource& tr)
     m_settings[SettingsID::BubblePop].loadFromFile("assets/particles/pop.xyp", tr);
     m_settings[SettingsID::Score].loadFromFile("assets/particles/score.xyp", tr);
     m_settings[SettingsID::SpawnNPC].loadFromFile("assets/particles/spawn.xyp", tr);
+    m_settings[SettingsID::BreakCrate].loadFromFile("assets/particles/crate.xyp", tr);
 }
 
 //public
@@ -89,6 +90,9 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
                 {
                     ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
                 }
+                break;
+            case ActorID::Crate:
+                ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BreakCrate];
                 break;
             }
             ent.getComponent<xy::Transform>().setPosition(data.x, data.y);

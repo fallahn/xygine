@@ -42,13 +42,14 @@ source distribution.
 namespace
 {
     const sf::Uint32 NpcScore = 500;
-    const sf::Uint32 PowerupScore = 800;
+    const sf::Uint32 PowerupScore = 750;
     const sf::Uint32 GooblyScore = 850;
     const sf::Uint32 SmallFruitScore = 350;
     const sf::Uint32 LargeFruitScore = 1000;
     const sf::Uint32 BonusScore = 100;
-    const sf::Uint32 BonusCompletionScore = 1500;
+    const sf::Uint32 BonusCompletionScore = 2500;
     const sf::Uint32 HatPickUpScore = 50;
+    const sf::Uint32 CrateScore = 1000;
 
     const sf::Uint32 lifeScore = 10000; //extra life is awarded in multiples of this
     const sf::Uint8 maxLives = 6;
@@ -102,7 +103,19 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             }
             else
             {
-                auto score = data.causeOfDeath == NpcEvent::Bubble ? NpcScore : PowerupScore;
+                sf::Uint32 score = 0;
+                switch (data.causeOfDeath)
+                {
+                case NpcEvent::Bubble:
+                    score = NpcScore;
+                    break;
+                case NpcEvent::Crate:
+                    score = CrateScore;
+                    break;
+                default:
+                    score = PowerupScore;
+                    break;
+                }
                 
                 m_playerValues[data.playerID].score += score;
                 m_updateQueue[m_queuePos++] = std::make_pair(data.playerID, score);
