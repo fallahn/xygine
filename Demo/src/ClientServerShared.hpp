@@ -125,8 +125,8 @@ static constexpr float MaxVelocity = 800.f;
 
 static const sf::FloatRect MapBounds(0.f, 0.f, 16.f * 64.f, 17.f * 64.f);
 
-static const sf::Vector2f PlayerOneSpawn(102.f, 926.f);
-static const sf::Vector2f PlayerTwoSpawn(922.f, 926.f);
+static const sf::Vector2f PlayerOneSpawn(104.f, 920.f);
+static const sf::Vector2f PlayerTwoSpawn(920.f, 920.f);
 static const float PlayerInvincibleTime = 2.f;
 static const sf::Uint8 PlayerStartLives = 3;
 

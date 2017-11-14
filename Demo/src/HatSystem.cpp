@@ -250,9 +250,9 @@ void HatSystem::updateIdle(xy::Entity entity)
                 cmd.action = [&](xy::Entity playerEnt, float)
                 {
                     auto& player = playerEnt.getComponent<Player>();
-                    if (!player.hasHat && (player.state == Player::State::Jumping || player.state == Player::State::Walking))
+                    if ((player.sync.flags & Player::HatFlag) == 0 && (player.sync.state == Player::State::Jumping || player.sync.state == Player::State::Walking))
                     {
-                        player.hasHat = true;
+                        player.sync.flags |= Player::HatFlag;
                         auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
                         msg->type = PlayerEvent::GotHat;
                         msg->entity = playerEnt;

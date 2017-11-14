@@ -316,9 +316,9 @@ void NPCSystem::updateGoobly(xy::Entity entity, float dt)
             case CollisionType::Player:
             {
                 auto player = manifold.otherEntity.getComponent<Player>();
-                if (player.state != Player::State::Dead && player.state != Player::State::Dying)
+                if (player.sync.state != Player::State::Dead && player.sync.state != Player::State::Dying)
                 {
-                    if (player.timer > 0)
+                    if (player.sync.timer > 0)
                     {
                         //player is invincible so kill goobly
                         getScene()->destroyEntity(entity);
@@ -618,7 +618,7 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
                 //kill ent
             {
                 const auto& player = manifold.otherEntity.getComponent<Player>();
-                if (player.playerNumber == npc.bubbleOwner && player.state == Player::State::Jumping)
+                if (player.playerNumber == npc.bubbleOwner && player.sync.state == Player::State::Jumping)
                 {
                     despawn(entity, player.playerNumber, NpcEvent::Bubble);
                 }

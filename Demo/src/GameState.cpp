@@ -974,7 +974,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
        
 #ifdef XY_DEBUG
         debugShape.setPosition(state.x, state.y);
-        debugPlayerState = sf::Uint8(state.playerState);
+        debugPlayerState = sf::Uint8(state.sync.state);
 #endif 
         
         //reconcile - seems a bit contrived, but must match the player input with 2 local players
@@ -1300,8 +1300,6 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.addComponent<xy::SpriteAnimation>();
         entity.getComponent<AnimationController>() = m_animationControllers[SpriteID::MagicHat];
         entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
-        //entity.addComponent<xy::ParticleEmitter>().settings = m_hatEmitter;
-        //entity.getComponent<xy::ParticleEmitter>().start();
         break;
     case ActorID::BubbleOne:
     case ActorID::BubbleTwo:
@@ -1425,8 +1423,8 @@ void GameState::spawnClient(const ClientData& data)
             [](xy::Entity entity, float dt)
         {
             static sf::Color colour = sf::Color::White;
-            if (entity.getComponent<Player>().timer > 0
-                && entity.getComponent<Player>().state != Player::State::Dying)
+            if (entity.getComponent<Player>().sync.timer > 0
+                && entity.getComponent<Player>().sync.state != Player::State::Dying)
             {
                 static float flashTime = 0.0625f;
                 flashTime -= dt;
@@ -1542,7 +1540,7 @@ void GameState::switchMap(const MapData& data)
         {
             if (entity.hasComponent<Player>())
             {
-                entity.getComponent<Player>().state = Player::State::Disabled;
+                entity.getComponent<Player>().sync.state = Player::State::Disabled;
             }
             entity.getComponent<AnimationController>().nextAnimation = 
                 (entity.getComponent<AnimationController>().currentAnim == AnimationController::Dead) ? 
@@ -1582,12 +1580,13 @@ void GameState::spawnMapActors()
         entity.addComponent<xy::Transform>().setOrigin(WhirlyBobOrigin);
         entity.addComponent<Actor>() = m_mapData.NPCs[i];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
-        entity.addComponent<xy::NetInterpolate>();
+        entity.addComponent<xy::NetInterpolate>();      
 
         /*
         Even though these are only actors NPCs require collision with the player to
         ensure the player state is properly updated during reconciliation
         */
+        entity.addComponent<xy::QuadTreeItem>().setArea(WhirlyBobBounds);
         switch (m_mapData.NPCs[i].type)
         {
         default:
@@ -1628,12 +1627,32 @@ void GameState::spawnMapActors()
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.addComponent<xy::ParticleEmitter>().settings = emitterSettings;
     }
+
+    xy::SpriteSheet spriteSheet;
+    spriteSheet.loadFromFile("assets/sprites/power_ups.spt", m_textureResource);
+
+    for (auto i = 0; i < m_mapData.crateCount; ++i)
+    {
+        auto entity = m_scene.createEntity();
+        entity.addComponent<xy::Transform>();// .setOrigin(WhirlyBobOrigin);
+        entity.addComponent<Actor>() = m_mapData.crates[i];
+        entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
+        entity.addComponent<xy::NetInterpolate>();
+        entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("crate");
+        entity.addComponent<xy::Drawable>().setDepth(-3);
+        entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
+        entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Crate);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+        entity.addComponent<xy::SpriteAnimation>().play(0);
+        entity.addComponent<AnimationController>();
+        entity.addComponent<xy::QuadTreeItem>().setArea(CrateBounds);
+    }
 }
 
 void GameState::spawnWarning()
 {
     auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Transform>().setPosition(/*m_scene.getActiveCamera().getComponent<xy::Transform>().getPosition()*/MapBounds.width / 2.f, MapBounds.height /  2.f);
+    entity.addComponent<xy::Transform>().setPosition(MapBounds.width / 2.f, MapBounds.height /  2.f);
     entity.getComponent<xy::Transform>().move(xy::DefaultSceneSize.x / 1.8f, -180.f);
     entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString("Hurry Up!");
     entity.getComponent<xy::Text>().setCharacterSize(200);

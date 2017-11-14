@@ -107,40 +107,40 @@ void PlayerSystem::process(float)
 
             //if shoot was pressed but not last frame, raise message
             //note this is NOT reconciled and ammo actors are entirely server side
-            if ((currentMask & InputFlag::Shoot) && player.canShoot)
+            if ((currentMask & InputFlag::Shoot) && (player.sync.flags & Player::ShootFlag))
             {
                 auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
                 msg->entity = entity;
                 msg->type = PlayerEvent::FiredWeapon;
 
-                player.canShoot = false;
+                player.sync.flags &= ~Player::ShootFlag;
             }
             else if ((currentMask & InputFlag::Shoot) == 0
-                && (player.state == Player::State::Walking || player.state == Player::State::Jumping))
+                && (player.sync.state == Player::State::Walking || player.sync.state == Player::State::Jumping))
             {
-                player.canShoot = true;
+                player.sync.flags |= Player::ShootFlag;
             }
 
             processInput(currentMask, delta, entity);
 
             //probably should be server side only?
-            if (player.state == Player::State::Dying && player.timer < 0) //respawn
+            if (player.sync.state == Player::State::Dying && player.sync.timer < 0) //respawn
             {
-                if (player.lives)
+                if (player.sync.lives)
                 {
                     tx.setPosition(player.spawnPosition);
-                    player.state = Player::State::Walking;
-                    player.direction =
+                    player.sync.state = Player::State::Walking;
+                    player.sync.direction =
                         (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
 
-                    player.timer = PlayerInvincibleTime;
+                    player.sync.timer = PlayerInvincibleTime;
                 }
                 else
                 {
-                    player.state = Player::State::Dead;
+                    player.sync.state = Player::State::Dead;
                     entity.getComponent<CollisionComponent>().setCollisionMaskBits(0); //remove collision
                 }
-                player.velocity.y = 0.f;
+                player.sync.velocity.y = 0.f;
             }
 
             player.lastUpdatedInput = (player.lastUpdatedInput + 1) % player.history.size();
@@ -148,21 +148,21 @@ void PlayerSystem::process(float)
 
         //update animation state
         auto& animController = entity.getComponent<AnimationController>();
-        animController.direction = (player.direction == Player::Direction::Left) ? 1.f : -1.f;
-        if (player.state == Player::State::Jumping)
+        animController.direction = (player.sync.direction == Player::Direction::Left) ? 1.f : -1.f;
+        if (player.sync.state == Player::State::Jumping)
         {
-            animController.nextAnimation = (player.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
+            animController.nextAnimation = (player.sync.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
         }
-        else if(player.state == Player::State::Walking)
+        else if(player.sync.state == Player::State::Walking)
         {
             xMotion = tx.getPosition().x - xMotion;
             animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
         }
-        else if(player.state == Player::State::Dying)
+        else if(player.sync.state == Player::State::Dying)
         {
             animController.nextAnimation = AnimationController::Die;
         }
-        else if (player.state == Player::State::Dead)
+        else if (player.sync.state == Player::State::Dead)
         {
             animController.nextAnimation = AnimationController::Dead;
         }
@@ -201,14 +201,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
     auto& tx = entity.getComponent<xy::Transform>();
 
     tx.setPosition(state.x, state.y);
-    player.state = state.playerState;
-    player.velocity.y = state.playerVelocity;
-    player.timer = state.playerTimer;
-    player.canJump = (state.boolFlags & ClientState::JumpFlag);
-    player.canLand = state.playerCanLand;
-    player.canRideBubble = (state.boolFlags & ClientState::BubbleFlag);
-    player.lives = state.playerLives;
-    player.hasHat = (state.boolFlags & ClientState::HatFlag);
+    player.sync = state.sync;
 
     //find the oldest timestamp not used by server
     auto ip = std::find_if(player.history.rbegin(), player.history.rend(),
@@ -244,21 +237,21 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
 
     //update resulting animation
     auto& animController = entity.getComponent<AnimationController>();
-    animController.direction = (player.direction == Player::Direction::Left) ? 1.f : -1.f;
-    if (player.state == Player::State::Jumping)
+    animController.direction = (player.sync.direction == Player::Direction::Left) ? 1.f : -1.f;
+    if (player.sync.state == Player::State::Jumping)
     {
-        animController.nextAnimation = (player.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
+        animController.nextAnimation = (player.sync.velocity.y > 0) ? AnimationController::JumpDown : AnimationController::JumpUp;
     }
-    else if(player.state == Player::State::Walking)
+    else if(player.sync.state == Player::State::Walking)
     {
         float xMotion = tx.getPosition().x - state.x;
         animController.nextAnimation = (xMotion == 0) ? AnimationController::Idle : AnimationController::Walk;
     }
-    else if (player.state == Player::State::Dying)
+    else if (player.sync.state == Player::State::Dying)
     {
         animController.nextAnimation = AnimationController::Die;
     }
-    else if (player.state == Player::State::Dead)
+    else if (player.sync.state == Player::State::Dead)
     {
         animController.nextAnimation = AnimationController::Dead;
     }
@@ -296,19 +289,19 @@ void PlayerSystem::processInput(sf::Uint16 currentMask, float delta, xy::Entity 
     //let go of jump so enable jumping again
     if ((currentMask & InputFlag::Up) == 0)
     {
-        player.canJump = true;
+        player.sync.flags |= Player::JumpFlag;
     }
 
     //state specific...
-    player.timer -= delta;
-    if (player.state == Player::State::Walking)
+    player.sync.timer -= delta;
+    if (player.sync.state == Player::State::Walking)
     {
         if ((currentMask & InputFlag::Up)
-            && player.canJump)
+            && (player.sync.flags & Player::JumpFlag))
         {
-            player.state = Player::State::Jumping;
-            player.velocity.y = -initialJumpVelocity;
-            player.canJump = false;
+            player.sync.state = Player::State::Jumping;
+            player.sync.velocity.y = -initialJumpVelocity;
+            player.sync.flags &= ~Player::JumpFlag;
 
             entity.getComponent<AnimationController>().nextAnimation = AnimationController::JumpUp;
 
@@ -320,48 +313,48 @@ void PlayerSystem::processInput(sf::Uint16 currentMask, float delta, xy::Entity 
             msg->entity = entity;
         }
     }
-    else if (player.state == Player::State::Jumping)
+    else if (player.sync.state == Player::State::Jumping)
     {
         //variable jump height
         if ((currentMask & InputFlag::Up) == 0
-            && player.velocity.y < minJumpVelocity)
+            && player.sync.velocity.y < minJumpVelocity)
         {
-            player.velocity.y = minJumpVelocity;
+            player.sync.velocity.y = minJumpVelocity;
         }
 
-        tx.move({ 0.f, player.velocity.y * delta });
-        player.velocity.y += Gravity * delta;
-        player.velocity.y = std::min(player.velocity.y, MaxVelocity);
+        tx.move({ 0.f, player.sync.velocity.y * delta });
+        player.sync.velocity.y += Gravity * delta;
+        player.sync.velocity.y = std::min(player.sync.velocity.y, MaxVelocity);
 
         //reenable downward collision
-        if (player.velocity.y > 0)
+        if (player.sync.velocity.y > 0)
         {
             entity.getComponent<CollisionComponent>().setCollisionMaskBits(DownMask);
         }
     }
-    else if (player.state == Player::State::Dying)
+    else if (player.sync.state == Player::State::Dying)
     {
         //dying
-        player.velocity.y += Gravity * delta;
-        player.velocity.y = std::min(player.velocity.y, MaxVelocity);
-        tx.move({ 0.f, player.velocity.y * delta });
-        player.canShoot = false;
+        player.sync.velocity.y += Gravity * delta;
+        player.sync.velocity.y = std::min(player.sync.velocity.y, MaxVelocity);
+        tx.move({ 0.f, player.sync.velocity.y * delta });
+        player.sync.flags &= ~Player::ShootFlag;
     }
 
     //move with input if not dying
-    if (player.state == Player::State::Walking || player.state == Player::State::Jumping)
+    if (player.sync.state == Player::State::Walking || player.sync.state == Player::State::Jumping)
     {
         auto motion = parseInput(currentMask);
         tx.move(speed * motion * delta);
-        player.velocity.x = speed * motion.x; //used to decide how much velocity to add to bubble spawn
+        player.sync.velocity.x = speed * motion.x; //used to decide how much velocity to add to bubble spawn
 
         if (motion.x > 0)
         {
-            player.direction = Player::Direction::Right;
+            player.sync.direction = Player::Direction::Right;
         }
         else if (motion.x < 0)
         {
-            player.direction = Player::Direction::Left;
+            player.sync.direction = Player::Direction::Left;
         }
     }
 }
@@ -369,7 +362,7 @@ void PlayerSystem::processInput(sf::Uint16 currentMask, float delta, xy::Entity 
 void PlayerSystem::resolveCollision(xy::Entity entity)
 {
     auto& player = entity.getComponent<Player>();
-    switch (player.state)
+    switch (player.sync.state)
     {
     default:break;
     case Player::State::Disabled:
@@ -419,7 +412,7 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                     }
                     break;*/
                 case CollisionType::Bubble:
-                    if (!player.canRideBubble)
+                    if ((player.sync.flags & Player::BubbleFlag) == 0)
                     {
                         break;
                     }
@@ -478,7 +471,8 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
             
             if (collisionCount == 0)
             {
-                entity.getComponent<Player>().state = Player::State::Jumping; //enter freefall
+                entity.getComponent<Player>().sync.state = Player::State::Jumping; //enter freefall
+                return;
             }
         }
     }
@@ -492,7 +486,7 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
     auto& player = entity.getComponent<Player>();    
     auto& tx = entity.getComponent<xy::Transform>();
 
-    player.canRideBubble = false;
+    player.sync.flags &= ~Player::BubbleFlag;
 
     //check for collision and resolve
     for (auto i = 0u; i < hitboxCount; ++i)
@@ -505,7 +499,7 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
 
             if (collisionCount == 0)
             {
-                player.canLand |= BodyClear;
+                player.sync.canLand |= BodyClear;
             }
             else
             {
@@ -523,7 +517,7 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                 switch (man.otherType)
                 {
                 default: 
-                    player.canLand |= BodyClear;
+                    player.sync.canLand |= BodyClear;
                     break;
                 /*case CollisionType::MagicHat:
                     if (!player.hasHat)
@@ -535,32 +529,32 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                         msg->entity = entity;
                     }*/
                 case CollisionType::Bubble:
-                    player.canRideBubble = true;
+                    player.sync.flags |= Player::BubbleFlag;
                 case CollisionType::Platform:
                     /*if (man.normal.x != 0)
                     {
                         tx.move(man.normal * man.penetration);
                     }                    
-                    else*/ if ((player.canLand & PlayerClear)&& player.velocity.y > 0 && man.normal.y < 0)
+                    else*/ if ((player.sync.canLand & PlayerClear)&& player.sync.velocity.y > 0 && man.normal.y < 0)
                     {
-                        player.state = Player::State::Walking;
-                        player.velocity.y = 0.f;
+                        player.sync.state = Player::State::Walking;
+                        player.sync.velocity.y = 0.f;
                         tx.move(man.normal * man.penetration);
                         return; //quit when we change state because this function is no longer valid
                     }
 
-                    player.canLand &= ~BodyClear;
+                    player.sync.canLand &= ~BodyClear;
                     break;
                 case CollisionType::Solid:
-                    if (man.normal.y < 0 && player.velocity.y > 0)
+                    if (man.normal.y < 0 && player.sync.velocity.y > 0)
                     {
-                        player.state = Player::State::Walking;
-                        player.velocity.y = 0.f;
+                        player.sync.state = Player::State::Walking;
+                        player.sync.velocity.y = 0.f;
                         return;
                     }
                     else if (man.normal.y > 0) //bonk head and fall
                     {
-                        player.velocity = -player.velocity * 0.25f;
+                        player.sync.velocity = -player.sync.velocity * 0.25f;
                     }
                     tx.move(man.normal * man.penetration);
                     //player.canLand &= ~BodyClear;
@@ -593,18 +587,18 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                 auto man = manifolds[j];
                 if (man.otherType == CollisionType::Platform)
                 {
-                    if (player.velocity.y < 0)
+                    if (player.sync.velocity.y < 0)
                     {
-                        player.canLand &= ~FootClear;
+                        player.sync.canLand &= ~FootClear;
                     }
                     else
                     {
-                        player.canLand |= FootClear;
+                        player.sync.canLand |= FootClear;
                     }
                 }
                 else
                 {
-                    player.canLand &= ~FootClear;
+                    player.sync.canLand &= ~FootClear;
                 }
             }
         }
@@ -631,7 +625,7 @@ void PlayerSystem::collisionDying(xy::Entity entity)
                 if ((man.otherType & (CollisionType::Solid | CollisionType::Platform)))
                 {
                     entity.getComponent<xy::Transform>().move(man.normal * man.penetration);
-                    entity.getComponent<Player>().velocity.y = 0.f;
+                    entity.getComponent<Player>().sync.velocity.y = 0.f;
                 }
             }
         }
@@ -641,34 +635,34 @@ void PlayerSystem::collisionDying(xy::Entity entity)
 bool PlayerSystem::npcCollision(xy::Entity entity, const Manifold& man)
 {
     auto& player = entity.getComponent<Player>();
-    if (player.timer < 0 && man.otherEntity.hasComponent<NPC>())
+    if (player.sync.timer < 0 && man.otherEntity.hasComponent<NPC>())
     {
         const auto& npc = man.otherEntity.getComponent<NPC>();
         if (npc.state != NPC::State::Bubble && npc.state != NPC::State::Dying)
         {
-            if (player.hasHat)
+            if (player.sync.flags & Player::HatFlag)
             {
-                player.timer = PlayerInvincibleTime;
+                player.sync.timer = PlayerInvincibleTime;
 
                 //raise message to lose hat
                 auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
                 msg->type = PlayerEvent::LostHat;
                 msg->entity = entity;
 
-                player.hasHat = false;
+                player.sync.flags &= ~Player::HatFlag;
                 return false;
             }
             else
             {
-                player.state = Player::State::Dying;
-                player.timer = dyingTime;
+                player.sync.state = Player::State::Dying;
+                player.sync.timer = dyingTime;
 
                 entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
 
-                player.lives--;
+                player.sync.lives--;
 
                 //remove collision if player has no lives left
-                if (!player.lives)
+                if (!player.sync.lives)
                 {
                     entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::Platform);
 

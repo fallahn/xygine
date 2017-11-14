@@ -6,6 +6,13 @@ sprite_sheet power_ups
 	sprite crate
 	{
 		bounds = 384, 192, 64, 64
+
+		animation idle
+		{
+			frame = 384, 192, 64, 64
+			framerate = 30
+			loop = true
+		}
 	}
 
 	sprite player_one_flame

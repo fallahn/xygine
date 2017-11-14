@@ -127,7 +127,7 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             break;
         case ActorID::Bonus:
             amount = BonusScore;
-            m_playerValues[playerID].bonusFlags = data.player.getComponent<Player>().bonusFlags;
+            m_playerValues[playerID].bonusFlags = data.player.getComponent<Player>().sync.bonusFlags;
 
             if (m_playerValues[playerID].bonusFlags == 0) //round change was triggered
             {
@@ -148,7 +148,7 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         {
             //reset the old scores
             const auto& player = data.entity.getComponent<Player>();
-            m_playerValues[player.playerNumber].lives = player.lives;
+            m_playerValues[player.playerNumber].lives = player.sync.lives;
             m_playerValues[player.playerNumber].score = 0;
             m_playerValues[player.playerNumber].hat = false;
 
@@ -159,7 +159,7 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         else if (data.type == PlayerEvent::Died)
         {
             const auto& player = data.entity.getComponent<Player>();
-            m_playerValues[player.playerNumber].lives = player.lives;
+            m_playerValues[player.playerNumber].lives = player.sync.lives;
             m_updateQueue[m_queuePos++] = std::make_pair(player.playerNumber, 0);
         }
         else if (data.type == PlayerEvent::GotHat)
@@ -240,7 +240,7 @@ void InventoryDirector::checkLifeBonus(sf::Uint8 player, sf::Uint32 oldScore)
         cmd.targetFlags = (player == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
         cmd.action = [](xy::Entity entity, float)
         {
-            entity.getComponent<Player>().lives++;
+            entity.getComponent<Player>().sync.lives++;
         };
         getScene().getSystem<xy::CommandSystem>().sendCommand(cmd);
     }

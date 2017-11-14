@@ -104,19 +104,13 @@ struct ActorState
 struct ClientState final : public ActorState
 {
     sf::Int64 clientTime = 0;
-    Player::State playerState = Player::State::Walking;
-    float playerVelocity = 0.f;
-    float playerTimer = 0.f;
-    sf::Uint8 playerCanLand = 0;
-    sf::Uint8 playerLives = 3;
-
-    enum
-    {
-        JumpFlag = 0x1,
-        BubbleFlag = 0x2,
-        HatFlag = 0x4
-    };
-    sf::Uint8 boolFlags;
+    Player::SyncState sync;
+    //Player::State playerState = Player::State::Walking;
+    //float playerVelocity = 0.f;
+    //float playerTimer = 0.f;
+    //sf::Uint8 playerCanLand = 0;
+    //sf::Uint8 playerLives = 3;
+    //sf::Uint8 boolFlags;
 };
 
 //actor events for spawn/despawn etc
