@@ -277,9 +277,9 @@ void GameState::handleMessage(const xy::Message& msg)
 bool GameState::update(float dt)
 {   
     DPRINT("Actor count", std::to_string(debugActorCount));
-    DPRINT("Actor Update Count", std::to_string(debugActorUpdate));
+    //DPRINT("Actor Update Count", std::to_string(debugActorUpdate));
     //DPRINT("Player Server State", std::to_string(debugPlayerState));
-    DPRINT("Crown Vel", std::to_string(debugCrownVel.x) + ", " + std::to_string(debugCrownVel.y));
+    //DPRINT("Crown Vel", std::to_string(debugCrownVel.x) + ", " + std::to_string(debugCrownVel.y));
 
 #ifdef XY_DEBUG
     debugActorUpdate = 0;
@@ -1636,7 +1636,7 @@ void GameState::spawnMapActors()
     for (auto i = 0; i < m_mapData.crateCount; ++i)
     {
         auto entity = m_scene.createEntity();
-        entity.addComponent<xy::Transform>();// .setOrigin(WhirlyBobOrigin);
+        entity.addComponent<xy::Transform>().setOrigin(CrateOrigin);
         entity.addComponent<Actor>() = m_mapData.crates[i];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
         entity.addComponent<xy::NetInterpolate>();
@@ -1786,6 +1786,10 @@ void GameState::updateUI(const InventoryUpdate& data)
             scoreEnt.getComponent<xy::Text>().setString("1 UP!");
             scoreEnt.getComponent<xy::Text>().setCharacterSize(56);
             scoreEnt.addComponent<ScoreTag>().colour = sf::Color::Red;
+
+            auto* msg = getContext().appInstance.getMessageBus().post<PlayerEvent>(MessageID::PlayerMessage);
+            msg->type = PlayerEvent::GotExtraLife;
+            msg->entity = entity;
         }
         else
         {

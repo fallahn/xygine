@@ -46,7 +46,7 @@ namespace
 {
     const float MinVelocity = 25.f; //min len sqr
     const float PushAcceleration = 10.f;
-    const float LethalVelocity = 700000.f; //vel sqr before box becomes lethal
+    const float LethalVelocity = 100000.f; //vel sqr before box becomes lethal
 }
 
 CrateSystem::CrateSystem(xy::MessageBus& mb, xy::NetHost& nh)
@@ -88,6 +88,7 @@ void CrateSystem::process(float dt)
         {
             crate.velocity = {};
         }
+
         crate.lethal = (l2 > LethalVelocity);
     }
 }
@@ -127,7 +128,10 @@ void CrateSystem::groundCollision(xy::Entity entity)
                     {
                         entity.getComponent<xy::Transform>().move(manifolds[j].normal * manifolds[j].penetration);
                         crate.velocity += manifolds[j].normal * manifolds[j].penetration * PushAcceleration;
-                        crate.lastOwner = manifolds[j].otherEntity.getComponent<Player>().playerNumber;
+                        if (!crate.lethal) //only take ownership if not moving (or at least slow enough to not kill)
+                        {
+                            crate.lastOwner = manifolds[j].otherEntity.getComponent<Player>().playerNumber;
+                        }
                     }
                     break;
                 case CollisionType::Powerup:
@@ -145,7 +149,6 @@ void CrateSystem::groundCollision(xy::Entity entity)
 
                 if (/*crate.lethal || */manifolds[j].penetration > (CrateBounds.width / 2.f))
                 {
-                    //destroy the crate - TODO check if should explode
                     destroy(entity);
                     return;
                 }
@@ -157,6 +160,7 @@ void CrateSystem::groundCollision(xy::Entity entity)
             {
                 crate.groundContact = false;
                 crate.state = Crate::Falling;
+                crate.velocity.x *= 0.3f;
                 return;
             }
             
@@ -198,7 +202,8 @@ void CrateSystem::airCollision(xy::Entity entity)
                     || manifolds[j].otherType == CollisionType::Player)
                 {
                     //SQUISH
-                    if ((crate.velocity.y * 2.f) > std::abs(crate.velocity.x))
+                    if ((crate.velocity.y) > std::abs(crate.velocity.x * 2.f)
+                        && manifolds[j].normal.y < 0)
                     {
                         destroy(entity);
                     }
@@ -241,7 +246,7 @@ void CrateSystem::destroy(xy::Entity entity)
     {
         //spawn explosion
         auto expEnt = getScene()->createEntity();
-        expEnt.addComponent<Explosion>();
+        expEnt.addComponent<Explosion>().owner = entity.getComponent<Crate>().lastOwner;
         expEnt.addComponent<xy::Transform>().setPosition(tx.getPosition());
         expEnt.getComponent<xy::Transform>().setOrigin(ExplosionOrigin);
         expEnt.addComponent<Actor>().id = expEnt.getIndex();

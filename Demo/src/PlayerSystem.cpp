@@ -435,7 +435,9 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                     break;
                 case CollisionType::Crate:
                     tx.move(man.normal * man.penetration / 2.f);
-                    //if (crateCollision(entity, man)) return;
+                    break;
+                case CollisionType::Explosion:
+                    if (explosionCollision(entity, man)) return;
                     break;
                 case CollisionType::NPC:
                     if(npcCollision(entity, man)) return; //this killed us so stop with walking collisions
@@ -564,12 +566,9 @@ void PlayerSystem::collisionJumping(xy::Entity entity)
                         player.sync.velocity = -player.sync.velocity * 0.25f;
                     }
                     tx.move(man.normal * man.penetration);
-
-                    /*if (man.otherType == CollisionType::Crate
-                        && crateCollision(entity, man))
-                    {
-                        return;
-                    }*/
+                    break;
+                case CollisionType::Explosion:
+                    if (explosionCollision(entity, man)) return;
                     break;
                 case CollisionType::Teleport:
                     if (man.normal.y < 0)
@@ -703,16 +702,16 @@ bool PlayerSystem::npcCollision(xy::Entity entity, const Manifold& man)
     return false;
 }
 
-bool PlayerSystem::crateCollision(xy::Entity entity, const Manifold& manifold)
+bool PlayerSystem::explosionCollision(xy::Entity entity, const Manifold& manifold)
 {
     auto& player = entity.getComponent<Player>();
-    if (manifold.penetration > (PlayerBounds.width / 3.f)
-        && player.sync.timer < 0 && manifold.otherEntity.hasComponent<Crate>())
+    if (/*manifold.penetration > (PlayerBounds.width / 3.f)
+        &&*/ player.sync.timer < 0 /*&& manifold.otherEntity.hasComponent<Crate>()*/)
     {
-        if (manifold.otherEntity.getComponent<Crate>().lastOwner == player.playerNumber)
-        {
-            return false; //don't kill ourself with our own box
-        }
+        //if (manifold.otherEntity.getComponent<Crate>().lastOwner == player.playerNumber)
+        //{
+        //    return false; //don't kill ourself with our own box
+        //}
 
         if (player.sync.flags & Player::HatFlag)
         {

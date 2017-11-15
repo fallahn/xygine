@@ -48,7 +48,7 @@ struct NPC final
     sf::Int32 bubbleOwner = -1;
     bool angry = false;
     xy::Entity target; //used if targetting a player
-    float failSafeTimer = 5.f; //this is reduced if the NPC goes out of bounds, to remove stuck NPCs
+    float failSafeTimer = 15.f; //this is reduced if the NPC goes out of bounds, to remove stuck NPCs
 };
 
 class NPCSystem final : public xy::System

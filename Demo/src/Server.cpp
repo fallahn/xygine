@@ -716,7 +716,7 @@ void GameServer::initScene()
     m_scene.addSystem<BonusSystem>(m_messageBus, m_host);
     m_scene.addSystem<HatSystem>(m_messageBus, m_host);
     m_scene.addSystem<CrateSystem>(m_messageBus, m_host);
-    m_scene.addSystem<ExplosionSystem>(m_messageBus);
+    m_scene.addSystem<ExplosionSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
@@ -1078,6 +1078,7 @@ void GameServer::spawnCrate(sf::Vector2f position, bool explosive)
 {
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(position);
+    entity.getComponent<xy::Transform>().setOrigin(CrateOrigin);
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = ActorID::Crate;
 
@@ -1086,7 +1087,7 @@ void GameServer::spawnCrate(sf::Vector2f position, bool explosive)
     entity.addComponent<AnimationController>();
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
 
-    entity.addComponent<Crate>().explosive = true;// explosive;
+    entity.addComponent<Crate>().explosive = explosive;
 
     entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
     entity.getComponent<CollisionComponent>().addHitbox(CrateFoot, CollisionType::Foot);

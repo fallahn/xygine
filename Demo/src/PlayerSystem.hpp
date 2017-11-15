@@ -118,7 +118,7 @@ private:
     void collisionDying(xy::Entity);
 
     bool npcCollision(xy::Entity, const Manifold&); //returns true if this caused a state change
-    bool crateCollision(xy::Entity, const Manifold&); //as above
+    bool explosionCollision(xy::Entity, const Manifold&); //as above
 };
 
 #endif //DEMO_PLAYER_SYSTEM_HPP_

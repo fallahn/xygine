@@ -36,6 +36,7 @@ source distribution.
 #include "CommandIDs.hpp"
 #include "PowerupSystem.hpp"
 #include "CrateSystem.hpp"
+#include "Explosion.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -807,6 +808,12 @@ void NPCSystem::collisionNormal(xy::Entity entity)
                     }
 
                     break;
+                case CollisionType::Explosion:
+                    if (manifold.otherEntity.hasComponent<Explosion>())
+                    {
+                        despawn(entity, manifold.otherEntity.getComponent<Explosion>().owner, NpcEvent::Explosion);
+                    }
+                    break;
                 case CollisionType::Bubble:
                     //switch to bubble state if bubble in spawn state
                 {
@@ -963,6 +970,12 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                     }
 
                     break;
+                case CollisionType::Explosion:
+                    if (manifold.otherEntity.hasComponent<Explosion>())
+                    {
+                        despawn(entity, manifold.otherEntity.getComponent<Explosion>().owner, NpcEvent::Explosion);
+                    }
+                    break;
                 case CollisionType::Bubble:
                     //switch to bubble state if bubble in spawn state
                 {
@@ -1002,11 +1015,13 @@ void NPCSystem::checkBounds(xy::Entity entity, float dt)
 {
     const auto& tx = entity.getComponent<xy::Transform>();
 
-    if (!MapBounds.contains(tx.getPosition()))
+    static const sf::FloatRect bounds(0.f, 160.f, MapBounds.width, MapBounds.height - 160.f);
+
+    if (!bounds.contains(tx.getPosition()))
     {
         entity.getComponent<NPC>().failSafeTimer -= dt;
 
-        LOG("NPC out of bounds: " + std::to_string(entity.getComponent<NPC>().failSafeTimer), xy::Logger::Type::Info);
+        //LOG("NPC out of bounds: " + std::to_string(entity.getComponent<NPC>().failSafeTimer), xy::Logger::Type::Info);
 
         if (entity.getComponent<NPC>().failSafeTimer < 0)
         {
@@ -1032,5 +1047,9 @@ void NPCSystem::checkBounds(xy::Entity entity, float dt)
 
             LOG("NPC out of bounds DESTROYED", xy::Logger::Type::Info);
         }
+    }
+    else
+    {
+        entity.getComponent<NPC>().failSafeTimer = std::min(15.f, entity.getComponent<NPC>().failSafeTimer + dt);
     }
 }

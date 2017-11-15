@@ -28,20 +28,26 @@ source distribution.
 #ifndef DEMO_EXPLOSION_HPP_
 #define DEMO_EXPLOSION_HPP_
 
+#include "MapAnimator.hpp"
+
 #include <xyginext/ecs/System.hpp>
 #include <xyginext/ecs/Entity.hpp>
 #include <xyginext/ecs/Scene.hpp>
+#include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/network/NetHost.hpp>
 
 struct Explosion final
 {
     float lifetime = 1.2f;
+    sf::Uint8 owner = 3;
 };
 
 class ExplosionSystem final : public xy::System
 {
 public:
-    explicit ExplosionSystem(xy::MessageBus& mb)
-        : xy::System(mb, typeid(ExplosionSystem))
+    ExplosionSystem(xy::MessageBus& mb, xy::NetHost& host)
+        : xy::System(mb, typeid(ExplosionSystem)),
+        m_host(host)
     {
         requireComponent<Explosion>();
     }
@@ -56,12 +62,22 @@ public:
             if (exp.lifetime < 0)
             {
                 getScene()->destroyEntity(entity);
+
+                const auto& tx = entity.getComponent<xy::Transform>();
+
+                ActorEvent evt;
+                evt.actor = entity.getComponent<Actor>();
+                evt.type = ActorEvent::Died;
+                evt.x = tx.getPosition().x;
+                evt.y = tx.getPosition().y;
+
+                m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
             }
         }
     }
 
 private:
-
+    xy::NetHost& m_host;
 };
 
 #endif //DEMO_EXPLOSION_HPP_

@@ -9,11 +9,11 @@ particle_system blop
 	lifetime_variance = 0.1
 	colour = 255,255,255,255
 	rotation_speed = 2
-	scale_affector = 1.6
-	size = 16.0
+	scale_affector = 2.6
+	size = 24.0
 	emit_rate = 40
 	emit_count = 4
-	spawn_radius = 32
+	spawn_radius = 64
 	release_count = 64
-	spawn_offset = 32,32
+	//spawn_offset = 96,96
 }

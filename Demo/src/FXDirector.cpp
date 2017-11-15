@@ -57,6 +57,7 @@ FXDirector::FXDirector()
     m_soundResource.get("assets/sound/get_hat.wav");
     m_soundResource.get("assets/sound/hat_land.wav");
     m_soundResource.get("assets/sound/crate_break.wav");
+    m_soundResource.get("assets/sound/one_up.wav");
 }
 
 //public
@@ -68,13 +69,18 @@ void FXDirector::handleMessage(const xy::Message& msg)
     case MessageID::PlayerMessage:
     {
         const auto& data = msg.getData<PlayerEvent>();
-        if (data.type == PlayerEvent::GotHat)
+        switch (data.type)
         {
+        default:break;
+        case PlayerEvent::GotExtraLife:
+            playSound(m_soundResource.get("assets/sound/one_up.wav"));
+            break;
+        case PlayerEvent::GotHat:
             playSound(m_soundResource.get("assets/sound/get_hat.wav"));
-        }
-        else if (data.type == PlayerEvent::LostHat)
-        {
+            break;
+        case PlayerEvent::LostHat:
             playSound(m_soundResource.get("assets/sound/hat_land.wav"));
+            break;
         }
     }
         break;
@@ -234,7 +240,7 @@ void FXDirector::resizeEntities()
     {
         m_entities[i] = getScene().createEntity();
         m_entities[i].addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("placeholder"));
-        m_entities[i].getComponent<xy::AudioEmitter>().setVolume(100.f);
+        m_entities[i].getComponent<xy::AudioEmitter>().setVolume(200.f);
         m_entities[i].getComponent<xy::AudioEmitter>().setMinDistance(1920.f);
         m_entities[i].getComponent<xy::AudioEmitter>().setRelativeTolistener(true);
         m_entities[i].addComponent<xy::Transform>();

@@ -120,6 +120,7 @@ static const sf::Vector2f SmallFoodOrigin(32.f, 32.f);
 
 static const sf::FloatRect CrateBounds(2.f, 2.f, 60.f, 62.f);
 static const sf::FloatRect CrateFoot = ClocksyFoot;
+static const sf::Vector2f CrateOrigin(32.f, 32.f);
 
 static const sf::FloatRect ExplosionBounds(0.f, 0.f, 192.f, 192.f);
 static const sf::Vector2f ExplosionOrigin(96.f, 96.f);

@@ -58,7 +58,8 @@ struct PlayerEvent final
         Jumped,
         Died,
         GotHat,
-        LostHat
+        LostHat,
+        GotExtraLife
     }type;
     xy::Entity entity;
 };
@@ -91,7 +92,8 @@ struct NpcEvent final
         Bubble,
         Lightning,
         Flame,
-        Crate
+        Crate,
+        Explosion
     };
     sf::Uint8 causeOfDeath = Bubble;
 };
