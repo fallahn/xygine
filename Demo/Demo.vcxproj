@@ -178,6 +178,7 @@
     <ClInclude Include="src\EndingDirector.hpp" />
     <ClInclude Include="src\EndingMessages.hpp" />
     <ClInclude Include="src\ErrorState.hpp" />
+    <ClInclude Include="src\Explosion.hpp" />
     <ClInclude Include="src\FruitSystem.hpp" />
     <ClInclude Include="src\FXDirector.hpp" />
     <ClInclude Include="src\Game.hpp" />

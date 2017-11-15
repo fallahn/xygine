@@ -72,6 +72,7 @@ namespace xy
             std::size_t count = 0;
             sf::Texture* texture = nullptr;
             sf::FloatRect bounds;
+            sf::BlendMode blendMode = sf::BlendAlpha;
         };
 
         std::vector<EmitterArray> m_emitterArrays;

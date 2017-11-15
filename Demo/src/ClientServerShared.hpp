@@ -76,12 +76,14 @@ namespace CollisionFlags //used in broad phase culling
         HardBounds = 0x200,
         MagicHat = 0x400,
         Crate = 0x800,
+        Explosion = 0x1000,
 
-        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup | Bonus | MagicHat | Crate,
-        NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup | HardBounds | Crate,
+        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup | Bonus | MagicHat | Crate | Explosion,
+        NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup | HardBounds | Crate | Explosion,
         FruitMask = Solid | Platform | Player | Teleport,
         PowerupMask = Platform | Solid | Player | NPC | Crate,
-        CrateMask = Platform | Solid | Player | NPC | Powerup | Teleport | Crate
+        CrateMask = Platform | Solid | Player | NPC | Powerup | Teleport | Crate,
+        ExplosionMask = Player | NPC
     };
 }
 
@@ -118,6 +120,9 @@ static const sf::Vector2f SmallFoodOrigin(32.f, 32.f);
 
 static const sf::FloatRect CrateBounds(2.f, 2.f, 60.f, 62.f);
 static const sf::FloatRect CrateFoot = ClocksyFoot;
+
+static const sf::FloatRect ExplosionBounds(0.f, 0.f, 192.f, 192.f);
+static const sf::Vector2f ExplosionOrigin(96.f, 96.f);
 
 static constexpr float TeleportDistance = 886.f;
 static constexpr float Gravity = 2200.f;

@@ -30,9 +30,15 @@ source distribution.
 #include "MapData.hpp"
 #include "PacketIDs.hpp"
 #include "PlayerSystem.hpp"
+#include "PowerupSystem.hpp"
+#include "Explosion.hpp"
+#include "AnimationController.hpp"
+#include "CommandIDs.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/components/QuadTreeItem.hpp>
+#include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/network/NetHost.hpp>
 #include <xyginext/util/Vector.hpp>
 
@@ -124,6 +130,17 @@ void CrateSystem::groundCollision(xy::Entity entity)
                         crate.lastOwner = manifolds[j].otherEntity.getComponent<Player>().playerNumber;
                     }
                     break;
+                case CollisionType::Powerup:
+                    if (manifolds[j].otherEntity.hasComponent<Powerup>())
+                    {
+                        const auto& powerup = manifolds[j].otherEntity.getComponent<Powerup>();
+                        if (powerup.state != Powerup::State::Idle)
+                        {
+                            destroy(entity);
+                            return;
+                        }
+                    }
+                    break;
                 }
 
                 if (/*crate.lethal || */manifolds[j].penetration > (CrateBounds.width / 2.f))
@@ -213,11 +230,35 @@ void CrateSystem::destroy(xy::Entity entity)
 
     //broadcast to client
     ActorEvent evt;
-    evt.actor.id = entity.getIndex();
-    evt.actor.type = entity.getComponent<Actor>().type;
+    evt.actor = entity.getComponent<Actor>();
     evt.x = tx.getPosition().x;
     evt.y = tx.getPosition().y;
     evt.type = ActorEvent::Died;
 
     m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+
+    if (entity.getComponent<Crate>().explosive)
+    {
+        //spawn explosion
+        auto expEnt = getScene()->createEntity();
+        expEnt.addComponent<Explosion>();
+        expEnt.addComponent<xy::Transform>().setPosition(tx.getPosition());
+        expEnt.getComponent<xy::Transform>().setOrigin(ExplosionOrigin);
+        expEnt.addComponent<Actor>().id = expEnt.getIndex();
+        expEnt.getComponent<Actor>().type = ActorID::Explosion;
+        expEnt.addComponent<CollisionComponent>().addHitbox(ExplosionBounds, CollisionType::Explosion);
+        expEnt.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Explosion);
+        expEnt.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::ExplosionMask);
+        expEnt.addComponent<xy::QuadTreeItem>().setArea(ExplosionBounds);
+        expEnt.addComponent<AnimationController>();
+        expEnt.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
+
+        //broadcast to clients
+        evt.actor = expEnt.getComponent<Actor>();
+        evt.x = tx.getPosition().x;
+        evt.y = tx.getPosition().y;
+        evt.type = ActorEvent::Spawned;
+
+        m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+    }
 }

@@ -25,53 +25,43 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_PARTICLE_DIRECTOR_HPP_
-#define DEMO_APRTICLE_DIRECTOR_HPP_
+#ifndef DEMO_EXPLOSION_HPP_
+#define DEMO_EXPLOSION_HPP_
 
-#include <xyginext/ecs/Director.hpp>
+#include <xyginext/ecs/System.hpp>
 #include <xyginext/ecs/Entity.hpp>
+#include <xyginext/ecs/Scene.hpp>
 
-#include <xyginext/ecs/components/ParticleEmitter.hpp>
-
-#include <vector>
-#include <array>
-
-namespace xy
+struct Explosion final
 {
-    class TextureResource;
-}
+    float lifetime = 1.2f;
+};
 
-class ParticleDirector final : public xy::Director 
+class ExplosionSystem final : public xy::System
 {
 public:
-    explicit ParticleDirector(xy::TextureResource&);
+    explicit ExplosionSystem(xy::MessageBus& mb)
+        : xy::System(mb, typeid(ExplosionSystem))
+    {
+        requireComponent<Explosion>();
+    }
 
-    void handleMessage(const xy::Message&) override;
-
-    void handleEvent(const sf::Event&) override;
-
-    void process(float) override;
+    void process(float dt) override
+    {
+        auto& entities = getEntities();
+        for (auto& entity : entities)
+        {
+            auto& exp = entity.getComponent<Explosion>();
+            exp.lifetime -= dt;
+            if (exp.lifetime < 0)
+            {
+                getScene()->destroyEntity(entity);
+            }
+        }
+    }
 
 private:
 
-    enum SettingsID
-    {
-        BubblePop,
-        SpawnNPC,
-        Score,
-        BreakCrate,
-        Explosion,
-        Count
-    };
-
-    std::array<xy::EmitterSettings, SettingsID::Count> m_settings;
-
-    std::size_t m_nextFreeEmitter;
-    std::vector<xy::Entity> m_emitters;
-
-    void resizeEmitters();
-    xy::Entity getNextEntity();
 };
 
-
-#endif //DEMO_PARTICLE_DIRECTOR_HPP_
+#endif //DEMO_EXPLOSION_HPP_

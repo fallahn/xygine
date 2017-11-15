@@ -211,6 +211,7 @@ void ParticleSystem::process(float dt)
             vertArray.count = 0;
             vertArray.texture = (emitter.settings.texture) ? emitter.settings.texture : &m_dummyTexture;
             vertArray.bounds = emitter.m_bounds;
+            vertArray.blendMode = emitter.settings.blendmode;
 
             for (auto i = 0u; i < emitter.m_nextFreeParticle; ++i)
             {
@@ -265,6 +266,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         if (m_emitterArrays[i].bounds.intersects(viewableArea))
         {
             m_shader.setUniform("u_texture", *m_emitterArrays[i].texture);
+            states.blendMode = m_emitterArrays[i].blendMode;
             rt.draw(m_emitterArrays[i].vertices.data(), m_emitterArrays[i].count, sf::Points, states);
             //DPRINT("Particle Count", std::to_string(m_emitterArrays[i].count));
         }

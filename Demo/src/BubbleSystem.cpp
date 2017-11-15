@@ -90,8 +90,7 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
 
             //broadcast to clients
             ActorEvent evt;
-            evt.actor.id = entity.getIndex();
-            evt.actor.type = entity.getComponent<Actor>().type;
+            evt.actor = entity.getComponent<Actor>();
             evt.x = pos.x;
             evt.y = pos.y;
             evt.type = ActorEvent::Spawned;

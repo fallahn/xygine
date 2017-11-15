@@ -1294,6 +1294,8 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     switch (actorEvent.actor.type)
     {
     default: break;
+    case ActorID::Explosion:
+        break;
     case ActorID::MagicHat:
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::MagicHat];
         entity.addComponent<xy::Drawable>().setDepth(3);

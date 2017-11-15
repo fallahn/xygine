@@ -54,7 +54,8 @@ namespace CollisionType
         Bubble = 0x100,
         HardBounds = 0x200,
         MagicHat = 0x400,
-        Crate = 0x800
+        Crate = 0x800,
+        Explosion = 1000
     };
 };
 
