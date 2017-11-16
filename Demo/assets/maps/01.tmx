@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="59">
  <properties>
-  <property name="round_time" type="float" value="120"/>
+  <property name="round_time" type="float" value="20"/>
  </properties>
  <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
   <image source="../images/block.png" width="512" height="512"/>
@@ -41,30 +41,5 @@
   <object id="44" name="clocksy" x="896" y="240" width="16" height="16"/>
   <object id="45" name="clocksy" x="128" y="240" width="16" height="16"/>
   <object id="46" name="squatmo" x="512" y="256" width="16" height="16"/>
- </objectgroup>
- <objectgroup name="crates">
-  <object id="52" name="crate" gid="2" x="384" y="576" width="64" height="64"/>
-  <object id="53" name="crate" gid="2" x="640" y="576" width="64" height="64">
-   <properties>
-    <property name="explosive" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="54" name="crate" gid="2" x="240" y="576" width="64" height="64">
-   <properties>
-    <property name="explosive" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="55" name="crate" gid="2" x="240" y="752" width="64" height="64"/>
-  <object id="56" name="crate" gid="2" x="704" y="752" width="64" height="64"/>
-  <object id="57" name="crate" gid="2" x="704" y="384" width="64" height="64">
-   <properties>
-    <property name="explosive" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="58" name="crate" gid="2" x="256" y="384" width="64" height="64">
-   <properties>
-    <property name="explosive" type="bool" value="true"/>
-   </properties>
-  </object>
  </objectgroup>
 </map>

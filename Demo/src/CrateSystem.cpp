@@ -79,9 +79,9 @@ void CrateSystem::process(float dt)
             crate.velocity.y += Gravity * dt;
             airCollision(entity);
             break;
-        case Crate::Breaking:
-            //TODO probably moot state, we'll just spawn some particles instead
-            break;
+        //case Crate::Breaking:
+        //    //TODO probably moot state, we'll just spawn some particles instead
+        //    break;
         }
 
         auto& tx = entity.getComponent<xy::Transform>();

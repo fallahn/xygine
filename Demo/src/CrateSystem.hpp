@@ -43,7 +43,7 @@ struct Crate final
 {
     enum
     {
-        Ground, Falling, Breaking
+        Ground, Falling//, Breaking
     }state = Falling;
     bool explosive = false;
     sf::Vector2f velocity;
