@@ -277,7 +277,7 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
     }
 
     //update animation state      
-    animController.direction = -npc.velocity.x;
+    animController.direction = (npc.velocity.x > 0) ? -1.f : 1.f;
     if (anim == animController.nextAnimation) //only update if collision hasn't changed it
     {
         if (npc.state == NPC::State::Jumping)

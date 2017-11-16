@@ -210,6 +210,7 @@ bool GameState::handleEvent(const sf::Event& evt)
             }
         }
     }
+    
     return false;
 }
 
@@ -268,6 +269,15 @@ void GameState::handleMessage(const xy::Message& msg)
             requestStackPop();
             m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
             break;
+        }
+    }
+    else if (msg.id == xy::Message::WindowMessage)
+    {
+        const auto& data = msg.getData<xy::Message::WindowEvent>();
+        if (data.type == xy::Message::WindowEvent::LostFocus)
+        {
+            requestStackPush(StateID::Pause);
+            m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
         }
     }
 
@@ -1608,6 +1618,8 @@ void GameState::spawnMapActors()
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
             entity.addComponent<CollisionComponent>().addHitbox(ClocksyBounds, CollisionType::NPC);
             entity.getComponent<xy::Transform>().setOrigin(ClocksyOrigin);
+            entity.addComponent<xy::Callback>().active = true;
+            entity.getComponent<xy::Callback>().function = [](xy::Entity clocksy, float) {DPRINT("scale", std::to_string(clocksy.getComponent<xy::Transform>().getScale().x)); };
             break;
         case ActorID::Balldock:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Balldock];

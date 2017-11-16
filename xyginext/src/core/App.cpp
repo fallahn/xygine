@@ -343,7 +343,7 @@ void App::handleEvents()
             continue;
         case sf::Event::GainedFocus:
             eventHandler = std::bind(&App::handleEvent, this, _1);
-
+            frameClock.restart(); //prevent dumps of HUGE dt
             {
                 auto* msg = m_messageBus.post<Message::WindowEvent>(Message::WindowMessage);
                 msg->type = Message::WindowEvent::GainedFocus;
