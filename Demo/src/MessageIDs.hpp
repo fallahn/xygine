@@ -93,7 +93,8 @@ struct NpcEvent final
         Lightning,
         Flame,
         Crate,
-        Explosion
+        Explosion,
+        OutOfBounds
     };
     sf::Uint8 causeOfDeath = Bubble;
 };

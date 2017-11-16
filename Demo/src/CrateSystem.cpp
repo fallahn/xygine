@@ -41,6 +41,8 @@ source distribution.
 #include <xyginext/ecs/components/CommandTarget.hpp>
 #include <xyginext/network/NetHost.hpp>
 #include <xyginext/util/Vector.hpp>
+#include <xyginext/util/Wavetable.hpp>
+#include <xyginext/util/Random.hpp>
 
 namespace
 {
@@ -55,6 +57,8 @@ CrateSystem::CrateSystem(xy::MessageBus& mb, xy::NetHost& nh)
 {
     requireComponent<Crate>();
     requireComponent<xy::Transform>();
+
+    m_waveTable = xy::Util::Wavetable::sine(8.f, 1.2f);
 }
 
 //public
@@ -83,6 +87,7 @@ void CrateSystem::process(float dt)
         auto& tx = entity.getComponent<xy::Transform>();
         tx.move(crate.velocity * dt);
 
+        //check velocity and put to eith full stop or make lethal
         float l2 = xy::Util::Vector::lengthSquared(crate.velocity);
         if (l2 < MinVelocity)
         {
@@ -90,6 +95,33 @@ void CrateSystem::process(float dt)
         }
 
         crate.lethal = (l2 > LethalVelocity);
+
+        //check if crate explosive and do occasional shake if not moving
+        if (crate.explosive && l2 == 0)
+        {
+            crate.shake.shakeTime -= dt;
+            if (crate.shake.shakeTime < 0)
+            {
+                if (!crate.shake.shaking)
+                {
+                    crate.shake.shaking = true;
+                    crate.shake.startPosition = tx.getPosition();
+                    crate.shake.shakeTime = Crate::ShakeTime;
+                }
+                else
+                {
+                    crate.shake.shaking = false;
+                    crate.shake.shakeTime = Crate::PauseTime;
+                }
+            }
+
+            if (crate.shake.shaking)
+            {
+                tx.setPosition(crate.shake.startPosition.x, crate.shake.startPosition.y);
+                tx.move(m_waveTable[crate.shake.shakeIndex], 0.f);
+                crate.shake.shakeIndex = (crate.shake.shakeIndex + 1) % m_waveTable.size();
+            }
+        }
     }
 }
 
@@ -266,4 +298,10 @@ void CrateSystem::destroy(xy::Entity entity)
 
         m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
     }
+}
+
+void CrateSystem::onEntityAdded(xy::Entity entity)
+{
+    entity.getComponent<Crate>().shake.shakeIndex = xy::Util::Random::value(0, m_waveTable.size() - 1);
+    entity.getComponent<Crate>().shake.shakeTime = xy::Util::Random::value(4.f, Crate::PauseTime + 4.f);
 }

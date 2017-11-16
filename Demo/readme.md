@@ -11,7 +11,10 @@ Controls are via keyboard using the Doom keys (WASD on standard
 US layouts) or with the arrow keys. The space bar is used to fire.
 Controllers are also supported with xbox style controllers in
 mind. The default buttons are A to jump and B to fire, and the
-D-Pad and left analogue stick will move.
+D-Pad and left analogue stick will move. The help menu can be
+accessed by clicking the ? sign on the main menu. From here
+keys may be rebound for both player one and two, by clicking on
+the currently bound key underneath the appropriate action icon.
 
 Escape, P and Pause keys all bring up the the quit menu in game.
 
@@ -19,7 +22,10 @@ F1 will open the console window, from there the Video and Audio
 options can be accessed to change the window size and alter the
 volume.
 
-When hosting a game servers expect incoming connections on port 40003
+When hosting a game servers expect incoming connections on port 40003.
+This is also true when running a local game, so windows users may see
+a warning from Windows firewall the first time the game is run. Click
+allow connections on this port to continue.
 
 ##### Maps
 Maps are simple [Tiled](http://www.mapeditor.org) tmx format maps
@@ -54,6 +60,10 @@ should be named for the enemy to spawn, currently these are:
 * squatmo
 
 Other names are ignored.
+
+An optional object layer named 'crates' can exist for placing crate objects
+in a map. Objects must be named 'crate', with an optional property 'explosive'
+which should be a boolean, set to true if the crate should explode on destruction.
 
 Finally, maps have an optional property `round_time` which is a floating
 point value, in seconds, that defines how long the map will run before the

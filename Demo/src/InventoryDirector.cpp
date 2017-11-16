@@ -92,6 +92,9 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
     case MessageID::NpcMessage:
     {
         const auto& data = msg.getData<NpcEvent>();
+
+        if (data.playerID > 1) break;
+
         if (data.type == NpcEvent::Died)
         {
             auto actor = getScene().getEntity(data.entityID).getComponent<Actor>().type;

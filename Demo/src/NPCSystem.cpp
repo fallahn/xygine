@@ -1025,26 +1025,27 @@ void NPCSystem::checkBounds(xy::Entity entity, float dt)
 
         if (entity.getComponent<NPC>().failSafeTimer < 0)
         {
-            getScene()->destroyEntity(entity);
+            //getScene()->destroyEntity(entity);
 
-            //broadcast to client
-            ActorEvent evt;
-            evt.actor.id = entity.getIndex();
-            evt.actor.type = entity.getComponent<Actor>().type;
-            evt.x = tx.getPosition().x;
-            evt.y = tx.getPosition().y;
-            evt.type = ActorEvent::Died;
+            ////broadcast to client
+            //ActorEvent evt;
+            //evt.actor.id = entity.getIndex();
+            //evt.actor.type = entity.getComponent<Actor>().type;
+            //evt.x = tx.getPosition().x;
+            //evt.y = tx.getPosition().y;
+            //evt.type = ActorEvent::Died;
 
-            m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+            //m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 
-            //raise message
-            auto* msg = postMessage<SceneEvent>(MessageID::SceneMessage);
-            msg->actorID = evt.actor.type;
-            msg->type = SceneEvent::ActorRemoved;
-            msg->entity = entity;
-            msg->x = evt.x;
-            msg->y = evt.y;
+            ////raise message
+            //auto* msg = postMessage<SceneEvent>(MessageID::SceneMessage);
+            //msg->actorID = evt.actor.type;
+            //msg->type = SceneEvent::ActorRemoved;
+            //msg->entity = entity;
+            //msg->x = evt.x;
+            //msg->y = evt.y;
 
+            despawn(entity, 255, NpcEvent::OutOfBounds);
             LOG("NPC out of bounds DESTROYED", xy::Logger::Type::Info);
         }
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="52">
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="59">
  <properties>
   <property name="round_time" type="float" value="120"/>
  </properties>
@@ -8,9 +8,6 @@
  </tileset>
  <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
- </tileset>
- <tileset firstgid="107" name="power_ups" tilewidth="64" tileheight="64" tilecount="35" columns="7">
-  <image source="../images/power_ups.png" width="448" height="320"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
@@ -46,8 +43,25 @@
   <object id="46" name="squatmo" x="512" y="256" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="crates">
-  <object id="50" name="crate" gid="134" x="384" y="592" width="64" height="64"/>
-  <object id="51" name="crate" gid="134" x="640" y="576" width="64" height="64">
+  <object id="52" name="crate" gid="2" x="384" y="576" width="64" height="64"/>
+  <object id="53" name="crate" gid="2" x="640" y="576" width="64" height="64">
+   <properties>
+    <property name="explosive" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="54" name="crate" gid="2" x="240" y="576" width="64" height="64">
+   <properties>
+    <property name="explosive" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="55" name="crate" gid="2" x="240" y="752" width="64" height="64"/>
+  <object id="56" name="crate" gid="2" x="704" y="752" width="64" height="64"/>
+  <object id="57" name="crate" gid="2" x="704" y="384" width="64" height="64">
+   <properties>
+    <property name="explosive" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="58" name="crate" gid="2" x="256" y="384" width="64" height="64">
    <properties>
     <property name="explosive" type="bool" value="true"/>
    </properties>

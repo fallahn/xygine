@@ -32,6 +32,8 @@ source distribution.
 
 #include <xyginext/ecs/System.hpp>
 
+#include <vector>
+
 namespace xy
 {
     class NetHost;
@@ -48,6 +50,17 @@ struct Crate final
     bool groundContact = false;
     bool lethal = false;
     sf::Uint8 lastOwner = 3;
+
+    struct Shake final
+    {
+        sf::Vector2f startPosition;
+        float shakeTime = 0.f;
+        bool shaking = false;
+        std::size_t shakeIndex = 0;
+    }shake;
+
+    static constexpr float ShakeTime = 0.7f;
+    static constexpr float PauseTime = 8.f;
 };
 
 class CrateSystem final : public xy::System
@@ -61,9 +74,13 @@ private:
 
     xy::NetHost& m_host;
 
+    std::vector<float> m_waveTable;
+
     void groundCollision(xy::Entity);
     void airCollision(xy::Entity);
     void destroy(xy::Entity);
+
+    void onEntityAdded(xy::Entity) override;
 };
 
 #endif //DEMO_CRATE_SYSTEM_HPP_
