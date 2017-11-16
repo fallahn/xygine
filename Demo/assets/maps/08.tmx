@@ -19,28 +19,25 @@
    eJxjYBhYoALEhmRiFSimxG6YfhMS9BnTUL8hHn0wOVrab4RHH0yOFvYj24EPIwNqxT+y2cg0ur3octS2n1SMbLc4EIuhmS+Hx24+PHLI+gSwyEkg8QEhQBCE
   </data>
  </layer>
- <objectgroup color="#00aa00" name="Solid">
-  <object id="3" x="64" y="0" width="896" height="160"/>
-  <object id="7" x="64" y="928" width="896" height="112"/>
-  <object id="8" x="960" y="128" width="64" height="832"/>
-  <object id="9" x="0" y="128" width="64" height="832"/>
-  <object id="47" x="832" y="256" width="32" height="384"/>
-  <object id="48" x="160" y="256" width="32" height="384"/>
+ <objectgroup color="#00aa00" name="geometry">
+  <object id="3" type="Solid" x="64" y="0" width="896" height="160"/>
+  <object id="7" type="Solid" x="64" y="928" width="896" height="112"/>
+  <object id="8" type="Solid" x="960" y="128" width="64" height="832"/>
+  <object id="9" type="Solid" x="0" y="128" width="64" height="832"/>
+  <object id="47" type="Solid" x="832" y="256" width="32" height="384"/>
+  <object id="48" type="Solid" x="160" y="256" width="32" height="384"/>
+  <object id="40" type="Platform" x="256" y="544" width="64" height="32"/>
+  <object id="43" type="Platform" x="256" y="800" width="48" height="32"/>
+  <object id="38" type="Platform" x="704" y="384" width="64" height="32"/>
+  <object id="41" type="Platform" x="256" y="672" width="512" height="32"/>
+  <object id="37" type="Platform" x="256" y="384" width="64" height="32"/>
+  <object id="46" type="Platform" x="848" y="800" width="112" height="32"/>
+  <object id="39" type="Platform" x="704" y="544" width="64" height="32"/>
+  <object id="44" type="Platform" x="384" y="800" width="256" height="32"/>
+  <object id="42" type="Platform" x="64" y="800" width="112" height="32"/>
+  <object id="45" type="Platform" x="720" y="800" width="48" height="32"/>
  </objectgroup>
- <objectgroup color="#ff007f" name="Teleport"/>
- <objectgroup color="#00ff00" name="Platform">
-  <object id="37" x="256" y="384" width="64" height="32"/>
-  <object id="38" x="704" y="384" width="64" height="32"/>
-  <object id="39" x="704" y="544" width="64" height="32"/>
-  <object id="40" x="256" y="544" width="64" height="32"/>
-  <object id="41" x="256" y="672" width="512" height="32"/>
-  <object id="42" x="64" y="800" width="112" height="32"/>
-  <object id="43" x="256" y="800" width="48" height="32"/>
-  <object id="44" x="384" y="800" width="256" height="32"/>
-  <object id="45" x="720" y="800" width="48" height="32"/>
-  <object id="46" x="848" y="800" width="112" height="32"/>
- </objectgroup>
- <objectgroup name="Spawn">
+ <objectgroup name="Spawn" visible="0">
   <object id="28" name="clocksy" x="288" y="320" width="16" height="16"/>
   <object id="30" name="clocksy" x="736" y="320" width="16" height="16"/>
   <object id="35" name="squatmo" x="288" y="480" width="16" height="16"/>

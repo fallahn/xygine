@@ -730,6 +730,7 @@ void GameServer::loadMap()
 {
     m_mapData.NPCCount = 0; //make sure count was reset
     m_mapData.crateCount = 0;
+    sf::Uint8 teleportCount = 0;
 
     tmx::Map map;
     if (map.load("assets/maps/" + m_mapFiles[m_currentMap]))
@@ -750,44 +751,45 @@ void GameServer::loadMap()
             {
                 //create map collision
                 auto name = xy::Util::String::toLower(layer->getName());
-                if (name == "platform")
+                if (name == "geometry")
                 {
                     const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
                     for (const auto& obj : objs)
                     {
-                        createCollisionObject(m_scene, obj, CollisionType::Platform);
-                        flags |= MapFlags::Platform;
-                    }
-                }
-                else if (name == "solid")
-                {
-                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
-                    for (const auto& obj : objs)
-                    {
-                        createCollisionObject(m_scene, obj, CollisionType::Solid);
-                        flags |= MapFlags::Solid;
-                    }                   
-                }
-                else if (name == "teleport")
-                {
-                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
-                    for (const auto& obj : objs)
-                    {
-                        createCollisionObject(m_scene, obj, CollisionType::Teleport);
-                    }
+                        auto type = xy::Util::String::toLower(obj.getType());
 
-                    //only enable powerups if we have 4 spawn points
-                    if (objs.size() == 4)
-                    {
-                        m_scene.getSystem<PowerupSystem>().setSpawnFlags(PowerupSystem::Flame | PowerupSystem::Lightning);
-                        if(xy::Util::Random::value(0, 1) == 0) m_scene.getSystem<BonusSystem>().setEnabled(true);
-                    }
-                    else
-                    {
-                        m_scene.getSystem<BonusSystem>().setEnabled(false);
-                    }
+                        if (type == "platform")
+                        {
+                            createCollisionObject(m_scene, obj, CollisionType::Platform);
+                            flags |= MapFlags::Platform;
+                        }
+                        else if (type == "solid")
+                        {
+                            createCollisionObject(m_scene, obj, CollisionType::Solid);
+                            flags |= MapFlags::Solid;
+                        }
+                        else if (type == "teleport")
+                        {
+                            createCollisionObject(m_scene, obj, CollisionType::Teleport);
+                            flags |= MapFlags::Teleport;
+                            teleportCount++;
+                        }
+                        else if (type == "crate")
+                        {
+                            if (m_mapData.crateCount == MaxCrates) continue;
 
-                    flags |= MapFlags::Teleport;
+                            bool explosive = false;
+                            const auto& properties = obj.getProperties();
+                            if (!properties.empty() &&
+                                xy::Util::String::toLower(properties[0].getName()) == "explosive")
+                            {
+                                explosive = properties[0].getBoolValue();
+                            }
+
+                            //create ent / actor with explosive parameter
+                            spawnCrate({ obj.getPosition().x, obj.getPosition().y }, explosive);
+                        }
+                    }
                 }
                 else if (name == "spawn")
                 {
@@ -824,30 +826,9 @@ void GameServer::loadMap()
                 
                     flags |= (m_mapData.NPCCount == 0) ? 0 : MapFlags::Spawn;
                 }
-                else if (name == "crates")
-                {
-                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
-                    for (const auto& obj : objs)
-                    {
-                        if (xy::Util::String::toLower(obj.getName()) == "crate")
-                        {
-                            bool explosive = false;
-                            const auto& properties = obj.getProperties();
-                            if (!properties.empty() && 
-                                xy::Util::String::toLower(properties[0].getName()) == "explosive")
-                            {
-                                explosive = properties[0].getBoolValue();
-                            }
-
-                            //create ent / actor with explosive parameter
-                            spawnCrate({ obj.getPosition().x, obj.getPosition().y }, explosive);
-                        }
-                        if (m_mapData.crateCount == MaxCrates) break;
-                    }
-                }
             }
         }
-        if (flags != MapFlags::Server)
+        if ((flags & MapFlags::Server) == 0)
         {
             CLIENT_MESSAGE(MessageIdent::MapFailed);
             //std::cout << m_mapFiles[m_currentMap] << ", Bad flags! " << std::bitset<8>(flags) << std::endl;
@@ -887,6 +868,13 @@ void GameServer::loadMap()
         else
         {
             m_roundTimeout = defaultRoundTime;
+        }
+
+        //enable bonuses if there are 4 teleports
+        if (teleportCount == 4)
+        {
+            m_scene.getSystem<PowerupSystem>().setSpawnFlags(PowerupSystem::Flame | PowerupSystem::Lightning);
+            if (xy::Util::Random::value(0, 1) == 0) m_scene.getSystem<BonusSystem>().setEnabled(true);
         }
 
         m_serverTime.restart();
@@ -1077,7 +1065,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
 void GameServer::spawnCrate(sf::Vector2f position, bool explosive)
 {
     auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Transform>().setPosition(position);
+    entity.addComponent<xy::Transform>().setPosition(position + CrateOrigin);
     entity.getComponent<xy::Transform>().setOrigin(CrateOrigin);
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = ActorID::Crate;

@@ -1121,8 +1121,10 @@ void GameState::handleTimeout()
 
 sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
 {
+    sf::Int32 flags = 0;
+    
     auto name = xy::Util::String::toLower(layer->getName());
-    if (name == "platform")
+    if (name == "geometry")
     {
         const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
         if (objs.empty())
@@ -1132,35 +1134,25 @@ sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
         
         for (const auto& obj : objs)
         {
-            createCollisionObject(m_scene, obj, CollisionType::Platform);
+            auto type = xy::Util::String::toLower(obj.getType());
+            if (type == "solid")
+            {
+                createCollisionObject(m_scene, obj, CollisionType::Solid);
+                flags |= MapFlags::Solid;
+            }
+            else if (type == "platform")
+            {
+                createCollisionObject(m_scene, obj, CollisionType::Platform);
+                flags |= MapFlags::Platform;
+            }
+            else if (type == "teleport")
+            {
+                createCollisionObject(m_scene, obj, CollisionType::Teleport);
+            }
         }
-        
-        return MapFlags::Platform;
     }
-    else if (name == "solid")
-    {
-        const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
-        if (objs.empty())
-        {
-            return 0;
-        }
-        
-        for (const auto& obj : objs)
-        {
-            createCollisionObject(m_scene, obj, CollisionType::Solid);
-        }
-        return MapFlags::Solid;
-    }
-    else if (name == "teleport")
-    {
-        const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
-        for (const auto& obj : objs)
-        {
-            createCollisionObject(m_scene, obj, CollisionType::Teleport);
-        }
-        return MapFlags::Teleport;
-    }
-    return 0;
+    
+    return flags;
 }
 
 sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, const tmx::Map& map)
@@ -1618,8 +1610,6 @@ void GameState::spawnMapActors()
             entity.addComponent<AnimationController>() = m_animationControllers[SpriteID::Clocksy];
             entity.addComponent<CollisionComponent>().addHitbox(ClocksyBounds, CollisionType::NPC);
             entity.getComponent<xy::Transform>().setOrigin(ClocksyOrigin);
-            entity.addComponent<xy::Callback>().active = true;
-            entity.getComponent<xy::Callback>().function = [](xy::Entity clocksy, float) {DPRINT("scale", std::to_string(clocksy.getComponent<xy::Transform>().getScale().x)); };
             break;
         case ActorID::Balldock:
             entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Balldock];
@@ -1653,13 +1643,15 @@ void GameState::spawnMapActors()
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
         entity.addComponent<xy::NetInterpolate>();
         entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("crate");
-        entity.addComponent<xy::Drawable>().setDepth(-3);
+        entity.addComponent<xy::Drawable>().setDepth(-1);
         entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Crate);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.addComponent<AnimationController>();
         entity.addComponent<xy::QuadTreeItem>().setArea(CrateBounds);
+
+        std::cout << "spawned crate" << std::endl;
     }
 }
 
@@ -1881,7 +1873,7 @@ void GameState::giveHat(sf::Uint8 player)
         auto hatEnt = m_scene.createEntity();
         hatEnt.addComponent<xy::Transform>();// .setOrigin(PlayerOrigin);
         hatEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::MagicHat];
-        hatEnt.addComponent<xy::Drawable>().setDepth(3);
+        hatEnt.addComponent<xy::Drawable>().setDepth(1);
         hatEnt.addComponent<xy::SpriteAnimation>();
         hatEnt.addComponent<xy::CommandTarget>().ID = CommandID::Hat | CommandID::MapItem;
         hatEnt.addComponent<AnimationController>() = m_animationControllers[SpriteID::MagicHat];

@@ -1014,16 +1014,18 @@ void NPCSystem::collisionFalling(xy::Entity entity)
 void NPCSystem::checkBounds(xy::Entity entity, float dt)
 {
     const auto& tx = entity.getComponent<xy::Transform>();
+    auto& npc = entity.getComponent<NPC>();
+    if (npc.state == NPC::State::Dying) return;
 
     static const sf::FloatRect bounds(0.f, 160.f, MapBounds.width, MapBounds.height - 160.f);
 
     if (!bounds.contains(tx.getPosition()))
     {
-        entity.getComponent<NPC>().failSafeTimer -= dt;
+        npc.failSafeTimer -= dt;
 
         //LOG("NPC out of bounds: " + std::to_string(entity.getComponent<NPC>().failSafeTimer), xy::Logger::Type::Info);
 
-        if (entity.getComponent<NPC>().failSafeTimer < 0)
+        if (npc.failSafeTimer < 0)
         {
             //getScene()->destroyEntity(entity);
 
@@ -1051,6 +1053,6 @@ void NPCSystem::checkBounds(xy::Entity entity, float dt)
     }
     else
     {
-        entity.getComponent<NPC>().failSafeTimer = std::min(15.f, entity.getComponent<NPC>().failSafeTimer + dt);
+        npc.failSafeTimer = std::min(NPC::FailSafeTime, entity.getComponent<NPC>().failSafeTimer + dt);
     }
 }

@@ -54,7 +54,7 @@ namespace MapFlags
         Teleport = 0x8,
         Spawn = 0x10,
 
-        Shared = Solid | Platform | Teleport,
+        Shared = Solid | Platform, //| Teleport,
         Server = Shared | Spawn,
         Client = Shared | Graphics
     };

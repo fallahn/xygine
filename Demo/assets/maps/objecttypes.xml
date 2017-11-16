@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="Solid" color="#00aa00"/>
+ <objecttype name="Platform" color="#00ff00"/>
+ <objecttype name="Teleport" color="#ff00ff"/>
+ <objecttype name="Crate" color="#aa5500">
+  <property name="explosive" type="bool" default="false"/>
+ </objecttype>
+</objecttypes>

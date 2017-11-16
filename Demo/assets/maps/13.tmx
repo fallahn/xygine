@@ -19,47 +19,43 @@
    eJxjYBhYwALEgkhYCiouTUBMEKqXhUK7YfolobQMGo0sh64GWb8wlBZBo5Hl0NVQUz9yuIAAtvBDV0PN8IMB9DDCJYZLP7ofcYnRSj96GOESw6WfFADTL4SEkcMKn5gQAbuNgdgGj7wVFjFtPOqNgFgHizgAnVcHOQ==
   </data>
  </layer>
- <objectgroup color="#005500" name="Solid">
-  <object id="4" x="64" y="0" width="224" height="160"/>
-  <object id="7" x="64" y="928" width="224" height="128"/>
-  <object id="8" x="960" y="128" width="64" height="832"/>
-  <object id="9" x="0" y="128" width="64" height="832"/>
-  <object id="42" x="416" y="0" width="192" height="160"/>
-  <object id="43" x="736" y="0" width="224" height="160"/>
-  <object id="49" x="416" y="928" width="192" height="128"/>
-  <object id="50" x="736" y="928" width="224" height="128"/>
-  <object id="106" x="416" y="288" width="32" height="160"/>
-  <object id="107" x="576" y="288" width="32" height="160"/>
-  <object id="110" x="256" y="608" width="32" height="160"/>
-  <object id="111" x="416" y="608" width="32" height="160"/>
-  <object id="112" x="576" y="608" width="32" height="160"/>
-  <object id="113" x="736" y="608" width="32" height="160"/>
-  <object id="117" x="144" y="288" width="16" height="160"/>
-  <object id="118" x="288" y="288" width="32" height="160"/>
-  <object id="119" x="704" y="288" width="32" height="160"/>
-  <object id="120" x="864" y="288" width="16" height="160"/>
-  <object id="122" x="288" y="0" width="128" height="16"/>
-  <object id="123" x="608" y="0" width="128" height="16"/>
-  <object id="124" x="64" y="1056" width="896" height="32"/>
+ <objectgroup color="#005500" name="geometry">
+  <object id="4" type="Solid" x="64" y="0" width="224" height="160"/>
+  <object id="7" type="Solid" x="64" y="928" width="224" height="128"/>
+  <object id="8" type="Solid" x="960" y="128" width="64" height="832"/>
+  <object id="9" type="Solid" x="0" y="128" width="64" height="832"/>
+  <object id="42" type="Solid" x="416" y="0" width="192" height="160"/>
+  <object id="43" type="Solid" x="736" y="0" width="224" height="160"/>
+  <object id="49" type="Solid" x="416" y="928" width="192" height="128"/>
+  <object id="50" type="Solid" x="736" y="928" width="224" height="128"/>
+  <object id="106" type="Solid" x="416" y="288" width="32" height="160"/>
+  <object id="107" type="Solid" x="576" y="288" width="32" height="160"/>
+  <object id="110" type="Solid" x="256" y="608" width="32" height="160"/>
+  <object id="111" type="Solid" x="416" y="608" width="32" height="160"/>
+  <object id="112" type="Solid" x="576" y="608" width="32" height="160"/>
+  <object id="113" type="Solid" x="736" y="608" width="32" height="160"/>
+  <object id="117" type="Solid" x="144" y="288" width="16" height="160"/>
+  <object id="118" type="Solid" x="288" y="288" width="32" height="160"/>
+  <object id="119" type="Solid" x="704" y="288" width="32" height="160"/>
+  <object id="120" type="Solid" x="864" y="288" width="16" height="160"/>
+  <object id="122" type="Solid" x="288" y="0" width="128" height="16"/>
+  <object id="123" type="Solid" x="608" y="0" width="128" height="16"/>
+  <object id="124" type="Solid" x="64" y="1056" width="896" height="32"/>
+  <object id="115" type="Platform" x="160" y="448" width="128" height="32"/>
+  <object id="100" type="Platform" x="288" y="768" width="128" height="32"/>
+  <object id="73" type="Teleport" x="288" y="1024" width="128" height="32"/>
+  <object id="101" type="Platform" x="608" y="768" width="128" height="32"/>
+  <object id="71" type="Teleport" x="288" y="16" width="128" height="16"/>
+  <object id="72" type="Teleport" x="608" y="16" width="128" height="16"/>
+  <object id="74" type="Teleport" x="608" y="1024" width="128" height="32"/>
+  <object id="116" type="Platform" x="736" y="448" width="128" height="32"/>
+  <object id="102" type="Platform" x="448" y="448" width="128" height="32"/>
  </objectgroup>
- <objectgroup name="Spawn">
+ <objectgroup name="Spawn" visible="0">
   <object id="76" name="clocksy" x="800" y="368" width="16" height="16"/>
   <object id="96" name="clocksy" x="512" y="368" width="16" height="16"/>
   <object id="97" name="clocksy" x="224" y="368" width="16" height="16"/>
   <object id="98" name="clocksy" x="352" y="688" width="16" height="16"/>
   <object id="121" name="clocksy" x="672" y="688" width="16" height="16"/>
- </objectgroup>
- <objectgroup color="#ff007f" name="Teleport">
-  <object id="73" x="288" y="1024" width="128" height="32"/>
-  <object id="74" x="608" y="1024" width="128" height="32"/>
-  <object id="71" x="288" y="16" width="128" height="16"/>
-  <object id="72" x="608" y="16" width="128" height="16"/>
- </objectgroup>
- <objectgroup name="Platform">
-  <object id="100" x="288" y="768" width="128" height="32"/>
-  <object id="101" x="608" y="768" width="128" height="32"/>
-  <object id="102" x="448" y="448" width="128" height="32"/>
-  <object id="115" x="160" y="448" width="128" height="32"/>
-  <object id="116" x="736" y="448" width="128" height="32"/>
  </objectgroup>
 </map>
