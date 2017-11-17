@@ -8,7 +8,7 @@ quite playable. There is also a dedicated server project
 included in the ServerTest directory of the repository.
 
 Controls are via keyboard using the Doom keys (WASD on standard
-US layouts) or with the arrow keys. The space bar is used to fire.
+GB/US layouts) or with the arrow keys. The space bar is used to fire.
 Controllers are also supported with xbox style controllers in
 mind. The default buttons are A to jump and B to fire, and the
 D-Pad and left analogue stick will move. The help menu can be
@@ -28,7 +28,7 @@ a warning from Windows firewall the first time the game is run. Click
 allow connections on this port to continue.
 
 ##### Maps
-Maps are simple [Tiled](http://www.mapeditor.org) tmx format maps
+Maps are [Tiled](http://www.mapeditor.org) tmx format maps
 which obey a few simple rules:
 
 A tile layer. Tiles are 64px square, and the total map size is 16x17
@@ -37,33 +37,37 @@ for teleporting nodes. Multiple tile layers may exist, but will be rendered
 to a single layer when the map is loaded and will always appear behind
 other game sprites.
 
-One object layer named 'solid'. Rectangular objects placed on this layer
-mark out solid map geometry which cannot be passed through. Other shapes
-are ignored.
+One object layer named 'geometry'. Objects placed on this layer must
+be rectangular, with the exception of crates (see below). Other shapes
+will automatically be converted to rectangles using their bounding boxes.
+The maps directory contains a file called objecttypes.xml which can be
+loaded into Tiled to define the needed object types. These are:
 
-One object layer named 'teleport'. This doesn't necessarily have to have
-any objects placed on it, but when there are they should be rectangular
-and be evenly spaced top and bottom. Maps with teleport objects in them
-also have bonus power ups enabled.
+* platform - One way platforms which can be passed through from below
+* solid - used to create impassable geometry, and ought to be used around
+the 4 edges of the map
+* teleport - these are used to teleport game entities from the bottom to
+the top of the map and vice versa. Attempting to place these closer together
+than the top and bottom edges of the map will cause incorrect behaviour.
+* crates - which can also be placed as object tiles to aid visual placement.
+Crates have a boolean property 'explosive' which when set to 'true' causes
+the crate to explode when it is destroyed.
 
-One object layer named 'platform'. This layer should contain only
-rectangular objects (other types are ignored) which become one-way
-platforms.
+Maps require at least one solid type object and one platform type and will
+fail to load if these are not found. Teleport and crate types are optional.
+
 
 One object layer named 'spawn'. This contains objects which define the
 points where enemies are spawned after the map is loaded. The objects
 should be named for the enemy to spawn, currently these are:
 
-* whirlybob
-* clocksy
-* balldock
-* squatmo
+* whirlybob - the blue bird
+* clocksy - a walking bush
+* balldock - a gurning orange chum
+* squatmo - also known as the Nightmare Booger.
 
-Other names are ignored.
-
-An optional object layer named 'crates' can exist for placing crate objects
-in a map. Objects must be named 'crate', with an optional property 'explosive'
-which should be a boolean, set to true if the crate should explode on destruction.
+Other names are ignored. The object type is irrelevant as the game only loads
+the positions. Object tiles may be used to help aid in visual design.
 
 Finally, maps have an optional property `round_time` which is a floating
 point value, in seconds, that defines how long the map will run before the

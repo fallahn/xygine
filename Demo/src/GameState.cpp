@@ -1650,8 +1650,6 @@ void GameState::spawnMapActors()
         entity.addComponent<xy::SpriteAnimation>().play(0);
         entity.addComponent<AnimationController>();
         entity.addComponent<xy::QuadTreeItem>().setArea(CrateBounds);
-
-        std::cout << "spawned crate" << std::endl;
     }
 }
 

@@ -634,6 +634,7 @@ void GameServer::checkMapStatus(float dt)
         m_scene.setSystemActive<PowerupSystem>(false);
         m_scene.setSystemActive<BonusSystem>(false);
         m_scene.setSystemActive<HatSystem>(false);
+        m_scene.setSystemActive<CrateSystem>(false);
 
         auto* msg = m_messageBus.post<MapEvent>(MessageID::MapMessage);
         msg->type = MapEvent::MapChangeStarted;
@@ -899,6 +900,7 @@ void GameServer::beginNewRound()
         m_scene.setSystemActive<CollisionSystem>(true);
         m_scene.setSystemActive<PowerupSystem>(true);
         m_scene.setSystemActive<BonusSystem>(true);
+        m_scene.setSystemActive<CrateSystem>(true);
         
         if (xy::Util::Random::value(0, 2) == 2)
         {
