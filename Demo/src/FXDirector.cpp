@@ -179,7 +179,14 @@ void FXDirector::handleMessage(const xy::Message& msg)
         break;
         case AnimationController::JumpUp:
         {
-            playSound(m_soundResource.get("assets/sound/jump.wav"));
+            const auto& actor = data.entity.getComponent<Actor>();
+            switch (actor.type)
+            {
+            default: 
+                playSound(m_soundResource.get("assets/sound/jump.wav"));
+                break;
+            case ActorID::MagicHat: break;
+            }
         }
         break;
         case AnimationController::Walk:

@@ -1,0 +1,22 @@
+translation chicewa
+{
+	single_player = "Wosewera yekha"
+	multiplayer = "Ophatikizapo"
+	quit = "Siya"
+	local = "Mderalo"
+	network = "Mtanda"
+	back = "Kubwerera"
+	host = "Wokondedwa"
+	join = "Lowani"
+	help_text = "#Undefined"
+	skip_text = "Dinani Chilichonse Chofunika Kuti Mudutse"
+	hurry = "Fulumirani!"
+	game_over = "Masewera atha"
+	continue = "Pitirizani"
+	yes = "Inde"
+	no = "Ayi"
+	score = "Chogoli: "
+	player_one_score = "Olemba Masewera Mmodzi: "
+	player_two_score = "Olemba Masewera Awiri: "
+	resume = Pitilizani"
+}

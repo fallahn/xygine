@@ -404,7 +404,8 @@ void UISystem::select(std::size_t entIdx)
 void UISystem::onEntityAdded(xy::Entity)
 {
     //selectNext();
-    selectPrev();
+    //selectPrev();
+    select(0);
 }
 
 void UISystem::onEntityRemoved(xy::Entity)

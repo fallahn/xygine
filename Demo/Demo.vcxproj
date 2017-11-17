@@ -193,6 +193,7 @@
     <ClInclude Include="src\KeyMapDirector.hpp" />
     <ClInclude Include="src\KeyMapping.hpp" />
     <ClInclude Include="src\LoadingScreen.hpp" />
+    <ClInclude Include="src\Localisation.hpp" />
     <ClInclude Include="src\MapAnimator.hpp" />
     <ClInclude Include="src\MapData.hpp" />
     <ClInclude Include="src\MenuCallbacks.hpp" />

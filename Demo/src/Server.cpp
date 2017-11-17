@@ -877,6 +877,10 @@ void GameServer::loadMap()
             m_scene.getSystem<PowerupSystem>().setSpawnFlags(PowerupSystem::Flame | PowerupSystem::Lightning);
             if (xy::Util::Random::value(0, 1) == 0) m_scene.getSystem<BonusSystem>().setEnabled(true);
         }
+        else
+        {
+            m_scene.getSystem<PowerupSystem>().setSpawnFlags(0);
+        }
 
         m_serverTime.restart();
     }

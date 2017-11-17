@@ -157,9 +157,16 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
             default: break;
             case CollisionType::Solid:
             case CollisionType::Platform:
+            case CollisionType::Crate:
                 tx.move(manifold.normal * manifold.penetration);
                 npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
 
+                break;
+            case CollisionType::Explosion:
+                if (manifold.otherEntity.hasComponent<Explosion>())
+                {
+                    despawn(entity, manifold.otherEntity.getComponent<Explosion>().owner, NpcEvent::Explosion);
+                }
                 break;
             case CollisionType::Bubble:
                 //switch to bubble state if bubble in spawn state
@@ -309,6 +316,12 @@ void NPCSystem::updateGoobly(xy::Entity entity, float dt)
             switch (manifold.otherType)
             {
             default: break;
+            case CollisionType::Explosion:
+                if (manifold.otherEntity.hasComponent<Explosion>())
+                {
+                    despawn(entity, manifold.otherEntity.getComponent<Explosion>().owner, NpcEvent::Explosion);
+                }
+                break;
             case CollisionType::Solid:
             //case CollisionType::Platform:
                 tx.move(manifold.normal * manifold.penetration);
@@ -476,7 +489,7 @@ void NPCSystem::updateBalldock(xy::Entity entity, float dt)
     }
 
     //update animation state     
-    animController.direction = -npc.velocity.x;
+    animController.direction = (npc.velocity.x < 0) ? 1.f : -1.f;
     if (currAnim == animController.nextAnimation)
     {
         if (npc.state == NPC::State::Jumping)

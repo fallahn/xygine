@@ -28,6 +28,7 @@ source distribution.
 #include "GameOverState.hpp"
 #include "SharedStateData.hpp"
 #include "MessageIDs.hpp"
+#include "Localisation.hpp"
 
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Text.hpp>
@@ -105,7 +106,7 @@ void GameoverState::load(const SharedStateData& data)
     entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
     entity.getComponent<xy::Transform>().move(-490.f, -460.f);
-    entity.addComponent<xy::Text>(m_font).setString("CONTINUE?");
+    entity.addComponent<xy::Text>(m_font).setString(Locale::Strings[Locale::Continue]);
     entity.getComponent<xy::Text>().setCharacterSize(260);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
 
@@ -119,7 +120,7 @@ void GameoverState::load(const SharedStateData& data)
         if (data.playerCount == 1)
         {
             entity.getComponent<xy::Transform>().move(-360.f, -180.f);
-            entity.getComponent<xy::Text>().setString("Score: " + data.scores[0]);
+            entity.getComponent<xy::Text>().setString(Locale::Strings[Locale::Score] + data.scores[0]);
             entity.getComponent<xy::Text>().setCharacterSize(140);
         }
         else
@@ -128,12 +129,12 @@ void GameoverState::load(const SharedStateData& data)
             if (i == 0)
             {
                 entity.getComponent<xy::Transform>().move(-400.f, -180.f);
-                entity.getComponent<xy::Text>().setString("Player One Score: " + data.scores[0]);
+                entity.getComponent<xy::Text>().setString(Locale::Strings[Locale::PlayerOneScore] + data.scores[0]);
             }
             else
             {
                 entity.getComponent<xy::Transform>().move(-400.f, -100.f);
-                entity.getComponent<xy::Text>().setString("Player Two Score: " + data.scores[1]);
+                entity.getComponent<xy::Text>().setString(Locale::Strings[Locale::PlayerTwoScore] + data.scores[1]);
             }
         }
     }
@@ -157,7 +158,7 @@ void GameoverState::load(const SharedStateData& data)
 
     //NO button text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(m_font).setString("NO");
+    entity.addComponent<xy::Text>(m_font).setString(Locale::Strings[Locale::No]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto& tx = entity.addComponent<xy::Transform>();
@@ -208,7 +209,7 @@ void GameoverState::load(const SharedStateData& data)
 
     //YES button text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(m_font).setString("YES");
+    entity.addComponent<xy::Text>(m_font).setString(Locale::Strings[Locale::Yes]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto& tx2 = entity.addComponent<xy::Transform>();

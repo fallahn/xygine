@@ -37,6 +37,7 @@ source distribution.
 #include "ClientServerShared.hpp"
 #include "KeyMapDirector.hpp"
 #include "Swarm.hpp"
+#include "Localisation.hpp"
 
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>

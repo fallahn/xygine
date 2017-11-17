@@ -31,6 +31,7 @@ source distribution.
 #include "EndingDirector.hpp"
 #include "EndingMessages.hpp"
 #include "SpringFlower.hpp"
+#include "Localisation.hpp"
 
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/components/AudioListener.hpp>
@@ -250,7 +251,7 @@ void GameCompleteState::loadUI()
 
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize.x / 2.f, 1000.f);
-    entity.addComponent<xy::Text>(font).setString("Press Any Key To Skip");
+    entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::SkipText]);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
@@ -272,7 +273,7 @@ void GameCompleteState::showSummary()
         if (m_sharedData.playerCount == 1)
         {
             entity.getComponent<xy::Transform>().move(-360.f, -180.f);
-            entity.getComponent<xy::Text>().setString("Score: " + m_sharedData.scores[0]);
+            entity.getComponent<xy::Text>().setString(Locale::Strings[Locale::Score] + m_sharedData.scores[0]);
             entity.getComponent<xy::Text>().setCharacterSize(140);
         }
         else
@@ -281,12 +282,12 @@ void GameCompleteState::showSummary()
             if (i == 0)
             {
                 entity.getComponent<xy::Transform>().move(-400.f, -180.f);
-                entity.getComponent<xy::Text>().setString("Player One Score: " + m_sharedData.scores[0]);
+                entity.getComponent<xy::Text>().setString(Locale::Strings[Locale::PlayerOneScore] + m_sharedData.scores[0]);
             }
             else
             {
                 entity.getComponent<xy::Transform>().move(-400.f, -100.f);
-                entity.getComponent<xy::Text>().setString("Player Two Score: " + m_sharedData.scores[1]);
+                entity.getComponent<xy::Text>().setString(Locale::Strings[Locale::PlayerTwoScore] + m_sharedData.scores[1]);
             }
         }
     }

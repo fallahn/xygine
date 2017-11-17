@@ -219,6 +219,7 @@ void InventoryDirector::process(float dt)
         {
             if (m_playerValues[i].hat)
             {
+                m_playerValues[i].score += (HatPickUpScore / 10);
                 sendUpdate(i, HatPickUpScore / 10);
             }
         }

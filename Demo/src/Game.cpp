@@ -34,6 +34,7 @@ source distribution.
 #include "IntroState.hpp"
 #include "RemotePauseState.hpp"
 #include "GameCompleteState.hpp"
+#include "Localisation.hpp"
 
 #include <SFML/Window/Event.hpp>
 
@@ -57,6 +58,7 @@ Game::Game()
 
     setWindowIcon("assets/images/icon.png");
     getRenderWindow()->setTitle("xygine - Castle Clamber (F1 for Options)");
+    Locale::load("assets/localisation/chichewa.xyl");
 }
 
 //private

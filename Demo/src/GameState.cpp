@@ -49,6 +49,7 @@ source distribution.
 #include "LoadingScreen.hpp"
 #include "SpringFlower.hpp"
 #include "HatSystem.hpp"
+#include "Localisation.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -1658,7 +1659,7 @@ void GameState::spawnWarning()
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(MapBounds.width / 2.f, MapBounds.height /  2.f);
     entity.getComponent<xy::Transform>().move(xy::DefaultSceneSize.x / 1.8f, -180.f);
-    entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString("Hurry Up!");
+    entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString(Locale::Strings[Locale::Hurry]);
     entity.getComponent<xy::Text>().setCharacterSize(200);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
     entity.addComponent<xy::Callback>().active = true;
