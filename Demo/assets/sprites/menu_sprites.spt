@@ -13,7 +13,11 @@ sprite_sheet menu_sprites
 			frame = 128,0,128,128
 			frame = 256,0,128,128
 			
-			framerate = 12
+			frame = 384,0,128,128			
+			frame = 512,0,128,128
+			frame = 640,0,128,128
+
+			framerate = 16
 			loop=true
 		}
 
@@ -22,14 +26,19 @@ sprite_sheet menu_sprites
 
 	sprite player_two
 	{
-		bounds = 384,0,128,128
+		bounds = 384,768,128,128
 
 		animation two
 		{
-			frame = 384,0,128,128
-			frame = 512,0,128,128
-			frame = 640,0,128,128
-			framerate = 12
+			frame = 0,768,128,128
+			frame = 128,768,128,128
+			frame = 256,768,128,128
+			
+			frame = 384,768,128,128			
+			frame = 512,768,128,128
+			frame = 640,768,128,128
+
+			framerate = 16
 			loop = true
 		}	
 	}
@@ -44,6 +53,8 @@ sprite_sheet menu_sprites
 			frame = 128,128,128,128
 			frame = 256,128,128,128
 			frame = 384,128,128,128
+			frame = 512,128,128,128
+			frame = 640,128,128,128			
 			
 			framerate = 12
 			loop=true
@@ -56,8 +67,8 @@ sprite_sheet menu_sprites
 
 		animation walk
 		{
-			frame = 512,128,128,128
-			frame = 640,128,128,128
+			frame = 384,384,128,128
+			frame = 512,384,128,128
 			
 			framerate = 12
 			loop=true

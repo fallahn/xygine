@@ -45,7 +45,8 @@ namespace ActorID
         LightningOne, LightningTwo,
         Bonus,
         PrincessOne, PrincessTwo,
-        TowerOne, TowerTwo
+        TowerOne, TowerTwo,
+        MagicHat, Crate, Explosion
     };
 }
 
@@ -64,14 +65,17 @@ struct Actor final
 };
 
 //this is sent to a client when it has connected successfully
+static constexpr sf::Uint8 MaxChars = 11;
+static constexpr sf::Uint8 MaxNPCs = 12;
+static constexpr sf::Uint8 MaxCrates = 6;
 struct MapData final
 {
-    static constexpr sf::Uint8 MaxChars = 11;
-    static constexpr sf::Uint8 MaxActors = 12;
     char mapName[MaxChars]{};
     char mapSha[41]{}; //sha1 is always 40 chars long
-    Actor actors[MaxActors]{};
-    sf::Int8 actorCount = 0;
+    Actor NPCs[MaxNPCs]{};
+    sf::Int8 NPCCount = 0;
+    Actor crates[MaxCrates]{};
+    sf::Int8 crateCount = 0;
 };
 
 //the actor ID, spawn position and Player number
@@ -100,13 +104,13 @@ struct ActorState
 struct ClientState final : public ActorState
 {
     sf::Int64 clientTime = 0;
-    Player::State playerState = Player::State::Walking;
-    float playerVelocity = 0.f;
-    float playerTimer = 0.f;
-    bool playerCanJump = false;
-    sf::Uint8 playerCanLand = 0;
-    bool playerCanRideBubble = false;
-    sf::Uint8 playerLives = 3;
+    Player::SyncState sync;
+    //Player::State playerState = Player::State::Walking;
+    //float playerVelocity = 0.f;
+    //float playerTimer = 0.f;
+    //sf::Uint8 playerCanLand = 0;
+    //sf::Uint8 playerLives = 3;
+    //sf::Uint8 boolFlags;
 };
 
 //actor events for spawn/despawn etc

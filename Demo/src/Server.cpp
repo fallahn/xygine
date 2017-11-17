@@ -44,6 +44,9 @@ source distribution.
 #include "InventoryDirector.hpp"
 #include "PowerupSystem.hpp"
 #include "BonusSystem.hpp"
+#include "HatSystem.hpp"
+#include "CrateSystem.hpp"
+#include "Explosion.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -260,13 +263,7 @@ void GameServer::update()
                     state.x = tx.x;
                     state.y = tx.y;
                     state.clientTime = player.history[player.lastUpdatedInput].input.timestamp;
-                    state.playerState = player.state;
-                    state.playerVelocity = player.velocity.y;
-                    state.playerTimer = player.timer;
-                    state.playerCanJump = player.canJump;
-                    state.playerCanLand = player.canLand;
-                    state.playerCanRideBubble = player.canRideBubble;
-                    state.playerLives = player.lives;
+                    state.sync = player.sync;
 
                     //auto collisionState = ent.getComponent<CollisionComponent>().serialise();
                     //std::vector<sf::Uint8> data(sizeof(ClientState) + collisionState.size()); //TODO recycle this to save on reallocations
@@ -278,7 +275,7 @@ void GameServer::update()
                     m_host.sendPacket(c.peer, PacketID::ClientUpdate, state, xy::NetFlag::Unreliable);
                     //m_host.sendPacket(c.peer, PacketID::ClientUpdate, data.data(), data.size(), xy::NetFlag::Unreliable);
 
-                    gameOver = (gameOver && player.state == Player::State::Dead);
+                    gameOver = (gameOver && player.sync.state == Player::State::Dead);
                 }
             }
 
@@ -290,7 +287,7 @@ void GameServer::update()
             m_stateFlags.set(GameOver, gameOver);
 
 #ifdef XY_DEBUG
-            m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.actorCount, xy::NetFlag::Unreliable, 0);
+            m_host.broadcastPacket(PacketID::DebugMapCount, m_mapData.NPCCount, xy::NetFlag::Unreliable, 0);
 #endif
         }
     }
@@ -355,6 +352,13 @@ void GameServer::handleDisconnect(const xy::NetEvent& evt)
         client->peer = {};
         client->ready = false;
         client->level = 1;
+
+        //unpause the game if it is paused so remaining player can continue
+        if (m_stateFlags.test(Paused))
+        {
+            m_stateFlags.set(Paused, false);
+            m_host.broadcastPacket(PacketID::RequestClientPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
+        }
     }
 }
 
@@ -453,16 +457,16 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         if (entity.getComponent<Actor>().id == id)
         {
             auto& player = entity.getComponent<Player>();
-            if (player.state == Player::State::Dead)
+            if (player.sync.state == Player::State::Dead)
             {
                 entity.getComponent<xy::Transform>().setPosition(player.spawnPosition);
-                player.state = Player::State::Walking;
-                player.direction =
+                player.sync.state = Player::State::Walking;
+                player.sync.direction =
                     (player.spawnPosition.x < (MapBounds.width / 2.f)) ? Player::Direction::Right : Player::Direction::Left;
 
-                player.timer = PlayerInvincibleTime;
-                player.lives = PlayerStartLives;
-                player.bonusFlags = 0;
+                player.sync.timer = PlayerInvincibleTime;
+                player.sync.lives = PlayerStartLives;
+                player.sync.bonusFlags = 0;
 
                 auto* msg = m_messageBus.post<GameEvent>(MessageID::GameMessage);
                 msg->action = GameEvent::Restarted;
@@ -494,7 +498,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
 
 void GameServer::checkRoundTime(float dt)
 {
-    if (m_stateFlags.test(ChangingMaps) || m_mapData.actorCount == 0) return;
+    if (m_stateFlags.test(ChangingMaps) || m_mapData.NPCCount == 0) return;
     
     float lastTime = m_currentRoundTime;
     m_currentRoundTime += dt;
@@ -506,7 +510,7 @@ void GameServer::checkRoundTime(float dt)
         m_host.broadcastPacket(PacketID::RoundWarning, sf::Uint8(0), xy::NetFlag::Reliable, 1);
     }
     else if (lastTime < m_roundTimeout &&
-        m_currentRoundTime >= m_roundTimeout && m_mapData.actorCount > 0)
+        m_currentRoundTime >= m_roundTimeout && m_mapData.NPCCount > 0)
     {
         //make everything angry
         xy::Command cmd;
@@ -530,7 +534,7 @@ void GameServer::checkRoundTime(float dt)
             cmd.targetFlags = CommandID::PlayerOne;
             cmd.action = [&](xy::Entity entity, float)
             {
-                if (entity.getComponent<Player>().state != Player::State::Dead)
+                if (entity.getComponent<Player>().sync.state != Player::State::Dead)
                 {
                     //spawn and set player as target
                     auto ent = spawnNPC(ActorID::Goobly, { MapBounds.left + offset, MapBounds.top + offset });
@@ -547,7 +551,7 @@ void GameServer::checkRoundTime(float dt)
             cmd.targetFlags = CommandID::PlayerTwo;
             cmd.action = [&](xy::Entity entity, float)
             {
-                if (entity.getComponent<Player>().state != Player::State::Dead)
+                if (entity.getComponent<Player>().sync.state != Player::State::Dead)
                 {
                     //spawn and set player as target
                     auto ent = spawnNPC(ActorID::Goobly, { MapBounds.width - offset, MapBounds.top + offset });
@@ -561,9 +565,9 @@ void GameServer::checkRoundTime(float dt)
 
     //sometimes the actor count gets messed up so we have a fail-safe timeout
     if (m_currentRoundTime > (m_roundTimeout + watchdogTime)
-        && m_mapData.actorCount <= 1)
+        && m_mapData.NPCCount <= 1)
     {
-        m_mapData.actorCount = 0;
+        m_mapData.NPCCount = 0;
     }
 }
 
@@ -571,7 +575,7 @@ void GameServer::checkMapStatus(float dt)
 {
     m_endOfRoundPauseTime -= dt;
 
-    if (m_mapData.actorCount == 0
+    if (m_mapData.NPCCount == 0
         && m_endOfRoundPauseTime < 0)
     {
         //clear remaining actors (should just be collectables / bubbles)
@@ -593,7 +597,7 @@ void GameServer::checkMapStatus(float dt)
         
 
         //tell clients to do map change
-        m_host.broadcastPacket(PacketID::MapChange, m_mapData, xy::NetFlag::Reliable, 1);
+        //m_host.broadcastPacket(PacketID::MapChange, m_mapData, xy::NetFlag::Reliable, 1);
 
         //set clients to not ready
         m_clients[0].ready = false;
@@ -602,7 +606,7 @@ void GameServer::checkMapStatus(float dt)
 
         //move players to spawn point ready for next map
         cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
-        cmd.action = [](xy::Entity entity, float)
+        cmd.action = [&](xy::Entity entity, float)
         {
             if (entity.getComponent<xy::CommandTarget>().ID & CommandID::PlayerOne)
             {
@@ -612,8 +616,16 @@ void GameServer::checkMapStatus(float dt)
             {
                 entity.getComponent<xy::Transform>().setPosition(PlayerTwoSpawn);
             }
-            entity.getComponent<Player>().state = Player::State::Disabled;
-            entity.getComponent<Player>().velocity.y = 0.f;
+            entity.getComponent<Player>().sync.state = Player::State::Disabled;
+            entity.getComponent<Player>().sync.velocity.y = 0.f;
+            if (entity.getComponent<Player>().sync.flags & Player::HatFlag)
+            {
+                auto* msg = m_messageBus.post<PlayerEvent>(MessageID::PlayerMessage);
+                msg->type = PlayerEvent::LostHat;
+                msg->entity = entity;
+
+                entity.getComponent<Player>().sync.flags &= ~Player::HatFlag;
+            }
         };
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
@@ -621,6 +633,11 @@ void GameServer::checkMapStatus(float dt)
         m_scene.setSystemActive<CollisionSystem>(false);
         m_scene.setSystemActive<PowerupSystem>(false);
         m_scene.setSystemActive<BonusSystem>(false);
+        m_scene.setSystemActive<HatSystem>(false);
+        m_scene.setSystemActive<CrateSystem>(false);
+
+        auto* msg = m_messageBus.post<MapEvent>(MessageID::MapMessage);
+        msg->type = MapEvent::MapChangeStarted;
 
         //increase the level count for connected clients and send update
         auto updateLevel = [&](Client& client)
@@ -637,6 +654,8 @@ void GameServer::checkMapStatus(float dt)
                 {
                     //send value update
                     m_host.sendPacket(client.peer, PacketID::LevelUpdate, client.level, xy::NetFlag::Reliable, 1);
+                    //and inform of next map
+                    m_host.sendPacket(client.peer, PacketID::MapChange, m_mapData, xy::NetFlag::Reliable, 1);
                 }
             }
         };
@@ -696,15 +715,24 @@ void GameServer::initScene()
     m_scene.addSystem<FruitSystem>(m_messageBus, m_host);
     m_scene.addSystem<PowerupSystem>(m_messageBus, m_host);
     m_scene.addSystem<BonusSystem>(m_messageBus, m_host);
+    m_scene.addSystem<HatSystem>(m_messageBus, m_host);
+    m_scene.addSystem<CrateSystem>(m_messageBus, m_host);
+    m_scene.addSystem<ExplosionSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
 
     m_scene.addDirector<InventoryDirector>(m_host);
+
+    m_scene.setSystemActive<HatSystem>(false); //no hats on first level plz
 }
 
 void GameServer::loadMap()
 {
+    m_mapData.NPCCount = 0; //make sure count was reset
+    m_mapData.crateCount = 0;
+    sf::Uint8 teleportCount = 0;
+
     tmx::Map map;
     if (map.load("assets/maps/" + m_mapFiles[m_currentMap]))
     {
@@ -724,67 +752,66 @@ void GameServer::loadMap()
             {
                 //create map collision
                 auto name = xy::Util::String::toLower(layer->getName());
-                if (name == "platform")
+                if (name == "geometry")
                 {
                     const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
                     for (const auto& obj : objs)
                     {
-                        createCollisionObject(m_scene, obj, CollisionType::Platform);
-                        flags |= MapFlags::Platform;
-                    }
-                }
-                else if (name == "solid")
-                {
-                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
-                    for (const auto& obj : objs)
-                    {
-                        createCollisionObject(m_scene, obj, CollisionType::Solid);
-                        flags |= MapFlags::Solid;
-                    }                   
-                }
-                else if (name == "teleport")
-                {
-                    const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
-                    for (const auto& obj : objs)
-                    {
-                        createCollisionObject(m_scene, obj, CollisionType::Teleport);
-                    }
+                        auto type = xy::Util::String::toLower(obj.getType());
 
-                    //only enable powerups if we have 4 spawn points
-                    if (objs.size() == 4)
-                    {
-                        m_scene.getSystem<PowerupSystem>().setSpawnFlags(PowerupSystem::Flame | PowerupSystem::Lightning);
-                        if(xy::Util::Random::value(0, 1) == 0) m_scene.getSystem<BonusSystem>().setEnabled(true);
-                    }
-                    else
-                    {
-                        m_scene.getSystem<BonusSystem>().setEnabled(false);
-                    }
+                        if (type == "platform")
+                        {
+                            createCollisionObject(m_scene, obj, CollisionType::Platform);
+                            flags |= MapFlags::Platform;
+                        }
+                        else if (type == "solid")
+                        {
+                            createCollisionObject(m_scene, obj, CollisionType::Solid);
+                            flags |= MapFlags::Solid;
+                        }
+                        else if (type == "teleport")
+                        {
+                            createCollisionObject(m_scene, obj, CollisionType::Teleport);
+                            flags |= MapFlags::Teleport;
+                            teleportCount++;
+                        }
+                        else if (type == "crate")
+                        {
+                            if (m_mapData.crateCount == MaxCrates) continue;
 
-                    flags |= MapFlags::Teleport;
+                            bool explosive = false;
+                            const auto& properties = obj.getProperties();
+                            if (!properties.empty() &&
+                                xy::Util::String::toLower(properties[0].getName()) == "explosive")
+                            {
+                                explosive = properties[0].getBoolValue();
+                            }
+
+                            //create ent / actor with explosive parameter
+                            spawnCrate({ obj.getPosition().x, obj.getPosition().y }, explosive);
+                        }
+                    }
                 }
                 else if (name == "spawn")
                 {
-                    m_mapData.actorCount = 0; //make sure count was reset
-
                     const auto& objs = dynamic_cast<tmx::ObjectGroup*>(layer.get())->getObjects();
                     for (const auto& obj : objs)
                     {
                         auto actor = ActorID::None;
-                        auto name = xy::Util::String::toLower(obj.getName());
-                        if (name == "whirlybob")
+                        auto objName = xy::Util::String::toLower(obj.getName());
+                        if (objName == "whirlybob")
                         {
                             actor = ActorID::Whirlybob;
                         }
-                        else if (name == "clocksy")
+                        else if (objName == "clocksy")
                         {
                             actor = ActorID::Clocksy;
                         }
-                        else if (name == "squatmo")
+                        else if (objName == "squatmo")
                         {
                             actor = ActorID::Squatmo;
                         }
-                        else if (name == "balldock")
+                        else if (objName == "balldock")
                         {
                             actor = ActorID::Balldock;
                         }
@@ -792,16 +819,17 @@ void GameServer::loadMap()
                         if (actor != ActorID::None)
                         {
                             auto entity = spawnNPC(actor, { obj.getPosition().x, obj.getPosition().y });
-                            m_mapData.actors[m_mapData.actorCount++] = entity.getComponent<Actor>();
+                            m_mapData.NPCs[m_mapData.NPCCount++] = entity.getComponent<Actor>();
                         }
+                        if (m_mapData.NPCCount == MaxNPCs) break;
                     }
                     //spawnNPC(ActorID::Clocksy, { 220.f, 220.f }); spawnCount++;
                 
-                    flags |= (m_mapData.actorCount == 0) ? 0 : MapFlags::Spawn;
+                    flags |= (m_mapData.NPCCount == 0) ? 0 : MapFlags::Spawn;
                 }
             }
         }
-        if (flags != MapFlags::Server)
+        if ((flags & MapFlags::Server) == 0)
         {
             CLIENT_MESSAGE(MessageIdent::MapFailed);
             //std::cout << m_mapFiles[m_currentMap] << ", Bad flags! " << std::bitset<8>(flags) << std::endl;
@@ -823,7 +851,7 @@ void GameServer::loadMap()
             entity.addComponent<xy::QuadTreeItem>().setArea({ 0.f, 0.f, rect.width, rect.height });
             entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::HardBounds);
-            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Bubble);
+            entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Bubble | CollisionFlags::MagicHat);
         }
 
         //check if map has a round time associated with it
@@ -841,6 +869,17 @@ void GameServer::loadMap()
         else
         {
             m_roundTimeout = defaultRoundTime;
+        }
+
+        //enable bonuses if there are 4 teleports
+        if (teleportCount == 4)
+        {
+            m_scene.getSystem<PowerupSystem>().setSpawnFlags(PowerupSystem::Flame | PowerupSystem::Lightning);
+            if (xy::Util::Random::value(0, 1) == 0) m_scene.getSystem<BonusSystem>().setEnabled(true);
+        }
+        else
+        {
+            m_scene.getSystem<PowerupSystem>().setSpawnFlags(0);
         }
 
         m_serverTime.restart();
@@ -865,12 +904,18 @@ void GameServer::beginNewRound()
         m_scene.setSystemActive<CollisionSystem>(true);
         m_scene.setSystemActive<PowerupSystem>(true);
         m_scene.setSystemActive<BonusSystem>(true);
+        m_scene.setSystemActive<CrateSystem>(true);
+        
+        if (xy::Util::Random::value(0, 2) == 2)
+        {
+            m_scene.setSystemActive<HatSystem>(true);
+        }
 
         m_stateFlags.set(ChangingMaps, false);
 
         if (m_mapSkipCount) //someone scored a bonus and skips 5 maps
         {
-            m_mapData.actorCount = 0;
+            m_mapData.NPCCount = 0;
             m_endOfRoundPauseTime = -1.f;
             m_mapSkipCount--;
         }
@@ -898,13 +943,13 @@ void GameServer::beginNewRound()
             cmd.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
             cmd.action = [](xy::Entity entity, float)
             {
-                if (entity.getComponent<Player>().lives > 0)
+                if (entity.getComponent<Player>().sync.lives > 0)
                 {
-                    entity.getComponent<Player>().state = Player::State::Walking;
+                    entity.getComponent<Player>().sync.state = Player::State::Jumping;
                 }
                 else //we have to set this else player remains 'disabled'
                 {
-                    entity.getComponent<Player>().state = Player::State::Dead;
+                    entity.getComponent<Player>().sync.state = Player::State::Dead;
                 }
             };
             m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
@@ -923,6 +968,10 @@ void GameServer::beginNewRound()
                 }
                 m_queuedClient.reset();
             }
+
+            //raise message to say new map started
+            auto* msg = m_messageBus.post<MapEvent>(MessageID::MapMessage);
+            msg->type = MapEvent::MapChangeComplete;
         }
     }
 }
@@ -947,7 +996,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     //add client controller
     entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);
     entity.getComponent<Player>().spawnPosition = entity.getComponent<xy::Transform>().getPosition();
-    if (player == 1) entity.getComponent<Player>().direction = Player::Direction::Left;
+    if (player == 1) entity.getComponent<Player>().sync.direction = Player::Direction::Left;
     entity.addComponent<xy::CommandTarget>().ID = (player == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
 
     //raise a message to say this happened
@@ -1019,6 +1068,29 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     return entity;
 }
 
+void GameServer::spawnCrate(sf::Vector2f position, bool explosive)
+{
+    auto entity = m_scene.createEntity();
+    entity.addComponent<xy::Transform>().setPosition(position + CrateOrigin);
+    entity.getComponent<xy::Transform>().setOrigin(CrateOrigin);
+    entity.addComponent<Actor>().id = entity.getIndex();
+    entity.getComponent<Actor>().type = ActorID::Crate;
+
+    entity.addComponent<xy::QuadTreeItem>().setArea(CrateBounds);
+
+    entity.addComponent<AnimationController>();
+    entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
+
+    entity.addComponent<Crate>().explosive = explosive;
+
+    entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
+    entity.getComponent<CollisionComponent>().addHitbox(CrateFoot, CollisionType::Foot);
+    entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Crate);
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::CrateMask);
+
+    m_mapData.crates[m_mapData.crateCount++] = entity.getComponent<Actor>();
+}
+
 void GameServer::handleMessage(const xy::Message& msg)
 {
     switch (msg.id)
@@ -1031,16 +1103,16 @@ void GameServer::handleMessage(const xy::Message& msg)
         {
             //remove from list of actors
             sf::Int8 i = 0;
-            for (; i < m_mapData.actorCount; ++i)
+            for (; i < m_mapData.NPCCount; ++i)
             {
-                if (m_mapData.actors[i].id == data.entityID)
+                if (m_mapData.NPCs[i].id == data.entityID)
                 {
                     break;
                 }
             }
 
-            m_mapData.actorCount--;
-            m_mapData.actors[i] = m_mapData.actors[m_mapData.actorCount];
+            m_mapData.NPCCount--;
+            m_mapData.NPCs[i] = m_mapData.NPCs[m_mapData.NPCCount];
 
             //LOG(std::to_string(m_mapData.actorCount), xy::Logger::Type::Info);
             m_endOfRoundPauseTime = endOfRoundTime;
@@ -1053,9 +1125,9 @@ void GameServer::handleMessage(const xy::Message& msg)
         if (data.actorID == ActorID::Bonus)
         {
             //trigger map skip if player has bonus
-            if (data.player.getComponent<Player>().bonusFlags == Bonus::BONUS)
+            if (data.player.getComponent<Player>().sync.bonusFlags == Bonus::BONUS)
             {
-                m_mapData.actorCount = 0;
+                m_mapData.NPCCount = 0;
                 m_endOfRoundPauseTime = -1.f;
                 m_mapSkipCount = 4;
 
@@ -1065,12 +1137,27 @@ void GameServer::handleMessage(const xy::Message& msg)
 
                 //reset bonus jigger
                 auto player = data.player;
-                player.getComponent<Player>().bonusFlags = 0;
+                player.getComponent<Player>().sync.bonusFlags = 0;
 
                 auto* msg = m_messageBus.post<ItemEvent>(MessageID::ItemMessage);
                 msg->actorID = ActorID::Bonus;
                 msg->player = player;
             }
+        }
+    }
+        break;
+    case MessageID::PlayerMessage:
+    {
+        const auto& data = msg.getData<PlayerEvent>();
+        if (data.type == PlayerEvent::GotHat)
+        {
+            auto type = (data.entity.getComponent<Player>().playerNumber == 0) ? HatFlag::OneOn : HatFlag::TwoOn;
+            m_host.broadcastPacket(PacketID::HatChange, sf::Uint8(type), xy::NetFlag::Reliable, 1);
+        }
+        else if (data.type == PlayerEvent::LostHat)
+        {
+            auto type = (data.entity.getComponent<Player>().playerNumber == 0) ? HatFlag::OneOff : HatFlag::TwoOff;
+            m_host.broadcastPacket(PacketID::HatChange, sf::Uint8(type), xy::NetFlag::Reliable, 1);
         }
     }
         break;

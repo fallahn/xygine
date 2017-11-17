@@ -1,0 +1,19 @@
+particle_system blop
+{
+	src = "assets/images/explosion.png"
+	blendmode = add
+	//gravity = 0,90
+	velocity = -1.4,-1.1
+	spread = 360
+	lifetime = 0.5
+	lifetime_variance = 0.1
+	colour = 255,255,255,255
+	rotation_speed = 2
+	scale_affector = 2.6
+	size = 24.0
+	emit_rate = 40
+	emit_count = 4
+	spawn_radius = 64
+	release_count = 64
+	//spawn_offset = 96,96
+}

@@ -46,27 +46,7 @@ AnimationControllerSystem::AnimationControllerSystem(xy::MessageBus& mb)
 
 void AnimationControllerSystem::handleMessage(const xy::Message& /*msg*/)
 {
-    //THIS IS HANDLED BY SCENE MESSAGE
 
-
-    //if (msg.id == MessageID::PlayerMessage)
-    //{
-    //    const auto& data = msg.getData<PlayerEvent>();
-    //    auto entity = data.entity;
-    //    auto& controller = entity.getComponent<AnimationController>();
-    //    controller.prevAnimation = controller.currentAnim;
-    //    switch (data.type)
-    //    {
-    //    default: break;
-    //    case PlayerEvent::Died:
-    //        controller.currentAnim = AnimationController::Animation::Die;
-    //        break;
-    //    case PlayerEvent::FiredWeapon:
-    //        controller.currentAnim = AnimationController::Animation::Shoot;
-    //        break;
-    //    }
-    //    entity.getComponent<xy::SpriteAnimation>().play(controller.animationMap[controller.currentAnim]);
-    //}
 }
 
 void AnimationControllerSystem::process(float)

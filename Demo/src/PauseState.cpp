@@ -27,6 +27,7 @@ source distribution.
 
 #include "PauseState.hpp"
 #include "MessageIDs.hpp"
+#include "Localisation.hpp"
 
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Text.hpp>
@@ -150,7 +151,7 @@ void PauseState::load()
 
     //resume text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(m_font).setString("RESUME");
+    entity.addComponent<xy::Text>(m_font).setString(Locale::Strings[Locale::Resume]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
@@ -199,7 +200,7 @@ void PauseState::load()
 
     //quit text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(m_font).setString("QUIT");
+    entity.addComponent<xy::Text>(m_font).setString(Locale::Strings[Locale::Quit]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto& tx2 = entity.addComponent<xy::Transform>();

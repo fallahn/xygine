@@ -78,8 +78,8 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
             entity.getComponent<Actor>().type = (player.playerNumber == 0) ?  ActorID::BubbleOne : ActorID::BubbleTwo;
             entity.addComponent<Bubble>().player = player.playerNumber;
             //add player current velocity to spawn velocity
-            entity.getComponent<Bubble>().velocity.x = (player.direction == Player::Direction::Right) ? spawnVelocity : -spawnVelocity;
-            entity.getComponent<Bubble>().velocity.x += player.velocity.x;
+            entity.getComponent<Bubble>().velocity.x = (player.sync.direction == Player::Direction::Right) ? spawnVelocity : -spawnVelocity;
+            entity.getComponent<Bubble>().velocity.x += player.sync.velocity.x;
             entity.addComponent<CollisionComponent>().addHitbox(BubbleBounds, CollisionType::Bubble);
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Bubble);
             entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Solid | CollisionFlags::NPC | CollisionFlags::HardBounds);
@@ -90,8 +90,7 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
 
             //broadcast to clients
             ActorEvent evt;
-            evt.actor.id = entity.getIndex();
-            evt.actor.type = entity.getComponent<Actor>().type;
+            evt.actor = entity.getComponent<Actor>();
             evt.x = pos.x;
             evt.y = pos.y;
             evt.type = ActorEvent::Spawned;

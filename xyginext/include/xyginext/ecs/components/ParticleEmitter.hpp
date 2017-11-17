@@ -76,6 +76,7 @@ namespace xy
         float lifetimeVariance = 0.f;
         sf::Color colour;
         float rotationSpeed = 0.f;
+        bool randomInitialRotation = true;
         float scaleModifier = 0.f;
         float size = 1.f; //! <diameter of particle
         float emitRate = 1.f; //! <particles per second

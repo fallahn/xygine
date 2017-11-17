@@ -125,15 +125,6 @@ void PowerupSystem::process(float dt)
             m_nextSpawnTime = (m_nextSpawnTime + 1) % spawnTimes.size();
         }
     }
-
-    //temp for testing
-    /*static float timer = 0.f;
-    timer += dt;
-    if (timer > 5.f)
-    {
-        timer = 0.f;
-        spawn(ActorID::LightningOne, 0);
-    }*/
 }
 
 void PowerupSystem::setSpawnFlags(sf::Uint8 flags)
@@ -277,6 +268,7 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float)
                 break;
             case CollisionType::Platform:
             case CollisionType::Solid:
+            case CollisionType::Crate:
                 if (powerup.state == Powerup::State::Idle)
                 {
                     tx.move(man.normal * man.penetration);
@@ -292,7 +284,13 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float)
                         powerup.velocity.x = 0.f;
                     }
                 }
-
+                else if (powerup.state == Powerup::State::Active
+                    && man.otherType == CollisionType::Crate)
+                {
+                    powerup.state = Powerup::State::Dying;
+                    powerup.lifetime = 1.f;
+                    entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+                }
                 break;
             case CollisionType::NPC:
                 if (powerup.state == Powerup::State::Active)

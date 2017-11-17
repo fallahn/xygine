@@ -35,6 +35,8 @@ source distribution.
 #include "MessageIDs.hpp"
 #include "CommandIDs.hpp"
 #include "PowerupSystem.hpp"
+#include "CrateSystem.hpp"
+#include "Explosion.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -101,6 +103,8 @@ void NPCSystem::process(float dt)
     auto entities = getEntities();
     for (auto& entity : entities)
     {
+        checkBounds(entity, dt);
+
         switch(entity.getComponent<NPC>().state)
         {
         case NPC::State::Bubble:
@@ -153,9 +157,16 @@ void NPCSystem::updateWhirlybob(xy::Entity entity, float dt)
             default: break;
             case CollisionType::Solid:
             case CollisionType::Platform:
+            case CollisionType::Crate:
                 tx.move(manifold.normal * manifold.penetration);
                 npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
 
+                break;
+            case CollisionType::Explosion:
+                if (manifold.otherEntity.hasComponent<Explosion>())
+                {
+                    despawn(entity, manifold.otherEntity.getComponent<Explosion>().owner, NpcEvent::Explosion);
+                }
                 break;
             case CollisionType::Bubble:
                 //switch to bubble state if bubble in spawn state
@@ -273,7 +284,7 @@ void NPCSystem::updateClocksy(xy::Entity entity, float dt)
     }
 
     //update animation state      
-    animController.direction = -npc.velocity.x;
+    animController.direction = (npc.velocity.x > 0) ? -1.f : 1.f;
     if (anim == animController.nextAnimation) //only update if collision hasn't changed it
     {
         if (npc.state == NPC::State::Jumping)
@@ -305,6 +316,12 @@ void NPCSystem::updateGoobly(xy::Entity entity, float dt)
             switch (manifold.otherType)
             {
             default: break;
+            case CollisionType::Explosion:
+                if (manifold.otherEntity.hasComponent<Explosion>())
+                {
+                    despawn(entity, manifold.otherEntity.getComponent<Explosion>().owner, NpcEvent::Explosion);
+                }
+                break;
             case CollisionType::Solid:
             //case CollisionType::Platform:
                 tx.move(manifold.normal * manifold.penetration);
@@ -314,9 +331,9 @@ void NPCSystem::updateGoobly(xy::Entity entity, float dt)
             case CollisionType::Player:
             {
                 auto player = manifold.otherEntity.getComponent<Player>();
-                if (player.state != Player::State::Dead && player.state != Player::State::Dying)
+                if (player.sync.state != Player::State::Dead && player.sync.state != Player::State::Dying)
                 {
-                    if (player.timer > 0)
+                    if (player.sync.timer > 0)
                     {
                         //player is invincible so kill goobly
                         getScene()->destroyEntity(entity);
@@ -472,7 +489,7 @@ void NPCSystem::updateBalldock(xy::Entity entity, float dt)
     }
 
     //update animation state     
-    animController.direction = -npc.velocity.x;
+    animController.direction = (npc.velocity.x < 0) ? 1.f : -1.f;
     if (currAnim == animController.nextAnimation)
     {
         if (npc.state == NPC::State::Jumping)
@@ -616,7 +633,7 @@ void NPCSystem::updateBubbleState(xy::Entity entity, float dt)
                 //kill ent
             {
                 const auto& player = manifold.otherEntity.getComponent<Player>();
-                if (player.playerNumber == npc.bubbleOwner && player.state == Player::State::Jumping)
+                if (player.playerNumber == npc.bubbleOwner && player.sync.state == Player::State::Jumping)
                 {
                     despawn(entity, player.playerNumber, NpcEvent::Bubble);
                 }
@@ -790,6 +807,26 @@ void NPCSystem::collisionNormal(xy::Entity entity)
                     tx.move(manifold.normal * manifold.penetration);
                     npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
                     break;
+                case CollisionType::Crate:
+                    tx.move(manifold.normal * manifold.penetration);
+                    npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
+
+                    if (manifold.otherEntity.hasComponent<Crate>())
+                    {
+                        if (manifold.penetration > (ClocksyBounds.width / 2.f))
+                        {
+                            const auto& crate = manifold.otherEntity.getComponent<Crate>();
+                            despawn(entity, crate.lastOwner, NpcEvent::Crate);
+                        }
+                    }
+
+                    break;
+                case CollisionType::Explosion:
+                    if (manifold.otherEntity.hasComponent<Explosion>())
+                    {
+                        despawn(entity, manifold.otherEntity.getComponent<Explosion>().owner, NpcEvent::Explosion);
+                    }
+                    break;
                 case CollisionType::Bubble:
                     //switch to bubble state if bubble in spawn state
                 {
@@ -839,6 +876,7 @@ void NPCSystem::collisionNormal(xy::Entity entity)
             {
                 //foot's in the air so we're falling
                 npc.state = NPC::State::Jumping;
+                return;
             }
         }
     }
@@ -900,6 +938,7 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                             //moving down
                             npc.state = NPC::State::Normal;
                             npc.velocity.y = 0.f;
+                            return;
                         }
                     }
                     else //bonk head
@@ -908,6 +947,47 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                     }
 
                     npc.velocity = xy::Util::Vector::reflect(npc.velocity, manifold.normal);
+                    break;
+                case CollisionType::Crate:
+                    tx.move(manifold.normal * manifold.penetration);
+                    if (npc.velocity.y > 0)
+                    {
+                        //balls bounce.
+                        if (entity.getComponent<Actor>().type == ActorID::Balldock
+                            && npc.velocity.y > BalldockBounceVelocity)
+                        {
+                            npc.velocity.y = -npc.velocity.y * 0.4f;
+                            break; //skip reflecting velocity, below
+                        }
+                        else
+                        {
+                            //moving down
+                            npc.state = NPC::State::Normal;
+                            npc.velocity.y = 0.f;
+                            return;
+                        }
+                    }
+                    else //bonk head
+                    {
+                        npc.velocity.y *= 0.25f;
+                    }
+
+                    if (manifold.otherEntity.hasComponent<Crate>())
+                    {
+                        if (manifold.penetration > (ClocksyBounds.width / 2.f)
+                            && manifold.normal.y >= 0)
+                        {
+                            const auto& crate = manifold.otherEntity.getComponent<Crate>();
+                            despawn(entity, crate.lastOwner, NpcEvent::Crate);
+                        }
+                    }
+
+                    break;
+                case CollisionType::Explosion:
+                    if (manifold.otherEntity.hasComponent<Explosion>())
+                    {
+                        despawn(entity, manifold.otherEntity.getComponent<Explosion>().owner, NpcEvent::Explosion);
+                    }
                     break;
                 case CollisionType::Bubble:
                     //switch to bubble state if bubble in spawn state
@@ -941,5 +1021,51 @@ void NPCSystem::collisionFalling(xy::Entity entity)
         //{
 
         //}
+    }
+}
+
+void NPCSystem::checkBounds(xy::Entity entity, float dt)
+{
+    const auto& tx = entity.getComponent<xy::Transform>();
+    auto& npc = entity.getComponent<NPC>();
+    if (npc.state == NPC::State::Dying) return;
+
+    static const sf::FloatRect bounds(0.f, 160.f, MapBounds.width, MapBounds.height - 160.f);
+
+    if (!bounds.contains(tx.getPosition()))
+    {
+        npc.failSafeTimer -= dt;
+
+        //LOG("NPC out of bounds: " + std::to_string(entity.getComponent<NPC>().failSafeTimer), xy::Logger::Type::Info);
+
+        if (npc.failSafeTimer < 0)
+        {
+            //getScene()->destroyEntity(entity);
+
+            ////broadcast to client
+            //ActorEvent evt;
+            //evt.actor.id = entity.getIndex();
+            //evt.actor.type = entity.getComponent<Actor>().type;
+            //evt.x = tx.getPosition().x;
+            //evt.y = tx.getPosition().y;
+            //evt.type = ActorEvent::Died;
+
+            //m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+
+            ////raise message
+            //auto* msg = postMessage<SceneEvent>(MessageID::SceneMessage);
+            //msg->actorID = evt.actor.type;
+            //msg->type = SceneEvent::ActorRemoved;
+            //msg->entity = entity;
+            //msg->x = evt.x;
+            //msg->y = evt.y;
+
+            despawn(entity, 255, NpcEvent::OutOfBounds);
+            LOG("NPC out of bounds DESTROYED", xy::Logger::Type::Info);
+        }
+    }
+    else
+    {
+        npc.failSafeTimer = std::min(NPC::FailSafeTime, entity.getComponent<NPC>().failSafeTimer + dt);
     }
 }

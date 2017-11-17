@@ -54,13 +54,13 @@ namespace MapFlags
         Teleport = 0x8,
         Spawn = 0x10,
 
-        Shared = Solid | Platform | Teleport,
+        Shared = Solid | Platform, //| Teleport,
         Server = Shared | Spawn,
         Client = Shared | Graphics
     };
 }
 
-namespace CollisionFlags
+namespace CollisionFlags //used in broad phase culling
 {
     enum
     {
@@ -74,11 +74,16 @@ namespace CollisionFlags
         Powerup = 0x80,
         Bonus = 0x100,
         HardBounds = 0x200,
+        MagicHat = 0x400,
+        Crate = 0x800,
+        Explosion = 0x1000,
 
-        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup | Bonus,
-        NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup | HardBounds,
+        PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup | Bonus | MagicHat | Crate | Explosion,
+        NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup | HardBounds | Crate | Explosion,
         FruitMask = Solid | Platform | Player | Teleport,
-        PowerupMask = Platform | Solid | Player | NPC
+        PowerupMask = Platform | Solid | Player | NPC | Crate,
+        CrateMask = Platform | Solid | Player | NPC | Powerup | Teleport | Crate,
+        ExplosionMask = Player | NPC
     };
 }
 
@@ -112,7 +117,13 @@ static const sf::Vector2f PlayerOrigin(32.f, 64.f);
 
 static const sf::FloatRect SmallFoodBounds(0.f, 0.f, 64.f, 64.f);
 static const sf::Vector2f SmallFoodOrigin(32.f, 32.f);
-static constexpr float LargeFruitSize = 96.f;
+
+static const sf::FloatRect CrateBounds(2.f, 2.f, 60.f, 62.f);
+static const sf::FloatRect CrateFoot = ClocksyFoot;
+static const sf::Vector2f CrateOrigin(32.f, 32.f);
+
+static const sf::FloatRect ExplosionBounds(0.f, 0.f, 192.f, 192.f);
+static const sf::Vector2f ExplosionOrigin(96.f, 96.f);
 
 static constexpr float TeleportDistance = 886.f;
 static constexpr float Gravity = 2200.f;
@@ -120,8 +131,8 @@ static constexpr float MaxVelocity = 800.f;
 
 static const sf::FloatRect MapBounds(0.f, 0.f, 16.f * 64.f, 17.f * 64.f);
 
-static const sf::Vector2f PlayerOneSpawn(102.f, 926.f);
-static const sf::Vector2f PlayerTwoSpawn(922.f, 926.f);
+static const sf::Vector2f PlayerOneSpawn(104.f, 920.f);
+static const sf::Vector2f PlayerTwoSpawn(920.f, 920.f);
 static const float PlayerInvincibleTime = 2.f;
 static const sf::Uint8 PlayerStartLives = 3;
 

@@ -1,0 +1,19 @@
+particle_system spawn
+{
+	src = "assets/images/fragment.png"
+	blend_mode = add
+	gravity = 0,2000
+	velocity = 0,0
+	//spread = 0
+	lifetime = 0.43
+	lifetime_variance = 0.13
+	colour = 125,75,9,255
+	scale_affector = 1
+	size = 16.0
+	emit_rate = 5
+	emit_count = 5
+	spawn_radius = 60
+	spawn_offset = 32,32
+	release_count = 5
+	random_initial_rotation = false
+}

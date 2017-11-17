@@ -55,25 +55,41 @@ struct Player final
     std::size_t currentInput = 0;
     std::size_t lastUpdatedInput = history.size() - 1;
     sf::Uint8 playerNumber = 0;
+    sf::Vector2f spawnPosition;
+
     enum class State : sf::Uint8
     {
         Walking, Jumping, Dying, Dead, Disabled //disable the player during map transitions
-    }state = State::Walking;
-    sf::Vector2f velocity; //only the Y velocity is actually used in movement - the x value is used to track how much initial velocity to spawn bubble with
-    bool canJump = true;
-    sf::Uint8 canLand = 0; //only for 1 way platforms
-    bool canShoot = true;
-    bool canRideBubble = false;
-    enum class Direction : sf::Uint8 
+    };
+
+    enum class Direction :sf::Uint8
     {
         Left, Right
-    }direction = Direction::Right;
+    };
 
-    sf::Vector2f spawnPosition;
-    float timer = 2.f; //times invulnerability when spawning, and time to respawn
-    sf::Uint8 lives = 3;
+    enum
+    {
+        JumpFlag = 0x1,
+        ShootFlag = 0x2,
+        BubbleFlag = 0x4,
+        HatFlag = 0x8
+    };
 
-    sf::Uint8 bonusFlags = 0;
+    //player info which requires net sync
+    struct SyncState final
+    {
+        State state = State::Jumping;
+        Direction direction = Direction::Right;
+
+        sf::Uint8 flags = 0;
+
+        sf::Vector2f velocity; //only the Y velocity is actually used in movement - the x value is used to track how much initial velocity to spawn bubble with
+        sf::Uint8 canLand = 0; //only for 1 way platforms
+
+        float timer = 2.f; //times invulnerability when spawning, and time to respawn
+        sf::Uint8 lives = 3;
+        sf::Uint8 bonusFlags = 0;
+    }sync;
 };
 
 struct Manifold;
@@ -102,6 +118,7 @@ private:
     void collisionDying(xy::Entity);
 
     bool npcCollision(xy::Entity, const Manifold&); //returns true if this caused a state change
+    bool explosionCollision(xy::Entity, const Manifold&); //as above
 };
 
 #endif //DEMO_PLAYER_SYSTEM_HPP_

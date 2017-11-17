@@ -56,7 +56,10 @@ struct PlayerEvent final
         Spawned,
         FiredWeapon,
         Jumped,
-        Died
+        Died,
+        GotHat,
+        LostHat,
+        GotExtraLife
     }type;
     xy::Entity entity;
 };
@@ -88,7 +91,10 @@ struct NpcEvent final
     {
         Bubble,
         Lightning,
-        Flame
+        Flame,
+        Crate,
+        Explosion,
+        OutOfBounds
     };
     sf::Uint8 causeOfDeath = Bubble;
 };
@@ -115,7 +121,9 @@ struct MapEvent final
     {
         AnimationComplete,
         HurryUp,
-        BonusSwitch
+        BonusSwitch,
+        MapChangeStarted,
+        MapChangeComplete
     }type;
 };
 

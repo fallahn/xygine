@@ -41,6 +41,7 @@ class GameoverState final : public xy::State
 {
 public:
     GameoverState(xy::StateStack&, xy::State::Context, const SharedStateData&);
+    ~GameoverState();
 
     xy::StateID stateID() const override { return StateID::GameOver; }
     bool handleEvent(const sf::Event&) override;

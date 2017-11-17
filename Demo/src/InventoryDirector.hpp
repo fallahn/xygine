@@ -54,11 +54,14 @@ private:
         sf::Uint32 score = 0;
         sf::Uint8 lives = 0;
         sf::Uint8 bonusFlags = 0;
+        bool hat = false;
     };
     std::array<Inventory, 2> m_playerValues{};
 
     std::array<std::pair<sf::Uint8, sf::Uint32>, 12> m_updateQueue;
     std::size_t m_queuePos;
+
+    float m_hatTime;
 
     void sendUpdate(sf::Uint8, sf::Uint32);
 

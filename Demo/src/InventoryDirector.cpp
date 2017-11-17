@@ -42,20 +42,25 @@ source distribution.
 namespace
 {
     const sf::Uint32 NpcScore = 500;
-    const sf::Uint32 PowerupScore = 800;
+    const sf::Uint32 PowerupScore = 750;
     const sf::Uint32 GooblyScore = 850;
     const sf::Uint32 SmallFruitScore = 350;
     const sf::Uint32 LargeFruitScore = 1000;
     const sf::Uint32 BonusScore = 100;
-    const sf::Uint32 BonusCompletionScore = 1500;
+    const sf::Uint32 BonusCompletionScore = 2500;
+    const sf::Uint32 HatPickUpScore = 50;
+    const sf::Uint32 CrateScore = 1000;
 
     const sf::Uint32 lifeScore = 10000; //extra life is awarded in multiples of this
     const sf::Uint8 maxLives = 6;
+
+    const float HatAwardTime = 5.f;
 }
 
 InventoryDirector::InventoryDirector(xy::NetHost& host)
-    : m_host(host),
-    m_queuePos(0)
+    : m_host    (host),
+    m_queuePos  (0),
+    m_hatTime   (HatAwardTime)
 {
 
 }
@@ -78,6 +83,7 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             m_playerValues[data.playerID].bonusFlags = 0;
             m_playerValues[data.playerID].lives = PlayerStartLives;
             m_playerValues[data.playerID].score = 0;
+            m_playerValues[data.playerID].hat = false;
 
             m_updateQueue[m_queuePos++] = std::make_pair(data.playerID, 0);
         }
@@ -86,6 +92,9 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
     case MessageID::NpcMessage:
     {
         const auto& data = msg.getData<NpcEvent>();
+
+        if (data.playerID > 1) break;
+
         if (data.type == NpcEvent::Died)
         {
             auto actor = getScene().getEntity(data.entityID).getComponent<Actor>().type;
@@ -97,7 +106,19 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             }
             else
             {
-                auto score = data.causeOfDeath == NpcEvent::Bubble ? NpcScore : PowerupScore;
+                sf::Uint32 score = 0;
+                switch (data.causeOfDeath)
+                {
+                case NpcEvent::Bubble:
+                    score = NpcScore;
+                    break;
+                case NpcEvent::Crate:
+                    score = CrateScore;
+                    break;
+                default:
+                    score = PowerupScore;
+                    break;
+                }
                 
                 m_playerValues[data.playerID].score += score;
                 m_updateQueue[m_queuePos++] = std::make_pair(data.playerID, score);
@@ -122,7 +143,7 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             break;
         case ActorID::Bonus:
             amount = BonusScore;
-            m_playerValues[playerID].bonusFlags = data.player.getComponent<Player>().bonusFlags;
+            m_playerValues[playerID].bonusFlags = data.player.getComponent<Player>().sync.bonusFlags;
 
             if (m_playerValues[playerID].bonusFlags == 0) //round change was triggered
             {
@@ -143,8 +164,9 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         {
             //reset the old scores
             const auto& player = data.entity.getComponent<Player>();
-            m_playerValues[player.playerNumber].lives = player.lives;
+            m_playerValues[player.playerNumber].lives = player.sync.lives;
             m_playerValues[player.playerNumber].score = 0;
+            m_playerValues[player.playerNumber].hat = false;
 
             //send info on both, in case new player has joined
             m_updateQueue[m_queuePos++] = std::make_pair(0, 0);
@@ -153,8 +175,19 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         else if (data.type == PlayerEvent::Died)
         {
             const auto& player = data.entity.getComponent<Player>();
-            m_playerValues[player.playerNumber].lives = player.lives;
+            m_playerValues[player.playerNumber].lives = player.sync.lives;
             m_updateQueue[m_queuePos++] = std::make_pair(player.playerNumber, 0);
+        }
+        else if (data.type == PlayerEvent::GotHat)
+        {
+            const auto& player = data.entity.getComponent<Player>();
+            m_playerValues[player.playerNumber].hat = true;
+            m_updateQueue[m_queuePos++] = std::make_pair(player.playerNumber, HatPickUpScore);
+            m_hatTime = HatAwardTime;
+        }
+        else if (data.type == PlayerEvent::LostHat)
+        {
+            m_playerValues[data.entity.getComponent<Player>().playerNumber].hat = false;
         }
     }
         break;
@@ -175,8 +208,23 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
     checkLifeBonus(1, p2Old);
 }
 
-void InventoryDirector::process(float)
+void InventoryDirector::process(float dt)
 {
+    m_hatTime -= dt;
+
+    if (m_hatTime < 0)
+    {
+        m_hatTime = HatAwardTime;
+        for (auto i = 0u; i < m_playerValues.size(); ++i)
+        {
+            if (m_playerValues[i].hat)
+            {
+                m_playerValues[i].score += (HatPickUpScore / 10);
+                sendUpdate(i, HatPickUpScore / 10);
+            }
+        }
+    }
+
     for (auto i = 0u; i < m_queuePos; ++i)
     {
         sendUpdate(m_updateQueue[i].first, m_updateQueue[i].second);
@@ -209,7 +257,7 @@ void InventoryDirector::checkLifeBonus(sf::Uint8 player, sf::Uint32 oldScore)
         cmd.targetFlags = (player == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
         cmd.action = [](xy::Entity entity, float)
         {
-            entity.getComponent<Player>().lives++;
+            entity.getComponent<Player>().sync.lives++;
         };
         getScene().getSystem<xy::CommandSystem>().sendCommand(cmd);
     }

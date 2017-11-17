@@ -54,6 +54,10 @@ FXDirector::FXDirector()
     m_soundResource.get("assets/sound/powerup_pop.wav");
     m_soundResource.get("assets/sound/pop.wav");
     m_soundResource.get("assets/sound/bonus.wav");
+    m_soundResource.get("assets/sound/get_hat.wav");
+    m_soundResource.get("assets/sound/hat_land.wav");
+    m_soundResource.get("assets/sound/crate_break.wav");
+    m_soundResource.get("assets/sound/one_up.wav");
 }
 
 //public
@@ -62,6 +66,24 @@ void FXDirector::handleMessage(const xy::Message& msg)
     switch (msg.id)
     {
     default: break;
+    case MessageID::PlayerMessage:
+    {
+        const auto& data = msg.getData<PlayerEvent>();
+        switch (data.type)
+        {
+        default:break;
+        case PlayerEvent::GotExtraLife:
+            playSound(m_soundResource.get("assets/sound/one_up.wav"));
+            break;
+        case PlayerEvent::GotHat:
+            playSound(m_soundResource.get("assets/sound/get_hat.wav"));
+            break;
+        case PlayerEvent::LostHat:
+            playSound(m_soundResource.get("assets/sound/hat_land.wav"));
+            break;
+        }
+    }
+        break;
     case MessageID::SceneMessage:
     {
         const auto& data = msg.getData<SceneEvent>();
@@ -81,6 +103,9 @@ void FXDirector::handleMessage(const xy::Message& msg)
             case ActorID::Bonus:
                 playSound(m_soundResource.get("assets/sound/pop.wav"));
                 break;
+            case ActorID::Crate:
+                playSound(m_soundResource.get("assets/sound/crate_break.wav"));
+                break;
             }
         }
         else if (data.type == SceneEvent::ActorSpawned)
@@ -94,6 +119,9 @@ void FXDirector::handleMessage(const xy::Message& msg)
                 playSound(m_soundResource.get("assets/sound/shoot.wav"));
             }
             break;
+            case ActorID::MagicHat:
+                playSound(m_soundResource.get("assets/sound/pop.wav"));
+            break;
             }
         }
     }
@@ -104,6 +132,21 @@ void FXDirector::handleMessage(const xy::Message& msg)
         switch (data.newAnim)
         {
         default: break;
+        case AnimationController::Dead:
+            {
+            if (data.entity.hasComponent<Actor>())
+            {
+                const auto& actor = data.entity.getComponent<Actor>();
+                switch (actor.type)
+                {
+                default: break;
+                case ActorID::MagicHat:
+                    playSound(m_soundResource.get("assets/sound/hat_land.wav"));
+                    break;
+                }
+            }
+            }
+                break;
         case AnimationController::Die:
         {
             if (data.entity.hasComponent<Actor>())
@@ -136,7 +179,14 @@ void FXDirector::handleMessage(const xy::Message& msg)
         break;
         case AnimationController::JumpUp:
         {
-            playSound(m_soundResource.get("assets/sound/jump.wav"));
+            const auto& actor = data.entity.getComponent<Actor>();
+            switch (actor.type)
+            {
+            default: 
+                playSound(m_soundResource.get("assets/sound/jump.wav"));
+                break;
+            case ActorID::MagicHat: break;
+            }
         }
         break;
         case AnimationController::Walk:
@@ -197,7 +247,7 @@ void FXDirector::resizeEntities()
     {
         m_entities[i] = getScene().createEntity();
         m_entities[i].addComponent<xy::AudioEmitter>().setSource(m_soundResource.get("placeholder"));
-        m_entities[i].getComponent<xy::AudioEmitter>().setVolume(100.f);
+        m_entities[i].getComponent<xy::AudioEmitter>().setVolume(200.f);
         m_entities[i].getComponent<xy::AudioEmitter>().setMinDistance(1920.f);
         m_entities[i].getComponent<xy::AudioEmitter>().setRelativeTolistener(true);
         m_entities[i].addComponent<xy::Transform>();

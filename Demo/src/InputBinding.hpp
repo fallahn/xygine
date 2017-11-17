@@ -39,7 +39,7 @@ struct InputBinding final
         Jump, Shoot, Left, Right, Count
     };
     std::array<sf::Keyboard::Key, Count> keys{};
-    std::array<sf::Uint32, 2u> buttons = { 0, 1 };
+    std::array<sf::Uint32, 2u> buttons = { {0, 1} };
     sf::Uint32 controllerID = 100;
 };
 

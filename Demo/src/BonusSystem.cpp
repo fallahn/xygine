@@ -138,7 +138,7 @@ void BonusSystem::doCollision(xy::Entity entity)
             {
                 //award to player and pop
                 auto otherEnt = man.otherEntity;
-                otherEnt.getComponent<Player>().bonusFlags |= bonus.value;
+                otherEnt.getComponent<Player>().sync.bonusFlags |= bonus.value;
 
                 auto* msg = postMessage<ItemEvent>(MessageID::ItemMessage);
                 msg->actorID = ActorID::Bonus;

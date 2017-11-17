@@ -41,7 +41,7 @@ namespace
 SpriteSystem::SpriteSystem(MessageBus& mb)
     : System        (mb, typeid(SpriteSystem))
 {
-    requireComponent<xy::Transform>();
+    //requireComponent<xy::Transform>();
     requireComponent<xy::Sprite>();
     requireComponent<xy::Drawable>();
 }
@@ -57,6 +57,7 @@ void SpriteSystem::process(float)
         if (sprite.m_dirty)
         {
             auto& drawable = entity.getComponent<xy::Drawable>();
+            //drawable.setPrimitiveType(sf::TriangleStrip);
             
             //update vert positions
             const auto subRect = sprite.m_textureRect;

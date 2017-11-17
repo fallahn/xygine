@@ -36,7 +36,8 @@ enum StateID
     Error,
     Pause,
     RemotePause,
-    GameOver
+    GameOver,
+    GameComplete
 };
 
 #endif //DEMO_STATE_IDS_HPP_

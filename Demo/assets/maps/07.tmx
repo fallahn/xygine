@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="39">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="43">
  <properties>
   <property name="round_time" type="float" value="26"/>
  </properties>
@@ -19,35 +19,43 @@
    eJxjYBhYwAHEokhYDiouT0BMFKqXg0K7QVgMCRMCyGrx2Y/N/bjsJxfA9IuiYVwAXR0twg9XOGJTQy37qaEfPWyQwxGXHC3CTxYqp0BADBZ+MGAKxA447LFF45sScBdMvTkQ22ORNwBifSgbAPbTCFc=
   </data>
  </layer>
- <objectgroup color="#00aa00" name="Solid">
-  <object id="2" x="416" y="0" width="192" height="160"/>
-  <object id="3" x="64" y="0" width="224" height="160"/>
-  <object id="4" x="736" y="0" width="224" height="160"/>
-  <object id="5" x="736" y="928" width="224" height="128"/>
-  <object id="6" x="416" y="928" width="192" height="128"/>
-  <object id="7" x="64" y="928" width="224" height="128"/>
-  <object id="8" x="960" y="128" width="64" height="832"/>
-  <object id="9" x="0" y="128" width="64" height="832"/>
-  <object id="36" x="288" y="0" width="128" height="16"/>
-  <object id="37" x="608" y="0" width="128" height="16"/>
-  <object id="38" x="64" y="1056" width="896" height="32"/>
- </objectgroup>
- <objectgroup color="#ff007f" name="Teleport">
-  <object id="21" x="288" y="1024" width="128" height="32"/>
-  <object id="22" x="608" y="1024" width="128" height="32"/>
-  <object id="19" x="288" y="16" width="128" height="16"/>
-  <object id="20" x="608" y="16" width="128" height="16"/>
- </objectgroup>
- <objectgroup color="#00ff00" name="Platform">
-  <object id="10" type="platform" x="64" y="288" width="192" height="32"/>
-  <object id="14" type="platform" x="640" y="608" width="320" height="32"/>
-  <object id="12" type="platform" x="704" y="448" width="256" height="32"/>
-  <object id="15" type="platform" x="576" y="768" width="304" height="32"/>
-  <object id="17" type="platform" x="64" y="608" width="320" height="32"/>
-  <object id="11" type="platform" x="768" y="288" width="192" height="32"/>
-  <object id="13" type="platform" x="64" y="448" width="256" height="32"/>
-  <object id="16" type="platform" x="144" y="768" width="304" height="32"/>
-  <object id="35" x="416" y="320" width="192" height="32"/>
+ <objectgroup color="#00aa00" name="geometry">
+  <object id="2" type="Solid" x="416" y="0" width="192" height="160"/>
+  <object id="3" type="Solid" x="64" y="0" width="224" height="160"/>
+  <object id="4" type="Solid" x="736" y="0" width="224" height="160"/>
+  <object id="5" type="Solid" x="736" y="928" width="224" height="128"/>
+  <object id="6" type="Solid" x="416" y="928" width="192" height="128"/>
+  <object id="7" type="Solid" x="64" y="928" width="224" height="128"/>
+  <object id="8" type="Solid" x="960" y="128" width="64" height="832"/>
+  <object id="9" type="Solid" x="0" y="128" width="64" height="832"/>
+  <object id="36" type="Solid" x="288" y="0" width="128" height="16"/>
+  <object id="37" type="Solid" x="608" y="0" width="128" height="16"/>
+  <object id="38" type="Solid" x="64" y="1056" width="896" height="32"/>
+  <object id="35" type="Platform" x="416" y="320" width="192" height="32"/>
+  <object id="12" type="Platform" x="704" y="448" width="256" height="32"/>
+  <object id="16" type="Platform" x="144" y="768" width="304" height="32"/>
+  <object id="13" type="Platform" x="64" y="448" width="256" height="32"/>
+  <object id="15" type="Platform" x="576" y="768" width="304" height="32"/>
+  <object id="17" type="Platform" x="64" y="608" width="320" height="32"/>
+  <object id="19" type="Teleport" x="288" y="16" width="128" height="16"/>
+  <object id="20" type="Teleport" x="608" y="16" width="128" height="16"/>
+  <object id="10" type="Platform" x="64" y="288" width="192" height="32"/>
+  <object id="11" type="Platform" x="768" y="288" width="192" height="32"/>
+  <object id="22" type="Teleport" x="608" y="1024" width="128" height="32"/>
+  <object id="14" type="Platform" x="640" y="608" width="320" height="32"/>
+  <object id="21" type="Teleport" x="288" y="1024" width="128" height="32"/>
+  <object id="39" type="Crate" gid="2" x="736" y="576" width="64" height="64"/>
+  <object id="40" type="Crate" gid="2" x="224" y="576" width="64" height="64"/>
+  <object id="41" type="Crate" gid="2" x="224" y="736" width="64" height="64">
+   <properties>
+    <property name="explosive" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="42" type="Crate" gid="2" x="736" y="736" width="64" height="64">
+   <properties>
+    <property name="explosive" type="bool" value="true"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup name="Spawn">
   <object id="28" name="whirlybob" x="128" y="208" width="16" height="16"/>

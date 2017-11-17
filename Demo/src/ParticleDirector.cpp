@@ -50,6 +50,8 @@ ParticleDirector::ParticleDirector(xy::TextureResource& tr)
     m_settings[SettingsID::BubblePop].loadFromFile("assets/particles/pop.xyp", tr);
     m_settings[SettingsID::Score].loadFromFile("assets/particles/score.xyp", tr);
     m_settings[SettingsID::SpawnNPC].loadFromFile("assets/particles/spawn.xyp", tr);
+    m_settings[SettingsID::BreakCrate].loadFromFile("assets/particles/crate.xyp", tr);
+    m_settings[SettingsID::Explosion].loadFromFile("assets/particles/explode.xyp", tr);
 }
 
 //public
@@ -90,6 +92,9 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
                     ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BubblePop];
                 }
                 break;
+            case ActorID::Crate:
+                ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::BreakCrate];
+                break;
             }
             ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
             ent.getComponent<xy::ParticleEmitter>().start();
@@ -107,12 +112,16 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             case ActorID::Goobly:
             case ActorID::Balldock:
             case ActorID::Squatmo:
+            case ActorID::MagicHat:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::SpawnNPC];
                 break;
             /*case ActorID::BubbleOne:
             case ActorID::BubbleTwo:
                 
                 break;*/
+            case ActorID::Explosion:
+                ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::Explosion];
+                break;
             }
             ent.getComponent<xy::Transform>().setPosition(data.x, data.y);
             ent.getComponent<xy::ParticleEmitter>().start();

@@ -73,6 +73,7 @@ private:
     sf::Vector2f m_menuTarget;
     sf::Vector2f m_leftMenuTarget;
     sf::Vector2f m_rightMenuTarget;
+    sf::Vector2f m_helpTextTarget;
 
     void loadKeybinds();
     void createScene();

@@ -46,6 +46,7 @@ namespace SpriteID
         FlameOne, FlameTwo,
         Bonus,
         TowerDudeOne, TowerDudeTwo,
+        MagicHat,
         Count
     };
 }

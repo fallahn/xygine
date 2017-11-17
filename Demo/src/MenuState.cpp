@@ -37,6 +37,7 @@ source distribution.
 #include "ClientServerShared.hpp"
 #include "KeyMapDirector.hpp"
 #include "Swarm.hpp"
+#include "Localisation.hpp"
 
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -613,6 +614,24 @@ void MenuState::createHelp()
 
     createKeybindInputs(towerEnt, 1);
 
+    //create text
+    std::string helpText = 
+R"(Trap Enemies With Your Bubbles
+
+Burst Bubbles To Defeat Enemies
+
+Click On A Keyboard Input
+To Change It)";
+
+    entity = m_helpScene.createEntity();
+    entity.addComponent<xy::Transform>().setPosition(364.f, xy::DefaultSceneSize.y);
+    entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setFillColour({ 127, 127, 127 });
+    entity.getComponent<xy::Text>().setString(helpText);
+    entity.getComponent<xy::Text>().setCharacterSize(60u);
+    m_helpTextTarget = entity.getComponent<xy::Transform>().getPosition();
+    entity.addComponent<xy::Callback>().function = MenuSliderCallback(m_helpTextTarget);
+    entity.getComponent<xy::Callback>().active = true;
+
     //apply the default view
     auto view = getContext().defaultView;
     auto& camera = m_helpScene.getActiveCamera().getComponent<xy::Camera>();
@@ -630,6 +649,7 @@ void MenuState::showHelpMenu()
         m_blurEffect->setEnabled(false);
         m_leftMenuTarget.x = -320.f;
         m_rightMenuTarget.x = xy::DefaultSceneSize.x;
+        m_helpTextTarget.y = xy::DefaultSceneSize.y;
     }
     else
     {
@@ -638,6 +658,7 @@ void MenuState::showHelpMenu()
         m_scene.setSystemActive<xy::UISystem>(false);
         m_leftMenuTarget.x = 0.f;
         m_rightMenuTarget.x = xy::DefaultSceneSize.x - 320.f;
+        m_helpTextTarget.y = 768.f;
     }
     
     m_helpShown = !m_helpShown;

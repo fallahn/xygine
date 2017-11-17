@@ -30,6 +30,7 @@ source distribution.
 #include "KeyMapping.hpp"
 #include "MessageIDs.hpp"
 #include "KeyMapDirector.hpp"
+#include "Localisation.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -46,7 +47,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     
     //one player text
     auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("Single Player");
+    entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::SinglePlayer]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
@@ -105,7 +106,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
 
     //two player text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("Multiplayer");
+    entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::Multiplayer]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto& tx2 = entity.addComponent<xy::Transform>();
@@ -155,7 +156,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
 
     //quit text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("QUIT");
+    entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::Quit]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     bounds = entity.getComponent<xy::Text>().getLocalBounds();
@@ -213,7 +214,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
     
     //local text
     auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("Local");
+    entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::Local]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
@@ -272,7 +273,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
 
     //network text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("Network");
+    entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::Network]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto& tx2 = entity.addComponent<xy::Transform>();
@@ -325,7 +326,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
 
     //back text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("Back");
+    entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::Back]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     bounds = entity.getComponent<xy::Text>().getLocalBounds();
@@ -380,7 +381,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
 
     //host text
     auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("Host");
+    entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::Host]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
@@ -436,7 +437,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
 
     //join text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("Join");
+    entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::Join]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     auto& tx2 = entity.addComponent<xy::Transform>();
@@ -505,7 +506,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
 
     //back text
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(font).setString("Back");
+    entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::Back]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     bounds = entity.getComponent<xy::Text>().getLocalBounds();
@@ -558,10 +559,10 @@ void MenuState::createKeybindInputs(xy::Entity towerEnt, sf::Uint8 player)
 {
     static const std::array<sf::Vector2f, 4u> buttonPositions =
     {
-        sf::Vector2f(0.f, 128.f),
-        sf::Vector2f(0.f, 384.f),
-        sf::Vector2f(0.f, 640.f),
-        sf::Vector2f(0.f, 896.f)
+        sf::Vector2f(64.f, 192.f),
+        sf::Vector2f(64.f, 448.f),
+        sf::Vector2f(64.f, 704.f),
+        sf::Vector2f(64.f, 960.f)
     };
 
     static const std::array<sf::Vector2f, 4u> textPositions =
@@ -580,7 +581,7 @@ void MenuState::createKeybindInputs(xy::Entity towerEnt, sf::Uint8 player)
         auto entity = m_helpScene.createEntity();
         entity.addComponent<xy::Transform>().setPosition(buttonPositions[i]);
         towerTx.addChild(entity.getComponent<xy::Transform>());
-        entity.addComponent<xy::UIHitBox>().area = { 0.f, 0.f, 64.f, 64.f };
+        entity.addComponent<xy::UIHitBox>().area = { 0.f, 0.f, 192.f, 64.f };
         entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
             m_helpScene.getSystem<xy::UISystem>().addMouseButtonCallback([&, i, player](
                 xy::Entity buttonEnt, sf::Uint64 flags)

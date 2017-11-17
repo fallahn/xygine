@@ -1,0 +1,25 @@
+sprite_sheet food
+{
+	src = "assets/images/food.png"
+	blendmode = alpha	
+	
+	sprite burger
+	{
+		bounds = 128,0,64,64
+	}
+
+	sprite icecream
+	{
+		bounds = 192,0,64,64
+	}
+
+	sprite pizza
+	{
+		bounds = 0,64,64,64
+	}
+
+	sprite cake
+	{
+		bounds = 64,64,64,64
+	}
+}

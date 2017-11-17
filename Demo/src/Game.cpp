@@ -33,6 +33,8 @@ source distribution.
 #include "GameOverState.hpp"
 #include "IntroState.hpp"
 #include "RemotePauseState.hpp"
+#include "GameCompleteState.hpp"
+#include "Localisation.hpp"
 
 #include <SFML/Window/Event.hpp>
 
@@ -56,6 +58,7 @@ Game::Game()
 
     setWindowIcon("assets/images/icon.png");
     getRenderWindow()->setTitle("xygine - Castle Clamber (F1 for Options)");
+    Locale::load("assets/localisation/chichewa.xyl");
 }
 
 //private
@@ -120,4 +123,5 @@ void Game::registerStates()
     m_stateStack.registerState<GameoverState>(StateID::GameOver, sharedData);
     m_stateStack.registerState<IntroState>(StateID::Intro);
     m_stateStack.registerState<RemotePauseState>(StateID::RemotePause);
+    m_stateStack.registerState<GameCompleteState>(StateID::GameComplete, sharedData);
 }

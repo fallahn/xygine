@@ -56,8 +56,10 @@ namespace PacketID
         RequestServerPause, //client request server pause game - 0 to pause, 1 to unpause
         RequestClientPause, //server paused, request client to display pause state - 0 to pause, 1 to unpause
         ServerFull,
+        HatChange, //someone lost or gained a hat
 
         DebugMapCount, //sends the number of active NPCs for debug printing
+        DebugCrownVelocity,
 
         Count
     };
