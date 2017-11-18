@@ -51,6 +51,9 @@ struct Crate final
     bool lethal = false;
     sf::Uint8 lastOwner = 3;
 
+    sf::Vector2f spawnPosition;
+    bool respawn = false;
+
     struct Shake final
     {
         sf::Vector2f startPosition;
@@ -61,6 +64,12 @@ struct Crate final
 
     static constexpr float ShakeTime = 0.7f;
     static constexpr float PauseTime = 8.f;
+
+    enum Flags
+    {
+        Explosive = 0x1,
+        Respawn = 0x2
+    };
 };
 
 class CrateSystem final : public xy::System
@@ -76,9 +85,13 @@ private:
 
     std::vector<float> m_waveTable;
 
+    std::vector<std::pair<float, Crate>> m_respawnQueue;
+
     void groundCollision(xy::Entity);
     void airCollision(xy::Entity);
     void destroy(xy::Entity);
+
+    void spawn(Crate);
 
     void onEntityAdded(xy::Entity) override;
 };

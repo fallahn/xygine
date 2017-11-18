@@ -49,6 +49,7 @@ namespace
     const float MinVelocity = 25.f; //min len sqr
     const float PushAcceleration = 10.f;
     const float LethalVelocity = 100000.f; //vel sqr before box becomes lethal
+    const float RespawnTime = 5.f;
 }
 
 CrateSystem::CrateSystem(xy::MessageBus& mb, xy::NetHost& nh)
@@ -120,6 +121,22 @@ void CrateSystem::process(float dt)
                 tx.setPosition(crate.shake.startPosition.x, crate.shake.startPosition.y);
                 tx.move(m_waveTable[crate.shake.shakeIndex], 0.f);
                 crate.shake.shakeIndex = (crate.shake.shakeIndex + 1) % m_waveTable.size();
+            }
+        }
+
+        //update the respawn queue
+        for (auto it = m_respawnQueue.begin(); it != m_respawnQueue.end(); ++it)
+        {
+            it->first -= dt;
+            if (it->first < 0)
+            {
+                //spawn crate
+                spawn(it->second);
+
+                //swap n pop
+                std::swap(it, m_respawnQueue.end() - 1);
+                m_respawnQueue.pop_back();
+                break;
             }
         }
     }
@@ -275,7 +292,9 @@ void CrateSystem::destroy(xy::Entity entity)
 
     m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 
-    if (entity.getComponent<Crate>().explosive)
+    const auto& crate = entity.getComponent<Crate>();
+
+    if (crate.explosive)
     {
         //spawn explosion
         auto expEnt = getScene()->createEntity();
@@ -299,6 +318,44 @@ void CrateSystem::destroy(xy::Entity entity)
 
         m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
     }
+
+    if (crate.respawn)
+    {
+        m_respawnQueue.push_back(std::make_pair(RespawnTime, crate));
+    }
+}
+
+void CrateSystem::spawn(Crate crate)
+{
+    auto entity = getScene()->createEntity();
+    entity.addComponent<xy::Transform>().setPosition(crate.spawnPosition);
+    entity.getComponent<xy::Transform>().setOrigin(CrateOrigin);
+    entity.addComponent<Actor>().id = entity.getIndex();
+    entity.getComponent<Actor>().type = ActorID::Crate;
+
+    entity.addComponent<xy::QuadTreeItem>().setArea(CrateBounds);
+
+    entity.addComponent<AnimationController>();
+    entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
+
+    crate.velocity = {};
+    crate.lastOwner = 3;
+    crate.lethal = false;
+    entity.addComponent<Crate>() = crate;
+
+    entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
+    entity.getComponent<CollisionComponent>().addHitbox(CrateFoot, CollisionType::Foot);
+    entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Crate);
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::CrateMask);
+
+    //let clients know
+    ActorEvent evt;
+    evt.actor = entity.getComponent<Actor>();
+    evt.x = crate.spawnPosition.x;
+    evt.y = crate.spawnPosition.y;
+    evt.type = ActorEvent::Spawned;
+
+    m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 }
 
 void CrateSystem::onEntityAdded(xy::Entity entity)

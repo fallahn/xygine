@@ -442,6 +442,7 @@ void GameState::loadAssets()
     m_sprites[SpriteID::FlameTwo] = spriteSheet.getSprite("player_two_flame");
     m_sprites[SpriteID::LightningOne] = spriteSheet.getSprite("player_one_star");
     m_sprites[SpriteID::LightningTwo] = spriteSheet.getSprite("player_two_star");
+    m_sprites[SpriteID::Crate] = spriteSheet.getSprite("crate");
 
     m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one_flame");
     m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one_flame");
@@ -1297,6 +1298,16 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     switch (actorEvent.actor.type)
     {
     default: break;
+    case ActorID::Crate:
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Crate];
+        entity.addComponent<xy::Drawable>().setDepth(-1);
+        entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
+        entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Crate);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+        entity.addComponent<xy::SpriteAnimation>().play(0);
+        entity.addComponent<xy::QuadTreeItem>().setArea(CrateBounds);
+        entity.getComponent<xy::Transform>().setOrigin(CrateOrigin);
+        break;
     case ActorID::Explosion:
         break;
     case ActorID::MagicHat:
@@ -1351,6 +1362,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.addComponent<CollisionComponent>().addHitbox(GooblyBounds, CollisionType::NPC);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+        entity.addComponent<xy::QuadTreeItem>().setArea(GooblyBounds);
         break;
     case ActorID::LightningOne:
         addSprite(entity, SpriteID::LightningOne);
@@ -1633,9 +1645,6 @@ void GameState::spawnMapActors()
         entity.addComponent<xy::ParticleEmitter>().settings = emitterSettings;
     }
 
-    xy::SpriteSheet spriteSheet;
-    spriteSheet.loadFromFile("assets/sprites/power_ups.spt", m_textureResource);
-
     for (auto i = 0; i < m_mapData.crateCount; ++i)
     {
         auto entity = m_scene.createEntity();
@@ -1643,7 +1652,7 @@ void GameState::spawnMapActors()
         entity.addComponent<Actor>() = m_mapData.crates[i];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
         entity.addComponent<xy::NetInterpolate>();
-        entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("crate");
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Crate];
         entity.addComponent<xy::Drawable>().setDepth(-1);
         entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Crate);

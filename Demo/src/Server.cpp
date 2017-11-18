@@ -779,16 +779,29 @@ void GameServer::loadMap()
                         {
                             if (m_mapData.crateCount == MaxCrates) continue;
 
-                            bool explosive = false;
+                            sf::Uint8 crateFlags = 0;
                             const auto& properties = obj.getProperties();
-                            if (!properties.empty() &&
-                                xy::Util::String::toLower(properties[0].getName()) == "explosive")
+                            for (const auto& prop : properties)
                             {
-                                explosive = properties[0].getBoolValue();
+                                auto propName = xy::Util::String::toLower(prop.getName());
+                                if (propName == "explosive")
+                                {
+                                    if (prop.getBoolValue())
+                                    {
+                                        crateFlags |= Crate::Flags::Explosive;
+                                    }
+                                }
+                                else if (propName == "respawn")
+                                {
+                                    if (prop.getBoolValue())
+                                    {
+                                        crateFlags |= Crate::Flags::Respawn;
+                                    }
+                                }
                             }
 
                             //create ent / actor with explosive parameter
-                            spawnCrate({ obj.getPosition().x, obj.getPosition().y }, explosive);
+                            spawnCrate({ obj.getPosition().x, obj.getPosition().y }, crateFlags);
                         }
                     }
                 }
@@ -875,11 +888,12 @@ void GameServer::loadMap()
         if (teleportCount == 4)
         {
             m_scene.getSystem<PowerupSystem>().setSpawnFlags(PowerupSystem::Flame | PowerupSystem::Lightning);
-            if (xy::Util::Random::value(0, 1) == 0) m_scene.getSystem<BonusSystem>().setEnabled(true);
+            m_scene.getSystem<BonusSystem>().setEnabled((xy::Util::Random::value(0, 1) == 0));
         }
         else
         {
             m_scene.getSystem<PowerupSystem>().setSpawnFlags(0);
+            m_scene.getSystem<BonusSystem>().setEnabled(false);
         }
 
         m_serverTime.restart();
@@ -1068,7 +1082,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     return entity;
 }
 
-void GameServer::spawnCrate(sf::Vector2f position, bool explosive)
+void GameServer::spawnCrate(sf::Vector2f position, sf::Uint8 flags)
 {
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(position + CrateOrigin);
@@ -1081,7 +1095,9 @@ void GameServer::spawnCrate(sf::Vector2f position, bool explosive)
     entity.addComponent<AnimationController>();
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
 
-    entity.addComponent<Crate>().explosive = explosive;
+    entity.addComponent<Crate>().explosive = (flags & Crate::Explosive);
+    entity.getComponent<Crate>().respawn = (flags & Crate::Respawn);
+    entity.getComponent<Crate>().spawnPosition = position + CrateOrigin;
 
     entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
     entity.getComponent<CollisionComponent>().addHitbox(CrateFoot, CollisionType::Foot);
