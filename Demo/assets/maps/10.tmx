@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="82">
  <properties>
-  <property name="round_time" type="float" value="46"/>
+  <property name="colour_quad" type="int" value="1"/>
+  <property name="round_time" type="float" value="60"/>
   <property name="use_bubbles" type="bool" value="false"/>
  </properties>
  <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">

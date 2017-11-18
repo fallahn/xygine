@@ -13,6 +13,13 @@ sprite_sheet power_ups
 			framerate = 30
 			loop = true
 		}
+
+		animation explosive
+		{
+			frame = 384, 256, 64, 64
+			framerate = 30
+			loop = true
+		}
 	}
 
 	sprite player_one_flame

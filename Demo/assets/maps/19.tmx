@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="96">
  <properties>
+  <property name="colour_quad" type="int" value="2"/>
   <property name="round_time" type="float" value="28"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="../images/block.png" width="512" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
+  <image source="../images/block.png" width="640" height="512"/>
  </tileset>
- <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="far" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJytU9EKgCAM3IvQT9pDWln//wE1MDoOnRoNDty8Oy23SUQmA66xX+O5So25GnMBPsPKBfS4n6AWMkdrEeoJ9Jrv5BvBU4gbqKba9cZG/Ahn98YywP0zVli37jvyPT0ez/qU9/899/EFXpLyuygO8NL3DJB74rKWYfUh67l3rV4u9e8XaPTMW20+rVl2FU/WXvvsKds=
+   eJytU9EKgCAM3IvQz9pDWllfXwOj49Cp0eDAzbvTcptEZDLgGvs1nqvUmKsxF+AzrFxAj/sJaiFztBahnkCv+U6+ETyFuIFqql1vbMSPcHZvLAPcP2OFdeu+I9/T4/GsT3n/33MfX+AlKb+L4gAvfc8AuScuaxlWH7Kee9fq5VL/foFGz7zV5tOaZVfxZO0Fdz4wiw==
+  </data>
+ </layer>
+ <layer name="detail" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBh44EqGHjcktj+1HEIhcCNCjBy/kgMCqGiWIRAbUaDfGoht8MijuxVbGKHHMbawxqWWGoDSeBssaZTaAAC9hgTj
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYwAHEokhYDiouT0BMFKqXg0K7QVgMCcOAApKYLJI4slpq2U+pflh4wAB6OCGHIQMDbcIPBhQYUMMIGaOH42AJP1zpCxtGVkuL9AcLIwUCYrDwgwEzLObb4bHbAY8cyCx9PGoMkNgACUEIhw==
+   eJxjYBhYwAHEkkhYBSquSkBMEqqXg0K7QVgKCcOAGpKYMpI4slpq2U+pflh4wAB6OCGHIQMDbcIPBpDDDR2jh+NgCT9c6QsbRlZLi/QHCyNs6Q89bJHtdsJivg8eu/3wyIHMssSjxgqJDQCSTwoJ
   </data>
  </layer>
  <objectgroup name="Spawn">

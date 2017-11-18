@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="101">
  <properties>
+  <property name="colour_quad" type="int" value="1"/>
   <property name="round_time" type="float" value="56"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="../images/block.png" width="512" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
+  <image source="../images/block.png" width="640" height="512"/>
  </tileset>
- <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJy1U4sKhDAM688I+6kdnHPn4/8/4Cy0kIur7gQDYUvSTsUuiUgiDkDOUiOL6jCLahQvYDZGGn2B/rJzhKzY+t45QV8B7VCv2h6zYusIvT2YGl5v713U65JbmGG/PPQMPffzZw9/70pa33tr5Owr/P+y5zM2y++8ZTliM3+1Pc4q6gx1Dp7rSHOmiO7bmdfSV3eaM9df7JEpng==
+   eJy1U4sKhDAM6w8J+7EdnHPn4+vPQgu5uOpOMBC2JO1U7JKIJOIA5Cw1sqgOs6hG8QJmY6TRF+gvO0fIiq3vnRP0FdAO9artMSu2jtDbg6nh9fbeRb0uuYUZ9stDz9BzP3/28PeupPW9t0bOvsL/L3s+Y7P8zluWIzbzV9vjrKLOUOfguY40Z4rovp15LX11pzlz/QVGwTDe
+  </data>
+ </layer>
+ <layer name="detail" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBg8wJUAnxDwp5ZDhgFwwyHuSkB+JANCYQYDASSaO5zTJQAwNgLV
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYoAHEpgQwDNijiWtAMSV249PvAMS2eGha20+JflMiaFrY78CAP8yQ6cEWfsSEGTJNLfvNCGAYcEATx2a3NBH2iqDxuaG0JBZzsMmBgAyUBgB+YhDD
+   eJxjYBhYYADEjgQwDPiiiRtAMSV249PvB8TeeGha20+JfkciaFrYTyjMkOnBFn7EhBkyTS37nQhgGPBDE8dmtyIR9kqg8XmhtDwWc7DJgYASlAYAB5IUaw==
   </data>
  </layer>
  <objectgroup color="#00aa00" name="geometry">

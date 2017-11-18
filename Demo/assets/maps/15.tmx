@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="76">
  <properties>
+  <property name="colour_quad" type="int" value="2"/>
   <property name="round_time" type="float" value="30"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="../images/block.png" width="512" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
+  <image source="../images/block.png" width="640" height="512"/>
  </tileset>
- <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzNU1sKwCAM64/gJfVDtym7/wGm0EIICm6DsUBY0pcwWi8ivtEpPXz9IDfiLD+LYbwjNEZgIM3etGFTn1VbT/cF6rPWV60TmtGRKG86y31gT3nQb0gvelexNx4fvPN34L+O4CvVnaCLetsz1EF9gJkRPMZ433n3+QY6Vm50dM+zW8b8aKaj+AW7ohyX
+   eJzNU+0KgCAQuz+CL6s/tFJ6+hTuYAwFK4gGo+2+hLjzIuIbndLD1w9yI87ysxjGO0JjBAbS7E0bNvVZtfV0X6A+a33VOqEZHYnyprPcB/aUB/2G9KJ3FXvj8cE7fwf+6wi+Ut0Juqi3PUMd1AeYGcFjjPedd59voGPlRkf3PLtlzI9mOopfd3ghBw==
+  </data>
+ </layer>
+ <layer name="detail" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBh44IpDPACHuBsa35+KbsFnDyGAyx/EylML4Ao3SgClbqd2HBGKG3qFNTogFPa0iJuBBADcFwQK
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYwAHEokhYDiouT0BMFKqXAyonRgZG1k+u29HdTyxG1j/q/pHtfmQzZaFyCgTEYPbDgCkQO+CwxxaNb0rAXTD15kBsj0XeAIj1oWwA+60MwQ==
+   eJxjYBhYwAHEkkhYBSquSkBMEqqXAyonRQZG1k+u29HdTyxG1j/q/pHtfmQzlaFyagTEYPbDgCMQ++GwxxuN70jAXTD1zkDsi0XeCogtoWwAJ/gPDQ==
   </data>
  </layer>
  <objectgroup color="#00aa00" name="geometry">

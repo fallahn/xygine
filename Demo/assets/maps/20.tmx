@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="59">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="84">
  <properties>
-  <property name="round_time" type="float" value="26"/>
+  <property name="colour_quad" type="int" value="3"/>
+  <property name="round_time" type="float" value="110"/>
  </properties>
  <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
   <image source="../images/block.png" width="640" height="512"/>
@@ -16,31 +17,66 @@
  </layer>
  <layer name="signs" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBh44Eqhfn+quGIUjALKgCwQy+GR5wRiLjzy6kCsgUdeGIhFyHAXLQEArc4BWQ==
+   eJxjYBh44Eqhen9qOQQJuNHATFoCYtwbQHNX4AekhulAuBfZTkMgNoKyiUmjskAsh8S3BmIbJD4nEHPh0a8OxBp45IWBWIQId9ATAABtxAR/
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYoAPEtmRiHSimxG5q6TcFYjsisRkN7GeAmk0IIKsZTOFHDf22ROhBVjNY3E9sukHHyHZLA7EUmvkqeOwWwCOHrE8Ii5wMEh8ACMYP3w==
+   eJxjYBhYoAPEtkjYA0nOEwsfWa0OFFNiN7p+YzQ7kLEJEfrJtd8OC2YgIIesHzmcCAFPLPoJuY8YefSw04RiXGEI04/sV2KBHRb7iQ0/XO4nJgw9kdiEwgfdPnSA7H8YdkeSdwBieyS+F5paZLulgVgKzXwVPHYL4JFD1ieERU4GiQ8AdjUVNg==
   </data>
  </layer>
  <objectgroup color="#00aa00" name="geometry">
-  <object id="3" type="Solid" x="64" y="0" width="896" height="160"/>
-  <object id="7" type="Solid" x="64" y="928" width="896" height="112"/>
+  <object id="3" type="Solid" x="64" y="32" width="224" height="128"/>
+  <object id="7" type="Solid" x="64" y="928" width="224" height="128"/>
   <object id="8" type="Solid" x="960" y="128" width="64" height="832"/>
   <object id="9" type="Solid" x="0" y="128" width="64" height="832"/>
-  <object id="54" type="Solid" x="864" y="320" width="32" height="64"/>
-  <object id="55" type="Solid" x="128" y="320" width="32" height="64"/>
-  <object id="52" type="Platform" x="768" y="704" width="64" height="32"/>
-  <object id="50" type="Platform" x="192" y="480" width="64" height="32"/>
-  <object id="53" type="Platform" x="192" y="704" width="64" height="32"/>
-  <object id="51" type="Platform" x="768" y="480" width="64" height="32"/>
-  <object id="49" type="Platform" x="160" y="352" width="704" height="32"/>
+  <object id="59" type="Solid" x="736" y="928" width="224" height="128"/>
+  <object id="60" type="Solid" x="736" y="32" width="224" height="128"/>
+  <object id="61" type="Solid" x="480" y="32" width="64" height="128"/>
+  <object id="62" type="Solid" x="480" y="896" width="64" height="160"/>
+  <object id="63" type="Solid" x="64" y="0" width="896" height="32"/>
+  <object id="64" type="Solid" x="64" y="1056" width="896" height="32"/>
+  <object id="65" type="Teleport" x="544" y="32" width="192" height="16"/>
+  <object id="66" type="Teleport" x="288" y="32" width="192" height="16"/>
+  <object id="67" type="Teleport" x="288" y="1024" width="192" height="32"/>
+  <object id="68" type="Teleport" x="544" y="1024" width="192" height="32"/>
+  <object id="69" type="Crate" gid="2" x="320" y="384" width="64" height="64">
+   <properties>
+    <property name="explosive" type="bool" value="true"/>
+    <property name="respawn" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="70" type="Crate" gid="2" x="640" y="384" width="64" height="64">
+   <properties>
+    <property name="respawn" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="71" type="Crate" gid="2" x="320" y="704" width="64" height="64">
+   <properties>
+    <property name="respawn" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="72" type="Crate" gid="2" x="640" y="704" width="64" height="64">
+   <properties>
+    <property name="explosive" type="bool" value="true"/>
+    <property name="respawn" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="73" type="Solid" x="448" y="864" width="128" height="32"/>
+  <object id="75" type="Platform" x="256" y="256" width="512" height="32"/>
+  <object id="76" type="Platform" x="144" y="416" width="304" height="32"/>
+  <object id="77" type="Platform" x="576" y="416" width="304" height="32"/>
+  <object id="78" type="Platform" x="208" y="576" width="608" height="32"/>
+  <object id="79" type="Platform" x="208" y="736" width="240" height="32"/>
+  <object id="80" type="Platform" x="592" y="736" width="224" height="32"/>
+  <object id="81" type="Platform" x="896" y="672" width="64" height="32"/>
+  <object id="82" type="Platform" x="64" y="672" width="64" height="32"/>
+  <object id="83" type="Solid" x="448" y="512" width="128" height="128"/>
  </objectgroup>
- <objectgroup name="Spawn" visible="0">
-  <object id="28" name="clocksy" x="224" y="416" width="16" height="16"/>
-  <object id="30" name="squatmo" x="480" y="288" width="16" height="16"/>
-  <object id="57" name="squatmo" x="608" y="288" width="16" height="16"/>
-  <object id="58" name="clocksy" x="800" y="416" width="16" height="16"/>
+ <objectgroup name="Spawn">
+  <object id="28" name="clocksy" x="464" y="448" width="16" height="16"/>
+  <object id="30" name="balldock" x="352" y="192" width="16" height="16"/>
+  <object id="57" name="balldock" x="640" y="192" width="16" height="16"/>
+  <object id="58" name="clocksy" x="528" y="448" width="16" height="16"/>
  </objectgroup>
 </map>

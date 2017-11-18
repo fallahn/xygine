@@ -966,6 +966,20 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             {
                 m_playerInputs[i].setEnabled(true);
             }
+
+            //set initial background colour
+            auto quad = data.colourQuad;
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::SceneBackground;
+            cmd.action = [quad](xy::Entity entity, float)
+            {
+                entity.getComponent<xy::Callback>().active = true;
+
+                //set target colours
+                entity.getComponent<BackgroundColour>().destAngle = static_cast<float>(quad) * 90.f;
+                entity.getComponent<BackgroundColour>().currentTime = 2.4f; //fudge to skip ahead in transition
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
         }
         else
         {
@@ -1309,6 +1323,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Crate);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
         entity.addComponent<xy::SpriteAnimation>().play(0);
+        entity.getComponent<AnimationController>().animationMap[AnimationController::Walk] = 1;
         entity.addComponent<xy::QuadTreeItem>().setArea(CrateBounds);
         entity.getComponent<xy::Transform>().setOrigin(CrateOrigin);
         break;
@@ -1665,7 +1680,7 @@ void GameState::spawnMapActors()
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Crate);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
         entity.addComponent<xy::SpriteAnimation>().play(0);
-        entity.addComponent<AnimationController>();
+        entity.addComponent<AnimationController>().animationMap[AnimationController::Walk] = 1;
         entity.addComponent<xy::QuadTreeItem>().setArea(CrateBounds);
     }
 }

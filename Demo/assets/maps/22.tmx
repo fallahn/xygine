@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="83">
  <properties>
+  <property name="colour_quad" type="int" value="1"/>
   <property name="round_time" type="float" value="46"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="../images/block.png" width="512" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
+  <image source="../images/block.png" width="640" height="512"/>
  </tileset>
- <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJztU0EKwCAM62cGfsrB5pzT/z9gCi3Ezs7DrgsEm6TFg9URkVNcgDpzg8zqw8zqaViBnmlp9AnmQ+UOWeBzqzxgLoAWNC9yjVngc4fZH3PEeUuHq/L8eEdWOlWWQa79Bnlf7cmOJer3zdMThf3MNe4qag99Ar3XltZZg/Xf3ryRnv1pnYm+AcRhKAg=
+   eJztU0EKwCAM64cGfszB5pzT10+hhdjZedh1gWCTtHiwOiJyigtQZ26QWX2YWT0NK9AzLY0+wXyo3CELfG6VB8wF0ILmRa4xC3zuMPtjjjhv6XBVnh/vyEqnyjLItd8g76s92bFE/b55eqKwn7nGXUXtoU+g99rSOmuw/tubN9KzP60z0Td2Qi8I
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYoAHEpmRiDSimxG5k/XZE6rPHoZ+QekL2owMHNL4tEfrR9eAD1Aw/dLfBAHqYIocFteMPn73E6McVTyDgQKL9xACYfjMyMTa7pYmwVwSNzw2lJbGYg00OBGSgNACcmQ2J
+   eJxjYBhYYADEjmRiAyimxG5k/T5E6vPFoZ+QekL2owM/NL43EfrR9eAD1Aw/dLfBAHqYIocFteMPn73E6McVTyCALVyp5X4nMjE2uxWJsFcCjc8LpeWxmINNDgSUoDQAmmMQdw==
   </data>
  </layer>
  <objectgroup color="#00aa00" name="geometry">

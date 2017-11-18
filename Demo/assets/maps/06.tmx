@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="67">
  <properties>
+  <property name="colour_quad" type="int" value="1"/>
   <property name="round_time" type="float" value="32"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="../images/block.png" width="512" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
+  <image source="../images/block.png" width="640" height="512"/>
  </tileset>
- <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJy1U4sKgCAM3M8I/ZRCmWL9/wfkQGmszUfUwaG7u0xwWwBgEWgUXfOlvBnIIWymY7QDOpDvkXtmzExlhaJh1mcGVlfQsyR4VkdWr4LG/RmEyfybczfmpZ/++RX4/Vr31Tz6Dqey17SDeZbUrvixeIloAHd/Yh3g2b+tnpdmoOoIbTZ78yvle7NqhP0FKmAmCg==
+   eJy1U4sKgCAM3A8J/ZhCmWJ9fQ6Uxtp8RB0curvLBLcFABaBRtE1X8qbgRzCZjpGO6AD+R65Z8bMVFYoGmZ9ZmB1BT1Lgmd1ZPUqaNyfQZjMvzl3Y1766Z9fgd+vdV/No+9wKntNO5hnSe2KH4uXiAZw9yfWAZ792+p5aQaqjtBmsze/Ur43q0bYXyiyLKo=
+  </data>
+ </layer>
+ <layer name="detail" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBg8wI0INa4kmGcIxEZkugUErIHYhkQ91PYDNuBPgfnEuG8gQQARaujhB1xhSIz7QIBQHA0XAABCAgRF
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYoAHEpkjYDipuT0DMFKpXg0K7kfWbkYipbT+5+k1JxNS2HwaGaviBALZwAqU79DSHHIbUsh85TGyhcg4ExGDhhw0IA7E0Ce7gxqFeCIu5MCADpQGKXxQN
+   eJxjYBhYYADEjkjYByruS0DMEarXgEK7kfU7kYipbT+5+h1JxNS2HwaGaviBALZwAqU79DSHHIbUsh85TLyhcn4ExGDhhw2IA7EiCe7gxaFeDIu5MKAEpQGkphhx
   </data>
  </layer>
  <objectgroup name="Spawn">
@@ -47,7 +53,7 @@
   <object id="44" type="Platform" x="192" y="288" width="768" height="32"/>
   <object id="46" type="Platform" x="192" y="608" width="768" height="32"/>
   <object id="47" type="Platform" x="137" y="768" width="327" height="32"/>
-  <object id="65" type="Crate" gid="2" x="272" y="736" width="64" height="64"/>
-  <object id="66" type="Crate" gid="2" x="688" y="736" width="64" height="64"/>
+  <object id="65" type="Crate" gid="2" x="256" y="576" width="64" height="64"/>
+  <object id="66" type="Crate" gid="2" x="736" y="416" width="64" height="64"/>
  </objectgroup>
 </map>

@@ -368,4 +368,9 @@ void CrateSystem::onEntityAdded(xy::Entity entity)
 {
     entity.getComponent<Crate>().shake.shakeIndex = xy::Util::Random::value(0, m_waveTable.size() - 1);
     entity.getComponent<Crate>().shake.shakeTime = xy::Util::Random::value(4.f, Crate::PauseTime + 4.f);
+
+    if (entity.getComponent<Crate>().explosive)
+    {
+        entity.getComponent<AnimationController>().nextAnimation = AnimationController::Walk;
+    }
 }
