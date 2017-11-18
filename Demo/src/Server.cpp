@@ -867,22 +867,24 @@ void GameServer::loadMap()
             entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Bubble | CollisionFlags::MagicHat);
         }
 
-        //check if map has a round time associated with it
-        const auto& properties = map.getProperties();
-        auto result = std::find_if(properties.begin(), properties.end(),
-            [](const tmx::Property& property)
-        {
-            return xy::Util::String::toLower(property.getName()) == "round_time";
-        });
 
-        if (result != properties.end())
+        //check for any map properties
+        m_roundTimeout = defaultRoundTime;
+        bool bubblesEnabled = true;
+        const auto& properties = map.getProperties();
+        for (const auto& prop : properties)
         {
-            m_roundTimeout = result->getFloatValue();
+            auto propName = xy::Util::String::toLower(prop.getName());
+            if (propName == "round_time")
+            {
+                m_roundTimeout = prop.getFloatValue();
+            }
+            else if (propName == "use_bubbles")
+            {
+                bubblesEnabled = prop.getBoolValue();
+            }
         }
-        else
-        {
-            m_roundTimeout = defaultRoundTime;
-        }
+        m_scene.getSystem<BubbleSystem>().setEnabled(bubblesEnabled);
 
         //enable bonuses if there are 4 teleports
         if (teleportCount == 4)
@@ -1097,7 +1099,7 @@ void GameServer::spawnCrate(sf::Vector2f position, sf::Uint8 flags)
 
     entity.addComponent<Crate>().explosive = (flags & Crate::Explosive);
     entity.getComponent<Crate>().respawn = (flags & Crate::Respawn);
-    entity.getComponent<Crate>().spawnPosition = position + CrateOrigin;
+    entity.getComponent<Crate>().spawnPosition = position;// +CrateOrigin;
 
     entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
     entity.getComponent<CollisionComponent>().addHitbox(CrateFoot, CollisionType::Foot);

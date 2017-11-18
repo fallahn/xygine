@@ -59,8 +59,12 @@ public:
     void handleMessage(const xy::Message&) override;
     void process(float) override;
 
+    void setEnabled(bool enabled) { m_enabled = enabled; }
+
 private:
     xy::NetHost& m_host;
+
+    bool m_enabled;
 
     void doCollision(xy::Entity);
     void killBubble(xy::Entity);

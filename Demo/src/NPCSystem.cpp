@@ -813,9 +813,10 @@ void NPCSystem::collisionNormal(xy::Entity entity)
 
                     if (manifold.otherEntity.hasComponent<Crate>())
                     {
-                        if (manifold.penetration > (ClocksyBounds.width / 2.f))
-                        {
-                            const auto& crate = manifold.otherEntity.getComponent<Crate>();
+                        const auto& crate = manifold.otherEntity.getComponent<Crate>();
+                        if (manifold.penetration > (ClocksyBounds.width / 2.f)
+                            || crate.lethal)
+                        {                         
                             despawn(entity, crate.lastOwner, NpcEvent::Crate);
                         }
                     }

@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="76">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="82">
  <properties>
   <property name="round_time" type="float" value="46"/>
   <property name="use_bubbles" type="bool" value="false"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="../images/block.png" width="512" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
+  <image source="../images/block.png" width="640" height="512"/>
  </tileset>
- <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFUwEKgCAM3GcCP2UkaVj/f0CNGqxjEwnCgwM9bzrhFogoGJweWrrnbZ15dzBmYFREHb0E/lVpvK4XM5xlVctIShds5COBl1Ea/lGweqoD3vwbydDknwfsW8DeOTN7R51kUbyF3pkUfaE7V9Go9/Ju6Tr7vbPrzeeX+dUzfAKb4CNn
+   eJzFUwEKgCAM3IcCP2YkaVivr1GDdWwiQXhwoOdNJ9wCEQWD00NL97ytM+8OxgyMiqijl8C/Ko3X9WKGs6xqGUnpgo18JPAySsM/ClZPdcCbfyMZmvzzgH0L2DtnZu+okyyKt9A7k6IvdOcqGvVe3i1dZ793dr35/DK/eoZPIPIppw==
+  </data>
+ </layer>
+ <layer name="signs" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFgw0YArERCeoDgNgViW8NxDZ41LtB9SADfyxqXJHUuZHgHlxm0gNgc28AEu3KQBnA5SdZIJYjQj8nEHNhEVcHYg0i9AsDsQgR6ugFAJDNBlM=
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFUrsKgDAQ6+4kuoh+gIuPxcei9f+/yiu0GMJVRQUDQUwvJlc05l/UwgEYYEFbQcfZ2vNNNvpn+HYLegP6dOJ/mj963kWYx3yrnDMDwn3G+q+KZhXty/vfTLwv64vi5374zvtc7a9lXvVnuAz3P01KN/ZrOZuwF3bm2Jd7xbJzYUVaIiwj84UwUzwOqT9nZP65AzfHEtA=
+   eJzFUkkKgDAQ6wc8it5EX+DN5eZy0/r/5ziFFkOYqqhgIBTTGZMZasy/qIUDMMCCtoKOtbXnG2/sn+HfLegN6NNJ/1P/0fMuQj36W+WeGRD2Gcu/KppVtC/3v5l4XtYXpZ/z4TfPczW/5nmVn+E83HualGzcr/m4ffTCzhzzcq6Ydy6sSEuEZaS+EGZKj0Pq7xmZP3dSnxbo
   </data>
  </layer>
  <objectgroup name="Spawn">
   <object id="75" name="balldock" x="688" y="192" width="16" height="16"/>
+  <object id="76" name="balldock" x="320" y="192" width="16" height="16"/>
+  <object id="77" name="clocksy" x="128" y="352" width="16" height="16"/>
+  <object id="81" name="squatmo" x="880" y="352" width="16" height="16"/>
  </objectgroup>
  <objectgroup name="geometry">
   <object id="4" type="Solid" x="64" y="32" width="192" height="128"/>
@@ -36,8 +44,8 @@
   <object id="54" type="Solid" x="64" y="0" width="896" height="32"/>
   <object id="55" type="Teleport" x="256" y="32" width="160" height="32"/>
   <object id="56" type="Teleport" x="608" y="32" width="160" height="32"/>
-  <object id="57" type="Teleport" x="608" y="1040" width="160" height="32"/>
-  <object id="58" type="Teleport" x="256" y="1040" width="160" height="32"/>
+  <object id="57" type="Teleport" x="608" y="1024" width="160" height="32"/>
+  <object id="58" type="Teleport" x="256" y="1024" width="160" height="32"/>
   <object id="59" type="Platform" x="224" y="256" width="224" height="32"/>
   <object id="60" type="Platform" x="576" y="256" width="224" height="32"/>
   <object id="61" type="Platform" x="832" y="416" width="128" height="32"/>
@@ -53,12 +61,12 @@
     <property name="respawn" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="73" type="Crate" gid="2" x="256" y="656" width="64" height="64">
+  <object id="73" type="Crate" gid="2" x="224" y="656" width="64" height="64">
    <properties>
     <property name="respawn" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="74" type="Crate" gid="2" x="704" y="656" width="64" height="64">
+  <object id="74" type="Crate" gid="2" x="736" y="656" width="64" height="64">
    <properties>
     <property name="respawn" type="bool" value="true"/>
    </properties>

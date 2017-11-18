@@ -268,7 +268,6 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float)
                 break;
             case CollisionType::Platform:
             case CollisionType::Solid:
-            case CollisionType::Crate:
                 if (powerup.state == Powerup::State::Idle)
                 {
                     tx.move(man.normal * man.penetration);
@@ -284,12 +283,29 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float)
                         powerup.velocity.x = 0.f;
                     }
                 }
-                else if (powerup.state == Powerup::State::Active
-                    && man.otherType == CollisionType::Crate)
+
+                break;
+            case CollisionType::Crate:
+                if (powerup.state == Powerup::State::Active)
                 {
                     powerup.state = Powerup::State::Dying;
                     powerup.lifetime = 1.f;
                     entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+                }
+                else
+                {
+                    tx.move(man.normal * man.penetration);
+
+                    if (man.normal.y != 0 && powerup.velocity.x == 0)
+                    {
+                        powerup.velocity.x =
+                            (xy::Util::Random::value(0, 1) == 0) ?
+                            -BubbleVerticalVelocity : BubbleVerticalVelocity;
+                    }
+                    else if (man.normal.x != 0)
+                    {
+                        powerup.velocity.x = 0.f;
+                    }
                 }
                 break;
             case CollisionType::NPC:

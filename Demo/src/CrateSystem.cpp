@@ -259,6 +259,10 @@ void CrateSystem::airCollision(xy::Entity entity)
                     }
                     return;
                 }
+                else if (manifolds[j].otherType == CollisionType::Powerup)
+                {
+                    //ignore
+                }
                 else
                 {
                     entity.getComponent<xy::Transform>().move(manifolds[j].normal * manifolds[j].penetration);
@@ -341,6 +345,8 @@ void CrateSystem::spawn(Crate crate)
     crate.velocity = {};
     crate.lastOwner = 3;
     crate.lethal = false;
+    crate.state = Crate::Falling;
+    crate.groundContact = false;
     entity.addComponent<Crate>() = crate;
 
     entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
