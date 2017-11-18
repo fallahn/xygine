@@ -277,8 +277,12 @@ void GameState::handleMessage(const xy::Message& msg)
         const auto& data = msg.getData<xy::Message::WindowEvent>();
         if (data.type == xy::Message::WindowEvent::LostFocus)
         {
-            requestStackPush(StateID::Pause);
-            m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+            //don't do this if already paused
+            if (getStackSize() == 1)
+            {
+                requestStackPush(StateID::Pause);
+                m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+            }
         }
     }
 
@@ -493,7 +497,7 @@ void GameState::loadAssets()
     if (m_backgroundShader.loadFromMemory(BackgroundFragment, sf::Shader::Fragment))
     {
         m_backgroundShader.setUniform("u_diffuseMap", m_textureResource.get("assets/images/background.png"));
-        ent.getComponent<xy::Sprite>();
+        ent.addComponent<BackgroundColour>();
         ent.getComponent<xy::Drawable>().setShader(&m_backgroundShader);
         ent.addComponent<xy::Callback>().function = ColourRotator(m_backgroundShader);
     }
@@ -1511,9 +1515,12 @@ void GameState::switchMap(const MapData& data)
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     
     cmd.targetFlags = CommandID::SceneBackground;
-    cmd.action = [](xy::Entity entity, float)
+    cmd.action = [&](xy::Entity entity, float)
     {
         entity.getComponent<xy::Callback>().active = true;
+
+        //set target colours
+        entity.getComponent<BackgroundColour>().destAngle = static_cast<float>(data.colourQuad) * 90.f;
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
    

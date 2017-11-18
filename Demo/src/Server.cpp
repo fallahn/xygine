@@ -883,6 +883,10 @@ void GameServer::loadMap()
             {
                 bubblesEnabled = prop.getBoolValue();
             }
+            else if (propName == "colour_quad")
+            {
+                m_mapData.colourQuad = prop.getIntValue() % 4;
+            }
         }
         m_scene.getSystem<BubbleSystem>().setEnabled(bubblesEnabled);
 

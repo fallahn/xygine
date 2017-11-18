@@ -76,6 +76,7 @@ struct MapData final
     sf::Int8 NPCCount = 0;
     Actor crates[MaxCrates]{};
     sf::Int8 crateCount = 0;
+    sf::Uint8 colourQuad = 0;
 };
 
 //the actor ID, spawn position and Player number

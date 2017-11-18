@@ -3,20 +3,25 @@
  <properties>
   <property name="round_time" type="float" value="26"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="../images/block.png" width="512" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
+  <image source="../images/block.png" width="640" height="512"/>
  </tileset>
- <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJy1UwEKgDAI9CtB35rQVov6/wOaoCTm1oJ2IPP0dGPoDABzxaYG93LTS43Vkk9AtqB8NPGg8uILlmKr0melScW2YpE1EtvBx8Kn9NtMfq3UgdMzNbQjYd/8B/KAnqNwGN7zH7oGlX929CdN4HuQ85njxGmmItxziPC8z856bSc0J3g71Yq14l/2XPgFiMwjtw==
+   eJy1UwEKgDAI9DtBX5vQVot6fROUxNxa0A5knp5uDJ0BYK7Y1OBebnqpsVryCcgWlI8mHlRefMFSbFX6rDSp2FYsskZiO/hY+JR+m8mvlTpweqaGdiTsm/9AHtBzFA7De/5D16Dyz47+pAl8D3I+c5w4zVSEew4RnvfZWa/thOYEb6dasVb8y54LvwBanion
+  </data>
+ </layer>
+ <layer name="signs" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBh44Eqhfn+quGIUjALKgCwQy+GR5wRiLjzy6kCsgUdeGIhFyHAXLQEArc4BWQ==
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYoALEhmRiFSimxG5q6dcGYiMisQ4N7GeAmk0IIKsZTOFHDf2GROhBVjNY3E9sukHHyHaLA7EYmvlyeOzmwyOHrE8Ai5wEEh8AibUM4Q==
+   eJxjYBhYoAPEtmRiHSimxG5q6TcFYjsisRkN7GeAmk0IIKsZTOFHDf22ROhBVjNY3E9sukHHyHZLA7EUmvkqeOwWwCOHrE8Ii5wMEh8ACMYP3w==
   </data>
  </layer>
  <objectgroup color="#00aa00" name="geometry">

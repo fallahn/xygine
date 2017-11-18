@@ -29,7 +29,8 @@ source distribution.
 #define DEMO_BACKGROUND_SHADER_HPP_
 
 #include <xyginext/ecs/Entity.hpp>
-#include <xyginext/ecs/components/Sprite.hpp>
+//#include <xyginext/ecs/components/Sprite.hpp>
+#include <xyginext/ecs/components/Callback.hpp>
 #include <SFML/Graphics/Shader.hpp>
 
 #include <string>
@@ -63,22 +64,44 @@ const static std::string BackgroundFragment = R"(
                 gl_FragColor = vec4(hsv2rgb(hsv), colour.a);
             })";
 
+struct BackgroundColour final
+{
+    float destAngle = 0.f;
+    float currentAngle = 0.f;
+    float lastAngle = 0.f;
+    float currentTime = 0.f;
+};
+
 class ColourRotator final
 {
 public:
     explicit ColourRotator(sf::Shader& shader)
         : m_shader(shader) {}
 
-    void operator () (xy::Entity, float dt)
+    void operator () (xy::Entity entity, float dt)
     {
-        m_rotation += dt * 36.4f;
-        m_shader.setUniform("u_colourAngle", m_rotation);
-        //m_shader.setUniform("u_diffuseMap", *entity.getComponent<xy::Sprite>().getTexture());
+        auto& colour = entity.getComponent<BackgroundColour>();
+        const float progress = std::min(1.f, colour.currentTime / TransitionTime);
+        float amount = (colour.destAngle - colour.lastAngle);
+        if (amount < 0) amount += 360.f;
+        colour.currentAngle = colour.lastAngle + (progress * amount);
+
+        m_shader.setUniform("u_colourAngle", colour.currentAngle);
+
+        colour.currentTime += dt;
+
+        if (progress == 1)
+        {
+            colour.lastAngle = colour.currentAngle;
+            colour.currentTime = 0.f;
+            entity.getComponent<xy::Callback>().active = false;
+        }
     }
 
 private:
-    float m_rotation = 0.f;
     sf::Shader& m_shader;
+
+    static constexpr float TransitionTime = 2.5f;
 };
 
 #endif //DEMO_BACKGROUND_SHADER_HPP_
