@@ -28,10 +28,13 @@ source distribution.
 #ifndef DEMO_CRATE_SYSTEM_HPP_
 #define DEMO_CRATE_SYSTEM_HPP_
 
+#include "MapData.hpp"
+
 #include <SFML/System/Vector2.hpp>
 
 #include <xyginext/ecs/System.hpp>
 
+#include <array>
 #include <vector>
 
 namespace xy
@@ -43,13 +46,14 @@ struct Crate final
 {
     enum
     {
-        Ground, Falling//, Breaking
+        Ground, Falling, Breaking, Carried
     }state = Falling;
     bool explosive = false;
     sf::Vector2f velocity;
     bool groundContact = false;
     bool lethal = false;
     sf::Uint8 lastOwner = 3;
+    sf::Uint32 parentID = 0;
 
     sf::Vector2f spawnPosition;
     bool respawn = false;
@@ -85,7 +89,8 @@ private:
 
     std::vector<float> m_waveTable;
 
-    std::vector<std::pair<float, Crate>> m_respawnQueue;
+    std::array<std::pair<float, Crate>, MaxCrates> m_respawnQueue;
+    std::size_t m_respawnCount;
 
     void groundCollision(xy::Entity);
     void airCollision(xy::Entity);

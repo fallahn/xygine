@@ -148,6 +148,10 @@ static const sf::Color BubbleColourTwo(255, 0, 212);
 
 static const sf::Uint8 MapsToWin = 24; //divisible by 4 for colour cycle
 
+//this is relative to player which looks left by default
+//and has an origin at the bottom centre
+const sf::Vector2f LuggageOffset(-64.f, -40.f);
+
 //map loading functions shared between client / server
 void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType::ID type);
 

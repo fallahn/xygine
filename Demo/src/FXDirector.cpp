@@ -191,16 +191,19 @@ void FXDirector::handleMessage(const xy::Message& msg)
         break;
         case AnimationController::Walk:
         {
-            const auto& actor = data.entity.getComponent<Actor>();
-            switch (actor.type)
+            if (data.entity.hasComponent<Actor>())
             {
-            default: break;
-            case ActorID::FlameOne:
-            case ActorID::FlameTwo:
-            case ActorID::LightningOne:
-            case ActorID::LightningTwo:
-                playSound(m_soundResource.get("assets/sound/powerup_pop.wav"));
-                break;
+                const auto& actor = data.entity.getComponent<Actor>();
+                switch (actor.type)
+                {
+                default: break;
+                case ActorID::FlameOne:
+                case ActorID::FlameTwo:
+                case ActorID::LightningOne:
+                case ActorID::LightningTwo:
+                    playSound(m_soundResource.get("assets/sound/powerup_pop.wav"));
+                    break;
+                }
             }
         }
             break;

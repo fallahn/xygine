@@ -967,6 +967,13 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                             npc.velocity.y = 0.f;
                             return;
                         }
+
+                        if (npc.velocity.y > 450 && manifold.otherEntity.hasComponent<Crate>())
+                        {
+                            auto crateEnt = manifold.otherEntity;
+                            crateEnt.getComponent<Crate>().state = Crate::Breaking;
+                        }
+                        std::cout << "NPC fall vel " << npc.velocity.y << std::endl;
                     }
                     else //bonk head
                     {

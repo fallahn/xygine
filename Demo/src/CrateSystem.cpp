@@ -34,6 +34,7 @@ source distribution.
 #include "Explosion.hpp"
 #include "AnimationController.hpp"
 #include "CommandIDs.hpp"
+#include "NPCSystem.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
@@ -50,11 +51,13 @@ namespace
     const float PushAcceleration = 10.f;
     const float LethalVelocity = 100000.f; //vel sqr before box becomes lethal
     const float RespawnTime = 5.f;
+    const float NpcMaxFallVelocity = 20000.f; //NPCs falling faster than this break creates
 }
 
 CrateSystem::CrateSystem(xy::MessageBus& mb, xy::NetHost& nh)
     : xy::System(mb, typeid(CrateSystem)),
-    m_host(nh)
+    m_host          (nh),
+    m_respawnCount  (0)
 {
     requireComponent<Crate>();
     requireComponent<xy::Transform>();
@@ -80,15 +83,25 @@ void CrateSystem::process(float dt)
             crate.velocity.y += Gravity * dt;
             airCollision(entity);
             break;
-        //case Crate::Breaking:
-        //    //TODO probably moot state, we'll just spawn some particles instead
-        //    break;
+        case Crate::Breaking:
+            //another collision marked it as breaking
+            destroy(entity);
+            continue;
+        case Crate::Carried:
+        {
+            auto parentEnt = getScene()->getEntity(crate.parentID);
+            auto worldPoint = LuggageOffset;
+            worldPoint.x *= parentEnt.getComponent<Player>().sync.direction == Player::Direction::Right ? -1.f : 1.f;
+            worldPoint += parentEnt.getComponent<xy::Transform>().getPosition();
+            entity.getComponent<xy::Transform>().setPosition(worldPoint);
+        }
+            continue; //don't update velocity
         }
 
         auto& tx = entity.getComponent<xy::Transform>();
         tx.move(crate.velocity * dt);
 
-        //check velocity and put to eith full stop or make lethal
+        //check velocity and put to either full stop or make lethal
         float l2 = xy::Util::Vector::lengthSquared(crate.velocity);
         if (l2 < MinVelocity)
         {
@@ -125,18 +138,18 @@ void CrateSystem::process(float dt)
         }
 
         //update the respawn queue
-        for (auto it = m_respawnQueue.begin(); it != m_respawnQueue.end(); ++it)
+        for (auto i = 0u; i < m_respawnCount; ++i)
         {
-            it->first -= dt;
-            if (it->first < 0)
-            {
-                //spawn crate
-                spawn(it->second);
+            m_respawnQueue[i].first -= dt;
 
-                //swap n pop
-                std::swap(it, m_respawnQueue.end() - 1);
-                m_respawnQueue.pop_back();
-                break;
+            if (m_respawnQueue[i].first < 0)
+            {
+                spawn(m_respawnQueue[i].second);
+
+                //swap last item in and resize count
+                m_respawnCount--;
+                m_respawnQueue[i] = m_respawnQueue[m_respawnCount];
+                i--; //retest i because it's a different object
             }
         }
     }
@@ -150,6 +163,12 @@ void CrateSystem::groundCollision(xy::Entity entity)
     const auto& hitboxes = collision.getHitboxes();
 
     auto& crate = entity.getComponent<Crate>();
+    if (crate.state == Crate::Breaking)
+    {
+        //something else has modified the state so we no longer require
+        //collision testing on this crate because it's already dooooomed
+        return;
+    }
 
     for (auto i = 0u; i < hitboxCount; ++i)
     {
@@ -195,6 +214,17 @@ void CrateSystem::groundCollision(xy::Entity entity)
                         }
                     }
                     break;
+                case CollisionType::NPC:
+                    if (manifolds[j].otherEntity.hasComponent<NPC>())
+                    {
+                        auto l2 = xy::Util::Vector::lengthSquared(manifolds[j].otherEntity.getComponent<NPC>().velocity) * 2.f;
+                        if (l2 > NpcMaxFallVelocity)
+                        {
+                            destroy(entity);
+                            return;
+                        }  
+                    }
+                    break;
                 }
 
                 if (/*crate.lethal || */manifolds[j].penetration > (CrateBounds.width / 2.f))
@@ -206,7 +236,21 @@ void CrateSystem::groundCollision(xy::Entity entity)
         }
         else if (hitboxes[i].getType() == CollisionType::Foot)
         {
-            if (collisionCount == 0)
+            auto collisions = collisionCount;
+
+            //remove any contacts which shouldn't stop it from falling
+            for (auto j = 0; j < collisionCount; ++j)
+            {
+                switch (manifolds[j].otherType)
+                {
+                default:break;
+                case CollisionType::Powerup:
+                    collisions--;
+                    break;
+                }
+            }
+            
+            if (collisions == 0)
             {
                 crate.groundContact = false;
                 crate.state = Crate::Falling;
@@ -225,6 +269,12 @@ void CrateSystem::airCollision(xy::Entity entity)
     const auto& hitboxes = collision.getHitboxes();
 
     auto& crate = entity.getComponent<Crate>();
+    if (crate.state == Crate::Breaking)
+    {
+        //something else has modified the state so we no longer require
+        //collision testing on this crate because it's already dooooomed
+        return;
+    }
 
     for (auto i = 0u; i < hitboxCount; ++i)
     {
@@ -284,6 +334,8 @@ void CrateSystem::airCollision(xy::Entity entity)
 
 void CrateSystem::destroy(xy::Entity entity)
 {
+    if (entity.destroyed()) return;
+    
     const auto& tx = entity.getComponent<xy::Transform>();
     getScene()->destroyEntity(entity);
 
@@ -325,7 +377,7 @@ void CrateSystem::destroy(xy::Entity entity)
 
     if (crate.respawn)
     {
-        m_respawnQueue.push_back(std::make_pair(RespawnTime, crate));
+        m_respawnQueue[m_respawnCount++] = std::make_pair(RespawnTime, crate);
     }
 }
 

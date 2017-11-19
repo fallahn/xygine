@@ -111,6 +111,8 @@ public:
 
     void setCollisionMaskBits(sf::Uint32 bits) { m_maskBits = bits; }
 
+    sf::Uint32 getCollisionCategoryBits() const { return m_categoryBits; }
+
     std::vector<sf::Uint8> serialise() const;
 
     void deserialise(const std::vector<sf::Uint8>&);

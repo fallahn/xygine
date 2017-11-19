@@ -21,6 +21,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/InventoryDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KeyMapDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/LoadingScreen.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/LuggageDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MapAnimator.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MenuCreation.cpp

@@ -144,6 +144,7 @@
     <ClCompile Include="src\InventoryDirector.cpp" />
     <ClCompile Include="src\KeyMapDirector.cpp" />
     <ClCompile Include="src\LoadingScreen.cpp" />
+    <ClCompile Include="src\LuggageDirector.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MapAnimator.cpp" />
     <ClCompile Include="src\MenuCreation.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="src\KeyMapping.hpp" />
     <ClInclude Include="src\LoadingScreen.hpp" />
     <ClInclude Include="src\Localisation.hpp" />
+    <ClInclude Include="src\LuggageDirector.hpp" />
     <ClInclude Include="src\MapAnimator.hpp" />
     <ClInclude Include="src\MapData.hpp" />
     <ClInclude Include="src\MenuCallbacks.hpp" />

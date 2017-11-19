@@ -114,6 +114,7 @@ private:
         xy::NetPeer peer;
         bool ready = false;
         sf::Uint8 level = 1;
+        bool luggageEnabled = false;
     };
     std::array<Client, 2u> m_clients;
 };

@@ -47,6 +47,7 @@ source distribution.
 #include "HatSystem.hpp"
 #include "CrateSystem.hpp"
 #include "Explosion.hpp"
+#include "LuggageDirector.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -723,6 +724,7 @@ void GameServer::initScene()
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
 
     m_scene.addDirector<InventoryDirector>(m_host);
+    m_scene.addDirector<LuggageDirector>();
 
     m_scene.setSystemActive<HatSystem>(false); //no hats on first level plz
 }
@@ -889,6 +891,15 @@ void GameServer::loadMap()
             }
         }
         m_scene.getSystem<BubbleSystem>().setEnabled(bubblesEnabled);
+        //only enable luggage if bubbles are disabled
+        xy::Command luggageCommand;
+        luggageCommand.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+        luggageCommand.action = [bubblesEnabled](xy::Entity en, float)
+        {
+            en.getComponent<Luggage>().enabled = !bubblesEnabled;
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(luggageCommand);
+        m_clients[0].luggageEnabled = m_clients[1].luggageEnabled = !bubblesEnabled;
 
         //enable bonuses if there are 4 teleports
         if (teleportCount == 4)
@@ -1004,6 +1015,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     m_clients[player].data.actor = entity.getComponent<Actor>();
     entity.addComponent<xy::Transform>().setPosition(m_clients[player].data.spawnX, m_clients[player].data.spawnY);
     entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
+    entity.addComponent<Luggage>().enabled = m_clients[0].luggageEnabled;
 
     entity.addComponent<CollisionComponent>().addHitbox(PlayerBounds, CollisionType::Player);
     entity.getComponent<CollisionComponent>().addHitbox(PlayerFoot, CollisionType::Foot);
@@ -1103,7 +1115,7 @@ void GameServer::spawnCrate(sf::Vector2f position, sf::Uint8 flags)
 
     entity.addComponent<Crate>().explosive = (flags & Crate::Explosive);
     entity.getComponent<Crate>().respawn = (flags & Crate::Respawn);
-    entity.getComponent<Crate>().spawnPosition = position;// +CrateOrigin;
+    entity.getComponent<Crate>().spawnPosition = position + CrateOrigin;
 
     entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
     entity.getComponent<CollisionComponent>().addHitbox(CrateFoot, CollisionType::Foot);
