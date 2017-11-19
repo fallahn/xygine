@@ -28,7 +28,7 @@ source distribution.
 #include "LuggageDirector.hpp"
 #include "MessageIDs.hpp"
 #include "CrateSystem.hpp"
-#include "HitBox.hpp"
+#include "Hitbox.hpp"
 #include "ClientServerShared.hpp"
 
 #include <xyginext/ecs/Entity.hpp>

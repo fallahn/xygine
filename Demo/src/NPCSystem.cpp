@@ -59,7 +59,11 @@ namespace
     const float DieTime = 1.5f;
 
     const sf::Uint32 FootMask = (CollisionType::Platform | CollisionType::Solid | CollisionType::Player);
+
+    const float FailSafeTime = 8.f;
 }
+
+
 
 NPCSystem::NPCSystem(xy::MessageBus& mb, xy::NetHost& host)
     : xy::System        (mb, typeid(NPCSystem)),
@@ -1048,32 +1052,12 @@ void NPCSystem::checkBounds(xy::Entity entity, float dt)
 
         if (npc.failSafeTimer < 0)
         {
-            //getScene()->destroyEntity(entity);
-
-            ////broadcast to client
-            //ActorEvent evt;
-            //evt.actor.id = entity.getIndex();
-            //evt.actor.type = entity.getComponent<Actor>().type;
-            //evt.x = tx.getPosition().x;
-            //evt.y = tx.getPosition().y;
-            //evt.type = ActorEvent::Died;
-
-            //m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
-
-            ////raise message
-            //auto* msg = postMessage<SceneEvent>(MessageID::SceneMessage);
-            //msg->actorID = evt.actor.type;
-            //msg->type = SceneEvent::ActorRemoved;
-            //msg->entity = entity;
-            //msg->x = evt.x;
-            //msg->y = evt.y;
-
             despawn(entity, 255, NpcEvent::OutOfBounds);
             LOG("NPC out of bounds DESTROYED", xy::Logger::Type::Info);
         }
     }
     else
     {
-        npc.failSafeTimer = std::min(NPC::FailSafeTime, entity.getComponent<NPC>().failSafeTimer + dt);
+        npc.failSafeTimer = std::min(FailSafeTime, entity.getComponent<NPC>().failSafeTimer + dt);
     }
 }
