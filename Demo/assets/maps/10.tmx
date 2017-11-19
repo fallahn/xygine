@@ -2,7 +2,7 @@
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="88">
  <properties>
   <property name="colour_quad" type="int" value="1"/>
-  <property name="round_time" type="float" value="160"/>
+  <property name="round_time" type="float" value="60"/>
   <property name="use_bubbles" type="bool" value="false"/>
  </properties>
  <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
@@ -56,18 +56,12 @@
   <object id="65" type="Platform" x="576" y="672" width="288" height="32"/>
   <object id="66" type="Platform" x="384" y="800" width="256" height="32"/>
   <object id="67" type="Solid" x="480" y="832" width="64" height="96"/>
-  <object id="72" type="Crate" gid="2" x="608" y="656" width="64" height="64">
-   <properties>
-    <property name="explosive" type="bool" value="true"/>
-    <property name="respawn" type="bool" value="true"/>
-   </properties>
-  </object>
   <object id="74" type="Crate" gid="2" x="608" y="464" width="64" height="64">
    <properties>
     <property name="respawn" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="83" type="Crate" gid="2" x="352" y="656" width="64" height="64">
+  <object id="83" type="Crate" gid="2" x="480" y="800" width="64" height="64">
    <properties>
     <property name="explosive" type="bool" value="true"/>
     <property name="respawn" type="bool" value="true"/>

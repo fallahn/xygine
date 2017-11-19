@@ -3,6 +3,7 @@
  <properties>
   <property name="colour_quad" type="int" value="3"/>
   <property name="round_time" type="float" value="110"/>
+  <property name="use_bubbles" type="bool" value="false"/>
  </properties>
  <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
   <image source="../images/block.png" width="640" height="512"/>
