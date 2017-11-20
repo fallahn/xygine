@@ -477,6 +477,18 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
                 m_host.sendPacket(m_clients[player.playerNumber].peer, PacketID::LevelUpdate, m_clients[player.playerNumber].level, xy::NetFlag::Reliable, 1);
             }
         }
+
+        //kill any remaining gooblies
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::NPC;
+        cmd.action = [&](xy::Entity npcEnt, float)
+        {
+            if (npcEnt.getComponent<Actor>().type == ActorID::Goobly)
+            {
+                m_scene.getSystem<NPCSystem>().despawn(npcEnt, 255, NpcEvent::OutOfBounds);
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
         break;
     case PacketID::MapReady:

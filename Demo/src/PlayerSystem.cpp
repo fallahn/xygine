@@ -48,7 +48,7 @@ namespace
 {
     const float speed = 280.f;
     const float initialJumpVelocity = 840.f;
-    const float minJumpVelocity = -initialJumpVelocity * 0.25f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocit
+    const float minJumpVelocity = -initialJumpVelocity * 0.2f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocit
     const float dyingTime = 2.f;
 
     const sf::Uint32 UpMask = CollisionFlags::PlayerMask & ~(CollisionFlags::Bubble/*|CollisionFlags::Platform*/);

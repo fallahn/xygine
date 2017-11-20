@@ -406,6 +406,7 @@ void UISystem::onEntityAdded(xy::Entity)
     //selectNext();
     //selectPrev();
     select(0);
+    unselect(getEntities().size() - 1);
 }
 
 void UISystem::onEntityRemoved(xy::Entity)

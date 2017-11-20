@@ -2,8 +2,8 @@ xygine demo game
 ----------------
 
 This directory contains the project for a small, networked,
-multiplayer demo based on a popular 80s arcade game. It is
-intended as an example of what xygine is capable of, but is also
+multiplayer demo inspired by popular 80s arcade games. It is
+intended as an example of what xygine is capable, but is also
 quite playable. There is also a dedicated server project
 included in the ServerTest directory of the repository.
 
@@ -16,16 +16,32 @@ accessed by clicking the ? sign on the main menu. From here
 keys may be rebound for both player one and two, by clicking on
 the currently bound key underneath the appropriate action icon.
 
-Escape, P and Pause keys all bring up the the quit menu in game.
+Escape, P and Pause keys all bring up the the pause/quit menu in game.
 
 F1 will open the console window, from there the Video and Audio
 options can be accessed to change the window size and alter the
 volume.
 
-When hosting a game servers expect incoming connections on port 40003.
-This is also true when running a local game, so windows users may see
+When hosting a game, servers expect incoming connections on port 40003.
+This is also true when running a local game, so Windows users may see
 a warning from Windows firewall the first time the game is run. Click
 allow connections on this port to continue.
+
+##### Gameplay
+The idea of the game is to clear all the levels required for the player
+to reach the top of the tower. Enemies can be defeated by trapping them
+in a bubble before bursting it, or by triggering a power up which then
+strikes the enemy. Power ups are colour coded to each player and come
+in two varieties - fire bombs and ninja stars. Some maps contain crates
+which can normally be pushed around and used to crush enemies, and on
+special maps can be picked up and dropped - at the cost of being able
+to shoot bubbles. Players can also collect Bonus Bubbles - bubbles
+that contain letters to spell out the word 'BONUS'. Collecting all five
+letters propels the player forward by five levels.
+    Plenty of extra points can be gained by collecting the food items
+dropped by defeated enemies, or by finding and wearing the magic crown.
+Each 10,000 points earned rewards the player with an extra life. The
+crown will also defand the player against a single blow from an enemy.
 
 ##### Maps
 Maps are [Tiled](http://www.mapeditor.org) tmx format maps
@@ -37,6 +53,7 @@ for teleporting nodes. Multiple tile layers may exist, but will be rendered
 to a single layer when the map is loaded and will always appear behind
 other game sprites.
 
+
 One object layer named 'geometry'. Objects placed on this layer must
 be rectangular, with the exception of crates (see below). Other shapes
 will automatically be converted to rectangles using their bounding boxes.
@@ -45,13 +62,15 @@ loaded into Tiled to define the needed object types. These are:
 
 * platform - One way platforms which can be passed through from below
 * solid - used to create impassable geometry, and ought to be used around
-the 4 edges of the map
+the four edges of the map
 * teleport - these are used to teleport game entities from the bottom to
 the top of the map and vice versa. Attempting to place these closer together
-than the top and bottom edges of the map will cause incorrect behaviour.
+than the top and bottom edges of the map will cause undesirable behaviour.
 * crates - which can also be placed as object tiles to aid visual placement.
 Crates have a boolean property 'explosive' which when set to 'true' causes
-the crate to explode when it is destroyed.
+the crate to explode when it is destroyed, and 'respawn' which cause crates
+that have been destroyed to respawn after a short time if this is true.
+There may be no more than 6 crates on a map. Any more are ignored by the game.
 
 Maps require at least one solid type object and one platform type and will
 fail to load if these are not found. Teleport and crate types are optional.
@@ -69,9 +88,23 @@ should be named for the enemy to spawn, currently these are:
 Other names are ignored. The object type is irrelevant as the game only loads
 the positions. Object tiles may be used to help aid in visual design.
 
-Finally, maps have an optional property `round_time` which is a floating
-point value, in seconds, that defines how long the map will run before the
-'Hurry Up!' warning is given. Maps without a value default to 39 seconds.
+Maps have the following available properties:
+
+* use_bubbles - An optional boolean property. If this is explicitly set to
+false then the player will not be able to fire bubbles. Use this on maps
+which have respawnable crates that can be used as weapons instead, as when
+bubbles are disabled players are able to pick up crates to move them around.
+* colour_quad - This represents the quadrant of a colour wheel used to
+define the colour of the background of the current map. This can be set
+to compliment the colour of the map geometry. The following values are
+available
+  * 0 - Yellow
+  * 1 - Green
+  * 2 - Blue
+  * 3 - Red
+* round_time - a floating point value, in seconds, that defines how long 
+the map will run before the 'Hurry Up!' warning is given. Maps without a
+value default to 39 seconds.
 
 Maps will appear in the playlist once they are copied to the assets/maps
 directory, and the corresponding entry added to the mapcycle.txt file.

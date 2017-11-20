@@ -1905,7 +1905,7 @@ void GameState::giveHat(sf::Uint8 player)
     cmd.action = [&](xy::Entity entity, float)
     {
         auto hatEnt = m_scene.createEntity();
-        hatEnt.addComponent<xy::Transform>();// .setOrigin(PlayerOrigin);
+        hatEnt.addComponent<xy::Transform>();
         hatEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::MagicHat];
         hatEnt.addComponent<xy::Drawable>().setDepth(1);
         hatEnt.addComponent<xy::SpriteAnimation>();
@@ -1981,11 +1981,10 @@ void GameState::luggageChange(sf::Uint32 data)
         cmd.action = [&, explosive, actorID](xy::Entity entity, float)
         {
             auto crateEnt = m_scene.createEntity();
-            crateEnt.addComponent<xy::Transform>();// .setOrigin(CrateOrigin);
-            crateEnt.getComponent<xy::Transform>().setPosition(LuggageOffset);
+            crateEnt.addComponent<xy::Transform>().setPosition(LuggageOffset);
             crateEnt.getComponent<xy::Transform>().move(0.f, CrateOrigin.y);
             crateEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::Crate];
-            crateEnt.addComponent<xy::Drawable>().setDepth(1);
+            crateEnt.addComponent<xy::Drawable>().setDepth(-4);
             crateEnt.addComponent<xy::SpriteAnimation>().play(explosive ? 1 : 0);
             crateEnt.addComponent<xy::CommandTarget>().ID = CommandID::Luggage | CommandID::MapItem;
             crateEnt.addComponent<Actor>().id = actorID;

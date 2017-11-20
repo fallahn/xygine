@@ -929,7 +929,7 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                 case CollisionType::Solid:
                     tx.move(manifold.normal * manifold.penetration);
 
-                    if (npc.velocity.y > 0)
+                    if (npc.velocity.y > 0 && manifold.normal.y != 0)
                     {
                         //balls bounce.
                         if (entity.getComponent<Actor>().type == ActorID::Balldock

@@ -156,56 +156,6 @@ void GameoverState::load(const SharedStateData& data)
         sprite.setTextureRect(rect);
     });
 
-    //NO button text
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Text>(m_font).setString(Locale::Strings[Locale::No]);
-    entity.getComponent<xy::Text>().setCharacterSize(60);
-    entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
-    auto& tx = entity.addComponent<xy::Transform>();
-    tx.setOrigin(32.f, 45.f);
-
-    // NO button
-    entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_buttonTexture);
-    auto bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
-    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 256.f, bounds.width, bounds.height / 4.f });
-    entity.addComponent<xy::Drawable>();
-    entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
-    entity.getComponent<xy::Transform>().addChild(tx);
-    entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    entity.getComponent<xy::Transform>().move(bounds.width / 2.f, 128.f);
-    tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
-    bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
-    entity.addComponent<xy::UIHitBox>().area = bounds;
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
-    {
-        if (flags & xy::UISystem::LeftMouse)
-        {
-            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
-            msg->action = MenuEvent::QuitGameClicked;
-        }
-    });
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
-        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
-    {
-        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
-        {
-            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
-            msg->action = MenuEvent::QuitGameClicked;
-        }
-    });
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
-    {
-        if (button == 0)
-        {
-            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
-            msg->action = MenuEvent::QuitGameClicked;
-        }
-    });
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
-    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
 
     //YES button text
     entity = m_scene.createEntity();
@@ -218,7 +168,7 @@ void GameoverState::load(const SharedStateData& data)
     //YES button
     entity = m_scene.createEntity();
     entity.addComponent<xy::Sprite>().setTexture(m_buttonTexture);
-    bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
+    auto bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 256.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
@@ -257,6 +207,60 @@ void GameoverState::load(const SharedStateData& data)
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
+
+
+
+    //NO button text
+    entity = m_scene.createEntity();
+    entity.addComponent<xy::Text>(m_font).setString(Locale::Strings[Locale::No]);
+    entity.getComponent<xy::Text>().setCharacterSize(60);
+    entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    auto& tx = entity.addComponent<xy::Transform>();
+    tx.setOrigin(32.f, 45.f);
+
+    // NO button
+    entity = m_scene.createEntity();
+    entity.addComponent<xy::Sprite>().setTexture(m_buttonTexture);
+    bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
+    entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 256.f, bounds.width, bounds.height / 4.f });
+    entity.addComponent<xy::Drawable>();
+    entity.addComponent<xy::Transform>().setOrigin(entity.getComponent<xy::Sprite>().getSize() / 2.f);
+    entity.getComponent<xy::Transform>().addChild(tx);
+    entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
+    entity.getComponent<xy::Transform>().move(bounds.width / 2.f, 128.f);
+    tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
+    bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
+    entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+    {
+        if (flags & xy::UISystem::LeftMouse)
+        {
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::QuitGameClicked;
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
+        m_scene.getSystem<xy::UISystem>().addKeyCallback([this](xy::Entity, sf::Keyboard::Key key)
+    {
+        if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
+        {
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::QuitGameClicked;
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+    {
+        if (button == 0)
+        {
+            auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
+            msg->action = MenuEvent::QuitGameClicked;
+        }
+    });
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
+ 
 
     //apply the default view
     auto view = getContext().defaultView;

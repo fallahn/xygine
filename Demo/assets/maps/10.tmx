@@ -18,7 +18,7 @@
  </layer>
  <layer name="signs" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFgxUYArEREeoCgNgVi7g1ENtgEXeD6kEG/ljUuCKpcyPCHegA3Ux6AGzuDUCisYUTKQCXn2SBWI4I/ZxAzIVFXB2INYjQLwzEIkSooxcAAIn9BlM=
+   eJxjYBgFgw0YArERCeoDgNgViW8NxDZ41LtB9SADfyxqXJHUuZHgHlxm0gNgc28AEu3KQBnA5SdZIJYjQj8nEHNhEVcHYg0i9AsDsQgR6ugFAJDNBlM=
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
@@ -27,8 +27,8 @@
   </data>
  </layer>
  <objectgroup name="Spawn">
-  <object id="75" name="balldock" x="688" y="192" width="16" height="16"/>
-  <object id="76" name="balldock" x="320" y="192" width="16" height="16"/>
+  <object id="75" name="balldock" x="688" y="176" width="16" height="16"/>
+  <object id="76" name="balldock" x="320" y="176" width="16" height="16"/>
   <object id="77" name="clocksy" x="128" y="352" width="16" height="16"/>
   <object id="81" name="clocksy" x="880" y="352" width="16" height="16"/>
  </objectgroup>
@@ -56,28 +56,23 @@
   <object id="65" type="Platform" x="576" y="672" width="288" height="32"/>
   <object id="66" type="Platform" x="384" y="800" width="256" height="32"/>
   <object id="67" type="Solid" x="480" y="832" width="64" height="96"/>
-  <object id="74" type="Crate" gid="2" x="608" y="464" width="64" height="64">
-   <properties>
-    <property name="respawn" type="bool" value="true"/>
-   </properties>
-  </object>
   <object id="83" type="Crate" gid="2" x="480" y="752" width="64" height="64">
    <properties>
     <property name="explosive" type="bool" value="true"/>
     <property name="respawn" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="84" type="Crate" gid="2" x="800" y="656" width="64" height="64">
+  <object id="84" type="Crate" gid="2" x="784" y="640" width="64" height="64">
    <properties>
     <property name="respawn" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="85" type="Crate" gid="2" x="336" y="464" width="64" height="64">
+  <object id="85" type="Crate" gid="2" x="480" y="464" width="64" height="64">
    <properties>
     <property name="respawn" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="86" type="Crate" gid="2" x="176" y="656" width="64" height="64">
+  <object id="86" type="Crate" gid="2" x="176" y="640" width="64" height="64">
    <properties>
     <property name="respawn" type="bool" value="true"/>
    </properties>
