@@ -63,7 +63,7 @@ int main()
     std::cout << "Dedicated server is running!" << std::endl;
     std::cout << "Type Q ";
 #ifdef __linux
-        std::cout << " or ctrl ^ C ";
+        std::cout << " or ^C ";
 #endif
         std::cout << "to quit." << std::endl;
     std::cout << std::endl;
