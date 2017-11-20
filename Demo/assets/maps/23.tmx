@@ -25,7 +25,7 @@
    eJxjYBhYwAHEkkhYBSquSkBMEqqXg0K7qaFfGUmMFY2NzocBNRz2SyOxZbDwsdlPqX5JJDFBIJaCYiEsfBigR/jD7CWkH5YeiAWE0g/MLGT7sZlPyP3o4Y9LvxQShqUlUPqAhT+yGLJaZLudsJjvg8duPzxyILMs8aixQmIDAIe2CKk=
   </data>
  </layer>
- <objectgroup name="Spawn" visible="0">
+ <objectgroup name="Spawn">
   <object id="55" name="clocksy" x="912" y="416" width="16" height="16"/>
   <object id="60" name="whirlybob" x="384" y="432" width="16" height="16"/>
   <object id="74" name="clocksy" x="112" y="416" width="16" height="16"/>

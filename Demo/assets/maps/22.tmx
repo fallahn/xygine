@@ -38,7 +38,7 @@
   <object id="75" type="Platform" x="288" y="480" width="32" height="32"/>
   <object id="78" type="Platform" x="800" y="576" width="32" height="32"/>
  </objectgroup>
- <objectgroup name="Spawn" visible="0">
+ <objectgroup name="Spawn">
   <object id="44" name="whirlybob" x="256" y="384" width="16" height="16"/>
   <object id="45" name="whirlybob" x="768" y="384" width="16" height="16"/>
   <object id="46" name="whirlybob" x="448" y="208" width="16" height="16"/>

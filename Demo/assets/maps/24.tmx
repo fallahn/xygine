@@ -43,7 +43,7 @@
   <object id="60" type="Solid" x="416" y="736" width="32" height="32"/>
   <object id="59" type="Platform" x="416" y="768" width="448" height="32"/>
  </objectgroup>
- <objectgroup name="Spawn" visible="0">
+ <objectgroup name="Spawn">
   <object id="28" name="whirlybob" x="560" y="544" width="16" height="16"/>
   <object id="30" name="whirlybob" x="816" y="560" width="16" height="16"/>
   <object id="61" name="squatmo" x="304" y="544" width="16" height="16"/>

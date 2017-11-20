@@ -57,7 +57,7 @@
   <object id="116" type="Platform" x="736" y="448" width="128" height="32"/>
   <object id="102" type="Platform" x="448" y="448" width="128" height="32"/>
  </objectgroup>
- <objectgroup name="Spawn" visible="0">
+ <objectgroup name="Spawn">
   <object id="76" name="clocksy" x="800" y="368" width="16" height="16"/>
   <object id="96" name="clocksy" x="512" y="368" width="16" height="16"/>
   <object id="97" name="clocksy" x="224" y="368" width="16" height="16"/>

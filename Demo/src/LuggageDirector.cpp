@@ -66,7 +66,7 @@ void LuggageDirector::handleMessage(const xy::Message& msg)
                     //we're carrying so drop
                     auto crateEnt = getScene().getEntity(luggage.entityID);
                     crateEnt.getComponent<Crate>().state = Crate::Falling;
-                    crateEnt.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::CrateMask);
+                    //crateEnt.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::CrateMask);
 
                     float direction = playerEnt.getComponent<Player>().sync.direction == Player::Direction::Left ? 1.f : -1.f;
                     auto offset = LuggageOffset;
@@ -121,7 +121,7 @@ void LuggageDirector::handleMessage(const xy::Message& msg)
                                 auto crateEnt = e;
                                 crateEnt.getComponent<Crate>().state = Crate::Carried;
                                 crateEnt.getComponent<Crate>().velocity = {};
-                                crateEnt.getComponent<CollisionComponent>().setCollisionMaskBits(0);
+                                //crateEnt.getComponent<CollisionComponent>().setCollisionMaskBits(0);
                                 crateEnt.getComponent<xy::Transform>().setPosition(-110.f, -110.f);
                                 luggage.entityID = crateEnt.getIndex();
 
@@ -165,7 +165,7 @@ void LuggageDirector::handleMessage(const xy::Message& msg)
                 //we're carrying so drop
                 auto crateEnt = getScene().getEntity(luggage.entityID);
                 crateEnt.getComponent<Crate>().state = Crate::Falling;
-                crateEnt.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::CrateMask);
+                //crateEnt.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::CrateMask);
 
                 float direction = playerEnt.getComponent<Player>().sync.direction == Player::Direction::Left ? 1.f : -1.f;
                 auto offset = LuggageOffset;

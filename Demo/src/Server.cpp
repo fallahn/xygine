@@ -1114,8 +1114,11 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
 
 void GameServer::spawnCrate(sf::Vector2f position, sf::Uint8 flags)
 {
+    auto offset = CrateOrigin;
+    offset.y = -offset.y; //tiled objects have their origin bottom left
+
     auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Transform>().setPosition(position + CrateOrigin);
+    entity.addComponent<xy::Transform>().setPosition(position + offset);
     entity.getComponent<xy::Transform>().setOrigin(CrateOrigin);
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = ActorID::Crate;
@@ -1127,7 +1130,7 @@ void GameServer::spawnCrate(sf::Vector2f position, sf::Uint8 flags)
 
     entity.addComponent<Crate>().explosive = (flags & Crate::Explosive);
     entity.getComponent<Crate>().respawn = (flags & Crate::Respawn);
-    entity.getComponent<Crate>().spawnPosition = position + CrateOrigin;
+    entity.getComponent<Crate>().spawnPosition = position + offset;
 
     entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
     entity.getComponent<CollisionComponent>().addHitbox(CrateFoot, CollisionType::Foot);

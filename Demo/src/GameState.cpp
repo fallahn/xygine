@@ -266,6 +266,21 @@ void GameState::handleMessage(const xy::Message& msg)
 
                 spawnTowerDude(actor.type);
             }
+
+            //kill stray gooblies
+            {
+                xy::Command cmd;
+                cmd.targetFlags = CommandID::NetActor;
+                cmd.action = [&](xy::Entity entity, float)
+                {
+                    if (entity.getComponent<Actor>().type == ActorID::Goobly)
+                    {
+                        m_scene.destroyEntity(entity);
+                    }
+                };
+                m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+            }
+
             break;
         case MenuEvent::UnpauseGame:
             requestStackPop();
