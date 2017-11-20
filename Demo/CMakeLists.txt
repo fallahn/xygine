@@ -33,7 +33,9 @@ find_package(TMXLITE REQUIRED)
 
 # X11 is required on unices
 if(UNIX)
+ if(!APPLE)
   find_package(X11 REQUIRED)
+ endif()
 endif()
 
 # Additional include directories
