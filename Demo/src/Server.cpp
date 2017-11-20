@@ -724,7 +724,7 @@ void GameServer::initScene()
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
 
     m_scene.addDirector<InventoryDirector>(m_host);
-    m_scene.addDirector<LuggageDirector>();
+    m_scene.addDirector<LuggageDirector>(m_host);
 
     m_scene.setSystemActive<HatSystem>(false); //no hats on first level plz
 }

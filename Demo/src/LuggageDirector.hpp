@@ -34,19 +34,34 @@ struct Luggage final
 {
     bool enabled = false;
     sf::Uint32 entityID = 0;
+
+    enum
+    {
+        PlayerOne = 0x1,
+        PlayerTwo = 0x2,
+        PickedUp = 0x4,
+        Dropped = 0x8,
+        Normal = 0x10,
+        Explosive = 0x20
+    };
 };
+
+namespace xy
+{
+    class NetHost;
+}
 
 class LuggageDirector final : public xy::Director
 {
 public:
-    LuggageDirector();
+    explicit LuggageDirector(xy::NetHost&);
 
     void handleEvent(const sf::Event&) override {}
     void handleMessage(const xy::Message&) override;
     void process(float) override {}
 
 private:
-
+    xy::NetHost& m_host;
 };
 
 #endif //DEMO_LUGGAGE_DIRECTOR_HPP_

@@ -50,6 +50,7 @@ source distribution.
 #include "SpringFlower.hpp"
 #include "HatSystem.hpp"
 #include "Localisation.hpp"
+#include "LuggageDirector.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -816,6 +817,9 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         m_sharedData.error = "Could not connect to server, reason: Server full";
         requestStackPush(StateID::Error);
         return;
+    case PacketID::CrateChange:
+        luggageChange(evt.packet.as<sf::Uint32>());
+        break;
     case PacketID::HatChange:
     {
         auto info = evt.packet.as<sf::Uint8>();
@@ -1948,6 +1952,63 @@ void GameState::takeHat(sf::Uint8 player)
         m_scene.destroyEntity(entity);
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+}
+
+void GameState::luggageChange(sf::Uint32 data)
+{
+    sf::Int16 actorID = ((data & 0xffff0000) >> 16);
+    bool pickedUp = (data & Luggage::PickedUp);
+    sf::Uint32 playerTarget = (data & Luggage::PlayerOne) ? CommandID::PlayerOne : CommandID::PlayerTwo;
+    bool explosive = (data & Luggage::Explosive);
+
+    //hide or show the client side actor sprite
+    xy::Command cmd;
+    cmd.targetFlags = CommandID::NetActor;
+    cmd.action = [actorID, pickedUp](xy::Entity entity, float)
+    {
+        if (entity.getComponent<Actor>().id == actorID)
+        {
+            sf::Color colour = pickedUp ? sf::Color::Transparent : sf::Color::White;
+            entity.getComponent<xy::Sprite>().setColour(colour);
+        }
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+    if (pickedUp)
+    {
+        //attach a sprite to the player
+        cmd.targetFlags = playerTarget;
+        cmd.action = [&, explosive, actorID](xy::Entity entity, float)
+        {
+            auto crateEnt = m_scene.createEntity();
+            crateEnt.addComponent<xy::Transform>();// .setOrigin(CrateOrigin);
+            crateEnt.getComponent<xy::Transform>().setPosition(LuggageOffset);
+            crateEnt.getComponent<xy::Transform>().move(0.f, CrateOrigin.y);
+            crateEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::Crate];
+            crateEnt.addComponent<xy::Drawable>().setDepth(1);
+            crateEnt.addComponent<xy::SpriteAnimation>().play(explosive ? 1 : 0);
+            crateEnt.addComponent<xy::CommandTarget>().ID = CommandID::Luggage | CommandID::MapItem;
+            crateEnt.addComponent<Actor>().id = actorID;
+            crateEnt.getComponent<Actor>().type = ActorID::Crate;
+
+            entity.getComponent<xy::Transform>().addChild(crateEnt.getComponent<xy::Transform>());
+        
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
+    else
+    {
+        //keeeeeeel
+        cmd.targetFlags = CommandID::Luggage;
+        cmd.action = [&, actorID](xy::Entity entity, float)
+        {
+            if (entity.getComponent<Actor>().id == actorID)
+            {
+                m_scene.destroyEntity(entity);
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
 }
 
 void GameState::updateLevelDisplay(sf::Uint8 level)

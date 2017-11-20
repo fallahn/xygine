@@ -30,18 +30,23 @@ source distribution.
 #include "CrateSystem.hpp"
 #include "Hitbox.hpp"
 #include "ClientServerShared.hpp"
+#include "PacketIDs.hpp"
 
 #include <xyginext/ecs/Entity.hpp>
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/systems/QuadTree.hpp>
 
+#include <xyginext/network/NetHost.hpp>
+
 namespace
 {
 
 }
 
-LuggageDirector::LuggageDirector() {}
+LuggageDirector::LuggageDirector(xy::NetHost& host)
+    : m_host(host)
+{}
 
 //public
 void LuggageDirector::handleMessage(const xy::Message& msg)
@@ -61,9 +66,35 @@ void LuggageDirector::handleMessage(const xy::Message& msg)
                     //we're carrying so drop
                     auto crateEnt = getScene().getEntity(luggage.entityID);
                     crateEnt.getComponent<Crate>().state = Crate::Falling;
-                    crateEnt.getComponent<Crate>().parentID = 0;
+                    crateEnt.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::CrateMask);
+
+                    float direction = playerEnt.getComponent<Player>().sync.direction == Player::Direction::Left ? 1.f : -1.f;
+                    auto offset = LuggageOffset;
+                    offset.x *= direction;
+                    crateEnt.getComponent<xy::Transform>().setPosition(playerEnt.getComponent<xy::Transform>().getPosition() + offset);
 
                     luggage.entityID = 0;
+
+                    //broadcast
+                    sf::Uint32 flags = (crateEnt.getComponent<Actor>().id << 16);
+                    flags |= Luggage::Dropped;
+                    if (playerEnt.getComponent<Player>().playerNumber == 0)
+                    {
+                        flags |= Luggage::PlayerOne;
+                    }
+                    else
+                    {
+                        flags |= Luggage::PlayerTwo;
+                    }
+                    if (crateEnt.getComponent<Crate>().explosive)
+                    {
+                        flags |= Luggage::Explosive;
+                    }
+                    else
+                    {
+                        flags |= Luggage::Normal;
+                    }
+                    m_host.broadcastPacket(PacketID::CrateChange, flags, xy::NetFlag::Reliable, 1);
                 }
                 else
                 {
@@ -78,7 +109,6 @@ void LuggageDirector::handleMessage(const xy::Message& msg)
                     queryArea.top = worldPoint.y - (CrateBounds.height / 2.f);
 
                     const auto& entList = getScene().getSystem<xy::QuadTree>().queryArea(queryArea);
-                    std::cout << entList.size() << std::endl;
 
                     for (const auto& e : entList)
                     {
@@ -91,8 +121,31 @@ void LuggageDirector::handleMessage(const xy::Message& msg)
                                 auto crateEnt = e;
                                 crateEnt.getComponent<Crate>().state = Crate::Carried;
                                 crateEnt.getComponent<Crate>().velocity = {};
-                                crateEnt.getComponent<Crate>().parentID = playerEnt.getIndex();
+                                crateEnt.getComponent<CollisionComponent>().setCollisionMaskBits(0);
+                                crateEnt.getComponent<xy::Transform>().setPosition(-110.f, -110.f);
                                 luggage.entityID = crateEnt.getIndex();
+
+                                //broadcast
+                                sf::Uint32 flags = (crateEnt.getComponent<Actor>().id << 16);
+                                flags |= Luggage::PickedUp;
+                                if (playerEnt.getComponent<Player>().playerNumber == 0)
+                                {
+                                    flags |= Luggage::PlayerOne;
+                                }
+                                else
+                                {
+                                    flags |= Luggage::PlayerTwo;
+                                }
+                                if (crateEnt.getComponent<Crate>().explosive)
+                                {
+                                    flags |= Luggage::Explosive;
+                                }
+                                else
+                                {
+                                    flags |= Luggage::Normal;
+                                }
+                                m_host.broadcastPacket(PacketID::CrateChange, flags, xy::NetFlag::Reliable, 1);
+
                                 break;
                             }
                         }
@@ -112,9 +165,36 @@ void LuggageDirector::handleMessage(const xy::Message& msg)
                 //we're carrying so drop
                 auto crateEnt = getScene().getEntity(luggage.entityID);
                 crateEnt.getComponent<Crate>().state = Crate::Falling;
-                crateEnt.getComponent<Crate>().parentID = 0;
+                crateEnt.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::CrateMask);
+
+                float direction = playerEnt.getComponent<Player>().sync.direction == Player::Direction::Left ? 1.f : -1.f;
+                auto offset = LuggageOffset;
+                offset.x *= direction;
+                crateEnt.getComponent<xy::Transform>().setPosition(playerEnt.getComponent<xy::Transform>().getPosition() + offset);
 
                 luggage.entityID = 0;
+
+                //broadcast
+                sf::Uint32 flags = (crateEnt.getComponent<Actor>().id << 16);
+                flags |= Luggage::Dropped;
+                if (playerEnt.getComponent<Player>().playerNumber == 0)
+                {
+                    flags |= Luggage::PlayerOne;
+                }
+                else
+                {
+                    flags |= Luggage::PlayerTwo;
+                }
+                if (crateEnt.getComponent<Crate>().explosive)
+                {
+                    flags |= Luggage::Explosive;
+                }
+                else
+                {
+                    flags |= Luggage::Normal;
+                }
+                m_host.broadcastPacket(PacketID::CrateChange, flags, xy::NetFlag::Reliable, 1);
+
             }
         }
     }

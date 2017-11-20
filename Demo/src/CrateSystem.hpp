@@ -53,7 +53,6 @@ struct Crate final
     bool groundContact = false;
     bool lethal = false;
     sf::Uint8 lastOwner = 3;
-    sf::Uint32 parentID = 0;
 
     sf::Vector2f spawnPosition;
     bool respawn = false;

@@ -88,13 +88,7 @@ void CrateSystem::process(float dt)
             destroy(entity);
             continue;
         case Crate::Carried:
-        {
-            auto parentEnt = getScene()->getEntity(crate.parentID);
-            auto worldPoint = LuggageOffset;
-            worldPoint.x *= parentEnt.getComponent<Player>().sync.direction == Player::Direction::Right ? -1.f : 1.f;
-            worldPoint += parentEnt.getComponent<xy::Transform>().getPosition();
-            entity.getComponent<xy::Transform>().setPosition(worldPoint);
-        }
+        
             continue; //don't update velocity
         }
 
@@ -260,6 +254,7 @@ void CrateSystem::groundCollision(xy::Entity entity)
             
         }
     }
+    std::cout;
 }
 
 void CrateSystem::airCollision(xy::Entity entity)
