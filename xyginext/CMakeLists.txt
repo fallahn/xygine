@@ -26,7 +26,7 @@ if (APPLE)
 find_library(CORESERVICES_LIBRARY CoreServices)
 find_library(APPKIT AppKit)
 elseif(UNIX)
-find_packge(PkgConfig REQUIRED)
+find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK REQUIRED gtk+-3.0)
 endif()
 
