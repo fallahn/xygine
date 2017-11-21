@@ -80,6 +80,8 @@ class CrateSystem final : public xy::System
 public:
     CrateSystem(xy::MessageBus&, xy::NetHost&);
 
+    void handleMessage(const xy::Message&) override;
+
     void process(float) override;
 
 private:

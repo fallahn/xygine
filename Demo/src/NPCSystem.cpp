@@ -824,6 +824,10 @@ void NPCSystem::collisionNormal(xy::Entity entity)
                             despawn(entity, crate.lastOwner, NpcEvent::Crate);
                         }
                     }
+                    else if (manifold.normal.y > 0)
+                    {
+                        despawn(entity, 255, NpcEvent::Crate);
+                    }
 
                     break;
                 case CollisionType::Explosion:

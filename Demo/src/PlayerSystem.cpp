@@ -442,6 +442,18 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                 case CollisionType::NPC:
                     if(npcCollision(entity, man)) return; //this killed us so stop with walking collisions
                     break;
+                case CollisionType::Teleport:
+                    if (man.normal.y < 0)
+                    {
+                        //move up
+                        tx.move(0.f, -TeleportDistance);
+                    }
+                    else
+                    {
+                        //move down
+                        tx.move(0.f, TeleportDistance);
+                    }
+                    return;
                 }
             }
         }
@@ -458,9 +470,6 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                 switch (man.otherType)
                 {
                 default: break;
-                case CollisionType::Fruit:
-                case CollisionType::NPC:
-                case CollisionType::Powerup:
                 case CollisionType::Bubble:
                     if (man.otherEntity.hasComponent<Bubble>())
                     {
@@ -470,8 +479,11 @@ void PlayerSystem::collisionWalking(xy::Entity entity)
                         {
                             break;
                         }
-                    }
-
+                    } //else fall through
+                case CollisionType::Fruit:
+                case CollisionType::Teleport:
+                case CollisionType::NPC:
+                case CollisionType::Powerup:
                     collisionCount--;
                     break;
                 }

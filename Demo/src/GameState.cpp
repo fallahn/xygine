@@ -351,7 +351,7 @@ bool GameState::update(float dt)
         m_playerInputs[i].update();
     }
     m_scene.update(dt);
-    return false;
+    return true;
 }
 
 void GameState::draw()
@@ -780,15 +780,17 @@ void GameState::loadUI()
 
     //level counter
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 16.f, MapBounds.height - 108.f);
+    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f), MapBounds.height - 108.f);
     ent.addComponent<xy::Text>(font).setString("1");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::LevelCounter | CommandID::UIElement;
 
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 60.f, MapBounds.height - 148.f);
+    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f), MapBounds.height - 148.f);
     ent.addComponent<xy::Text>(font).setString("LEVEL");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     ent.getComponent<xy::Text>().setFillColour(sf::Color::Red);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
 
@@ -1554,7 +1556,7 @@ void GameState::switchMap(const MapData& data)
         entity.getComponent<xy::Callback>().active = true;
 
         //set target colours
-        entity.getComponent<BackgroundColour>().destAngle = static_cast<float>(data.colourQuad) * 90.f;
+        entity.getComponent<BackgroundColour>().destAngle = (static_cast<float>(data.colourQuad) * 90.f) + 1.f;
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
    

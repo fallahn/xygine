@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="89">
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="89">
  <properties>
   <property name="colour_quad" type="int" value="1"/>
   <property name="round_time" type="float" value="60"/>
@@ -18,12 +18,12 @@
  </layer>
  <layer name="signs" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFgw0YArERCeoDgNgViW8NxDZ41LtB9SADfyxqXJHUuZHgHlxm0gNgc28AEu3KQBnA5SdZIJYjQj8nEHNhEVcHYg0i9AsDsQgR6ugFAJDNBlM=
+   eJxjYBgFgw0YArERCeoDgNgViW8NxDZ41LtB9SADfyxqXJHUuZHgHlxm0gOg+wtdzhWPPDEAl59kgViOCP2cQMyFRVwdiDWI0C8MxCJEqKMXAADBjgW9
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFUkkKgDAQ6wc8it5EX+DN5eZy0/r/5ziFFkOYqqhgIBTTGZMZasy/qIUDMMCCtoKOtbXnG2/sn+HfLegN6NNJ/1P/0fMuQj36W+WeGRD2Gcu/KppVtC/3v5l4XtYXpZ/z4TfPczW/5nmVn+E83HualGzcr/m4ffTCzhzzcq6Ydy6sSEuEZaS+EGZKj0Pq7xmZP3dSnxbo
+   eJzFUkkKgEAMmw94FL2JvsCby83l5oz/f44tzEAsrYgKBoKQppO26Ny/aIkTMCGA5kFHbxv5Jhv7V3i7B70Dfbnof5o/R95F8mN+UOqSCeme1vxe0YKifXn/3Z1n3cBn1az9GbiDVbua37qdNb8EZ/D/tCj5sl/L4Z1H4uDOt0CvlV0SG6FlxNrwV8RC6WHksS5RxO8BdMsW/Q==
   </data>
  </layer>
  <objectgroup name="Spawn">
@@ -52,8 +52,8 @@
   <object id="61" type="Platform" x="832" y="416" width="128" height="32"/>
   <object id="62" type="Platform" x="64" y="416" width="128" height="32"/>
   <object id="63" type="Platform" x="320" y="480" width="384" height="32"/>
-  <object id="64" type="Platform" x="160" y="672" width="288" height="32"/>
-  <object id="65" type="Platform" x="576" y="672" width="288" height="32"/>
+  <object id="64" type="Platform" x="160" y="672" width="240" height="32"/>
+  <object id="65" type="Platform" x="624" y="672" width="240" height="32"/>
   <object id="66" type="Platform" x="384" y="800" width="256" height="32"/>
   <object id="67" type="Solid" x="480" y="832" width="64" height="96"/>
   <object id="83" type="Crate" gid="2" x="480" y="752" width="64" height="64">

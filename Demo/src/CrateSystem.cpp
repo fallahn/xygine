@@ -35,6 +35,7 @@ source distribution.
 #include "AnimationController.hpp"
 #include "CommandIDs.hpp"
 #include "NPCSystem.hpp"
+#include "MessageIDs.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
@@ -66,6 +67,19 @@ CrateSystem::CrateSystem(xy::MessageBus& mb, xy::NetHost& nh)
 }
 
 //public
+void CrateSystem::handleMessage(const xy::Message& msg)
+{
+    if (msg.id == MessageID::MapMessage)
+    {
+        const auto& data = msg.getData<MapEvent>();
+        if (data.type == MapEvent::MapChangeStarted)
+        {
+            //clear respawn list so they aren't carried on to next map
+            m_respawnCount = 0;
+        }
+    }
+}
+
 void CrateSystem::process(float dt)
 {
     auto& entities = getEntities();
@@ -88,7 +102,7 @@ void CrateSystem::process(float dt)
             destroy(entity);
             continue;
         case Crate::Carried:
-        
+
             continue; //don't update velocity
         }
 
@@ -130,23 +144,23 @@ void CrateSystem::process(float dt)
                 crate.shake.shakeIndex = (crate.shake.shakeIndex + 1) % m_waveTable.size();
             }
         }
-
-        //update the respawn queue
-        for (auto i = 0u; i < m_respawnCount; ++i)
-        {
-            m_respawnQueue[i].first -= dt;
-
-            if (m_respawnQueue[i].first < 0)
-            {
-                spawn(m_respawnQueue[i].second);
-
-                //swap last item in and resize count
-                m_respawnCount--;
-                m_respawnQueue[i] = m_respawnQueue[m_respawnCount];
-                i--; //retest i because it's a different object
-            }
-        }
     }
+
+    //update the respawn queue
+    for (auto i = 0u; i < m_respawnCount; ++i)
+    {
+        m_respawnQueue[i].first -= dt;
+
+        if (m_respawnQueue[i].first < 0)
+        {
+            spawn(m_respawnQueue[i].second);
+
+            //swap last item in and resize count
+            m_respawnCount--;
+            m_respawnQueue[i] = m_respawnQueue[m_respawnCount];
+            i--; //retest i because it's a different object
+        }
+    }  
 }
 
 //private
