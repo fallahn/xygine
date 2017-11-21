@@ -85,6 +85,12 @@
     <Filter Include="Header Files\gui">
       <UniqueIdentifier>{2ff1bc60-c739-4aa2-a51c-2934af714f4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\core\dialogues">
+      <UniqueIdentifier>{74d61afd-bfd8-4a9f-a51a-c8adf2268c82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\core\dialogues\nfd">
+      <UniqueIdentifier>{22ade682-fc97-4470-92a0-1c850fda1aa7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\App.cpp">
@@ -275,6 +281,12 @@
     </ClCompile>
     <ClCompile Include="src\ecs\systems\SpriteSystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\dialogues\nfd\nfd_common.c">
+      <Filter>Source Files\core\dialogues\nfd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\dialogues\nfd\nfd_win.cpp">
+      <Filter>Source Files\core\dialogues\nfd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -130,6 +130,8 @@
     <ClCompile Include="src\core\ConfigFile.cpp" />
     <ClCompile Include="src\core\Console.cpp" />
     <ClCompile Include="src\core\ConsoleClient.cpp" />
+    <ClCompile Include="src\core\dialogues\nfd\nfd_common.c" />
+    <ClCompile Include="src\core\dialogues\nfd\nfd_win.cpp" />
     <ClCompile Include="src\core\FileSystem.cpp" />
     <ClCompile Include="src\core\MessageBus.cpp" />
     <ClCompile Include="src\core\State.cpp" />

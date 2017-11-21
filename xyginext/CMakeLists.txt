@@ -24,6 +24,10 @@ endif()
 # Apple requires some extra guff
 if (APPLE)
 find_library(CORESERVICES_LIBRARY CoreServices)
+find_library(APPKIT AppKit)
+elseif(UNIX)
+find_packge(PkgConfig REQUIRED)
+pkg_check_modules(GTK REQUIRED gtk+-3.0)
 endif()
 
 # Only works with SFML version 2.4 and above
@@ -40,8 +44,28 @@ include_directories(
   ${ENET_INCLUDE_DIR}
   ${CMAKE_SOURCE_DIR}/include)
   
+if(UNIX)
+  include_directories(${GTK_INCLUDE_DIRS})
+  link_directories(${GTK_LIBRARY_DIRS})
+endif()
+
 # Project source files
 add_subdirectory(src)
+
+# platform specific for file dialogue
+if(APPLE)
+  SET(NFD_SRC 
+    src/core/dialogues/nfd/nfd_common.c
+    src/core/dialogues/nfd/nfd_cocoa.m)
+elseif(UNIX)
+  SET(NFD_SRC 
+    src/core/dialogues/nfd/nfd_common.c
+    src/core/dialogues/nfd/nfd_gtk.c)
+elseif(WIN32)
+  SET(NFD_SRC 
+    src/core/dialogues/nfd/nfd_common.c
+    src/core/dialogues/nfd/nfd_win.cpp)
+endif()
 
 # If building static, define XY_STATIC 
 if (NOT BUILD_SHARED_LIBS)
@@ -54,7 +78,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 # Create the library
-add_library(${PROJECT_NAME} ${PROJECT_SRC})
+add_library(${PROJECT_NAME} ${PROJECT_SRC} ${NFD_SRC})
 
 # Linker settings
 target_link_libraries(${PROJECT_NAME}
@@ -65,7 +89,9 @@ target_link_libraries(${PROJECT_NAME}
 
 # Link apple guff if appropriate
 if (APPLE)
-target_link_libraries(${PROJECT_NAME} ${CORESERVICES_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${CORESERVICES_LIBRARY} ${APPKIT})
+elseif(UNIX)
+target_link_libraries(${PROJECT_NAME} ${GTK_LIBRARIES})
 endif()
 
 # The project specific includes (Useful if linking to this target from another cmake script)
