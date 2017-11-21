@@ -16,6 +16,11 @@ SET(CMAKE_BUILD_TYPE        Debug CACHE STRING  "Choose the type of build (Debug
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Apple doesn't like static constexpr if c++17 isn't enabled
+if (APPLE)
+ set(CMAKE_CXX_STANDARD 17)
+endif()
+
 # enable some warnings in debug builds with gcc/clang
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wextra -Wreorder")
@@ -33,7 +38,9 @@ find_package(TMXLITE REQUIRED)
 
 # X11 is required on unices
 if(UNIX)
+ if(!APPLE)
   find_package(X11 REQUIRED)
+ endif()
 endif()
 
 # Additional include directories
