@@ -164,6 +164,14 @@ void LuggageDirector::handleMessage(const xy::Message& msg)
             {
                 //we're carrying so drop
                 auto crateEnt = getScene().getEntity(luggage.entityID);
+
+                if (!crateEnt.hasComponent<Crate>())
+                {
+                    //we probably got a game over when carrying a crate
+                    getScene().destroyEntity(crateEnt);
+                    return;
+                }
+
                 crateEnt.getComponent<Crate>().state = Crate::Falling;
                 //crateEnt.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::CrateMask);
 

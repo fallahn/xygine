@@ -722,11 +722,12 @@ void GameState::loadUI()
     ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
     
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 140.f, 10.f);
+    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f), 10.f);
     ent.addComponent<xy::Text>(font);
     ent.getComponent<xy::Text>().setFillColour(sf::Color::Red);
     ent.getComponent<xy::Text>().setString("HIGH SCORE");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
     
     ent = m_scene.createEntity();
@@ -746,10 +747,11 @@ void GameState::loadUI()
     ent.addComponent<xy::CommandTarget>().ID = CommandID::ScoreOne | CommandID::UIElement;
 
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 140.f, 46.f);
+    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f), 46.f);
     ent.addComponent<xy::Text>(font);
     ent.getComponent<xy::Text>().setString(m_scores.getProperties()[0].getValue<std::string>());
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::HighScore | CommandID::UIElement;
 
     ent = m_scene.createEntity();

@@ -359,8 +359,7 @@ void CrateSystem::destroy(xy::Entity entity)
 {
     if (entity.destroyed()) return;
     
-    const auto& tx = entity.getComponent<xy::Transform>();
-    getScene()->destroyEntity(entity);
+    const auto& tx = entity.getComponent<xy::Transform>();  
 
     //broadcast to client
     ActorEvent evt;
@@ -391,8 +390,8 @@ void CrateSystem::destroy(xy::Entity entity)
 
         //broadcast to clients
         evt.actor = expEnt.getComponent<Actor>();
-        evt.x = tx.getPosition().x;
-        evt.y = tx.getPosition().y;
+        /*evt.x = tx.getPosition().x;
+        evt.y = tx.getPosition().y;*/
         evt.type = ActorEvent::Spawned;
 
         m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
@@ -402,6 +401,8 @@ void CrateSystem::destroy(xy::Entity entity)
     {
         m_respawnQueue[m_respawnCount++] = std::make_pair(RespawnTime, crate);
     }
+
+    getScene()->destroyEntity(entity);
 }
 
 void CrateSystem::spawn(Crate crate)

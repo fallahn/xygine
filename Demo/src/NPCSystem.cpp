@@ -818,11 +818,13 @@ void NPCSystem::collisionNormal(xy::Entity entity)
 
                     if (manifold.otherEntity.hasComponent<Crate>())
                     {
-                        const auto& crate = manifold.otherEntity.getComponent<Crate>();
+                        auto otherEnt = manifold.otherEntity;
+                        auto& crate = otherEnt.getComponent<Crate>();
                         if (manifold.penetration > (ClocksyBounds.width / 2.f)
                             || crate.lethal)
                         {                         
                             despawn(entity, crate.lastOwner, NpcEvent::Crate);
+                            crate.state = Crate::Breaking;
                         }
                     }
                     else if (manifold.normal.y > 0)
@@ -976,12 +978,13 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                             npc.velocity.y = 0.f;
                             return;
                         }
-
-                        /*if (npc.velocity.y > 450 && manifold.otherEntity.hasComponent<Crate>())
+                        
+                        if (npc.velocity.y > 250 && manifold.otherEntity.hasComponent<Crate>())
                         {
                             auto crateEnt = manifold.otherEntity;
                             crateEnt.getComponent<Crate>().state = Crate::Breaking;
-                        }*/
+                            std::cout << "NPCs face met the wall: " << npc.velocity.y << std::endl;
+                        }
                     }
                     else //bonk head
                     {
