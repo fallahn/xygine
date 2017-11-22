@@ -4,28 +4,28 @@
   <property name="colour_quad" type="int" value="2"/>
   <property name="round_time" type="float" value="26"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
-  <image source="../images/block.png" width="640" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFU8sKgDAM62Wwn+0OTt3w67XQQigd6BQMlCV95DDaTET5iqSR4c1BLYpRfZTDvICvKBDsuNfGDavqqtxmRDfor9rftY+ch2CBOgOv9Bw40ybmDUuQ2174RRC//WNP8/0LfWIG/7qA9l4H8Kba9gw5q2bwLKAx5/fd776/AcGdG43ueXTLWI88k8ufeHAi1g==
+   eJzFU8sKgDAM62Wwn+8OTt3wa7XQQigd6BQMlCV95DDaTET5iqSR4c1BLYpRfZTDvICvKBDsuNfGDavqqtxmRDfor9rftY+ch2CBOgOv9Bw40ybmDUuQ2174RRC//WNP8/0LfWIG/7qA9l4H8Kba9gw5q2bwLKAx5/fd776/AcGdG43ueXTLWI88k8ufDissNg==
   </data>
  </layer>
  <layer name="detail" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBg8wJVC/f5UcQV1ATY/BdDQPjcamk0vgC3M0OMWXxgOxnQwXAEAQcICow==
+   eJxjYBg8IBaLGA8R+syA2ByIs7HISRGh3wWIXYlQhwzUiVDDx4DdTzlAbIHE18KhXwaP2W44xOOIcNdgBNxIbGxhhh63OWh8STxqNYG4AIjzGXCHNS1ACB65YCS2BhZ5UPpKwiOXSIG7qAkABZIJAg==
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYwAHEkkhYBSquSkBMEqqXg0K7QVgKCRMCyGrx2Y/N/bjsJxfA9EuiYVwAXR0twg9XOGJTQy37qaEfPWyQwxGXHC3CTxkqp0ZADBZ+MOAIxH447PFG4zsScBdMvTMQ+2KRtwJiSygbAErICdM=
+   eJxjYBhYwAHEikjYACpuSEBMEaqXg0K7QVgJCRMCyGrx2Y/N/bjsJxfA9CuiYVwAXR0twg9XOGJTQy37qaEfPWyQwxGXHC3CTx8qZ0RADBZ+MBAJxFk47ElH40cScBdMfTQQZ2KR9wNiXygbAPKUDMs=
   </data>
  </layer>
- <objectgroup color="#00aa00" name="geometry">
+ <objectgroup color="#00aa00" name="geometry" visible="0">
   <object id="2" type="Solid" x="416" y="0" width="192" height="160"/>
   <object id="3" type="Solid" x="64" y="0" width="224" height="160"/>
   <object id="4" type="Solid" x="736" y="0" width="224" height="160"/>

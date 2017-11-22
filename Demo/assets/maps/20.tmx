@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="87">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="87">
  <properties>
   <property name="colour_quad" type="int" value="3"/>
   <property name="round_time" type="float" value="110"/>
   <property name="use_bubbles" type="bool" value="false"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
-  <image source="../images/block.png" width="640" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJy1UwEKgDAI9DtBX5vQVot6fROUxNxa0A5knp5uDJ0BYK7Y1OBebnqpsVryCcgWlI8mHlRefMFSbFX6rDSp2FYsskZiO/hY+JR+m8mvlTpweqaGdiTsm/9AHtBzFA7De/5D16Dyz47+pAl8D3I+c5w4zVSEew4RnvfZWa/thOYEb6dasVb8y54LvwBanion
+   eJy1UwEKgDAI9FtBX5zQVot6bROUxNxa0A5knp5uDJ0BYK7Y1OBebnqpsVryCcgWlI8mHlRefMFSbFX6rDSp2FYsskZiO/hY+JR+m8mvlTpweqaGdiTsm/9AHtBzFA7De/5D16Dyz47+pAl8D3I+c5w4zVSEew4RnvfZWa/thOYEb6dasVb8y54LvwD+MzcH
   </data>
  </layer>
  <layer name="signs" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBh44Eqhen9qOQQJuNHATFKBIRAbEakWm3utgdgGiR9AsYsoA6SG6UC4F5edxKRRWSCWwyPPCcRceOTVgVgDj7wwEIsQ4Q56AgC00wR/
+   eJxjYBh4EEuh+mw0viYQa0HpfCAugPJJAXEkqgcBMyA2J6AmGI+cCxC7IvEdgdgJia8OxIlArIFFLzb3+gNxABI/B4hNCbgPFGa5DJBwg4E8BkT4ORPQjw+QGqY5eOTUkdh8ZLgFGchgsZMHTQ0xaVQViNWgbCks8pxAzAVlhyCJw+LTGIhN8JgvDsQSDBC/JxHhHnoAADeDDQY=
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFUTEOgCAQ4wnGUR1dTNh0Fd0U/v8gGSBpmgMuOtikCWephWLMv7CRO/AGzQsz7rWJX7LZv1IGclP43+Y7gaahoR97ygiRl/DdC/7W+TQ6d7ckljrMfryrFk7I1/ZXOr/UIcPDutUP5zHw/pn4XmfkAXOgvZg9Rg70/7mS3VU09PWCNsH8AM/MFcc=
+   eJzFks0NgCAUgxnCOIA6gFcT7rqA6B1x/xHkAEnTVPw7+JImPh4fDUVj/i0bNYM2mAXR416b9MWb+ZE8UNMN/q2/I3nYt4s585gTcl6sB8ErNs/VGYrn7Iakswwz78zzcsJfZVRaZ15lyBXg++r92Y8L76/efY1aoOf/AL3bqIbO7wveVWGGXC1mHfQH8NUe8Q==
   </data>
  </layer>
  <objectgroup color="#00aa00" name="geometry">
@@ -65,8 +65,8 @@
   </object>
   <object id="73" type="Solid" x="448" y="864" width="128" height="32"/>
   <object id="75" type="Platform" x="256" y="256" width="512" height="32"/>
-  <object id="76" type="Platform" x="144" y="416" width="288" height="32"/>
-  <object id="77" type="Platform" x="592" y="416" width="288" height="32"/>
+  <object id="76" type="Platform" x="144" y="416" width="256" height="32"/>
+  <object id="77" type="Platform" x="624" y="416" width="256" height="32"/>
   <object id="78" type="Platform" x="208" y="576" width="608" height="32"/>
   <object id="79" type="Platform" x="208" y="736" width="240" height="32"/>
   <object id="80" type="Platform" x="592" y="736" width="224" height="32"/>

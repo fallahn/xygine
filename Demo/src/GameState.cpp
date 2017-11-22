@@ -110,7 +110,7 @@ namespace
     };
 
 #ifdef XY_DEBUG
-    sf::Uint8 debugActorCount = 0;
+    sf::Int8 debugActorCount = 0;
     sf::Uint8 debugPlayerState = 0;
     sf::Uint8 debugActorUpdate = 0;
     sf::Vector2f debugCrownVel;
@@ -307,6 +307,7 @@ void GameState::handleMessage(const xy::Message& msg)
 
 bool GameState::update(float dt)
 {   
+    DPRINT("map", m_mapData.mapName);
     DPRINT("Actor count", std::to_string(debugActorCount));
     //DPRINT("Actor Update Count", std::to_string(debugActorUpdate));
     //DPRINT("Player Server State", std::to_string(debugPlayerState));
@@ -824,7 +825,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     default: break;
 #ifdef XY_DEBUG
     case PacketID::DebugMapCount:
-        debugActorCount = evt.packet.as<sf::Uint8>();
+        debugActorCount = evt.packet.as<sf::Int8>();
         break;
     case PacketID::DebugCrownVelocity:
         debugCrownVel = evt.packet.as<sf::Vector2f>();

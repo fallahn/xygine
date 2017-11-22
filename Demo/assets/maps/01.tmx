@@ -4,28 +4,28 @@
   <property name="colour_quad" type="int" value="0"/>
   <property name="round_time" type="float" value="20"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
-  <image source="../images/block.png" width="640" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFk9sKgDAMQyv4uxsMFS9fr4UVQ2yd+KAHii6J3Ri2F5EeqqO1aZ7e8rwsa0o+KkHlB5XkZASNc+hbZpArpeYSZEr1FuphGmJrr7eRG74xP9S+4s+9EbvjiXQ+n+bWwCsSo95WK0MPZAu+VT36d1fIsCZOnvtEc6Hczdbb+eSnt4e976DDJXs=
+   eJzFk9sKgDAMQyv4+xsMFS9fq4UVQ2yd+KAHii6J3Ri2F5EeqqO1aZ7e8rwsa0o+KkHlB5XkZASNc+hbZpArpeYSZEr1FuphGmJrr7eRG74xP9S+4s+9EbvjiXQ+n+bWwCsSo95WK0MPZAu+VT36d1fIsCZOnvtEc6Hczdbb+eSnt4e9704cL9s=
   </data>
  </layer>
  <layer name="detail" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBh44IbEdiWglpA8IeBPof7BCAKIVEdp2NEDuBFWAgbE+plcgO6O0XSHHQAAOxUDJQ==
+   eJxjYBh4EIfEjkWT40Hjw+T5iDRbCo2fDaVliNRPb6AJxLlArIXEz0fiYwM5SGxuPOrQwxYbkCRCDTrQIEMPLhBHWAkY5BCQB4VbAQP+cCPFHehhZ4HEDgTiICAOBuIQNHUwsWA0MTckfjwQJwBxIhAnMSDCUx1JLBEqjiw2GAAAdPsNzw==
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYwALEomRiFiimxO7hoF8UyldkIBxmClC11Aw/MShfCcrGh+WhasWoaD+l+gdD+JGDke12wGGHKRB7EukeMygNU2+PJm+HRS0AJHwH9g==
+   eJxjYBhYwALEsmRiFiimxO7hoF8WytdlIBxmOlC11Aw/OShfD8rGh7WhauWoaD+l+gdD+JGDke2OwGGHJxCnEukeLygNUx+OJh+GRS0AX3gKyg==
   </data>
  </layer>
- <objectgroup color="#00aa00" name="Geometry">
+ <objectgroup color="#00aa00" name="Geometry" visible="0">
   <object id="3" type="Solid" x="64" y="0" width="896" height="160"/>
   <object id="7" type="Solid" x="64" y="928" width="896" height="112"/>
   <object id="8" type="Solid" x="960" y="128" width="64" height="832"/>

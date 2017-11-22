@@ -4,25 +4,25 @@
   <property name="colour_quad" type="int" value="1"/>
   <property name="round_time" type="float" value="56"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
-  <image source="../images/block.png" width="640" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJy1U4sKhDAM6w8J+7EdnHPn4+vPQgu5uOpOMBC2JO1U7JKIJOIA5Cw1sqgOs6hG8QJmY6TRF+gvO0fIiq3vnRP0FdAO9artMSu2jtDbg6nh9fbeRb0uuYUZ9stDz9BzP3/28PeupPW9t0bOvsL/L3s+Y7P8zluWIzbzV9vjrKLOUOfguY40Z4rovp15LX11pzlz/QVGwTDe
+   eJy1U4sKhDAM648J+8EdnHPn42vPQgu52OlOMBC2JO1U7JKIJOIA5CwFWasOs1aN4gXMxpZGX6C/7BwhK7a+d07QV0A71Ku2x6zYOkJvD6bA6+29i3pdcgsz7JeHnqHnfv7s4e9dSet7b0HOvsL/L3s+Y7P8zluWIzbzV9vjrKLOUOfguW5pzhRJ4vt25kX66k5z5voL+wM/Xg==
   </data>
  </layer>
  <layer name="detail" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBg8wJUAnxDwp5ZDhgFwwyHuSkB+JANCYQYDASSaO5zTJQAwNgLV
+   eJxjYBg8IJYAHwR48ejPJsIOaeKdM6iBJgH5OBzisQTk6QXUB9h+bIBQmMFADgFzgoE4BEqDAKF0qYHEBoVLIhAnQWkNrDoGT/gBAJNpBwU=
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYYADEjgQwDPiiiRtAMSV249PvB8TeeGha20+JfkciaFrYTyjMkOnBFn7EhBkyTS37nQhgGPBDE8dmtyIR9kqg8XmhtDwWc7DJgYASlAYAB5IUaw==
+   eJxjYBhY4ADEkQQwDGSiiTtAMSV249OfBcTpeGha20+J/kgiaFrYTyjMkGla2E+JfmLCDJmmlv1RBDAMZKGJY7Nblwh7FdD4glBaG4s52ORAQA9KAwAZ4xu7
   </data>
  </layer>
  <objectgroup color="#00aa00" name="geometry">

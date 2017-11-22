@@ -4,25 +4,25 @@
   <property name="colour_quad" type="int" value="0"/>
   <property name="round_time" type="float" value="32"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
-  <image source="../images/block.png" width="640" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFU9EKwCAIdNDv2ktB7u9XYHCTNBjBDg7W3Wk4MhFR6ryUyTnvaGu9jPUGspLhe5458AnqW2eFTFFv6KKe1ScKvcG0RnX0vyEHengzr9D2kaP4Ot8deDjDzNl78J+IkxnI2oOhF4Mu4KGG9d77X+0Bvv9oH6P9XXlRjec9qwIeeg==
+   eJzFU9EKwCAIdNDv20tB7m9XYHCTNBjBDg7W3Wk4MhFR6ryUyTnvaGu9jPUGspLhe5458AnqW2eFTFFv6KKe1ScKvcG0RnX0vyEHengzr9D2kaP4Ot8deDjDzNl78J+IkxnI2oOhF4Mu4KGG9d77X+0Bvv9oH6P9XXlRjec97oEm2g==
   </data>
  </layer>
  <layer name="detail" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBg8wJVIMVKAP4X6hzpwQ+NTGp4jAWALowAS9I+kNAcAP88CSQ==
+   eJxjYBg8IJYIMV4SzcxG40uTqJ9eIB+ItdDEcrGIaULFsQE+LGJxaHxsYQwDMnjkhgrIY4CEZQGSWC6SODEAWxjl4FEfgsZHT3OEQBIQa5CoR51E9bQCAAjHCMk=
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYwALEokhYASquSEBMFKqXhUK7YfrlobQSGo0sh64GWb84lJZAo5Hl0NVQUz9yuIAAtvBDV0PN8IMB9DDCJYZLP7ofcYnRSj96GOESw6WfFADTL4aEkcMKn5gYAbvtgdgLj7wHFjFTPOrtgNgMizgAdTwIwQ==
+   eJxjYBhYwALEskhYByquS0BMFqqXhUK7Yfq1obQeGo0sh64GWb88lFZAo5Hl0NVQUz9yuIAAtvBDV0PN8IMB9DDCJYZLP7ofcYnRSj96GOESw6WfFADTL4eEkcMKn5gcAbvDgTgNj3wKFjFPPOrDgNgLizgAJQYL0Q==
   </data>
  </layer>
  <objectgroup color="#005500" name="geometry">

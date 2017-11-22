@@ -66,8 +66,8 @@ struct Actor final
 
 //this is sent to a client when it has connected successfully
 static constexpr sf::Uint8 MaxChars = 11;
-static constexpr sf::Uint8 MaxNPCs = 12;
-static constexpr sf::Uint8 MaxCrates = 6;
+static constexpr sf::Uint8 MaxNPCs = 8;
+static constexpr sf::Uint8 MaxCrates = 8;
 struct MapData final
 {
     char mapName[MaxChars]{};

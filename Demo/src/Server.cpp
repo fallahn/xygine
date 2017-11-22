@@ -1160,7 +1160,7 @@ void GameServer::handleMessage(const xy::Message& msg)
                 }
             }
 
-            m_mapData.NPCCount--;
+            m_mapData.NPCCount = std::max(0, m_mapData.NPCCount - 1);
             m_mapData.NPCs[i] = m_mapData.NPCs[m_mapData.NPCCount];
 
             //LOG(std::to_string(m_mapData.actorCount), xy::Logger::Type::Info);

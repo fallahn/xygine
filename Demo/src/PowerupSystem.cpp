@@ -34,6 +34,7 @@ source distribution.
 #include "CommandIDs.hpp"
 #include "NPCSystem.hpp"
 #include "MessageIDs.hpp"
+#include "CrateSystem.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
@@ -291,10 +292,18 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float)
                     powerup.state = Powerup::State::Dying;
                     powerup.lifetime = 1.f;
                     entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+
+                    if (man.otherEntity.hasComponent<Crate>())
+                    {
+                        auto otherEnt = man.otherEntity;
+                        auto& crate = otherEnt.getComponent<Crate>();
+                        crate.lastOwner = powerup.owner;
+                        crate.state = Crate::Breaking;
+                    }
                 }
                 else
                 {
-                    tx.move(man.normal * man.penetration);
+                    //tx.move(man.normal * man.penetration);
 
                     if (man.normal.y != 0 && powerup.velocity.x == 0)
                     {
@@ -352,6 +361,16 @@ void PowerupSystem::fireCollision(xy::Entity entity)
             switch (man.otherType)
             {
             default: break;
+            case CollisionType::Crate:
+                if (powerup.state == Powerup::State::Dying 
+                    && man.otherEntity.hasComponent<Crate>())
+                {
+                    auto otherEnt = man.otherEntity;
+                    auto& crate = otherEnt.getComponent<Crate>();
+                    crate.lastOwner = powerup.owner;
+                    crate.state = Crate::Breaking;
+                }
+                break;
             case CollisionType::Platform:
             case CollisionType::Solid:
                 tx.move(man.penetration * man.normal);

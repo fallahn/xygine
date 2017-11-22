@@ -749,6 +749,7 @@ void NPCSystem::updateDyingState(xy::Entity entity, float dt)
     {
         npc.velocity.y += Gravity * dt;
     }
+    entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
 }
 
 void NPCSystem::onEntityAdded(xy::Entity /*entity*/)
@@ -1024,6 +1025,7 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                             return;
                         }
                     }
+                    npc.canLand = true;
                 }
                 break;
                 case CollisionType::Teleport:

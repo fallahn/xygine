@@ -4,25 +4,25 @@
   <property name="colour_quad" type="int" value="1"/>
   <property name="round_time" type="float" value="26"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
-  <image source="../images/block.png" width="640" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJztU0EKwCAM64cGfszB5pzT10+hhdjZedh1gWCTtHiwOiJyigtQZ26QWX2YWT0NK9AzLY0+wXyo3CELfG6VB8wF0ILmRa4xC3zuMPtjjjhv6XBVnh/vyEqnyjLItd8g76s92bFE/b55eqKwn7nGXUXtoU+g99rSOmuw/tubN9KzP60z0Td2Qi8I
+   eJztU0EKwCAM68cGftDB1jmnr51CC7HTedh1gWCTtHiwOiJyhgvQZq6TjfowG/VUrEAvHGn0Cea5cIeM5dwKD5hj0IrqBakxYzl3mP0xR5i3NLgKz493JKNjYe7k1q/Q97We7likdt88PZHFT1LjrqL20Kewez3SNqtw1P9vb15Pz/60zVTf2fU9CA==
   </data>
  </layer>
  <layer name="detail" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBh8wJVMOWKAP4X6CYEANL4bje2jB6A0zJEBevjQwo6BAsh+wxfvtE6D9AQAFY0DLw==
+   eJxjYBgcgBeJHYtHHS45aSLtySZSHQhoAnEuEOcBcT4QFwCxFgE9OWj8OBLsQwbBQBxCpl51IE4E4iQg1iBRLw8WMXzxgQ6kCMijhw85doAALw5xULgFAnEQDjlYmGJLL7BwiwfiBAbUsCMmTJH9Bot3mFuCkeTQ0yAu89SR3JKIxT2DAQAAOSgPWQ==
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYYADEjmRiAyimxG5q6HeE8mHu0mXAdCuyGEwtLvsdiRRD1u9EIkbXzwB1IzJwAWJnNDFkNdQMP3Tsg2S/Lw411Ix/aoQfufaTajcMY7NbkQh7JdD4vFBaHos52ORAQAlKAwAwxhsA
+   eJxjYBhY4ADEkWRiByimxG5q6I+E8mHusmXAdCuyGEwtLvsjiRRD1h9FIkbXzwB1IzKIAeJoNDFkNbjcTyyA6ccWtxlI9mfiUEMt+0GAGuFHrv2k2g3D2OzWJcJeBTS+IJTWxmIONjkQ0IPSALCTJLQ=
   </data>
  </layer>
  <objectgroup color="#00aa00" name="geometry">

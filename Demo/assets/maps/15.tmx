@@ -4,28 +4,28 @@
   <property name="colour_quad" type="int" value="2"/>
   <property name="round_time" type="float" value="30"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
-  <image source="../images/block.png" width="640" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzNU+0KgCAQuz+CL6s/tFJ6+hTuYAwFK4gGo+2+hLjzIuIbndLD1w9yI87ysxjGO0JjBAbS7E0bNvVZtfV0X6A+a33VOqEZHYnyprPcB/aUB/2G9KJ3FXvj8cE7fwf+6wi+Ut0Juqi3PUMd1AeYGcFjjPedd59voGPlRkf3PLtlzI9mOopfd3ghBw==
+   eJzNU+0KgCAQuz+CL68/tFJ62hTuYAwFK4gGo+2+hLjzIuIbndLD1w9yI87ysxjGO0JjBAbS7E0bNvVZtfV0X6A+a33VOqEZHYnyprPcB/aUB/2G9KJ3FXvj8cE7fwf+6wi+Ut0Juqi3PUMd1AeYGcFjjPedd59voGPlRkf3PLtlzI9mOopf7xUp5w==
   </data>
  </layer>
  <layer name="detail" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBh44IpDPACHuBsa35+KbsFnDyGAyx/EylML4Ao3SgClbqd2HBGKG3qFNTogFPa0iJuBBADcFwQK
+   eJxjYBh4EItDPAeHeBwaP5tC+7WItIcQwOUPQvKmJNoDAupIbGc0OVzhRgkg5DdCAF8c4Qp/fIBQ3FDqXkJAHYc4ctgH45G3QBLTwGF+Ig45EHDD6zr6AQAGFwg1
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYwAHEkkhYBSquSkBMEqqXAyonRQZG1k+u29HdTyxG1j/q/pHtfmQzlaFyagTEYPbDgCMQ++GwxxuN70jAXTD1zkDsi0XeCogtoWwAJ/gPDQ==
+   eJxjYBhYwAHEikjYACpuSEBMEaqXAyqnRAZG1k+u29HdTyxG1j/q/pHtfmQz9aFyRgTEYPbDQCQQZ+GwJx2NH0nAXTD10UCciUXeD4h9oWwAgHATpQ==
   </data>
  </layer>
- <objectgroup color="#00aa00" name="geometry">
+ <objectgroup color="#00aa00" name="geometry" visible="0">
   <object id="2" type="Solid" x="416" y="0" width="192" height="144"/>
   <object id="3" type="Solid" x="64" y="0" width="224" height="160"/>
   <object id="4" type="Solid" x="736" y="0" width="224" height="160"/>

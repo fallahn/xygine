@@ -4,28 +4,28 @@
   <property name="colour_quad" type="int" value="3"/>
   <property name="round_time" type="float" value="36"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
-  <image source="../images/block.png" width="640" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJydU4sKxDAI83cG+7UWjute/fpDUBaCdt0FZNVEnaWuIrKSLUEMOeaXJP5US01RyYoZx1gnkF/AdrMGsS/5mO/aajoE+s38IjE4N8MxqVOcL7Q+5x5w0WyMbcB9XvxH1H8G2b06zkTjd6QzbhRTXHBu9sVZo5qecyR8h3OlHl3u99XlfnNXwHv/f3ZAMdrL0f7NxLlmlPMDxIcwyQ==
+   eJydU4sKxCAM628N9osKx7mXX3sUWhZC6+YFwrRJ6yp2FZGVuAQx1FhfkvhTLaWiEouRY+wTyC/A3dgg9qU95ru3mg+B+2b7IjE4N8Px0qc4J7ze5x5oUW+MbaB9Jv5jpj9Edq+OM/H4HWmPG8UUF6ybfbHXqKbnHIneYV3pjC73++pyv7kr0P38f2ZAMZrL0fy9iXPNKOcHylM/ig==
   </data>
  </layer>
  <layer name="detail" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBgcwBWHeAAOcTc0vj8V3UItgO7GwQBwhedgA8jpgZxwJCc9EGMPrnQ6UgEAo2EDJg==
+   eJxjYBgcIBaHeA4O8Tg0fjYWNSFAHEyme9SBOAmIE4FYgwz9pgyYbjQDYnMi9TtjEXMBYlc8erSgtAUeNbjCExm4EaGG1gA5PaCHIzEAW3oAAU08egjZw8uAPZ0GAnEQEW6ShtKgNBmCJB4PxAkMxKUzULoEpckkItTSAwAA48kLeQ==
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFUUEKgDAM8wt61LOHwb7g3M1t/3+QCiuE0NbdDBRK1jRtN03/Ij5xQJydr8CVzmWqjT0QWI+QfuzNekGisGa39DhDHdA3x5P5S9Fn6h2M/IXcGPVyn6JoglHj7e/5C3h+6+8E4q/Nnx0dw9sfZ6iU87u3/whEr/1t++CS4r0oHrvhvRr8Bvk80P8GF+4X6A==
+   eJzFUUEKgDAM8xP6AH2Bx8G+4dzdbf9/ggorhNDW3QwUStY0bTdN/yI+cUCcna/Alc5lqo09EFiPkH7szXpBorBmt/Q4Qx3QN8eT+UvRZ+odjPyF3Bj1cp+iaIJR4+3v+Qt4fuvvBOKvzc/7e/D2xxkq5fzu7T8C0Wt/2z64pHgvisdueK8Gv0E+D/S/AUPbIQA=
   </data>
  </layer>
- <objectgroup color="#005500" name="geometry">
+ <objectgroup color="#005500" name="geometry" visible="0">
   <object id="4" type="Solid" x="64" y="0" width="224" height="160"/>
   <object id="7" type="Solid" x="64" y="928" width="224" height="128"/>
   <object id="8" type="Solid" x="960" y="128" width="64" height="832"/>

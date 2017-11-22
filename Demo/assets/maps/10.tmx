@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="89">
+<map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="89">
  <properties>
   <property name="colour_quad" type="int" value="1"/>
   <property name="round_time" type="float" value="60"/>
   <property name="use_bubbles" type="bool" value="false"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
-  <image source="../images/block.png" width="640" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFUwEKgCAM3IcCP2YkaVivr1GDdWwiQXhwoOdNJ9wCEQWD00NL97ytM+8OxgyMiqijl8C/Ko3X9WKGs6xqGUnpgo18JPAySsM/ClZPdcCbfyMZmvzzgH0L2DtnZu+okyyKt9A7k6IvdOcqGvVe3i1dZ793dr35/DK/eoZPIPIppw==
+   eJzFU1sKgDAM68WEXnDicJPpabVooZZ07EcMBLY03QNSJiIGnB4iPfL2atEZgtkxGXrde8n5V6PJul0srlZMryAbXbFRjOy8gtrx/wX0pvbDnV8jA03/ebh9D/7tkpl9oE+zqN5K70yqvtCdqwT6o7wj3WafAaOZQ/Npa6Pzy0Y7ASsHNic=
   </data>
  </layer>
  <layer name="signs" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFgw0YArERCeoDgNgViW8NxDZ41LtB9SADfyxqXJHUuZHgHlxm0gOg+wtdzhWPPDEAl59kgViOCP2cQMyFRVwdiDWI0C8MxCJEqKMXAADBjgW9
+   eJxjYBheQBOI84FYi8rm8lGoXwaNH4jE1kCTcwRiJyjbDIjN0eTVgTgeiZ8DxLFIfH8gDoCyXYDYFU1/HFQPMsjGoiYWSV0cA2EQAsTBeMzEB0B+SgLiRAbM8CAFIPvLFItcLAPxwBmLGC4/qQKxGhFmcgIxF5oYyL/GQGxChH5xIJZggITXYAAAW/4NBg==
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFUkkKgEAMmw94FL2JvsCby83l5oz/f44tzEAsrYgKBoKQppO26Ny/aIkTMCGA5kFHbxv5Jhv7V3i7B70Dfbnof5o/R95F8mN+UOqSCeme1vxe0YKifXn/3Z1n3cBn1az9GbiDVbua37qdNb8EZ/D/tCj5sl/L4Z1H4uDOt0CvlV0SG6FlxNrwV8RC6WHksS5RxO8BdMsW/Q==
+   eJzFkksKwzAMRHWFHiCk+5KcIft+9mmyb5z7H6Ay2PAipBDSRQcGw0jjkYVF/otBOYIVCdoCnb1D4S/Z9M+4+wH9Dn3a8Z/NfxceRe1nfnLqlhV1n/SLUyeSo0X+o6B/le2sH/RFNfrtfHxDVKPfItpdNL9Fzsj/aXLyrd/LyW9+KZ+y3QV7o+yrsjfaRdkF/Tdl63gymlK3aMv5BbeLHzU=
   </data>
  </layer>
  <objectgroup name="Spawn">
@@ -32,7 +32,7 @@
   <object id="77" name="squatmo" x="128" y="352" width="16" height="16"/>
   <object id="81" name="squatmo" x="880" y="352" width="16" height="16"/>
  </objectgroup>
- <objectgroup name="geometry">
+ <objectgroup name="geometry" visible="0">
   <object id="4" type="Solid" x="64" y="32" width="192" height="128"/>
   <object id="7" type="Solid" x="64" y="928" width="192" height="128"/>
   <object id="8" type="Solid" x="960" y="128" width="64" height="832"/>

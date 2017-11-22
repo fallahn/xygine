@@ -4,25 +4,25 @@
   <property name="colour_quad" type="int" value="1"/>
   <property name="round_time" type="float" value="32"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="80" columns="10">
-  <image source="../images/block.png" width="640" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="81" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJy1U4sKgCAM3A8J/ZhCmWJ9fQ6Uxtp8RB0curvLBLcFABaBRtE1X8qbgRzCZjpGO6AD+R65Z8bMVFYoGmZ9ZmB1BT1Lgmd1ZPUqaNyfQZjMvzl3Y1766Z9fgd+vdV/No+9wKntNO5hnSe2KH4uXiAZw9yfWAZ792+p5aQaqjtBmsze/Ur43q0bYXyiyLKo=
+   eJy1U4sKgCAM3I8J/qBCmWJ9bRsojbWJRR0cenfzAU4PAF6hM3wr1+rdRB0hIKNgmPCBrSduyIKsbYTmUW1CZqE7+F4aktBF6EXxZP4E+WH9m31XkdWfzvwK8n6j+1oZf4fDmFveLrLAdGx5aVllHsDVn6Qz3Pt31PPaH+g+wSvU/t2Izlgz0n1+AiVWOeo=
   </data>
  </layer>
  <layer name="detail" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBg8wI0INa40dwVlgB5+8KfAfGLcN5AggAg19PADrjAkxn0gQCiOhgsAAH4lA2s=
+   eJxjYBg8IA6LGB8aP5ZEM2XIdAu5ANkP3DjUoPtBC4c6SSitCcT5SOqyCbgBXxhhC+OBAOo4xHOwiKGnAVL9QE4awBWG2NwXhEUMFEeBOORAIBiJnQDEGmjyoPCJxyOXiMNcegMAbmQJjA==
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYYADEjkjYByruS0DMEarXgEK7kfU7kYipbT+5+h1JxNS2HwaGaviBALZwAqU79DSHHIbUsh85TLyhcn4ExGDhhw2IA7EiCe7gxaFeDIu5MKAEpQGkphhx
+   eJxjYBhY4ADEkUg4AyqeSUAsEqrXgUK7kfVHkYipbT+5+iNJxNS2HwaGaviBALZwAqU79DSHHIbUsh85TNKhclkExGDhhw3IA7EuCe4QxKFeDou5MKAHpQHZNCE5
   </data>
  </layer>
  <objectgroup name="Spawn">
@@ -32,7 +32,7 @@
   <object id="60" name="whirlybob" x="480" y="192" width="16" height="16"/>
   <object id="61" name="whirlybob" x="480" y="672" width="16" height="16"/>
  </objectgroup>
- <objectgroup color="#005500" name="geometry">
+ <objectgroup color="#005500" name="geometry" visible="0">
   <object id="4" type="Solid" x="64" y="0" width="224" height="160"/>
   <object id="7" type="Solid" x="64" y="928" width="224" height="128"/>
   <object id="8" type="Solid" x="960" y="128" width="64" height="832"/>

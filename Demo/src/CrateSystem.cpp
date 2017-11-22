@@ -268,7 +268,6 @@ void CrateSystem::groundCollision(xy::Entity entity)
             
         }
     }
-    std::cout;
 }
 
 void CrateSystem::airCollision(xy::Entity entity)
@@ -336,7 +335,22 @@ void CrateSystem::airCollision(xy::Entity entity)
         }
         else if (hitboxes[i].getType() == CollisionType::Foot)
         {
-            crate.groundContact = (collisionCount != 0);
+            auto contactCount = collisionCount;
+            for (auto j = 0u; j < collisionCount; ++j)
+            {
+                auto other = hitboxes[i].getManifolds()[j].otherType;
+                switch (other)
+                {
+                default: break;
+                case CollisionType::Player:
+                case CollisionType::NPC:
+                case CollisionType::Powerup:
+                    contactCount--;
+                    break;
+                }
+            }
+            
+            crate.groundContact = (contactCount != 0);
         }
     }
 }
