@@ -86,7 +86,7 @@ void EntityManager::destroyEntity(Entity entity)
 
 bool EntityManager::entityDestroyed(Entity entity) const
 {
-    const auto id = entity.getGeneration();
+    const auto id = entity.getIndex();
     XY_ASSERT(id < m_generations.size(), "Generation index out of range");
     
     return (m_generations[id] != entity.getGeneration());
