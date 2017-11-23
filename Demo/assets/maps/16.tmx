@@ -25,7 +25,7 @@
    eJxjYBhYYAPEoUg4BSqeSkAsFKrXhkK7YfrDsOBkIE7DIYeunxL7ibETm/io/6lvP7H+x2V/OB77IoiwH6Yf2d5kJP3o9iMDMSx2GuJwixIOcWUktigR5gMAHlgm2A==
   </data>
  </layer>
- <objectgroup color="#005500" name="geometry" visible="0">
+ <objectgroup color="#005500" name="geometry">
   <object id="4" type="Solid" x="64" y="0" width="224" height="160"/>
   <object id="7" type="Solid" x="64" y="928" width="224" height="128"/>
   <object id="8" type="Solid" x="960" y="128" width="64" height="832"/>
@@ -56,12 +56,12 @@
   <object id="74" type="Teleport" x="608" y="1024" width="128" height="32"/>
   <object id="115" type="Platform" x="560" y="544" width="320" height="32"/>
   <object id="129" type="Crate" gid="2" x="480" y="656" width="64" height="64"/>
-  <object id="130" type="Crate" gid="2" x="320" y="256" width="64" height="64">
+  <object id="130" type="Crate" gid="2" x="144" y="528" width="64" height="64">
    <properties>
     <property name="explosive" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="131" type="Crate" gid="2" x="640" y="256" width="64" height="64">
+  <object id="131" type="Crate" gid="2" x="768" y="528" width="64" height="64">
    <properties>
     <property name="explosive" type="bool" value="true"/>
    </properties>
@@ -70,8 +70,8 @@
  <objectgroup name="Spawn">
   <object id="75" name="whirlybob" x="784" y="224" width="16" height="16"/>
   <object id="76" name="whirlybob" x="224" y="224" width="16" height="16"/>
-  <object id="77" name="whirlybob" x="320" y="480" width="16" height="16"/>
-  <object id="78" name="whirlybob" x="704" y="480" width="16" height="16"/>
+  <object id="77" name="whirlybob" x="368" y="368" width="16" height="16"/>
+  <object id="78" name="whirlybob" x="656" y="368" width="16" height="16"/>
   <object id="81" name="whirlybob" x="512" y="768" width="16" height="16"/>
   <object id="123" name="balldock" x="160" y="608" width="16" height="16"/>
   <object id="124" name="balldock" x="864" y="608" width="16" height="16"/>
