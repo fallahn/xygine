@@ -216,7 +216,7 @@ void CrateSystem::groundCollision(xy::Entity entity)
                     if (manifolds[j].otherEntity.hasComponent<Powerup>())
                     {
                         const auto& powerup = manifolds[j].otherEntity.getComponent<Powerup>();
-                        if (powerup.state != Powerup::State::Idle)
+                        if (powerup.state == Powerup::State::Active)
                         {
                             crate.lastOwner = powerup.owner;
                             destroy(entity);
