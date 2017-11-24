@@ -9,6 +9,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/CollisionComponent.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/CollisionSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/CrateSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/DynamiteSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/FruitSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/HatSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/../../Demo/src/InventoryDirector.cpp
