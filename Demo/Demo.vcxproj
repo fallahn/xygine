@@ -131,6 +131,7 @@
     <ClCompile Include="src\CollisionComponent.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
     <ClCompile Include="src\CrateSystem.cpp" />
+    <ClCompile Include="src\DynamiteSystem.cpp" />
     <ClCompile Include="src\EndingDirector.cpp" />
     <ClCompile Include="src\ErrorState.cpp" />
     <ClCompile Include="src\FruitSystem.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="src\CollisionSystem.hpp" />
     <ClInclude Include="src\CommandIDs.hpp" />
     <ClInclude Include="src\CrateSystem.hpp" />
+    <ClInclude Include="src\DynamiteSystem.hpp" />
     <ClInclude Include="src\EndingDirector.hpp" />
     <ClInclude Include="src\EndingMessages.hpp" />
     <ClInclude Include="src\ErrorState.hpp" />

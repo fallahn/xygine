@@ -48,6 +48,7 @@ source distribution.
 #include "CrateSystem.hpp"
 #include "Explosion.hpp"
 #include "LuggageDirector.hpp"
+#include "DynamiteSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -739,9 +740,10 @@ void GameServer::initScene()
     m_scene.addSystem<BonusSystem>(m_messageBus, m_host);
     m_scene.addSystem<HatSystem>(m_messageBus, m_host);
     m_scene.addSystem<CrateSystem>(m_messageBus, m_host);
+    m_scene.addSystem<DynamiteSystem>(m_messageBus, m_host);
     m_scene.addSystem<ExplosionSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
-    m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
+    //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
 
     m_scene.addDirector<InventoryDirector>(m_host);

@@ -8,6 +8,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/CollisionComponent.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/CrateSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/DynamiteSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/EndingDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ErrorState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/FruitSystem.cpp

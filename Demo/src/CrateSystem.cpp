@@ -36,12 +36,13 @@ source distribution.
 #include "CommandIDs.hpp"
 #include "NPCSystem.hpp"
 #include "MessageIDs.hpp"
+#include "DynamiteSystem.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
-#include <xyginext/ecs/components/Callback.hpp>
+//#include <xyginext/ecs/components/Callback.hpp>
 #include <xyginext/network/NetHost.hpp>
 #include <xyginext/util/Vector.hpp>
 #include <xyginext/util/Wavetable.hpp>
@@ -54,37 +55,6 @@ namespace
     const float LethalVelocity = 100000.f; //vel sqr before box becomes lethal
     const float RespawnTime = 5.f;
     const float NpcMaxFallVelocity = 20000.f; //NPCs falling faster than this break creates
-
-    struct DynamiteTimer final
-    {
-        float timer = 2.f;
-        std::function<void(sf::Uint8)> callback;
-        xy::NetHost& host;
-        xy::Scene& scene;
-
-        DynamiteTimer(xy::NetHost& h, xy::Scene& s) : host(h), scene(s) {}
-
-        void operator() (xy::Entity ent, float dt)
-        {
-            timer -= dt;
-            if (timer < 0)
-            {
-                const auto& xForm = ent.getComponent<xy::Transform>();
-
-                //broadcast to client
-                ActorEvent e;
-                e.actor = ent.getComponent<Actor>();
-                e.x = xForm.getPosition().x;
-                e.y = xForm.getPosition().y;
-                e.type = ActorEvent::Died;
-
-                host.broadcastPacket(PacketID::ActorEvent, e, xy::NetFlag::Reliable, 1);
-                scene.destroyEntity(ent);
-
-                callback(255);
-            }
-        }
-    };
 }
 
 CrateSystem::CrateSystem(xy::MessageBus& mb, xy::NetHost& nh)
@@ -404,11 +374,11 @@ void CrateSystem::destroy(xy::Entity entity)
 
     const auto& crate = entity.getComponent<Crate>();
 
-    auto spawnExplosion = [&, evt](sf::Uint8 owner) mutable
+    auto spawnExplosion = [&, evt](sf::Uint8 owner, sf::Vector2f position) mutable
     {
         auto expEnt = getScene()->createEntity();
         expEnt.addComponent<Explosion>().owner = owner;
-        expEnt.addComponent<xy::Transform>().setPosition(evt.x, evt.y);
+        expEnt.addComponent<xy::Transform>().setPosition(position);
         expEnt.getComponent<xy::Transform>().setOrigin(ExplosionOrigin);
         expEnt.addComponent<Actor>().id = expEnt.getIndex();
         expEnt.getComponent<Actor>().type = ActorID::Explosion;
@@ -421,6 +391,8 @@ void CrateSystem::destroy(xy::Entity entity)
 
         //broadcast to clients
         evt.actor = expEnt.getComponent<Actor>();
+        evt.x = position.x;
+        evt.y = position.y;
         evt.type = ActorEvent::Spawned;
 
         m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
@@ -429,7 +401,7 @@ void CrateSystem::destroy(xy::Entity entity)
     if (crate.explosive)
     {
         //spawn explosion
-        spawnExplosion(entity.getComponent<Crate>().lastOwner);
+        spawnExplosion(entity.getComponent<Crate>().lastOwner, { evt.x, evt.y });
     }
     else
     {
@@ -443,11 +415,13 @@ void CrateSystem::destroy(xy::Entity entity)
             dynEnt.getComponent<Actor>().type = ActorID::Dynamite;
             dynEnt.addComponent<AnimationController>();
             dynEnt.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
-
-            DynamiteTimer dynTimer(m_host, *getScene());
-            dynTimer.callback = spawnExplosion;
-            dynEnt.addComponent<xy::Callback>().active = true;
-            dynEnt.getComponent<xy::Callback>().function = dynTimer;
+            dynEnt.addComponent<Dynamite>().callback = spawnExplosion;
+            dynEnt.getComponent<Dynamite>().velocity = { static_cast<float>(xy::Util::Random::value(-1, 1)) * 500.f, -300.f };
+            dynEnt.getComponent<Dynamite>().lifetime += xy::Util::Random::value(0.1f, 0.5f);
+            dynEnt.addComponent<CollisionComponent>().addHitbox(DynamiteBounds, CollisionType::Dynamite);
+            dynEnt.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Dynamite);
+            dynEnt.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::DynamiteMask);
+            dynEnt.addComponent<xy::QuadTreeItem>().setArea(DynamiteBounds);
 
             //broadcast to clients
             evt.actor = dynEnt.getComponent<Actor>();

@@ -55,7 +55,8 @@ namespace CollisionType
         HardBounds = 0x200,
         MagicHat = 0x400,
         Crate = 0x800,
-        Explosion = 1000
+        Explosion = 0x1000,
+        Dynamite = 0x2000
     };
 };
 

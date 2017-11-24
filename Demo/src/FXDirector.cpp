@@ -58,6 +58,7 @@ FXDirector::FXDirector()
     m_soundResource.get("assets/sound/hat_land.wav");
     m_soundResource.get("assets/sound/crate_break.wav");
     m_soundResource.get("assets/sound/one_up.wav");
+    m_soundResource.get("assets/sound/explode.wav");
 }
 
 //public
@@ -122,6 +123,9 @@ void FXDirector::handleMessage(const xy::Message& msg)
             case ActorID::MagicHat:
                 playSound(m_soundResource.get("assets/sound/pop.wav"));
             break;
+            case ActorID::Explosion:
+                playSound(m_soundResource.get("assets/sound/explode.wav"));
+                break;
             }
         }
     }
