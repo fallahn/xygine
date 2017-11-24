@@ -247,7 +247,7 @@ void HatSystem::updateIdle(xy::Entity entity)
                 cmd.targetFlags = 
                     (man.otherEntity.getComponent<Player>().playerNumber == 0) 
                     ? CommandID::PlayerOne : CommandID::PlayerTwo;
-                cmd.action = [&](xy::Entity playerEnt, float)
+                cmd.action = [&, entity](xy::Entity playerEnt, float)
                 {
                     auto& player = playerEnt.getComponent<Player>();
                     if ((player.sync.flags & Player::HatFlag) == 0 && (player.sync.state == Player::State::Jumping || player.sync.state == Player::State::Walking))
@@ -256,11 +256,11 @@ void HatSystem::updateIdle(xy::Entity entity)
                         auto* msg = postMessage<PlayerEvent>(MessageID::PlayerMessage);
                         msg->type = PlayerEvent::GotHat;
                         msg->entity = playerEnt;
+
+                        destroy(entity);
                     }
                 };
                 getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
-                
-                destroy(entity);
                 return;
             }
             else

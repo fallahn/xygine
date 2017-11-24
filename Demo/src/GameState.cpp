@@ -1098,7 +1098,13 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         spawnRoundSkip();
         break;
     case PacketID::GameOver:
-        requestStackPush(StateID::GameOver);
+    {
+        if (getStackSize() == 1)
+        {
+            m_sharedData.continueCount = evt.packet.as<sf::Uint8>();
+            requestStackPush(StateID::GameOver);
+        }
+    }
         break;
     case PacketID::CollisionFlag:
     {

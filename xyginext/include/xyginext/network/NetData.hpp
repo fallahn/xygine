@@ -70,6 +70,8 @@ namespace xy
             return other.m_peer == this->m_peer;
         }
 
+        operator bool() const { return m_peer != nullptr; }
+
     private:
         _ENetPeer* m_peer = nullptr;
 

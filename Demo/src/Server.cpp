@@ -283,7 +283,13 @@ void GameServer::update()
             if (gameOver && !m_stateFlags.test(GameOver))
             {
                 //state changed, send message
-                m_host.broadcastPacket(PacketID::GameOver, 0, xy::NetFlag::Reliable, 1);
+                for (const auto& client : m_clients)
+                {
+                    if (client.peer)
+                    {
+                        m_host.sendPacket(client.peer, PacketID::GameOver, client.continues, xy::NetFlag::Reliable, 1);
+                    }
+                }
             }
             m_stateFlags.set(GameOver, gameOver);
 
@@ -411,6 +417,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
             m_clients[playerNumber].peer = evt.peer;
             m_clients[playerNumber].ready = true;
             m_clients[playerNumber].level = 1;
+            m_clients[playerNumber].continues = 3;
             m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber].data, xy::NetFlag::Reliable, 1);
         }
         //send initial position of existing actors
@@ -473,7 +480,8 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
                 msg->action = GameEvent::Restarted;
                 msg->playerID = player.playerNumber;
 
-                m_clients[player.playerNumber].level = 1;
+                //m_clients[player.playerNumber].level = 1;
+                m_clients[player.playerNumber].continues--;
                 m_host.sendPacket(m_clients[player.playerNumber].peer, PacketID::LevelUpdate, m_clients[player.playerNumber].level, xy::NetFlag::Reliable, 1);
             }
         }
@@ -653,6 +661,7 @@ void GameServer::checkMapStatus(float dt)
         msg->type = MapEvent::MapChangeStarted;
 
         //increase the level count for connected clients and send update
+        //TODO this should only apply if connected client is alive
         auto updateLevel = [&](Client& client)
         {
             if (client.data.actor.type != ActorID::None)
