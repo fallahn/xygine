@@ -400,6 +400,7 @@ void GameState::loadAssets()
     spriteSheet.loadFromFile("assets/sprites/bubble.spt", m_textureResource);
     m_sprites[SpriteID::BubbleOne] = spriteSheet.getSprite("player_one");
     m_sprites[SpriteID::BubbleTwo] = spriteSheet.getSprite("player_two");
+    m_sprites[SpriteID::Dynamite] = spriteSheet.getSprite("dynamite");
 
     spriteSheet.loadFromFile("assets/sprites/player.spt", m_textureResource);
     m_sprites[SpriteID::PlayerOne] = spriteSheet.getSprite("player_one");
@@ -1363,6 +1364,10 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.getComponent<AnimationController>().animationMap[AnimationController::Walk] = 1;
         entity.addComponent<xy::QuadTreeItem>().setArea(CrateBounds);
         entity.getComponent<xy::Transform>().setOrigin(CrateOrigin);
+        break;
+    case ActorID::Dynamite:
+        addSprite(entity, SpriteID::Dynamite);
+        entity.getComponent<xy::SpriteAnimation>().play(0);
         break;
     case ActorID::Explosion:
         break;

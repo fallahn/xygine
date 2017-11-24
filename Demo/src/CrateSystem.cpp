@@ -41,6 +41,7 @@ source distribution.
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
+#include <xyginext/ecs/components/Callback.hpp>
 #include <xyginext/network/NetHost.hpp>
 #include <xyginext/util/Vector.hpp>
 #include <xyginext/util/Wavetable.hpp>
@@ -53,6 +54,37 @@ namespace
     const float LethalVelocity = 100000.f; //vel sqr before box becomes lethal
     const float RespawnTime = 5.f;
     const float NpcMaxFallVelocity = 20000.f; //NPCs falling faster than this break creates
+
+    struct DynamiteTimer final
+    {
+        float timer = 2.f;
+        std::function<void(sf::Uint8)> callback;
+        xy::NetHost& host;
+        xy::Scene& scene;
+
+        DynamiteTimer(xy::NetHost& h, xy::Scene& s) : host(h), scene(s) {}
+
+        void operator() (xy::Entity ent, float dt)
+        {
+            timer -= dt;
+            if (timer < 0)
+            {
+                const auto& xForm = ent.getComponent<xy::Transform>();
+
+                //broadcast to client
+                ActorEvent e;
+                e.actor = ent.getComponent<Actor>();
+                e.x = xForm.getPosition().x;
+                e.y = xForm.getPosition().y;
+                e.type = ActorEvent::Died;
+
+                host.broadcastPacket(PacketID::ActorEvent, e, xy::NetFlag::Reliable, 1);
+                scene.destroyEntity(ent);
+
+                callback(255);
+            }
+        }
+    };
 }
 
 CrateSystem::CrateSystem(xy::MessageBus& mb, xy::NetHost& nh)
@@ -372,12 +404,11 @@ void CrateSystem::destroy(xy::Entity entity)
 
     const auto& crate = entity.getComponent<Crate>();
 
-    if (crate.explosive)
+    auto spawnExplosion = [&, evt](sf::Uint8 owner) mutable
     {
-        //spawn explosion
         auto expEnt = getScene()->createEntity();
-        expEnt.addComponent<Explosion>().owner = entity.getComponent<Crate>().lastOwner;
-        expEnt.addComponent<xy::Transform>().setPosition(tx.getPosition());
+        expEnt.addComponent<Explosion>().owner = owner;
+        expEnt.addComponent<xy::Transform>().setPosition(evt.x, evt.y);
         expEnt.getComponent<xy::Transform>().setOrigin(ExplosionOrigin);
         expEnt.addComponent<Actor>().id = expEnt.getIndex();
         expEnt.getComponent<Actor>().type = ActorID::Explosion;
@@ -390,11 +421,40 @@ void CrateSystem::destroy(xy::Entity entity)
 
         //broadcast to clients
         evt.actor = expEnt.getComponent<Actor>();
-        /*evt.x = tx.getPosition().x;
-        evt.y = tx.getPosition().y;*/
         evt.type = ActorEvent::Spawned;
 
         m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+    };
+
+    if (crate.explosive)
+    {
+        //spawn explosion
+        spawnExplosion(entity.getComponent<Crate>().lastOwner);
+    }
+    else
+    {
+        //small chance might drop dynamite
+        if (xy::Util::Random::value(0, 3) == 0)
+        {
+            auto dynEnt = getScene()->createEntity();
+            dynEnt.addComponent<xy::Transform>().setPosition(evt.x, evt.y);
+            dynEnt.getComponent<xy::Transform>().setOrigin(CrateOrigin);
+            dynEnt.addComponent<Actor>().id = dynEnt.getIndex();
+            dynEnt.getComponent<Actor>().type = ActorID::Dynamite;
+            dynEnt.addComponent<AnimationController>();
+            dynEnt.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
+
+            DynamiteTimer dynTimer(m_host, *getScene());
+            dynTimer.callback = spawnExplosion;
+            dynEnt.addComponent<xy::Callback>().active = true;
+            dynEnt.getComponent<xy::Callback>().function = dynTimer;
+
+            //broadcast to clients
+            evt.actor = dynEnt.getComponent<Actor>();
+            evt.type = ActorEvent::Spawned;
+
+            m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+        }
     }
 
     if (crate.respawn)

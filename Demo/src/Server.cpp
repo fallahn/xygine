@@ -741,7 +741,7 @@ void GameServer::initScene()
     m_scene.addSystem<CrateSystem>(m_messageBus, m_host);
     m_scene.addSystem<ExplosionSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
-    //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
+    m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
 
     m_scene.addDirector<InventoryDirector>(m_host);

@@ -48,6 +48,7 @@ namespace SpriteID
         TowerDudeOne, TowerDudeTwo,
         MagicHat,
         Crate,
+        Dynamite,
         Count
     };
 }

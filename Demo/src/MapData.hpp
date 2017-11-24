@@ -46,7 +46,8 @@ namespace ActorID
         Bonus,
         PrincessOne, PrincessTwo,
         TowerOne, TowerTwo,
-        MagicHat, Crate, Explosion
+        MagicHat, Crate, Explosion,
+        Dynamite
     };
 }
 
