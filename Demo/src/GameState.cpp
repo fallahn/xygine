@@ -261,6 +261,8 @@ void GameState::handleMessage(const xy::Message& msg)
            
             for (auto i = 0u; i < m_sharedData.playerCount; ++i)
             {
+                m_playerInputs[i].setEnabled(true);
+                
                 auto actor = m_playerInputs[i].getPlayerEntity().getComponent<Actor>();
                 m_client.sendPacket(PacketID::ClientContinue, actor.id, xy::NetFlag::Reliable, 1);
 
@@ -1103,6 +1105,11 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         {
             m_sharedData.continueCount = evt.packet.as<sf::Uint8>();
             requestStackPush(StateID::GameOver);
+            
+            for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+            {
+                m_playerInputs[i].setEnabled(false);
+            }
         }
     }
         break;
