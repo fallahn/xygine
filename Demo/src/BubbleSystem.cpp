@@ -49,7 +49,8 @@ namespace
 
 BubbleSystem::BubbleSystem(xy::MessageBus& mb, xy::NetHost& host)
     : xy::System(mb, typeid(BubbleSystem)),
-    m_host      (host)
+    m_host      (host),
+    m_enabled   (true)
 {
     requireComponent<xy::Transform>();
     requireComponent<Actor>();
@@ -63,7 +64,7 @@ void BubbleSystem::handleMessage(const xy::Message& msg)
     if (msg.id == MessageID::PlayerMessage)
     {
         const auto& data = msg.getData<PlayerEvent>();
-        if (data.type == PlayerEvent::FiredWeapon)
+        if (data.type == PlayerEvent::FiredWeapon && m_enabled)
         {
             const auto& player = data.entity.getComponent<Player>();
             auto pos = data.entity.getComponent<xy::Transform>().getPosition();

@@ -34,11 +34,15 @@ source distribution.
 #include "Explosion.hpp"
 #include "AnimationController.hpp"
 #include "CommandIDs.hpp"
+#include "NPCSystem.hpp"
+#include "MessageIDs.hpp"
+#include "DynamiteSystem.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
+//#include <xyginext/ecs/components/Callback.hpp>
 #include <xyginext/network/NetHost.hpp>
 #include <xyginext/util/Vector.hpp>
 #include <xyginext/util/Wavetable.hpp>
@@ -49,11 +53,14 @@ namespace
     const float MinVelocity = 25.f; //min len sqr
     const float PushAcceleration = 10.f;
     const float LethalVelocity = 100000.f; //vel sqr before box becomes lethal
+    const float RespawnTime = 5.f;
+    const float NpcMaxFallVelocity = 20000.f; //NPCs falling faster than this break creates
 }
 
 CrateSystem::CrateSystem(xy::MessageBus& mb, xy::NetHost& nh)
     : xy::System(mb, typeid(CrateSystem)),
-    m_host(nh)
+    m_host          (nh),
+    m_respawnCount  (0)
 {
     requireComponent<Crate>();
     requireComponent<xy::Transform>();
@@ -62,6 +69,19 @@ CrateSystem::CrateSystem(xy::MessageBus& mb, xy::NetHost& nh)
 }
 
 //public
+void CrateSystem::handleMessage(const xy::Message& msg)
+{
+    if (msg.id == MessageID::MapMessage)
+    {
+        const auto& data = msg.getData<MapEvent>();
+        if (data.type == MapEvent::MapChangeStarted)
+        {
+            //clear respawn list so they aren't carried on to next map
+            m_respawnCount = 0;
+        }
+    }
+}
+
 void CrateSystem::process(float dt)
 {
     auto& entities = getEntities();
@@ -79,15 +99,19 @@ void CrateSystem::process(float dt)
             crate.velocity.y += Gravity * dt;
             airCollision(entity);
             break;
-        //case Crate::Breaking:
-        //    //TODO probably moot state, we'll just spawn some particles instead
-        //    break;
+        case Crate::Breaking:
+            //another collision marked it as breaking
+            destroy(entity);
+            continue;
+        case Crate::Carried:
+
+            continue; //don't update velocity
         }
 
         auto& tx = entity.getComponent<xy::Transform>();
         tx.move(crate.velocity * dt);
 
-        //check velocity and put to eith full stop or make lethal
+        //check velocity and put to either full stop or make lethal
         float l2 = xy::Util::Vector::lengthSquared(crate.velocity);
         if (l2 < MinVelocity)
         {
@@ -123,6 +147,22 @@ void CrateSystem::process(float dt)
             }
         }
     }
+
+    //update the respawn queue
+    for (auto i = 0u; i < m_respawnCount; ++i)
+    {
+        m_respawnQueue[i].first -= dt;
+
+        if (m_respawnQueue[i].first < 0)
+        {
+            spawn(m_respawnQueue[i].second);
+
+            //swap last item in and resize count
+            m_respawnCount--;
+            m_respawnQueue[i] = m_respawnQueue[m_respawnCount];
+            i--; //retest i because it's a different object
+        }
+    }  
 }
 
 //private
@@ -133,6 +173,12 @@ void CrateSystem::groundCollision(xy::Entity entity)
     const auto& hitboxes = collision.getHitboxes();
 
     auto& crate = entity.getComponent<Crate>();
+    if (crate.state == Crate::Breaking)
+    {
+        //something else has modified the state so we no longer require
+        //collision testing on this crate because it's already dooooomed
+        return;
+    }
 
     for (auto i = 0u; i < hitboxCount; ++i)
     {
@@ -170,12 +216,23 @@ void CrateSystem::groundCollision(xy::Entity entity)
                     if (manifolds[j].otherEntity.hasComponent<Powerup>())
                     {
                         const auto& powerup = manifolds[j].otherEntity.getComponent<Powerup>();
-                        if (powerup.state != Powerup::State::Idle)
+                        if (powerup.state == Powerup::State::Active)
                         {
                             crate.lastOwner = powerup.owner;
                             destroy(entity);
                             return;
                         }
+                    }
+                    break;
+                case CollisionType::NPC:
+                    if (manifolds[j].otherEntity.hasComponent<NPC>())
+                    {
+                        auto l2 = xy::Util::Vector::lengthSquared(manifolds[j].otherEntity.getComponent<NPC>().velocity) * 2.f;
+                        if (l2 > NpcMaxFallVelocity)
+                        {
+                            destroy(entity);
+                            return;
+                        }  
                     }
                     break;
                 }
@@ -189,7 +246,21 @@ void CrateSystem::groundCollision(xy::Entity entity)
         }
         else if (hitboxes[i].getType() == CollisionType::Foot)
         {
-            if (collisionCount == 0)
+            auto collisions = collisionCount;
+
+            //remove any contacts which shouldn't stop it from falling
+            for (auto j = 0; j < collisionCount; ++j)
+            {
+                switch (manifolds[j].otherType)
+                {
+                default:break;
+                case CollisionType::Powerup:
+                    collisions--;
+                    break;
+                }
+            }
+            
+            if (collisions == 0)
             {
                 crate.groundContact = false;
                 crate.state = Crate::Falling;
@@ -208,6 +279,12 @@ void CrateSystem::airCollision(xy::Entity entity)
     const auto& hitboxes = collision.getHitboxes();
 
     auto& crate = entity.getComponent<Crate>();
+    if (crate.state == Crate::Breaking)
+    {
+        //something else has modified the state so we no longer require
+        //collision testing on this crate because it's already dooooomed
+        return;
+    }
 
     for (auto i = 0u; i < hitboxCount; ++i)
     {
@@ -242,6 +319,10 @@ void CrateSystem::airCollision(xy::Entity entity)
                     }
                     return;
                 }
+                else if (manifolds[j].otherType == CollisionType::Powerup)
+                {
+                    //ignore
+                }
                 else
                 {
                     entity.getComponent<xy::Transform>().move(manifolds[j].normal * manifolds[j].penetration);
@@ -256,15 +337,31 @@ void CrateSystem::airCollision(xy::Entity entity)
         }
         else if (hitboxes[i].getType() == CollisionType::Foot)
         {
-            crate.groundContact = (collisionCount != 0);
+            auto contactCount = collisionCount;
+            for (auto j = 0u; j < collisionCount; ++j)
+            {
+                auto other = hitboxes[i].getManifolds()[j].otherType;
+                switch (other)
+                {
+                default: break;
+                case CollisionType::Player:
+                case CollisionType::NPC:
+                case CollisionType::Powerup:
+                    contactCount--;
+                    break;
+                }
+            }
+            
+            crate.groundContact = (contactCount != 0);
         }
     }
 }
 
 void CrateSystem::destroy(xy::Entity entity)
 {
-    const auto& tx = entity.getComponent<xy::Transform>();
-    getScene()->destroyEntity(entity);
+    if (entity.destroyed()) return;
+    
+    const auto& tx = entity.getComponent<xy::Transform>();  
 
     //broadcast to client
     ActorEvent evt;
@@ -275,12 +372,13 @@ void CrateSystem::destroy(xy::Entity entity)
 
     m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 
-    if (entity.getComponent<Crate>().explosive)
+    const auto& crate = entity.getComponent<Crate>();
+
+    auto spawnExplosion = [&, evt](sf::Uint8 owner, sf::Vector2f position) mutable
     {
-        //spawn explosion
         auto expEnt = getScene()->createEntity();
-        expEnt.addComponent<Explosion>().owner = entity.getComponent<Crate>().lastOwner;
-        expEnt.addComponent<xy::Transform>().setPosition(tx.getPosition());
+        expEnt.addComponent<Explosion>().owner = owner;
+        expEnt.addComponent<xy::Transform>().setPosition(position);
         expEnt.getComponent<xy::Transform>().setOrigin(ExplosionOrigin);
         expEnt.addComponent<Actor>().id = expEnt.getIndex();
         expEnt.getComponent<Actor>().type = ActorID::Explosion;
@@ -293,16 +391,96 @@ void CrateSystem::destroy(xy::Entity entity)
 
         //broadcast to clients
         evt.actor = expEnt.getComponent<Actor>();
-        evt.x = tx.getPosition().x;
-        evt.y = tx.getPosition().y;
+        evt.x = position.x;
+        evt.y = position.y;
         evt.type = ActorEvent::Spawned;
 
         m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+    };
+
+    if (crate.explosive)
+    {
+        //spawn explosion
+        spawnExplosion(entity.getComponent<Crate>().lastOwner, { evt.x, evt.y });
     }
+    else
+    {
+        //small chance might drop dynamite
+        if (xy::Util::Random::value(0, 3) == 0)
+        {
+            auto dynEnt = getScene()->createEntity();
+            dynEnt.addComponent<xy::Transform>().setPosition(evt.x, evt.y);
+            dynEnt.getComponent<xy::Transform>().setOrigin(CrateOrigin);
+            dynEnt.addComponent<Actor>().id = dynEnt.getIndex();
+            dynEnt.getComponent<Actor>().type = ActorID::Dynamite;
+            dynEnt.addComponent<AnimationController>();
+            dynEnt.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
+            dynEnt.addComponent<Dynamite>().callback = spawnExplosion;
+            dynEnt.getComponent<Dynamite>().velocity = { static_cast<float>(xy::Util::Random::value(-1, 1)) * 500.f, -300.f };
+            dynEnt.getComponent<Dynamite>().lifetime += xy::Util::Random::value(0.1f, 0.5f);
+            dynEnt.addComponent<CollisionComponent>().addHitbox(DynamiteBounds, CollisionType::Dynamite);
+            dynEnt.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Dynamite);
+            dynEnt.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::DynamiteMask);
+            dynEnt.addComponent<xy::QuadTreeItem>().setArea(DynamiteBounds);
+
+            //broadcast to clients
+            evt.actor = dynEnt.getComponent<Actor>();
+            evt.type = ActorEvent::Spawned;
+
+            m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
+        }
+    }
+
+    if (crate.respawn)
+    {
+        m_respawnQueue[m_respawnCount++] = std::make_pair(RespawnTime, crate);
+    }
+
+    getScene()->destroyEntity(entity);
+}
+
+void CrateSystem::spawn(Crate crate)
+{
+    auto entity = getScene()->createEntity();
+    entity.addComponent<xy::Transform>().setPosition(crate.spawnPosition);
+    entity.getComponent<xy::Transform>().setOrigin(CrateOrigin);
+    entity.addComponent<Actor>().id = entity.getIndex();
+    entity.getComponent<Actor>().type = ActorID::Crate;
+
+    entity.addComponent<xy::QuadTreeItem>().setArea(CrateBounds);
+
+    entity.addComponent<AnimationController>();
+    entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
+
+    crate.velocity = {};
+    crate.lastOwner = 3;
+    crate.lethal = false;
+    crate.state = Crate::Falling;
+    crate.groundContact = false;
+    entity.addComponent<Crate>() = crate;
+
+    entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
+    entity.getComponent<CollisionComponent>().addHitbox(CrateFoot, CollisionType::Foot);
+    entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Crate);
+    entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::CrateMask);
+
+    //let clients know
+    ActorEvent evt;
+    evt.actor = entity.getComponent<Actor>();
+    evt.x = crate.spawnPosition.x;
+    evt.y = crate.spawnPosition.y;
+    evt.type = ActorEvent::Spawned;
+
+    m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 }
 
 void CrateSystem::onEntityAdded(xy::Entity entity)
 {
     entity.getComponent<Crate>().shake.shakeIndex = xy::Util::Random::value(0, m_waveTable.size() - 1);
     entity.getComponent<Crate>().shake.shakeTime = xy::Util::Random::value(4.f, Crate::PauseTime + 4.f);
+
+    if (entity.getComponent<Crate>().explosive)
+    {
+        entity.getComponent<AnimationController>().nextAnimation = AnimationController::Walk;
+    }
 }

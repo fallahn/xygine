@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="88">
  <properties>
+  <property name="colour_quad" type="int" value="3"/>
   <property name="round_time" type="float" value="36"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="../images/block.png" width="512" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJydUwkKxDAI9CuFfiuBZdMr/3/AIigdBk3THZBGZ9Qa4ioiK9kSxJBjfkniT7XUFJWsmHGMdQL5BWw3axD7ko/5rq2mQ6DfzC8Sg3MzHJM6xflC63PuARfNxtgG3OfFf0T9Z5Ddq+NMNH5HOuNGMcUF52ZfnDWq6TlHwnc4V+rR5X5fXe43dwW89/9nBxSjvRzt30yca0Y5P8KXKWk=
+   eJydU4sKxCAM628N9osKx7mXX3sUWhZC6+YFwrRJ6yp2FZGVuAQx1FhfkvhTLaWiEouRY+wTyC/A3dgg9qU95ru3mg+B+2b7IjE4N8Px0qc4J7ze5x5oUW+MbaB9Jv5jpj9Edq+OM/H4HWmPG8UUF6ybfbHXqKbnHIneYV3pjC73++pyv7kr0P38f2ZAMZrL0fy9iXPNKOcHylM/ig==
+  </data>
+ </layer>
+ <layer name="detail" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgcIBaHeA4O8Tg0fjYWNSFAHEyme9SBOAmIE4FYgwz9pgyYbjQDYnMi9TtjEXMBYlc8erSgtAUeNbjCExm4EaGG1gA5PaCHIzEAW3oAAU08egjZw8uAPZ0GAnEQEW6ShtKgNBmCJB4PxAkMxKUzULoEpckkItTSAwAA48kLeQ==
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFUUEKgDAM8wd60qMM9gHnLm77/7tUWCGEtu5moFCypmm7afoX8YkD4ux8Ba50LlNt7IHAeoT0Y2/WCxKFNbulxxnqgL45nsxfij5T72DkL+TGqJf7FEUTjBpvf89fwPNbfycQf21+3t+Dtz/OUCnnd2//EYhe+9v2wSXFe1E8dsN7NfgN8nmg/w2B8BNc
+   eJzFUUEKgDAM8xP6AH2Bx8G+4dzdbf9/ggorhNDW3QwUStY0bTdN/yI+cUCcna/Alc5lqo09EFiPkH7szXpBorBmt/Q4Qx3QN8eT+UvRZ+odjPyF3Bj1cp+iaIJR4+3v+Qt4fuvvBOKvzc/7e/D2xxkq5fzu7T8C0Wt/2z64pHgvisdueK8Gv0E+D/S/AUPbIQA=
   </data>
  </layer>
- <objectgroup color="#005500" name="geometry">
+ <objectgroup color="#005500" name="geometry" visible="0">
   <object id="4" type="Solid" x="64" y="0" width="224" height="160"/>
   <object id="7" type="Solid" x="64" y="928" width="224" height="128"/>
   <object id="8" type="Solid" x="960" y="128" width="64" height="832"/>
@@ -30,31 +36,31 @@
   <object id="50" type="Solid" x="736" y="928" width="224" height="128"/>
   <object id="63" type="Solid" x="576" y="416" width="64" height="224"/>
   <object id="62" type="Solid" x="384" y="416" width="64" height="224"/>
-  <object id="69" type="Solid" x="832" y="672" width="32" height="96"/>
-  <object id="70" type="Solid" x="160" y="672" width="32" height="96"/>
-  <object id="60" type="Solid" x="832" y="448" width="32" height="64"/>
-  <object id="61" type="Solid" x="160" y="448" width="32" height="64"/>
+  <object id="69" type="Solid" x="832" y="640" width="32" height="160"/>
+  <object id="70" type="Solid" x="160" y="640" width="32" height="160"/>
+  <object id="60" type="Solid" x="832" y="416" width="32" height="128"/>
+  <object id="61" type="Solid" x="160" y="416" width="32" height="128"/>
   <object id="83" type="Solid" x="288" y="0" width="128" height="16"/>
   <object id="84" type="Solid" x="608" y="0" width="128" height="16"/>
   <object id="85" type="Solid" x="80" y="1056" width="864" height="32"/>
   <object id="67" type="Platform" x="480" y="768" width="64" height="32"/>
-  <object id="66" type="Platform" x="160" y="768" width="192" height="32"/>
-  <object id="65" type="Platform" x="160" y="640" width="128" height="32"/>
-  <object id="53" type="Platform" x="256" y="192" width="88" height="32"/>
+  <object id="66" type="Platform" x="192" y="768" width="160" height="32"/>
+  <object id="65" type="Platform" x="192" y="640" width="96" height="32"/>
+  <object id="53" type="Platform" x="288" y="192" width="56" height="32"/>
   <object id="74" type="Teleport" x="608" y="1024" width="128" height="32"/>
-  <object id="68" type="Platform" x="672" y="768" width="192" height="32"/>
-  <object id="57" type="Platform" x="640" y="416" width="224" height="32"/>
+  <object id="68" type="Platform" x="672" y="768" width="160" height="32"/>
+  <object id="57" type="Platform" x="640" y="416" width="192" height="32"/>
   <object id="72" type="Teleport" x="608" y="16" width="128" height="16"/>
-  <object id="64" type="Platform" x="736" y="640" width="128" height="32"/>
+  <object id="64" type="Platform" x="736" y="640" width="96" height="32"/>
   <object id="73" type="Teleport" x="288" y="1024" width="128" height="32"/>
   <object id="71" type="Teleport" x="288" y="16" width="128" height="16"/>
-  <object id="58" type="Platform" x="160" y="512" width="128" height="32"/>
+  <object id="58" type="Platform" x="192" y="512" width="96" height="32"/>
   <object id="55" type="Platform" x="384" y="288" width="256" height="32"/>
-  <object id="56" type="Platform" x="160" y="416" width="224" height="32"/>
-  <object id="59" type="Platform" x="736" y="512" width="128" height="32"/>
-  <object id="54" type="Platform" x="681" y="192" width="87" height="32"/>
-  <object id="86" type="Solid" x="256" y="160" width="16" height="32"/>
-  <object id="87" type="Solid" x="752" y="160" width="16" height="32"/>
+  <object id="56" type="Platform" x="192" y="416" width="192" height="32"/>
+  <object id="59" type="Platform" x="736" y="512" width="96" height="32"/>
+  <object id="54" type="Platform" x="681" y="192" width="55" height="32"/>
+  <object id="86" type="Solid" x="256" y="160" width="16" height="64"/>
+  <object id="87" type="Solid" x="752" y="160" width="16" height="64"/>
  </objectgroup>
  <objectgroup name="Spawn">
   <object id="75" name="whirlybob" x="496" y="368" width="16" height="16"/>

@@ -113,6 +113,7 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
             case ActorID::Balldock:
             case ActorID::Squatmo:
             case ActorID::MagicHat:
+            case ActorID::Crate:
                 ent.getComponent<xy::ParticleEmitter>().settings = m_settings[SettingsID::SpawnNPC];
                 break;
             /*case ActorID::BubbleOne:

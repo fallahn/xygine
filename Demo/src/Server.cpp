@@ -47,6 +47,8 @@ source distribution.
 #include "HatSystem.hpp"
 #include "CrateSystem.hpp"
 #include "Explosion.hpp"
+#include "LuggageDirector.hpp"
+#include "DynamiteSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -282,7 +284,13 @@ void GameServer::update()
             if (gameOver && !m_stateFlags.test(GameOver))
             {
                 //state changed, send message
-                m_host.broadcastPacket(PacketID::GameOver, 0, xy::NetFlag::Reliable, 1);
+                for (const auto& client : m_clients)
+                {
+                    if (client.peer)
+                    {
+                        m_host.sendPacket(client.peer, PacketID::GameOver, client.continues, xy::NetFlag::Reliable, 1);
+                    }
+                }
             }
             m_stateFlags.set(GameOver, gameOver);
 
@@ -410,6 +418,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
             m_clients[playerNumber].peer = evt.peer;
             m_clients[playerNumber].ready = true;
             m_clients[playerNumber].level = 1;
+            m_clients[playerNumber].continues = 3;
             m_host.broadcastPacket(PacketID::ClientData, m_clients[playerNumber].data, xy::NetFlag::Reliable, 1);
         }
         //send initial position of existing actors
@@ -472,10 +481,23 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
                 msg->action = GameEvent::Restarted;
                 msg->playerID = player.playerNumber;
 
-                m_clients[player.playerNumber].level = 1;
+                //m_clients[player.playerNumber].level = 1;
+                m_clients[player.playerNumber].continues--;
                 m_host.sendPacket(m_clients[player.playerNumber].peer, PacketID::LevelUpdate, m_clients[player.playerNumber].level, xy::NetFlag::Reliable, 1);
             }
         }
+
+        //kill any remaining gooblies
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::NPC;
+        cmd.action = [&](xy::Entity npcEnt, float)
+        {
+            if (npcEnt.getComponent<Actor>().type == ActorID::Goobly)
+            {
+                m_scene.getSystem<NPCSystem>().despawn(npcEnt, 255, NpcEvent::OutOfBounds);
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
         break;
     case PacketID::MapReady:
@@ -640,6 +662,7 @@ void GameServer::checkMapStatus(float dt)
         msg->type = MapEvent::MapChangeStarted;
 
         //increase the level count for connected clients and send update
+        //TODO this should only apply if connected client is alive
         auto updateLevel = [&](Client& client)
         {
             if (client.data.actor.type != ActorID::None)
@@ -717,12 +740,14 @@ void GameServer::initScene()
     m_scene.addSystem<BonusSystem>(m_messageBus, m_host);
     m_scene.addSystem<HatSystem>(m_messageBus, m_host);
     m_scene.addSystem<CrateSystem>(m_messageBus, m_host);
+    m_scene.addSystem<DynamiteSystem>(m_messageBus, m_host);
     m_scene.addSystem<ExplosionSystem>(m_messageBus, m_host);
     m_scene.addSystem<PlayerSystem>(m_messageBus, true);
     //m_scene.addSystem<xy::CallbackSystem>(m_messageBus);
     m_scene.addSystem<xy::CommandSystem>(m_messageBus);
 
     m_scene.addDirector<InventoryDirector>(m_host);
+    m_scene.addDirector<LuggageDirector>(m_host);
 
     m_scene.setSystemActive<HatSystem>(false); //no hats on first level plz
 }
@@ -779,16 +804,29 @@ void GameServer::loadMap()
                         {
                             if (m_mapData.crateCount == MaxCrates) continue;
 
-                            bool explosive = false;
+                            sf::Uint8 crateFlags = 0;
                             const auto& properties = obj.getProperties();
-                            if (!properties.empty() &&
-                                xy::Util::String::toLower(properties[0].getName()) == "explosive")
+                            for (const auto& prop : properties)
                             {
-                                explosive = properties[0].getBoolValue();
+                                auto propName = xy::Util::String::toLower(prop.getName());
+                                if (propName == "explosive")
+                                {
+                                    if (prop.getBoolValue())
+                                    {
+                                        crateFlags |= Crate::Flags::Explosive;
+                                    }
+                                }
+                                else if (propName == "respawn")
+                                {
+                                    if (prop.getBoolValue())
+                                    {
+                                        crateFlags |= Crate::Flags::Respawn;
+                                    }
+                                }
                             }
 
                             //create ent / actor with explosive parameter
-                            spawnCrate({ obj.getPosition().x, obj.getPosition().y }, explosive);
+                            spawnCrate({ obj.getPosition().x, obj.getPosition().y }, crateFlags);
                         }
                     }
                 }
@@ -854,32 +892,48 @@ void GameServer::loadMap()
             entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Bubble | CollisionFlags::MagicHat);
         }
 
-        //check if map has a round time associated with it
-        const auto& properties = map.getProperties();
-        auto result = std::find_if(properties.begin(), properties.end(),
-            [](const tmx::Property& property)
-        {
-            return xy::Util::String::toLower(property.getName()) == "round_time";
-        });
 
-        if (result != properties.end())
+        //check for any map properties
+        m_roundTimeout = defaultRoundTime;
+        bool bubblesEnabled = true;
+        const auto& properties = map.getProperties();
+        for (const auto& prop : properties)
         {
-            m_roundTimeout = result->getFloatValue();
+            auto propName = xy::Util::String::toLower(prop.getName());
+            if (propName == "round_time")
+            {
+                m_roundTimeout = prop.getFloatValue();
+            }
+            else if (propName == "use_bubbles")
+            {
+                bubblesEnabled = prop.getBoolValue();
+            }
+            else if (propName == "colour_quad")
+            {
+                m_mapData.colourQuad = prop.getIntValue() % 4;
+            }
         }
-        else
+        m_scene.getSystem<BubbleSystem>().setEnabled(bubblesEnabled);
+        //only enable luggage if bubbles are disabled
+        xy::Command luggageCommand;
+        luggageCommand.targetFlags = CommandID::PlayerOne | CommandID::PlayerTwo;
+        luggageCommand.action = [bubblesEnabled](xy::Entity en, float)
         {
-            m_roundTimeout = defaultRoundTime;
-        }
+            en.getComponent<Luggage>().enabled = !bubblesEnabled;
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(luggageCommand);
+        m_clients[0].luggageEnabled = m_clients[1].luggageEnabled = !bubblesEnabled;
 
         //enable bonuses if there are 4 teleports
         if (teleportCount == 4)
         {
             m_scene.getSystem<PowerupSystem>().setSpawnFlags(PowerupSystem::Flame | PowerupSystem::Lightning);
-            if (xy::Util::Random::value(0, 1) == 0) m_scene.getSystem<BonusSystem>().setEnabled(true);
+            m_scene.getSystem<BonusSystem>().setEnabled((xy::Util::Random::value(0, 1) == 0));
         }
         else
         {
             m_scene.getSystem<PowerupSystem>().setSpawnFlags(0);
+            m_scene.getSystem<BonusSystem>().setEnabled(false);
         }
 
         m_serverTime.restart();
@@ -984,6 +1038,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     m_clients[player].data.actor = entity.getComponent<Actor>();
     entity.addComponent<xy::Transform>().setPosition(m_clients[player].data.spawnX, m_clients[player].data.spawnY);
     entity.getComponent<xy::Transform>().setOrigin(PlayerOrigin);
+    entity.addComponent<Luggage>().enabled = m_clients[0].luggageEnabled;
 
     entity.addComponent<CollisionComponent>().addHitbox(PlayerBounds, CollisionType::Player);
     entity.getComponent<CollisionComponent>().addHitbox(PlayerFoot, CollisionType::Foot);
@@ -1068,10 +1123,13 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     return entity;
 }
 
-void GameServer::spawnCrate(sf::Vector2f position, bool explosive)
+void GameServer::spawnCrate(sf::Vector2f position, sf::Uint8 flags)
 {
+    auto offset = CrateOrigin;
+    offset.y = -offset.y; //tiled objects have their origin bottom left
+
     auto entity = m_scene.createEntity();
-    entity.addComponent<xy::Transform>().setPosition(position + CrateOrigin);
+    entity.addComponent<xy::Transform>().setPosition(position + offset);
     entity.getComponent<xy::Transform>().setOrigin(CrateOrigin);
     entity.addComponent<Actor>().id = entity.getIndex();
     entity.getComponent<Actor>().type = ActorID::Crate;
@@ -1081,7 +1139,9 @@ void GameServer::spawnCrate(sf::Vector2f position, bool explosive)
     entity.addComponent<AnimationController>();
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem;
 
-    entity.addComponent<Crate>().explosive = explosive;
+    entity.addComponent<Crate>().explosive = (flags & Crate::Explosive);
+    entity.getComponent<Crate>().respawn = (flags & Crate::Respawn);
+    entity.getComponent<Crate>().spawnPosition = position + offset;
 
     entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
     entity.getComponent<CollisionComponent>().addHitbox(CrateFoot, CollisionType::Foot);
@@ -1111,7 +1171,7 @@ void GameServer::handleMessage(const xy::Message& msg)
                 }
             }
 
-            m_mapData.NPCCount--;
+            m_mapData.NPCCount = std::max(0, m_mapData.NPCCount - 1);
             m_mapData.NPCs[i] = m_mapData.NPCs[m_mapData.NPCCount];
 
             //LOG(std::to_string(m_mapData.actorCount), xy::Logger::Type::Info);

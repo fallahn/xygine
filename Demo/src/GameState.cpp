@@ -50,6 +50,7 @@ source distribution.
 #include "SpringFlower.hpp"
 #include "HatSystem.hpp"
 #include "Localisation.hpp"
+#include "LuggageDirector.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -109,7 +110,7 @@ namespace
     };
 
 #ifdef XY_DEBUG
-    sf::Uint8 debugActorCount = 0;
+    sf::Int8 debugActorCount = 0;
     sf::Uint8 debugPlayerState = 0;
     sf::Uint8 debugActorUpdate = 0;
     sf::Vector2f debugCrownVel;
@@ -260,11 +261,28 @@ void GameState::handleMessage(const xy::Message& msg)
            
             for (auto i = 0u; i < m_sharedData.playerCount; ++i)
             {
+                m_playerInputs[i].setEnabled(true);
+                
                 auto actor = m_playerInputs[i].getPlayerEntity().getComponent<Actor>();
                 m_client.sendPacket(PacketID::ClientContinue, actor.id, xy::NetFlag::Reliable, 1);
 
                 spawnTowerDude(actor.type);
             }
+
+            //kill stray gooblies
+            {
+                xy::Command cmd;
+                cmd.targetFlags = CommandID::NetActor;
+                cmd.action = [&](xy::Entity entity, float)
+                {
+                    if (entity.getComponent<Actor>().type == ActorID::Goobly)
+                    {
+                        m_scene.destroyEntity(entity);
+                    }
+                };
+                m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+            }
+
             break;
         case MenuEvent::UnpauseGame:
             requestStackPop();
@@ -277,8 +295,12 @@ void GameState::handleMessage(const xy::Message& msg)
         const auto& data = msg.getData<xy::Message::WindowEvent>();
         if (data.type == xy::Message::WindowEvent::LostFocus)
         {
-            requestStackPush(StateID::Pause);
-            m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+            //don't do this if already paused
+            if (getStackSize() == 1)
+            {
+                requestStackPush(StateID::Pause);
+                m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+            }
         }
     }
 
@@ -287,6 +309,7 @@ void GameState::handleMessage(const xy::Message& msg)
 
 bool GameState::update(float dt)
 {   
+    DPRINT("map", m_mapData.mapName);
     DPRINT("Actor count", std::to_string(debugActorCount));
     //DPRINT("Actor Update Count", std::to_string(debugActorUpdate));
     //DPRINT("Player Server State", std::to_string(debugPlayerState));
@@ -331,7 +354,7 @@ bool GameState::update(float dt)
         m_playerInputs[i].update();
     }
     m_scene.update(dt);
-    return false;
+    return true;
 }
 
 void GameState::draw()
@@ -377,6 +400,7 @@ void GameState::loadAssets()
     spriteSheet.loadFromFile("assets/sprites/bubble.spt", m_textureResource);
     m_sprites[SpriteID::BubbleOne] = spriteSheet.getSprite("player_one");
     m_sprites[SpriteID::BubbleTwo] = spriteSheet.getSprite("player_two");
+    m_sprites[SpriteID::Dynamite] = spriteSheet.getSprite("dynamite");
 
     spriteSheet.loadFromFile("assets/sprites/player.spt", m_textureResource);
     m_sprites[SpriteID::PlayerOne] = spriteSheet.getSprite("player_one");
@@ -442,6 +466,7 @@ void GameState::loadAssets()
     m_sprites[SpriteID::FlameTwo] = spriteSheet.getSprite("player_two_flame");
     m_sprites[SpriteID::LightningOne] = spriteSheet.getSprite("player_one_star");
     m_sprites[SpriteID::LightningTwo] = spriteSheet.getSprite("player_two_star");
+    m_sprites[SpriteID::Crate] = spriteSheet.getSprite("crate");
 
     m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Idle] = spriteSheet.getAnimationIndex("idle", "player_one_flame");
     m_animationControllers[SpriteID::FlameOne].animationMap[AnimationController::Walk] = spriteSheet.getAnimationIndex("walk", "player_one_flame");
@@ -492,7 +517,7 @@ void GameState::loadAssets()
     if (m_backgroundShader.loadFromMemory(BackgroundFragment, sf::Shader::Fragment))
     {
         m_backgroundShader.setUniform("u_diffuseMap", m_textureResource.get("assets/images/background.png"));
-        ent.getComponent<xy::Sprite>();
+        ent.addComponent<BackgroundColour>();
         ent.getComponent<xy::Drawable>().setShader(&m_backgroundShader);
         ent.addComponent<xy::Callback>().function = ColourRotator(m_backgroundShader);
     }
@@ -700,11 +725,12 @@ void GameState::loadUI()
     ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
     
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 140.f, 10.f);
+    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f), 10.f);
     ent.addComponent<xy::Text>(font);
     ent.getComponent<xy::Text>().setFillColour(sf::Color::Red);
     ent.getComponent<xy::Text>().setString("HIGH SCORE");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
     
     ent = m_scene.createEntity();
@@ -724,10 +750,11 @@ void GameState::loadUI()
     ent.addComponent<xy::CommandTarget>().ID = CommandID::ScoreOne | CommandID::UIElement;
 
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 140.f, 46.f);
+    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f), 46.f);
     ent.addComponent<xy::Text>(font);
     ent.getComponent<xy::Text>().setString(m_scores.getProperties()[0].getValue<std::string>());
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::HighScore | CommandID::UIElement;
 
     ent = m_scene.createEntity();
@@ -759,15 +786,17 @@ void GameState::loadUI()
 
     //level counter
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 16.f, MapBounds.height - 108.f);
+    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f), MapBounds.height - 108.f);
     ent.addComponent<xy::Text>(font).setString("1");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::LevelCounter | CommandID::UIElement;
 
     ent = m_scene.createEntity();
-    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f) - 60.f, MapBounds.height - 148.f);
+    ent.addComponent<xy::Transform>().setPosition((MapBounds.width / 2.f), MapBounds.height - 148.f);
     ent.addComponent<xy::Text>(font).setString("LEVEL");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     ent.getComponent<xy::Text>().setFillColour(sf::Color::Red);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
 
@@ -801,7 +830,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     default: break;
 #ifdef XY_DEBUG
     case PacketID::DebugMapCount:
-        debugActorCount = evt.packet.as<sf::Uint8>();
+        debugActorCount = evt.packet.as<sf::Int8>();
         break;
     case PacketID::DebugCrownVelocity:
         debugCrownVel = evt.packet.as<sf::Vector2f>();
@@ -811,6 +840,9 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         m_sharedData.error = "Could not connect to server, reason: Server full";
         requestStackPush(StateID::Error);
         return;
+    case PacketID::CrateChange:
+        luggageChange(evt.packet.as<sf::Uint32>());
+        break;
     case PacketID::HatChange:
     {
         auto info = evt.packet.as<sf::Uint8>();
@@ -961,6 +993,20 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             {
                 m_playerInputs[i].setEnabled(true);
             }
+
+            //set initial background colour
+            auto quad = data.colourQuad;
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::SceneBackground;
+            cmd.action = [quad](xy::Entity entity, float)
+            {
+                entity.getComponent<xy::Callback>().active = true;
+
+                //set target colours
+                entity.getComponent<BackgroundColour>().destAngle = static_cast<float>(quad) * 90.f;
+                entity.getComponent<BackgroundColour>().currentTime = 2.4f; //fudge to skip ahead in transition
+            };
+            m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
         }
         else
         {
@@ -1055,7 +1101,18 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         spawnRoundSkip();
         break;
     case PacketID::GameOver:
-        requestStackPush(StateID::GameOver);
+    {
+        if (getStackSize() == 1)
+        {
+            m_sharedData.continueCount = evt.packet.as<sf::Uint8>();
+            requestStackPush(StateID::GameOver);
+            
+            for (auto i = 0u; i < m_sharedData.playerCount; ++i)
+            {
+                m_playerInputs[i].setEnabled(false);
+            }
+        }
+    }
         break;
     case PacketID::CollisionFlag:
     {
@@ -1297,6 +1354,21 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     switch (actorEvent.actor.type)
     {
     default: break;
+    case ActorID::Crate:
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Crate];
+        entity.addComponent<xy::Drawable>().setDepth(-1);
+        entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
+        entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Crate);
+        entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+        entity.addComponent<xy::SpriteAnimation>().play(0);
+        entity.getComponent<AnimationController>().animationMap[AnimationController::Walk] = 1;
+        entity.addComponent<xy::QuadTreeItem>().setArea(CrateBounds);
+        entity.getComponent<xy::Transform>().setOrigin(CrateOrigin);
+        break;
+    case ActorID::Dynamite:
+        addSprite(entity, SpriteID::Dynamite);
+        entity.getComponent<xy::SpriteAnimation>().play(0);
+        break;
     case ActorID::Explosion:
         break;
     case ActorID::MagicHat:
@@ -1351,6 +1423,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         entity.addComponent<CollisionComponent>().addHitbox(GooblyBounds, CollisionType::NPC);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::NPC);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
+        entity.addComponent<xy::QuadTreeItem>().setArea(GooblyBounds);
         break;
     case ActorID::LightningOne:
         addSprite(entity, SpriteID::LightningOne);
@@ -1499,9 +1572,12 @@ void GameState::switchMap(const MapData& data)
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     
     cmd.targetFlags = CommandID::SceneBackground;
-    cmd.action = [](xy::Entity entity, float)
+    cmd.action = [&](xy::Entity entity, float)
     {
         entity.getComponent<xy::Callback>().active = true;
+
+        //set target colours
+        entity.getComponent<BackgroundColour>().destAngle = (static_cast<float>(data.colourQuad) * 90.f) + 1.f;
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
    
@@ -1633,9 +1709,6 @@ void GameState::spawnMapActors()
         entity.addComponent<xy::ParticleEmitter>().settings = emitterSettings;
     }
 
-    xy::SpriteSheet spriteSheet;
-    spriteSheet.loadFromFile("assets/sprites/power_ups.spt", m_textureResource);
-
     for (auto i = 0; i < m_mapData.crateCount; ++i)
     {
         auto entity = m_scene.createEntity();
@@ -1643,13 +1716,13 @@ void GameState::spawnMapActors()
         entity.addComponent<Actor>() = m_mapData.crates[i];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
         entity.addComponent<xy::NetInterpolate>();
-        entity.addComponent<xy::Sprite>() = spriteSheet.getSprite("crate");
+        entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Crate];
         entity.addComponent<xy::Drawable>().setDepth(-1);
         entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);
         entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Crate);
         entity.getComponent<CollisionComponent>().setCollisionMaskBits(CollisionFlags::Player);
         entity.addComponent<xy::SpriteAnimation>().play(0);
-        entity.addComponent<AnimationController>();
+        entity.addComponent<AnimationController>().animationMap[AnimationController::Walk] = 1;
         entity.addComponent<xy::QuadTreeItem>().setArea(CrateBounds);
     }
 }
@@ -1870,7 +1943,7 @@ void GameState::giveHat(sf::Uint8 player)
     cmd.action = [&](xy::Entity entity, float)
     {
         auto hatEnt = m_scene.createEntity();
-        hatEnt.addComponent<xy::Transform>();// .setOrigin(PlayerOrigin);
+        hatEnt.addComponent<xy::Transform>();
         hatEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::MagicHat];
         hatEnt.addComponent<xy::Drawable>().setDepth(1);
         hatEnt.addComponent<xy::SpriteAnimation>();
@@ -1917,6 +1990,62 @@ void GameState::takeHat(sf::Uint8 player)
         m_scene.destroyEntity(entity);
     };
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+}
+
+void GameState::luggageChange(sf::Uint32 data)
+{
+    sf::Int16 actorID = ((data & 0xffff0000) >> 16);
+    bool pickedUp = (data & Luggage::PickedUp);
+    sf::Uint32 playerTarget = (data & Luggage::PlayerOne) ? CommandID::PlayerOne : CommandID::PlayerTwo;
+    bool explosive = (data & Luggage::Explosive);
+
+    //hide or show the client side actor sprite
+    xy::Command cmd;
+    cmd.targetFlags = CommandID::NetActor;
+    cmd.action = [actorID, pickedUp](xy::Entity entity, float)
+    {
+        if (entity.getComponent<Actor>().id == actorID)
+        {
+            sf::Color colour = pickedUp ? sf::Color::Transparent : sf::Color::White;
+            entity.getComponent<xy::Sprite>().setColour(colour);
+        }
+    };
+    m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+    if (pickedUp)
+    {
+        //attach a sprite to the player
+        cmd.targetFlags = playerTarget;
+        cmd.action = [&, explosive, actorID](xy::Entity entity, float)
+        {
+            auto crateEnt = m_scene.createEntity();
+            crateEnt.addComponent<xy::Transform>().setPosition(LuggageOffset);
+            crateEnt.getComponent<xy::Transform>().move(0.f, CrateOrigin.y);
+            crateEnt.addComponent<xy::Sprite>() = m_sprites[SpriteID::Crate];
+            crateEnt.addComponent<xy::Drawable>().setDepth(-4);
+            crateEnt.addComponent<xy::SpriteAnimation>().play(explosive ? 1 : 0);
+            crateEnt.addComponent<xy::CommandTarget>().ID = CommandID::Luggage | CommandID::MapItem;
+            crateEnt.addComponent<Actor>().id = actorID;
+            crateEnt.getComponent<Actor>().type = ActorID::Crate;
+
+            entity.getComponent<xy::Transform>().addChild(crateEnt.getComponent<xy::Transform>());
+        
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
+    else
+    {
+        //keeeeeeel
+        cmd.targetFlags = CommandID::Luggage;
+        cmd.action = [&, actorID](xy::Entity entity, float)
+        {
+            if (entity.getComponent<Actor>().id == actorID)
+            {
+                m_scene.destroyEntity(entity);
+            }
+        };
+        m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
 }
 
 void GameState::updateLevelDisplay(sf::Uint8 level)

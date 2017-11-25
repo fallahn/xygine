@@ -55,18 +55,19 @@ void createCollisionObject(xy::Scene& scene, const tmx::Object& obj, CollisionTy
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Platform);
             entity.getComponent<CollisionComponent>().setCollisionMaskBits(
                 CollisionFlags::Player | CollisionFlags::NPC | CollisionFlags::Fruit | CollisionFlags::Powerup | 
-                CollisionFlags::Bonus | CollisionFlags::MagicHat | CollisionFlags::Crate);
+                CollisionFlags::Bonus | CollisionFlags::MagicHat | CollisionFlags::Crate | CollisionFlags::Dynamite);
             break;
         case CollisionType::Solid:
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Solid);
             entity.getComponent<CollisionComponent>().setCollisionMaskBits(
                 CollisionFlags::Player | CollisionFlags::Bubble | CollisionFlags::NPC | CollisionFlags::Fruit | 
-                CollisionFlags::Powerup | CollisionFlags::Bonus | CollisionFlags::MagicHat | CollisionFlags::Crate);
+                CollisionFlags::Powerup | CollisionFlags::Bonus | CollisionFlags::MagicHat | CollisionFlags::Crate | CollisionFlags::Dynamite);
             break;
         case CollisionType::Teleport:
             entity.getComponent<CollisionComponent>().setCollisionCategoryBits(CollisionFlags::Teleport);
             entity.getComponent<CollisionComponent>().setCollisionMaskBits(
-                CollisionFlags::Player | CollisionFlags::NPC | CollisionFlags::Fruit | CollisionFlags::MagicHat | CollisionFlags::Crate);
+                CollisionFlags::Player | CollisionFlags::NPC | CollisionFlags::Fruit | CollisionFlags::MagicHat | 
+                CollisionFlags::Crate | CollisionFlags::Dynamite);
             break;
         }
     }

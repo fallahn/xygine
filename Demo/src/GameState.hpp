@@ -127,6 +127,8 @@ private:
     void giveHat(sf::Uint8);
     void takeHat(sf::Uint8);
 
+    void luggageChange(sf::Uint32);
+
     void updateLoadingScreen(float, sf::RenderWindow&) override;
 
     void transitionToEnd();

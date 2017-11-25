@@ -46,7 +46,8 @@ namespace ActorID
         Bonus,
         PrincessOne, PrincessTwo,
         TowerOne, TowerTwo,
-        MagicHat, Crate, Explosion
+        MagicHat, Crate, Explosion,
+        Dynamite
     };
 }
 
@@ -66,8 +67,8 @@ struct Actor final
 
 //this is sent to a client when it has connected successfully
 static constexpr sf::Uint8 MaxChars = 11;
-static constexpr sf::Uint8 MaxNPCs = 12;
-static constexpr sf::Uint8 MaxCrates = 6;
+static constexpr sf::Uint8 MaxNPCs = 8;
+static constexpr sf::Uint8 MaxCrates = 8;
 struct MapData final
 {
     char mapName[MaxChars]{};
@@ -76,6 +77,7 @@ struct MapData final
     sf::Int8 NPCCount = 0;
     Actor crates[MaxCrates]{};
     sf::Int8 crateCount = 0;
+    sf::Uint8 colourQuad = 0;
 };
 
 //the actor ID, spawn position and Player number

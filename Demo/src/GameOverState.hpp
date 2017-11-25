@@ -56,7 +56,9 @@ private:
     sf::Texture m_buttonTexture;
     sf::Texture m_backgroundTexture;
 
-    void load(const SharedStateData&);
+    void initScene();
+    void loadContinue(const SharedStateData&);
+    void loadGameOver(const SharedStateData&);
 };
 
 #endif //DEMO_OVER_STATE_HPP_

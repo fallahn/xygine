@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="101">
  <properties>
+  <property name="colour_quad" type="int" value="1"/>
   <property name="round_time" type="float" value="56"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="../images/block.png" width="512" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJy1U4sKhDAM688I+6kdnHPn4/8/4Cy0kIur7gQDYUvSTsUuiUgiDkDOUiOL6jCLahQvYDZGGn2B/rJzhKzY+t45QV8B7VCv2h6zYusIvT2YGl5v713U65JbmGG/PPQMPffzZw9/70pa33tr5Owr/P+y5zM2y++8ZTliM3+1Pc4q6gx1Dp7rSHOmiO7bmdfSV3eaM9df7JEpng==
+   eJy1U4sKhDAM648J+8EdnHPn42vPQgu52OlOMBC2JO1U7JKIJOIA5CwFWasOs1aN4gXMxpZGX6C/7BwhK7a+d07QV0A71Ku2x6zYOkJvD6bA6+29i3pdcgsz7JeHnqHnfv7s4e9dSet7b0HOvsL/L3s+Y7P8zluWIzbzV9vjrKLOUOfguW5pzhRJ4vt25kX66k5z5voL+wM/Xg==
+  </data>
+ </layer>
+ <layer name="detail" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBg8IJYAHwR48ejPJsIOaeKdM6iBJgH5OBzisQTk6QXUB9h+bIBQmMFADgFzgoE4BEqDAKF0qYHEBoVLIhAnQWkNrDoGT/gBAJNpBwU=
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYoAHEpgQwDNijiWtAMSV249PvAMS2eGha20+JflMiaFrY78CAP8yQ6cEWfsSEGTJNLfvNCGAYcEATx2a3NBH2iqDxuaG0JBZzsMmBgAyUBgB+YhDD
+   eJxjYBhY4ADEkQQwDGSiiTtAMSV249OfBcTpeGha20+J/kgiaFrYTyjMkGla2E+JfmLCDJmmlv1RBDAMZKGJY7Nblwh7FdD4glBaG4s52ORAQA9KAwAZ4xu7
   </data>
  </layer>
  <objectgroup color="#00aa00" name="geometry">
@@ -52,7 +58,7 @@
   <object id="92" type="Platform" x="928" y="608" width="32" height="32"/>
   <object id="80" type="Platform" x="864" y="288" width="64" height="32"/>
  </objectgroup>
- <objectgroup name="Spawn" visible="0">
+ <objectgroup name="Spawn">
   <object id="44" name="whirlybob" x="784" y="704" width="16" height="16"/>
   <object id="45" name="whirlybob" x="384" y="704" width="16" height="16"/>
   <object id="46" name="squatmo" x="640" y="224" width="16" height="16"/>

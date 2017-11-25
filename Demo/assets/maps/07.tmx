@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="43">
  <properties>
+  <property name="colour_quad" type="int" value="2"/>
   <property name="round_time" type="float" value="26"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="../images/block.png" width="512" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJzFU1sKgDAM689gl+w+nLrh/Q+ghRZC6UCnYKAs6SMfo81ElK9IGhneHNSiGNVHOcwL+IoCwY57bdywqq7KbUZ0g/6q/V37yHkIFqgz8ErPgTNtYt6wBLnthV8E8ds/9jTfv9AnZvCvC2jvdQBvqm3PkLNqBs8CGnN+3/3u+xsQ3LnR6J5Ht4z1yDO5/Aktmh4m
+   eJzFU8sKgDAM62Wwn+8OTt3wa7XQQigd6BQMlCV95DDaTET5iqSR4c1BLYpRfZTDvICvKBDsuNfGDavqqtxmRDfor9rftY+ch2CBOgOv9Bw40ybmDUuQ2174RRC//WNP8/0LfWIG/7qA9l4H8Kba9gw5q2bwLKAx5/fd776/AcGdG43ueXTLWI88k8ufDissNg==
+  </data>
+ </layer>
+ <layer name="detail" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBg8IBaLGA8R+syA2ByIs7HISRGh3wWIXYlQhwzUiVDDx4DdTzlAbIHE18KhXwaP2W44xOOIcNdgBNxIbGxhhh63OWh8STxqNYG4AIjzGXCHNS1ACB65YCS2BhZ5UPpKwiOXSIG7qAkABZIJAg==
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYwAHEokhYDiouT0BMFKqXg0K7QVgMCRMCyGrx2Y/N/bjsJxfA9IuiYVwAXR0twg9XOGJTQy37qaEfPWyQwxGXHC3CTxYqp0BADBZ+MGAKxA447LFF45sScBdMvTkQ22ORNwBifSgbAPbTCFc=
+   eJxjYBhYwAHEikjYACpuSEBMEaqXg0K7QVgJCRMCyGrx2Y/N/bjsJxfA9CuiYVwAXR0twg9XOGJTQy37qaEfPWyQwxGXHC3CTx8qZ0RADBZ+MBAJxFk47ElH40cScBdMfTQQZ2KR9wNiXygbAPKUDMs=
   </data>
  </layer>
- <objectgroup color="#00aa00" name="geometry">
+ <objectgroup color="#00aa00" name="geometry" visible="0">
   <object id="2" type="Solid" x="416" y="0" width="192" height="160"/>
   <object id="3" type="Solid" x="64" y="0" width="224" height="160"/>
   <object id="4" type="Solid" x="736" y="0" width="224" height="160"/>
@@ -44,8 +50,8 @@
   <object id="22" type="Teleport" x="608" y="1024" width="128" height="32"/>
   <object id="14" type="Platform" x="640" y="608" width="320" height="32"/>
   <object id="21" type="Teleport" x="288" y="1024" width="128" height="32"/>
-  <object id="39" type="Crate" gid="2" x="736" y="576" width="64" height="64"/>
-  <object id="40" type="Crate" gid="2" x="224" y="576" width="64" height="64"/>
+  <object id="39" type="Crate" gid="2" x="736" y="416" width="64" height="64"/>
+  <object id="40" type="Crate" gid="2" x="224" y="416" width="64" height="64"/>
   <object id="41" type="Crate" gid="2" x="224" y="736" width="64" height="64">
    <properties>
     <property name="explosive" type="bool" value="true"/>
@@ -60,8 +66,8 @@
  <objectgroup name="Spawn">
   <object id="28" name="whirlybob" x="128" y="208" width="16" height="16"/>
   <object id="29" name="whirlybob" x="832" y="208" width="16" height="16"/>
-  <object id="30" name="balldock" x="128" y="368" width="16" height="16"/>
-  <object id="31" name="balldock" x="832" y="368" width="16" height="16"/>
+  <object id="30" name="balldock" x="128" y="528" width="16" height="16"/>
+  <object id="31" name="balldock" x="832" y="528" width="16" height="16"/>
   <object id="34" name="whirlybob" x="496" y="240" width="16" height="16"/>
  </objectgroup>
 </map>

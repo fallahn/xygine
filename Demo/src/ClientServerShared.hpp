@@ -77,13 +77,15 @@ namespace CollisionFlags //used in broad phase culling
         MagicHat = 0x400,
         Crate = 0x800,
         Explosion = 0x1000,
+        Dynamite = 0x2000,
 
         PlayerMask = Bubble | Platform | Solid | Teleport | NPC | Fruit | Powerup | Bonus | MagicHat | Crate | Explosion,
         NPCMask = Solid | Player | Bubble | Platform | Teleport | Powerup | HardBounds | Crate | Explosion,
         FruitMask = Solid | Platform | Player | Teleport,
         PowerupMask = Platform | Solid | Player | NPC | Crate,
         CrateMask = Platform | Solid | Player | NPC | Powerup | Teleport | Crate,
-        ExplosionMask = Player | NPC
+        ExplosionMask = Player | NPC,
+        DynamiteMask = Solid | Platform | Teleport
     };
 }
 
@@ -122,8 +124,11 @@ static const sf::FloatRect CrateBounds(2.f, 2.f, 60.f, 62.f);
 static const sf::FloatRect CrateFoot = ClocksyFoot;
 static const sf::Vector2f CrateOrigin(32.f, 32.f);
 
-static const sf::FloatRect ExplosionBounds(0.f, 0.f, 192.f, 192.f);
-static const sf::Vector2f ExplosionOrigin(96.f, 96.f);
+static const sf::FloatRect DynamiteBounds = { 20, 24, 24, 40 };
+static const sf::Vector2f DynamiteOrigin = BubbleOrigin;
+
+static const sf::FloatRect ExplosionBounds(0.f, 0.f, 128.f, 128.f);
+static const sf::Vector2f ExplosionOrigin(64.f, 64.f);
 
 static constexpr float TeleportDistance = 886.f;
 static constexpr float Gravity = 2200.f;
@@ -147,6 +152,10 @@ static const sf::Color BubbleColourOne(255, 212, 0);
 static const sf::Color BubbleColourTwo(255, 0, 212);
 
 static const sf::Uint8 MapsToWin = 24; //divisible by 4 for colour cycle
+
+//this is relative to player which looks left by default
+//and has an origin at the bottom centre
+const sf::Vector2f LuggageOffset(-58.f, -40.f);
 
 //map loading functions shared between client / server
 void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType::ID type);

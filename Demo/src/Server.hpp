@@ -104,7 +104,7 @@ private:
     sf::Int32 spawnPlayer(std::size_t);
 
     xy::Entity spawnNPC(sf::Int32, sf::Vector2f);
-    void spawnCrate(sf::Vector2f, bool);
+    void spawnCrate(sf::Vector2f, sf::Uint8);
 
     void handleMessage(const xy::Message&);
 
@@ -114,6 +114,8 @@ private:
         xy::NetPeer peer;
         bool ready = false;
         sf::Uint8 level = 1;
+        sf::Uint8 continues = 3;
+        bool luggageEnabled = false;
     };
     std::array<Client, 2u> m_clients;
 };

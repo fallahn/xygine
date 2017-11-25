@@ -28,10 +28,13 @@ source distribution.
 #ifndef DEMO_CRATE_SYSTEM_HPP_
 #define DEMO_CRATE_SYSTEM_HPP_
 
+#include "MapData.hpp"
+
 #include <SFML/System/Vector2.hpp>
 
 #include <xyginext/ecs/System.hpp>
 
+#include <array>
 #include <vector>
 
 namespace xy
@@ -43,13 +46,16 @@ struct Crate final
 {
     enum
     {
-        Ground, Falling//, Breaking
+        Ground, Falling, Breaking, Carried
     }state = Falling;
     bool explosive = false;
     sf::Vector2f velocity;
     bool groundContact = false;
     bool lethal = false;
     sf::Uint8 lastOwner = 3;
+
+    sf::Vector2f spawnPosition;
+    bool respawn = false;
 
     struct Shake final
     {
@@ -61,12 +67,20 @@ struct Crate final
 
     static constexpr float ShakeTime = 0.7f;
     static constexpr float PauseTime = 8.f;
+
+    enum Flags
+    {
+        Explosive = 0x1,
+        Respawn = 0x2
+    };
 };
 
 class CrateSystem final : public xy::System
 {
 public:
     CrateSystem(xy::MessageBus&, xy::NetHost&);
+
+    void handleMessage(const xy::Message&) override;
 
     void process(float) override;
 
@@ -76,9 +90,14 @@ private:
 
     std::vector<float> m_waveTable;
 
+    std::array<std::pair<float, Crate>, MaxCrates> m_respawnQueue;
+    std::size_t m_respawnCount;
+
     void groundCollision(xy::Entity);
     void airCollision(xy::Entity);
     void destroy(xy::Entity);
+
+    void spawn(Crate);
 
     void onEntityAdded(xy::Entity) override;
 };

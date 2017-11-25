@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" tiledversion="1.0.2" orientation="orthogonal" renderorder="left-down" width="16" height="17" tilewidth="64" tileheight="64" nextobjectid="67">
  <properties>
+  <property name="colour_quad" type="int" value="1"/>
   <property name="round_time" type="float" value="32"/>
  </properties>
- <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="64" columns="8">
-  <image source="../images/block.png" width="512" height="512"/>
+ <tileset firstgid="1" name="large" tilewidth="64" tileheight="64" tilecount="112" columns="14">
+  <image source="../images/block.png" width="896" height="512"/>
  </tileset>
- <tileset firstgid="65" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
+ <tileset firstgid="113" name="block_background" tilewidth="64" tileheight="64" tilecount="42" columns="6">
   <image source="../images/block_background.png" width="384" height="448"/>
  </tileset>
  <layer name="background" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJy1U4sKgCAM3M8I/ZRCmWL9/wfkQGmszUfUwaG7u0xwWwBgEWgUXfOlvBnIIWymY7QDOpDvkXtmzExlhaJh1mcGVlfQsyR4VkdWr4LG/RmEyfybczfmpZ/++RX4/Vr31Tz6Dqey17SDeZbUrvixeIloAHd/Yh3g2b+tnpdmoOoIbTZ78yvle7NqhP0FKmAmCg==
+   eJy1U4sKgCAM3I8J/qBCmWJ9bRsojbWJRR0cenfzAU4PAF6hM3wr1+rdRB0hIKNgmPCBrSduyIKsbYTmUW1CZqE7+F4aktBF6EXxZP4E+WH9m31XkdWfzvwK8n6j+1oZf4fDmFveLrLAdGx5aVllHsDVn6Qz3Pt31PPaH+g+wSvU/t2Izlgz0n1+AiVWOeo=
+  </data>
+ </layer>
+ <layer name="detail" width="16" height="17">
+  <data encoding="base64" compression="zlib">
+   eJxjYBg8IA6LGB8aP5ZEM2XIdAu5ANkP3DjUoPtBC4c6SSitCcT5SOqyCbgBXxhhC+OBAOo4xHOwiKGnAVL9QE4awBWG2NwXhEUMFEeBOORAIBiJnQDEGmjyoPCJxyOXiMNcegMAbmQJjA==
   </data>
  </layer>
  <layer name="Blocks" width="16" height="17">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYoAHEpkjYDipuT0DMFKpXg0K7kfWbkYipbT+5+k1JxNS2HwaGaviBALZwAqU79DSHHIbUsh85TGyhcg4ExGDhhw0IA7E0Ce7gxqFeCIu5MCADpQGKXxQN
+   eJxjYBhY4ADEkUg4AyqeSUAsEqrXgUK7kfVHkYipbT+5+iNJxNS2HwaGaviBALZwAqU79DSHHIbUsh85TNKhclkExGDhhw3IA7EuCe4QxKFeDou5MKAHpQHZNCE5
   </data>
  </layer>
  <objectgroup name="Spawn">
@@ -26,7 +32,7 @@
   <object id="60" name="whirlybob" x="480" y="192" width="16" height="16"/>
   <object id="61" name="whirlybob" x="480" y="672" width="16" height="16"/>
  </objectgroup>
- <objectgroup color="#005500" name="geometry">
+ <objectgroup color="#005500" name="geometry" visible="0">
   <object id="4" type="Solid" x="64" y="0" width="224" height="160"/>
   <object id="7" type="Solid" x="64" y="928" width="224" height="128"/>
   <object id="8" type="Solid" x="960" y="128" width="64" height="832"/>
@@ -47,7 +53,7 @@
   <object id="44" type="Platform" x="192" y="288" width="768" height="32"/>
   <object id="46" type="Platform" x="192" y="608" width="768" height="32"/>
   <object id="47" type="Platform" x="137" y="768" width="327" height="32"/>
-  <object id="65" type="Crate" gid="2" x="272" y="736" width="64" height="64"/>
-  <object id="66" type="Crate" gid="2" x="688" y="736" width="64" height="64"/>
+  <object id="65" type="Crate" gid="2" x="256" y="576" width="64" height="64"/>
+  <object id="66" type="Crate" gid="2" x="736" y="416" width="64" height="64"/>
  </objectgroup>
 </map>

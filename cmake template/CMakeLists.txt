@@ -36,10 +36,8 @@ find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window audio system netw
 find_package(XYGINEXT REQUIRED)
 
 # X11 is required on unices
-if(UNIX)
- if(!APPLE)
+if(UNIX AND NOT APPLE)
   find_package(X11 REQUIRED)
- endif()
 endif()
 
 # Additional include directories

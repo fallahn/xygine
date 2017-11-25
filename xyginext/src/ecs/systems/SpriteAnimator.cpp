@@ -51,7 +51,7 @@ void SpriteAnimator::process(float dt)
         {
             auto& sprite = entity.getComponent<Sprite>();
             animation.m_currentFrameTime -= dt;
-            if (animation.m_currentFrameTime < 0)
+            if (animation.m_currentFrameTime < 0 && sprite.m_animations[animation.m_id].frameCount > 0)
             {
                 XY_ASSERT(sprite.m_animations[animation.m_id].framerate > 0, "Illegal Frame Rate");
                 XY_ASSERT(sprite.m_animations[animation.m_id].frameCount > 0, "Illegal Frame Count");

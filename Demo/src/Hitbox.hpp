@@ -55,7 +55,8 @@ namespace CollisionType
         HardBounds = 0x200,
         MagicHat = 0x400,
         Crate = 0x800,
-        Explosion = 1000
+        Explosion = 0x1000,
+        Dynamite = 0x2000
     };
 };
 
@@ -110,6 +111,8 @@ public:
     void setCollisionCategoryBits(sf::Uint32 bits) { m_categoryBits = bits; }
 
     void setCollisionMaskBits(sf::Uint32 bits) { m_maskBits = bits; }
+
+    sf::Uint32 getCollisionCategoryBits() const { return m_categoryBits; }
 
     std::vector<sf::Uint8> serialise() const;
 

@@ -131,6 +131,7 @@
     <ClCompile Include="src\CollisionComponent.cpp" />
     <ClCompile Include="src\CollisionSystem.cpp" />
     <ClCompile Include="src\CrateSystem.cpp" />
+    <ClCompile Include="src\DynamiteSystem.cpp" />
     <ClCompile Include="src\EndingDirector.cpp" />
     <ClCompile Include="src\ErrorState.cpp" />
     <ClCompile Include="src\FruitSystem.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="src\InventoryDirector.cpp" />
     <ClCompile Include="src\KeyMapDirector.cpp" />
     <ClCompile Include="src\LoadingScreen.cpp" />
+    <ClCompile Include="src\LuggageDirector.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MapAnimator.cpp" />
     <ClCompile Include="src\MenuCreation.cpp" />
@@ -175,6 +177,7 @@
     <ClInclude Include="src\CollisionSystem.hpp" />
     <ClInclude Include="src\CommandIDs.hpp" />
     <ClInclude Include="src\CrateSystem.hpp" />
+    <ClInclude Include="src\DynamiteSystem.hpp" />
     <ClInclude Include="src\EndingDirector.hpp" />
     <ClInclude Include="src\EndingMessages.hpp" />
     <ClInclude Include="src\ErrorState.hpp" />
@@ -194,6 +197,7 @@
     <ClInclude Include="src\KeyMapping.hpp" />
     <ClInclude Include="src\LoadingScreen.hpp" />
     <ClInclude Include="src\Localisation.hpp" />
+    <ClInclude Include="src\LuggageDirector.hpp" />
     <ClInclude Include="src\MapAnimator.hpp" />
     <ClInclude Include="src\MapData.hpp" />
     <ClInclude Include="src\MenuCallbacks.hpp" />

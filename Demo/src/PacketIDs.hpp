@@ -57,6 +57,7 @@ namespace PacketID
         RequestClientPause, //server paused, request client to display pause state - 0 to pause, 1 to unpause
         ServerFull,
         HatChange, //someone lost or gained a hat
+        CrateChange, //someone grabbed or dropped luggage. Packet is Uint32 (actorID << 16) | LuggageFlags
 
         DebugMapCount, //sends the number of active NPCs for debug printing
         DebugCrownVelocity,

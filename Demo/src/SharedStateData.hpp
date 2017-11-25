@@ -45,6 +45,7 @@ struct SharedStateData final
 
     std::array<std::string, 2u> scores;
     std::size_t playerCount = 1;
+    std::size_t continueCount = 0;
 
     std::array<InputBinding, 2u> inputBindings;
 };

@@ -109,13 +109,13 @@ void MapAnimatorSystem::process(float dt)
         msg->type = MapEvent::AnimationComplete;
         m_counting = false;
 
-        xy::Command cmd;
+        /*xy::Command cmd;
         cmd.targetFlags = CommandID::SceneBackground;
         cmd.action = [](xy::Entity entity, float)
         {
             entity.getComponent<xy::Callback>().active = false;
         };
-        getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);
+        getScene()->getSystem<xy::CommandSystem>().sendCommand(cmd);*/
     }
     m_lastCount = count;
 }

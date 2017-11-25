@@ -34,6 +34,7 @@ source distribution.
 #include "CommandIDs.hpp"
 #include "NPCSystem.hpp"
 #include "MessageIDs.hpp"
+#include "CrateSystem.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
@@ -49,7 +50,7 @@ namespace
     const sf::Vector2f flameOffset(32.f, 0.f);
     const float flameSpreadTime = 0.5f; //age at which a flame spawns another
 
-    std::array<float, 6u> spawnTimes = { 11.f, 12.f, 10.5f, 13.5f, 12.5f, 14.f };
+    std::array<float, 6u> spawnTimes = { 12.5f, 13.5f, 12.f, 15.f, 14.f, 15.5f };
 }
 
 PowerupSystem::PowerupSystem(xy::MessageBus& mb, xy::NetHost& host)
@@ -268,7 +269,6 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float)
                 break;
             case CollisionType::Platform:
             case CollisionType::Solid:
-            case CollisionType::Crate:
                 if (powerup.state == Powerup::State::Idle)
                 {
                     tx.move(man.normal * man.penetration);
@@ -284,12 +284,37 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float)
                         powerup.velocity.x = 0.f;
                     }
                 }
-                else if (powerup.state == Powerup::State::Active
-                    && man.otherType == CollisionType::Crate)
+
+                break;
+            case CollisionType::Crate:
+                if (powerup.state == Powerup::State::Active)
                 {
                     powerup.state = Powerup::State::Dying;
                     powerup.lifetime = 1.f;
                     entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
+
+                    if (man.otherEntity.hasComponent<Crate>())
+                    {
+                        auto otherEnt = man.otherEntity;
+                        auto& crate = otherEnt.getComponent<Crate>();
+                        crate.lastOwner = powerup.owner;
+                        crate.state = Crate::Breaking;
+                    }
+                }
+                else
+                {
+                    //tx.move(man.normal * man.penetration);
+
+                    if (man.normal.y != 0 && powerup.velocity.x == 0)
+                    {
+                        powerup.velocity.x =
+                            (xy::Util::Random::value(0, 1) == 0) ?
+                            -BubbleVerticalVelocity : BubbleVerticalVelocity;
+                    }
+                    else if (man.normal.x != 0)
+                    {
+                        powerup.velocity.x = 0.f;
+                    }
                 }
                 break;
             case CollisionType::NPC:
@@ -336,6 +361,16 @@ void PowerupSystem::fireCollision(xy::Entity entity)
             switch (man.otherType)
             {
             default: break;
+            case CollisionType::Crate:
+                if (powerup.state == Powerup::State::Dying 
+                    && man.otherEntity.hasComponent<Crate>())
+                {
+                    auto otherEnt = man.otherEntity;
+                    auto& crate = otherEnt.getComponent<Crate>();
+                    crate.lastOwner = powerup.owner;
+                    crate.state = Crate::Breaking;
+                }
+                break;
             case CollisionType::Platform:
             case CollisionType::Solid:
                 tx.move(man.penetration * man.normal);

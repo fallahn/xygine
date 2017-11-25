@@ -34,4 +34,19 @@ sprite_sheet bubble
 			loop=true
 		}	
 	}
+
+	sprite dynamite
+	{
+		bounds = 0,192,64,64
+
+		animation idle
+		{
+			frame = 0,192,64,64
+			frame = 64,192,64,64
+			frame = 128,192,64,64
+
+			framerate = 18
+			loop=true
+		}	
+	}
 }

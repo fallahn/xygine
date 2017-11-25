@@ -8,6 +8,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/CollisionComponent.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/CollisionSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/CrateSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/DynamiteSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/EndingDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ErrorState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/FruitSystem.cpp
@@ -21,6 +22,7 @@ set(PROJECT_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/InventoryDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KeyMapDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/LoadingScreen.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/LuggageDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MapAnimator.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/MenuCreation.cpp
