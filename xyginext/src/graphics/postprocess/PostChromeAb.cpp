@@ -90,7 +90,7 @@ void PostChromeAb::update(float dt)
 {
     accumulatedTime += dt;
 
-#ifdef _DEBUG_
+#ifdef XY_DEBUG
     m_shader.setUniform("u_distortStrength", distortionAmount);
-#endif //_DEBUG_
+#endif //XY_DEBUG
 }
