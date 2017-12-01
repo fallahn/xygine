@@ -32,7 +32,7 @@ source distribution.
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
-
+#include <SFML/Graphics/Shader.hpp>
 
 xy::RenderSystem::RenderSystem(xy::MessageBus& mb)
     : xy::System(mb, typeid(xy::RenderSystem)),
@@ -89,6 +89,32 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         {
             states = drawable.m_states;
             states.transform = tx;
+
+            if (states.shader)
+            {
+                sf::Shader* shader = const_cast<sf::Shader*>(states.shader);
+                for (auto i = 0u; i < drawable.m_textureCount; ++i)
+                {
+                    const auto& pair = drawable.m_textureBindings[i];
+                    shader->setUniform(pair.first, *pair.second);
+                }
+                for (auto i = 0u; i < drawable.m_floatCount; ++i)
+                {
+                    const auto& pair = drawable.m_floatBindings[i];
+                    shader->setUniform(pair.first, pair.second);
+                }
+                for (auto i = 0u; i < drawable.m_vec2Count; ++i)
+                {
+                    const auto& pair = drawable.m_vec2Bindings[i];
+                    shader->setUniform(pair.first, pair.second);
+                }
+                for (auto i = 0u; i < drawable.m_vec3Count; ++i)
+                {
+                    const auto& pair = drawable.m_vec3Bindings[i];
+                    shader->setUniform(pair.first, pair.second);
+                }
+            }
+
             rt.draw(drawable.m_vertices.data(), drawable.m_vertices.size(), drawable.m_primitiveType, states);
         }
     }
