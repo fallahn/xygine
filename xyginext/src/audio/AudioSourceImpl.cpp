@@ -36,6 +36,14 @@ AudioSound::AudioSound(const sf::SoundBuffer& buff)
     m_sound.setBuffer(buff);
 }
 
+AudioSound::~AudioSound()
+{
+    if (m_sound.getStatus() == sf::Sound::Playing)
+    {
+        m_sound.stop();
+    }
+}
+
 void AudioSound::play()
 {
     m_sound.play();

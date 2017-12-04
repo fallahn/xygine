@@ -70,3 +70,13 @@ void AudioSystem::process(float)
         audio.m_impl->setVolume(audio.m_volume * AudioMixer::m_channels[audio.m_mixerChannel]);
     }
 }
+
+//private
+void AudioSystem::onEntityRemoved(xy::Entity entity)
+{
+    auto& ae = entity.getComponent<xy::AudioEmitter>();
+    if (ae.hasSource() && ae.getStatus() == AudioEmitter::Playing)
+    {
+        ae.stop();
+    }
+}

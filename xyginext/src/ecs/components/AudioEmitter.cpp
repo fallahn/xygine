@@ -34,8 +34,8 @@ source distribution.
 using namespace xy;
 
 AudioEmitter::AudioEmitter()
-    : m_mixerChannel(0),
-    m_volume(0.f)
+    : m_mixerChannel    (0),
+    m_volume            (0.f)
 {
 
 }
@@ -52,6 +52,11 @@ bool AudioEmitter::setSource(const std::string& path)
     m_impl = std::make_unique<Detail::AudioMusic>(path);
     m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel));
     return static_cast<Detail::AudioMusic*>(m_impl.get())->isValid();
+}
+
+bool AudioEmitter::hasSource() const
+{
+    return m_impl != nullptr;
 }
 
 void AudioEmitter::play()
