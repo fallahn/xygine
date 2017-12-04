@@ -50,11 +50,12 @@ AudioSystem::AudioSystem(MessageBus& mb)
 void AudioSystem::process(float)
 {
     //set listener position to active camera
-    auto listener = getScene()->getActiveListener();
-    auto listenerPos = listener.getComponent<xy::Transform>().getWorldTransform().transformPoint({});
+    auto listenerEnt = getScene()->getActiveListener();
+    auto listenerPos = listenerEnt.getComponent<xy::Transform>().getWorldTransform().transformPoint({});
+    const auto& listener = listenerEnt.getComponent<AudioListener>();
 
-    sf::Listener::setPosition({ listenerPos.x, listenerPos.y, 100.f });
-    sf::Listener::setGlobalVolume(listener.getComponent<AudioListener>().m_volume * AudioMixer::getMasterVolume() * 100.f);
+    sf::Listener::setPosition({ listenerPos.x, listenerPos.y, listener.m_depth });
+    sf::Listener::setGlobalVolume(listener.m_volume * AudioMixer::getMasterVolume() * 100.f);
 
     auto& entities = getEntities();
     for (auto& entity : entities)
