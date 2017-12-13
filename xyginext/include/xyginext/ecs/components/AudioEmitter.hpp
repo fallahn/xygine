@@ -96,6 +96,11 @@ namespace xy
         bool setSource(const std::string& path);
 
         /*!
+        \brief Returns true if the emitter has been initialised with a sound source
+        */
+        bool hasSource() const;
+
+        /*!
         \brief Plays the emitter's sound source if there is one
         */
         void play();

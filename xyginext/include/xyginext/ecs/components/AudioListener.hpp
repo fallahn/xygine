@@ -65,9 +65,22 @@ namespace xy
             return m_volume;
         }
 
+        /*!
+        \brief Sets the depth of the listener relative to the scene.
+        Positive numbers move the listener 'out' of the screen. By
+        default the listener is at 0, on the same plane as the rest
+        of the scene - this generally leads to a more pronounced
+        stereo effect.
+        */
+        void setDepth(float depth) 
+        { 
+            m_depth = depth;
+        }
+
     private:
         friend class AudioSystem;
         float m_volume = 1.f;
+        float m_depth = 0.f;
     };
 }
 

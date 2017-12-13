@@ -33,8 +33,11 @@ source distribution.
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/System/Vector3.hpp>
 
 #include <vector>
+#include <string>
+#include <array>
 
 namespace xy
 {
@@ -49,7 +52,7 @@ namespace xy
     class XY_EXPORT_API Drawable final
     {
     public:
-        Drawable() = default;
+        Drawable();
         explicit Drawable(const sf::Texture&);
         
         /*!
@@ -66,6 +69,23 @@ namespace xy
         Passing nullptr removes any active shader.
         */
         void setShader(sf::Shader*);
+
+        /*!
+        \brief Adds a uniform binding to be applied to any shader this
+        drawable may have.
+        When sharing a shader between multiple drawables is maybe be, for
+        instance, desirable to the apply a different texture for each drawble.
+        This function allows mapping a uniform name (assuming it is available
+        in the current shader) to a texture or other value.
+        Bindings are limited to 6 per type.
+        */
+        void bindUniform(const std::string& name, const sf::Texture& texture);
+
+        void bindUniform(const std::string& name, float value);
+
+        void bindUniform(const std::string& name, sf::Vector2f value);
+
+        void bindUniform(const std::string& name, sf::Vector3f value);
 
         /*!
         \brief Sets the blend mode used when drawing
@@ -140,6 +160,16 @@ namespace xy
         bool m_wantsSorting = true;
 
         sf::FloatRect m_localBounds;
+
+        static constexpr std::size_t MaxBindings = 6;
+        std::array<std::pair<std::string, const sf::Texture*>, MaxBindings> m_textureBindings;
+        std::array<std::pair<std::string, float>, MaxBindings> m_floatBindings;
+        std::array<std::pair<std::string, sf::Vector2f>, MaxBindings> m_vec2Bindings;
+        std::array<std::pair<std::string, sf::Vector3f>, MaxBindings> m_vec3Bindings;
+        std::size_t m_textureCount;
+        std::size_t m_floatCount;
+        std::size_t m_vec2Count;
+        std::size_t m_vec3Count;
 
         friend class RenderSystem;
     };

@@ -26,12 +26,26 @@ source distribution.
 *********************************************************************/
 
 #include <xyginext/ecs/components/Drawable.hpp>
+#include <xyginext/core/Log.hpp>
 
 #include <limits>
 
 using namespace xy;
 
+Drawable::Drawable()
+    : m_textureCount(0),
+    m_floatCount    (0),
+    m_vec2Count     (0),
+    m_vec3Count     (0)
+{
+
+}
+
 Drawable::Drawable(const sf::Texture& texture)
+    : m_textureCount(0),
+    m_floatCount    (0),
+    m_vec2Count     (0),
+    m_vec3Count     (0)
 {
     m_states.texture = &texture;
 }
@@ -44,6 +58,106 @@ void Drawable::setTexture(const sf::Texture* texture)
 void Drawable::setShader(sf::Shader* shader)
 {
     m_states.shader = shader;
+}
+
+void Drawable::bindUniform(const std::string& name, const sf::Texture& texture)
+{
+    if (m_textureCount < MaxBindings)
+    {
+        auto result = std::find_if(m_textureBindings.begin(), m_textureBindings.end(),
+            [&name](const std::pair<std::string, const sf::Texture*>& pair)
+        {
+            return pair.first == name;
+        });
+        if (result == m_textureBindings.end())
+        {
+            m_textureBindings[m_textureCount] = std::make_pair(name, &texture);
+            m_textureCount++;
+        }
+        else
+        {
+            result->second = &texture;
+        }
+    }
+    else
+    {
+        Logger::log(name + ": uniform not bound, MaxBindings reached", xy::Logger::Type::Info);
+    }
+}
+
+void Drawable::bindUniform(const std::string& name, float value)
+{
+    if (m_floatCount < MaxBindings)
+    {
+        auto result = std::find_if(m_floatBindings.begin(), m_floatBindings.end(),
+            [&name](const std::pair<std::string, float>& pair)
+        {
+            return pair.first == name;
+        });
+        if (result == m_floatBindings.end())
+        {
+            m_floatBindings[m_floatCount] = std::make_pair(name, value);
+            m_floatCount++;
+        }
+        else
+        {
+            result->second = value;
+        }
+    }
+    else
+    {
+        Logger::log(name + ": uniform not bound, MaxBindings reached", xy::Logger::Type::Info);
+    }
+}
+
+void Drawable::bindUniform(const std::string& name, sf::Vector2f value)
+{
+    if (m_vec2Count < MaxBindings)
+    {
+        auto result = std::find_if(m_vec2Bindings.begin(), m_vec2Bindings.end(),
+            [&name](const std::pair<std::string, sf::Vector2f>& pair)
+        {
+            return pair.first == name;
+        });
+        if (result == m_vec2Bindings.end())
+        {
+            m_vec2Bindings[m_vec2Count] = std::make_pair(name, value);
+            m_vec2Count++;
+        }
+        else
+        {
+            result->second = value;
+        }
+    }
+    else
+    {
+        Logger::log(name + ": uniform not bound, MaxBindings reached", xy::Logger::Type::Info);
+    }
+}
+
+void Drawable::bindUniform(const std::string& name, sf::Vector3f value)
+{
+    if (m_vec3Count < MaxBindings)
+    {
+        auto result = std::find_if(m_vec3Bindings.begin(), m_vec3Bindings.end(),
+            [&name](const std::pair<std::string, sf::Vector3f>& pair)
+        {
+            return pair.first == name;
+        });
+        if (result == m_vec3Bindings.end())
+        {
+            m_vec3Bindings[m_vec3Count] = std::make_pair(name, value);
+            m_vec3Count++;
+        }
+        else
+        {
+            result->second = value;
+        }
+    }
+    else
+    {
+        Logger::log(name + ": uniform not bound, MaxBindings reached", xy::Logger::Type::Info);
+    }
 }
 
 void Drawable::setBlendMode(sf::BlendMode mode)

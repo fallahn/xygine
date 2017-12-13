@@ -105,7 +105,7 @@ std::vector<std::string> FileSystem::listFiles(std::string path)
     }while (FindNextFile(hFind, &findData) != 0);
     FindClose(hFind);
 
-    return std::move(results);
+    return results;
 #else
     if (path.back() != '/')
         path.append("/.");
@@ -134,7 +134,7 @@ std::vector<std::string> FileSystem::listFiles(std::string path)
         }
         closedir(dir);
     }
-    return std::move(results);
+    return results;
 #endif //_WIN32
 }
 
@@ -317,7 +317,7 @@ std::vector<std::string> FileSystem::listDirectories(const std::string& path)
     {
         do
         {
-            if ((findFileData.dwFileAttributes | FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY
+            if ((findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
                 && (findFileData.cFileName[0] != '.'))
             {
                 retVal.emplace_back(findFileData.cFileName);
@@ -344,7 +344,7 @@ std::vector<std::string> FileSystem::listDirectories(const std::string& path)
     closedir(dp);
 
 #endif //_WIN32
-    return std::move(retVal);
+    return retVal;
 }
 
 std::string FileSystem::getCurrentDirectory()
@@ -358,8 +358,8 @@ std::string FileSystem::getCurrentDirectory()
     }
     std::string retVal(output);
     std::replace(retVal.begin(), retVal.end(), '\\', '/');
-    return std::move(retVal);
-#else //this may not work on OSx
+    return retVal;
+#else //this may not work on macOS
     char output[FILENAME_MAX];
     if (getcwd(output, FILENAME_MAX) == 0)
     {
@@ -400,7 +400,7 @@ std::string FileSystem::getRelativePath(std::string path, const std::string& roo
         retVal += "../";
     }
     retVal += path.substr(pos + length + 1); //extra 1 for trailing '/'
-    return std::move(retVal);
+    return retVal;
 }
 
 std::string FileSystem::getConfigDirectory(const std::string& appName)

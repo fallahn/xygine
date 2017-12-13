@@ -78,6 +78,7 @@ namespace xy
         {
         public:
             AudioSound(const sf::SoundBuffer&);
+            ~AudioSound();
 
             void play() override;
             void pause() override;
