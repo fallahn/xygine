@@ -317,7 +317,7 @@ std::vector<std::string> FileSystem::listDirectories(const std::string& path)
     {
         do
         {
-            if ((findFileData.dwFileAttributes | FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY
+            if ((findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
                 && (findFileData.cFileName[0] != '.'))
             {
                 retVal.emplace_back(findFileData.cFileName);
