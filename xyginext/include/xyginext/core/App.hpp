@@ -209,6 +209,21 @@ namespace xy
         */
         static App* getActiveInstance();
 
+        /*!
+        \brief Sets the application name.
+        This is used when reading/writing config files such as window settings
+        to the current user directory. A directory with this name is created
+        to store the configurations files, and so should be unique to the application
+        to prevent cross pollution of settings between xygine apps. This is set
+        to "xygine_application" by default.
+        */
+        void setApplicationName(const std::string& name);
+
+        /*!
+        \brief Returns the current application name string.
+        */
+        const std::string& getApplicationName() const;
+
     protected:
         /*!
         \brief Function for despatching all window events
@@ -274,6 +289,7 @@ namespace xy
         VideoSettings m_videoSettings;
         sf::RenderWindow m_renderWindow;
         sf::Image m_windowIcon;
+        std::string m_applicationName;
 
         MessageBus m_messageBus;
 

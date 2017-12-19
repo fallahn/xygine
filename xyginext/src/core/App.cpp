@@ -80,6 +80,7 @@ namespace
 App::App()
     : m_videoSettings   (),
     m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
+    m_applicationName   (APP_NAME),
     m_showStats         (false)
 {
     m_windowIcon.create(16u, 16u, defaultIcon);
@@ -295,6 +296,17 @@ App* App::getActiveInstance()
     return appInstance;
 }
 
+void App::setApplicationName(const std::string& name)
+{
+    XY_ASSERT(!name.empty(), "must be a valid name");
+    m_applicationName = name;
+}
+
+const std::string& App::getApplicationName() const
+{
+    return m_applicationName;
+}
+
 //protected
 void App::initialise() {}
 
@@ -471,7 +483,7 @@ void App::removeWindows(const GuiClient* c)
 void App::loadSettings()
 {
     ConfigFile settings;
-    if (settings.loadFromFile(FileSystem::getConfigDirectory(APP_NAME) + settingsFile))
+    if (settings.loadFromFile(FileSystem::getConfigDirectory(m_applicationName) + settingsFile))
     {
         auto objects = settings.getObjects();
         auto vObj = std::find_if(objects.begin(), objects.end(),
@@ -562,5 +574,5 @@ void App::saveSettings()
         aObj->addProperty("channel" + std::to_string(i), std::to_string(AudioMixer::getVolume(i)));
     }
     
-    settings.save(FileSystem::getConfigDirectory(APP_NAME) + settingsFile);
+    settings.save(FileSystem::getConfigDirectory(m_applicationName) + settingsFile);
 }
