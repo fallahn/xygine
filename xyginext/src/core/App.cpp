@@ -101,9 +101,6 @@ App::App()
 
     m_videoSettings.Title = windowTitle;
 
-    //if we find a settings file apply those settings
-    loadSettings();
-
     update = [this](float dt)
     {
         updateApp(dt);
@@ -126,6 +123,9 @@ void App::run()
         Logger::log("Shaders reported as unavailable.", Logger::Type::Error, Logger::Output::File);
         return;
     }
+
+    //if we find a settings file apply those settings
+    loadSettings();
 
     ImGui::SFML::Init(m_renderWindow);
     Console::init();
