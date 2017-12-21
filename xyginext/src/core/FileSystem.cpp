@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <nfd.h>
+#include "dialogues/nfd/include/nfd.h"
 
 #include <xyginext/core/FileSystem.hpp>
 #include <xyginext/core/Log.hpp>
