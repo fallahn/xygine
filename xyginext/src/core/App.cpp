@@ -138,8 +138,6 @@ void App::run()
         float elapsedTime = frameClock.restart().asSeconds();
         timeSinceLastUpdate += elapsedTime;
         
-        doImgui();
-
         while (timeSinceLastUpdate > timePerFrame)
         {
             timeSinceLastUpdate -= timePerFrame;
@@ -150,8 +148,10 @@ void App::run()
             update(timePerFrame);                 
         }
 
+        doImgui();
+
         m_renderWindow.clear(clearColour);
-        draw();
+        draw();       
         ImGui::Render();
         m_renderWindow.display();
     }
