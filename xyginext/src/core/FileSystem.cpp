@@ -25,6 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#include <nfd.h>
+
 #include <xyginext/core/FileSystem.hpp>
 #include <xyginext/core/Log.hpp>
 
@@ -510,4 +512,40 @@ std::string FileSystem::getConfigDirectory(const std::string& appName)
 #endif
 
     return { out };
+}
+
+std::string FileSystem::openFileDialogue()
+{
+    // Show native file dialog, blocking call
+    nfdchar_t *outPath = NULL;
+    nfdresult_t result = NFD_OpenDialog( NULL, NULL, &outPath );
+    
+    if ( result == NFD_OKAY ) {
+        return outPath;
+    }
+    else if ( result == NFD_CANCEL ) {
+        xy::Logger::log("User cancelled native file dialog");
+    }
+    else {
+        std::string error = NFD_GetError();
+        xy::Logger::log("Error during native file dialog: " + error);
+    }
+}
+
+std::string FileSystem::openFolderDialogue()
+{
+    // Show native file dialog, blocking call
+    nfdchar_t *outPath = NULL;
+    nfdresult_t result = NFD_PickFolder( NULL, &outPath );
+    
+    if ( result == NFD_OKAY ) {
+        return outPath;
+    }
+    else if ( result == NFD_CANCEL ) {
+        xy::Logger::log("User cancelled native file dialog");
+    }
+    else {
+        std::string error = NFD_GetError();
+        xy::Logger::log("Error during native file dialog: " + error);
+    }
 }
