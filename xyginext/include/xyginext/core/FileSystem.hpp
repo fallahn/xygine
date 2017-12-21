@@ -114,13 +114,13 @@ namespace xy
         \brief Show a native file dialog to open a file
         \returns path the path selected by the user
         */
-        static std::string nativeOpenFile();
+        static std::string openFileDialogue();
 
         /*!
         \brief Show a native file dialog to open a folder
         \returns path the path selected by the user
         */
-        static std::string nativeOpenFolder();
+        static std::string openFolderDialogue();
 
     private:
 

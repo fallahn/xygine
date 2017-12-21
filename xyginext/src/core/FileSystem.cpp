@@ -514,7 +514,7 @@ std::string FileSystem::getConfigDirectory(const std::string& appName)
     return { out };
 }
 
-std::string FileSystem::nativeOpenFile()
+std::string FileSystem::openFileDialogue()
 {
     // Show native file dialog, blocking call
     nfdchar_t *outPath = NULL;
@@ -532,7 +532,7 @@ std::string FileSystem::nativeOpenFile()
     }
 }
 
-std::string FileSystem::nativeOpenFolder()
+std::string FileSystem::openFolderDialogue()
 {
     // Show native file dialog, blocking call
     nfdchar_t *outPath = NULL;
