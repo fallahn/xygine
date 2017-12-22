@@ -51,8 +51,10 @@ endif()
 
 # Project source files
 add_subdirectory(src)
+add_subdirectory(include/xyginext)
 
 # platform specific for file dialogue
+include_directories(src/core/dialogues/nfd/include)
 if(APPLE)
   SET(NFD_SRC 
     src/core/dialogues/nfd/nfd_common.c
