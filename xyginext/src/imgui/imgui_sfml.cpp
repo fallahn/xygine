@@ -112,6 +112,7 @@ void Init(sf::Window& window, sf::RenderTarget& target)
     style.Colors[ImGuiCol_ScrollbarGrab]        = ImVec4(0.69f, 0.69f, 0.69f, 0.80f);
     style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.49f, 0.49f, 0.49f, 0.80f);
     style.Colors[ImGuiCol_ScrollbarGrabActive]  = ImVec4(0.49f, 0.49f, 0.49f, 1.00f);
+    style.Colors[ImGuiCol_ComboBg]              = ImVec4(0.86f, 0.86f, 0.86f, 0.99f);
     style.Colors[ImGuiCol_CheckMark]            = ImVec4(0.19f, 0.38f, 0.21f, 1.00f);
     style.Colors[ImGuiCol_SliderGrab]           = ImVec4(0.19f, 0.38f, 0.21f, 0.78f);
     style.Colors[ImGuiCol_SliderGrabActive]     = ImVec4(0.19f, 0.38f, 0.21f, 1.00f);
