@@ -517,35 +517,46 @@ std::string FileSystem::getConfigDirectory(const std::string& appName)
 std::string FileSystem::openFileDialogue()
 {
     // Show native file dialog, blocking call
-    nfdchar_t *outPath = NULL;
-    nfdresult_t result = NFD_OpenDialog( NULL, NULL, &outPath );
+    nfdchar_t* outPath = nullptr;
+    nfdresult_t result = NFD_OpenDialog(nullptr, nullptr, &outPath);
     
-    if ( result == NFD_OKAY ) {
+    if (result == NFD_OKAY)
+    {
         return outPath;
     }
-    else if ( result == NFD_CANCEL ) {
+    else if (result == NFD_CANCEL)
+    {
         xy::Logger::log("User cancelled native file dialog");
+        return {};
     }
-    else {
+    else 
+    {
         std::string error = NFD_GetError();
         xy::Logger::log("Error during native file dialog: " + error);
+        return{};
     }
+    return {};
 }
 
 std::string FileSystem::openFolderDialogue()
 {
     // Show native file dialog, blocking call
-    nfdchar_t *outPath = NULL;
-    nfdresult_t result = NFD_PickFolder( NULL, &outPath );
+    nfdchar_t* outPath = nullptr;
+    nfdresult_t result = NFD_PickFolder(nullptr, &outPath);
     
-    if ( result == NFD_OKAY ) {
+    if (result == NFD_OKAY)
+    {
         return outPath;
     }
-    else if ( result == NFD_CANCEL ) {
+    else if (result == NFD_CANCEL)
+    {
         xy::Logger::log("User cancelled native file dialog");
+        return {};
     }
-    else {
+    else 
+    {
         std::string error = NFD_GetError();
         xy::Logger::log("Error during native file dialog: " + error);
+        return {};
     }
 }
