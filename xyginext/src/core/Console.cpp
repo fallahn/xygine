@@ -213,7 +213,7 @@ void Console::draw()
     if (!visible) return;
 
     nim::SetNextWindowSizeConstraints({ 640, 480 }, { 1024.f, 768.f });
-    if (!nim::Begin("Console", &visible, ImGuiWindowFlags_MenuBar))
+    if (!nim::Begin("Console", &visible, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_ShowBorders))
     {
         //window is collapsed so save your effort..
         nim::End();
@@ -253,7 +253,7 @@ void Console::draw()
         nim::EndMenuBar();
     }
 
-    nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
+    nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetItemsLineHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
     nim::TextUnformatted(output.c_str(), output.c_str() + output.size());
     nim::SetScrollHere();
     nim::EndChild();
@@ -281,7 +281,7 @@ void Console::draw()
     if (showVideoOptions)
     {
         nim::SetNextWindowSize({ 340.f, 150.f });
-        nim::Begin("Video Options", &showVideoOptions);
+        nim::Begin("Video Options", &showVideoOptions, ImGuiWindowFlags_ShowBorders);
 
         nim::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         nim::NewLine();
@@ -313,7 +313,7 @@ void Console::draw()
     if (showAudioOptions)
     {
         nim::SetNextWindowSize({ 315.f, 440.f });
-        nim::Begin("Audio Mixer", &showAudioOptions);
+        nim::Begin("Audio Mixer", &showAudioOptions, ImGuiWindowFlags_ShowBorders);
 
         nim::Text("NOTE: only AudioSystem sounds are affected.");
 
