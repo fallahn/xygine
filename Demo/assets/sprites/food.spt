@@ -1,6 +1,6 @@
 sprite_sheet food
 {
-	src = "assets/images/food.png"
+	src = "../images/food.png"
 	blendmode = alpha	
 
 	sprite food

@@ -56,21 +56,45 @@ namespace xy
         bool loadFromFile(const std::string& path, TextureResource& rx);
 
         /*!
+        \brief Attempts to save a ConfigFile at the given path.
+        \returns true if successful, else false
+        */
+        bool saveToFile(const std::string& path);
+
+        /*!
         \brief Returns a sprite component with the given name as it
         appears in the sprite sheet. If the sprite does not exist an
         empty sprite is returned.
         */
         Sprite getSprite(const std::string& name) const;
+        
+        /*!
+         \brief Returns all sprites in this spritesheet
+         */
+        const std::unordered_map<std::string, Sprite>& getSprites() const;
 
         /*!
         \brief Returns the index of the animation with the given name
         on the given sprite if it exists, else returns 0
         */
         std::size_t getAnimationIndex(const std::string& name, const std::string& sprite) const;
+        
+        /*!
+         \brief Returns the path of the texture used by this spritesheet
+         */
+        const std::string& getTexturePath() const;
+        
+        /*!
+         \brief Set the path of the texture used by this spritesheet
+         */
+        void setTexturePath(const std::string& path);
 
     private:
         mutable std::unordered_map<std::string, Sprite> m_sprites;
         mutable std::unordered_map<std::string, std::vector<std::string>> m_animations;
+
+        std::string m_texturePath;
+        bool        m_smooth;
     };
 }
 

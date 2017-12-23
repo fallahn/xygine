@@ -1,6 +1,6 @@
 sprite_sheet npcs
 {
-	src = "assets/images/npcs.png"
+	src = "../images/npcs.png"
 	blendmode = alpha
 
 	sprite goobly

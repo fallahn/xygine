@@ -1,6 +1,6 @@
 sprite_sheet ui
 {
-	src = "assets/images/ui.png"
+	src = "../images/ui.png"
 	blendmode = alpha
 
 	sprite player_one_lives

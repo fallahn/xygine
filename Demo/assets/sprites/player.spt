@@ -1,6 +1,6 @@
 sprite_sheet player
 {
-	src = "assets/images/players.png"
+	src = "../images/players.png"
 	blendmode = alpha
 
 	sprite player_one
