@@ -6,7 +6,7 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_PLACEMENT_NEW
 #include "imgui_internal.h"
-
+#include <stdint.h>
 #define TAB_SMOOTH_DRAG 0   // This work nicely but has overlapping issues (maybe render dragged tab separately, at end)
 
 // Basic keyed storage, slow/amortized insertion, O(Log N) queries over a dense/hot buffer
