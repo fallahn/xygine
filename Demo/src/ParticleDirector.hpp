@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 #ifndef DEMO_PARTICLE_DIRECTOR_HPP_
-#define DEMO_APRTICLE_DIRECTOR_HPP_
+#define DEMO_PARTICLE_DIRECTOR_HPP_
 
 #include <xyginext/ecs/Director.hpp>
 #include <xyginext/ecs/Entity.hpp>
