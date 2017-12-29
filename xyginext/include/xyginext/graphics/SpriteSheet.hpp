@@ -69,6 +69,16 @@ namespace xy
         Sprite getSprite(const std::string& name) const;
         
         /*!
+         \brief Set the data of a sprite in the spritesheet
+         
+         \param name The name of the sprite to set
+         \param data The sprite component data to assign
+         
+         \warning if sprite already exists it will be overwritten
+         */
+        void setSprite(const std::string& name, const Sprite& data);
+        
+        /*!
          \brief Returns all sprites in this spritesheet
          */
         const std::unordered_map<std::string, Sprite>& getSprites() const;

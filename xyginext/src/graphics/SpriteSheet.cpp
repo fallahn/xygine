@@ -164,7 +164,7 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
 bool SpriteSheet::saveToFile(const std::string &path)
 {
     ConfigFile sheetFile;
-    sheetFile.addProperty("src", m_texturePath);
+    sheetFile.addProperty("src", "\"" + m_texturePath + "\"");
     sheetFile.addProperty("smooth").setValue( m_smooth ? true : false);
     
     for (auto& sprite : m_sprites)
@@ -209,6 +209,11 @@ Sprite SpriteSheet::getSprite(const std::string& name) const
     }
     LOG(name + " not found in sprite sheet", Logger::Type::Warning);
     return {};
+}
+
+void SpriteSheet::setSprite(const std::string& name, const xy::Sprite& data)
+{
+    m_sprites[name] = data;
 }
 
 const std::unordered_map<std::string, Sprite>& SpriteSheet::getSprites() const
