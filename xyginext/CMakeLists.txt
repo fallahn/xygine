@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.1)
 
 # Rename this variable to change the project name
 SET(PROJECT_NAME xyginext)
+project(${PROJECT_NAME})
 
 # Set the path to our find modules
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
@@ -51,6 +52,7 @@ endif()
 
 # Project source files
 add_subdirectory(src)
+add_subdirectory(include/xyginext)
 
 # platform specific for file dialogue
 if(APPLE)
@@ -106,6 +108,5 @@ install(TARGETS ${PROJECT_NAME} EXPORT xyginext-targets
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin)
 
- # Configuration for packaging
- include(CPack)
-
+# Configuration for packaging
+include(CPack)
