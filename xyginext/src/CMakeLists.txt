@@ -1,5 +1,5 @@
 #source files used by xyginext library
-set(PROJECT_SRC 
+set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/audio/AudioSourceImpl.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/audio/Mixer.cpp
 
