@@ -31,6 +31,8 @@ source distribution.
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/Scene.hpp>
 
+const float ScoreTag::MaxLife = 2.f;
+
 namespace
 {
     const float speed = -120.f;
