@@ -32,7 +32,7 @@ source distribution.
 
 struct ScoreTag final
 {
-    static constexpr float MaxLife = 2.f;
+    static const float MaxLife;
     float lifetime = MaxLife;
     sf::Color colour = { 155, 255, 55 };
 };
