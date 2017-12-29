@@ -2,11 +2,6 @@
 language: c++
 sudo: true
 
-# Remove this if/when xyginext merged into master
-branches:
- only:
-  - xyginext
-
 addons:
  apt:
    packages:
@@ -32,12 +27,18 @@ before_script:
 
  - git clone https://github.com/sfml/sfml && cd sfml
  - git checkout tags/2.4.2
- - cmake . && sudo make install && cd ..
+ - cmake . && sudo cmake --build . --target install && cd ..
+
+# Also install TmxLite, required for Demo
+ - git clone https://github.com/fallahn/tmxlite
+ - cd tmxlite/tmxlite
+ - cmake . && sudo cmake --build . --target install && cd ../../
 
 script:
- - mkdir build && cd build
- - cmake ../xyginext
- - make
+ - cd xyginext && mkdir build && cd build
+ - cmake ../ && sudo cmake --build . --target install
+ - cd ../../Demo && mkdir build && cd build
+ - cmake ../ && cmake --build .
 
 matrix:
  include:
