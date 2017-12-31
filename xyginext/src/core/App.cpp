@@ -127,6 +127,7 @@ void App::run()
     loadSettings();
 
     ImGui::SFML::Init(m_renderWindow);
+    ImGui::StyleColorsLight(&ImGui::GetStyle());
     Console::init();
     initialise();
 

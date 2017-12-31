@@ -50,8 +50,6 @@ namespace nim = ImGui;
 
 namespace
 {
-    std::vector<std::string> m_debugLines;
-    
     std::vector<std::pair<std::function<void()>, const GuiClient*>> m_statusControls;
     
     std::vector<sf::Vector2u> resolutions;
@@ -249,12 +247,6 @@ void Console::draw()
             && !nim::IsAnyItemActive() && !nim::IsMouseClicked(0)))
         {
             nim::SetKeyboardFocusHere(-1);
-        }
-        
-        //print any debug lines
-        for (const auto& p : m_debugLines)
-        {
-            ImGui::Text("%s", p.c_str());
         }
     }
     
