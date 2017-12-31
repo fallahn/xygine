@@ -291,8 +291,7 @@ sf::RenderWindow* App::getRenderWindow()
 
 void App::printStat(const std::string& name, const std::string& value)
 {
-    XY_ASSERT(appInstance, "hm");
-    xy::Logger::log(name + ":" + value);
+    Console::printStat(name,value);
 }
 
 App* App::getActiveInstance()

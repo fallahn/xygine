@@ -50,6 +50,7 @@ namespace nim = ImGui;
 
 namespace
 {
+    std::vector<std::string>    m_debugLines;
     std::vector<std::pair<std::function<void()>, const GuiClient*>> m_statusControls;
     
     std::vector<sf::Vector2u> resolutions;
@@ -253,9 +254,6 @@ void Console::draw()
     // Video options
     if (nim::TabItem("Video"))
     {
-        nim::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        nim::NewLine();
-
         nim::Combo("Resolution", &currentResolution, resolutionNames.data());
 
         XY_ASSERT(App::getRenderWindow(), "no valid window");
@@ -296,6 +294,19 @@ void Console::draw()
             AudioMixer::setVolume(channelVol[i], i);
         }
     }
+    
+    // Stats
+    if (nim::TabItem("Stats"))
+    {
+        nim::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        nim::NewLine();
+        for (auto& line : m_debugLines)
+        {
+            ImGui::Text(line.c_str());
+        }
+    }
+    m_debugLines.clear();
+    m_debugLines.reserve(10);
     
     //display any registered controls
     int count(0);
@@ -564,5 +575,10 @@ void Console::removeStatusControls(const GuiClient* c)
                                           {
                                               return pair.second == c;
                                           }), std::end(m_statusControls));
+}
+
+void Console::printStat(const std::string& name, const std::string& value)
+{
+    m_debugLines.push_back(name + ":" + value);
 }
 

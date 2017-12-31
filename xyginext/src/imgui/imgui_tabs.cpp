@@ -1,11 +1,12 @@
 // dear imgui tabs
 // experimental/WIP feature, API will be reworked.
 
-#define _CRT_SECURE_NO_WARNINGS
 #include "imgui_tabs.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_PLACEMENT_NEW
 #include "imgui_internal.h"
+
+#include <cstdint>
 
 #define TAB_SMOOTH_DRAG 0   // This work nicely but has overlapping issues (maybe render dragged tab separately, at end)
 

@@ -89,6 +89,11 @@ namespace xy
         */
         template <typename T>
         static T getConvarValue(const std::string& convar);
+        
+        /*!
+         \brief Prints the name/value pair to the stats window
+         */
+        static void printStat(const std::string&, const std::string&);
 
     private:
         friend class App;
@@ -99,6 +104,8 @@ namespace xy
         
         static void addStatusControl(const std::function<void()>&, const GuiClient*);
         static void removeStatusControls(const GuiClient*);
+        
+        
 
         static void addCommand(const std::string& name, const Command& cmd, const ConsoleClient* owner);
         static void removeCommands(const ConsoleClient*); //removes all commands belonging to the given client
