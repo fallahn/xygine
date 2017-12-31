@@ -57,6 +57,8 @@ namespace
     //int currentAALevel = 0;
     int currentResolution = 0;
     std::array<char, 300> resolutionNames{};
+    bool fullScreen = false;
+    bool vSync = false;
     
     std::string output;
 
@@ -102,6 +104,21 @@ void Console::print(const std::string& line)
 void Console::show()
 {
     visible = !visible;
+
+    const auto& size = App::getRenderWindow()->getSize();
+    for (auto i = 0u; i < resolutions.size(); ++i)
+    {
+        if (resolutions[i].x == size.x && resolutions[i].y == size.y)
+        {
+            currentResolution = i;
+            break;
+        }
+    }
+
+    const auto& settings = App::getActiveInstance()->getVideoSettings();
+    fullScreen = (settings.WindowStyle & sf::Style::Fullscreen);
+
+    vSync = settings.VSync;
 }
 
 void Console::doCommand(const std::string& str)
@@ -253,21 +270,20 @@ void Console::draw()
     
     // Video options
     if (nim::TabItem("Video"))
-    {
+    {       
         nim::Combo("Resolution", &currentResolution, resolutionNames.data());
 
         XY_ASSERT(App::getRenderWindow(), "no valid window");
-        auto settings = App::getActiveInstance()->getVideoSettings();
-        static bool vSync = settings.VSync;
+        
         nim::Checkbox("V-Sync", &vSync);
 
         nim::SameLine();
-        static bool fullScreen = (settings.WindowStyle & sf::Style::Fullscreen);
         nim::Checkbox("Full Screen", &fullScreen);
 
         if (nim::Button("Apply", { 50.f, 20.f }))
         {
             //apply settings
+            auto settings = App::getActiveInstance()->getVideoSettings();
             settings.VideoMode.width = resolutions[currentResolution].x;
             settings.VideoMode.height = resolutions[currentResolution].y;
             settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
