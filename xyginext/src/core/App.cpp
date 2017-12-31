@@ -57,9 +57,9 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
 #ifndef XY_DEBUG
-    const std::string windowTitle("xyginext game (Release Build) - F1: Console, F2: Show stats");
+    const std::string windowTitle("xyginext game (Release Build) - F1: Open Console");
 #else
-    const std::string windowTitle("xyginext game (Debug Build) - F1: Console, F2: Show stats");
+    const std::string windowTitle("xyginext game (Debug Build) - F1: Open Console");
 #endif //XY_DEBUG
 
     sf::Clock frameClock;
