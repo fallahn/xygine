@@ -32,8 +32,10 @@ source distribution.
 #include <xyginext/core/SysTime.hpp>
 #include <xyginext/core/Assert.hpp>
 #include <xyginext/audio/Mixer.hpp>
+#include <xyginext/gui/GuiClient.hpp>
 
 #include "../imgui/imgui.h"
+#include "../imgui/imgui_tabs.h"
 
 #include <list>
 #include <unordered_map>
@@ -48,9 +50,10 @@ namespace nim = ImGui;
 
 namespace
 {
-    bool showVideoOptions = false;
-    bool showAudioOptions = false;
-
+    std::vector<std::string> m_debugLines;
+    
+    std::vector<std::pair<std::function<void()>, const GuiClient*>> m_statusControls;
+    
     std::vector<sf::Vector2u> resolutions;
     //int currentAALevel = 0;
     int currentResolution = 0;
@@ -213,76 +216,51 @@ void Console::draw()
     if (!visible) return;
 
     nim::SetNextWindowSizeConstraints({ 640, 480 }, { 1024.f, 768.f });
-    if (!nim::Begin("Console", &visible, ImGuiWindowFlags_MenuBar))
+    if (!nim::Begin("Console", &visible))
     {
         //window is collapsed so save your effort..
         nim::End();
         return;
     }
-
-    //options at top of window
-    if (nim::BeginMenuBar())
+    
+    nim::BeginTabBar("Tabs");
+    
+    // Console
+    if (nim::TabItem("Console"))
     {
-        if (nim::BeginMenu("Options"))
+        
+        nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
+        nim::TextUnformatted(output.c_str(), output.c_str() + output.size());
+        nim::SetScrollHere();
+        nim::EndChild();
+
+        nim::Separator();
+
+        nim::PushItemWidth(620.f);
+        if (nim::InputText("", input, MAX_INPUT_CHARS,
+            ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory,
+            textEditCallback))
         {
-            if (nim::MenuItem("Video", nullptr, &showVideoOptions))
-            {
-                //select active resolution
-                XY_ASSERT(App::getRenderWindow(), "no valid window");
-
-                const auto& size = App::getRenderWindow()->getSize();
-                for (auto i = 0u; i < resolutions.size(); ++i)
-                {
-                    if (resolutions[i].x == size.x && resolutions[i].y == size.y)
-                    {
-                        currentResolution = i;
-                        break;
-                    }
-                }
-            }
-
-            nim::MenuItem("Audio", nullptr, &showAudioOptions);
-
-            if (nim::MenuItem("Quit", nullptr))
-            {
-                App::quit();
-            }
-
-            nim::EndMenu();
+            doCommand(input);
         }
-        nim::EndMenuBar();
+        nim::PopItemWidth();
+
+        if (nim::IsItemHovered() || (nim::IsRootWindowOrAnyChildFocused()
+            && !nim::IsAnyItemActive() && !nim::IsMouseClicked(0)))
+        {
+            nim::SetKeyboardFocusHere(-1);
+        }
+        
+        //print any debug lines
+        for (const auto& p : m_debugLines)
+        {
+            ImGui::Text("%s", p.c_str());
+        }
     }
-
-    nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
-    nim::TextUnformatted(output.c_str(), output.c_str() + output.size());
-    nim::SetScrollHere();
-    nim::EndChild();
-
-    nim::Separator();
-
-    nim::PushItemWidth(620.f);
-    if (nim::InputText("", input, MAX_INPUT_CHARS,
-        ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory,
-        textEditCallback))
+    
+    // Video options
+    if (nim::TabItem("Video"))
     {
-        doCommand(input);
-    }
-    nim::PopItemWidth();
-
-    if (nim::IsItemHovered() || (nim::IsRootWindowOrAnyChildFocused()
-        && !nim::IsAnyItemActive() && !nim::IsMouseClicked(0)))
-    {
-        nim::SetKeyboardFocusHere(-1);
-    }
-
-    nim::End();
-
-    //draw options window if visible
-    if (showVideoOptions)
-    {
-        nim::SetNextWindowSize({ 340.f, 150.f });
-        nim::Begin("Video Options", &showVideoOptions);
-
         nim::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         nim::NewLine();
 
@@ -299,7 +277,7 @@ void Console::draw()
 
         if (nim::Button("Apply", { 50.f, 20.f }))
         {
-            //apply settings       
+            //apply settings
             settings.VideoMode.width = resolutions[currentResolution].x;
             settings.VideoMode.height = resolutions[currentResolution].y;
             settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
@@ -307,14 +285,11 @@ void Console::draw()
 
             App::getActiveInstance()->applyVideoSettings(settings);
         }
-        nim::End();
     }
 
-    if (showAudioOptions)
+    // Audio
+    if (nim::TabItem("Audio"))
     {
-        nim::SetNextWindowSize({ 315.f, 440.f });
-        nim::Begin("Audio Mixer", &showAudioOptions);
-
         nim::Text("NOTE: only AudioSystem sounds are affected.");
 
         static float maxVol = AudioMixer::getMasterVolume();
@@ -328,9 +303,21 @@ void Console::draw()
             nim::SliderFloat(AudioMixer::getLabel(i).c_str(), &channelVol[i], 0.f, 1.f);
             AudioMixer::setVolume(channelVol[i], i);
         }
-
-        nim::End();
     }
+    
+    //display any registered controls
+    int count(0);
+    for (const auto& func : m_statusControls)
+    {
+        if (ImGui::TabItem(("Stat " + std::to_string(count)).c_str()))
+        {
+            func.first();
+        }
+    }
+    
+    nim::EndTabBar();
+
+    nim::End();
 #endif //USE_IMGUI
 }
 
@@ -464,12 +451,74 @@ void Console::finalise()
 int textEditCallback(ImGuiTextEditCallbackData* data)
 {
     //use this to scroll up and down through command history
-    //TODO create an auto complete thinger
 
     switch (data->EventFlag)
     {
     default: break;
     case ImGuiInputTextFlags_CallbackCompletion: //user pressed tab to complete
+        {
+            // Example of TEXT COMPLETION
+            
+            // Locate beginning of current word
+            const char* word_end = data->Buf + data->CursorPos;
+            const char* word_start = word_end;
+            while (word_start > data->Buf)
+            {
+                const char c = word_start[-1];
+                if (c == ' ' || c == '\t' || c == ',' || c == ';')
+                    break;
+                word_start--;
+            }
+            
+            // Build a list of candidates
+            std::vector<std::string> candidates;
+            for (auto& c : commands)
+            {
+                if (c.first.substr(0,word_end - word_start) == std::string(word_start,word_end - word_start))
+                {
+                    candidates.push_back(c.first);
+                }
+            }
+            
+            if (candidates.size() == 0)
+            {
+                // No match
+                break;
+            }
+            else if (candidates.size() == 1)
+            {
+                // Single match. Delete the beginning of the word and replace it entirely so we've got nice casing
+                data->DeleteChars((int)(word_start-data->Buf), (int)(word_end-word_start));
+                data->InsertChars(data->CursorPos, candidates[0].c_str());
+                data->InsertChars(data->CursorPos, " ");
+            }
+            else
+            {
+                // Multiple matches. Complete as much as we can, so inputing "C" will complete to "CL" and display "CLEAR" and "CLASSIFY"
+                int match_len = (int)(word_end - word_start);
+                for (;;)
+                {
+                    int c = 0;
+                    bool all_candidates_matches = true;
+                    for (int i = 0; i < candidates.size() && all_candidates_matches; i++)
+                        if (i == 0)
+                            c = toupper(candidates[i][match_len]);
+                        else if (c == 0 || c != toupper(candidates[i][match_len]))
+                            all_candidates_matches = false;
+                    if (!all_candidates_matches)
+                        break;
+                    match_len++;
+                }
+                
+                if (match_len > 0)
+                {
+                    data->DeleteChars((int)(word_start - data->Buf), (int)(word_end-word_start));
+                    data->InsertChars(data->CursorPos, candidates[0].c_str(), candidates[0].c_str() + match_len);
+                }
+            }
+            
+            break;
+    }
     case ImGuiInputTextFlags_CallbackHistory:
     {
         const int prev_history_pos = historyIndex;
@@ -495,7 +544,7 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
             }
         }
 
-        //a better implementation would preserve the data on the current input line along with cursor position.
+        //a betterźimplementation would preserve the data on the current input line along with cursor position.
         if (prev_history_pos != historyIndex)
         {
             data->CursorPos = data->SelectionStart = data->SelectionEnd = data->BufTextLen =
@@ -507,5 +556,21 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
     }
 
     return 0;
+}
+
+void Console::addStatusControl(const std::function<void ()> &func, const xy::GuiClient *c)
+{
+    m_statusControls.push_back(std::make_pair(func, c));
+}
+
+void Console::removeStatusControls(const GuiClient* c)
+{
+    
+    m_statusControls.erase(std::remove_if(std::begin(m_statusControls),
+                                          std::end(m_statusControls),
+                                          [c](const std::pair<std::function<void()>, const GuiClient*>& pair)
+                                          {
+                                              return pair.second == c;
+                                          }), std::end(m_statusControls));
 }
 

@@ -38,6 +38,7 @@ source distribution.
 namespace xy
 {
     class ConsoleClient;
+    class GuiClient;
     
     /*!
     \brief Console class.
@@ -95,10 +96,13 @@ namespace xy
 
         static void init();
         static void finalise();
+        
+        static void addStatusControl(const std::function<void()>&, const GuiClient*);
+        static void removeStatusControls(const GuiClient*);
 
         static void addCommand(const std::string& name, const Command& cmd, const ConsoleClient* owner);
         static void removeCommands(const ConsoleClient*); //removes all commands belonging to the given client
-
+        
         static void draw();
     };
 
