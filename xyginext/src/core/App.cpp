@@ -34,7 +34,7 @@ source distribution.
 #include <xyginext/gui/GuiClient.hpp>
 
 #include "../imgui/imgui.h"
-#include "../imgui/imgui_sfml.h"
+#include "../imgui/imgui-SFML.h"
 #include "../imgui/imgui_internal.h"
 
 #include "../detail/glad.h"
@@ -145,14 +145,15 @@ void App::run()
             handleEvents();
             handleMessages();
 
-            update(timePerFrame);                 
+            update(timePerFrame);
+            
         }
-
+        ImGui::SFML::Update(*getRenderWindow(), sf::seconds(elapsedTime));
         doImgui();
 
         m_renderWindow.clear(clearColour);
         draw();       
-        ImGui::Render();
+        ImGui::SFML::Render(*getRenderWindow());
         m_renderWindow.display();
     }
 
@@ -338,8 +339,8 @@ void App::handleEvents()
     sf::Event evt;
 
     while (m_renderWindow.pollEvent(evt))
-    {        
-        auto imguiConsumed = ImGui::SFML::ProcessEvent(evt);
+    {
+        ImGui::SFML::ProcessEvent(evt);
 
         switch (evt.type)
         {
@@ -395,7 +396,7 @@ void App::handleEvents()
             }           
         }
         
-        if(!imguiConsumed) eventHandler(evt);
+        eventHandler(evt);
     }   
 }
 
@@ -411,7 +412,6 @@ void App::handleMessages()
 
 void App::doImgui()
 {
-    ImGui::SFML::Update(false);
 
     Console::draw();
 
