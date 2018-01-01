@@ -100,7 +100,7 @@ bool MenuState::handleEvent(const sf::Event& evt)
 {
     // Don't process events which the gui wants
     if (xy::Nim::wantsMouse() || xy::Nim::wantsKeyboard())
-        return;
+        return true;
     m_scene.getSystem<xy::UISystem>().handleEvent(evt);
     m_scene.forwardEvent(evt);
 
