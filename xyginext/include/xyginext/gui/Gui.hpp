@@ -32,11 +32,6 @@ source distribution.
 
 #include <string>
 
-/*!
- \see ImGuiIO
- */
-class ImGuiIO;
-
 namespace xy
 {
     /*!
