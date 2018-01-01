@@ -64,6 +64,8 @@ source distribution.
 #include <xyginext/graphics/postprocess/Blur.hpp>
 #include <xyginext/graphics/SpriteSheet.hpp>
 
+#include <xyginext/gui/Gui.hpp>
+
 #include <xyginext/util/Random.hpp>
 #include <xyginext/util/Math.hpp>
 
@@ -96,6 +98,9 @@ MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
 //public
 bool MenuState::handleEvent(const sf::Event& evt)
 {
+    // Don't process events which the gui wants
+    if (xy::Nim::wantsMouse() || xy::Nim::wantsKeyboard())
+        return;
     m_scene.getSystem<xy::UISystem>().handleEvent(evt);
     m_scene.forwardEvent(evt);
 

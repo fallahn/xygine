@@ -75,4 +75,16 @@ void Nim::end()
 {
     ImGui::End();
 }
+
+bool Nim::wantsMouse()
+{
+    return ImGui::GetIO().WantCaptureMouse;
+}
+
+bool Nim::wantsKeyboard()
+{
+    return ImGui::GetIO().WantCaptureKeyboard;
+}
+
+
 //I miss you like hell.
