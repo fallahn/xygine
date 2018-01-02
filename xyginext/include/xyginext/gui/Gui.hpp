@@ -87,6 +87,16 @@ namespace xy
         \see ImGui::End()
         */
         XY_EXPORT_API void end();
+        
+        /*!
+         \see ImGui::GetIo().WantCaptureMouse
+         */
+        XY_EXPORT_API bool wantsMouse();
+        
+        /*!
+         \see ImGui::GetIo().WantCaptureKeyboard
+         */
+        XY_EXPORT_API bool wantsKeyboard();
     }
 }
 

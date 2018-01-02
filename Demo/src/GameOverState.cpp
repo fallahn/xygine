@@ -30,6 +30,8 @@ source distribution.
 #include "MessageIDs.hpp"
 #include "Localisation.hpp"
 
+#include <xyginext/gui/Gui.hpp>
+
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Text.hpp>
 #include <xyginext/ecs/components/Drawable.hpp>
@@ -103,6 +105,12 @@ GameoverState::~GameoverState()
 
 bool GameoverState::handleEvent(const sf::Event& evt)
 {
+    // Don't process events which the gui wants
+    if (xy::Nim::wantsMouse() || xy::Nim::wantsKeyboard())
+    {
+        return true;
+    }
+    
     m_scene.getSystem<xy::UISystem>().handleEvent(evt);
     m_scene.forwardEvent(evt);
     return false;

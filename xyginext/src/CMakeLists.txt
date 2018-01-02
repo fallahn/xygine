@@ -62,7 +62,9 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_demo.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_draw.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_sfml.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui-SFML.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_tabs.cpp
+
 
   ${CMAKE_CURRENT_SOURCE_DIR}/network/NetClient.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/network/NetConf.cpp

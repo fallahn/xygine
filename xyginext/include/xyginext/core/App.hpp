@@ -301,11 +301,6 @@ namespace xy
         void handleEvents();
         void handleMessages();
 
-        bool m_showStats;
-        std::vector<std::string> m_debugLines;
-        void doImgui();
-
-        std::vector<std::pair<std::function<void()>, const GuiClient*>> m_statusControls;
         std::vector<std::pair<std::function<void()>, const GuiClient*>> m_guiWindows;
 
         static void addStatusControl(const std::function<void()>&, const GuiClient*);

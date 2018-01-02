@@ -29,6 +29,8 @@ source distribution.
 #include "MessageIDs.hpp"
 #include "Localisation.hpp"
 
+#include <xyginext/gui/Gui.hpp>
+
 #include <xyginext/ecs/components/Sprite.hpp>
 #include <xyginext/ecs/components/Text.hpp>
 #include <xyginext/ecs/components/Drawable.hpp>
@@ -71,6 +73,12 @@ PauseState::~PauseState()
 
 bool PauseState::handleEvent(const sf::Event& evt)
 {
+    // Don't process events which the gui wants
+    if (xy::Nim::wantsMouse() || xy::Nim::wantsKeyboard())
+    {
+        return true;
+    }
+    
     if (evt.type == sf::Event::KeyReleased)
     {
         switch (evt.key.code)

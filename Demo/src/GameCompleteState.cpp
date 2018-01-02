@@ -33,6 +33,8 @@ source distribution.
 #include "SpringFlower.hpp"
 #include "Localisation.hpp"
 
+#include <xyginext/gui/Gui.hpp>
+
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/components/AudioListener.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
@@ -85,6 +87,12 @@ GameCompleteState::GameCompleteState(xy::StateStack& stack, xy::State::Context c
 //public
 bool GameCompleteState::handleEvent(const sf::Event& evt)
 {
+    // Don't process events which the gui wants
+    if (xy::Nim::wantsMouse() || xy::Nim::wantsKeyboard())
+    {
+        return true;
+    }
+    
     if (evt.type == sf::Event::KeyReleased
         || evt.type == sf::Event::JoystickButtonReleased
         && inputDelay > 2.f)

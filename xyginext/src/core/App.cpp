@@ -34,7 +34,7 @@ source distribution.
 #include <xyginext/gui/GuiClient.hpp>
 
 #include "../imgui/imgui.h"
-#include "../imgui/imgui_sfml.h"
+#include "../imgui/imgui-SFML.h"
 #include "../imgui/imgui_internal.h"
 
 #include "../detail/glad.h"
@@ -57,9 +57,9 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
 #ifndef XY_DEBUG
-    const std::string windowTitle("xyginext game (Release Build) - F1: Console, F2: Show stats");
+    const std::string windowTitle("xyginext game (Release Build) - F1: Open Console");
 #else
-    const std::string windowTitle("xyginext game (Debug Build) - F1: Console, F2: Show stats");
+    const std::string windowTitle("xyginext game (Debug Build) - F1: Open Console");
 #endif //XY_DEBUG
 
     sf::Clock frameClock;
@@ -80,8 +80,7 @@ namespace
 App::App()
     : m_videoSettings   (),
     m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
-    m_applicationName   (APP_NAME),
-    m_showStats         (false)
+    m_applicationName   (APP_NAME)
 {
     m_windowIcon.create(16u, 16u, defaultIcon);
 
@@ -128,6 +127,7 @@ void App::run()
     loadSettings();
 
     ImGui::SFML::Init(m_renderWindow);
+    ImGui::StyleColorsLight(&ImGui::GetStyle());
     Console::init();
     initialise();
 
@@ -145,14 +145,19 @@ void App::run()
             handleEvents();
             handleMessages();
 
-            update(timePerFrame);                 
+            update(timePerFrame);
+            
         }
-
-        doImgui();
-
+        
+        ImGui::SFML::Update(*getRenderWindow(), sf::seconds(elapsedTime));
+        
+        // Do imgui stuff (Console and any client windows)
+        Console::draw();
+        for (auto& f : m_guiWindows) f.first();
+        
         m_renderWindow.clear(clearColour);
         draw();       
-        ImGui::Render();
+        ImGui::SFML::Render(*getRenderWindow());
         m_renderWindow.display();
     }
 
@@ -286,8 +291,7 @@ sf::RenderWindow* App::getRenderWindow()
 
 void App::printStat(const std::string& name, const std::string& value)
 {
-    XY_ASSERT(appInstance, "hm");
-    appInstance->m_debugLines.push_back(name + ":" + value);
+    Console::printStat(name,value);
 }
 
 App* App::getActiveInstance()
@@ -338,8 +342,8 @@ void App::handleEvents()
     sf::Event evt;
 
     while (m_renderWindow.pollEvent(evt))
-    {        
-        auto imguiConsumed = ImGui::SFML::ProcessEvent(evt);
+    {
+        ImGui::SFML::ProcessEvent(evt);
 
         switch (evt.type)
         {
@@ -385,9 +389,6 @@ void App::handleEvents()
             case sf::Keyboard::F1:
                 Console::show();
                 break;
-            case sf::Keyboard::F2:
-                m_showStats = !m_showStats;
-                break;
             case sf::Keyboard::F5:
                 saveScreenshot();
                 break;
@@ -395,7 +396,7 @@ void App::handleEvents()
             }           
         }
         
-        if(!imguiConsumed) eventHandler(evt);
+        eventHandler(evt);
     }   
 }
 
@@ -409,56 +410,14 @@ void App::handleMessages()
     } 
 }
 
-void App::doImgui()
-{
-    ImGui::SFML::Update(false);
-
-    Console::draw();
-
-    for (auto& f : m_guiWindows) f.first();
-
-    if (m_showStats)
-    {
-        ImGui::SetNextWindowSizeConstraints({ 360.f, 200.f }, { 400.f, 1000.f });
-        ImGui::Begin("Stats:", &m_showStats);
-
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::NewLine();
-
-        //display any registered controls
-        for (const auto& func : m_statusControls)
-        {
-            func.first();
-        }
-
-        //print any debug lines       
-        for (const auto& p : m_debugLines)
-        {
-            ImGui::Text("%s", p.c_str());
-        }
-
-        ImGui::End();
-    }
-    m_debugLines.clear();
-    m_debugLines.reserve(10);
-}
-
 void App::addStatusControl(const std::function<void()>& func, const GuiClient* c)
 {
-    XY_ASSERT(appInstance, "App not properly instanciated!");
-    appInstance->m_statusControls.push_back(std::make_pair(func, c));
+    Console::addStatusControl(func, c);
 }
 
 void App::removeStatusControls(const GuiClient* c)
 {
-    XY_ASSERT(appInstance, "App not properly instanciated!");
-
-    appInstance->m_statusControls.erase(
-        std::remove_if(std::begin(appInstance->m_statusControls), std::end(appInstance->m_statusControls),
-            [c](const std::pair<std::function<void()>, const GuiClient*>& pair)
-    {
-        return pair.second == c;
-    }), std::end(appInstance->m_statusControls));
+    Console::removeStatusControls(c);
 }
 
 void App::addWindow(const std::function<void()>& func, const GuiClient* c)
