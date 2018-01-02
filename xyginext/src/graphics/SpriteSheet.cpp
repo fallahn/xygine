@@ -216,6 +216,11 @@ void SpriteSheet::setSprite(const std::string& name, const xy::Sprite& data)
     m_sprites[name] = data;
 }
 
+void SpriteSheet::removeSprite(const std::string& name)
+{
+    m_sprites.erase(name);
+}
+
 const std::unordered_map<std::string, Sprite>& SpriteSheet::getSprites() const
 {
     return m_sprites;

@@ -79,6 +79,11 @@ namespace xy
         void setSprite(const std::string& name, const Sprite& data);
         
         /*!
+         \brief Remove a sprite from the sheet
+         */
+        void removeSprite(const std::string& name);
+        
+        /*!
          \brief Returns all sprites in this spritesheet
          */
         const std::unordered_map<std::string, Sprite>& getSprites() const;
