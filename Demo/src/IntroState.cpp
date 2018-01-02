@@ -29,6 +29,7 @@ source distribution.
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/util/Random.hpp>
+#include <xyginext/gui/Gui.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -120,6 +121,12 @@ IntroState::IntroState(xy::StateStack& stack, Context context)
 //public
 bool IntroState::handleEvent(const sf::Event & evt)
 {
+    // Don't process events which the gui wants
+    if (xy::Nim::wantsMouse() || xy::Nim::wantsKeyboard())
+    {
+        return true;
+    }
+    
     if (evt.type == sf::Event::KeyReleased
         || evt.type == sf::Event::JoystickButtonReleased
         || evt.type == sf::Event::MouseButtonReleased)
