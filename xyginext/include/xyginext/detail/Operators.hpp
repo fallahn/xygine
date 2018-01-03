@@ -28,6 +28,7 @@ source distribution.
 #ifndef XY_OPERATORS_HPP_
 #define XY_OPERATORS_HPP_
 
+#include <SFML/Config.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 
 namespace sf
