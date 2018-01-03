@@ -37,7 +37,7 @@ gameplay oriented connections based upon the indomitable [Enet](http://enet.besp
 
 ###### Contributions
 Contributions should be acknowledged and are gratefully accepted from:  
-Jonny Paton (Build system and CI setup)  
+Jonny Paton (Build system and CI setup and many usability improvements)  
 Jean-Sebastien Fauteux (macOS Testing)  
 Baard (Awesome Logo)
 
@@ -79,7 +79,7 @@ xygine isn't really an engine).
 
 
 /*********************************************************************  
-(c) Matt Marchant 2017  
+(c) Matt Marchant 2017 - 2018  
 http://trederia.blogspot.com  
 
 xygineXT - Zlib license.  
