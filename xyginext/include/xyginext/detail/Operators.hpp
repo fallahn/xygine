@@ -28,10 +28,12 @@ source distribution.
 #ifndef XY_OPERATORS_HPP_
 #define XY_OPERATORS_HPP_
 
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/ContextSettings.hpp>
 
-bool operator == (const sf::ContextSettings& l, const sf::ContextSettings& r);
+namespace sf
+{
+    bool operator == (const sf::ContextSettings& l, const sf::ContextSettings& r);
 
-bool operator != (const sf::ContextSettings& l, const sf::ContextSettings& r);
-
+    bool operator != (const sf::ContextSettings& l, const sf::ContextSettings& r);
+}
 #endif //XY_OPERATORS_HPP_

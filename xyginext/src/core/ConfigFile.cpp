@@ -85,6 +85,12 @@ void ConfigProperty::setValue(sf::Color v)
     m_value = std::to_string(v.r) + "," + std::to_string(v.g) + "," + std::to_string(v.b) + "," + std::to_string(v.a);
 }
 
+void ConfigProperty::setValue(xy::Vector4f v)
+{
+    m_value = std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z) + "," + std::to_string(v.w);
+}
+
+//private
 std::vector<float> ConfigProperty::valueAsArray() const
 {
     std::vector<float> retval;
@@ -109,6 +115,7 @@ std::vector<float> ConfigProperty::valueAsArray() const
 ConfigObject::ConfigObject(const std::string& name, const std::string& id)
     : ConfigItem	(name), m_id(id){}
 
+//public
 bool ConfigObject::loadFromFile(const std::string& path)
 {
     m_id = "";

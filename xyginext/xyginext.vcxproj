@@ -207,6 +207,7 @@
     <ClInclude Include="include\xyginext\core\State.hpp" />
     <ClInclude Include="include\xyginext\core\StateStack.hpp" />
     <ClInclude Include="include\xyginext\core\SysTime.hpp" />
+    <ClInclude Include="include\xyginext\core\Vector4.hpp" />
     <ClInclude Include="include\xyginext\detail\Operators.hpp" />
     <ClInclude Include="include\xyginext\ecs\Component.hpp" />
     <ClInclude Include="include\xyginext\ecs\ComponentPool.hpp" />
@@ -268,6 +269,7 @@
   <ItemGroup>
     <None Include="include\xyginext\core\ConfigFile.inl" />
     <None Include="include\xyginext\core\Console.inl" />
+    <None Include="include\xyginext\core\Vector4.inl" />
     <None Include="include\xyginext\ecs\Entity.inl" />
     <None Include="include\xyginext\ecs\EntityManager.inl" />
     <None Include="include\xyginext\ecs\Scene.inl" />

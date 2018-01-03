@@ -94,3 +94,10 @@ inline sf::Color ConfigProperty::getValue<sf::Color>() const
     auto values = valueAsArray();
     return { static_cast<sf::Uint8>(values[0]), static_cast<sf::Uint8>(values[1]), static_cast<sf::Uint8>(values[2]), static_cast<sf::Uint8>(values[3]) };
 }
+
+template <>
+inline xy::Vector4f ConfigProperty::getValue<xy::Vector4f>() const
+{
+    auto values = valueAsArray();
+    return { values[0], values[1], values[2], values[3] };
+}

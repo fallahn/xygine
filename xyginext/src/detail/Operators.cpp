@@ -27,7 +27,7 @@ source distribution.
 
 #include <xyginext/detail/Operators.hpp>
 
-bool operator == (const sf::ContextSettings& l, const sf::ContextSettings& r)
+bool sf::operator == (const sf::ContextSettings& l, const sf::ContextSettings& r)
 {
     return (l.antialiasingLevel == r.antialiasingLevel
         && l.attributeFlags == r.attributeFlags
@@ -35,7 +35,7 @@ bool operator == (const sf::ContextSettings& l, const sf::ContextSettings& r)
         && l.stencilBits == r.stencilBits);
 }
 
-bool operator != (const sf::ContextSettings& l, const sf::ContextSettings& r)
+bool sf::operator != (const sf::ContextSettings& l, const sf::ContextSettings& r)
 {
     return !(l == r);
 }

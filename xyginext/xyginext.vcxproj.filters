@@ -509,6 +509,9 @@
     <ClInclude Include="include\xyginext\ecs\systems\SpriteSystem.hpp">
       <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
+    <ClInclude Include="include\xyginext\core\Vector4.hpp">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl">
@@ -561,6 +564,9 @@
     </None>
     <None Include="src\graphics\postprocess\PostOldSchool.inl">
       <Filter>Header Files\graphics\post process</Filter>
+    </None>
+    <None Include="include\xyginext\core\Vector4.inl">
+      <Filter>Header Files\core</Filter>
     </None>
   </ItemGroup>
 </Project>

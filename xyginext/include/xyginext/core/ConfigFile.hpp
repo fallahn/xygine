@@ -30,6 +30,7 @@ source distribution.
 
 #include <xyginext/Config.hpp>
 #include <xyginext/core/Log.hpp>
+#include <xyginext/core/Vector4.hpp>
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -81,7 +82,7 @@ namespace xy
         /*!
         \brief Attempts to retrieve the value as the requested type.
         Valid types are : std::string, sf::Int32, float, bool, sf::Vector2f,
-        sf::Vector3f, sf::FloatRect, sf::Color
+        sf::Vector3f, sf::FloatRect, sf::Color, xy::Vector4f
         */
         template <typename T>
         T getValue() const;// = delete;
@@ -95,6 +96,7 @@ namespace xy
         void setValue(sf::Vector3f v);
         void setValue(sf::FloatRect);
         void setValue(sf::Color);
+        void setValue(xy::Vector4f);
         
     private:
         std::string m_value;
