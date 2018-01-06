@@ -155,7 +155,7 @@ std::string FileSystem::getFileName(const std::string& path)
     
     static auto searchFunc = [](const char separator, const std::string& path)->std::string
     {
-        std::size_t i = path.rfind(seperator, path.length());
+        std::size_t i = path.rfind(separator, path.length());
         if (i != std::string::npos)
         {
             return(path.substr(i + 1, path.length() - i));
@@ -180,7 +180,7 @@ std::string FileSystem::getFilePath(const std::string& path)
 
     static auto searchFunc = [](const char separator, const std::string& path)->std::string
     {
-        std::size_t i = path.rfind(seperator, path.length());
+        std::size_t i = path.rfind(separator, path.length());
         if (i != std::string::npos)
         {
             return(path.substr(0, i + 1));
