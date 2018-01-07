@@ -31,6 +31,7 @@ source distribution.
 #define XY_RESOURCES_HPP_
 
 #include <xyginext/Config.hpp>
+#include <xyginext/core/FileSystem.hpp>
 
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Image.hpp>
@@ -84,7 +85,7 @@ namespace xy
             }
             //else attempt to load from file
             std::unique_ptr<T> r = std::make_unique<T>();
-            if (path.empty() || !r->loadFromFile(path))
+            if (path.empty() || !r->loadFromFile(xy::FileSystem::getResourcePath() + path))
             {
                 m_resources[path] = errorHandle();
             }

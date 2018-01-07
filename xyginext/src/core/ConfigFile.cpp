@@ -123,7 +123,7 @@ bool ConfigObject::loadFromFile(const std::string& path)
     m_properties.clear();
     m_objects.clear();
 
-    std::fstream file(path);
+    std::fstream file(xy::FileSystem::getResourcePath() + path);
     if (file.fail())
     {
         Logger::log(path + " file invalid or not found.", Logger::Type::Error);

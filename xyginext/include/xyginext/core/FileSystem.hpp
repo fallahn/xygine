@@ -121,6 +121,14 @@ namespace xy
         \returns path the path selected by the user
         */
         static std::string openFolderDialogue();
+        
+        /*!
+         \brief Currently only relevent on macOS when creating an app bundle.
+         Basically a wrapper around the SFML resourcePath() function.
+         Might potentially provide some portable way of bundling resources nicely in the future.
+         \returns path to the resource directory
+         */
+        static std::string getResourcePath();
 
     private:
 

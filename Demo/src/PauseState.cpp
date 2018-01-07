@@ -54,8 +54,8 @@ PauseState::PauseState(xy::StateStack& stack, xy::State::Context ctx)
     : xy::State(stack, ctx),
     m_scene(ctx.appInstance.getMessageBus())
 {
-    m_buttonTexture.loadFromFile("assets/images/button.png");
-    m_font.loadFromFile("assets/fonts/Cave-Story.ttf");
+    m_buttonTexture.loadFromFile(xy::FileSystem::getResourcePath() + "assets/images/button.png");
+    m_font.loadFromFile(xy::FileSystem::getResourcePath() + "assets/fonts/Cave-Story.ttf");
 
     sf::Image img;
     img.create(1, 1, sf::Color(0, 0, 0, 180));

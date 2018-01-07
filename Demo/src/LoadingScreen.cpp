@@ -29,6 +29,7 @@ source distribution.
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
+#include <xyginext/core/FileSystem.hpp>
 
 #include <array>
 
@@ -50,7 +51,7 @@ namespace
 LoadingScreen::LoadingScreen()
     : m_frame(0)
 {
-    m_texture.loadFromFile("assets/images/menu_sprites.png");
+    m_texture.loadFromFile(xy::FileSystem::getResourcePath() + "assets/images/menu_sprites.png");
     m_sprite.setTexture(m_texture);
     m_sprite.setTextureRect(frames[0]);
     m_sprite.setScale(-1.f, 1.f);

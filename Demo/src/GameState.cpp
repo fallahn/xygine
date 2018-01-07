@@ -308,12 +308,7 @@ void GameState::handleMessage(const xy::Message& msg)
 }
 
 bool GameState::update(float dt)
-{   
-    DPRINT("map", m_mapData.mapName);
-    DPRINT("Actor count", std::to_string(debugActorCount));
-    //DPRINT("Actor Update Count", std::to_string(debugActorUpdate));
-    //DPRINT("Player Server State", std::to_string(debugPlayerState));
-    //DPRINT("Crown Vel", std::to_string(debugCrownVel.x) + ", " + std::to_string(debugCrownVel.y));
+{
 
 #ifdef XY_DEBUG
     debugActorUpdate = 0;
@@ -363,6 +358,13 @@ void GameState::draw()
     rw.draw(m_scene);
 #ifdef XY_DEBUG
     rw.draw(debugShape);
+    
+    DPRINT("map", m_mapData.mapName);
+    DPRINT("Actor count", std::to_string(debugActorCount));
+    //DPRINT("Actor Update Count", std::to_string(debugActorUpdate));
+    //DPRINT("Player Server State", std::to_string(debugPlayerState));
+    //DPRINT("Crown Vel", std::to_string(debugCrownVel.x) + ", " + std::to_string(debugCrownVel.y));
+    
 #endif
 }
 
@@ -579,7 +581,7 @@ bool GameState::loadScene(const MapData& data, sf::Vector2f position)
     std::string remoteSha(data.mapSha);
     
     //check the local sha1 to make sure we have the same file version
-    std::string mapSha = getSha("assets/maps/" + mapName);
+    std::string mapSha = getSha(xy::FileSystem::getResourcePath() + "assets/maps/" + mapName);
     if (mapSha != remoteSha)
     {
         m_sharedData.error = "Local copy of " + mapName + " is different version to server's";
@@ -588,7 +590,7 @@ bool GameState::loadScene(const MapData& data, sf::Vector2f position)
     }
 
     tmx::Map map;
-    if (!map.load("assets/maps/" + mapName))
+    if (!map.load(xy::FileSystem::getResourcePath() + "assets/maps/" + mapName))
     {
         //disconnect from server and push disconnected state
         m_sharedData.error = "Could not find map " + mapName;

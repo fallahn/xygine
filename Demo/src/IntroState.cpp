@@ -100,7 +100,7 @@ IntroState::IntroState(xy::StateStack& stack, Context context)
     m_fadeTime(0.f),
     m_fade(Fade::In)
 {
-    m_texture.loadFromFile("assets/images/startup.png");
+    m_texture.loadFromFile(xy::FileSystem::getResourcePath() + "assets/images/startup.png");
     m_sprite.setTexture(m_texture);
     m_rectangleShape.setSize(xy::DefaultSceneSize);
 
@@ -111,7 +111,7 @@ IntroState::IntroState(xy::StateStack& stack, Context context)
     m_lineShader.loadFromMemory(scanLineFragment, sf::Shader::Fragment);
     m_lineShader.setUniform("u_sourceTexture", m_texture);
 
-    m_soundBuffer.loadFromFile("assets/sound/startup.wav");
+    m_soundBuffer.loadFromFile(xy::FileSystem::getResourcePath() + "assets/sound/startup.wav");
     m_sound.setBuffer(m_soundBuffer);
     m_sound.play();
 

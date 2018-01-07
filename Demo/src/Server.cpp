@@ -689,13 +689,14 @@ void GameServer::checkMapStatus(float dt)
 
 void GameServer::initMaplist()
 {
-    auto mapFiles = xy::FileSystem::listFiles("assets/maps");
+    auto rp = xy::FileSystem::getResourcePath();
+    auto mapFiles = xy::FileSystem::listFiles(rp + "assets/maps");
 
     //if no map cycle list create it
-    if (!xy::FileSystem::fileExists("assets/maps/mapcycle.txt"))
+    if (!xy::FileSystem::fileExists(rp + "assets/maps/mapcycle.txt"))
     {
         //TODO should really be using user data directory
-        std::ofstream file("assets/maps/mapcycle.txt");
+        std::ofstream file(rp + "assets/maps/mapcycle.txt");
         if (file.good())
         {
             for (const auto& map : mapFiles)
@@ -707,7 +708,7 @@ void GameServer::initMaplist()
     }
 
     static const std::size_t maxMaps = 255;
-    std::ifstream file("assets/maps/mapcycle.txt");
+    std::ifstream file(rp + "assets/maps/mapcycle.txt");
     if (file.good())
     {
         std::string line;
@@ -759,9 +760,9 @@ void GameServer::loadMap()
     sf::Uint8 teleportCount = 0;
 
     tmx::Map map;
-    if (map.load("assets/maps/" + m_mapFiles[m_currentMap]))
+    if (map.load(xy::FileSystem::getResourcePath() + "assets/maps/" + m_mapFiles[m_currentMap]))
     {
-        auto sha1 = getSha("assets/maps/" + m_mapFiles[m_currentMap]);
+        auto sha1 = getSha(xy::FileSystem::getResourcePath() + "assets/maps/" + m_mapFiles[m_currentMap]);
 
         std::strcpy(m_mapData.mapName, m_mapFiles[m_currentMap].c_str());
         std::strcpy(m_mapData.mapSha, sha1.c_str());

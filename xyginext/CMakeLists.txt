@@ -69,6 +69,11 @@ elseif(WIN32)
     src/core/dialogues/nfd/nfd_win.cpp)
 endif()
 
+# Add the Resourcepath source
+if (APPLE)
+  set(PROJECT_SRC ${PROJECT_SRC} src/detail/ResourcePath.mm)
+endif()
+
 # If building static, define XY_STATIC 
 if (NOT BUILD_SHARED_LIBS)
   add_definitions(-DXY_STATIC)

@@ -55,8 +55,17 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
   add_definitions(-DXY_DEBUG)
 endif()
 
-# Create the actual executable (PROJECT_SRC variable is set inside previous steps)
-add_executable(${PROJECT_NAME} ${PROJECT_SRC})
+# If on apple, create a nice bundle
+If (APPLE)
+  set_source_files_properties( 
+    ${CMAKE_SOURCE_DIR}/assets PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+set_source_files_properties(
+    ${CMAKE_SOURCE_DIR}/macOS/icon.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
+  add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${PROJECT_SRC} ${CMAKE_SOURCE_DIR}/assets ${CMAKE_SOURCE_DIR}/macOS/icon.icns)
+  set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE icon.icns)
+else()
+  add_executable(${PROJECT_NAME} ${PROJECT_SRC})
+endif(APPLE)
 
 # Linker settings
 target_link_libraries(${PROJECT_NAME}
@@ -72,8 +81,22 @@ endif()
 
 # Install executable
 install(TARGETS ${PROJECT_NAME}
-  RUNTIME DESTINATION .)
+  RUNTIME DESTINATION .
+  BUNDLE DESTINATION .)
 
-# Install assets folder
-install(DIRECTORY assets
+# Install assets folder except on Apple, where it's included in the app bundle
+if (NOT APPLE)
+  install(DIRECTORY assets
   DESTINATION .)
+endif()
+
+#Platform specific packaging
+if(APPLE)
+	#set(CPACK_PACKAGE_FILE_NAME ${PROJECT_NAME})
+    install(CODE " include(BundleUtilities)
+		 fixup_bundle(${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME}.app \"\" \"\")
+		 verify_app(${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME}.app)")
+    SET(CPACK_GENERATOR "DragNDrop")
+endif()
+
+include(CPack)
