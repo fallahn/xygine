@@ -182,6 +182,7 @@
     <ClCompile Include="src\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\imgui\imgui_draw.cpp" />
     <ClCompile Include="src\imgui\imgui_tabs.cpp" />
+    <ClCompile Include="src\network\EnetClientImpl.cpp" />
     <ClCompile Include="src\network\NetClient.cpp" />
     <ClCompile Include="src\network\NetConf.cpp" />
     <ClCompile Include="src\network\NetEvent.cpp" />
@@ -253,6 +254,7 @@
     <ClInclude Include="include\xyginext\network\NetClient.hpp" />
     <ClInclude Include="include\xyginext\network\NetData.hpp" />
     <ClInclude Include="include\xyginext\network\NetHost.hpp" />
+    <ClInclude Include="include\xyginext\network\NetImpl.hpp" />
     <ClInclude Include="include\xyginext\resources\Resource.hpp" />
     <ClInclude Include="include\xyginext\resources\ShaderResource.hpp" />
     <ClInclude Include="include\xyginext\util\Const.hpp" />
@@ -264,6 +266,7 @@
     <ClInclude Include="include\xyginext\util\Vector.hpp" />
     <ClInclude Include="include\xyginext\util\Wavetable.hpp" />
     <ClInclude Include="src\detail\GLCheck.hpp" />
+    <ClInclude Include="src\network\EnetClientImpl.hpp" />
     <ClInclude Include="src\network\NetConf.hpp" />
   </ItemGroup>
   <ItemGroup>

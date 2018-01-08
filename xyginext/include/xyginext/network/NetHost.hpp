@@ -31,6 +31,7 @@ source distribution.
 #include <xyginext/Config.hpp>
 #include <SFML/Config.hpp>
 #include <xyginext/network/NetData.hpp>
+#include <xyginext/network/NetImpl.hpp>
 
 #include <string>
 

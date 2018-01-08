@@ -77,6 +77,7 @@ namespace xy
 
         friend class NetClient;
         friend class NetHost;
+        friend class EnetClientImpl; //TODO fix this one
     };
 
     /*!
@@ -139,6 +140,7 @@ namespace xy
 
             friend class NetClient;
             friend class NetHost;
+            friend class EnetClientImpl; //TODO fix this
         }packet;
 
         /*!
@@ -149,16 +151,6 @@ namespace xy
 
 #include "NetData.inl"
 
-    /*!
-    \brief Reliability enum.
-    These are used to flag sent packets with a requested reliability.
-    */
-    enum class NetFlag
-    {
-        Reliable = 0x1, //! <packet must be received by the remote connection, and resend attemps are made until delivered
-        Unsequenced = 0x2, //! <packet will not be sequenced with other packets. Not supported on reliable packets
-        Unreliable = 0x4 //! <packet will be fragments and sent unreliably if it exceeds MTU
-    };
 }
 
 #endif //XY_NET_DATA_HPP_

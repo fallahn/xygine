@@ -25,205 +25,61 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <enet/enet.h>
 
 #include "NetConf.hpp"
+#include "EnetClientImpl.hpp"
 
 #include <xyginext/network/NetClient.hpp>
-#include <xyginext/core/Log.hpp>
-#include <xyginext/core/Assert.hpp>
-
-#include <cstring>
 
 using namespace xy;
 
 NetClient::NetClient()
-    : m_client  (nullptr)
 {
     if (!NetConf::instance)
     {
         NetConf::instance = std::make_unique<NetConf>();
     }
+    m_impl = std::make_unique<EnetClientImpl>();
 }
 
 NetClient::~NetClient()
 {
-    if (m_peer.m_peer)
-    {
-        disconnect();
-    }
-    
-    if (m_client)
-    {
-        enet_host_destroy(m_client);
-    }
+
 }
 
 
 //public
 bool NetClient::create(std::size_t maxChannels, std::size_t maxClients, sf::Uint32 incoming, sf::Uint32 outgoing)
 {
-    if (m_client)
-    {
-        disconnect();
-        enet_host_destroy(m_client);
-    }
-
-    if (!NetConf::instance->m_initOK)
-    {
-        Logger::log("Failed creating client host, Network not initialised", Logger::Type::Error);
-        return false;
-    }
-
-    XY_ASSERT(maxChannels > 0, "Invalid channel count");
-    XY_ASSERT(maxClients > 0, "Invalid client count");
-
-    m_client = enet_host_create(nullptr, maxClients, maxChannels, incoming, outgoing);
-    if (!m_client)
-    {
-        Logger::log("Creating net client failed.", Logger::Type::Error);
-        return false;
-    }
-    LOG("Created client host", Logger::Type::Info);
-    return true;
+    return m_impl->create(maxChannels, maxClients, incoming, outgoing);
 }
 
 bool NetClient::connect(const std::string& address, sf::Uint16 port, sf::Uint32 timeout)
 {
-    XY_ASSERT(timeout > 0, "Timeout should probably be at least 1000ms");
-    XY_ASSERT(port > 0, "Invalid port number");
-    XY_ASSERT(!address.empty(), "Invalid address string");
-
-    if (m_peer.m_peer)
-    {
-        disconnect();
-    }
-
-    if (!m_client)
-    {
-        //must call create() successfully first!
-        Logger::log("Unable to connect, client has not yet been created.", Logger::Type::Error);
-        return false;
-    }
-
-    ENetAddress add;
-    if (enet_address_set_host(&add, address.c_str()) != 0)
-    {
-        Logger::log("Failed to parse address from " + address + ", client failed to connect", Logger::Type::Error);
-        return false;
-    }
-    add.port = port;
-
-    m_peer.m_peer = enet_host_connect(m_client, &add, m_client->channelLimit, 0);
-    if (!m_peer.m_peer)
-    {
-        Logger::log("Failed assigning peer connection to host", Logger::Type::Error);
-        return false;
-    }
-
-    //wait for a success event from server - this part is blocking
-    ENetEvent evt;
-    if (enet_host_service(m_client, &evt, timeout) > 0 && evt.type == ENET_EVENT_TYPE_CONNECT)
-    {
-        LOG("Connected to " + address, Logger::Type::Info);
-        return true;
-    }
-
-    enet_peer_reset(m_peer.m_peer);
-    m_peer.m_peer = nullptr;
-    Logger::log("Connection attempt timed out after " + std::to_string(timeout) + " milliseconds.", Logger::Type::Error);
-    return false;
+    return m_impl->connect(address, port, timeout);
 }
 
 bool NetClient::connected() const
 {
-    return m_peer.m_peer != nullptr;
+    return m_impl->connected();
 }
 
 void NetClient::disconnect()
 {
-    if (m_peer.m_peer)
-    {
-        ENetEvent evt;
-        enet_peer_disconnect(m_peer.m_peer, 0);
-
-        //wait 3 seconds for a response
-        while (enet_host_service(m_client, &evt, 3000) > 0)
-        {
-            switch (evt.type)
-            {
-            default:break;
-            case ENET_EVENT_TYPE_RECEIVE:
-                //clear rx'd packets from buffer by destroying them
-                enet_packet_destroy(evt.packet);
-                break;
-            case ENET_EVENT_TYPE_DISCONNECT: //um what if this is another peer disconnecting at the same time?
-                m_peer.m_peer = nullptr;
-                LOG("Disconnected from server", Logger::Type::Info);
-                return;
-            }
-        }
-
-        //timed out so force disconnect
-        LOG("Disconnect timed out", Logger::Type::Info);
-        enet_peer_reset(m_peer.m_peer);
-        m_peer.m_peer = nullptr;
-    }
+    m_impl->disconnect();
 }
 
 bool NetClient::pollEvent(NetEvent& evt)
 {
-    if (!m_client) return false;
-
-    ENetEvent hostEvt;
-    if (enet_host_service(m_client, &hostEvt, 0) > 0)
-    {
-        switch (hostEvt.type)
-        {
-        default:
-            evt.type = NetEvent::None;
-            break;
-        case ENET_EVENT_TYPE_CONNECT:
-            evt.type = NetEvent::ClientConnect;
-            break;
-        case ENET_EVENT_TYPE_DISCONNECT:
-            evt.type = NetEvent::ClientDisconnect;            
-            break;
-        case ENET_EVENT_TYPE_RECEIVE:
-            evt.type = NetEvent::PacketReceived;
-            evt.packet.setPacketData(hostEvt.packet);
-            //our event takes ownership
-            //enet_packet_destroy(hostEvt.packet);
-            break;
-        }
-        evt.peer.m_peer = hostEvt.peer;
-        return true;
-    }
-    return false;
+    return m_impl->pollEvent(evt);
 }
 
 void NetClient::sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
-    if (m_peer.m_peer)
-    {
-        sf::Int32 packetFlags = 0;
-        if (flags == NetFlag::Reliable)
-        {
-            packetFlags |= ENET_PACKET_FLAG_RELIABLE;
-        }
-        else if (flags == NetFlag::Unreliable)
-        {
-            packetFlags |= ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT;
-        }
-        else if (flags == NetFlag::Unsequenced)
-        {
-            packetFlags |= ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT | ENET_PACKET_FLAG_UNSEQUENCED;
-        }
-        
-        ENetPacket* packet = enet_packet_create(&id, sizeof(sf::Uint32), packetFlags);
-        enet_packet_resize(packet, sizeof(sf::Uint32) + size);
-        std::memcpy(&packet->data[sizeof(sf::Uint32)], data, size);
+    m_impl->sendPacket(id, data, size, flags, channel);
+}
 
-        enet_peer_send(m_peer.m_peer, channel, packet);
-    }
+const NetPeer& NetClient::getPeer() const
+{
+    return m_impl->getPeer();
 }

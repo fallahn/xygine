@@ -41,6 +41,7 @@ namespace xy
     private:
         friend class NetHost;
         friend class NetClient;
+        friend class EnetClientImpl;
 
         static std::unique_ptr<NetConf> instance;
 

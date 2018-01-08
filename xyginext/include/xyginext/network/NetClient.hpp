@@ -32,10 +32,10 @@ source distribution.
 #include <SFML/Config.hpp>
 
 #include <xyginext/network/NetData.hpp>
+#include <xyginext/network/NetImpl.hpp>
 
 #include <string>
-
-struct _ENetHost;
+#include <memory>
 
 namespace xy
 {
@@ -145,12 +145,11 @@ namespace xy
         Peers are only valid when connected to a server.
         \see NetPeer
         */
-        const NetPeer& getPeer() const { return m_peer; }
+        const NetPeer& getPeer() const;
 
     private:
 
-        _ENetHost* m_client;
-        NetPeer m_peer;
+        std::unique_ptr<NetClientImpl> m_impl;
     };
 
 #include "NetClient.inl"

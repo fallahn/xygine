@@ -25,8 +25,38 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-template <typename T>
-void NetClient::sendPacket(sf::Uint32 id, const T& data, NetFlag flags, sf::Uint8 channel)
+#ifndef ENET_CLIENT_IMPL_HPP_
+#define ENET_CLIENT_IMPL_HPP_
+
+//implements the NetClient interface with enet
+#include <xyginext/network/NetImpl.hpp>
+#include <xyginext/network/NetData.hpp>
+
+struct _ENetHost;
+
+namespace xy
 {
-    m_impl->sendPacket(id, (void*)&data, sizeof(T), flags, channel);
+    class EnetClientImpl final : public NetClientImpl
+    {
+    public:
+        EnetClientImpl();
+        ~EnetClientImpl();
+
+        bool create(std::size_t maxChannels, std::size_t maxClients, sf::Uint32 incoming, sf::Uint32 outgoing) override;
+        bool connect(const std::string& address, sf::Uint16 port, sf::Uint32 timeout) override;
+        bool connected() const override;
+        void disconnect() override;
+
+        bool pollEvent(NetEvent&) override;
+        void sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
+
+        const NetPeer& getPeer() const override { return m_peer; }
+
+    private:
+
+        _ENetHost* m_client;
+        NetPeer m_peer;
+    };
 }
+
+#endif //ENET_CLIENT_IMPL_HPP_
