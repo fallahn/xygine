@@ -47,7 +47,7 @@ namespace xy
         void process(float) override;
 
     private:
-        void onEntityRemoved(xy::Entity);
+        void onEntityRemoved(xy::Entity) override;
     };
 }
 

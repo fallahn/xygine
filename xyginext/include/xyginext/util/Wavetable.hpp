@@ -63,7 +63,7 @@ namespace xy
                     wavetable.push_back(std::sin(step * i) * amplitude);
                 }
 
-                return std::move(wavetable);
+                return wavetable;
             }
         }
     }

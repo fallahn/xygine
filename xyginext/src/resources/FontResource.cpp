@@ -74,5 +74,5 @@ FontResource::FontResource()
 
 std::unique_ptr<sf::Font> FontResource::errorHandle()
 {
-	return std::move(std::make_unique<sf::Font>(m_font));
+	return std::make_unique<sf::Font>(m_font);
 }
