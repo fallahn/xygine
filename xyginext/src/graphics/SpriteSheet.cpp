@@ -40,7 +40,7 @@ SpriteSheet::SpriteSheet()
 bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& textures)
 {
     ConfigFile sheetFile;
-    if (!sheetFile.loadFromFile(path))
+    if (!sheetFile.loadFromFile(xy::FileSystem::getResourcePath() + path))
     {
         return false;
     }
