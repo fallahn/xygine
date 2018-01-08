@@ -55,7 +55,7 @@ namespace xy
     {
         Reliable = 0x1, //! <packet must be received by the remote connection, and resend attemps are made until delivered
         Unsequenced = 0x2, //! <packet will not be sequenced with other packets. Not supported on reliable packets
-        Unreliable = 0x4 //! <packet will be fragments and sent unreliably if it exceeds MTU
+        Unreliable = 0x4 //! <packet will be fragmented and sent unreliably if it exceeds MTU
     };
 
     class XY_EXPORT_API NetClientImpl
@@ -78,6 +78,26 @@ namespace xy
         virtual void sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
 
         virtual const NetPeer& getPeer() const = 0;
+    };
+
+    class XY_EXPORT_API NetHostImpl
+    {
+    public:
+        NetHostImpl() = default;
+        virtual ~NetHostImpl() = default;
+
+        NetHostImpl(const NetHostImpl&) = delete;
+        NetHostImpl(NetHostImpl&&) = delete;
+        NetHostImpl& operator = (const NetHostImpl&) = delete;
+        NetHostImpl& operator = (NetHostImpl&&) = delete;
+
+        virtual bool start(const std::string& address, sf::Uint16 port, std::size_t maxClient, std::size_t maxChannels, sf::Uint32 incoming, sf::Uint32 outgoing) = 0;
+        virtual void stop() = 0;
+        virtual bool pollEvent(NetEvent&) = 0;
+        virtual void broadcastPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
+        virtual void sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
+
+        virtual std::size_t getConnectedPeerCount() const = 0;
     };
 }
 #endif //XY_NET_IMPL_HPP_

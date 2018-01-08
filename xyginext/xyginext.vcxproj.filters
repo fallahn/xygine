@@ -294,6 +294,9 @@
     <ClCompile Include="src\network\EnetClientImpl.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
+    <ClCompile Include="src\network\EnetHostImpl.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -519,6 +522,9 @@
       <Filter>Header Files\network</Filter>
     </ClInclude>
     <ClInclude Include="src\network\EnetClientImpl.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="src\network\EnetHostImpl.hpp">
       <Filter>Header Files\network</Filter>
     </ClInclude>
   </ItemGroup>

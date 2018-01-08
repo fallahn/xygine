@@ -39,10 +39,13 @@ source distribution.
 
 namespace xy
 {
+    class EnetClientImpl;
+
     /*!
     \brief Creates a clientside host which can be used to create
     a peer connected to a NetHost server.
     */
+    //template <typename T = EnetClientImpl>
     class XY_EXPORT_API NetClient final
     {
     public:
@@ -146,6 +149,18 @@ namespace xy
         \see NetPeer
         */
         const NetPeer& getPeer() const;
+
+        /*!
+        \brief Sets the network library implmentation used by this instance.
+        Normally this would not be used, and is for specialised cases where
+        the NetClientImpl interface has been implemented;
+        */
+        template <typename T>
+        void setImplementation()
+        {
+            static_assert(std::is_base_of<NetClientImpl, T>(), "");
+            m_impl = std::make_unique<T>();
+        }
 
     private:
 

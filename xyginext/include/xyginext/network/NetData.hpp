@@ -78,6 +78,7 @@ namespace xy
         friend class NetClient;
         friend class NetHost;
         friend class EnetClientImpl; //TODO fix this one
+        friend class EnetHostImpl; //and this one
     };
 
     /*!
@@ -141,6 +142,7 @@ namespace xy
             friend class NetClient;
             friend class NetHost;
             friend class EnetClientImpl; //TODO fix this
+            friend class EnetHostImpl; //and this
         }packet;
 
         /*!

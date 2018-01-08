@@ -65,13 +65,13 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui-SFML.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_tabs.cpp
 
-
+  ${CMAKE_CURRENT_SOURCE_DIR}/network/EnetClientImpl.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/network/EnetHostImpl.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/network/NetClient.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/network/NetConf.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/network/NetEvent.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/network/NetHost.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/network/NetPeer.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/network/EnetClientImpl.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/resources/FontResource.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/resources/ShaderResource.cpp

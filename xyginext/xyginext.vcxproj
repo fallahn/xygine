@@ -183,6 +183,7 @@
     <ClCompile Include="src\imgui\imgui_draw.cpp" />
     <ClCompile Include="src\imgui\imgui_tabs.cpp" />
     <ClCompile Include="src\network\EnetClientImpl.cpp" />
+    <ClCompile Include="src\network\EnetHostImpl.cpp" />
     <ClCompile Include="src\network\NetClient.cpp" />
     <ClCompile Include="src\network\NetConf.cpp" />
     <ClCompile Include="src\network\NetEvent.cpp" />
@@ -267,6 +268,7 @@
     <ClInclude Include="include\xyginext\util\Wavetable.hpp" />
     <ClInclude Include="src\detail\GLCheck.hpp" />
     <ClInclude Include="src\network\EnetClientImpl.hpp" />
+    <ClInclude Include="src\network\EnetHostImpl.hpp" />
     <ClInclude Include="src\network\NetConf.hpp" />
   </ItemGroup>
   <ItemGroup>

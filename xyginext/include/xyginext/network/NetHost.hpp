@@ -34,8 +34,7 @@ source distribution.
 #include <xyginext/network/NetImpl.hpp>
 
 #include <string>
-
-struct _ENetHost;
+#include <memory>
 
 namespace xy
 {
@@ -158,9 +157,20 @@ namespace xy
         */
         std::size_t getConnectedPeerCount() const;
 
-    private:
+        /*!
+        \brief Sets the network implementation.
+        This is generally not used, except in special cases where
+        network libraries other than enet are required.
+        */
+        template <typename T>
+        void setImplementation()
+        {
+            static_assert(std::is_base_of<NetHostImpl, T>(), "");
+            m_impl = std::make_unique<T>();
+        }
 
-        _ENetHost* m_host;
+    private:
+        std::unique_ptr<NetHostImpl> m_impl;
     };
 
 #include "NetHost.inl"

@@ -25,29 +25,32 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_NETCONF_HPP_
-#define XY_NETCONF_HPP_
+#ifndef XY_ENET_HOST_IMPL_HPP_
+#define XY_ENET_HOST_IMPL_HPP_
 
-#include <memory>
+#include <xyginext/network/NetImpl.hpp>
+
+struct _ENetHost;
 
 namespace xy
 {
-    class NetConf final
+    class EnetHostImpl final : public NetHostImpl
     {
     public:
-        NetConf();
-        ~NetConf();
+        EnetHostImpl();
+        ~EnetHostImpl();
+
+        bool start(const std::string& address, sf::Uint16 port, std::size_t maxClient, std::size_t maxChannels, sf::Uint32 incoming, sf::Uint32 outgoing) override;
+        void stop() override;
+        bool pollEvent(NetEvent&) override;
+        void broadcastPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
+        void sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
+
+        std::size_t getConnectedPeerCount() const override;
 
     private:
-        friend class EnetClientImpl;
-        friend class EnetHostImpl;
-        friend class NetClient;
-        friend class NetHost;
-
-        static std::unique_ptr<NetConf> instance;
-
-        bool m_initOK;
+        _ENetHost* m_host;
     };
 }
 
-#endif //XY_NETCONF_HPP_
+#endif //XY_ENET_HOST_IMPL_HPP_
