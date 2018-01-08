@@ -205,7 +205,7 @@ void EnetHostImpl::sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, st
 {
     if (peer.m_peer)
     {
-        enet_peer_send(peer.m_peer, channel, createPacket(id, data, size, flags));
+        enet_peer_send(static_cast<_ENetPeer*>(peer.m_peer), channel, createPacket(id, data, size, flags));
     }
 }
 

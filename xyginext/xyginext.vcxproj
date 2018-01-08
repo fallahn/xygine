@@ -283,6 +283,7 @@
     <None Include="include\xyginext\network\NetClient.inl" />
     <None Include="include\xyginext\network\NetData.inl" />
     <None Include="include\xyginext\network\NetHost.inl" />
+    <None Include="include\xyginext\network\NetPeer.inl" />
     <None Include="src\graphics\postprocess\DefaultVertex.inl" />
     <None Include="src\graphics\postprocess\PostAdditiveBlend.inl" />
     <None Include="src\graphics\postprocess\PostBrightness.inl" />

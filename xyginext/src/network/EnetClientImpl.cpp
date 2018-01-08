@@ -125,7 +125,7 @@ bool EnetClientImpl::connect(const std::string& address, sf::Uint16 port, sf::Ui
         return true;
     }
 
-    enet_peer_reset(m_peer.m_peer);
+    enet_peer_reset(static_cast<_ENetPeer*>(m_peer.m_peer));
     m_peer.m_peer = nullptr;
     Logger::log("Connection attempt timed out after " + std::to_string(timeout) + " milliseconds.", Logger::Type::Error);
     return false;
@@ -141,7 +141,7 @@ void EnetClientImpl::disconnect()
     if (m_peer)
     {
         ENetEvent evt;
-        enet_peer_disconnect(m_peer.m_peer, 0);
+        enet_peer_disconnect(static_cast<_ENetPeer*>(m_peer.m_peer), 0);
 
         //wait 3 seconds for a response
         while (enet_host_service(m_client, &evt, 3000) > 0)
@@ -162,7 +162,7 @@ void EnetClientImpl::disconnect()
 
         //timed out so force disconnect
         LOG("Disconnect timed out", Logger::Type::Info);
-        enet_peer_reset(m_peer.m_peer);
+        enet_peer_reset(static_cast<_ENetPeer*>(m_peer.m_peer));
         m_peer.m_peer = nullptr;
     }
 }
@@ -220,6 +220,6 @@ void EnetClientImpl::sendPacket(sf::Uint32 id, void* data, std::size_t size, Net
         enet_packet_resize(packet, sizeof(sf::Uint32) + size);
         std::memcpy(&packet->data[sizeof(sf::Uint32)], data, size);
 
-        enet_peer_send(m_peer.m_peer, channel, packet);
+        enet_peer_send(static_cast<_ENetPeer*>(m_peer.m_peer), channel, packet);
     }
 }

@@ -31,11 +31,12 @@ source distribution.
 
 using namespace xy;
 
-std::string NetPeer::getAddress() const
+template <>
+std::string NetPeer::getAddress<_ENetPeer>() const
 {
     XY_ASSERT(m_peer, "Not a valid peer");
 
-    auto bytes = m_peer->address.host;
+    auto bytes = static_cast<_ENetPeer*>(m_peer)->address.host;
 
     std::string ret = std::to_string(bytes & 0x000000FF);
     ret += "." + std::to_string((bytes & 0x0000FF00) >> 8);
@@ -44,35 +45,39 @@ std::string NetPeer::getAddress() const
     return ret;
 }
 
-sf::Uint16 NetPeer::getPort() const
+template <>
+sf::Uint16 NetPeer::getPort<_ENetPeer>() const
 {
     XY_ASSERT(m_peer, "Not a valid peer");
 
-    return m_peer->address.port;
+    return static_cast<_ENetPeer*>(m_peer)->address.port;
 }
 
-sf::Uint32 NetPeer::getID() const
+template <>
+sf::Uint32 NetPeer::getID<_ENetPeer>() const
 {
     XY_ASSERT(m_peer, "Not a valid peer");
 
-    return m_peer->connectID;
+    return static_cast<_ENetPeer*>(m_peer)->connectID;
 }
 
-sf::Uint32 NetPeer::getRoundTripTime()const
+template <>
+sf::Uint32 NetPeer::getRoundTripTime<_ENetPeer>()const
 {
     XY_ASSERT(m_peer, "Not a valid peer");
 
-    return m_peer->roundTripTime;
+    return static_cast<_ENetPeer*>(m_peer)->roundTripTime;
 }
 
-NetPeer::State NetPeer::getState() const
+template <>
+NetPeer::State NetPeer::getState<_ENetPeer>() const
 {
     if (!m_peer)
     {
         return State::Disconnected;
     }
 
-    switch (m_peer->state)
+    switch (static_cast<_ENetPeer*>(m_peer)->state)
     {
     case ENET_PEER_STATE_ACKNOWLEDGING_CONNECT:
         return State::AcknowledingConnect;

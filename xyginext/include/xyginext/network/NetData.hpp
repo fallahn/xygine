@@ -45,9 +45,13 @@ namespace xy
     */
     struct XY_EXPORT_API NetPeer final
     {
+        template<typename T = _ENetPeer>
         std::string getAddress() const; //! <String containing the IPv4 address
+        template<typename T = _ENetPeer>
         sf::Uint16 getPort() const; //! <Port number
+        template<typename T = _ENetPeer>
         sf::Uint32 getID() const; //! <Unique ID
+        template<typename T = _ENetPeer>
         sf::Uint32 getRoundTripTime() const; //! <Mean round trip time in milliseconds of a reliable packet
 
         enum class State
@@ -63,6 +67,7 @@ namespace xy
             AcknowledingDisconnect,
             Zombie
         };
+        template<typename T = _ENetPeer>
         State getState() const; //! <Current state of the peer
 
         bool operator == (const NetPeer& other) const
@@ -73,7 +78,7 @@ namespace xy
         operator bool() const { return m_peer != nullptr; }
 
     private:
-        _ENetPeer* m_peer = nullptr;
+        void* m_peer = nullptr;
 
         friend class NetClient;
         friend class NetHost;
@@ -152,7 +157,6 @@ namespace xy
     };
 
 #include "NetData.inl"
-
 }
 
 #endif //XY_NET_DATA_HPP_

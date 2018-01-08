@@ -583,5 +583,8 @@
     <None Include="include\xyginext\core\Vector4.inl">
       <Filter>Header Files\core</Filter>
     </None>
+    <None Include="include\xyginext\network\NetPeer.inl">
+      <Filter>Header Files\network</Filter>
+    </None>
   </ItemGroup>
 </Project>
