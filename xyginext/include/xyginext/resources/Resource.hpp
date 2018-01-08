@@ -125,7 +125,7 @@ namespace xy
             sf::Image i;
             i.create(20u, 20u, m_fallbackColour);
             t->loadFromImage(i);
-            return std::move(t);
+            return t;
         }
 
         sf::Color m_fallbackColour;
@@ -142,7 +142,7 @@ namespace xy
         {
             std::unique_ptr<sf::Image> i = std::make_unique<sf::Image>();
             i->create(20u, 20u, sf::Color::Green);
-            return std::move(i);
+            return i;
         }
     };
 
@@ -168,7 +168,7 @@ namespace xy
             std::memset(buffer.data(), 0, buffer.size());
             auto sb = std::make_unique<sf::SoundBuffer>();
             sb->loadFromSamples(buffer.data(), buffer.size(), 1, 48000);
-            return std::move(sb);
+            return sb;
         }
     };
 }
