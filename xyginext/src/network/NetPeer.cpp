@@ -31,12 +31,11 @@ source distribution.
 
 using namespace xy;
 
-template <>
-std::string NetPeer::getAddress<_ENetPeer>() const
+std::string Detail::getEnetPeerAddress(void* peer)
 {
-    XY_ASSERT(m_peer, "Not a valid peer");
+    XY_ASSERT(peer, "Not a valid peer");
 
-    auto bytes = static_cast<_ENetPeer*>(m_peer)->address.host;
+    auto bytes = static_cast<_ENetPeer*>(peer)->address.host;
 
     std::string ret = std::to_string(bytes & 0x000000FF);
     ret += "." + std::to_string((bytes & 0x0000FF00) >> 8);
@@ -45,60 +44,56 @@ std::string NetPeer::getAddress<_ENetPeer>() const
     return ret;
 }
 
-template <>
-sf::Uint16 NetPeer::getPort<_ENetPeer>() const
+sf::Uint16 Detail::getEnetPeerPort(void* peer)
 {
-    XY_ASSERT(m_peer, "Not a valid peer");
+    XY_ASSERT(peer, "Not a valid peer");
 
-    return static_cast<_ENetPeer*>(m_peer)->address.port;
+    return static_cast<_ENetPeer*>(peer)->address.port;
 }
 
-template <>
-sf::Uint32 NetPeer::getID<_ENetPeer>() const
+sf::Uint32 Detail::getEnetPeerID(void* peer)
 {
-    XY_ASSERT(m_peer, "Not a valid peer");
+    XY_ASSERT(peer, "Not a valid peer");
 
-    return static_cast<_ENetPeer*>(m_peer)->connectID;
+    return static_cast<_ENetPeer*>(peer)->connectID;
 }
 
-template <>
-sf::Uint32 NetPeer::getRoundTripTime<_ENetPeer>()const
+sf::Uint32 Detail::getEnetRoundTrip(void* peer)
 {
-    XY_ASSERT(m_peer, "Not a valid peer");
+    XY_ASSERT(peer, "Not a valid peer");
 
-    return static_cast<_ENetPeer*>(m_peer)->roundTripTime;
+    return static_cast<_ENetPeer*>(peer)->roundTripTime;
 }
 
-template <>
-NetPeer::State NetPeer::getState<_ENetPeer>() const
+NetPeer::State Detail::getEnetPeerState(void* peer)
 {
-    if (!m_peer)
+    if (!peer)
     {
-        return State::Disconnected;
+        return NetPeer::State::Disconnected;
     }
 
-    switch (static_cast<_ENetPeer*>(m_peer)->state)
+    switch (static_cast<_ENetPeer*>(peer)->state)
     {
     case ENET_PEER_STATE_ACKNOWLEDGING_CONNECT:
-        return State::AcknowledingConnect;
+        return NetPeer::State::AcknowledingConnect;
     case ENET_PEER_STATE_ACKNOWLEDGING_DISCONNECT:
-        return State::AcknowledingDisconnect;
+        return NetPeer::State::AcknowledingDisconnect;
     case ENET_PEER_STATE_CONNECTED:
-        return State::Connected;
+        return NetPeer::State::Connected;
     case ENET_PEER_STATE_CONNECTING:
-        return State::Connecting;
+        return NetPeer::State::Connecting;
     case ENET_PEER_STATE_CONNECTION_PENDING:
-        return State::PendingConnect;
+        return NetPeer::State::PendingConnect;
     case ENET_PEER_STATE_CONNECTION_SUCCEEDED:
-        return State::Succeeded;
+        return NetPeer::State::Succeeded;
     case ENET_PEER_STATE_DISCONNECTED:
-        return State::Disconnected;
+        return NetPeer::State::Disconnected;
     case ENET_PEER_STATE_DISCONNECTING:
-        return State::Disconnecting;
+        return NetPeer::State::Disconnecting;
     case ENET_PEER_STATE_DISCONNECT_LATER:
-        return State::DisconnectLater;
+        return NetPeer::State::DisconnectLater;
     case ENET_PEER_STATE_ZOMBIE:
-        return State::Zombie;
+        return NetPeer::State::Zombie;
     }
-    return State::Zombie;
+    return NetPeer::State::Zombie;
 }

@@ -86,6 +86,16 @@ namespace xy
         friend class EnetHostImpl; //and this one
     };
 
+    namespace Detail
+    {
+        //used for kludgery - don't call directly!
+        XY_EXPORT_API std::string getEnetPeerAddress(void*);
+        XY_EXPORT_API sf::Uint16 getEnetPeerPort(void*);
+        XY_EXPORT_API sf::Uint32 getEnetPeerID(void*);
+        XY_EXPORT_API sf::Uint32 getEnetRoundTrip(void*);
+        XY_EXPORT_API NetPeer::State getEnetPeerState(void*);
+    }
+
     /*!
     \brief Network event.
     These are used to poll NetHost and NetClient objects
@@ -157,6 +167,7 @@ namespace xy
     };
 
 #include "NetData.inl"
+#include "NetPeer.inl"
 }
 
 #endif //XY_NET_DATA_HPP_

@@ -2,33 +2,33 @@
 #define XY_NET_PEER_INL_
 
 template <>
-std::string NetPeer::getAddress<_ENetPeer>() const
+inline std::string NetPeer::getAddress<_ENetPeer>() const
 {
-
+    return Detail::getEnetPeerAddress(m_peer);
 }
 
 template <>
-sf::Uint16 NetPeer::getPort<_ENetPeer>() const
+inline sf::Uint16 NetPeer::getPort<_ENetPeer>() const
 {
-
+    return Detail::getEnetPeerPort(m_peer);
 }
 
 template <>
-sf::Uint32 NetPeer::getID<_ENetPeer>() const
+inline sf::Uint32 NetPeer::getID<_ENetPeer>() const
 {
-
+    return Detail::getEnetPeerID(m_peer);
 }
 
 template <>
-sf::Uint32 NetPeer::getRoundTripTime<_ENetPeer>()const
+inline sf::Uint32 NetPeer::getRoundTripTime<_ENetPeer>()const
 {
-
+    return Detail::getEnetRoundTrip(m_peer);
 }
 
 template <>
-NetPeer::State NetPeer::getState<_ENetPeer>() const
+inline NetPeer::State NetPeer::getState<_ENetPeer>() const
 {
-
+    return Detail::getEnetPeerState(m_peer);
 }
 
 #endif //XY_NET_PEER_INL_
