@@ -182,9 +182,9 @@ bool EnetHostImpl::pollEvent(NetEvent& evt)
             break;
         case ENET_EVENT_TYPE_RECEIVE:
             evt.type = NetEvent::PacketReceived;
-            evt.packet.setPacketData(hostEvt.packet);
-            //our event takes ownership and promises to clean up the packet
-            //enet_packet_destroy(hostEvt.packet);
+            evt.packet.setPacketData(hostEvt.packet->data, hostEvt.packet->dataLength);
+            
+            enet_packet_destroy(hostEvt.packet);
             break;
         }
         evt.peer.m_peer = hostEvt.peer;

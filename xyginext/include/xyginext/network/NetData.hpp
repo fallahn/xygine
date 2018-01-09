@@ -33,6 +33,7 @@ source distribution.
 #include <SFML/Config.hpp>
 
 #include <cstring>
+#include <array>
 
 struct _ENetPacket;
 struct _ENetPeer;
@@ -150,9 +151,11 @@ namespace xy
             std::size_t getSize() const;
 
         private:
-            _ENetPacket* m_packet;
+            
             sf::Uint32 m_id;
-            void setPacketData(_ENetPacket*);
+            std::array<std::uint8_t, 1024> m_data;
+            std::size_t m_size;
+            void setPacketData(const std::uint8_t*, std::size_t);
 
             friend class NetClient;
             friend class NetHost;
