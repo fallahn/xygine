@@ -40,7 +40,10 @@ using namespace xy;
 EnetClientImpl::EnetClientImpl()
     : m_client(nullptr)
 {
-
+    if (!NetConf::instance)
+    {
+        NetConf::instance = std::make_unique<NetConf>();
+    }
 }
 
 EnetClientImpl::~EnetClientImpl()

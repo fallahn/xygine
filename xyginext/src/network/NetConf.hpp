@@ -32,6 +32,10 @@ source distribution.
 
 namespace xy
 {
+    /*!
+    \brief Used to ensure proper startup and shutdown
+    of Enet networking libraries
+    */
     class NetConf final
     {
     public:
@@ -41,8 +45,6 @@ namespace xy
     private:
         friend class EnetClientImpl;
         friend class EnetHostImpl;
-        friend class NetClient;
-        friend class NetHost;
 
         static std::unique_ptr<NetConf> instance;
 

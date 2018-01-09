@@ -44,10 +44,7 @@ NetEvent::Packet::Packet()
 
 NetEvent::Packet::~Packet()
 {
-    /*if (m_packet)
-    {
-        enet_packet_destroy(m_packet);
-    }*/
+
 }
 
 //public
@@ -65,8 +62,6 @@ const void* NetEvent::Packet::getData() const
 
 std::size_t NetEvent::Packet::getSize() const
 {
-    //XY_ASSERT(m_packet, "Not a valid packet instance");
-    //return m_packet->dataLength - sizeof(sf::Uint32);
     return m_size;
 }
 

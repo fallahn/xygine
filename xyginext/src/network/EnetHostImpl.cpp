@@ -68,7 +68,10 @@ namespace
 EnetHostImpl::EnetHostImpl()
     :m_host(nullptr)
 {
-
+    if (!NetConf::instance)
+    {
+        NetConf::instance = std::make_unique<NetConf>();
+    }
 }
 
 EnetHostImpl::~EnetHostImpl()

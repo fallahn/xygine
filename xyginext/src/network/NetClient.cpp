@@ -26,7 +26,6 @@ source distribution.
 *********************************************************************/
 
 
-#include "NetConf.hpp"
 #include "EnetClientImpl.hpp"
 
 #include <xyginext/network/NetClient.hpp>
@@ -35,10 +34,6 @@ using namespace xy;
 
 NetClient::NetClient()
 {
-    if (!NetConf::instance)
-    {
-        NetConf::instance = std::make_unique<NetConf>();
-    }
     m_impl = std::make_unique<EnetClientImpl>();
 }
 

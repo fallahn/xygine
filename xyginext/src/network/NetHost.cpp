@@ -25,7 +25,6 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "NetConf.hpp"
 #include "EnetHostImpl.hpp"
 #include <xyginext/network/NetHost.hpp>
 
@@ -33,10 +32,6 @@ using namespace xy;
 
 NetHost::NetHost()
 {
-    if (!NetConf::instance)
-    {
-        NetConf::instance = std::make_unique<NetConf>();
-    }
     m_impl = std::make_unique<EnetHostImpl>();
 }
 

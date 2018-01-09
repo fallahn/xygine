@@ -45,7 +45,6 @@ namespace xy
     \brief Creates a clientside host which can be used to create
     a peer connected to a NetHost server.
     */
-    //template <typename T = EnetClientImpl>
     class XY_EXPORT_API NetClient final
     {
     public:
