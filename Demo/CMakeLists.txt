@@ -11,6 +11,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 # Some default variables which the user may change
 SET(CMAKE_BUILD_TYPE        Debug CACHE STRING  "Choose the type of build (Debug or Release)")
+SET(MACOS_BUNDLE            False CACHE BOOL    "True to generate a macOS bundle (experimental)")
 
 # We're using c++14
 set(CMAKE_CXX_STANDARD 14)
@@ -56,7 +57,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 # If on apple, create a nice bundle
-If (APPLE)
+If (APPLE AND MACOS_BUNDLE)
   set_source_files_properties( 
     ${CMAKE_SOURCE_DIR}/assets PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
 set_source_files_properties(
@@ -65,7 +66,7 @@ set_source_files_properties(
   set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE icon.icns)
 else()
   add_executable(${PROJECT_NAME} ${PROJECT_SRC})
-endif(APPLE)
+endif()
 
 # Linker settings
 target_link_libraries(${PROJECT_NAME}
@@ -85,13 +86,13 @@ install(TARGETS ${PROJECT_NAME}
   BUNDLE DESTINATION .)
 
 # Install assets folder except on Apple, where it's included in the app bundle
-if (NOT APPLE)
+if (NOT (APPLE AND MACOS_BUNDLE))
   install(DIRECTORY assets
   DESTINATION .)
 endif()
 
 #Platform specific packaging
-if(APPLE)
+if(APPLE AND MACOS_BUNDLE)
 	#set(CPACK_PACKAGE_FILE_NAME ${PROJECT_NAME})
     install(CODE " include(BundleUtilities)
 		 fixup_bundle(${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME}.app \"\" \"\")
