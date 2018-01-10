@@ -58,6 +58,26 @@ endif()
 
 # If on apple, create a nice bundle
 If (APPLE AND MACOS_BUNDLE)
+
+# use, i.e. don't skip the full RPATH for the build tree
+SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+
+# when building, don't use the install RPATH already
+# (but later on when installing)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+
+# add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+# the RPATH to be used when installing, but only if it's not a system directory
+LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+IF("${isSystemDir}" STREQUAL "-1")
+   SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+ENDIF("${isSystemDir}" STREQUAL "-1")
+
   set_source_files_properties( 
     ${CMAKE_SOURCE_DIR}/assets PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
 set_source_files_properties(
@@ -80,10 +100,10 @@ if(X11_FOUND)
     ${X11_LIBRARIES})
 endif()
 
-# Install executable
+# Install executable - don't install the bundle to usr/lib because this requires sudo
 install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION .
-  BUNDLE DESTINATION .)
+  BUNDLE DESTINATION ${CMAKE_SOURCE_DIR})
 
 # Install assets folder except on Apple, where it's included in the app bundle
 if (NOT (APPLE AND MACOS_BUNDLE))
@@ -93,10 +113,11 @@ endif()
 
 #Platform specific packaging
 if(APPLE AND MACOS_BUNDLE)
+
 	#set(CPACK_PACKAGE_FILE_NAME ${PROJECT_NAME})
     install(CODE " include(BundleUtilities)
-		 fixup_bundle(${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app \"\" \"\")
-		 verify_app(${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app)")
+		 fixup_bundle(${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.app \"\" \"\")
+		 verify_app(${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.app)")
     SET(CPACK_GENERATOR "DragNDrop")
 endif()
 

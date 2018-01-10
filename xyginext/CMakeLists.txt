@@ -104,14 +104,14 @@ endif()
 # The project specific includes (Useful if linking to this target from another cmake script)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Install the includes
+# Install
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/xyginext DESTINATION include)
 
-# And the rest
 install(TARGETS ${PROJECT_NAME} EXPORT xyginext-targets 
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin)
+#endif()
 
 # Configuration for packaging
 include(CPack)
