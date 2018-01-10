@@ -31,12 +31,18 @@ source distribution.
 //implements the NetClient interface with enet
 #include <xyginext/network/NetImpl.hpp>
 #include <xyginext/network/NetData.hpp>
+#include <xyginext/Config.hpp>
 
 struct _ENetHost;
 
 namespace xy
 {
-    class EnetClientImpl final : public NetClientImpl
+
+    /*!
+    \brief Default networking library implmentation.
+    This should never be used directly.
+    */
+    class XY_EXPORT_API EnetClientImpl final : public NetClientImpl
     {
     public:
         EnetClientImpl();
@@ -54,7 +60,7 @@ namespace xy
 
     private:
 
-        _ENetHost* m_client;
+        _ENetHost * m_client;
         NetPeer m_peer;
     };
 }

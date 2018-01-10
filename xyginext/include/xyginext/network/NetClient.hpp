@@ -32,7 +32,7 @@ source distribution.
 #include <SFML/Config.hpp>
 
 #include <xyginext/network/NetData.hpp>
-#include <xyginext/network/NetImpl.hpp>
+#include <xyginext/network/EnetClientImpl.hpp>
 
 #include <string>
 #include <memory>
@@ -48,8 +48,8 @@ namespace xy
     class XY_EXPORT_API NetClient final
     {
     public:
-        NetClient();
-        ~NetClient();
+        NetClient() = default;
+        ~NetClient() = default;
 
         NetClient(const NetClient&) = delete;
         NetClient(NetClient&&) = delete;
@@ -69,7 +69,11 @@ namespace xy
         A value of 0 sets throttling to automatic (default).
         \returns true if successful or false if something went wrong
         Calling this 2 or more times with different parameters will attempt to recreate the host.
+        NOTE: this is a templated function which defaults to the ENet library implementation.
+        Generally this type does not need to be specified, and is useful only when providing
+        a custom netowrking implmentation.
         */
+        template <typename T = EnetClientImpl>
         bool create(std::size_t maxChannels, std::size_t maxClients = 1, sf::Uint32 incoming = 0, sf::Uint32 outgoing = 0);
 
         /*!
@@ -148,18 +152,6 @@ namespace xy
         \see NetPeer
         */
         const NetPeer& getPeer() const;
-
-        /*!
-        \brief Sets the network library implmentation used by this instance.
-        Normally this would not be used, and is for specialised cases where
-        the NetClientImpl interface has been implemented;
-        */
-        template <typename T>
-        void setImplementation()
-        {
-            static_assert(std::is_base_of<NetClientImpl, T>(), "");
-            m_impl = std::make_unique<T>();
-        }
 
     private:
 

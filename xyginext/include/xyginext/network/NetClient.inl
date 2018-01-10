@@ -26,6 +26,14 @@ source distribution.
 *********************************************************************/
 
 template <typename T>
+inline bool NetClient::create(std::size_t maxChannels, std::size_t maxClients, sf::Uint32 incoming, sf::Uint32 outgoing)
+{
+    static_assert(std::is_base_of<NetClientImpl, T>(), "");
+    m_impl = std::make_unique<T>();
+    return m_impl->create(maxChannels, maxClients, incoming, outgoing);
+}
+
+template <typename T>
 void NetClient::sendPacket(sf::Uint32 id, const T& data, NetFlag flags, sf::Uint8 channel)
 {
     m_impl->sendPacket(id, (void*)&data, sizeof(T), flags, channel);

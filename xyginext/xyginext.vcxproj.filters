@@ -521,10 +521,10 @@
     <ClInclude Include="include\xyginext\network\NetImpl.hpp">
       <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="src\network\EnetClientImpl.hpp">
+    <ClInclude Include="include\xyginext\network\EnetClientImpl.hpp">
       <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="src\network\EnetHostImpl.hpp">
+    <ClInclude Include="include\xyginext\network\EnetHostImpl.hpp">
       <Filter>Header Files\network</Filter>
     </ClInclude>
   </ItemGroup>

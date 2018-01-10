@@ -39,7 +39,8 @@ source distribution.
 By default the networking classes wrap the enet library, although in some
 cases it may be desirable to use 3rd party networking such as that available
 in the Steam API. This interface is designed to allow flexible switching
-of services.
+of services. For NetClient and NetHost the type can be provided by the
+create<T>() and start<T>() functions respectively.
 */
 
 namespace xy

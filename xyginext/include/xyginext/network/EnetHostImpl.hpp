@@ -29,12 +29,17 @@ source distribution.
 #define XY_ENET_HOST_IMPL_HPP_
 
 #include <xyginext/network/NetImpl.hpp>
+#include <xyginext/Config.hpp>
 
 struct _ENetHost;
 
 namespace xy
 {
-    class EnetHostImpl final : public NetHostImpl
+    /*!
+    \brief Default implementation of the networking library.
+    This should never be used directly.
+    */
+    class XY_EXPORT_API EnetHostImpl final : public NetHostImpl
     {
     public:
         EnetHostImpl();
@@ -49,7 +54,7 @@ namespace xy
         std::size_t getConnectedPeerCount() const override;
 
     private:
-        _ENetHost* m_host;
+        _ENetHost * m_host;
     };
 }
 

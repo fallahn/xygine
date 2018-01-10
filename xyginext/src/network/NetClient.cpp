@@ -26,55 +26,43 @@ source distribution.
 *********************************************************************/
 
 
-#include "EnetClientImpl.hpp"
-
 #include <xyginext/network/NetClient.hpp>
 
 using namespace xy;
 
-NetClient::NetClient()
-{
-    m_impl = std::make_unique<EnetClientImpl>();
-}
-
-NetClient::~NetClient()
-{
-
-}
-
-
 //public
-bool NetClient::create(std::size_t maxChannels, std::size_t maxClients, sf::Uint32 incoming, sf::Uint32 outgoing)
-{
-    return m_impl->create(maxChannels, maxClients, incoming, outgoing);
-}
-
 bool NetClient::connect(const std::string& address, sf::Uint16 port, sf::Uint32 timeout)
 {
+    XY_ASSERT(m_impl, "create() has not yet been called!");
     return m_impl->connect(address, port, timeout);
 }
 
 bool NetClient::connected() const
 {
+    XY_ASSERT(m_impl, "create() has not yet been called!");
     return m_impl->connected();
 }
 
 void NetClient::disconnect()
 {
+    XY_ASSERT(m_impl, "create() has not yet been called!");
     m_impl->disconnect();
 }
 
 bool NetClient::pollEvent(NetEvent& evt)
 {
+    XY_ASSERT(m_impl, "create() has not yet been called!");
     return m_impl->pollEvent(evt);
 }
 
 void NetClient::sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
+    XY_ASSERT(m_impl, "create() has not yet been called!");
     m_impl->sendPacket(id, data, size, flags, channel);
 }
 
 const NetPeer& NetClient::getPeer() const
 {
+    XY_ASSERT(m_impl, "create() has not yet been called!");
     return m_impl->getPeer();
 }

@@ -78,13 +78,19 @@ namespace xy
 
         operator bool() const { return m_peer != nullptr; }
 
+        //specialise this for custom implementations which need
+        //to set the peer pointer.
+        template <typename T = _ENetPeer>
+        void setPeer(T* peer);
+
+        const void* getPeer() const { return m_peer; }
+
+        void reset() { m_peer = nullptr; }
+
     private:
         void* m_peer = nullptr;
 
-        friend class NetClient;
-        friend class NetHost;
-        friend class EnetClientImpl; //TODO fix this one
-        friend class EnetHostImpl; //and this one
+        //friend class EnetHostImpl; //and this one
     };
 
     namespace Detail
@@ -150,17 +156,17 @@ namespace xy
             */
             std::size_t getSize() const;
 
+            /*!
+            \brief Used by active implementation to set packet data.
+            DO NOT USE DIRECTLY.
+            */
+            void setPacketData(const std::uint8_t*, std::size_t);
         private:
             
             sf::Uint32 m_id;
             std::array<std::uint8_t, 1024> m_data;
             std::size_t m_size;
-            void setPacketData(const std::uint8_t*, std::size_t);
 
-            friend class NetClient;
-            friend class NetHost;
-            friend class EnetClientImpl; //TODO fix this
-            friend class EnetHostImpl; //and this
         }packet;
 
         /*!

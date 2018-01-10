@@ -25,15 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "EnetHostImpl.hpp"
 #include <xyginext/network/NetHost.hpp>
 
 using namespace xy;
-
-NetHost::NetHost()
-{
-    m_impl = std::make_unique<EnetHostImpl>();
-}
 
 NetHost::~NetHost()
 {
@@ -41,11 +35,6 @@ NetHost::~NetHost()
 }
 
 //public
-bool NetHost::start(const std::string& address, sf::Uint16 port, std::size_t maxClients, std::size_t maxChannels, sf::Uint32 incoming, sf::Uint32 outgoing)
-{
-    return m_impl->start(address, port, maxClients, maxChannels, incoming, outgoing);
-}
-
 void NetHost::stop()
 {
     m_impl->stop();
@@ -53,19 +42,23 @@ void NetHost::stop()
 
 bool NetHost::pollEvent(NetEvent& evt)
 {
+    XY_ASSERT(m_impl, "start() has not yet been called!");
     return m_impl->pollEvent(evt);
 }
 
 void NetHost::broadcastPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
+    XY_ASSERT(m_impl, "start() has not yet been called!");
     m_impl->broadcastPacket(id, data, size, flags, channel);
 }
 
 void NetHost::sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
+    XY_ASSERT(m_impl, "start() has not yet been called!");
     m_impl->sendPacket(peer, id, data, size, flags, channel);
 }
 std::size_t NetHost::getConnectedPeerCount() const
 {
+    XY_ASSERT(m_impl, "start() has not yet been called!");
     return m_impl->getConnectedPeerCount();
 }

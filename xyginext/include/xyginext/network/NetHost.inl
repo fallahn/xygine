@@ -26,6 +26,14 @@ source distribution.
 *********************************************************************/
 
 template <typename T>
+bool NetHost::start(const std::string& address, sf::Uint16 port, std::size_t maxClients, std::size_t maxChannels, sf::Uint32 incoming, sf::Uint32 outgoing)
+{
+    static_assert(std::is_base_of<NetHostImpl, T>(), "");
+    m_impl = std::make_unique<T>();
+    return m_impl->start(address, port, maxClients, maxChannels, incoming, outgoing);
+}
+
+template <typename T>
 void NetHost::broadcastPacket(sf::Uint32 id, const T& data, NetFlag flags, sf::Uint8 channel)
 {
     m_impl->broadcastPacket(id, (void*)&data, sizeof(T), flags, channel);

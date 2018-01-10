@@ -31,4 +31,10 @@ inline NetPeer::State NetPeer::getState<_ENetPeer>() const
     return Detail::getEnetPeerState(m_peer);
 }
 
+template <>
+inline void NetPeer::setPeer(_ENetPeer* peer)
+{
+    m_peer = peer;
+}
+
 #endif //XY_NET_PEER_INL_

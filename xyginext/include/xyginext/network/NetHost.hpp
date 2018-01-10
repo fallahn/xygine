@@ -31,7 +31,7 @@ source distribution.
 #include <xyginext/Config.hpp>
 #include <SFML/Config.hpp>
 #include <xyginext/network/NetData.hpp>
-#include <xyginext/network/NetImpl.hpp>
+#include <xyginext/network/EnetHostImpl.hpp>
 
 #include <string>
 #include <memory>
@@ -49,7 +49,7 @@ namespace xy
     class XY_EXPORT_API NetHost final
     {
     public:
-        NetHost();
+        NetHost() = default;
         ~NetHost();
 
         NetHost(const NetHost&) = delete;
@@ -69,7 +69,12 @@ namespace xy
         \param outgoing Limit the outgoing bandwidth in bytes per second. 0
         is no limit (default)
         \returns true if created successfully, else false.
+        NOTE Although this function is a template it is generally not required
+        to pass a type here, unless specifying a custom network implementation.
+        This needs to be called at least once before attempting to use any of
+        the other functions in this class
         */
+        template <typename T = EnetHostImpl>
         bool start(const std::string& address, sf::Uint16 port, std::size_t maxClient, std::size_t maxChannels, sf::Uint32 incoming = 0, sf::Uint32 outgoing = 0);
 
         /*!
@@ -157,17 +162,6 @@ namespace xy
         */
         std::size_t getConnectedPeerCount() const;
 
-        /*!
-        \brief Sets the network implementation.
-        This is generally not used, except in special cases where
-        network libraries other than enet are required.
-        */
-        template <typename T>
-        void setImplementation()
-        {
-            static_assert(std::is_base_of<NetHostImpl, T>(), "");
-            m_impl = std::make_unique<T>();
-        }
 
     private:
         std::unique_ptr<NetHostImpl> m_impl;

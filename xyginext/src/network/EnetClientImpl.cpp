@@ -27,9 +27,9 @@ source distribution.
 
 #include <enet/enet.h> //always include this first because windows mangles winsock includes
 
-#include "EnetClientImpl.hpp"
 #include "NetConf.hpp"
 
+#include <xyginext/network/EnetClientImpl.hpp>
 #include <xyginext/core/Log.hpp>
 #include <xyginext/core/Assert.hpp>
 
@@ -93,7 +93,7 @@ bool EnetClientImpl::connect(const std::string& address, sf::Uint16 port, sf::Ui
     XY_ASSERT(port > 0, "Invalid port number");
     XY_ASSERT(!address.empty(), "Invalid address string");
 
-    if (m_peer.m_peer)
+    if (m_peer)
     {
         disconnect();
     }
@@ -113,8 +113,8 @@ bool EnetClientImpl::connect(const std::string& address, sf::Uint16 port, sf::Ui
     }
     add.port = port;
 
-    m_peer.m_peer = enet_host_connect(m_client, &add, m_client->channelLimit, 0);
-    if (!m_peer.m_peer)
+    m_peer.setPeer(enet_host_connect(m_client, &add, m_client->channelLimit, 0));
+    if (!m_peer)
     {
         Logger::log("Failed assigning peer connection to host", Logger::Type::Error);
         return false;
@@ -128,8 +128,8 @@ bool EnetClientImpl::connect(const std::string& address, sf::Uint16 port, sf::Ui
         return true;
     }
 
-    enet_peer_reset(static_cast<_ENetPeer*>(m_peer.m_peer));
-    m_peer.m_peer = nullptr;
+    enet_peer_reset(static_cast<_ENetPeer*>(const_cast<void*>(m_peer.getPeer())));
+    m_peer.reset();
     Logger::log("Connection attempt timed out after " + std::to_string(timeout) + " milliseconds.", Logger::Type::Error);
     return false;
 }
@@ -144,7 +144,7 @@ void EnetClientImpl::disconnect()
     if (m_peer)
     {
         ENetEvent evt;
-        enet_peer_disconnect(static_cast<_ENetPeer*>(m_peer.m_peer), 0);
+        enet_peer_disconnect(static_cast<_ENetPeer*>(const_cast<void*>(m_peer.getPeer())), 0);
 
         //wait 3 seconds for a response
         while (enet_host_service(m_client, &evt, 3000) > 0)
@@ -157,7 +157,7 @@ void EnetClientImpl::disconnect()
                 enet_packet_destroy(evt.packet);
                 break;
             case ENET_EVENT_TYPE_DISCONNECT: //um what if this is another peer disconnecting at the same time?
-                m_peer.m_peer = nullptr;
+                m_peer.reset();
                 LOG("Disconnected from server", Logger::Type::Info);
                 return;
             }
@@ -165,8 +165,8 @@ void EnetClientImpl::disconnect()
 
         //timed out so force disconnect
         LOG("Disconnect timed out", Logger::Type::Info);
-        enet_peer_reset(static_cast<_ENetPeer*>(m_peer.m_peer));
-        m_peer.m_peer = nullptr;
+        enet_peer_reset(static_cast<_ENetPeer*>(const_cast<void*>(m_peer.getPeer())));
+        m_peer.reset();
     }
 }
 
@@ -195,7 +195,7 @@ bool EnetClientImpl::pollEvent(NetEvent& evt)
             enet_packet_destroy(hostEvt.packet);
             break;
         }
-        evt.peer.m_peer = hostEvt.peer;
+        evt.peer.setPeer(hostEvt.peer);
         return true;
     }
     return false;
@@ -203,7 +203,7 @@ bool EnetClientImpl::pollEvent(NetEvent& evt)
 
 void EnetClientImpl::sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
-    if (m_peer.m_peer)
+    if (m_peer)
     {
         sf::Int32 packetFlags = 0;
         if (flags == NetFlag::Reliable)
@@ -223,6 +223,6 @@ void EnetClientImpl::sendPacket(sf::Uint32 id, void* data, std::size_t size, Net
         enet_packet_resize(packet, sizeof(sf::Uint32) + size);
         std::memcpy(&packet->data[sizeof(sf::Uint32)], data, size);
 
-        enet_peer_send(static_cast<_ENetPeer*>(m_peer.m_peer), channel, packet);
+        enet_peer_send(static_cast<_ENetPeer*>(const_cast<void*>(m_peer.getPeer())), channel, packet);
     }
 }

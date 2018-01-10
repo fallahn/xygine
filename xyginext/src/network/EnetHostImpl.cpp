@@ -30,8 +30,8 @@ source distribution.
 #include <enet/enet.h> 
 
 #include "NetConf.hpp"
-#include "EnetHostImpl.hpp"
 
+#include <xyginext/network/EnetHostImpl.hpp>
 #include <xyginext/core/Log.hpp>
 #include <xyginext/core/Assert.hpp>
 
@@ -190,7 +190,7 @@ bool EnetHostImpl::pollEvent(NetEvent& evt)
             enet_packet_destroy(hostEvt.packet);
             break;
         }
-        evt.peer.m_peer = hostEvt.peer;
+        evt.peer.setPeer(hostEvt.peer);
         return true;
     }
     return false;
@@ -206,9 +206,9 @@ void EnetHostImpl::broadcastPacket(sf::Uint32 id, void* data, std::size_t size, 
 
 void EnetHostImpl::sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
-    if (peer.m_peer)
+    if (peer)
     {
-        enet_peer_send(static_cast<_ENetPeer*>(peer.m_peer), channel, createPacket(id, data, size, flags));
+        enet_peer_send(static_cast<_ENetPeer*>(const_cast<void*>(peer.getPeer())), channel, createPacket(id, data, size, flags));
     }
 }
 

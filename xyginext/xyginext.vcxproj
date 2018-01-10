@@ -252,6 +252,8 @@
     <ClInclude Include="include\xyginext\graphics\SpriteSheet.hpp" />
     <ClInclude Include="include\xyginext\gui\Gui.hpp" />
     <ClInclude Include="include\xyginext\gui\GuiClient.hpp" />
+    <ClInclude Include="include\xyginext\network\EnetClientImpl.hpp" />
+    <ClInclude Include="include\xyginext\network\EnetHostImpl.hpp" />
     <ClInclude Include="include\xyginext\network\NetClient.hpp" />
     <ClInclude Include="include\xyginext\network\NetData.hpp" />
     <ClInclude Include="include\xyginext\network\NetHost.hpp" />
@@ -267,8 +269,6 @@
     <ClInclude Include="include\xyginext\util\Vector.hpp" />
     <ClInclude Include="include\xyginext\util\Wavetable.hpp" />
     <ClInclude Include="src\detail\GLCheck.hpp" />
-    <ClInclude Include="src\network\EnetClientImpl.hpp" />
-    <ClInclude Include="src\network\EnetHostImpl.hpp" />
     <ClInclude Include="src\network\NetConf.hpp" />
   </ItemGroup>
   <ItemGroup>
