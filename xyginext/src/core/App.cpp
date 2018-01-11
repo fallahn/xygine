@@ -271,7 +271,7 @@ void App::setWindowTitle(const std::string& title)
 
 void App::setWindowIcon(const std::string& path)
 {
-    if (m_windowIcon.loadFromFile(path))
+    if (m_windowIcon.loadFromFile(xy::FileSystem::getResourcePath() + path))
     {
         auto size = m_windowIcon.getSize();
         XY_ASSERT(size.x == 16 && size.y == 16, "window icon must be 16x16 pixels");

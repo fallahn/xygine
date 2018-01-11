@@ -27,12 +27,14 @@ source distribution.
 
 #include "RemotePauseState.hpp"
 
+#include <xyginext/core/FileSystem.hpp>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 
 RemotePauseState::RemotePauseState(xy::StateStack& stack, xy::State::Context ctx)
     : xy::State(stack, ctx)
 {
-    m_font.loadFromFile("assets/fonts/Cave-Story.ttf");
+    m_font.loadFromFile(xy::FileSystem::getResourcePath() + "assets/fonts/Cave-Story.ttf");
     m_text.setFont(m_font);
     m_text.setString("Other Player Paused The Game");
     m_text.setFillColor(sf::Color::Red);
