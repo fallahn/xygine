@@ -69,6 +69,11 @@ elseif(WIN32)
     src/core/dialogues/nfd/nfd_win.cpp)
 endif()
 
+# Add the Resourcepath source
+if (APPLE)
+  set(PROJECT_SRC ${PROJECT_SRC} src/detail/ResourcePath.mm)
+endif()
+
 # If building static, define XY_STATIC 
 if (NOT BUILD_SHARED_LIBS)
   add_definitions(-DXY_STATIC)
@@ -99,14 +104,14 @@ endif()
 # The project specific includes (Useful if linking to this target from another cmake script)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Install the includes
+# Install
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/xyginext DESTINATION include)
 
-# And the rest
 install(TARGETS ${PROJECT_NAME} EXPORT xyginext-targets 
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin)
+#endif()
 
 # Configuration for packaging
 include(CPack)

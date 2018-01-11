@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <xyginext/audio/AudioSourceImpl.hpp>
+#include <xyginext/core/FileSystem.hpp>
 
 using namespace xy;
 using namespace xy::Detail;
@@ -139,7 +140,7 @@ sf::Int32 AudioSound::getStatus() const
 
 AudioMusic::AudioMusic(const std::string& path)
 {
-    m_valid = m_music.openFromFile(path);
+    m_valid = m_music.openFromFile(xy::FileSystem::getResourcePath() + path);
 }
 
 AudioMusic::~AudioMusic()

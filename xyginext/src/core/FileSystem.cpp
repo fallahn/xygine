@@ -65,6 +65,7 @@ source distribution.
 #elif defined(__APPLE__)
 #define MAX_PATH PATH_MAX
 #include <CoreServices/CoreServices.h>
+#include "../detail/ResourcePath.hpp"
 #endif
 
 #endif //_WIN32
@@ -559,4 +560,12 @@ std::string FileSystem::openFolderDialogue()
         xy::Logger::log("Error during native file dialog: " + error);
         return {};
     }
+}
+
+std::string FileSystem::getResourcePath()
+{
+#ifdef __APPLE__
+    return resourcePath();
+#endif
+    return "";
 }

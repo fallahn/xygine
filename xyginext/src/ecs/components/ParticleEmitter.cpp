@@ -61,7 +61,7 @@ void ParticleEmitter::stop()
 bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& textureResource)
 {
     ConfigFile cfg;
-    if (!cfg.loadFromFile(path)) return false;
+    if (!cfg.loadFromFile(xy::FileSystem::getResourcePath() + path)) return false;
 
     if (cfg.getName() == "particle_system")
     {

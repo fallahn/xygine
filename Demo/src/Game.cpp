@@ -57,6 +57,7 @@ Game::Game()
     }*/
 
     setWindowIcon("assets/images/icon.png");
+    
     getRenderWindow()->setTitle("xygine - Castle Clamber (F1 for Options)");
     Locale::load("assets/localisation/chichewa.xyl");
 }
