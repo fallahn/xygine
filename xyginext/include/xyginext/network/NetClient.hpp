@@ -81,7 +81,7 @@ namespace xy
         \param address Address or hostname to connect to.
         \param port The port number on which this client will attempt
         to connect to the server.
-        \param timeout Number of milliseconds to wait before connection attempt tiems out.
+        \param timeout Number of milliseconds to wait before connection attempt times out.
         This function is blocking until the server either responds with a connection
         successful event, or the timeout is reached. The default timeout is 5 seconds,
         and should be greater than 0, which may falsely return true as the connection

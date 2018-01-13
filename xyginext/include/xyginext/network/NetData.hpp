@@ -35,6 +35,16 @@ source distribution.
 #include <cstring>
 #include <array>
 
+//if implementing a custom network api
+//defining this will warn if you're using any of
+//the default template specialisations instead
+//of your own
+#ifdef NET_IMPL_WARN
+#define IMPL_WARN xy::Logger::Log("Called default network implementation here!", xy::Logger::Type::Warning)
+#else
+#define IMPL_WARN
+#endif //NET_IMPL_WARN
+
 struct _ENetPacket;
 struct _ENetPeer;
 
@@ -51,7 +61,7 @@ namespace xy
         template<typename T = _ENetPeer>
         sf::Uint16 getPort() const; //! <Port number
         template<typename T = _ENetPeer>
-        sf::Uint32 getID() const; //! <Unique ID
+        sf::Uint64 getID() const; //! <Unique ID
         template<typename T = _ENetPeer>
         sf::Uint32 getRoundTripTime() const; //! <Mean round trip time in milliseconds of a reliable packet
 
