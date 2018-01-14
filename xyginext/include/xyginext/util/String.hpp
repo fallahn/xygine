@@ -114,7 +114,7 @@ namespace xy
             {
                 //TODO sanity checks on input
                 std::stringstream s(str);
-                std::uint8_t a, b, c, d;
+                std::uint32_t a, b, c, d;
                 char ch;
                 s >> a >> ch >> b >> ch >> c >> ch >> d;
                 return (d << 24) | (c << 16) | (b << 8) | (a);
