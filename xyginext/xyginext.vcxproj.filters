@@ -291,6 +291,12 @@
     <ClCompile Include="src\imgui\imgui-SFML.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\network\EnetClientImpl.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\EnetHostImpl.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -512,6 +518,15 @@
     <ClInclude Include="include\xyginext\core\Vector4.hpp">
       <Filter>Header Files\core</Filter>
     </ClInclude>
+    <ClInclude Include="include\xyginext\network\NetImpl.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\network\EnetClientImpl.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\network\EnetHostImpl.hpp">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl">
@@ -567,6 +582,9 @@
     </None>
     <None Include="include\xyginext\core\Vector4.inl">
       <Filter>Header Files\core</Filter>
+    </None>
+    <None Include="include\xyginext\network\NetPeer.inl">
+      <Filter>Header Files\network</Filter>
     </None>
   </ItemGroup>
 </Project>

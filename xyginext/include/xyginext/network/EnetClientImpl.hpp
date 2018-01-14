@@ -25,31 +25,44 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_NETCONF_HPP_
-#define XY_NETCONF_HPP_
+#ifndef ENET_CLIENT_IMPL_HPP_
+#define ENET_CLIENT_IMPL_HPP_
 
-#include <memory>
+//implements the NetClient interface with enet
+#include <xyginext/network/NetImpl.hpp>
+#include <xyginext/network/NetData.hpp>
+#include <xyginext/Config.hpp>
+
+struct _ENetHost;
 
 namespace xy
 {
+
     /*!
-    \brief Used to ensure proper startup and shutdown
-    of Enet networking libraries
+    \brief Default networking library implmentation.
+    This should never be used directly.
     */
-    class NetConf final
+    class XY_EXPORT_API EnetClientImpl final : public NetClientImpl
     {
     public:
-        NetConf();
-        ~NetConf();
+        EnetClientImpl();
+        ~EnetClientImpl();
+
+        bool create(std::size_t maxChannels, std::size_t maxClients, sf::Uint32 incoming, sf::Uint32 outgoing) override;
+        bool connect(const std::string& address, sf::Uint16 port, sf::Uint32 timeout) override;
+        bool connected() const override;
+        void disconnect() override;
+
+        bool pollEvent(NetEvent&) override;
+        void sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
+
+        const NetPeer& getPeer() const override { return m_peer; }
 
     private:
-        friend class EnetClientImpl;
-        friend class EnetHostImpl;
 
-        static std::unique_ptr<NetConf> instance;
-
-        bool m_initOK;
+        _ENetHost * m_client;
+        NetPeer m_peer;
     };
 }
 
-#endif //XY_NETCONF_HPP_
+#endif //ENET_CLIENT_IMPL_HPP_

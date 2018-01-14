@@ -32,13 +32,15 @@ source distribution.
 #include <SFML/Config.hpp>
 
 #include <xyginext/network/NetData.hpp>
+#include <xyginext/network/EnetClientImpl.hpp>
 
 #include <string>
-
-struct _ENetHost;
+#include <memory>
 
 namespace xy
 {
+    class EnetClientImpl;
+
     /*!
     \brief Creates a clientside host which can be used to create
     a peer connected to a NetHost server.
@@ -46,8 +48,8 @@ namespace xy
     class XY_EXPORT_API NetClient final
     {
     public:
-        NetClient();
-        ~NetClient();
+        NetClient() = default;
+        ~NetClient() = default;
 
         NetClient(const NetClient&) = delete;
         NetClient(NetClient&&) = delete;
@@ -67,7 +69,11 @@ namespace xy
         A value of 0 sets throttling to automatic (default).
         \returns true if successful or false if something went wrong
         Calling this 2 or more times with different parameters will attempt to recreate the host.
+        NOTE: this is a templated function which defaults to the ENet library implementation.
+        Generally this type does not need to be specified, and is useful only when providing
+        a custom netowrking implmentation.
         */
+        template <typename T = EnetClientImpl>
         bool create(std::size_t maxChannels, std::size_t maxClients = 1, sf::Uint32 incoming = 0, sf::Uint32 outgoing = 0);
 
         /*!
@@ -75,7 +81,7 @@ namespace xy
         \param address Address or hostname to connect to.
         \param port The port number on which this client will attempt
         to connect to the server.
-        \param timeout Number of milliseconds to wait before connection attempt tiems out.
+        \param timeout Number of milliseconds to wait before connection attempt times out.
         This function is blocking until the server either responds with a connection
         successful event, or the timeout is reached. The default timeout is 5 seconds,
         and should be greater than 0, which may falsely return true as the connection
@@ -145,12 +151,11 @@ namespace xy
         Peers are only valid when connected to a server.
         \see NetPeer
         */
-        const NetPeer& getPeer() const { return m_peer; }
+        const NetPeer& getPeer() const;
 
     private:
 
-        _ENetHost* m_client;
-        NetPeer m_peer;
+        std::unique_ptr<NetClientImpl> m_impl;
     };
 
 #include "NetClient.inl"

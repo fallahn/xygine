@@ -27,56 +27,56 @@ source distribution.
 
 #include <enet/enet.h>
 
+#ifdef min
+#undef min
+#endif
+
 #include <xyginext/network/NetData.hpp>
 
 using namespace xy;
 
 NetEvent::Packet::Packet()
-    : m_packet(nullptr),
-    m_id(0)
+    : m_id(0),
+    m_size(0)
 {
 
 }
 
 NetEvent::Packet::~Packet()
 {
-    if (m_packet)
-    {
-        enet_packet_destroy(m_packet);
-    }
+
 }
 
 //public
 sf::Uint32 NetEvent::Packet::getID() const
 {
-    XY_ASSERT(m_packet, "Not a valid packet instance");
+    XY_ASSERT(m_size, "Not a valid packet instance");
     return m_id;
 }
 
 const void* NetEvent::Packet::getData() const
 {
-    XY_ASSERT(m_packet, "Not a valid packet instance");
-    return &m_packet->data[sizeof(sf::Uint32)];
+    XY_ASSERT(m_size, "Not a valid packet instance");
+    return m_data.data();
 }
 
 std::size_t NetEvent::Packet::getSize() const
 {
-    XY_ASSERT(m_packet, "Not a valid packet instance");
-    return m_packet->dataLength - sizeof(sf::Uint32);
+    return m_size;
 }
 
 //private
-void NetEvent::Packet::setPacketData(ENetPacket* packet)
+void NetEvent::Packet::setPacketData(const std::uint8_t* data, std::size_t size)
 {
-    if (m_packet)
-    {
-        enet_packet_destroy(m_packet);
-    }
+    //truncate large packets
+    size = std::min(size, m_data.size());
 
-    m_packet = packet;
-
-    if (m_packet)
+    if (size)
     {
-        std::memcpy(&m_id, m_packet->data, sizeof(sf::Uint32));
+        std::memcpy(&m_id, data, sizeof(sf::Uint32));
+        
+        size -= sizeof(sf::Uint32);
+        std::memcpy(m_data.data(), data + sizeof(sf::Uint32), size);
+        m_size = size;
     }
 }

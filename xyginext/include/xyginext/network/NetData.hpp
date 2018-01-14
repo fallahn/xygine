@@ -33,6 +33,17 @@ source distribution.
 #include <SFML/Config.hpp>
 
 #include <cstring>
+#include <array>
+
+//if implementing a custom network api
+//defining this will warn if you're using any of
+//the default template specialisations instead
+//of your own
+#ifdef NET_IMPL_WARN
+#define IMPL_WARN xy::Logger::Log("Called default network implementation here!", xy::Logger::Type::Warning)
+#else
+#define IMPL_WARN
+#endif //NET_IMPL_WARN
 
 struct _ENetPacket;
 struct _ENetPeer;
@@ -45,9 +56,13 @@ namespace xy
     */
     struct XY_EXPORT_API NetPeer final
     {
+        template<typename T = _ENetPeer>
         std::string getAddress() const; //! <String containing the IPv4 address
+        template<typename T = _ENetPeer>
         sf::Uint16 getPort() const; //! <Port number
-        sf::Uint32 getID() const; //! <Unique ID
+        template<typename T = _ENetPeer>
+        sf::Uint64 getID() const; //! <Unique ID
+        template<typename T = _ENetPeer>
         sf::Uint32 getRoundTripTime() const; //! <Mean round trip time in milliseconds of a reliable packet
 
         enum class State
@@ -63,6 +78,7 @@ namespace xy
             AcknowledingDisconnect,
             Zombie
         };
+        template<typename T = _ENetPeer>
         State getState() const; //! <Current state of the peer
 
         bool operator == (const NetPeer& other) const
@@ -72,12 +88,30 @@ namespace xy
 
         operator bool() const { return m_peer != nullptr; }
 
-    private:
-        _ENetPeer* m_peer = nullptr;
+        //specialise this for custom implementations which need
+        //to set the peer pointer.
+        template <typename T = _ENetPeer>
+        void setPeer(T* peer);
 
-        friend class NetClient;
-        friend class NetHost;
+        const void* getPeer() const { return m_peer; }
+
+        void reset() { m_peer = nullptr; }
+
+    private:
+        void* m_peer = nullptr;
+
+        //friend class EnetHostImpl; //and this one
     };
+
+    namespace Detail
+    {
+        //used for kludgery - don't call directly!
+        XY_EXPORT_API std::string getEnetPeerAddress(void*);
+        XY_EXPORT_API sf::Uint16 getEnetPeerPort(void*);
+        XY_EXPORT_API sf::Uint32 getEnetPeerID(void*);
+        XY_EXPORT_API sf::Uint32 getEnetRoundTrip(void*);
+        XY_EXPORT_API NetPeer::State getEnetPeerState(void*);
+    }
 
     /*!
     \brief Network event.
@@ -132,13 +166,17 @@ namespace xy
             */
             std::size_t getSize() const;
 
+            /*!
+            \brief Used by active implementation to set packet data.
+            DO NOT USE DIRECTLY.
+            */
+            void setPacketData(const std::uint8_t*, std::size_t);
         private:
-            _ENetPacket* m_packet;
+            
             sf::Uint32 m_id;
-            void setPacketData(_ENetPacket*);
+            std::array<std::uint8_t, 1024> m_data;
+            std::size_t m_size;
 
-            friend class NetClient;
-            friend class NetHost;
         }packet;
 
         /*!
@@ -148,17 +186,7 @@ namespace xy
     };
 
 #include "NetData.inl"
-
-    /*!
-    \brief Reliability enum.
-    These are used to flag sent packets with a requested reliability.
-    */
-    enum class NetFlag
-    {
-        Reliable = 0x1, //! <packet must be received by the remote connection, and resend attemps are made until delivered
-        Unsequenced = 0x2, //! <packet will not be sequenced with other packets. Not supported on reliable packets
-        Unreliable = 0x4 //! <packet will be fragments and sent unreliably if it exceeds MTU
-    };
+#include "NetPeer.inl"
 }
 
 #endif //XY_NET_DATA_HPP_

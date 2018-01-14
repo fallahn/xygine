@@ -182,6 +182,8 @@
     <ClCompile Include="src\imgui\imgui_demo.cpp" />
     <ClCompile Include="src\imgui\imgui_draw.cpp" />
     <ClCompile Include="src\imgui\imgui_tabs.cpp" />
+    <ClCompile Include="src\network\EnetClientImpl.cpp" />
+    <ClCompile Include="src\network\EnetHostImpl.cpp" />
     <ClCompile Include="src\network\NetClient.cpp" />
     <ClCompile Include="src\network\NetConf.cpp" />
     <ClCompile Include="src\network\NetEvent.cpp" />
@@ -250,9 +252,12 @@
     <ClInclude Include="include\xyginext\graphics\SpriteSheet.hpp" />
     <ClInclude Include="include\xyginext\gui\Gui.hpp" />
     <ClInclude Include="include\xyginext\gui\GuiClient.hpp" />
+    <ClInclude Include="include\xyginext\network\EnetClientImpl.hpp" />
+    <ClInclude Include="include\xyginext\network\EnetHostImpl.hpp" />
     <ClInclude Include="include\xyginext\network\NetClient.hpp" />
     <ClInclude Include="include\xyginext\network\NetData.hpp" />
     <ClInclude Include="include\xyginext\network\NetHost.hpp" />
+    <ClInclude Include="include\xyginext\network\NetImpl.hpp" />
     <ClInclude Include="include\xyginext\resources\Resource.hpp" />
     <ClInclude Include="include\xyginext\resources\ShaderResource.hpp" />
     <ClInclude Include="include\xyginext\util\Const.hpp" />
@@ -278,6 +283,7 @@
     <None Include="include\xyginext\network\NetClient.inl" />
     <None Include="include\xyginext\network\NetData.inl" />
     <None Include="include\xyginext\network\NetHost.inl" />
+    <None Include="include\xyginext\network\NetPeer.inl" />
     <None Include="src\graphics\postprocess\DefaultVertex.inl" />
     <None Include="src\graphics\postprocess\PostAdditiveBlend.inl" />
     <None Include="src\graphics\postprocess\PostBrightness.inl" />
