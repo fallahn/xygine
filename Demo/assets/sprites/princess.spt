@@ -1,6 +1,6 @@
 sprite_sheet princess
 {
-	src = "../images/princess.png"
+	src = "assets/images/princess.png"
 	blendmode = alpha
 
 	sprite player_one

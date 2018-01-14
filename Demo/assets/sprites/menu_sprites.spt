@@ -1,6 +1,6 @@
 sprite_sheet menu_sprites
 {
-	src = "../images/menu_sprites.png"
+	src = "assets/images/menu_sprites.png"
 	blendmode = alpha
 
 	sprite player_one

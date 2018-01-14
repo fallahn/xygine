@@ -1,6 +1,6 @@
 sprite_sheet power_ups
 {
-	src = "../images/power_ups.png"
+	src = "assets/images/power_ups.png"
 	blendmode = alpha
 
 	sprite crate

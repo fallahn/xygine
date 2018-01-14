@@ -1,6 +1,6 @@
 sprite_sheet tower_sprites
 {
-	src = "../images/tower_sprites.png"
+	src = "assets/images/tower_sprites.png"
 	blendmode = alpha
 
 	sprite player_one
