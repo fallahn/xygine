@@ -87,7 +87,7 @@ struct ClientData final
     Actor actor;
     float spawnX = 0.f;
     float spawnY = 0.f;
-    sf::Uint32 peerID = 0;
+    sf::Uint64 peerID = 0;
     sf::Uint8 playerNumber = 0;
 };
 

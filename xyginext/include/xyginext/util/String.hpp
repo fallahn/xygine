@@ -107,6 +107,33 @@ namespace xy
             }
 
             /*!
+            \brief Converts a string representation of an IPv4 address to a
+            32bit uint in network byte order
+            */
+            static inline std::uint32_t toIPv4(const std::string& str)
+            {
+                //TODO sanity checks on input
+                std::stringstream s(str);
+                std::uint8_t a, b, c, d;
+                char ch;
+                s >> a >> ch >> b >> ch >> c >> ch >> d;
+                return (d << 24) | (c << 16) | (b << 8) | (a);
+            }
+
+            /*!
+            \brief Converts a 32bit IPv4 address to its string representation.
+            */
+            static std::string fromIPv4(std::uint32_t bytes)
+            {
+                std::string ret = std::to_string(bytes & 0x000000FF);
+                ret += "." + std::to_string((bytes & 0x0000FF00) >> 8);
+                ret += "." + std::to_string((bytes & 0x00FF0000) >> 16);
+                ret += "." + std::to_string((bytes & 0xFF000000) >> 24);
+                return ret;
+            }
+
+
+            /*!
             \brief Decode a UTF8 encoded string to a vector of uint32 codepoints.
             Donated by therocode https://github.com/therocode
             */

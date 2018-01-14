@@ -28,6 +28,7 @@ source distribution.
 #include <enet/enet.h>
 
 #include <xyginext/network/NetData.hpp>
+#include <xyginext/util/String.hpp>
 
 using namespace xy;
 
@@ -36,12 +37,7 @@ std::string Detail::getEnetPeerAddress(void* peer)
     XY_ASSERT(peer, "Not a valid peer");
 
     auto bytes = static_cast<_ENetPeer*>(peer)->address.host;
-
-    std::string ret = std::to_string(bytes & 0x000000FF);
-    ret += "." + std::to_string((bytes & 0x0000FF00) >> 8);
-    ret += "." + std::to_string((bytes & 0x00FF0000) >> 16);
-    ret += "." + std::to_string((bytes & 0xFF000000) >> 24);
-    return ret;
+    return xy::Util::String::fromIPv4(bytes);
 }
 
 sf::Uint16 Detail::getEnetPeerPort(void* peer)
