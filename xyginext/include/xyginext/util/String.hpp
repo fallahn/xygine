@@ -137,7 +137,7 @@ namespace xy
             \brief Decode a UTF8 encoded string to a vector of uint32 codepoints.
             Donated by therocode https://github.com/therocode
             */
-            static inline std::vector<uint32_t> decodeUtf8(const std::string& str)
+            static inline std::vector<uint32_t> getCodepoints(const std::string& str)
             {
                 std::vector<uint32_t> codePoints;
 
