@@ -123,7 +123,7 @@ namespace xy
             /*!
             \brief Converts a 32bit IPv4 address to its string representation.
             */
-            static std::string fromIPv4(std::uint32_t bytes)
+            static inline std::string fromIPv4(std::uint32_t bytes)
             {
                 std::string ret = std::to_string(bytes & 0x000000FF);
                 ret += "." + std::to_string((bytes & 0x0000FF00) >> 8);
