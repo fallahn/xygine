@@ -119,6 +119,12 @@ namespace xy
         */
         struct Animation final
         {
+            /*!
+             \brief Maximum  length of animation id
+             */
+            static constexpr std::size_t MaxAnimationIdLength = 16;
+            
+            std::array<char,MaxAnimationIdLength> id = {{0}};
             std::array<sf::FloatRect, MaxFrames> frames;
             std::size_t frameCount = 0;
 

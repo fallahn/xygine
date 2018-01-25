@@ -59,6 +59,16 @@ namespace xy
         \brief Returns true if the current animation has stopped playing
         */
         bool stopped() const { return !m_playing; }
+        
+        /*!
+         \brief Returns the current frame ID
+         */
+        sf::Uint32 getFrameID() const { return m_frameID; }
+        
+        /*!
+         \brief Set the current frame ID
+         */
+        void setFrameID(sf::Uint32 frameID) { m_frameID = frameID; }
 
     private:
         sf::Int32 m_id = -1;
