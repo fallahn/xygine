@@ -117,18 +117,18 @@ namespace xy
                 std::uint32_t a, b, c, d;
                 char ch;
                 s >> a >> ch >> b >> ch >> c >> ch >> d;
-                return (d << 24) | (c << 16) | (b << 8) | (a);
+                return (a << 24) | (b << 16) | (c << 8) | (d);
             }
 
             /*!
             \brief Converts a 32bit IPv4 address to its string representation.
             */
-            static inline std::string fromIPv4(std::uint32_t bytes)
+            static std::string fromIPv4(std::uint32_t bytes)
             {
-                std::string ret = std::to_string(bytes & 0x000000FF);
-                ret += "." + std::to_string((bytes & 0x0000FF00) >> 8);
+                std::string ret = std::to_string((bytes & 0xFF000000) >> 24);
                 ret += "." + std::to_string((bytes & 0x00FF0000) >> 16);
-                ret += "." + std::to_string((bytes & 0xFF000000) >> 24);
+                ret += "." + std::to_string((bytes & 0x0000FF00) >> 8);
+                ret += "." + std::to_string((bytes & 0x000000FF));
                 return ret;
             }
 
