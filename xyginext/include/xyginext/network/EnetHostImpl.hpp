@@ -52,6 +52,8 @@ namespace xy
         void sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
 
         std::size_t getConnectedPeerCount() const override;
+        std::uint32_t getAddress() const override;
+        std::uint16_t getPort() const override;
 
     private:
         _ENetHost * m_host;

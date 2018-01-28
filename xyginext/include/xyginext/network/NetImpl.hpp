@@ -99,6 +99,8 @@ namespace xy
         virtual void sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
 
         virtual std::size_t getConnectedPeerCount() const = 0;
+        virtual std::uint32_t getAddress() const { return 0; }
+        virtual std::uint16_t getPort() const { return 0; }
     };
 }
 #endif //XY_NET_IMPL_HPP_

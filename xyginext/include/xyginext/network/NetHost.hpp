@@ -162,6 +162,17 @@ namespace xy
         */
         std::size_t getConnectedPeerCount() const;
 
+        /*
+        \brief Returns a Uint32 containing the host's IP address
+        in network byte order if it is running, else returns 0
+        */
+        std::uint32_t getAddress() const;
+
+        /*
+        \brief Returns a Uint16 containing the port of the host
+        if it is running, else returns 0
+        */
+        std::uint16_t getPort() const;
 
     private:
         std::unique_ptr<NetHostImpl> m_impl;

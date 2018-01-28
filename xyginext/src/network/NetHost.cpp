@@ -62,3 +62,15 @@ std::size_t NetHost::getConnectedPeerCount() const
     XY_ASSERT(m_impl, "start() has not yet been called!");
     return m_impl->getConnectedPeerCount();
 }
+
+std::uint32_t NetHost::getAddress() const
+{
+    XY_ASSERT(m_impl, "start() has not yet been called!");
+    return m_impl->getAddress();
+}
+
+std::uint16_t NetHost::getPort() const
+{
+    XY_ASSERT(m_impl, "start() has not yet been called!");
+    return m_impl->getPort();
+}

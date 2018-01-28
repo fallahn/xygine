@@ -216,3 +216,13 @@ std::size_t EnetHostImpl::getConnectedPeerCount() const
 {
     return (m_host) ? m_host->connectedPeers : 0;
 }
+
+std::uint32_t EnetHostImpl::getAddress() const
+{
+    return m_host ? m_host->address.host : 0;
+}
+
+std::uint16_t EnetHostImpl::getPort() const
+{
+    return m_host ? m_host->address.port : 0;
+}
