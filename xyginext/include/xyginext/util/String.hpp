@@ -108,9 +108,9 @@ namespace xy
 
             /*!
             \brief Converts a string representation of an IPv4 address to a
-            32bit uint in network byte order
+            32bit uint in host byte order ie 127.0.0.1 == 0x7f000001
             */
-            static inline std::uint32_t toIPv4(const std::string& str)
+            static inline std::uint32_t toHostOrderIPv4(const std::string& str)
             {
                 //TODO sanity checks on input
                 std::stringstream s(str);
@@ -122,8 +122,10 @@ namespace xy
 
             /*!
             \brief Converts a 32bit IPv4 address to its string representation.
+            \param bytes Uint32 value containing the ip address bytes in host
+            byte order ie 127.0.0.1 == 0x7f000001
             */
-            static std::string fromIPv4(std::uint32_t bytes)
+            static inline std::string fromHostOrderIPv4(std::uint32_t bytes)
             {
                 std::string ret = std::to_string((bytes & 0xFF000000) >> 24);
                 ret += "." + std::to_string((bytes & 0x00FF0000) >> 16);
@@ -132,6 +134,33 @@ namespace xy
                 return ret;
             }
 
+            /*!
+            \brief Converts a string representation of an IPv4 address to a
+            32bit uint in network byte order ie 127.0.0.1 == 0x0100007f
+            */
+            static inline std::uint32_t toNetworkOrderIPv4(const std::string& str)
+            {
+                //TODO sanity checks on input
+                std::stringstream s(str);
+                std::uint32_t a, b, c, d;
+                char ch;
+                s >> a >> ch >> b >> ch >> c >> ch >> d;
+                return (d << 24) | (c << 16) | (b << 8) | (a);
+            }
+
+            /*!
+            \brief Converts a 32bit IPv4 address to its string representation.
+            \param bytes Uint32 value containing the ip address bytes in network
+            byte order ie 127.0.0.1 == 0x0100007f
+            */
+            static inline std::string fromNetworkOrderIPv4(std::uint32_t bytes)
+            {
+                std::string ret = std::to_string((bytes & 0x000000FF));
+                ret += "." + std::to_string((bytes & 0x0000FF00) >> 8);
+                ret += "." + std::to_string((bytes & 0x00FF0000) >> 16);
+                ret += "." + std::to_string((bytes & 0xFF000000) >> 24);
+                return ret;
+            }
 
             /*!
             \brief Decode a UTF8 encoded string to a vector of uint32 codepoints.

@@ -37,7 +37,7 @@ std::string Detail::getEnetPeerAddress(void* peer)
     XY_ASSERT(peer, "Not a valid peer");
 
     auto bytes = static_cast<_ENetPeer*>(peer)->address.host;
-    return xy::Util::String::fromIPv4(bytes);
+    return xy::Util::String::fromNetworkOrderIPv4(bytes);
 }
 
 sf::Uint16 Detail::getEnetPeerPort(void* peer)
