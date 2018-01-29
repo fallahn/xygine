@@ -51,7 +51,7 @@ if(X11_FOUND)
 endif()
 
 # Project source files
-add_subdirectory(include)
+#add_subdirectory(include)
 add_subdirectory(src)
 
 # Add XY_DEBUG on Debug builds
