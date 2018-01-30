@@ -76,7 +76,7 @@ EnetHostImpl::EnetHostImpl()
 
 EnetHostImpl::~EnetHostImpl()
 {
-
+    stop();
 }
 
 //public

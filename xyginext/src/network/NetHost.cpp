@@ -31,12 +31,13 @@ using namespace xy;
 
 NetHost::~NetHost()
 {
-    m_impl->stop();
+    if(m_impl) m_impl->stop();
 }
 
 //public
 void NetHost::stop()
 {
+    XY_ASSERT(m_impl, "start() has not yet been called!");
     m_impl->stop();
 }
 
