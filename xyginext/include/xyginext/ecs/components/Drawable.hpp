@@ -95,12 +95,12 @@ namespace xy
         /*!
         \brief Returns a pointer to the active texture
         */
-        const sf::Texture* getTexture() const;
+        sf::Texture* getTexture();
 
         /*!
         \brief Returns a pointer to the active shader, if any
         */
-        const sf::Shader* getShader() const;
+        sf::Shader* getShader();
 
         /*!
         \brief Returns the current blend mode

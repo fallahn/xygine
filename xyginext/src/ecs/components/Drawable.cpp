@@ -165,14 +165,14 @@ void Drawable::setBlendMode(sf::BlendMode mode)
     m_states.blendMode = mode;
 }
 
-const sf::Texture* Drawable::getTexture() const
+sf::Texture* Drawable::getTexture()
 {
-    return m_states.texture;
+    return const_cast<sf::Texture*>(m_states.texture);
 }
 
-const sf::Shader* Drawable::getShader() const
+sf::Shader* Drawable::getShader()
 {
-    return m_states.shader;
+    return const_cast<sf::Shader*>(m_states.shader);
 }
 
 sf::FloatRect Drawable::getLocalBounds() const
