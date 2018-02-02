@@ -1,6 +1,6 @@
 sprite_sheet bubble
 {
-	src = "assets/images/bubble.png"
+	src = assets/images/bubble.png
 	blendmode = alpha
 
 	sprite player_one

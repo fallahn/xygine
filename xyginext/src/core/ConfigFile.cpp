@@ -453,16 +453,20 @@ void ConfigObject::removeComment(std::string& line)
     auto result = line.find_first_of("//");
 
     //make sure to only crop comments outside of string literals
-    auto otherResult = line.find_first_of('\"');
+    /*auto otherResult = line.find_first_of('\"');
     if (result != std::string::npos && (result < otherResult || otherResult == std::string::npos))
     {
         line = line.substr(0, result);
-    }
+    }*/
     
-    otherResult = line.find_last_of('\"');
-    if (result != std::string::npos && (result > otherResult || otherResult == std::string::npos))
+    //for some reason it appears result also matches '/' so unquoted paths get truncated
+    if (result < line.size() - 1 && line[result + 1] == '/')
     {
-        line = line.substr(0, result);
+        auto otherResult = line.find_last_of('\"');
+        if (result != std::string::npos && (result > otherResult || otherResult == std::string::npos))
+        {
+            line = line.substr(0, result);
+        }
     }
     
     //remove any tabs while we're at it

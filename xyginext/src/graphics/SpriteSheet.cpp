@@ -58,6 +58,7 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
     {
         m_texturePath = p->getValue<std::string>();
         texture = &textures.get(m_texturePath);
+        std::cout << m_texturePath << "\n";
     }
     else
     {
