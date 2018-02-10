@@ -136,6 +136,16 @@ namespace xy
         */
         void selectInput(std::size_t);
 
+        /*!
+        \brief Enables controlling the mouse cursor with the controller
+        connected to port 0.
+        When this is enabled all mouse movement callbacks are executed
+        as they would with a normal mouse move, controller button and mouse button
+        callbacks remain unchanged.
+        \param active If true enables controlling the mouse cursor with the controller
+        */
+        void setJoypadCursorActive(bool active);
+
     private:
 
         std::vector<MouseButtonCallback> m_buttonCallbacks;
@@ -164,6 +174,8 @@ namespace xy
         {
             Up = 0x1, Down = 0x2, Left = 0x4, Right = 0x8
         };
+
+        bool m_joypadCursorActive;
 
         void selectNext();
         void selectPrev();
