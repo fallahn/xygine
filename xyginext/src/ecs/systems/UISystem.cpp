@@ -52,7 +52,8 @@ UISystem::UISystem(MessageBus& mb)
     : System    (mb, typeid(UISystem)),
     m_selectedIndex     (0),
     m_controllerMask    (0),
-    m_prevControllerMask(0)
+    m_prevControllerMask(0),
+    m_joypadCursorActive(true)
 {
     requireComponent<UIHitBox>();
     requireComponent<Transform>();
@@ -139,10 +140,42 @@ void UISystem::handleEvent(const sf::Event& evt)
             break;
         }
         break;
-    case sf::Event::JoystickButtonPressed:
+    case sf::Event::JoystickButtonPressed: 
+        if (m_joypadCursorActive
+            && evt.joystickButton.joystickId == 0)
+        {
+            //if controller mouse active push back mouse events
+            switch (evt.joystickButton.button)
+            {
+            default: break;
+            case 0:
+                m_mouseDownEvents.push_back(LeftMouse);
+                break;
+            case 1:
+                m_mouseDownEvents.push_back(RightMouse);
+                break;
+            }
+            break;
+        }
         m_controllerDownEvents.push_back(std::make_pair(evt.joystickButton.joystickId, evt.joystickButton.button));
         break;
     case sf::Event::JoystickButtonReleased:
+        if (m_joypadCursorActive
+            && evt.joystickButton.joystickId == 0)
+        {
+            //if controller mouse active push back mouse events
+            switch (evt.joystickButton.button)
+            {
+            default: break;
+            case 0:
+                m_mouseUpEvents.push_back(LeftMouse);
+                break;
+            case 1:
+                m_mouseUpEvents.push_back(RightMouse);
+                break;
+            }
+            break;
+        }
         m_controllerUpEvents.push_back(std::make_pair(evt.joystickButton.joystickId, evt.joystickButton.button));
         break;
     case sf::Event::JoystickMoved:
@@ -191,34 +224,61 @@ void UISystem::handleEvent(const sf::Event& evt)
 void UISystem::process(float)
 {    
     //parse any controller events
-    auto diff = m_prevControllerMask ^ m_controllerMask;
-    for (auto i = 0; i < 4; ++i)
+    if (m_joypadCursorActive)
     {
-        auto flag = (1 << i);
-        if (diff & flag)
+        static const float moveSpeed = 0.125f;
+
+        sf::Vector2f movement;
+        float axis = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+        if (axis < -DeadZone || axis > DeadZone) movement.x = axis;
+        axis = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+        if (axis < -DeadZone || axis > DeadZone) movement.y = axis;
+
+        //again for PoV
+        axis = sf::Joystick::getAxisPosition(0, sf::Joystick::PovX);
+        if (axis < -DeadZone || axis > DeadZone) movement.x = axis;
+#ifdef _WIN32
+        axis = -sf::Joystick::getAxisPosition(0, sf::Joystick::PovY);
+#else
+        axis = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY);
+#endif //_WIN32
+        if (axis < -DeadZone || axis > DeadZone) movement.y = axis;
+
+        auto pos = sf::Mouse::getPosition(*xy::App::getRenderWindow());
+        pos += sf::Vector2i(movement * moveSpeed);
+        sf::Mouse::setPosition(pos, *xy::App::getRenderWindow());
+    }
+    else
+    {
+        auto diff = m_prevControllerMask ^ m_controllerMask;
+        for (auto i = 0; i < 4; ++i)
         {
-            //something changed
-            if (m_controllerMask & flag)
+            auto flag = (1 << i);
+            if (diff & flag)
             {
-                //axis was pressed
-                switch (flag)
+                //something changed
+                if (m_controllerMask & flag)
                 {
-                default: break;
-                case ControllerBits::Left:
-                case ControllerBits::Up:
-                    selectNext();
-                    break;
-                case ControllerBits::Right:
-                case ControllerBits::Down:
-                    selectPrev();
-                    break;
+                    //axis was pressed
+                    switch (flag)
+                    {
+                    default: break;
+                    case ControllerBits::Left:
+                    case ControllerBits::Up:
+                        selectNext();
+                        break;
+                    case ControllerBits::Right:
+                    case ControllerBits::Down:
+                        selectPrev();
+                        break;
+                    }
                 }
             }
         }
+        m_prevControllerMask = m_controllerMask;
+        m_controllerMask = 0;
     }
-    m_prevControllerMask = m_controllerMask;
-    m_controllerMask = 0;
-    
+
     //TODO we probably want some partitioning? Checking every entity for a collision could be a bit pants
     std::size_t currentIndex = 0;
     auto& entities = getEntities();
