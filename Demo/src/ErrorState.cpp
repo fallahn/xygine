@@ -66,7 +66,7 @@ ErrorState::ErrorState(xy::StateStack& stack, xy::State::Context ctx, const Shar
         xy::Nim::end();
     });
 
-    ctx.renderWindow.setMouseCursorVisible(true);
+    xy::App::setMouseCursorVisible(true);
 }
 
 bool ErrorState::handleEvent(const sf::Event&)

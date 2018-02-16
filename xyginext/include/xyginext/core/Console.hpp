@@ -70,6 +70,11 @@ namespace xy
         static void show();
 
         /*!
+        \brief Returns true if the console is currently shown
+        */
+        static bool isVisible();
+
+        /*!
         \brief Executes the given command line.
         Allows for programatically executing arbitrary commands
         */

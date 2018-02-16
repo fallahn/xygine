@@ -224,6 +224,18 @@ namespace xy
         */
         const std::string& getApplicationName() const;
 
+        /*!
+        \brief Sets whether or not the mouse cursor should be visible.
+        Prefer this rather than setting on the render window directly
+        to prevent ImGUI settings overriding the window setting.
+        */
+        static void setMouseCursorVisible(bool);
+
+        /*!
+        \brief Returns whether or not the mouse cursor is set to be visible
+        */
+        static bool isMouseCursorVisible();
+
     protected:
         /*!
         \brief Function for despatching all window events
@@ -295,6 +307,8 @@ namespace xy
 
         std::function<void(float)> update;
         std::function<void(const sf::Event&)> eventHandler;
+
+        static bool m_mouseCursorVisible;
 
         void saveScreenshot();
 

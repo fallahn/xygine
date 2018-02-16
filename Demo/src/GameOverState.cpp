@@ -95,12 +95,12 @@ GameoverState::GameoverState(xy::StateStack& stack, xy::State::Context ctx, cons
     camera.setView(view.getSize());
     camera.setViewport(view.getViewport());
 
-    ctx.renderWindow.setMouseCursorVisible(true);
+    xy::App::setMouseCursorVisible(true);
 }
 
 GameoverState::~GameoverState()
 {
-    getContext().renderWindow.setMouseCursorVisible(false);
+    xy::App::setMouseCursorVisible(false);
 }
 
 bool GameoverState::handleEvent(const sf::Event& evt)

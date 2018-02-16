@@ -158,7 +158,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     camera.setView(view.getSize());
     camera.setViewport(view.getViewport());
 
-    ctx.renderWindow.setMouseCursorVisible(false);
+    xy::App::setMouseCursorVisible(false);
 
     //sharedData.playerCount = 2;
 

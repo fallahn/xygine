@@ -121,6 +121,11 @@ void Console::show()
     vSync = settings.VSync;
 }
 
+bool Console::isVisible()
+{
+    return visible;
+}
+
 void Console::doCommand(const std::string& str)
 {
     //store in history

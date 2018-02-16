@@ -81,7 +81,7 @@ GameCompleteState::GameCompleteState(xy::StateStack& stack, xy::State::Context c
     loadScene();
     loadUI();
 
-    ctx.renderWindow.setMouseCursorVisible(true);
+    xy::App::setMouseCursorVisible(true);
 }
 
 //public

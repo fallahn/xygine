@@ -77,6 +77,8 @@ namespace
 #include "DefaultIcon.inl"
 }
 
+bool App::m_mouseCursorVisible = true;
+
 App::App()
     : m_videoSettings   (),
     m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
@@ -149,7 +151,7 @@ void App::run()
             
         }
         
-        ImGui::SFML::Update(*getRenderWindow(), sf::seconds(elapsedTime));
+        ImGui::SFML::Update(m_renderWindow, sf::seconds(elapsedTime));
         
         // Do imgui stuff (Console and any client windows)
         Console::draw();
@@ -157,7 +159,7 @@ void App::run()
         
         m_renderWindow.clear(clearColour);
         draw();       
-        ImGui::SFML::Render(*getRenderWindow());
+        ImGui::SFML::Render(m_renderWindow);
         m_renderWindow.display();
     }
 
@@ -309,6 +311,16 @@ void App::setApplicationName(const std::string& name)
 const std::string& App::getApplicationName() const
 {
     return m_applicationName;
+}
+
+void App::setMouseCursorVisible(bool visible)
+{
+    m_mouseCursorVisible = visible;
+}
+
+bool App::isMouseCursorVisible()
+{
+    return m_mouseCursorVisible || Console::isVisible();
 }
 
 //protected

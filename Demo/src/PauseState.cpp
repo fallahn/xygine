@@ -63,12 +63,12 @@ PauseState::PauseState(xy::StateStack& stack, xy::State::Context ctx)
 
     load();
 
-    ctx.renderWindow.setMouseCursorVisible(true);
+    xy::App::setMouseCursorVisible(true);
 }
 
 PauseState::~PauseState()
 {
-    getContext().renderWindow.setMouseCursorVisible(false);
+    xy::App::setMouseCursorVisible(false);
 }
 
 bool PauseState::handleEvent(const sf::Event& evt)
