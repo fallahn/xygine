@@ -86,6 +86,11 @@ namespace xy
             return other.m_peer == this->m_peer;
         }
 
+        bool operator != (const NetPeer& other) const
+        {
+            return !(other == *this);
+        }
+
         operator bool() const { return m_peer != nullptr; }
 
         //specialise this for custom implementations which need
@@ -172,7 +177,7 @@ namespace xy
             */
             void setPacketData(const std::uint8_t*, std::size_t);
         private:
-            
+
             sf::Uint32 m_id;
             std::array<std::uint8_t, 1024> m_data;
             std::size_t m_size;
