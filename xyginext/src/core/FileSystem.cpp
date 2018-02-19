@@ -341,7 +341,23 @@ std::vector<std::string> FileSystem::listDirectories(const std::string& path)
         std::string str(dirp->d_name);
         if (str != "." && str != "..")
         {
-            retVal.emplace_back(std::move(str));
+            bool isDir;
+            if (dirp->d_type != DT_UNKNOWN && dirp->d_type != DT_LNK)
+            {
+                isDir = (dirp->d_type == DT_DIR);
+            }
+            else
+            {
+                struct stat stbuf;
+                // stat follows symlinks, lstat doesn't.
+                stat(dirp->d_name, &stbuf);
+                isDir = S_ISDIR(stbuf.st_mode);
+            }
+            
+            if (isDir)
+            {
+                retVal.emplace_back(std::move(str));
+            }
         }
     }
     closedir(dp);
