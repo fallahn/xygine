@@ -91,6 +91,7 @@ namespace xy
             sf::VideoMode VideoMode;
             sf::ContextSettings ContextSettings;
             bool VSync;
+            sf::Uint32 FrameLimit;
             std::vector<sf::VideoMode> AvailableVideoModes;
             std::string Title;
 
@@ -98,7 +99,8 @@ namespace xy
                 : WindowStyle(sf::Style::Close /*sf::Style::Fullscreen*/),
                 VideoMode(800, 600),
                 ContextSettings(),
-                VSync(true){}
+                VSync(true),
+                FrameLimit(0){}
 
             bool operator == (const VideoSettings& vs)
             {

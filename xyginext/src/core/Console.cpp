@@ -59,6 +59,9 @@ namespace
     std::array<char, 300> resolutionNames{};
     bool fullScreen = false;
     bool vSync = false;
+    bool useFrameLimit = false;
+    int frameLimit = 10;
+
     
     std::string output;
 
@@ -119,6 +122,8 @@ void Console::show()
     fullScreen = (settings.WindowStyle & sf::Style::Fullscreen);
 
     vSync = settings.VSync;
+    useFrameLimit = (settings.FrameLimit != 0);
+    frameLimit = settings.FrameLimit;
 }
 
 bool Console::isVisible()
@@ -280,10 +285,26 @@ void Console::draw()
 
         XY_ASSERT(App::getRenderWindow(), "no valid window");
         
+        nim::Checkbox("Full Screen", &fullScreen);
+
         nim::Checkbox("V-Sync", &vSync);
+        if (vSync)
+        {
+            useFrameLimit = false;
+        }
+        
+        bool oldFrameLimit = useFrameLimit;
+        nim::Checkbox("Limit Framerate", &useFrameLimit);
+        if (useFrameLimit)
+        {
+            vSync = false;
+        }
 
         nim::SameLine();
-        nim::Checkbox("Full Screen", &fullScreen);
+        nim::PushItemWidth(80.f);
+        nim::InputInt("Frame Rate", &frameLimit);
+        nim::PopItemWidth();
+        frameLimit = std::max(10, std::min(frameLimit, 360));
 
         if (nim::Button("Apply", { 50.f, 20.f }))
         {
@@ -293,6 +314,7 @@ void Console::draw()
             settings.VideoMode.height = resolutions[currentResolution].y;
             settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
             settings.VSync = vSync;
+            settings.FrameLimit = useFrameLimit ? frameLimit : 0;
 
             App::getActiveInstance()->applyVideoSettings(settings);
         }

@@ -229,7 +229,16 @@ void App::applyVideoSettings(const VideoSettings& settings)
     }
 
     m_renderWindow.setVerticalSyncEnabled(settings.VSync);
-    //m_renderWindow.setMouseCursorVisible(false);
+    //only set frame limiter is not vSync
+    if (settings.FrameLimit && !settings.VSync)
+    {
+        m_renderWindow.setFramerateLimit(settings.FrameLimit);
+    }
+    else
+    {
+        m_renderWindow.setFramerateLimit(0);
+    }
+
     //TODO test validity and restore old settings if possible
     m_videoSettings = settings;
     m_videoSettings.ContextSettings.antialiasingLevel = newAA; //so it's correct if requested
@@ -483,6 +492,10 @@ void App::loadSettings()
                 {
                     vSettings.WindowStyle = (p.getValue<bool>()) ? sf::Style::Fullscreen : sf::Style::Close;
                 }
+                else if (p.getName() == "framelimit")
+                {
+                    vSettings.FrameLimit = p.getValue<sf::Int32>();
+                }
             }
 
             vSettings.Title = windowTitle;
@@ -537,6 +550,7 @@ void App::saveSettings()
     vObj->addProperty("resolution", std::to_string(m_videoSettings.VideoMode.width) + "," + std::to_string(m_videoSettings.VideoMode.height));
     vObj->addProperty("vsync", m_videoSettings.VSync ? "true" : "false");
     vObj->addProperty("fullscreen", (m_videoSettings.WindowStyle & sf::Style::Fullscreen) ? "true" : "false");
+    vObj->addProperty("framelimit", std::to_string(m_videoSettings.FrameLimit));
     
     auto* aObj = settings.addObject("audio");
     aObj->addProperty("master", std::to_string(AudioMixer::getMasterVolume()));
