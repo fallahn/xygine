@@ -113,5 +113,11 @@ install(TARGETS ${PROJECT_NAME} EXPORT xyginext-targets
   RUNTIME DESTINATION bin)
 #endif()
 
+# Version number
+SET(CPACK_PACKAGE_VERSION_MAJOR 0)
+SET(CPACK_PACKAGE_VERSION_MINOR 1)
+SET(CPACK_PACKAGE_VERSION_PATCH 0)
+
 # Configuration for packaging
+set(CPACK_GENERATOR "ZIP")
 include(CPack)

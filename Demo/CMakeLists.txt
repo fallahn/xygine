@@ -113,12 +113,15 @@ endif()
 
 #Platform specific packaging
 if(APPLE AND MACOS_BUNDLE)
-
-	#set(CPACK_PACKAGE_FILE_NAME ${PROJECT_NAME})
     install(CODE " include(BundleUtilities)
-		 fixup_bundle(${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.app \"\" \"\")
+		 fixup_bundle(${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.app \"\" \"/Library/Frameworks\")
 		 verify_app(${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.app)")
-    SET(CPACK_GENERATOR "DragNDrop")
+    set(CPACK_GENERATOR "DragNDrop")
+elseif(UNIX AND NOT APPLE)
+    set(CPACK_GENERATOR "DEB")
+    set(CPACK_PACKAGE_CONTACT Jonny@JonnyPaton.com)
+else()
+    set(CPACK_GENERATOR "NSIS")
 endif()
 
 include(CPack)
