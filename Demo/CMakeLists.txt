@@ -121,7 +121,7 @@ elseif(UNIX AND NOT APPLE)
     set(CPACK_GENERATOR "DEB")
     set(CPACK_PACKAGE_CONTACT Jonny@JonnyPaton.com)
 else()
-    set(CPACK_GENERATOR "NSIS")
+    set(CPACK_GENERATOR "ZIP")
 endif()
 
 include(CPack)
