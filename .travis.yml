@@ -1,10 +1,8 @@
-
 language: c++
-sudo: true
-
+sudo: false
 addons:
- apt:
-   packages:
+  apt:
+    packages:
     - cmake
     - libxrandr-dev
     - libudev-dev
@@ -16,47 +14,76 @@ addons:
     - g++-7
     - gcc-7
     - clang
-   sources:
+    sources:
     - ubuntu-toolchain-r-test
-
-# Install SFML from git for consistent version
 before_script:
- - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90; fi
- - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90; fi
- - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install enet; fi
-
- - git clone https://github.com/sfml/sfml && cd sfml
- - git checkout tags/2.4.2
- - cmake . && sudo cmake --build . --target install && cd ..
-
-# Also install TmxLite, required for Demo
- - git clone https://github.com/fallahn/tmxlite
- - cd tmxlite/tmxlite
- - cmake . && sudo cmake --build . --target install && cd ../../
-
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/gcc
+  gcc /usr/bin/gcc-7 90; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/g++
+  g++ /usr/bin/g++-7 90; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install enet; fi
+- git clone https://github.com/sfml/sfml && cd sfml
+- git checkout tags/2.4.2
+- mkdir build && cd build
+- cmake .. $CMAKE_FLAGS && sudo cmake --build . --target install && cd ../..
+- git clone https://github.com/fallahn/tmxlite
+- cd tmxlite/tmxlite && mkdir build && cd build
+- cmake .. -G"$GENERATOR" $CMAKE_FLAGS -DCMAKE_BUILD_TYPE=Release && sudo cmake --build
+  . --target install --config Release && cd ../../../
 script:
- - cd xyginext && mkdir build && cd build
- - cmake ../ && sudo cmake --build . --target install
- - cd ../../Demo && mkdir build && cd build
- - cmake ../ && cmake --build .
-
+- cd xyginext && mkdir build && cd build
+- cmake ../ -G"$GENERATOR" $CMAKE_FLAGS && sudo cmake --build . --target install
+- sudo cmake --build . --target package
+- cd ../../Demo && mkdir build && cd build
+- cmake ../ -G"$GENERATOR" $CMAKE_FLAGS -DMACOS_BUNDLE=TRUE
+- sudo cmake --build . --target package
+- cd ../../ && mkdir deploy
+- cp xyginext/build/*.zip deploy
+- cp Demo/build/$DEMO_PACKAGE_NAME deploy
 matrix:
- include:
+  fast_finish: true
+  include:
+  - os: linux
+    compiler: gcc
+    env:
+    - GENERATOR="Unix Makefiles"
+    - CMAKE_FLAGS=""
+    - DEMO_PACKAGE_NAME="*.deb"
+  - os: linux
+    compiler: clang
+    env:
+    - GENERATOR="Unix Makefiles"
+    - CMAKE_FLAGS=""
+    - DEMO_PACKAGE_NAME="*.deb"
+  - os: osx
+    osx_image: xcode9
+    env:
+    - GENERATOR="Xcode"
+    - CMAKE_FLAGS=""
+    - DEMO_PACKAGE_NAME="*.dmg"
+  - os: osx
+    osx_image: xcode9
+    env:
+    - GENERATOR="Xcode"
+    - CMAKE_FLAGS="-DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake"
+    - DEMO_PACKAGE_NAME="*.dmg"
+  allow_failures:
+  - os: osx
+    osx_image: xcode9
+    env:
+    - GENERATOR="Xcode"
+    - CMAKE_FLAGS="-DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake"
+    - DEMO_PACKAGE_NAME="*.dmg"
+deploy:
+  provider: releases
+  api_key:
+    secure: QXXzmYECNj059cmvLbBTnjlNpIwJhbXlppmlmwpknz2/LBLWJiL4xUHVz61if06TmhPJwakxVwN+JqPsD3rWERpdo63foelvduEflO6Gdx8eEwbmMA3nWNXwy8mllBkq7vy1dYdP1x/SmW6o1Q8PuwgqQa+QArV5GI5k6KxF4oo1tRwiZQ58gr11DliQ0pUmSa8qYsaEppD6YOoEIztjVLKAGh/2i0o2r8pVLIT7dkbuEoTfhtxgLYxP9rIdv/g6nyQz6BVQAcPj3gMkgKfHfR8d1T7YTXYHt9mPhwW+a1HO5tzkXfkPQWElG/zyl2/UzUJMPsS6vl5lmw/zcPozT1SYCyuArp1bh14FMmuEI4t1W97NwDVHl9RdAI7zfssQKtWcJvSZR+lyO6Mau6GY69PmUMKoQTluwFrBFpf0SCYzhYUfqlq3USR2BPj8Dg1uDDEo7HfvsoqgNYR4rn55dEdzuuYGSPJM47hedvLwpRupXHoGvmn3cjU54cP2vDQAWptQXbT7S9nGvK+1M9E9U7RIa5eeIb3MM8PYycEq9ySy37+Wx8xpXQP5dATcjkZEoYC7u2w3nn7pHDDXoeLzIN8ad4SrO7mYMVdSQaCEdYPiiasSKpx2zWjEe4PlV2tSSuU0c4LUl3PHsfp3zCOKndaFwSaWXW1EnOU7/UAvzdI=
+  file_glob: true
+  file: deploy/$DEMO_PACKAGE_NAME, deploy/*.zip
+  overwrite: true
+  skip_cleanup: true
+  prerelease: true
+  on:
+   tags: true
 
-    - os: linux
-      compiler: gcc
 
-    - os: linux
-      compiler: clang
-
-    - os: osx
-      osx_image: xcode6.4
-
-    - os: osx
-      osx_image: xcode7.3
-
-    - os: osx
-      osx_image: xcode8.3
-
-    - os: osx
-      osx_image: xcode9
