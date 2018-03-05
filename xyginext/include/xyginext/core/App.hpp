@@ -109,7 +109,8 @@ namespace xy
                     (vs.VideoMode == this->VideoMode
                     && vs.ContextSettings.antialiasingLevel == this->ContextSettings.antialiasingLevel
                     && vs.VSync == this->VSync
-                    && vs.WindowStyle == this->WindowStyle);
+                    && vs.WindowStyle == this->WindowStyle
+                    && vs.FrameLimit == this->FrameLimit);
             }
         };
 
