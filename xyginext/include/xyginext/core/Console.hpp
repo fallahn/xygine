@@ -50,12 +50,15 @@ namespace xy
     {
     public:
         /*!
-        Command functions are registered with their associated
+        Command functions are registered with an associated
         string, and executed when that string is entered into the
         consle window. Any further characters entered after the
-        command are passed into the command function as a paramter.
-        If this is a list of paramters it is up to the command
+        command are passed into the command function as a parameter.
+        If this is a list of parameters it is up to the command
         function implementation to properly parse the given string.
+        Registering a command with the console may be done by any
+        class which inherits ConsoleClient.
+        \see ConsoleClient
         */
         using Command = std::function<void(const std::string&)>;
 

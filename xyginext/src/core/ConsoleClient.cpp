@@ -27,6 +27,7 @@ source distribution.
 
 #include <xyginext/core/ConsoleClient.hpp>
 #include <xyginext/core/Console.hpp>
+#include <xyginext/core/Assert.hpp>
 
 using namespace xy;
 
@@ -39,5 +40,6 @@ ConsoleClient::~ConsoleClient()
 //public
 void ConsoleClient::registerCommand(const std::string& name, const Console::Command& command)
 {
+    XY_ASSERT(name.find(' ') == std::string::npos, "commands must not contain spaces");
     Console::addCommand(name, command, this);
 }

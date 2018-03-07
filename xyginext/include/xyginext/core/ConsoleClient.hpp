@@ -45,6 +45,7 @@ namespace xy
     class XY_EXPORT_API ConsoleClient
     {
     public:
+        ConsoleClient() = default;
         virtual ~ConsoleClient();
         ConsoleClient(const ConsoleClient&) = default;
         ConsoleClient(ConsoleClient&&) = default;
