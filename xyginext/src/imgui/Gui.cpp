@@ -26,10 +26,19 @@ source distribution.
 *********************************************************************/
 
 #include <xyginext/gui/Gui.hpp>
+#include <xyginext/core/ConfigFile.hpp>
 
 #include "imgui.h"
 
+// Saves the hassle of mapping strings to all style vars
+#define GET_VARIABLE_NAME(Variable) (#Variable)
+
 using namespace xy;
+
+namespace
+{
+    static Nim::Style currentStyle;
+}
 
 void Nim::begin(const std::string& title, bool* b)
 {
@@ -86,5 +95,120 @@ bool Nim::wantsKeyboard()
     return ImGui::GetIO().WantCaptureKeyboard;
 }
 
+const Nim::Style& Nim::getStyle()
+{
+    return currentStyle;
+}
+
+void Nim::setStyle(const Nim::Style& style)
+{
+    // copy vars to imgui style
+    currentStyle = style;
+    auto& s = ImGui::GetStyle();
+    s.Alpha = style.Alpha;
+    s.AntiAliasedFill = style.AntiAliasedFill;
+    s.AntiAliasedLines = style.AntiAliasedLines;
+    s.ButtonTextAlign = style.ButtonTextAlign;
+    s.ChildBorderSize = style.ChildBorderSize;
+    s.ChildRounding = style.ChildRounding;
+    s.ColumnsMinSpacing = style.ColumnsMinSpacing;
+    s.CurveTessellationTol = style.CurveTessellationTol;
+    s.DisplaySafeAreaPadding = style.DisplaySafeAreaPadding;
+    s.DisplayWindowPadding = style.DisplayWindowPadding;
+    s.FrameBorderSize = style.FrameBorderSize;
+    s.FramePadding = style.FramePadding;
+    s.FrameRounding = style.FrameRounding;
+    s.GrabMinSize = style.GrabMinSize;
+    s.GrabRounding = style.GrabRounding;
+    s.IndentSpacing = style.IndentSpacing;
+    s.ItemInnerSpacing = style.ItemInnerSpacing;
+    s.ItemSpacing = style.ItemSpacing;
+    s.PopupBorderSize = style.PopupBorderSize;
+    s.PopupRounding = style.PopupRounding;
+    s.ScrollbarRounding = style.ScrollbarRounding;
+    s.ScrollbarSize = style.ScrollbarSize;
+    s.TouchExtraPadding = style.TouchExtraPadding;
+    s.WindowBorderSize = style.WindowBorderSize;
+    s.WindowMinSize = style.WindowMinSize;
+    s.WindowPadding = style.WindowPadding;
+    s.WindowRounding = style.WindowRounding;
+    s.WindowTitleAlign = style.WindowTitleAlign;
+}
+
+bool Nim::Style::saveToFile(const std::string& path)
+{
+    xy::ConfigFile styleFile;
+    
+    styleFile.addProperty(GET_VARIABLE_NAME(Alpha)).setValue(Alpha);
+    styleFile.addProperty(GET_VARIABLE_NAME(AntiAliasedFill)).setValue(AntiAliasedFill);
+    styleFile.addProperty(GET_VARIABLE_NAME(AntiAliasedLines)).setValue(AntiAliasedLines);
+    styleFile.addProperty(GET_VARIABLE_NAME(ButtonTextAlign)).setValue(ButtonTextAlign);
+    styleFile.addProperty(GET_VARIABLE_NAME(ChildBorderSize)).setValue(ChildBorderSize);
+    styleFile.addProperty(GET_VARIABLE_NAME(ChildRounding)).setValue(ChildRounding);
+    styleFile.addProperty(GET_VARIABLE_NAME(ColumnsMinSpacing)).setValue(ColumnsMinSpacing);
+    styleFile.addProperty(GET_VARIABLE_NAME(CurveTessellationTol)).setValue(CurveTessellationTol);
+    styleFile.addProperty(GET_VARIABLE_NAME(DisplaySafeAreaPadding)).setValue(DisplaySafeAreaPadding);
+    styleFile.addProperty(GET_VARIABLE_NAME(DisplayWindowPadding)).setValue(DisplayWindowPadding);
+    styleFile.addProperty(GET_VARIABLE_NAME(FrameBorderSize)).setValue(FrameBorderSize);
+    styleFile.addProperty(GET_VARIABLE_NAME(FramePadding)).setValue(FramePadding);
+    styleFile.addProperty(GET_VARIABLE_NAME(FrameRounding)).setValue(FrameRounding);
+    styleFile.addProperty(GET_VARIABLE_NAME(GrabMinSize)).setValue(GrabMinSize);
+    styleFile.addProperty(GET_VARIABLE_NAME(GrabRounding)).setValue(GrabRounding);
+    styleFile.addProperty(GET_VARIABLE_NAME(IndentSpacing)).setValue(IndentSpacing);
+    styleFile.addProperty(GET_VARIABLE_NAME(ItemInnerSpacing)).setValue(ItemInnerSpacing);
+    styleFile.addProperty(GET_VARIABLE_NAME(ItemSpacing)).setValue(ItemSpacing);
+    styleFile.addProperty(GET_VARIABLE_NAME(PopupBorderSize)).setValue(PopupBorderSize);
+    styleFile.addProperty(GET_VARIABLE_NAME(PopupRounding)).setValue(PopupRounding);
+    styleFile.addProperty(GET_VARIABLE_NAME(ScrollbarRounding)).setValue(ScrollbarRounding);
+    styleFile.addProperty(GET_VARIABLE_NAME(ScrollbarSize)).setValue(ScrollbarSize);
+    styleFile.addProperty(GET_VARIABLE_NAME(TouchExtraPadding)).setValue(TouchExtraPadding);
+    styleFile.addProperty(GET_VARIABLE_NAME(WindowBorderSize)).setValue(WindowBorderSize);
+    styleFile.addProperty(GET_VARIABLE_NAME(WindowMinSize)).setValue(WindowMinSize);
+    styleFile.addProperty(GET_VARIABLE_NAME(WindowPadding)).setValue(WindowPadding);
+    styleFile.addProperty(GET_VARIABLE_NAME(WindowRounding)).setValue(WindowRounding);
+    styleFile.addProperty(GET_VARIABLE_NAME(WindowTitleAlign)).setValue(WindowTitleAlign);
+    
+    return styleFile.save(path);
+}
+
+bool Nim::Style::loadFromFile(const std::string& path)
+{
+    xy::ConfigFile styleFile;
+    if (!styleFile.loadFromFile(path))
+        return false;
+    
+    // I'm not going to check the property is found, bc I'm a loose cannon
+    // Also kind of wish I'd written a helper function before doing this...
+    Alpha = styleFile.findProperty(GET_VARIABLE_NAME(Alpha))->getValue<typeof(Alpha)>();
+    AntiAliasedFill = styleFile.findProperty(GET_VARIABLE_NAME(AntiAliasedFill))->getValue<typeof(AntiAliasedFill)>();
+    AntiAliasedLines = styleFile.findProperty(GET_VARIABLE_NAME(AntiAliasedLines))->getValue<typeof(AntiAliasedLines)>();
+    ButtonTextAlign = styleFile.findProperty(GET_VARIABLE_NAME(ButtonTextAlign))->getValue<typeof(ButtonTextAlign)>();
+    ChildBorderSize = styleFile.findProperty(GET_VARIABLE_NAME(ChildBorderSize))->getValue<typeof(ChildBorderSize)>();
+    ChildRounding = styleFile.findProperty(GET_VARIABLE_NAME(ChildRounding))->getValue<typeof(ChildRounding)>();
+    ColumnsMinSpacing = styleFile.findProperty(GET_VARIABLE_NAME(ColumnsMinSpacing))->getValue<typeof(ColumnsMinSpacing)>();
+    CurveTessellationTol = styleFile.findProperty(GET_VARIABLE_NAME(CurveTessellationTol))->getValue<typeof(CurveTessellationTol)>();
+    DisplaySafeAreaPadding = styleFile.findProperty(GET_VARIABLE_NAME(DisplaySafeAreaPadding))->getValue<typeof(DisplaySafeAreaPadding)>();
+    DisplayWindowPadding = styleFile.findProperty(GET_VARIABLE_NAME(DisplayWindowPadding))->getValue<typeof(DisplayWindowPadding)>();
+    FrameBorderSize = styleFile.findProperty(GET_VARIABLE_NAME(FrameBorderSize))->getValue<typeof(FrameBorderSize)>();
+    FramePadding = styleFile.findProperty(GET_VARIABLE_NAME(FramePadding))->getValue<typeof(FramePadding)>();
+    FrameRounding = styleFile.findProperty(GET_VARIABLE_NAME(FrameRounding))->getValue<typeof(FrameRounding)>();
+    GrabMinSize = styleFile.findProperty(GET_VARIABLE_NAME(GrabMinSize))->getValue<typeof(GrabMinSize)>();
+    GrabRounding = styleFile.findProperty(GET_VARIABLE_NAME(GrabRounding))->getValue<typeof(GrabRounding)>();
+    IndentSpacing = styleFile.findProperty(GET_VARIABLE_NAME(IndentSpacing))->getValue<typeof(IndentSpacing)>();
+    ItemInnerSpacing = styleFile.findProperty(GET_VARIABLE_NAME(ItemInnerSpacing))->getValue<typeof(ItemInnerSpacing)>();
+    ItemSpacing = styleFile.findProperty(GET_VARIABLE_NAME(ItemSpacing))->getValue<typeof(ItemSpacing)>();
+    PopupBorderSize = styleFile.findProperty(GET_VARIABLE_NAME(PopupBorderSize))->getValue<typeof(PopupBorderSize)>();
+    PopupRounding = styleFile.findProperty(GET_VARIABLE_NAME(PopupRounding))->getValue<typeof(currentStyle.PopupRounding)>();
+    ScrollbarRounding = styleFile.findProperty(GET_VARIABLE_NAME(ScrollbarRounding))->getValue<typeof(ScrollbarRounding)>();
+    ScrollbarSize = styleFile.findProperty(GET_VARIABLE_NAME(ScrollbarSize))->getValue<typeof(ScrollbarSize)>();
+    TouchExtraPadding = styleFile.findProperty(GET_VARIABLE_NAME(TouchExtraPadding))->getValue<typeof(TouchExtraPadding)>();
+    WindowBorderSize = styleFile.findProperty(GET_VARIABLE_NAME(WindowBorderSize))->getValue<typeof(WindowBorderSize)>();
+    WindowMinSize = styleFile.findProperty(GET_VARIABLE_NAME(WindowMinSize))->getValue<typeof(WindowMinSize)>();
+    WindowPadding = styleFile.findProperty(GET_VARIABLE_NAME(WindowPadding))->getValue<typeof(WindowPadding)>();
+    WindowRounding = styleFile.findProperty(GET_VARIABLE_NAME(WindowRounding))->getValue<typeof(WindowRounding)>();
+    WindowTitleAlign = styleFile.findProperty(GET_VARIABLE_NAME(WindowTitleAlign))->getValue<typeof(WindowTitleAlign)>();
+    
+    return true;
+}
 
 //I miss you like hell.
