@@ -31,7 +31,8 @@ source distribution.
 using namespace xy;
 
 Transform::Transform()
-    : m_parent(nullptr)
+    : m_parent  (nullptr),
+    m_depth     (0)
 {
 
 }
@@ -53,13 +54,17 @@ Transform::~Transform()
     for(auto c : m_children)
     {
         c->m_parent = nullptr;
+        c->setDepth(0);
     }
 }
 
 Transform::Transform(Transform&& other)
 {
     m_parent = other.m_parent;
+    m_depth = other.m_depth;
+
     other.m_parent = nullptr;
+    other.setDepth(0);
 
     //swap ourself into siblings list
     if (m_parent)
@@ -80,6 +85,7 @@ Transform::Transform(Transform&& other)
     for (auto c : m_children)
     {
         c->m_parent = this;
+        c->setDepth(m_depth + 1);
     }
 
     //actually take on the other transform
@@ -99,7 +105,10 @@ Transform& Transform::operator=(Transform&& other)
     if (&other != this)
     {
         m_parent = other.m_parent;
+        m_depth = other.m_depth;
+
         other.m_parent = nullptr;
+        other.setDepth(0);
 
         //swap ourself into siblings list
         if (m_parent)
@@ -121,6 +130,7 @@ Transform& Transform::operator=(Transform&& other)
         for (auto c : m_children)
         {
             c->m_parent = this;
+            c->setDepth(m_depth + 1);
         }
 
         //actually take on the other transform
@@ -158,6 +168,7 @@ void Transform::addChild(Transform& child)
         }), otherSiblings.end());
     }
     child.m_parent = this;
+    child.setDepth(m_depth + 1);
     m_children.push_back(&child);
 }
 
@@ -166,6 +177,8 @@ void Transform::removeChild(Transform& tx)
     if (tx.m_parent != this) return;
 
     tx.m_parent = nullptr;
+    tx.setDepth(0);
+
     m_children.erase(std::remove_if(m_children.begin(), m_children.end(), 
         [&tx](const Transform* ptr)
     {
@@ -185,4 +198,16 @@ sf::Transform Transform::getWorldTransform() const
 sf::Vector2f Transform::getWorldPosition() const
 {
     return getWorldTransform().transformPoint({});
+}
+
+//private
+void Transform::setDepth(std::size_t depth)
+{
+    m_depth = depth;
+    for (auto& c : m_children)
+    {
+        c->setDepth(depth + 1);
+    }
+
+    XY_WARNING(m_depth > 10, "Transform added with depth " + std::to_string(m_depth));
 }
