@@ -114,6 +114,9 @@ App::App()
     {
         Logger::log("Something went wrong loading OpenGL. Particles may be unavailable", Logger::Type::Error, Logger::Output::All);
     }
+    
+    ImGui::SFML::Init(m_renderWindow);
+    ImGui::StyleColorsLight(&ImGui::GetStyle());
 }
 
 //public
@@ -127,9 +130,7 @@ void App::run()
 
     //if we find a settings file apply those settings
     loadSettings();
-
-    ImGui::SFML::Init(m_renderWindow);
-    ImGui::StyleColorsLight(&ImGui::GetStyle());
+    
     Console::init();
     initialise();
 
