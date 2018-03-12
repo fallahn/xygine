@@ -60,49 +60,61 @@ Transform::~Transform()
 
 Transform::Transform(Transform&& other)
 {
-    m_parent = other.m_parent;
-    m_depth = other.m_depth;
-
-    other.m_parent = nullptr;
-    other.setDepth(0);
-
-    //swap ourself into siblings list
-    if (m_parent)
+    if (other.m_parent != this)
     {
-        auto& siblings = m_parent->m_children;
-        for (auto& s : siblings)
+        m_parent = other.m_parent;
+        m_depth = other.m_depth;
+
+        other.m_parent = nullptr;
+        other.setDepth(0);
+
+        //swap ourself into siblings list
+        if (m_parent)
         {
-            if (s == &other)
+            auto& siblings = m_parent->m_children;
+            for (auto& s : siblings)
             {
-                s = this;
-                break;
+                if (s == &other)
+                {
+                    s = this;
+                    break;
+                }
             }
         }
-    }
-    m_children = std::move(other.m_children);
+        m_children = std::move(other.m_children);
 
-    //update the children's new parent
-    for (auto c : m_children)
+        //update the children's new parent
+        for (auto* c : m_children)
+        {
+            if (c == this)
+            {
+                throw std::runtime_error("Transform already exists in child list");
+            }
+
+            c->m_parent = this;
+            c->setDepth(m_depth + 1);
+        }
+
+        //actually take on the other transform
+        setPosition(other.getPosition());
+        setRotation(other.getRotation());
+        setScale(other.getScale());
+        setOrigin(other.getOrigin());
+
+        other.setPosition({});
+        other.setRotation(0.f);
+        other.setScale({ 1.f, 1.f });
+        other.setOrigin({});
+    }
+    else
     {
-        c->m_parent = this;
-        c->setDepth(m_depth + 1);
+        xy::Logger::log("Move construction tried to parent transform to itself");
     }
-
-    //actually take on the other transform
-    setPosition(other.getPosition());
-    setRotation(other.getRotation());
-    setScale(other.getScale());
-    setOrigin(other.getOrigin());
-
-    other.setPosition({});
-    other.setRotation(0.f);
-    other.setScale({ 1.f, 1.f });
-    other.setOrigin({});
 }
 
 Transform& Transform::operator=(Transform&& other)
 {
-    if (&other != this)
+    if (&other != this && other.m_parent != this)
     {
         m_parent = other.m_parent;
         m_depth = other.m_depth;
@@ -129,6 +141,10 @@ Transform& Transform::operator=(Transform&& other)
         //update the children's new parent
         for (auto c : m_children)
         {
+            if (c == this)
+            {
+                throw std::runtime_error("Transform exists in list of children");
+            }
             c->m_parent = this;
             c->setDepth(m_depth + 1);
         }
@@ -151,6 +167,12 @@ Transform& Transform::operator=(Transform&& other)
 void Transform::addChild(Transform& child)
 {
     XY_ASSERT(this != &child, "Can't parent to ourself!");
+
+    if (&child == this)
+    {
+        xy::Logger::log("Cannot parent transform to itself");
+        return;
+    }
 
     //remove old parent first
     if (child.m_parent)
