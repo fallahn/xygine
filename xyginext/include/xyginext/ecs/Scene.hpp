@@ -35,6 +35,7 @@ source distribution.
 #include <xyginext/ecs/systems/CommandSystem.hpp>
 #include <xyginext/ecs/Director.hpp>
 #include <xyginext/graphics/postprocess/PostProcess.hpp>
+#include <xyginext/core/Editor.hpp>
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Drawable.hpp>
@@ -57,7 +58,7 @@ namespace xy
     entities else existing entities will not be processed by new systems.
     */
 
-    class XY_EXPORT_API Scene final : public sf::Drawable
+    class XY_EXPORT_API Scene final : public sf::Drawable, Editable
     {
     public:
         explicit Scene(MessageBus&);
@@ -204,6 +205,10 @@ namespace xy
         std::function<void(sf::RenderTarget&, sf::RenderStates)> currentRenderPath;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
+        
+        // Editor stuff
+        void editorDraw() override;
+        bool m_visible;
     };
 
 #include "Scene.inl"

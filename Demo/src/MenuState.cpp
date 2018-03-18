@@ -137,10 +137,10 @@ bool MenuState::update(float dt)
 
 void MenuState::draw()
 {
-    auto& rt = getContext().renderWindow;
+    auto rt = xy::App::getRenderTarget();
 
-    rt.draw(m_scene);
-    rt.draw(m_helpScene);
+    rt->draw(m_scene);
+    rt->draw(m_helpScene);
 }
 
 //private

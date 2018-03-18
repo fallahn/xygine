@@ -10,6 +10,7 @@ namespace sf
 {
     class Event;
     class RenderTarget;
+    class RenderTexture;
     class RenderWindow;
     class Sprite;
     class Texture;
@@ -51,6 +52,19 @@ namespace SFML
     void Image(const sf::Texture& texture, const sf::Vector2f& size, const sf::FloatRect& textureRect,
         const sf::Color& tintColor = sf::Color::White,
         const sf::Color& borderColor = sf::Color::Transparent);
+    
+    void Image(const sf::RenderTexture& texture,
+               const sf::Color& tintColor = sf::Color::White,
+               const sf::Color& borderColor = sf::Color::Transparent);
+    void Image(const sf::RenderTexture& texture, const sf::Vector2f& size,
+               const sf::Color& tintColor = sf::Color::White,
+               const sf::Color& borderColor = sf::Color::Transparent);
+    void Image(const sf::RenderTexture& texture, const sf::FloatRect& textureRect,
+               const sf::Color& tintColor = sf::Color::White,
+               const sf::Color& borderColor = sf::Color::Transparent);
+    void Image(const sf::RenderTexture& texture, const sf::Vector2f& size, const sf::FloatRect& textureRect,
+               const sf::Color& tintColor = sf::Color::White,
+               const sf::Color& borderColor = sf::Color::Transparent);
 
     void Image(const sf::Sprite& sprite,
         const sf::Color& tintColor = sf::Color::White,

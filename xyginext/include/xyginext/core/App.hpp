@@ -198,9 +198,10 @@ namespace xy
         void setWindowIcon(const std::string&);
 
         /*!
-        \brief Returns a reference to the current render window
+        \brief Returns a reference to the current render target
+         This can be either an sf::Renderwindow or an sf::Rendertexture
         */
-        static sf::RenderWindow* getRenderWindow();
+        static sf::RenderTarget* getRenderTarget();
 
         /*!
         \brief Prints the name/value pair to the stats window
@@ -305,6 +306,10 @@ namespace xy
         sf::RenderWindow m_renderWindow;
         sf::Image m_windowIcon;
         std::string m_applicationName;
+        
+        // Set the game's render target
+        // This just updates the anonymous pointer, which is only used for xy::App::getRenderTarget
+        void setRenderTarget(sf::RenderTarget* target);
 
         MessageBus m_messageBus;
 
@@ -327,6 +332,7 @@ namespace xy
         static void removeWindows(const GuiClient*);
 
         friend class GuiClient;
+        friend class Editor;
 
         void loadSettings();
         void saveSettings();

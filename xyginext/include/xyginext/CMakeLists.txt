@@ -6,6 +6,7 @@ set(PROJECT_SRC  ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/core/App.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/ConfigFile.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/Console.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/Editor.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/ConsoleClient.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/FileSystem.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/MessageBus.hpp

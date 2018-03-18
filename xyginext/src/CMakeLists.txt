@@ -6,6 +6,7 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/core/App.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/ConfigFile.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/Console.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/Editor.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/ConsoleClient.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/FileSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/MessageBus.cpp
@@ -63,7 +64,7 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_demo.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_draw.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui-SFML.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_tabs.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_dock.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/network/EnetClientImpl.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/network/EnetHostImpl.cpp

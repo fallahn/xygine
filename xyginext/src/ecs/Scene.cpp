@@ -33,15 +33,17 @@ source distribution.
 
 #include <SFML/Window/Event.hpp>
 
+#include "../imgui/imgui_dock.hpp"
+
 using namespace xy;
 
 namespace
 {
     sf::FloatRect getDefaultViewport()
     {
-        if (App::getRenderWindow())
+        if (App::getRenderTarget())
         {
-            auto winSize = sf::Vector2f(App::getRenderWindow()->getSize());
+            auto winSize = sf::Vector2f(App::getRenderTarget()->getSize());
 
             float windowRatio = winSize.x / winSize.y;
             float viewRatio = DefaultSceneSize.x / DefaultSceneSize.y;
@@ -58,7 +60,8 @@ namespace
 Scene::Scene(MessageBus& mb)
     : m_messageBus      (mb),
     m_entityManager     (mb),
-    m_systemManager     (*this)
+    m_systemManager     (*this),
+    m_visible(true)
 {
     auto defaultCamera = createEntity();
     defaultCamera.addComponent<Transform>().setPosition(xy::DefaultSceneSize / 2.f);
@@ -129,8 +132,8 @@ void Scene::setPostEnabled(bool enabled)
     {
         currentRenderPath = std::bind(&Scene::postRenderPath, this, std::placeholders::_1, std::placeholders::_2);
         
-        XY_ASSERT(App::getRenderWindow(), "no valid window");
-        auto size = App::getRenderWindow()->getSize();
+        XY_ASSERT(App::getRenderTarget(), "no valid window");
+        auto size = App::getRenderTarget()->getSize();
         m_sceneBuffer.create(size.x, size.y, true);
         for (auto& p : m_postEffects) p->resizeBuffer(size.x, size.y);
     }
@@ -252,5 +255,28 @@ void Scene::postRenderPath(sf::RenderTarget& rt, sf::RenderStates states)
 
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    currentRenderPath(rt, states);
+    if (m_visible)
+    {
+        currentRenderPath(rt, states);
+    }
+}
+
+void Scene::editorDraw()
+{
+    if (ImGui::BeginDock(("Scene##" + std::to_string(m_id)).c_str()))
+    {
+        ImGui::Text(("Director count: " + std::to_string(m_directors.size())).c_str());
+        ImGui::Text(("Drawable count: " + std::to_string(m_drawables.size())).c_str());
+        ImGui::Text(("Post buffer count: " + std::to_string(m_postBuffers.size())).c_str());
+        ImGui::Text(("Post effect count: " + std::to_string(m_postEffects.size())).c_str());
+        ImGui::Text(("Active camera entity ID: " + std::to_string(m_activeCamera)).c_str());
+        ImGui::Text(("Active listener entity ID: " + std::to_string(m_activeListener)).c_str());
+        ImGui::Text(("Pending entities: " + std::to_string(m_pendingEntities.size())).c_str());
+        ImGui::Text(("Destroyed entities: " + std::to_string(m_destroyedEntities.size())).c_str());
+        
+        ImGui::Checkbox("Visible", &m_visible);
+        
+        
+    }
+    ImGui::EndDock();
 }

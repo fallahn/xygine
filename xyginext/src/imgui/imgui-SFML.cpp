@@ -6,6 +6,7 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -376,6 +377,33 @@ void Image(const sf::Texture& texture, const sf::Vector2f& size, const sf::Float
     ImVec2 uv1((textureRect.left + textureRect.width) / textureSize.x,
         (textureRect.top + textureRect.height) / textureSize.y);
     ImGui::Image((void*)texture.getNativeHandle(), size, uv0, uv1, tintColor, borderColor);
+}
+    
+void Image(const sf::RenderTexture& texture,
+               const sf::Color& tintColor, const sf::Color& borderColor)
+{
+    Image(texture, static_cast<sf::Vector2f>(texture.getSize()), tintColor, borderColor);
+}
+    
+void Image(const sf::RenderTexture& texture, const sf::Vector2f& size,
+               const sf::Color& tintColor, const sf::Color& borderColor)
+{
+    ImGui::Image((void*)texture.getTexture().getNativeHandle(), size, ImVec2(0, 1), ImVec2(1, 0), tintColor, borderColor);
+}
+    
+void Image(const sf::RenderTexture& texture, const sf::FloatRect& textureRect,
+               const sf::Color& tintColor, const sf::Color& borderColor)
+{
+    Image(texture, sf::Vector2f(std::abs(textureRect.width), std::abs(textureRect.height)), textureRect, tintColor, borderColor);
+}
+    
+void Image(const sf::RenderTexture& texture, const sf::Vector2f& size, const sf::FloatRect& textureRect,
+               const sf::Color& tintColor, const sf::Color& borderColor)
+{
+    sf::Vector2f textureSize = static_cast<sf::Vector2f>(texture.getSize());
+    ImVec2 uv0(textureRect.left / textureSize.x, (textureRect.top + textureRect.height) / textureSize.y);
+    ImVec2 uv1((textureRect.left + textureRect.width) / textureSize.x, textureRect.top / textureSize.y);
+    ImGui::Image((void*)texture.getTexture().getNativeHandle(), size, uv0, uv1, tintColor, borderColor);
 }
 
 void Image(const sf::Sprite& sprite,

@@ -34,6 +34,8 @@ source distribution.
 #include <xyginext/core/Assert.hpp>
 #include <xyginext/core/Message.hpp>
 
+#include <xyginext/core/Editor.hpp>
+
 #include <vector>
 #include <type_traits>
 
@@ -55,7 +57,7 @@ namespace xy
         BadgerEvent //etc...
     };
     */
-    class XY_EXPORT_API MessageBus final
+    class XY_EXPORT_API MessageBus final : Editable
     {
     public:
         MessageBus();
@@ -131,6 +133,9 @@ namespace xy
         std::size_t m_pendingCount;
 
         bool m_enabled;
+        
+        //Editor
+        void editorDraw() override;
     };
 }
 #endif //XY_MESSAGE_BUS_HPP_

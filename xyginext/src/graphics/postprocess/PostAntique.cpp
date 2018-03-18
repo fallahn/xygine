@@ -27,7 +27,6 @@ source distribution.
 
 #include <xyginext/graphics/postprocess/Antique.hpp>
 #include <xyginext/core/App.hpp>
-#include "../../imgui/imgui.h"
 
 #include <SFML/Graphics/RenderTexture.hpp>
 

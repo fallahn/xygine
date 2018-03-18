@@ -47,9 +47,9 @@ ErrorState::ErrorState(xy::StateStack& stack, xy::State::Context ctx, const Shar
     registerWindow(
         [&]()
     {
-        XY_ASSERT(xy::App::getRenderWindow(), "no valid window");
+        XY_ASSERT(xy::App::getRenderTarget(), "no valid window");
 
-        auto windowSize = sf::Vector2f(xy::App::getRenderWindow()->getSize());
+        auto windowSize = sf::Vector2f(xy::App::getRenderTarget()->getSize());
         auto boxSize = sf::Vector2f(400.f, 100.f);
         windowSize = (windowSize - boxSize) / 2.f;
 
@@ -86,9 +86,9 @@ bool ErrorState::update(float)
 
 void ErrorState::draw()
 {
-    XY_ASSERT(xy::App::getRenderWindow(), "no valid window");
+    XY_ASSERT(xy::App::getRenderTarget(), "no valid window");
 
-    auto& rt = *getContext().appInstance.getRenderWindow();
+    auto& rt = *getContext().appInstance.getRenderTarget();
     rt.setView(getContext().defaultView);
     rt.draw(m_backgroundSprite);
 }

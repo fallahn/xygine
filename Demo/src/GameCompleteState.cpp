@@ -136,9 +136,9 @@ bool GameCompleteState::update(float dt)
 
 void GameCompleteState::draw()
 {
-    auto& rt = getContext().renderWindow;
+    auto rt = xy::App::getRenderTarget();
 
-    rt.draw(m_scene);
+    rt->draw(m_scene);
 }
 
 //private

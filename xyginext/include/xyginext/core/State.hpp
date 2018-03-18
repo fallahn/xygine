@@ -78,8 +78,7 @@ namespace xy
         */
         struct XY_EXPORT_API Context
         {
-            Context(sf::RenderWindow& renderWindow, App& app);
-            sf::RenderWindow& renderWindow;
+            Context(App& app);
             App& appInstance;
             sf::View defaultView;
         };

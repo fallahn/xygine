@@ -201,11 +201,6 @@ namespace xy
         \brief Set the current style
         */
         XY_EXPORT_API void setStyle(const Style& style);
-        
-        /*!
-         \brief Set the current style
-         */
-        XY_EXPORT_API void setStyle(const Style& style);
     }
 }
 

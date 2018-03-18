@@ -104,6 +104,7 @@ namespace xy
         static void printStat(const std::string&, const std::string&);
 
     private:
+        friend class Editor;
         friend class App;
         friend class ConsoleClient;
 

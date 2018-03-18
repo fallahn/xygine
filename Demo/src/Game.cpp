@@ -46,7 +46,7 @@ namespace
 
 Game::Game()
     : xy::App   (/*sf::ContextSettings(0, 0, 0, 3, 2, sf::ContextSettings::Core)*/),
-    m_stateStack({ *getRenderWindow(), *this })
+m_stateStack({ *this })
 {
     /*sf::Image img;
     img.loadFromFile("assets/images/cursor.png");
@@ -58,7 +58,7 @@ Game::Game()
 
     setWindowIcon("assets/images/icon.png");
     
-    getRenderWindow()->setTitle("xygine - Castle Clamber (F1 for Options)");
+    setWindowTitle("xygine - Castle Clamber (F1 for Options)");
     Locale::load("assets/localisation/chichewa.xyl");
 }
 
@@ -105,8 +105,8 @@ void Game::initialise()
     m_stateStack.pushState(StateID::Intro);
 #endif
 
-    XY_ASSERT(getRenderWindow(), "no valid window");
-    getRenderWindow()->setKeyRepeatEnabled(false);
+    XY_ASSERT(getRenderTarget(), "no valid window");
+    dynamic_cast<sf::RenderWindow*>(getRenderTarget())->setKeyRepeatEnabled(false);
 }
 
 void Game::finalise()

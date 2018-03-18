@@ -129,8 +129,8 @@ bool GameoverState::update(float dt)
 
 void GameoverState::draw()
 {
-    auto& rw = getContext().renderWindow;
-    rw.draw(m_scene);
+    auto rw = xy::App::getRenderTarget();
+    rw->draw(m_scene);
 }
 
 //private

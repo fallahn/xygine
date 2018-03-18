@@ -354,10 +354,10 @@ bool GameState::update(float dt)
 
 void GameState::draw()
 {
-    auto& rw = getContext().renderWindow;
-    rw.draw(m_scene);
+    auto rw = xy::App::getRenderTarget();
+    rw->draw(m_scene);
 #ifdef XY_DEBUG
-    rw.draw(debugShape);
+    rw->draw(debugShape);
     
     DPRINT("map", m_mapData.mapName);
     DPRINT("Actor count", std::to_string(debugActorCount));

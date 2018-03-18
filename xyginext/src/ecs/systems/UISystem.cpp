@@ -41,8 +41,8 @@ namespace
 {
     sf::Vector2f toWorldCoords(sf::Int32 x, sf::Int32 y)
     {
-        XY_ASSERT(App::getRenderWindow(), "no valid window");
-        return App::getRenderWindow()->mapPixelToCoords({ x, y });
+        XY_ASSERT(App::getRenderTarget(), "no valid window");
+        return App::getRenderTarget()->mapPixelToCoords({ x, y });
     }
 
     const float DeadZone = 20.f;
@@ -243,10 +243,13 @@ void UISystem::process(float)
         axis = sf::Joystick::getAxisPosition(0, sf::Joystick::PovY);
 #endif //_WIN32
         if (axis < -DeadZone || axis > DeadZone) movement.y = axis;
-
-        auto pos = sf::Mouse::getPosition(*xy::App::getRenderWindow());
-        pos += sf::Vector2i(movement * moveSpeed);
-        sf::Mouse::setPosition(pos, *xy::App::getRenderWindow());
+        
+        if (dynamic_cast<sf::RenderWindow*>(xy::App::getRenderTarget()))
+        {
+            auto pos = sf::Mouse::getPosition(*(dynamic_cast<sf::RenderWindow*>(xy::App::getRenderTarget())));
+            pos += sf::Vector2i(movement * moveSpeed);
+            sf::Mouse::setPosition(pos, *(dynamic_cast<sf::RenderWindow*>(xy::App::getRenderTarget())));
+        }
     }
     else
     {
