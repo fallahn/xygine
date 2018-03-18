@@ -9,7 +9,7 @@ build_script:
 
     ./bootstrap-vcpkg.bat
 
-    vcpkg install sfml enet
+    vcpkg install --head sfml enet
 
     cd C:/projects/xygine/xyginext
 
