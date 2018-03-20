@@ -90,6 +90,9 @@ State::Context State::getContext() const
 void State::launchLoadingScreen()
 {
     m_context.appInstance.pause();
+    
+    // Need to cast on SFML 2.4.2, although setActive was implemented in SFML commit 2df9ab
+    auto rt = m_context.appInstance.getRenderTarget();
     m_context.appInstance.getRenderTarget()->setActive(false);
     m_threadRunning = true;
     m_loadingThread.launch();

@@ -53,16 +53,6 @@ namespace
     std::vector<std::string>    m_debugLines;
     std::vector<std::pair<std::function<void()>, const GuiClient*>> m_statusControls;
     
-    std::vector<sf::Vector2u> resolutions;
-    //int currentAALevel = 0;
-    int currentResolution = 0;
-    std::array<char, 300> resolutionNames{};
-    bool fullScreen = false;
-    bool vSync = false;
-    bool useFrameLimit = false;
-    int frameLimit = 10;
-
-    
     std::string output;
 
     constexpr std::size_t MAX_INPUT_CHARS = 400;
@@ -107,23 +97,6 @@ void Console::print(const std::string& line)
 void Console::show()
 {
     visible = !visible;
-
-    const auto& size = App::getRenderTarget()->getSize();
-    for (auto i = 0u; i < resolutions.size(); ++i)
-    {
-        if (resolutions[i].x == size.x && resolutions[i].y == size.y)
-        {
-            currentResolution = i;
-            break;
-        }
-    }
-
-    const auto& settings = App::getActiveInstance()->getVideoSettings();
-    fullScreen = (settings.WindowStyle & sf::Style::Fullscreen);
-
-    vSync = settings.VSync;
-    useFrameLimit = (settings.FrameLimit != 0);
-    frameLimit = settings.FrameLimit;
 }
 
 bool Console::isVisible()
@@ -240,6 +213,7 @@ void Console::draw()
 {
 #ifdef USE_IMGUI
     // Console
+    ImGui::SetNextDock(ImGuiDockSlot_Bottom);
     if (nim::BeginDock("Console"))
     {
         
@@ -266,68 +240,7 @@ void Console::draw()
         }
     }
     nim::EndDock();
-    
-    // Video options
-    if (nim::BeginDock("Video"))
-    {       
-        nim::Combo("Resolution", &currentResolution, resolutionNames.data());
 
-        XY_ASSERT(App::getRenderTarget(), "no valid render target");
-        
-        nim::Checkbox("Full Screen", &fullScreen);
-
-        nim::Checkbox("V-Sync", &vSync);
-        if (vSync)
-        {
-            useFrameLimit = false;
-        }
-        
-        nim::Checkbox("Limit Framerate", &useFrameLimit);
-        if (useFrameLimit)
-        {
-            vSync = false;
-        }
-
-        nim::SameLine();
-        nim::PushItemWidth(80.f);
-        nim::InputInt("Frame Rate", &frameLimit);
-        nim::PopItemWidth();
-        frameLimit = std::max(10, std::min(frameLimit, 360));
-
-        if (nim::Button("Apply", { 50.f, 20.f }))
-        {
-            //apply settings
-            auto settings = App::getActiveInstance()->getVideoSettings();
-            settings.VideoMode.width = resolutions[currentResolution].x;
-            settings.VideoMode.height = resolutions[currentResolution].y;
-            settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
-            settings.VSync = vSync;
-            settings.FrameLimit = useFrameLimit ? frameLimit : 0;
-
-            App::getActiveInstance()->applyVideoSettings(settings);
-        }
-    }
-    nim::EndDock();
-
-    // Audio
-    if (nim::BeginDock("Audio"))
-    {
-        nim::Text("NOTE: only AudioSystem sounds are affected.");
-
-        static float maxVol = AudioMixer::getMasterVolume();
-        nim::SliderFloat("Master", &maxVol, 0.f, 1.f);
-        AudioMixer::setMasterVolume(maxVol);
-
-        static std::array<float, AudioMixer::MaxChannels> channelVol;
-        for (auto i = 0u; i < AudioMixer::MaxChannels; ++i)
-        {
-            channelVol[i] = AudioMixer::getVolume(i);
-            nim::SliderFloat(AudioMixer::getLabel(i).c_str(), &channelVol[i], 0.f, 1.f);
-            AudioMixer::setVolume(channelVol[i], i);
-        }
-    }
-    nim::EndDock();
-    
     // Stats
     if (nim::BeginDock("Stats"))
     {
@@ -357,37 +270,6 @@ void Console::draw()
 
 void Console::init()
 {
-    auto modes = sf::VideoMode::getFullscreenModes();
-    for (const auto& mode : modes)
-    {
-        if (mode.bitsPerPixel == 32)
-        {
-            resolutions.emplace_back(mode.width, mode.height);
-        }
-    }
-    
-    std::reverse(std::begin(resolutions), std::end(resolutions));
-
-    int i = 0;
-    for (auto r = resolutions.begin(); r != resolutions.end(); ++r)
-    {
-        std::string width = std::to_string(r->x);
-        std::string height = std::to_string(r->y);
-
-        for (char c : width)
-        {
-            resolutionNames[i++] = c;
-        }
-        resolutionNames[i++] = ' ';
-        resolutionNames[i++] = 'x';
-        resolutionNames[i++] = ' ';
-        for (char c : height)
-        {
-            resolutionNames[i++] = c;
-        }
-        resolutionNames[i++] = '\0';
-    }
-
     //------default commands------//
     //list all available commands to the console
     addCommand("help",

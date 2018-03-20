@@ -29,6 +29,9 @@ namespace xy
     class Editor
     {
     public:
+        
+        static void init();
+        
         static bool isEnabled();
         
         template<typename T>
@@ -38,14 +41,12 @@ namespace xy
         static void toggle();
         static void draw();
         
-        static std::vector<Editable*> m_editables;
+        static void showStyleEditor();
+        static void showVideoSettings();
+        static void showAudioSettings();
         
         friend class App;
         friend class Editable;
-        
-        static bool m_enabled;
-        
-        static sf::RenderTexture m_viewportBuffer;
     };
 }
 

@@ -133,6 +133,7 @@ void App::run()
     loadSettings();
     
     Console::init();
+    Editor::init();
     initialise();
 
     running = true;
