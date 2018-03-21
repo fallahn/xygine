@@ -160,6 +160,27 @@ void Drawable::bindUniform(const std::string& name, sf::Vector3f value)
     }
 }
 
+void Drawable::bindUniform(const std::string& name, const float* matrix)
+{
+    if (m_matCount < MaxBindings)
+    {
+        auto result = std::find_if(m_matBindings.begin(), m_matBindings.end(),
+            [&name](const std::pair<std::string, const float*>& pair)
+        {
+            return pair.first == name;
+        });
+        if (result == m_matBindings.end())
+        {
+            m_matBindings[m_matCount] = std::make_pair(name, matrix);
+            m_matCount++;
+        }
+        else
+        {
+            result->second = matrix;
+        }
+    }
+}
+
 void Drawable::setBlendMode(sf::BlendMode mode)
 {
     m_states.blendMode = mode;
