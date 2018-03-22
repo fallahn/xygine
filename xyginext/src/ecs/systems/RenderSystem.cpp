@@ -113,6 +113,11 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
                     const auto& pair = drawable.m_vec3Bindings[i];
                     shader->setUniform(pair.first, pair.second);
                 }
+                for (auto i = 0u; i < drawable.m_boolCount; ++i)
+                {
+                    const auto& pair = drawable.m_boolBindings[i];
+                    shader->setUniform(pair.first, pair.second);
+                }
                 for (auto i = 0u; i < drawable.m_matCount; ++i)
                 {
                     const auto& pair = drawable.m_matBindings[i];

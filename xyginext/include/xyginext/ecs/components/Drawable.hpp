@@ -87,6 +87,8 @@ namespace xy
 
         void bindUniform(const std::string& name, sf::Vector3f value);
 
+        void bindUniform(const std::string& name, bool value);
+
         /*!
         \brief Binds a pointer to a float array containing a 4x4 matrix
         */
@@ -173,11 +175,13 @@ namespace xy
         std::array<std::pair<std::string, float>, MaxBindings> m_floatBindings;
         std::array<std::pair<std::string, sf::Vector2f>, MaxBindings> m_vec2Bindings;
         std::array<std::pair<std::string, sf::Vector3f>, MaxBindings> m_vec3Bindings;
+        std::array<std::pair<std::string, bool>, MaxBindings> m_boolBindings;
         std::array<std::pair<std::string, const float*>, MaxBindings> m_matBindings;
         std::size_t m_textureCount;
         std::size_t m_floatCount;
         std::size_t m_vec2Count;
         std::size_t m_vec3Count;
+        std::size_t m_boolCount;
         std::size_t m_matCount;
 
         friend class RenderSystem;

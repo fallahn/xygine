@@ -160,6 +160,31 @@ void Drawable::bindUniform(const std::string& name, sf::Vector3f value)
     }
 }
 
+void Drawable::bindUniform(const std::string& name, bool value)
+{
+    if (m_boolCount < MaxBindings)
+    {
+        auto result = std::find_if(m_boolBindings.begin(), m_boolBindings.end(),
+            [&name](const std::pair<std::string, bool>& pair)
+        {
+            return pair.first == name;
+        });
+        if (result == m_boolBindings.end())
+        {
+            m_boolBindings[m_boolCount] = std::make_pair(name, value);
+            m_boolCount++;
+        }
+        else
+        {
+            result->second = value;
+        }
+    }
+    else
+    {
+        Logger::log(name + ": uniform not bound, MaxBindings reached", xy::Logger::Type::Info);
+    }
+}
+
 void Drawable::bindUniform(const std::string& name, const float* matrix)
 {
     if (m_matCount < MaxBindings)
