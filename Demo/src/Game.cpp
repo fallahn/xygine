@@ -55,10 +55,8 @@ Game::Game()
     {
         getRenderWindow()->setMouseCursor(cursor);
     }*/
-
-    setWindowIcon("assets/images/icon.png");
-    
-    getRenderWindow()->setTitle("xygine - Castle Clamber (F1 for Options)");
+  
+    setWindowTitle("xygine - Castle Clamber (F1 for Options)");
     Locale::load("assets/localisation/chichewa.xyl");
 }
 
@@ -98,6 +96,8 @@ void Game::draw()
 
 void Game::initialise()
 {
+    setWindowIcon("assets/images/icon.png");
+    
     registerStates();
 #ifdef XY_DEBUG
     m_stateStack.pushState(StateID::MainMenu);

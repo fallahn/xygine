@@ -197,9 +197,11 @@ namespace xy
 
         /*!
         \brief Sets the window icon.
-        This should be a path to a 16x16px image. Prefer this to
-        setting the icon directly on the window object, as it will
-        make sure to maintain the icon when video modes are modified
+        This should be a path to a 16x16px image on most platforms,
+        although on macOS this icon should be larger as it appears 
+        in the dock. Prefer this to setting the icon directly on the
+        window object, as it will make sure to maintain the icon when
+        video modes are modified
         */
         void setWindowIcon(const std::string&);
 
