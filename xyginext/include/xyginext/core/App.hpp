@@ -95,12 +95,12 @@ namespace xy
             std::vector<sf::VideoMode> AvailableVideoModes;
             std::string Title;
 
-            VideoSettings()
+            VideoSettings(sf::ContextSettings contextSettings = sf::ContextSettings())
                 : WindowStyle(sf::Style::Close /*sf::Style::Fullscreen*/),
-                VideoMode(800, 600),
-                ContextSettings(),
-                VSync(true),
-                FrameLimit(0){}
+                VideoMode       (800, 600),
+                ContextSettings (contextSettings),
+                VSync           (true),
+                FrameLimit      (0){}
 
             bool operator == (const VideoSettings& vs)
             {
@@ -108,9 +108,15 @@ namespace xy
                 return
                     (vs.VideoMode == this->VideoMode
                     && vs.ContextSettings.antialiasingLevel == this->ContextSettings.antialiasingLevel
+                    && vs.ContextSettings.depthBits == this->ContextSettings.depthBits
                     && vs.VSync == this->VSync
                     && vs.WindowStyle == this->WindowStyle
                     && vs.FrameLimit == this->FrameLimit);
+            }
+
+            bool operator != (const VideoSettings& vs)
+            {
+                return !(*this == vs);
             }
         };
 
@@ -123,7 +129,7 @@ namespace xy
         (or other 3D features) a context with OpenGL version 3.2 or 
         higher is needed, as well as a depth buffer.
         */
-        App();
+        App(sf::ContextSettings contextSettings = sf::ContextSettings());
         virtual ~App() = default;
         App(const App&) = delete;
         const App& operator = (const App&) = delete;

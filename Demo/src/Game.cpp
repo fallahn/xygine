@@ -45,7 +45,7 @@ namespace
 }
 
 Game::Game()
-    : xy::App   (/*sf::ContextSettings(0, 0, 0, 3, 2, sf::ContextSettings::Core)*/),
+    : xy::App   (sf::ContextSettings(0, 0, 0, 1, 1, 0)),
     m_stateStack({ *getRenderWindow(), *this })
 {
     /*sf::Image img;

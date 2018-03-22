@@ -37,7 +37,7 @@ source distribution.
 #include "../imgui/imgui-SFML.h"
 #include "../imgui/imgui_internal.h"
 
-#include "../detail/glad.h"
+#include "../detail/GLCheck.hpp"
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -79,7 +79,7 @@ namespace
 
 bool App::m_mouseCursorVisible = true;
 
-App::App()
+App::App(sf::ContextSettings contextSettings)
     : m_videoSettings   (),
     m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
     m_applicationName   (APP_NAME)
@@ -157,7 +157,12 @@ void App::run()
         Console::draw();
         for (auto& f : m_guiWindows) f.first();
         
-        m_renderWindow.clear(clearColour);
+        //m_renderWindow.clear(clearColour);
+        if (m_renderWindow.setActive(true))
+        {
+            glCheck(glClearColor(clearColour.r / 255.f, clearColour.g / 255.f, clearColour.b / 255.f, clearColour.a / 255.f));
+            glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        }
         draw();       
         ImGui::SFML::Render(m_renderWindow);
         m_renderWindow.display();
