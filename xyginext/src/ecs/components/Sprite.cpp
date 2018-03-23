@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/components/Sprite.hpp>
+#include "xyginext/ecs/components/Sprite.hpp"
 
 #include <SFML/Graphics/Texture.hpp>
 

@@ -25,12 +25,12 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/systems/CameraSystem.hpp>
-#include <xyginext/ecs/components/Camera.hpp>
-#include <xyginext/ecs/components/Transform.hpp>
-#include <xyginext/util/Math.hpp>
+#include "xyginext/ecs/systems/CameraSystem.hpp"
+#include "xyginext/ecs/components/Camera.hpp"
+#include "xyginext/ecs/components/Transform.hpp"
+#include "xyginext/util/Math.hpp"
 
-#include <xyginext/core/App.hpp>
+#include "xyginext/core/App.hpp"
 
 using namespace xy;
 

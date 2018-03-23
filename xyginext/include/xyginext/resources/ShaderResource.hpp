@@ -30,7 +30,7 @@ source distribution.
 #ifndef XY_SHADER_RESOURCE_HPP_
 #define XY_SHADER_RESOURCE_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Shader.hpp>

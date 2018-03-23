@@ -25,13 +25,13 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/systems/ParticleSystem.hpp>
-#include <xyginext/ecs/components/Transform.hpp>
-#include <xyginext/ecs/components/ParticleEmitter.hpp>
-#include <xyginext/core/App.hpp>
-#include <xyginext/util/Const.hpp>
-#include <xyginext/util/Random.hpp>
-#include <xyginext/util/Vector.hpp>
+#include "xyginext/ecs/systems/ParticleSystem.hpp"
+#include "xyginext/ecs/components/Transform.hpp"
+#include "xyginext/ecs/components/ParticleEmitter.hpp"
+#include "xyginext/core/App.hpp"
+#include "xyginext/util/Const.hpp"
+#include "xyginext/util/Random.hpp"
+#include "xyginext/util/Vector.hpp"
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>

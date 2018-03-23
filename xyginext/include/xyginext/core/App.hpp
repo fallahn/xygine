@@ -41,10 +41,10 @@ The older revision of xygine can be found <a href="https://github.com/fallahn/xy
 #ifndef XY_APP_HPP_
 #define XY_APP_HPP_
 
-#include <xyginext/core/StateStack.hpp>
-#include <xyginext/core/MessageBus.hpp>
-#include <xyginext/Config.hpp>
-#include <xyginext/audio/Mixer.hpp>
+#include "xyginext/core/StateStack.hpp"
+#include "xyginext/core/MessageBus.hpp"
+#include "xyginext/Config.hpp"
+#include "xyginext/audio/Mixer.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 

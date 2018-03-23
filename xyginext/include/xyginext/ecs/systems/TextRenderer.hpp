@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_TEXT_RENDERER_HPP_
 #define XY_TEXT_RENDERER_HPP_
 
-#include <xyginext/ecs/System.hpp>
+#include "xyginext/ecs/System.hpp"
 
 #include <SFML/Graphics/Drawable.hpp>
 

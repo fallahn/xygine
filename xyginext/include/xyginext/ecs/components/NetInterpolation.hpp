@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_NET_INTERPOLATE_HPP_
 #define XY_NET_INTERPOLATE_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 #include <SFML/Config.hpp>
 
 namespace xy

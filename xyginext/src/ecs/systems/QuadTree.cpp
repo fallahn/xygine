@@ -25,14 +25,14 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/systems/QuadTree.hpp>
+#include "xyginext/ecs/systems/QuadTree.hpp"
 
-#include <xyginext/ecs/components/Transform.hpp>
-#include <xyginext/ecs/components/QuadTreeItem.hpp>
+#include "xyginext/ecs/components/Transform.hpp"
+#include "xyginext/ecs/components/QuadTreeItem.hpp"
 
-#include <xyginext/util/Rectangle.hpp>
+#include "xyginext/util/Rectangle.hpp"
 
-#include <xyginext/core/App.hpp>
+#include "xyginext/core/App.hpp"
 
 #ifdef DDRAW
 #include <SFML/Graphics/RenderTarget.hpp>

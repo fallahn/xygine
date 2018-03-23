@@ -30,7 +30,7 @@ source distribution.
 #ifndef XY_FILE_SYS_HPP_
 #define XY_FILE_SYS_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <string>
 #include <vector>

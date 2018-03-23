@@ -25,13 +25,13 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/core/App.hpp>
-#include <xyginext/core/Log.hpp>
-#include <xyginext/core/Console.hpp>
-#include <xyginext/core/ConfigFile.hpp>
-#include <xyginext/core/FileSystem.hpp>
-#include <xyginext/detail/Operators.hpp>
-#include <xyginext/gui/GuiClient.hpp>
+#include "xyginext/core/App.hpp"
+#include "xyginext/core/Log.hpp"
+#include "xyginext/core/Console.hpp"
+#include "xyginext/core/ConfigFile.hpp"
+#include "xyginext/core/FileSystem.hpp"
+#include "xyginext/detail/Operators.hpp"
+#include "xyginext/gui/GuiClient.hpp"
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui-SFML.h"

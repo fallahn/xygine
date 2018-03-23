@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/core/MessageBus.hpp>
-#include <xyginext/core/Log.hpp>
+#include "xyginext/core/MessageBus.hpp"
+#include "xyginext/core/Log.hpp"
 
 using namespace xy;
 

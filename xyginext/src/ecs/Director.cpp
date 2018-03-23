@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/Director.hpp>
-#include <xyginext/ecs/systems/CommandSystem.hpp>
+#include "xyginext/ecs/Director.hpp"
+#include "xyginext/ecs/systems/CommandSystem.hpp"
 
 using namespace xy;
 

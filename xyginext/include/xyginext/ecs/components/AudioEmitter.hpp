@@ -28,8 +28,8 @@ source distribution.
 #ifndef XY_AUDIO_EMITTER_HPP_
 #define XY_AUDIO_EMITTER_HPP_
 
-#include <xyginext/Config.hpp>
-#include <xyginext/audio/AudioSourceImpl.hpp>
+#include "xyginext/Config.hpp"
+#include "xyginext/audio/AudioSourceImpl.hpp"
 
 #include <SFML/Config.hpp>
 

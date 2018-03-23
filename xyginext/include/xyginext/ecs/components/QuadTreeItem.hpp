@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_QUAD_TREE_ITEM_HPP_
 #define XY_QUAD_TREE_ITEM_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <SFML/Graphics/Rect.hpp>
 

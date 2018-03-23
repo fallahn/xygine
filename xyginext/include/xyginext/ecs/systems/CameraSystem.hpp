@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_CAMERA_SYSTEM_HPP_
 #define XY_CAMERA_SYSTEM_HPP_
 
-#include <xyginext/ecs/System.hpp>
+#include "xyginext/ecs/System.hpp"
 
 namespace xy
 {

@@ -25,10 +25,10 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/systems/TextRenderer.hpp>
-#include <xyginext/ecs/components/Text.hpp>
-#include <xyginext/ecs/components/Transform.hpp>
-#include <xyginext/util/Rectangle.hpp>
+#include "xyginext/ecs/systems/TextRenderer.hpp"
+#include "xyginext/ecs/components/Text.hpp"
+#include "xyginext/ecs/components/Transform.hpp"
+#include "xyginext/util/Rectangle.hpp"
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>

@@ -25,11 +25,11 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/core/StateStack.hpp>
-#include <xyginext/core/App.hpp>
-#include <xyginext/core/Log.hpp>
-#include <xyginext/core/Assert.hpp>
-#include <xyginext/core/Message.hpp>
+#include "xyginext/core/StateStack.hpp"
+#include "xyginext/core/App.hpp"
+#include "xyginext/core/Log.hpp"
+#include "xyginext/core/Assert.hpp"
+#include "xyginext/core/Message.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>
 

@@ -30,8 +30,8 @@ source distribution.
 #ifndef XY_RESOURCES_HPP_
 #define XY_RESOURCES_HPP_
 
-#include <xyginext/Config.hpp>
-#include <xyginext/core/FileSystem.hpp>
+#include "xyginext/Config.hpp"
+#include "xyginext/core/FileSystem.hpp"
 
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Image.hpp>

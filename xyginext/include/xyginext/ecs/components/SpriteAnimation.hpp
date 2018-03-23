@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_SPRITE_ANIMATION_HPP_
 #define XY_SPRITE_ANIMATION_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 #include <SFML/Config.hpp>
 
 namespace xy

@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_UI_SYSTEM_HPP_
 #define XY_UI_SYSTEM_HPP_
 
-#include <xyginext/ecs/System.hpp>
+#include "xyginext/ecs/System.hpp"
 
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Rect.hpp>

@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_SPRITE_HPP_
 #define XY_SPRITE_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Vertex.hpp>

@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_TEXT_HPP_
 #define XY_TEXT_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <SFML/System/String.hpp>
 #include <SFML/Graphics/Rect.hpp>

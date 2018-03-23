@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/resources/ShaderResource.hpp>
-#include <xyginext/core/Assert.hpp>
+#include "xyginext/resources/ShaderResource.hpp"
+#include "xyginext/core/Assert.hpp"
 
 #include <SFML/Graphics/Shader.hpp>
 

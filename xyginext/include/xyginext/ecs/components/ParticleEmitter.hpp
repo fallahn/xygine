@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_PARTICLE_EMITTER_HPP_
 #define XY_PARTICLE_EMITTER_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Clock.hpp>

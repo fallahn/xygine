@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_SPRITE_ANIMATOR_HPP_
 #define XY_SPRITE_ANIMATOR_HPP_
 
-#include <xyginext/ecs/System.hpp>
+#include "xyginext/ecs/System.hpp"
 
 namespace xy
 {
