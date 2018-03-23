@@ -40,10 +40,9 @@ find_package(OpenGL REQUIRED)
 find_package(ENet REQUIRED)
 
 # Additional include directories
-include_directories(
+include_directories( SYSTEM
   ${SFML_INCLUDE_DIR} 
-  ${ENET_INCLUDE_DIR}
-  ${CMAKE_SOURCE_DIR}/include)
+  ${ENET_INCLUDE_DIR})
   
 if(UNIX)
   include_directories(${GTK_INCLUDE_DIRS})
