@@ -57,7 +57,7 @@ namespace xy
     entities else existing entities will not be processed by new systems.
     */
 
-    class XY_EXPORT_API Scene final : public sf::Drawable, Editable
+    class XY_EXPORT_API Scene final : public sf::Drawable
     {
     public:
         explicit Scene(MessageBus&);
@@ -204,10 +204,6 @@ namespace xy
         std::function<void(sf::RenderTarget&, sf::RenderStates)> currentRenderPath;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
-        
-        // Editor stuff
-        void editorDraw() override;
-        bool m_visible;
     };
 
 #include "Scene.inl"

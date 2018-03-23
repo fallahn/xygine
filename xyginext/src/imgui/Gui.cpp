@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include "xyginext/gui/Gui.hpp"
+#include "xyginext/core/ConfigFile.hpp"
 
 #include "imgui.h"
 

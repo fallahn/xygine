@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include "xyginext/core/App.hpp"
+#include "xyginext/core/Editor.hpp"
 #include "xyginext/core/Log.hpp"
 #include "xyginext/core/Console.hpp"
 #include "xyginext/core/ConfigFile.hpp"

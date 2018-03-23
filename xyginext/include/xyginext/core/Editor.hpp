@@ -15,7 +15,7 @@
 namespace xy
 {
     // Editable component, attach this to entities for the editor system to see them
-    class Editable
+    class Editable final
     {
         // hrm...
     };
@@ -24,7 +24,8 @@ namespace xy
     class EditorSystem : public xy::System
     {
     public:
-        EditorSystem(xy::MessageBus& mb);
+        EditorSystem(xy::MessageBus& mb, const std::string& sceneName = "");
+        ~EditorSystem();
     };
     
     class Editor
@@ -42,6 +43,7 @@ namespace xy
         static void showStyleEditor();
         static void showVideoSettings();
         static void showAudioSettings();
+        static void showAssetBrowser();
         static void showSpriteEditor();
         
         friend class App;

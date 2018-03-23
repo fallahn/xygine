@@ -60,8 +60,7 @@ namespace
 Scene::Scene(MessageBus& mb)
     : m_messageBus      (mb),
     m_entityManager     (mb),
-    m_systemManager     (*this),
-    m_visible(true)
+    m_systemManager     (*this)
 {
     auto defaultCamera = createEntity();
     defaultCamera.addComponent<Transform>().setPosition(xy::DefaultSceneSize / 2.f);

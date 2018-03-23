@@ -16,6 +16,8 @@
 #include "../imgui/imgui_dock.hpp"
 #include "../imgui/imgui-SFML.h"
 
+#include <unordered_map>
+
 using namespace xy;
 
 namespace
@@ -27,6 +29,7 @@ namespace
     bool shouldShowVideoSettings = false;
     bool shouldShowAudioSettings = false;
     bool shouldShowConsole = false;
+    bool shouldShowAssetBrowser = false;
     sf::RenderTexture viewportBuffer;
     int currentResolution = 0;
     std::array<char, 300> resolutionNames{};
@@ -35,6 +38,41 @@ namespace
     bool vSync = false;
     bool useFrameLimit = false;
     int frameLimit = 10;
+    
+    // For asset editing
+    std::string selectedAsset;
+    
+    // Any scenes which have the EditorSystem added
+    std::unordered_map<std::string, xy::Scene*> m_editableScenes;
+    static int sceneCounter(0);
+}
+
+EditorSystem::EditorSystem(xy::MessageBus& mb, const std::string& sceneName) :
+xy::System(mb, typeid(this))
+{
+    requireComponent<Editable>();
+    
+    // Register the scene we've been added to with the editor
+    auto name = sceneName;
+    if (name.empty())
+    {
+        name = "Scene " + std::to_string(sceneCounter++);
+    }
+        
+    m_editableScenes[name] = getScene();
+    
+}
+
+EditorSystem::~EditorSystem()
+{
+    auto scene = getScene();
+    auto me = std::find_if(m_editableScenes.begin(),m_editableScenes.end(),[scene](const std::pair<std::string, xy::Scene*>& m)
+                           { return m.second == scene; });
+                           
+    if (me != m_editableScenes.end())
+    {
+        m_editableScenes.erase(me);
+    }
 }
 
 void Editor::init()
@@ -127,6 +165,7 @@ void Editor::draw()
                     ImGui::MenuItem("Video", "v", &shouldShowVideoSettings);
                     ImGui::MenuItem("Audio", "a", &shouldShowAudioSettings);
                     ImGui::MenuItem("Console", "c", &shouldShowConsole);
+                    ImGui::MenuItem("Assets", "erm...", &shouldShowAssetBrowser);
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenu();
@@ -159,36 +198,11 @@ void Editor::draw()
         }
         ImGui::EndDock();
         
-        // Show asset browser
-        ImGui::SetNextDock(ImGuiDockSlot_Bottom); // should only affect first run
-        if (ImGui::BeginDock("Assets"))
+        // Asset browser
+        if (shouldShowAssetBrowser)
         {
-            std::function<void(std::string)> imFileTreeRecurse = [&](std::string path)
-            {
-                // List directories, recurse if selected
-                for (auto& dir : xy::FileSystem::listDirectories(path))
-                {
-                    if (ImGui::TreeNode(dir.c_str()))
-                    {
-                        imFileTreeRecurse(path + "/" + dir);
-                        ImGui::TreePop();
-                    }
-                }
-                
-                // List files, broadcast message if selected
-                for (auto& file : xy::FileSystem::listFiles(path))
-                {
-                    if (ImGui::Selectable(file.c_str()))
-                    {
-                        // Do something... show specific asset editor?
-                    }
-                }
-            };
-            
-            imFileTreeRecurse("assets");
+            showAssetBrowser();
         }
-        
-        ImGui::EndDock();
         
         // Style editor
         if (shouldShowStyleEditor)
@@ -312,8 +326,43 @@ void Editor::showAudioSettings()
     ImGui::EndDock();
 }
 
+void Editor::showAssetBrowser()
+{
+    ImGui::SetNextDock(ImGuiDockSlot_Bottom); // should only affect first run
+    if (ImGui::BeginDock("Assets"))
+    {
+        std::function<void(std::string)> imFileTreeRecurse = [&](std::string path)
+        {
+            // List directories, recurse if selected
+            for (auto& dir : xy::FileSystem::listDirectories(path))
+            {
+                if (ImGui::TreeNode(dir.c_str()))
+                {
+                    imFileTreeRecurse(path + "/" + dir);
+                    ImGui::TreePop();
+                }
+            }
+            
+            // List files, broadcast message if selected
+            for (auto& file : xy::FileSystem::listFiles(path))
+            {
+                bool selected = selectedAsset == file;
+                if (ImGui::Selectable(file.c_str(), &selected))
+                {
+                    selectedAsset = file;
+                }
+            }
+        };
+        
+        imFileTreeRecurse("assets");
+    }
+    
+    ImGui::EndDock();
+}
+
 void Editor::showSpriteEditor()
 {
     
 }
+
 

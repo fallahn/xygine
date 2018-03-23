@@ -33,6 +33,8 @@ source distribution.
 #include "SpringFlower.hpp"
 #include "Localisation.hpp"
 
+#include <xyginext/core/Editor.hpp>
+
 #include <xyginext/gui/Gui.hpp>
 
 #include <xyginext/ecs/components/AudioEmitter.hpp>
@@ -155,6 +157,9 @@ void GameCompleteState::loadAssets()
     m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
+    
+    // Add the editor system
+    m_scene.addSystem<xy::EditorSystem>(mb);
 
     m_scene.addDirector<EndingDirector>(m_soundResource, m_textureResource, mb);
 
