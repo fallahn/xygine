@@ -73,7 +73,7 @@ namespace xy
         /*!
         \brief Adds a uniform binding to be applied to any shader this
         drawable may have.
-        When sharing a shader between multiple drawables is maybe be, for
+        When sharing a shader between multiple drawables it may be, for
         instance, desirable to the apply a different texture for each drawble.
         This function allows mapping a uniform name (assuming it is available
         in the current shader) to a texture or other value.
@@ -86,6 +86,13 @@ namespace xy
         void bindUniform(const std::string& name, sf::Vector2f value);
 
         void bindUniform(const std::string& name, sf::Vector3f value);
+
+        void bindUniform(const std::string& name, bool value);
+
+        /*!
+        \brief Binds a pointer to a float array containing a 4x4 matrix
+        */
+        void bindUniform(const std::string& name, const float* value);
 
         /*!
         \brief Sets the blend mode used when drawing
@@ -113,7 +120,7 @@ namespace xy
         inversely the greater the value the further forward it is drawn.
         Default value is 0.
         */
-        void setDepth(sf::Int32 depth) { m_zDepth = depth; m_wantsSorting = true; }
+        void setDepth(sf::Int32 depth);
 
         /*!
         \brief Returns the Z depth value
@@ -147,7 +154,9 @@ namespace xy
 
         /*!
         \brief Updates the local bounds.
-        This should be called once by a system when it updates the vertex array
+        This should be called once by a system when it updates the vertex array.
+        As this is used by the render system for culling, Drawable components
+        will not be drawn if the bounds have not been updated.
         */
         void updateLocalBounds();
 
@@ -166,10 +175,14 @@ namespace xy
         std::array<std::pair<std::string, float>, MaxBindings> m_floatBindings;
         std::array<std::pair<std::string, sf::Vector2f>, MaxBindings> m_vec2Bindings;
         std::array<std::pair<std::string, sf::Vector3f>, MaxBindings> m_vec3Bindings;
+        std::array<std::pair<std::string, bool>, MaxBindings> m_boolBindings;
+        std::array<std::pair<std::string, const float*>, MaxBindings> m_matBindings;
         std::size_t m_textureCount;
         std::size_t m_floatCount;
         std::size_t m_vec2Count;
         std::size_t m_vec3Count;
+        std::size_t m_boolCount;
+        std::size_t m_matCount;
 
         friend class RenderSystem;
     };

@@ -36,7 +36,9 @@ Drawable::Drawable()
     : m_textureCount(0),
     m_floatCount    (0),
     m_vec2Count     (0),
-    m_vec3Count     (0)
+    m_vec3Count     (0),
+    m_boolCount     (0),
+    m_matCount      (0)
 {
 
 }
@@ -45,7 +47,9 @@ Drawable::Drawable(const sf::Texture& texture)
     : m_textureCount(0),
     m_floatCount    (0),
     m_vec2Count     (0),
-    m_vec3Count     (0)
+    m_vec3Count     (0),
+    m_boolCount     (0),
+    m_matCount      (0)
 {
     m_states.texture = &texture;
 }
@@ -58,6 +62,15 @@ void Drawable::setTexture(const sf::Texture* texture)
 void Drawable::setShader(sf::Shader* shader)
 {
     m_states.shader = shader;
+}
+
+void Drawable::setDepth(sf::Int32 depth)
+{
+    if (m_zDepth != depth)
+    {
+        m_zDepth = depth;
+        m_wantsSorting = true;
+    }
 }
 
 void Drawable::bindUniform(const std::string& name, const sf::Texture& texture)
@@ -157,6 +170,52 @@ void Drawable::bindUniform(const std::string& name, sf::Vector3f value)
     else
     {
         Logger::log(name + ": uniform not bound, MaxBindings reached", xy::Logger::Type::Info);
+    }
+}
+
+void Drawable::bindUniform(const std::string& name, bool value)
+{
+    if (m_boolCount < MaxBindings)
+    {
+        auto result = std::find_if(m_boolBindings.begin(), m_boolBindings.end(),
+            [&name](const std::pair<std::string, bool>& pair)
+        {
+            return pair.first == name;
+        });
+        if (result == m_boolBindings.end())
+        {
+            m_boolBindings[m_boolCount] = std::make_pair(name, value);
+            m_boolCount++;
+        }
+        else
+        {
+            result->second = value;
+        }
+    }
+    else
+    {
+        Logger::log(name + ": uniform not bound, MaxBindings reached", xy::Logger::Type::Info);
+    }
+}
+
+void Drawable::bindUniform(const std::string& name, const float* matrix)
+{
+    if (m_matCount < MaxBindings)
+    {
+        auto result = std::find_if(m_matBindings.begin(), m_matBindings.end(),
+            [&name](const std::pair<std::string, const float*>& pair)
+        {
+            return pair.first == name;
+        });
+        if (result == m_matBindings.end())
+        {
+            m_matBindings[m_matCount] = std::make_pair(name, matrix);
+            m_matCount++;
+        }
+        else
+        {
+            result->second = matrix;
+        }
     }
 }
 

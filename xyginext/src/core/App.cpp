@@ -36,7 +36,7 @@ source distribution.
 
 #include "../imgui/imgui-SFML.h"
 
-#include "../detail/glad.h"
+#include "../detail/GLCheck.hpp"
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -79,19 +79,28 @@ namespace
 
 bool App::m_mouseCursorVisible = true;
 
-App::App()
+App::App(sf::ContextSettings contextSettings)
     : m_videoSettings   (),
     m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
     m_applicationName   (APP_NAME)
 {
+<<<<<<< HEAD
     m_windowIcon.create(16u, 16u, defaultIcon);
 
     renderTarget = &m_renderWindow;
+=======
+    renderWindow = &m_renderWindow;
+>>>>>>> 2ae2daa874abc6635bf17d2c4e267244941292a4
 
     // At this point we can safely assume the target will be a renderwindow.
     // Perhaps in future add the ability to initialise with a rendertexture
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
+
+    //tiny icon looks awful in the dock
+#ifndef __APPLE__
+    m_windowIcon.create(16u, 16u, defaultIcon);
     m_renderWindow.setIcon(16, 16, m_windowIcon.getPixelsPtr());
+#endif
 
     //store available modes and remove unusable
     m_videoSettings.AvailableVideoModes = sf::VideoMode::getFullscreenModes();
@@ -158,6 +167,7 @@ void App::run()
         
         for (auto& f : m_guiWindows) f.first();
         
+<<<<<<< HEAD
         m_renderWindow.clear(clearColour);
         
         // Draw the editor, if enabled
@@ -175,6 +185,15 @@ void App::run()
             draw();
         }
         
+=======
+        //m_renderWindow.clear(clearColour);
+        if (m_renderWindow.setActive(true))
+        {
+            glCheck(glClearColor(clearColour.r / 255.f, clearColour.g / 255.f, clearColour.b / 255.f, clearColour.a / 255.f));
+            glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        }
+        draw();       
+>>>>>>> 2ae2daa874abc6635bf17d2c4e267244941292a4
         ImGui::SFML::Render(m_renderWindow);
         
         m_renderWindow.display();
@@ -302,7 +321,7 @@ void App::setWindowIcon(const std::string& path)
     if (m_windowIcon.loadFromFile(xy::FileSystem::getResourcePath() + path))
     {
         auto size = m_windowIcon.getSize();
-        XY_ASSERT(size.x == 16 && size.y == 16, "window icon must be 16x16 pixels");
+        //XY_ASSERT(size.x == 16 && size.y == 16, "window icon must be 16x16 pixels");
         m_renderWindow.setIcon(size.x, size.y, m_windowIcon.getPixelsPtr());
     }
     else

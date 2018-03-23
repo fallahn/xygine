@@ -77,9 +77,18 @@ namespace xy
         */
         sf::Vector2f getWorldPosition() const;
 
+        /*!
+        \brief Returns the depth of this transform in the scene hierachy.
+        A value of 0 means it has no parent, 1 means one parent and so on
+        */
+        std::size_t getDepth() const { return m_depth; }
+
     private:
         Transform* m_parent;
         std::vector<Transform*> m_children;
+        std::size_t m_depth;
+
+        void setDepth(std::size_t);
     };
 }
 
