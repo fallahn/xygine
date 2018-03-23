@@ -25,9 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/components/AudioEmitter.hpp>
-#include <xyginext/core/Assert.hpp>
-#include <xyginext/audio/Mixer.hpp>
+#include "xyginext/ecs/components/AudioEmitter.hpp"
+#include "xyginext/core/Assert.hpp"
+#include "xyginext/audio/Mixer.hpp"
 
 #include <SFML/Audio/SoundBuffer.hpp>
 

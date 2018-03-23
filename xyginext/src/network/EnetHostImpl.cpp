@@ -31,11 +31,11 @@ source distribution.
 
 #include "NetConf.hpp"
 
-#include <xyginext/network/EnetHostImpl.hpp>
-#include <xyginext/core/Log.hpp>
-#include <xyginext/core/Assert.hpp>
+#include "xyginext/network/EnetHostImpl.hpp"
+#include "xyginext/core/Log.hpp"
+#include "xyginext/core/Assert.hpp"
 
-#include <xyginext/network/NetData.hpp>
+#include "xyginext/network/NetData.hpp"
 
 using namespace xy;
 

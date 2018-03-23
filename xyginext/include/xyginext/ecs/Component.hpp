@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_COMPONENT_HPP_
 #define XY_COMPONENT_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <SFML/Config.hpp>
 

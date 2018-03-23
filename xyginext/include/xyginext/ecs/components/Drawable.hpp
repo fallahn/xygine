@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_DRAWABLE_HPP_
 #define XY_DRAWABLE_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Vertex.hpp>

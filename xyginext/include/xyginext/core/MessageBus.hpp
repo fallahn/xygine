@@ -30,9 +30,9 @@ source distribution.
 #ifndef XY_MESSAGE_BUS_HPP_
 #define XY_MESSAGE_BUS_HPP_
 
-#include <xyginext/core/State.hpp>
-#include <xyginext/core/Assert.hpp>
-#include <xyginext/core/Message.hpp>
+#include "xyginext/core/State.hpp"
+#include "xyginext/core/Assert.hpp"
+#include "xyginext/core/Message.hpp"
 
 #include <xyginext/core/Editor.hpp>
 

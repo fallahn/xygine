@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_UTIL_RANDOM_HPP_
 #define XY_UTIL_RANDOM_HPP_
 
-#include <xyginext/core/Assert.hpp>
+#include "xyginext/core/Assert.hpp"
 
 #include <SFML/Graphics/Rect.hpp>
 

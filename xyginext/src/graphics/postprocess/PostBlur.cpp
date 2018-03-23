@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/graphics/postprocess/Blur.hpp>
-#include <xyginext/core/Assert.hpp>
+#include "xyginext/graphics/postprocess/Blur.hpp"
+#include "xyginext/core/Assert.hpp"
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Sprite.hpp>

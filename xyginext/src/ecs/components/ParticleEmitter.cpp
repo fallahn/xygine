@@ -25,9 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/components/ParticleEmitter.hpp>
-#include <xyginext/resources/Resource.hpp>
-#include <xyginext/core/ConfigFile.hpp>
+#include "xyginext/ecs/components/ParticleEmitter.hpp"
+#include "xyginext/resources/Resource.hpp"
+#include "xyginext/core/ConfigFile.hpp"
 
 using namespace xy;
 

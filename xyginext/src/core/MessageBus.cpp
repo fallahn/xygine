@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/core/MessageBus.hpp>
-#include <xyginext/core/Log.hpp>
+#include "xyginext/core/MessageBus.hpp"
+#include "xyginext/core/Log.hpp"
 
 #include "../imgui/imgui_dock.hpp"
 
@@ -76,17 +76,4 @@ bool MessageBus::empty()
 std::size_t MessageBus::pendingMessageCount() const
 {
     return m_pendingCount;
-}
-
-// Editor
-void MessageBus::editorDraw()
-{
-    if (ImGui::BeginDock(("Message Bus##" + std::to_string(m_id)).c_str()))
-    {
-        ImGui::Text(("Message count: " + std::to_string(m_currentCount)).c_str());
-        ImGui::Text(("Pending count: " + std::to_string(m_pendingCount)).c_str());
-        
-        ImGui::Checkbox("Enabled", &m_enabled);
-    }
-    ImGui::EndDock();
 }

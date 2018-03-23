@@ -29,7 +29,7 @@ source distribution.
 #define XY_NET_IMPL_HPP_
 
 #include <SFML/Config.hpp>
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <cstddef>
 #include <string>

@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/Config.hpp>
-#include <xyginext/core/Log.hpp>
+#include "xyginext/Config.hpp"
+#include "xyginext/core/Log.hpp"
 #include "glad.h"
 
 #include <string>

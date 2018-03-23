@@ -28,8 +28,8 @@ source distribution.
 #ifndef XY_PARTICLE_SYSTEM_HPP_
 #define XY_PARTICLE_SYSTEM_HPP_
 
-#include <xyginext/ecs/System.hpp>
-#include <xyginext/ecs/components/ParticleEmitter.hpp>
+#include "xyginext/ecs/System.hpp"
+#include "xyginext/ecs/components/ParticleEmitter.hpp"
 
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Vertex.hpp>

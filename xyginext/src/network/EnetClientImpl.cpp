@@ -29,9 +29,9 @@ source distribution.
 
 #include "NetConf.hpp"
 
-#include <xyginext/network/EnetClientImpl.hpp>
-#include <xyginext/core/Log.hpp>
-#include <xyginext/core/Assert.hpp>
+#include "xyginext/network/EnetClientImpl.hpp"
+#include "xyginext/core/Log.hpp"
+#include "xyginext/core/Assert.hpp"
 
 #include <cstring>
 

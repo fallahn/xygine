@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_POST_OS_HPP_
 #define XY_POST_OS_HPP_
 
-#include <xyginext/graphics/postprocess/PostProcess.hpp>
+#include "xyginext/graphics/postprocess/PostProcess.hpp"
 
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>

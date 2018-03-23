@@ -30,7 +30,7 @@ source distribution.
 #ifndef XY_POST_CHROMEAB_HPP_
 #define XY_POST_CHROMEAB_HPP_
 
-#include <xyginext/graphics/postprocess/PostProcess.hpp>
+#include "xyginext/graphics/postprocess/PostProcess.hpp"
 
 #include <SFML/Graphics/Shader.hpp>
 

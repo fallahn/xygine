@@ -1,7 +1,7 @@
 #include "imgui-SFML.h"
 #include "imgui.h"
 
-#include <xyginext/core/App.hpp>
+#include "xyginext/core/App.hpp"
 
 #include <SFML/OpenGL.hpp>
 #include <SFML/Graphics/Color.hpp>

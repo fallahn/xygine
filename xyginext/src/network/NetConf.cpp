@@ -28,7 +28,7 @@ source distribution.
 #include "NetConf.hpp"
 
 #include <enet/enet.h>
-#include <xyginext/core/Log.hpp>
+#include "xyginext/core/Log.hpp"
 
 using namespace xy;
 

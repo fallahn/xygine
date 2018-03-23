@@ -25,13 +25,13 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/systems/UISystem.hpp>
-#include <xyginext/ecs/components/Transform.hpp>
-#include <xyginext/ecs/components/Camera.hpp>
-#include <xyginext/ecs/components/UIHitBox.hpp>
-#include <xyginext/ecs/Scene.hpp>
+#include "xyginext/ecs/systems/UISystem.hpp"
+#include "xyginext/ecs/components/Transform.hpp"
+#include "xyginext/ecs/components/Camera.hpp"
+#include "xyginext/ecs/components/UIHitBox.hpp"
+#include "xyginext/ecs/Scene.hpp"
 
-#include <xyginext/util/Vector.hpp>
+#include "xyginext/util/Vector.hpp"
 
 #include <SFML/Window/Event.hpp>
 

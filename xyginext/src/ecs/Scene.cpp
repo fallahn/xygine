@@ -25,11 +25,11 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/core/App.hpp>
-#include <xyginext/ecs/Scene.hpp>
-#include <xyginext/ecs/components/Camera.hpp>
-#include <xyginext/ecs/components/Transform.hpp>
-#include <xyginext/ecs/components/AudioListener.hpp>
+#include "xyginext/core/App.hpp"
+#include "xyginext/ecs/Scene.hpp"
+#include "xyginext/ecs/components/Camera.hpp"
+#include "xyginext/ecs/components/Transform.hpp"
+#include "xyginext/ecs/components/AudioListener.hpp"
 
 #include <SFML/Window/Event.hpp>
 
@@ -255,28 +255,5 @@ void Scene::postRenderPath(sf::RenderTarget& rt, sf::RenderStates states)
 
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    if (m_visible)
-    {
-        currentRenderPath(rt, states);
-    }
-}
-
-void Scene::editorDraw()
-{
-    if (ImGui::BeginDock(("Scene##" + std::to_string(m_id)).c_str()))
-    {
-        ImGui::Text(("Director count: " + std::to_string(m_directors.size())).c_str());
-        ImGui::Text(("Drawable count: " + std::to_string(m_drawables.size())).c_str());
-        ImGui::Text(("Post buffer count: " + std::to_string(m_postBuffers.size())).c_str());
-        ImGui::Text(("Post effect count: " + std::to_string(m_postEffects.size())).c_str());
-        ImGui::Text(("Active camera entity ID: " + std::to_string(m_activeCamera)).c_str());
-        ImGui::Text(("Active listener entity ID: " + std::to_string(m_activeListener)).c_str());
-        ImGui::Text(("Pending entities: " + std::to_string(m_pendingEntities.size())).c_str());
-        ImGui::Text(("Destroyed entities: " + std::to_string(m_destroyedEntities.size())).c_str());
-        
-        ImGui::Checkbox("Visible", &m_visible);
-        
-        
-    }
-    ImGui::EndDock();
+    currentRenderPath(rt, states);
 }

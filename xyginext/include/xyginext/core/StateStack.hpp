@@ -34,7 +34,7 @@ source distribution.
 #include <functional>
 #include <vector>
 
-#include <xyginext/core/State.hpp>
+#include "xyginext/core/State.hpp"
 
 namespace sf
 {

@@ -27,8 +27,8 @@ source distribution.
 
 #include <enet/enet.h>
 
-#include <xyginext/network/NetData.hpp>
-#include <xyginext/util/String.hpp>
+#include "xyginext/network/NetData.hpp"
+#include "xyginext/util/String.hpp"
 
 using namespace xy;
 

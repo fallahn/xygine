@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_COMMAND_SYSTEM_HPP_
 #define XY_COMMAND_SYSTEM_HPP_
 
-#include <xyginext/ecs/System.hpp>
+#include "xyginext/ecs/System.hpp"
 
 #include <functional>
 

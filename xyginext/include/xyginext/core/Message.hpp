@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_MESSAGE_HPP_
 #define XY_MESSAGE_HPP_
 
-#include <xyginext/core/Assert.hpp>
+#include "xyginext/core/Assert.hpp"
 
 #include <SFML/Config.hpp>
 

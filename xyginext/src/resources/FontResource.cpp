@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 //creates a default font in memory to return when requested font unavailable//
-#include <xyginext/resources/Resource.hpp>
+#include "xyginext/resources/Resource.hpp"
 
 using namespace xy;
 

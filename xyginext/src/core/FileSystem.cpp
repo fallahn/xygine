@@ -27,8 +27,8 @@ source distribution.
 
 #include "dialogues/nfd/include/nfd.h"
 
-#include <xyginext/core/FileSystem.hpp>
-#include <xyginext/core/Log.hpp>
+#include "xyginext/core/FileSystem.hpp"
+#include "xyginext/core/Log.hpp"
 
 #include <sys/types.h>
 #include <sys/stat.h>

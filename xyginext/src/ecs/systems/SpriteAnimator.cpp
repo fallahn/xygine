@@ -25,11 +25,11 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/systems/SpriteAnimator.hpp>
-#include <xyginext/ecs/components/Sprite.hpp>
-#include <xyginext/ecs/components/SpriteAnimation.hpp>
+#include "xyginext/ecs/systems/SpriteAnimator.hpp"
+#include "xyginext/ecs/components/Sprite.hpp"
+#include "xyginext/ecs/components/SpriteAnimation.hpp"
 
-#include <xyginext/core/Message.hpp>
+#include "xyginext/core/Message.hpp"
 
 using namespace xy;
 

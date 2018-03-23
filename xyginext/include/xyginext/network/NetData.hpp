@@ -28,8 +28,8 @@ source distribution.
 #ifndef XY_NET_DATA_HPP_
 #define XY_NET_DATA_HPP_
 
-#include <xyginext/Config.hpp>
-#include <xyginext/core/Assert.hpp>
+#include "xyginext/Config.hpp"
+#include "xyginext/core/Assert.hpp"
 #include <SFML/Config.hpp>
 
 #include <cstring>
