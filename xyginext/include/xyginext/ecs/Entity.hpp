@@ -28,11 +28,11 @@ source distribution.
 #ifndef XY_ENTITY_HPP_
 #define XY_ENTITY_HPP_
 
-#include <xyginext/core/Assert.hpp>
-#include <xyginext/Config.hpp>
+#include "xyginext/core/Assert.hpp"
+#include "xyginext/Config.hpp"
 
-#include <xyginext/ecs/ComponentPool.hpp>
-#include <xyginext/ecs/Component.hpp>
+#include "xyginext/ecs/ComponentPool.hpp"
+#include "xyginext/ecs/Component.hpp"
 
 #include <SFML/Config.hpp>
 

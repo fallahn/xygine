@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/gui/Gui.hpp>
+#include "xyginext/gui/Gui.hpp"
 
 #include "imgui.h"
 

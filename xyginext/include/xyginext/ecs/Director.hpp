@@ -28,8 +28,8 @@ source distribution.
 #ifndef XY_DIRECTOR_HPP_
 #define XY_DIRECTOR_HPP_
 
-#include <xyginext/Config.hpp>
-#include <xyginext/core/MessageBus.hpp>
+#include "xyginext/Config.hpp"
+#include "xyginext/core/MessageBus.hpp"
 
 namespace xy
 {

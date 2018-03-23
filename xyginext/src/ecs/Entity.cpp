@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/Component.hpp>
-#include <xyginext/ecs/Entity.hpp>
+#include "xyginext/ecs/Component.hpp"
+#include "xyginext/ecs/Entity.hpp"
 
 using namespace xy;
 

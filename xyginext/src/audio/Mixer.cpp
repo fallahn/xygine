@@ -25,9 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/audio/Mixer.hpp>
-#include <xyginext/util/Math.hpp>
-#include <xyginext/core/Assert.hpp>
+#include "xyginext/audio/Mixer.hpp"
+#include "xyginext/util/Math.hpp"
+#include "xyginext/core/Assert.hpp"
 
 using namespace xy;
 

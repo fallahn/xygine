@@ -28,9 +28,9 @@ source distribution.
 #ifndef XY_UTIL_VECTOR_HPP_
 #define XY_UTIL_VECTOR_HPP_
 
-#include <xyginext/util/Const.hpp>
-#include <xyginext/util/String.hpp>
-#include <xyginext/core/Assert.hpp>
+#include "xyginext/util/Const.hpp"
+#include "xyginext/util/String.hpp"
+#include "xyginext/core/Assert.hpp"
 
 #include <SFML/System/Vector2.hpp>
 

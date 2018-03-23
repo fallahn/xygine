@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/graphics/postprocess/Bloom.hpp>
+#include "xyginext/graphics/postprocess/Bloom.hpp"
 
 namespace
 {

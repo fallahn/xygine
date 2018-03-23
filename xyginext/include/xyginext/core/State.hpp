@@ -30,7 +30,7 @@ source distribution.
 #ifndef XY_STATE_HPP_
 #define XY_STATE_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <SFML/Graphics/View.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>

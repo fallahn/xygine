@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_POOL_HPP_
 #define XY_POOL_HPP_
 
-#include <xyginext/core/Assert.hpp>
+#include "xyginext/core/Assert.hpp"
 
 #include <vector>
 

@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/core/SysTime.hpp>
+#include "xyginext/core/SysTime.hpp"
 
 #include <ctime>
 #include <sstream>

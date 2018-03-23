@@ -25,9 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/core/ConfigFile.hpp>
-#include <xyginext/core/Assert.hpp>
-#include <xyginext/util/String.hpp>
+#include "xyginext/core/ConfigFile.hpp"
+#include "xyginext/core/Assert.hpp"
+#include "xyginext/util/String.hpp"
 
 #include <iostream>
 #include <sstream>

@@ -31,7 +31,7 @@ source distribution.
 #undef min
 #endif
 
-#include <xyginext/network/NetData.hpp>
+#include "xyginext/network/NetData.hpp"
 
 using namespace xy;
 

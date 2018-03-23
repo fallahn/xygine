@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_AUDIO_LISTENER_HPP_
 #define XY_AUDIO_LISTENER_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <algorithm>
 

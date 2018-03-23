@@ -25,9 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/core/ConfigFile.hpp>
-#include <xyginext/graphics/SpriteSheet.hpp>
-#include <xyginext/resources/Resource.hpp>
+#include "xyginext/core/ConfigFile.hpp"
+#include "xyginext/graphics/SpriteSheet.hpp"
+#include "xyginext/resources/Resource.hpp"
 
 using namespace xy;
 

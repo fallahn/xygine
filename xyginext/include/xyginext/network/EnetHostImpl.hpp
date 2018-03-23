@@ -28,8 +28,8 @@ source distribution.
 #ifndef XY_ENET_HOST_IMPL_HPP_
 #define XY_ENET_HOST_IMPL_HPP_
 
-#include <xyginext/network/NetImpl.hpp>
-#include <xyginext/Config.hpp>
+#include "xyginext/network/NetImpl.hpp"
+#include "xyginext/Config.hpp"
 
 struct _ENetHost;
 

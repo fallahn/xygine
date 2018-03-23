@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/components/Camera.hpp>
-#include <xyginext/core/Assert.hpp>
+#include "xyginext/ecs/components/Camera.hpp"
+#include "xyginext/core/Assert.hpp"
 
 #include <limits>
 

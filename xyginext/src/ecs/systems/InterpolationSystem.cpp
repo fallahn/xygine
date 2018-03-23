@@ -25,12 +25,12 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/systems/InterpolationSystem.hpp>
+#include "xyginext/ecs/systems/InterpolationSystem.hpp"
 
-#include <xyginext/ecs/components/NetInterpolation.hpp>
-#include <xyginext/ecs/components/Transform.hpp>
+#include "xyginext/ecs/components/NetInterpolation.hpp"
+#include "xyginext/ecs/components/Transform.hpp"
 
-#include <xyginext/util/Vector.hpp>
+#include "xyginext/util/Vector.hpp"
 
 using namespace xy;
 

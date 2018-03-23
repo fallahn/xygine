@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/gui/GuiClient.hpp>
-#include <xyginext/core/App.hpp>
+#include "xyginext/gui/GuiClient.hpp"
+#include "xyginext/core/App.hpp"
 
 using namespace xy;
 

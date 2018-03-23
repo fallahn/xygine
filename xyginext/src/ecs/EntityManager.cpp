@@ -25,9 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/Entity.hpp>
-#include <xyginext/core/Assert.hpp>
-#include <xyginext/core/MessageBus.hpp>
+#include "xyginext/ecs/Entity.hpp"
+#include "xyginext/core/Assert.hpp"
+#include "xyginext/core/MessageBus.hpp"
 
 using namespace xy;
 

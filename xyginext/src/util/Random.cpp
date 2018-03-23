@@ -29,8 +29,8 @@ source distribution.
 Poisson Disc sampling based on article at http://devmag.org.za/2009/05/03/poisson-disk-sampling/
 */
 
-#include <xyginext/util/Random.hpp>
-#include <xyginext/util/Vector.hpp>
+#include "xyginext/util/Random.hpp"
+#include "xyginext/util/Vector.hpp"
 
 using namespace xy::Util::Random;
 
