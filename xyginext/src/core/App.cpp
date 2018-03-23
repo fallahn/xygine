@@ -1,4 +1,4 @@
-/*********************************************************************
+ /*********************************************************************
 (c) Matt Marchant 2017 - 2018
 http://trederia.blogspot.com
 
@@ -84,13 +84,9 @@ App::App(sf::ContextSettings contextSettings)
     m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
     m_applicationName   (APP_NAME)
 {
-<<<<<<< HEAD
     m_windowIcon.create(16u, 16u, defaultIcon);
 
     renderTarget = &m_renderWindow;
-=======
-    renderWindow = &m_renderWindow;
->>>>>>> 2ae2daa874abc6635bf17d2c4e267244941292a4
 
     // At this point we can safely assume the target will be a renderwindow.
     // Perhaps in future add the ability to initialise with a rendertexture
@@ -167,8 +163,11 @@ void App::run()
         
         for (auto& f : m_guiWindows) f.first();
         
-<<<<<<< HEAD
-        m_renderWindow.clear(clearColour);
+        if (m_renderWindow.setActive(true))
+        {
+            glCheck(glClearColor(clearColour.r / 255.f, clearColour.g / 255.f, clearColour.b / 255.f, clearColour.a / 255.f));
+            glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        }
         
         // Draw the editor, if enabled
         if (Editor::isEnabled())
@@ -182,18 +181,14 @@ void App::run()
         }
         else
         {
+            if (m_renderWindow.setActive(true))
+            {
+                glCheck(glClearColor(clearColour.r / 255.f, clearColour.g / 255.f, clearColour.b / 255.f, clearColour.a / 255.f));
+                glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+            }
             draw();
         }
         
-=======
-        //m_renderWindow.clear(clearColour);
-        if (m_renderWindow.setActive(true))
-        {
-            glCheck(glClearColor(clearColour.r / 255.f, clearColour.g / 255.f, clearColour.b / 255.f, clearColour.a / 255.f));
-            glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-        }
-        draw();       
->>>>>>> 2ae2daa874abc6635bf17d2c4e267244941292a4
         ImGui::SFML::Render(m_renderWindow);
         
         m_renderWindow.display();

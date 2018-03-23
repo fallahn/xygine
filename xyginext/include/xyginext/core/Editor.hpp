@@ -10,20 +10,21 @@
 #include <vector>
 #include <SFML/Graphics/RenderTexture.hpp>
 
+#include <xyginext/ecs/System.hpp>
+
 namespace xy
 {
+    // Editable component, attach this to entities for the editor system to see them
     class Editable
     {
+        // hrm...
+    };
+    
+    // Editor system, add it to scenes you want to modify
+    class EditorSystem : public xy::System
+    {
     public:
-        Editable();
-        ~Editable();
-        
-    private:
-        friend class Editor;
-        virtual void editorDraw() = 0;
-        
-    protected:
-        const int m_id;
+        EditorSystem(xy::MessageBus& mb);
     };
     
     class Editor
@@ -34,9 +35,6 @@ namespace xy
         
         static bool isEnabled();
         
-        template<typename T>
-        static void registerEditable(const std::string& name, T* editable);
-        
     private:
         static void toggle();
         static void draw();
@@ -44,6 +42,7 @@ namespace xy
         static void showStyleEditor();
         static void showVideoSettings();
         static void showAudioSettings();
+        static void showSpriteEditor();
         
         friend class App;
         friend class Editable;

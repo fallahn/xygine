@@ -10,6 +10,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 # Some default variables which the user may change
 SET(CMAKE_BUILD_TYPE Debug CACHE STRING  "Choose the type of build (Debug or Release)")
 SET(BUILD_SHARED_LIBS true CACHE BOOL "Build Shared libs")
+SET(ENABLE_EDITOR false CACHE BOOL "Build xygine with the in game editor")
 
 # We're using c++14
 set(CMAKE_CXX_STANDARD 14)
@@ -83,6 +84,11 @@ endif()
 if (CMAKE_BUILD_TYPE MATCHES Debug) 
   add_definitions(-DXY_DEBUG)
 endif()
+
+# Add editor definition if requested
+if (ENABLE_EDITOR)
+  add_definitions(-DXY_EDITOR)
+endif();
 
 # Create the library
 add_library(${PROJECT_NAME} ${PROJECT_SRC} ${NFD_SRC})

@@ -27,7 +27,6 @@ namespace
     bool shouldShowVideoSettings = false;
     bool shouldShowAudioSettings = false;
     bool shouldShowConsole = false;
-    std::vector<Editable*> editables;
     sf::RenderTexture viewportBuffer;
     int currentResolution = 0;
     std::array<char, 300> resolutionNames{};
@@ -36,26 +35,6 @@ namespace
     bool vSync = false;
     bool useFrameLimit = false;
     int frameLimit = 10;
-}
-
-namespace
-{
-    // To keep track of multiple editables of the same type
-    // This is only really required to prevent conflicts in the imgui window names
-    // Adding some sort of name to editable stuff would negate this
-    static int eId = 0;
-}
-
-Editable::Editable() :
-m_id(eId++)
-{
-    editables.push_back(this);
-}
-
-Editable::~Editable()
-{
-    auto me = std::find(editables.begin(), editables.end(), this);
-    editables.erase(me);
 }
 
 void Editor::init()
@@ -127,9 +106,18 @@ void Editor::draw()
         float menuBarHeight = 0;
         if (ImGui::BeginMainMenuBar())
         {
-            // Some stuff will go here...
             
             menuBarHeight = ImGui::GetWindowHeight();
+            
+            if (ImGui::BeginMenu("File"))
+            {
+                if (ImGui::MenuItem("Quit","q"))
+                {
+                    App::quit();
+                }
+                ImGui::EndMenu();
+            }
+            
             
             if (ImGui::BeginMenu("View"))
             {
@@ -155,12 +143,6 @@ void Editor::draw()
         
         ImGui::Begin("Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar );
         ImGui::BeginDockspace();
-        
-        // Draw any other registered editable objects
-        for (auto& e : editables)
-        {
-            e->editorDraw();
-        }
         
         // Show viewport
         ImGui::SetNextDock(ImGuiDockSlot_Right); // should only affect first run
@@ -328,5 +310,10 @@ void Editor::showAudioSettings()
         }
     }
     ImGui::EndDock();
+}
+
+void Editor::showSpriteEditor()
+{
+    
 }
 
