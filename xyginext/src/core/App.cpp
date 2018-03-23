@@ -84,12 +84,15 @@ App::App(sf::ContextSettings contextSettings)
     m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
     m_applicationName   (APP_NAME)
 {
-    m_windowIcon.create(16u, 16u, defaultIcon);
-
     renderWindow = &m_renderWindow;
 
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
+
+    //tiny icon looks awful in the dock
+#ifndef __APPLE__
+    m_windowIcon.create(16u, 16u, defaultIcon);
     m_renderWindow.setIcon(16, 16, m_windowIcon.getPixelsPtr());
+#endif
 
     //store available modes and remove unusable
     m_videoSettings.AvailableVideoModes = sf::VideoMode::getFullscreenModes();

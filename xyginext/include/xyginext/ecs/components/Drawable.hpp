@@ -120,7 +120,7 @@ namespace xy
         inversely the greater the value the further forward it is drawn.
         Default value is 0.
         */
-        void setDepth(sf::Int32 depth) { m_zDepth = depth; m_wantsSorting = true; }
+        void setDepth(sf::Int32 depth);
 
         /*!
         \brief Returns the Z depth value

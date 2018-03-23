@@ -36,7 +36,9 @@ Drawable::Drawable()
     : m_textureCount(0),
     m_floatCount    (0),
     m_vec2Count     (0),
-    m_vec3Count     (0)
+    m_vec3Count     (0),
+    m_boolCount     (0),
+    m_matCount      (0)
 {
 
 }
@@ -45,7 +47,9 @@ Drawable::Drawable(const sf::Texture& texture)
     : m_textureCount(0),
     m_floatCount    (0),
     m_vec2Count     (0),
-    m_vec3Count     (0)
+    m_vec3Count     (0),
+    m_boolCount     (0),
+    m_matCount      (0)
 {
     m_states.texture = &texture;
 }
@@ -58,6 +62,15 @@ void Drawable::setTexture(const sf::Texture* texture)
 void Drawable::setShader(sf::Shader* shader)
 {
     m_states.shader = shader;
+}
+
+void Drawable::setDepth(sf::Int32 depth)
+{
+    if (m_zDepth != depth)
+    {
+        m_zDepth = depth;
+        m_wantsSorting = true;
+    }
 }
 
 void Drawable::bindUniform(const std::string& name, const sf::Texture& texture)
