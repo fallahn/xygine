@@ -38,7 +38,8 @@ Drawable::Drawable()
     m_vec2Count     (0),
     m_vec3Count     (0),
     m_boolCount     (0),
-    m_matCount      (0)
+    m_matCount      (0),
+    m_cull          (true)
 {
 
 }
@@ -49,7 +50,8 @@ Drawable::Drawable(const sf::Texture& texture)
     m_vec2Count     (0),
     m_vec3Count     (0),
     m_boolCount     (0),
-    m_matCount      (0)
+    m_matCount      (0),
+    m_cull          (true)
 {
     m_states.texture = &texture;
 }
