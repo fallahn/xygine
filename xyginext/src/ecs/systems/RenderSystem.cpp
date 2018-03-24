@@ -25,10 +25,10 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/systems/RenderSystem.hpp>
+#include "xyginext/ecs/systems/RenderSystem.hpp"
 
-#include <xyginext/ecs/components/Transform.hpp>
-#include <xyginext/ecs/components/Drawable.hpp>
+#include "xyginext/ecs/components/Transform.hpp"
+#include "xyginext/ecs/components/Drawable.hpp"
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -85,7 +85,7 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         const auto& drawable = entity.getComponent<xy::Drawable>();
         const auto& tx = entity.getComponent<xy::Transform>().getWorldTransform();
         const auto bounds = tx.transformRect(drawable.getLocalBounds());
-        if (bounds.intersects(viewableArea))
+        if (!drawable.m_cull || bounds.intersects(viewableArea))
         {
             states = drawable.m_states;
             states.transform = tx;
@@ -112,6 +112,16 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
                 {
                     const auto& pair = drawable.m_vec3Bindings[i];
                     shader->setUniform(pair.first, pair.second);
+                }
+                for (auto i = 0u; i < drawable.m_boolCount; ++i)
+                {
+                    const auto& pair = drawable.m_boolBindings[i];
+                    shader->setUniform(pair.first, pair.second);
+                }
+                for (auto i = 0u; i < drawable.m_matCount; ++i)
+                {
+                    const auto& pair = drawable.m_matBindings[i];
+                    shader->setUniform(pair.first, sf::Glsl::Mat4(pair.second));
                 }
             }
 

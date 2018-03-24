@@ -30,7 +30,7 @@ source distribution.
 #ifndef XY_POST_PROCESS_HPP_
 #define XY_POST_PROCESS_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Config.hpp>

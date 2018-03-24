@@ -29,9 +29,9 @@ source distribution.
 #define ENET_CLIENT_IMPL_HPP_
 
 //implements the NetClient interface with enet
-#include <xyginext/network/NetImpl.hpp>
-#include <xyginext/network/NetData.hpp>
-#include <xyginext/Config.hpp>
+#include "xyginext/network/NetImpl.hpp"
+#include "xyginext/network/NetData.hpp"
+#include "xyginext/Config.hpp"
 
 struct _ENetHost;
 

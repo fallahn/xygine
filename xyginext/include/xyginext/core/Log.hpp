@@ -30,9 +30,9 @@ source distribution.
 #ifndef XY_LOGGER_HPP_
 #define XY_LOGGER_HPP_
 
-#include <xyginext/core/FileSystem.hpp>
-#include <xyginext/core/Console.hpp>
-#include <xyginext/core/SysTime.hpp>
+#include "xyginext/core/FileSystem.hpp"
+#include "xyginext/core/Console.hpp"
+#include "xyginext/core/SysTime.hpp"
 
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>

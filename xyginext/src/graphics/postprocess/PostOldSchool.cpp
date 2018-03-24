@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/graphics/postprocess/OldSchool.hpp>
-#include <xyginext/core/Log.hpp>
+#include "xyginext/graphics/postprocess/OldSchool.hpp"
+#include "xyginext/core/Log.hpp"
 
 using namespace xy;
 

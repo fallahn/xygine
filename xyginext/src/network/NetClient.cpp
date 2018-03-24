@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 
-#include <xyginext/network/NetClient.hpp>
+#include "xyginext/network/NetClient.hpp"
 
 using namespace xy;
 

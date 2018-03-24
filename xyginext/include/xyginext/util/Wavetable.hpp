@@ -28,8 +28,8 @@ source distribution.
 #ifndef XY_UTIL_WAVETABLE_HPP_
 #define XY_UTIL_WAVETABLE_HPP_
 
-#include <xyginext/util/Const.hpp>
-#include <xyginext/core/Assert.hpp>
+#include "xyginext/util/Const.hpp"
+#include "xyginext/core/Assert.hpp"
 
 #include <cmath>
 

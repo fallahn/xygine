@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_UI_HITBOX_HPP_
 #define XY_UI_HITBOX_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Rect.hpp>

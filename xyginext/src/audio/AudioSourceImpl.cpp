@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/audio/AudioSourceImpl.hpp>
-#include <xyginext/core/FileSystem.hpp>
+#include "xyginext/audio/AudioSourceImpl.hpp"
+#include "xyginext/core/FileSystem.hpp"
 
 using namespace xy;
 using namespace xy::Detail;

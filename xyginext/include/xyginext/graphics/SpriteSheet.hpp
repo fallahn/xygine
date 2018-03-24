@@ -28,8 +28,8 @@ source distribution.
 #ifndef XY_SPRITE_SHEET_HPP_
 #define XY_SPRITE_SHEET_HPP_
 
-#include <xyginext/Config.hpp>
-#include <xyginext/ecs/components/Sprite.hpp>
+#include "xyginext/Config.hpp"
+#include "xyginext/ecs/components/Sprite.hpp"
 
 #include <unordered_map>
 #include <string>
@@ -109,8 +109,8 @@ namespace xy
         mutable std::unordered_map<std::string, std::vector<std::string>> m_animations;
 
         std::string m_texturePath;
-        bool        m_smooth;
+        bool m_smooth;
     };
 }
 
-#endif //CRO_SPRITE_SHEET_HPP_
+#endif //XY_SPRITE_SHEET_HPP_

@@ -25,19 +25,19 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/core/App.hpp>
-#include <xyginext/core/Log.hpp>
-#include <xyginext/core/Console.hpp>
-#include <xyginext/core/ConfigFile.hpp>
-#include <xyginext/core/FileSystem.hpp>
-#include <xyginext/detail/Operators.hpp>
-#include <xyginext/gui/GuiClient.hpp>
+#include "xyginext/core/App.hpp"
+#include "xyginext/core/Log.hpp"
+#include "xyginext/core/Console.hpp"
+#include "xyginext/core/ConfigFile.hpp"
+#include "xyginext/core/FileSystem.hpp"
+#include "xyginext/detail/Operators.hpp"
+#include "xyginext/gui/GuiClient.hpp"
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui-SFML.h"
 #include "../imgui/imgui_internal.h"
 
-#include "../detail/glad.h"
+#include "../detail/GLCheck.hpp"
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -79,17 +79,20 @@ namespace
 
 bool App::m_mouseCursorVisible = true;
 
-App::App()
+App::App(sf::ContextSettings contextSettings)
     : m_videoSettings   (),
     m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
     m_applicationName   (APP_NAME)
 {
-    m_windowIcon.create(16u, 16u, defaultIcon);
-
     renderWindow = &m_renderWindow;
 
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
+
+    //tiny icon looks awful in the dock
+#ifndef __APPLE__
+    m_windowIcon.create(16u, 16u, defaultIcon);
     m_renderWindow.setIcon(16, 16, m_windowIcon.getPixelsPtr());
+#endif
 
     //store available modes and remove unusable
     m_videoSettings.AvailableVideoModes = sf::VideoMode::getFullscreenModes();
@@ -157,7 +160,12 @@ void App::run()
         Console::draw();
         for (auto& f : m_guiWindows) f.first();
         
-        m_renderWindow.clear(clearColour);
+        //m_renderWindow.clear(clearColour);
+        if (m_renderWindow.setActive(true))
+        {
+            glCheck(glClearColor(clearColour.r / 255.f, clearColour.g / 255.f, clearColour.b / 255.f, clearColour.a / 255.f));
+            glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        }
         draw();       
         ImGui::SFML::Render(m_renderWindow);
         m_renderWindow.display();
@@ -285,7 +293,7 @@ void App::setWindowIcon(const std::string& path)
     if (m_windowIcon.loadFromFile(xy::FileSystem::getResourcePath() + path))
     {
         auto size = m_windowIcon.getSize();
-        XY_ASSERT(size.x == 16 && size.y == 16, "window icon must be 16x16 pixels");
+        //XY_ASSERT(size.x == 16 && size.y == 16, "window icon must be 16x16 pixels");
         m_renderWindow.setIcon(size.x, size.y, m_windowIcon.getPixelsPtr());
     }
     else

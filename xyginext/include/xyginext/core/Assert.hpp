@@ -30,7 +30,7 @@ source distribution.
 #ifndef XY_ASSERT_HPP_
 #define XY_ASSERT_HPP_
 
-#include <xyginext/core/Log.hpp>
+#include "xyginext/core/Log.hpp"
 
 #include <sstream>
 

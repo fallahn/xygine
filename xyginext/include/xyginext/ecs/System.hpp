@@ -28,10 +28,10 @@ source distribution.
 #ifndef XY_SYSTEM_HPP_
 #define XY_SYSTEM_HPP_
 
-#include <xyginext/Config.hpp>
-#include <xyginext/ecs/Entity.hpp>
-#include <xyginext/ecs/Component.hpp>
-#include <xyginext/core/MessageBus.hpp>
+#include "xyginext/Config.hpp"
+#include "xyginext/ecs/Entity.hpp"
+#include "xyginext/ecs/Component.hpp"
+#include "xyginext/core/MessageBus.hpp"
 
 #include <vector>
 #include <typeindex>

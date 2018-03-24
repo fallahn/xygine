@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_CALLBACK_HPP_
 #define XY_CALLBACK_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <functional>
 

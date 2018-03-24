@@ -28,9 +28,9 @@ source distribution.
 #ifndef XY_CONFIG_FILE_HPP_
 #define XY_CONFIG_FILE_HPP_
 
-#include <xyginext/Config.hpp>
-#include <xyginext/core/Log.hpp>
-#include <xyginext/core/Vector4.hpp>
+#include "xyginext/Config.hpp"
+#include "xyginext/core/Log.hpp"
+#include "xyginext/core/Vector4.hpp"
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Color.hpp>

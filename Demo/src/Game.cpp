@@ -45,7 +45,7 @@ namespace
 }
 
 Game::Game()
-    : xy::App   (/*sf::ContextSettings(0, 0, 0, 3, 2, sf::ContextSettings::Core)*/),
+    : xy::App   (sf::ContextSettings(0, 0, 0, 1, 1, 0)),
     m_stateStack({ *getRenderWindow(), *this })
 {
     /*sf::Image img;
@@ -55,10 +55,8 @@ Game::Game()
     {
         getRenderWindow()->setMouseCursor(cursor);
     }*/
-
-    setWindowIcon("assets/images/icon.png");
-    
-    getRenderWindow()->setTitle("xygine - Castle Clamber (F1 for Options)");
+  
+    setWindowTitle("xygine - Castle Clamber (F1 for Options)");
     Locale::load("assets/localisation/chichewa.xyl");
 }
 
@@ -98,6 +96,8 @@ void Game::draw()
 
 void Game::initialise()
 {
+    setWindowIcon("assets/images/icon.png");
+    
     registerStates();
 #ifdef XY_DEBUG
     m_stateStack.pushState(StateID::MainMenu);

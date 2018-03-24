@@ -28,10 +28,10 @@ source distribution.
 #ifndef XY_NETHOST_HPP_
 #define XY_NETHOST_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 #include <SFML/Config.hpp>
-#include <xyginext/network/NetData.hpp>
-#include <xyginext/network/EnetHostImpl.hpp>
+#include "xyginext/network/NetData.hpp"
+#include "xyginext/network/EnetHostImpl.hpp"
 
 #include <string>
 #include <memory>

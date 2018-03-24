@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/detail/Operators.hpp>
+#include "xyginext/detail/Operators.hpp"
 
 bool sf::operator == (const sf::ContextSettings& l, const sf::ContextSettings& r)
 {

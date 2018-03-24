@@ -28,7 +28,7 @@ source distribution.
 #ifndef XY_SYSTIME_HPP_
 #define XY_SYSTIME_HPP_
 
-#include <xyginext/Config.hpp>
+#include "xyginext/Config.hpp"
 
 #include <string>
 

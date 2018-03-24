@@ -28,13 +28,13 @@ source distribution.
 #ifndef XY_SCENE_HPP_
 #define XY_SCENE_HPP_
 
-#include <xyginext/Config.hpp>
-#include <xyginext/core/App.hpp>
-#include <xyginext/ecs/Entity.hpp>
-#include <xyginext/ecs/System.hpp>
-#include <xyginext/ecs/systems/CommandSystem.hpp>
-#include <xyginext/ecs/Director.hpp>
-#include <xyginext/graphics/postprocess/PostProcess.hpp>
+#include "xyginext/Config.hpp"
+#include "xyginext/core/App.hpp"
+#include "xyginext/ecs/Entity.hpp"
+#include "xyginext/ecs/System.hpp"
+#include "xyginext/ecs/systems/CommandSystem.hpp"
+#include "xyginext/ecs/Director.hpp"
+#include "xyginext/graphics/postprocess/PostProcess.hpp"
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Drawable.hpp>

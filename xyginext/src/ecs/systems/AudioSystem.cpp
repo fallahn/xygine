@@ -25,15 +25,15 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <xyginext/ecs/systems/AudioSystem.hpp>
+#include "xyginext/ecs/systems/AudioSystem.hpp"
 
-#include <xyginext/ecs/components/Transform.hpp>
-#include <xyginext/ecs/components/AudioEmitter.hpp>
-#include <xyginext/ecs/components/AudioListener.hpp>
-#include <xyginext/ecs/Scene.hpp>
+#include "xyginext/ecs/components/Transform.hpp"
+#include "xyginext/ecs/components/AudioEmitter.hpp"
+#include "xyginext/ecs/components/AudioListener.hpp"
+#include "xyginext/ecs/Scene.hpp"
 
-#include <xyginext/audio/Mixer.hpp>
-#include <xyginext/core/App.hpp>
+#include "xyginext/audio/Mixer.hpp"
+#include "xyginext/core/App.hpp"
 
 #include <SFML/Audio/Listener.hpp>
 
