@@ -1,14 +1,38 @@
-//
-//  Editor.cpp
-//  xyginext
-//
-//  Created by Jonny Paton on 12/03/2018.
-//
+/*********************************************************************
+ (c) Jonny Paton 2017 - 2018
+ http://trederia.blogspot.com
+ 
+ xygineXT - Zlib license.
+ 
+ This software is provided 'as-is', without any express or
+ implied warranty. In no event will the authors be held
+ liable for any damages arising from the use of this software.
+ 
+ Permission is granted to anyone to use this software for any purpose,
+ including commercial applications, and to alter it and redistribute
+ it freely, subject to the following restrictions:
+ 
+ 1. The origin of this software must not be misrepresented;
+ you must not claim that you wrote the original software.
+ If you use this software in a product, an acknowledgment
+ in the product documentation would be appreciated but
+ is not required.
+ 
+ 2. Altered source versions must be plainly marked as such,
+ and must not be misrepresented as being the original software.
+ 
+ 3. This notice may not be removed or altered from any
+ source distribution.
+ *********************************************************************/
 
-#include <xyginext/core/Editor.hpp>
-#include <xyginext/core/Log.hpp>
-#include <xyginext/core/App.hpp>
-#include <xyginext/gui/Gui.hpp>
+#include "xyginext/core/Editor.hpp"
+#include "xyginext/core/Log.hpp"
+#include "xyginext/core/App.hpp"
+#include "xyginext/graphics/SpriteSheet.hpp"
+#include "xyginext/gui/Gui.hpp"
+#include "xyginext/ecs/Scene.hpp"
+#include "xyginext/resources/Resource.hpp"
+#include "xyginext/ecs/components/ParticleEmitter.hpp"
 
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Window/WindowStyle.hpp>
@@ -16,7 +40,8 @@
 #include "../imgui/imgui_dock.hpp"
 #include "../imgui/imgui-SFML.h"
 
-#include <unordered_map>
+#include <map>
+#include <set>
 
 using namespace xy;
 
@@ -30,6 +55,7 @@ namespace
     bool shouldShowAudioSettings = false;
     bool shouldShowConsole = false;
     bool shouldShowAssetBrowser = false;
+    bool shouldShowSceneEditor = false;
     sf::RenderTexture viewportBuffer;
     int currentResolution = 0;
     std::array<char, 300> resolutionNames{};
@@ -39,12 +65,25 @@ namespace
     bool useFrameLimit = false;
     int frameLimit = 10;
     
+    TextureResource textureResource;
+    
     // For asset editing
     std::string selectedAsset;
     
     // Any scenes which have the EditorSystem added
-    std::unordered_map<std::string, xy::Scene*> m_editableScenes;
+    std::unordered_map<std::string, xy::Scene*> editableScenes;
     static int sceneCounter(0);
+    std::string selectedSceneName = "Select a scene";
+    Scene*  selectedScene = nullptr;
+    
+    // Asset lists
+    std::map<std::string, SpriteSheet> spriteSheets;
+    std::map<std::string, ParticleEmitter> particleEmitters;
+    std::map<std::string, sf::Texture> textures;
+    std::map<std::string, sf::Font> fonts;
+    std::map<std::string, std::fstream> textFiles;
+    std::set<std::string> tmxFiles;
+    std::map<std::string, sf::SoundBuffer> sounds;
 }
 
 EditorSystem::EditorSystem(xy::MessageBus& mb, const std::string& sceneName) :
@@ -56,22 +95,21 @@ xy::System(mb, typeid(this))
     auto name = sceneName;
     if (name.empty())
     {
-        name = "Scene " + std::to_string(sceneCounter++);
+        name = "Unnamed scene " + std::to_string(sceneCounter++);
     }
-        
-    m_editableScenes[name] = getScene();
     
+    editableScenes[name] = getScene();
 }
 
 EditorSystem::~EditorSystem()
 {
     auto scene = getScene();
-    auto me = std::find_if(m_editableScenes.begin(),m_editableScenes.end(),[scene](const std::pair<std::string, xy::Scene*>& m)
+    auto me = std::find_if(editableScenes.begin(),editableScenes.end(),[scene](const std::pair<std::string, xy::Scene*>& m)
                            { return m.second == scene; });
-                           
-    if (me != m_editableScenes.end())
+    
+    if (me != editableScenes.end())
     {
-        m_editableScenes.erase(me);
+        editableScenes.erase(me);
     }
 }
 
@@ -112,6 +150,61 @@ void Editor::init()
         if (r->x == rwSize.x && r->y == rwSize.y)
             currentResolution = std::distance(resolutions.begin(),r);
     }
+    
+    // Load any assets
+    std::function<void(std::string)> assetSearch = [&](std::string path)
+    {
+        // Search subdirectories
+        for (auto& dir : xy::FileSystem::listDirectories(path))
+        {
+            assetSearch(path + "/" + dir);
+        }
+        
+        // Save assets
+        for (auto& file : xy::FileSystem::listFiles(path))
+        {
+            auto ext = FileSystem::getFileExtension(file);
+            auto filePath = path + "/" + file;
+            
+            // Would prefer a better way to handle file types - enum?
+            if (ext == ".spt")
+            {
+                spriteSheets[file].loadFromFile(filePath, textureResource);
+            }
+            else if (ext == ".xyp")
+            {
+                particleEmitters[file].settings.loadFromFile(filePath, textureResource);
+            }
+            else if (ext == ".png")
+            {
+                textures[file].loadFromFile(filePath);
+            }
+            else if (ext == ".ttf")
+            {
+                fonts[file].loadFromFile(filePath);
+            }
+            else if (ext == ".txt")
+            {
+                textFiles[file].open(filePath);
+            }
+            else if (ext == ".tmx")
+            {
+                tmxFiles.emplace(filePath);
+            }
+            else if (ext == ".wav" || ext == ".ogg")
+            {
+                sounds[file].loadFromFile(filePath);
+            }
+            else
+            {
+                Logger::log("Resource not recognised: " + file);
+            }
+            
+        }
+    };
+    
+    assetSearch("assets");
+    
 }
 
 void Editor::toggle()
@@ -166,6 +259,7 @@ void Editor::draw()
                     ImGui::MenuItem("Audio", "a", &shouldShowAudioSettings);
                     ImGui::MenuItem("Console", "c", &shouldShowConsole);
                     ImGui::MenuItem("Assets", "erm...", &shouldShowAssetBrowser);
+                    ImGui::MenuItem("Scenes", "I need better shortcuts", &shouldShowSceneEditor);
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenu();
@@ -184,8 +278,7 @@ void Editor::draw()
         ImGui::BeginDockspace();
         
         // Show viewport
-        ImGui::SetNextDock(ImGuiDockSlot_Right); // should only affect first run
-        if (ImGui::BeginDock("Viewport", nullptr, ImGuiDockSlot_Right))
+        if (ImGui::BeginDock("Viewport", nullptr))
         {
             // Make the viewport scale to available space
             auto vpw = viewportBuffer.getSize().x;
@@ -222,9 +315,16 @@ void Editor::draw()
             showAudioSettings();
         }
         
+        // Console
         if (shouldShowConsole)
         {
             Console::draw();
+        }
+        
+        // Scene editor
+        if (shouldShowSceneEditor)
+        {
+            showSceneEditor();
         }
         
         ImGui::EndDockspace();
@@ -328,35 +428,24 @@ void Editor::showAudioSettings()
 
 void Editor::showAssetBrowser()
 {
-    ImGui::SetNextDock(ImGuiDockSlot_Bottom); // should only affect first run
     if (ImGui::BeginDock("Assets"))
     {
-        std::function<void(std::string)> imFileTreeRecurse = [&](std::string path)
+       // Show all assets
+        if (ImGui::TreeNode("SpriteSheets"))
         {
-            // List directories, recurse if selected
-            for (auto& dir : xy::FileSystem::listDirectories(path))
+            for (auto ss : spriteSheets)
             {
-                if (ImGui::TreeNode(dir.c_str()))
+                // Show the texture as a preview
+                auto& tex = textureResource.get(ss.second.getTexturePath());
+                const sf::Vector2f PreviewSize = {50.f,50.f};
+                if (ImGui::ImageButton(tex, PreviewSize))
                 {
-                    imFileTreeRecurse(path + "/" + dir);
-                    ImGui::TreePop();
+                    
                 }
             }
-            
-            // List files, broadcast message if selected
-            for (auto& file : xy::FileSystem::listFiles(path))
-            {
-                bool selected = selectedAsset == file;
-                if (ImGui::Selectable(file.c_str(), &selected))
-                {
-                    selectedAsset = file;
-                }
-            }
-        };
-        
-        imFileTreeRecurse("assets");
+            ImGui::TreePop();
+        }
     }
-    
     ImGui::EndDock();
 }
 
@@ -365,4 +454,44 @@ void Editor::showSpriteEditor()
     
 }
 
+void Editor::showSceneEditor()
+{
+    if (ImGui::BeginDock("Scenes"))
+    {
+        // Show combo box to select scene first
+        if (ImGui::BeginCombo("Scenes", selectedSceneName.c_str()))
+        {
+            for (auto& s : editableScenes)
+            {
+                if (ImGui::Selectable(s.first.c_str()))
+                {
+                    selectedSceneName = s.first;
+                    selectedScene = s.second;
+                }
+            }
+            ImGui::EndCombo();
+        }
+        
+        if (selectedScene)
+        {
+        }
+        
+    }
+    ImGui::EndDock();
+}
 
+void Editor::registerScene(Scene* scene, const std::string& name)
+{
+    editableScenes[name] = scene;
+}
+
+void Editor::deregisterScene(Scene* scene)
+{
+    auto me = std::find_if(editableScenes.begin(),editableScenes.end(),[scene](const std::pair<std::string, xy::Scene*>& m)
+                           { return m.second == scene; });
+    
+    if (me != editableScenes.end())
+    {
+        editableScenes.erase(me);
+    }
+}

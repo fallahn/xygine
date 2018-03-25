@@ -213,25 +213,21 @@ void Console::draw()
 {
 #ifdef USE_IMGUI
     // Console
-    ImGui::SetNextDock(ImGuiDockSlot_Bottom);
     if (nim::BeginDock("Console"))
     {
-        
-        nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
+        const float inputHeight = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing(); // 1 separator, 1 input text
+        nim::BeginChild("ScrollingRegion",{0,-inputHeight}, false, ImGuiWindowFlags_HorizontalScrollbar);
         nim::TextUnformatted(output.c_str(), output.c_str() + output.size());
-        nim::SetScrollHere();
         nim::EndChild();
 
         nim::Separator();
 
-        nim::PushItemWidth(620.f);
         if (nim::InputText("", input, MAX_INPUT_CHARS,
             ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory,
             textEditCallback))
         {
             doCommand(input);
         }
-        nim::PopItemWidth();
 
         if (nim::IsItemHovered() || (nim::IsRootWindowOrAnyChildFocused()
             && !nim::IsAnyItemActive() && !nim::IsMouseClicked(0)))

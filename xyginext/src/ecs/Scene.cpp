@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include "xyginext/core/App.hpp"
+#include "xyginext/core/Editor.hpp"
 #include "xyginext/ecs/Scene.hpp"
 #include "xyginext/ecs/components/Camera.hpp"
 #include "xyginext/ecs/components/Transform.hpp"
@@ -80,6 +81,22 @@ Scene::Scene(MessageBus& mb)
             rt.draw(*r, states);
         }
     };
+    
+#ifdef XY_EDITOR
+    // I'd prefer for scenes to be registered with the editor automatically
+    // when the EditorSystem is added, but as the scene pointer isn't set in
+    // xy::System until after it's constructed, I can't see a way to do this without
+    // changing API. So for now, this will do
+    Editor::registerScene(this, "Menu Scene");
+#endif
+}
+
+Scene::~Scene()
+{
+#ifdef XY_EDITOR
+    // See above
+    Editor::deregisterScene(this);
+#endif
 }
 
 //public

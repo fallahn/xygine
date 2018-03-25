@@ -70,6 +70,7 @@ source distribution.
 #include <xyginext/util/Math.hpp>
 
 #include <xyginext/core/FileSystem.hpp>
+#include <xyginext/core/Editor.hpp>
 
 #include <SFML/Window/Event.hpp>
 
@@ -329,6 +330,9 @@ void MenuState::createScene()
     m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addDirector<TextboxDirector>(m_sharedStateData);
     m_scene.addDirector<MenuDirector>(m_textureResource);
+    
+    // Add editor system
+   // m_scene.addSystem<xy::EditorSystem>(mb);
 
     m_blurEffect = &m_scene.addPostProcess<xy::PostBlur>();
     m_blurEffect->setFadeSpeed(2.5f);

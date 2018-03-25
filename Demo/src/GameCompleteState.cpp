@@ -157,9 +157,6 @@ void GameCompleteState::loadAssets()
     m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addSystem<xy::TextRenderer>(mb);
     m_scene.addSystem<xy::AudioSystem>(mb);
-    
-    // Add the editor system
-    m_scene.addSystem<xy::EditorSystem>(mb);
 
     m_scene.addDirector<EndingDirector>(m_soundResource, m_textureResource, mb);
 
