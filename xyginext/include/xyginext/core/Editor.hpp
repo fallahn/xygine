@@ -54,6 +54,7 @@ namespace xy
     public:
         
         static void init();
+        static void shutdown();
         
         static bool isEnabled();
         

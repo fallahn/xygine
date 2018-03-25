@@ -198,6 +198,7 @@ void App::run()
     m_messageBus.disable(); //prevents spamming with loads of entity quit messages
 
     Console::finalise();
+    Editor::shutdown();
     finalise();
     ImGui::SFML::Shutdown();
 

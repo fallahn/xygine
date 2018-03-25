@@ -97,6 +97,38 @@ bool Nim::wantsKeyboard()
 
 const Nim::Style& Nim::getStyle()
 {
+    auto style = ImGui::GetStyle();
+    auto& s = currentStyle;
+    s.Alpha = style.Alpha;
+    s.AntiAliasedFill = style.AntiAliasedFill;
+    s.AntiAliasedLines = style.AntiAliasedLines;
+    s.ButtonTextAlign = style.ButtonTextAlign;
+    s.ChildBorderSize = style.ChildBorderSize;
+    s.ChildRounding = style.ChildRounding;
+    s.ColumnsMinSpacing = style.ColumnsMinSpacing;
+    s.CurveTessellationTol = style.CurveTessellationTol;
+    s.DisplaySafeAreaPadding = style.DisplaySafeAreaPadding;
+    s.DisplayWindowPadding = style.DisplayWindowPadding;
+    s.FrameBorderSize = style.FrameBorderSize;
+    s.FramePadding = style.FramePadding;
+    s.FrameRounding = style.FrameRounding;
+    s.GrabMinSize = style.GrabMinSize;
+    s.GrabRounding = style.GrabRounding;
+    s.IndentSpacing = style.IndentSpacing;
+    s.ItemInnerSpacing = style.ItemInnerSpacing;
+    s.ItemSpacing = style.ItemSpacing;
+    s.PopupBorderSize = style.PopupBorderSize;
+    s.PopupRounding = style.PopupRounding;
+    s.ScrollbarRounding = style.ScrollbarRounding;
+    s.ScrollbarSize = style.ScrollbarSize;
+    s.TouchExtraPadding = style.TouchExtraPadding;
+    s.WindowBorderSize = style.WindowBorderSize;
+    s.WindowMinSize = style.WindowMinSize;
+    s.WindowPadding = style.WindowPadding;
+    s.WindowRounding = style.WindowRounding;
+    s.WindowTitleAlign = style.WindowTitleAlign;
+    for (int i=0; i < s.colours.size(); i++)
+        s.colours[i] = style.Colors[i];
     return currentStyle;
 }
 
@@ -133,6 +165,8 @@ void Nim::setStyle(const Nim::Style& style)
     s.WindowPadding = style.WindowPadding;
     s.WindowRounding = style.WindowRounding;
     s.WindowTitleAlign = style.WindowTitleAlign;
+    for (int i=0; i < style.colours.size(); i++)
+        s.Colors[i] = style.colours[i];
 }
 
 bool Nim::Style::saveToFile(const std::string& path)
@@ -167,6 +201,12 @@ bool Nim::Style::saveToFile(const std::string& path)
     styleFile.addProperty(GET_VARIABLE_NAME(WindowPadding)).setValue(WindowPadding);
     styleFile.addProperty(GET_VARIABLE_NAME(WindowRounding)).setValue(WindowRounding);
     styleFile.addProperty(GET_VARIABLE_NAME(WindowTitleAlign)).setValue(WindowTitleAlign);
+    
+    auto colourObj = styleFile.addObject("Colours");
+    for (int i=0; i<colours.size(); i++)
+    {
+        colourObj->addProperty(std::to_string(i)).setValue(colours[i]);
+    }
     
     return styleFile.save(path);
 }
@@ -207,6 +247,13 @@ bool Nim::Style::loadFromFile(const std::string& path)
     WindowPadding = styleFile.findProperty(GET_VARIABLE_NAME(WindowPadding))->getValue<typeof(WindowPadding)>();
     WindowRounding = styleFile.findProperty(GET_VARIABLE_NAME(WindowRounding))->getValue<typeof(WindowRounding)>();
     WindowTitleAlign = styleFile.findProperty(GET_VARIABLE_NAME(WindowTitleAlign))->getValue<typeof(WindowTitleAlign)>();
+    
+    auto colourObj = styleFile.findObjectWithName("Colours");
+    for (int i=0; i<colours.size(); i++)
+    {
+        // Need a better method for this...
+        colours[i] = colourObj->findProperty(std::to_string(i))->getValue<sf::Color>();
+    }
     
     return true;
 }

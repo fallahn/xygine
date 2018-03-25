@@ -50,9 +50,8 @@ namespace xy
         */
         struct Style
         {
-            
             // Enumeration for colours
-            enum class Color
+            enum class Colour
             {
                 Text,
                 TextDisabled,
@@ -129,7 +128,7 @@ namespace xy
             bool            AntiAliasedFill = true;            // Enable anti-aliasing on filled shapes (rounded rectangles, circles, etc.)
             float           CurveTessellationTol = 1.25f;       // Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.
             
-            std::array<sf::Color, static_cast<size_t>(Color::Count)>         Colors;
+            std::array<sf::Color, static_cast<size_t>(Colour::Count)>         colours;
             
             XY_EXPORT_API   bool loadFromFile(const std::string& path);
             XY_EXPORT_API   bool saveToFile(const std::string& path);
