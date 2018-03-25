@@ -160,6 +160,17 @@ namespace xy
         */
         void updateLocalBounds();
 
+        /*!
+        \brief Enables or disables viewport culling.
+        By default Drawables are culled from rendering when not in the
+        viewable area of the active camer. Setting this to true will cause
+        the drawable to always be rendered, even if it falls outside the active
+        camera's view.
+        \param cull Set to true to have the drawble culled from rendering when
+        not intersecting the current viewable area.
+        */
+        void setCulled(bool cull) { m_cull = cull; }
+
     private:
         sf::PrimitiveType m_primitiveType = sf::Quads;
         sf::RenderStates m_states;
@@ -183,6 +194,8 @@ namespace xy
         std::size_t m_vec3Count;
         std::size_t m_boolCount;
         std::size_t m_matCount;
+
+        bool m_cull;
 
         friend class RenderSystem;
     };
