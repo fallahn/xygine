@@ -42,7 +42,11 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
     ConfigFile sheetFile;
     if (!sheetFile.loadFromFile(xy::FileSystem::getResourcePath() + path))
     {
-        return false;
+        // Check without resource path
+        if (!sheetFile.loadFromFile(path))
+        {
+            return false;
+        }
     }
 
     m_sprites.clear();

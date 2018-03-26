@@ -46,6 +46,7 @@ T& SystemManager::addSystem(Args&&... args)
     m_systems.back()->setScene(m_scene);
     m_activeSystems.push_back(m_systems.back().get());
     m_systems.back()->m_active = true;
+    m_systems.back()->onCreate();
 
     return *(dynamic_cast<T*>(m_systems.back().get()));
 }

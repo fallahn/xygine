@@ -401,6 +401,12 @@ void App::handleEvents()
 
     while (m_renderWindow.pollEvent(evt))
     {
+        if (Editor::handleEvent(evt))
+        {
+            // Editor has taken the event
+            continue;
+        }
+        
         ImGui::SFML::ProcessEvent(evt);
 
         switch (evt.type)

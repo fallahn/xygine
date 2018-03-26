@@ -32,6 +32,7 @@
 #include <SFML/Graphics/RenderTexture.hpp>
 
 #include "xyginext/ecs/System.hpp"
+#include "xyginext/graphics/SpriteSheet.hpp"
 
 namespace xy
 {
@@ -47,8 +48,17 @@ namespace xy
     public:
         EditorSystem(xy::MessageBus& mb, const std::string& sceneName = "");
         ~EditorSystem();
+        
+    protected:
+        void onCreate();
+        
+    private:
+        std::string m_sceneName;
+        
+        friend class Editor;
     };
     
+    // Basically just a load of static/global stuff I haven't decided on a decent structure for yet
     class Editor
     {
     public:
@@ -61,6 +71,7 @@ namespace xy
     private:
         static void toggle();
         static void draw();
+        static bool handleEvent(sf::Event& ev);
         
         static void showStyleEditor();
         static void showVideoSettings();
@@ -69,14 +80,19 @@ namespace xy
         static void showSpriteEditor();
         static void showSceneEditor();
         
-        // Called in the scene constructor
-        // So the editor can keep track of active scenes
-        static void registerScene(Scene* scene, const std::string& name);
-        static void deregisterScene(Scene* scene);
+        static void showModalPopups();
         
         friend class App;
         friend class Editable;
         friend class Scene;
+    };
+    
+    // This will probably eventually be moved to it's own source files
+    struct SpriteSheetAsset
+    {
+        SpriteSheet sheet; // The spritesheed asset itself
+        bool        open = false; // True if the asset is currently open for editing
+        bool        unsavedChanges = false;
     };
 }
 

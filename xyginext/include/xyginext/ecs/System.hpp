@@ -127,6 +127,11 @@ namespace xy
         \brief Optional callback performed when an entity is removed
         */
         virtual void onEntityRemoved(Entity) {}
+        
+        /*
+         \brief Called once a system has been created
+         */
+        virtual void onCreate() {} //
 
         /*!
         \brief Posts a message on the system wide message bus
@@ -150,6 +155,7 @@ namespace xy
         Scene* getScene();
 
     private:
+        
 
         MessageBus& m_messageBus;
         UniqueType m_type;

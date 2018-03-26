@@ -62,7 +62,7 @@ namespace xy
     public:
         explicit Scene(MessageBus&);
 
-        ~Scene();
+        ~Scene() = default;
         Scene(const Scene&) = delete;
         Scene(const Scene&&) = delete;
         Scene& operator = (const Scene&) = delete;

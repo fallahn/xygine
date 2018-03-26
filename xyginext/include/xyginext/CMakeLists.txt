@@ -25,6 +25,8 @@ set(PROJECT_SRC  ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/Entity.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/Scene.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/System.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/System.inl
+  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/SystemManager.inl
 
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/AudioEmitter.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/AudioListener.hpp
