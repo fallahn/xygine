@@ -129,7 +129,7 @@ namespace xy
         (or other 3D features) a context with OpenGL version 3.2 or 
         higher is needed, as well as a depth buffer.
         */
-        App(sf::ContextSettings contextSettings = sf::ContextSettings());
+        App(sf::ContextSettings contextSettings = sf::ContextSettings(), const std::string& name = APP_NAME);
         virtual ~App() = default;
         App(const App&) = delete;
         const App& operator = (const App&) = delete;
@@ -220,17 +220,7 @@ namespace xy
         \brief Returns a reference to the active App instance
         */
         static App* getActiveInstance();
-
-        /*!
-        \brief Sets the application name.
-        This is used when reading/writing config files such as window settings
-        to the current user directory. A directory with this name is created
-        to store the configurations files, and so should be unique to the application
-        to prevent cross pollution of settings between xygine apps. This is set
-        to "xygine_application" by default.
-        */
-        void setApplicationName(const std::string& name);
-
+        
         /*!
         \brief Returns the current application name string.
         */

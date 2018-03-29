@@ -138,6 +138,12 @@ namespace xy
         from a sprite sheet definition file.
         */
         std::size_t getAnimationCount() const { return m_animationCount; }
+        
+        /*!
+         \brief Set the number of animations this sprite has
+         */
+        void setAnimationCount(std::size_t c) { m_animationCount = c; }
+
 
         /*!
         /brief Returns a reference to the sprites animation array.

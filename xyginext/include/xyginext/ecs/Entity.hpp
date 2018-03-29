@@ -257,6 +257,8 @@ namespace xy
 
         template <typename T>
         Detail::ComponentPool<T>& getPool();
+        
+        friend class Editor;
     };
 
 #include "Entity.inl"

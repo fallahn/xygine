@@ -33,6 +33,7 @@
 
 #include "xyginext/ecs/System.hpp"
 #include "xyginext/graphics/SpriteSheet.hpp"
+#include "xyginext/ecs/components/Camera.hpp"
 
 namespace xy
 {
@@ -87,12 +88,20 @@ namespace xy
         friend class Scene;
     };
     
-    // This will probably eventually be moved to it's own source files
+    // These will probably eventually be moved to their own source files
+    
     struct SpriteSheetAsset
     {
-        SpriteSheet sheet; // The spritesheed asset itself
+        SpriteSheet sheet; // The spritesheet asset itself
         bool        open = false; // True if the asset is currently open for editing
         bool        unsavedChanges = false;
+        std::string path;
+    };
+    
+    struct SceneAsset
+    {
+        Scene* scene;
+        xy::Entity cam;
     };
 }
 

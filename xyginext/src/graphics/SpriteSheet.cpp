@@ -218,6 +218,13 @@ Sprite SpriteSheet::getSprite(const std::string& name) const
 void SpriteSheet::setSprite(const std::string& name, const xy::Sprite& data)
 {
     m_sprites[name] = data;
+    
+    // Update the animations
+    m_animations[name].clear();
+    for (auto i = 0; i < data.getAnimationCount(); i++)
+    {
+        m_animations[name].push_back(data.getAnimations()[i].id.data());
+    }
 }
 
 void SpriteSheet::removeSprite(const std::string& name)

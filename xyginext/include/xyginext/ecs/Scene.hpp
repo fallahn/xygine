@@ -179,7 +179,17 @@ namespace xy
         \brief Forwards messages to the systems in the scene
         */
         void forwardMessage(const Message&);
-
+        
+        /*!
+         \brief Save the scene to a file
+         */
+        bool saveToFile(const std::string& file);
+        
+        /*!
+         \brief Load the scene from a file
+         */
+        bool loadFromFile(const std::string& file);
+        
     private:
         MessageBus& m_messageBus;
         Entity::ID m_defaultCamera;
@@ -204,6 +214,8 @@ namespace xy
         std::function<void(sf::RenderTarget&, sf::RenderStates)> currentRenderPath;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
+        
+        friend class Editor;
     };
 
 #include "Scene.inl"

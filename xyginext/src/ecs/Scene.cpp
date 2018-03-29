@@ -225,6 +225,11 @@ void Scene::forwardMessage(const Message& msg)
    
 }
 
+bool Scene::saveToFile(const std::string &file)
+{
+    
+}
+
 //private
 void Scene::postRenderPath(sf::RenderTarget& rt, sf::RenderStates states)
 {

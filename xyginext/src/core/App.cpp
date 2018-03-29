@@ -79,10 +79,10 @@ namespace
 
 bool App::m_mouseCursorVisible = true;
 
-App::App(sf::ContextSettings contextSettings)
+App::App(sf::ContextSettings contextSettings, const std::string& name)
     : m_videoSettings   (),
     m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
-    m_applicationName   (APP_NAME)
+    m_applicationName   (name)
 {
     m_windowIcon.create(16u, 16u, defaultIcon);
 
@@ -138,7 +138,11 @@ void App::run()
     loadSettings();
     
     Console::init();
-    Editor::init();
+    
+    #ifdef XY_EDITOR
+        Editor::init();
+    #endif
+    
     initialise();
 
     running = true;
@@ -346,12 +350,6 @@ App* App::getActiveInstance()
 {
     //XY_ASSERT(appInstance, "No active app instance");
     return appInstance;
-}
-
-void App::setApplicationName(const std::string& name)
-{
-    XY_ASSERT(!name.empty(), "must be a valid name");
-    m_applicationName = name;
 }
 
 const std::string& App::getApplicationName() const
