@@ -867,6 +867,7 @@ void Editor::showSpriteEditor()
                     if (ImGui::Button("-##sprite"))
                     {
                         ss.second.sheet.removeSprite(selectedSprite);
+                        selectedSprite = "Select a sprite";
                         ss.second.unsavedChanges = true;
                     }
                     
