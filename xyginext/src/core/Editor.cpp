@@ -168,6 +168,10 @@ void Editor::init()
             currentResolution = std::distance(resolutions.begin(),r);
     }
     
+    auto settings = App::getActiveInstance()->getVideoSettings();
+    fullScreen = (settings.WindowStyle & sf::Style::Fullscreen) == sf::Style::Fullscreen;
+    vSync = settings.VSync;
+    
     // Load any assets
     std::function<void(std::string)> assetSearch = [&](std::string path)
     {
@@ -701,8 +705,6 @@ void Editor::showVideoSettings()
         // Get the video settings
         auto settings = App::getActiveInstance()->getVideoSettings();
         
-        fullScreen = (settings.WindowStyle & sf::Style::Fullscreen) == sf::Style::Fullscreen;
-        vSync = settings.VSync;
         
         ImGui::Combo("Resolution", &currentResolution, resolutionNames.data());
         
