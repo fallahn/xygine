@@ -48,8 +48,21 @@ namespace xy
 
         void process(float) override;
 
+        /*!
+        \brief Adds a border around the current view when culling.
+        This is used to increase the effectively culled area when the system is drawn.
+        By default drawables outside the view of the currently active camera are
+        culled from rendering, this value adds a border around the viewble area,
+        increasing or decreasing the size of the area from which drawables are culled.
+        \param size The size of the border. This is a positive or negative value added
+        to every side of the active view. Negative values will decrease the size of the
+        culling area making drawables visibly culled from the output.
+        */
+        void setCullingBorder(float size);
+
     private:
         bool m_wantsSorting;
+        sf::Vector2f m_cullingBorder;
 
         void onEntityAdded(xy::Entity) override;
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
