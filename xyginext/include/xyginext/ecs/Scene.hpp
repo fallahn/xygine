@@ -30,6 +30,7 @@ source distribution.
 
 #include "xyginext/Config.hpp"
 #include "xyginext/core/App.hpp"
+#include "xyginext/core/editor/SceneEditor.hpp"
 #include "xyginext/ecs/Entity.hpp"
 #include "xyginext/ecs/System.hpp"
 #include "xyginext/ecs/systems/CommandSystem.hpp"
@@ -215,7 +216,7 @@ namespace xy
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
         
-        friend class Editor;
+        friend void SceneEditor::editScene(Scene&);
     };
 
 #include "Scene.inl"

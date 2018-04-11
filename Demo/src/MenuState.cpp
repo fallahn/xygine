@@ -332,7 +332,7 @@ void MenuState::createScene()
     m_scene.addDirector<MenuDirector>(m_textureResource);
     
     // Add editor system
-   // m_scene.addSystem<xy::EditorSystem>(mb);
+    m_scene.addSystem<xy::EditorSystem>(mb);
 
     m_blurEffect = &m_scene.addPostProcess<xy::PostBlur>();
     m_blurEffect->setFadeSpeed(2.5f);

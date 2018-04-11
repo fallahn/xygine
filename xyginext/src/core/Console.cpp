@@ -244,7 +244,7 @@ void Console::draw()
         nim::NewLine();
         for (auto& line : m_debugLines)
         {
-            ImGui::Text(line.c_str());
+            nim::Text(line.c_str());
         }
     }
     nim::EndDock();

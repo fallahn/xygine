@@ -31,18 +31,13 @@
 #include <vector>
 #include <SFML/Graphics/RenderTexture.hpp>
 
+#include "xyginext/core/editor/SceneEditor.hpp"
 #include "xyginext/ecs/System.hpp"
-#include "xyginext/graphics/SpriteSheet.hpp"
 #include "xyginext/ecs/components/Camera.hpp"
+#include "xyginext/graphics/SpriteSheet.hpp"
 
 namespace xy
 {
-    // Editable component, attach this to entities for the editor system to see them
-    class Editable final
-    {
-        // hrm...
-    };
-    
     // Editor system, add it to scenes you want to modify
     class EditorSystem : public xy::System
     {
@@ -57,6 +52,7 @@ namespace xy
         std::string m_sceneName;
         
         friend class Editor;
+        friend void SceneEditor::editScene(Scene&); //meh
     };
     
     // Basically just a load of static/global stuff I haven't decided on a decent structure for yet
@@ -80,28 +76,21 @@ namespace xy
         static void showAssetBrowser();
         static void showSpriteEditor();
         static void showSceneEditor();
+        static void showSettings();
         
         static void showModalPopups();
         
         friend class App;
-        friend class Editable;
         friend class Scene;
     };
     
-    // These will probably eventually be moved to their own source files
-    
-    struct SpriteSheetAsset
+    // Inheritable class for things which the editor classes as "Assets"
+    class Asset
     {
-        SpriteSheet sheet; // The spritesheet asset itself
-        bool        open = false; // True if the asset is currently open for editing
-        bool        unsavedChanges = false;
-        std::string path;
-    };
-    
-    struct SceneAsset
-    {
-        Scene* scene;
-        xy::Entity cam;
+    private:
+        friend class Editor;
+        bool open = false;
+        bool dirty = false;
     };
 }
 
