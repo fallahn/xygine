@@ -171,14 +171,14 @@ void App::run()
         m_renderWindow.display();
     }
 
-    m_renderWindow.close();
     m_messageBus.disable(); //prevents spamming with loads of entity quit messages
-
-    Console::finalise();
+    
     finalise();
+    Console::finalise();  
     ImGui::SFML::Shutdown();
 
     saveSettings();
+    m_renderWindow.close();
 }
 
 void App::pause()
