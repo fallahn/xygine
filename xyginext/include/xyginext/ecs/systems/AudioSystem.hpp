@@ -42,7 +42,7 @@ namespace xy
     class XY_EXPORT_API AudioSystem final : public System
     {
     public:
-        AudioSystem(MessageBus&);
+        explicit AudioSystem(MessageBus&);
 
         void process(float) override;
 

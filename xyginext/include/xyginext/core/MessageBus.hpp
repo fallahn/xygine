@@ -61,7 +61,9 @@ namespace xy
         MessageBus();
         ~MessageBus() = default;
         MessageBus(const MessageBus&) = delete;
-        const MessageBus& operator = (const MessageBus&) = delete;
+        MessageBus(MessageBus&&) = delete;
+        MessageBus& operator = (const MessageBus&) = delete;
+        MessageBus& operator = (MessageBus&&) = delete;
 
         /*!
         \brief Read and despatch all messages on the message stack

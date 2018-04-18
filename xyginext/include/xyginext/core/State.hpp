@@ -92,7 +92,9 @@ namespace xy
         State(StateStack& stateStack, Context context);
         virtual ~State() = default;
         State(const State&) = delete;
-        const State& operator =(const State&) = delete;
+        State(State&&) = delete;
+        State& operator =(const State&) = delete;
+        State& operator = (State&&) = delete;
 
         /*!
         \brief Receives window events from the state stack to which the state belongs

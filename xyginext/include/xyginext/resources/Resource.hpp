@@ -62,7 +62,9 @@ namespace xy
         }
         virtual ~BaseResource() = default;
         BaseResource(const BaseResource&) = delete;
-        const BaseResource& operator = (const BaseResource&) = delete;
+        BaseResource(BaseResource&&) = delete;
+        BaseResource& operator = (const BaseResource&) = delete;
+        BaseResource& operator = (BaseResource&&) = delete;
 
         /*!
         \brief Attempts to load a resource from disk at the given path

@@ -48,7 +48,6 @@ namespace xy
     {
     public:
         PostBlur();
-        ~PostBlur() = default;
 
         /*!
         \brief Applies the effect to the screen

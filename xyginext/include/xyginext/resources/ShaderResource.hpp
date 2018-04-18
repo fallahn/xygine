@@ -57,7 +57,9 @@ namespace xy
         ShaderResource();
         ~ShaderResource() = default;
         ShaderResource(const ShaderResource&) = delete;
-        const ShaderResource& operator = (const ShaderResource&) = delete;
+        ShaderResource(ShaderResource&&) = delete;
+        ShaderResource& operator = (const ShaderResource&) = delete;
+        ShaderResource& operator = (ShaderResource&&) = delete;
 
         /*!
         \brief get a reference to the shader corresponding to the given ID

@@ -42,11 +42,6 @@ NetEvent::Packet::Packet()
 
 }
 
-NetEvent::Packet::~Packet()
-{
-
-}
-
 //public
 sf::Uint32 NetEvent::Packet::getID() const
 {

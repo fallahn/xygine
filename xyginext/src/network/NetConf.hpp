@@ -42,6 +42,11 @@ namespace xy
         NetConf();
         ~NetConf();
 
+        NetConf(const NetConf&) = delete;
+        NetConf(NetConf&&) = delete;
+        NetConf& operator = (const NetConf&) = delete;
+        NetConf& operator = (NetConf&&) = delete;
+
     private:
         friend class EnetClientImpl;
         friend class EnetHostImpl;
