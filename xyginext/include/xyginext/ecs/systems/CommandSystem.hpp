@@ -70,7 +70,7 @@ namespace xy
 
     private:
         std::vector<Command> m_commands;
-        std::vector<Command>::iterator m_currentCommand;
+        std::vector<Command> m_commandBuffer;
         std::size_t m_count;
     };
 }
