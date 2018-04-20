@@ -39,7 +39,7 @@ source distribution.
 
 namespace xy
 {
-    class XY_EXPORT_API Component final
+    class XY_EXPORT_API ComponentManager final
     {
     public:
 
@@ -49,14 +49,17 @@ namespace xy
         \brief Returns a unique ID based on the component type
         */
         template <typename T>
-        static ID getID()
+        ID getID()
         {
             auto id = std::type_index(typeid(T));
             return getFromTypeID(id);
         }
 
+        ID getFromTypeID(std::type_index);
+
     private:
-        static ID getFromTypeID(std::type_index);
+
+        std::vector<std::type_index> m_IDs;     
     };
 }
 
