@@ -40,6 +40,7 @@ NetConf::NetConf()
     if (enet_initialize() == 0)
     {
         m_initOK = true;
+        Logger::log("Network subsystem initialised");
     }
     else
     {
@@ -52,5 +53,7 @@ NetConf::~NetConf()
     if (m_initOK)
     {
         enet_deinitialize();
+        m_initOK = false;
+        Logger::log("Network subsystem deinitialised");
     }
 }

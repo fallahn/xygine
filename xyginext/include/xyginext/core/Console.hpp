@@ -45,6 +45,9 @@ namespace xy
     The console class provides a feedback window and interface
     with xygine. Any class can register a command with the
     console as long as it inherits the ConsoleClient interface.
+
+    The Console functions are not threadsafe - appropriate care
+    should be taken when using the Console from multiple threads.
     */
     class XY_EXPORT_API Console final
     {

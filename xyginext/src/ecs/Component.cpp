@@ -30,11 +30,6 @@ source distribution.
 
 using namespace xy;
 
-namespace
-{
-
-}
-
 ComponentManager::ID ComponentManager::getFromTypeID(std::type_index id)
 {
     auto result = std::find(std::begin(m_IDs), std::end(m_IDs), id);

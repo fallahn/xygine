@@ -30,11 +30,24 @@ source distribution.
 
 #include <SFML/Config.hpp>
 #include <SFML/Window/ContextSettings.hpp>
+#include <SFML/System/Vector2.hpp>
 
 namespace sf
 {
     bool operator == (const sf::ContextSettings& l, const sf::ContextSettings& r);
 
     bool operator != (const sf::ContextSettings& l, const sf::ContextSettings& r);
+}
+
+template <typename T>
+sf::Vector2<T> operator * (sf::Vector2<T> l, sf::Vector2<T> r)
+{
+    return { l.x * r.x, l.y * r.y };
+}
+
+template <typename T>
+sf::Vector2<T> operator / (sf::Vector2<T>l, sf::Vector2<T> r)
+{
+    return { l.x / r.x, l.y / r.y };
 }
 #endif //XY_OPERATORS_HPP_
