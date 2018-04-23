@@ -44,6 +44,7 @@ T& SystemManager::addSystem(Args&&... args)
 
     m_systems.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
     m_systems.back()->setScene(m_scene);
+    m_systems.back()->processTypes(m_componentManager);
     m_activeSystems.push_back(m_systems.back().get());
     m_systems.back()->m_active = true;
 

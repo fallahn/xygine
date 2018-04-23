@@ -125,7 +125,7 @@ void QuadTreeNode::removeEntity(xy::Entity entity)
     auto result = std::find(m_entities.begin(), m_entities.end(), entity);
     if (result == m_entities.end())
     {
-        auto node = entity.getComponent<xy::QuadTreeItem>().m_node;
+        //auto node = entity.getComponent<xy::QuadTreeItem>().m_node;
         entity.getComponent<xy::QuadTreeItem>().m_node = nullptr;
         
         //xy::Logger::log("Entity not found in quad tree node when removing " + std::to_string(entity.getIndex()), Logger::Type::Error, Logger::Output::All);

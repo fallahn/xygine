@@ -47,6 +47,10 @@ namespace xy
     public:
         EnetClientImpl();
         ~EnetClientImpl();
+        EnetClientImpl(const EnetClientImpl&) = delete;
+        EnetClientImpl(EnetClientImpl&&) = delete;
+        EnetClientImpl& operator = (const EnetClientImpl&) = delete;
+        EnetClientImpl& operator = (EnetClientImpl&&) = delete;
 
         bool create(std::size_t maxChannels, std::size_t maxClients, sf::Uint32 incoming, sf::Uint32 outgoing) override;
         bool connect(const std::string& address, sf::Uint16 port, sf::Uint32 timeout) override;

@@ -142,7 +142,7 @@ namespace xy
         struct XY_EXPORT_API Packet final
         {
             Packet();
-            ~Packet();
+            ~Packet() = default;
 
             Packet(const Packet&) = delete;
             Packet(Packet&&) = delete;

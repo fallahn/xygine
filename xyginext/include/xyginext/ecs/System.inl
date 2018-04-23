@@ -28,8 +28,9 @@ source distribution.
 template <typename T>
 void System::requireComponent()
 {
-    const auto id = Component::getID<T>();
-    m_componentMask.set(id);
+    /*const auto id = Component::getID<T>();
+    m_componentMask.set(id);*/
+    m_pendingTypes.push_back(typeid(T));
 }
 
 template <typename T>

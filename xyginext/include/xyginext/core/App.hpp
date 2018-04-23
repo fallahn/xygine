@@ -132,7 +132,9 @@ namespace xy
         App(sf::ContextSettings contextSettings = sf::ContextSettings());
         virtual ~App() = default;
         App(const App&) = delete;
-        const App& operator = (const App&) = delete;
+        App(App&&) = delete;
+        App& operator = (const App&) = delete;
+        App& operator = (App&&) = delete;
 
         /*!
         \brief Starts the application

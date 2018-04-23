@@ -38,7 +38,7 @@ namespace
 CommandSystem::CommandSystem(MessageBus& mb)
     : System        (mb, typeid(CommandSystem)),
     m_commands      (MaxCommands),
-    m_currentCommand(m_commands.begin()),
+    m_commandBuffer (MaxCommands),
     m_count         (0)
 {
     requireComponent<CommandTarget>();
@@ -47,30 +47,30 @@ CommandSystem::CommandSystem(MessageBus& mb)
 //public
 void CommandSystem::sendCommand(const Command& cmd)
 {
-    if (m_currentCommand == m_commands.end()) return;
 
-    *m_currentCommand = cmd;
-    m_currentCommand++;
-    m_count++;
     //XY_ASSERT(m_currentCommand != m_commands.end(), "Exceeded max commands!");
+
+    if (m_count == MaxCommands) return;
+
+    m_commandBuffer[m_count++] = cmd;
 }
 
 void CommandSystem::process(float dt)
 {
+    auto count = m_count;
+    m_count = 0;
+    m_commands.swap(m_commandBuffer);
+    
     auto& entities = getEntities();
-    m_currentCommand = m_commands.begin();
 
-    for (auto i = 0u; i < m_count; ++i, ++m_currentCommand)
+    for (auto i = 0u; i < count; ++i)
     {
         for (auto& e : entities)
         {
-            if (e.getComponent<CommandTarget>().ID & m_currentCommand->targetFlags)
+            if (e.getComponent<CommandTarget>().ID & m_commands[i].targetFlags)
             {
-                m_currentCommand->action(e, dt);
+                m_commands[i].action(e, dt);
             }
         }
     }
-
-    m_currentCommand = m_commands.begin();
-    m_count = 0;
 }
