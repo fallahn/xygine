@@ -54,6 +54,6 @@ NetConf::~NetConf()
     {
         enet_deinitialize();
         m_initOK = false;
-        Logger::log("Network subsystem deinitialised");
+        //Logger::log("Network subsystem deinitialised");
     }
 }
