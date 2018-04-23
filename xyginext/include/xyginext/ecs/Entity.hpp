@@ -48,7 +48,7 @@ namespace xy
 	{
 		enum
 		{
-			MaxComponents = 64, //this is max number of types on a single entity
+			MaxComponents = 64, //this is max number of types on a single entity (and max bits in a bitset)
 			IndexBits = 24,
 			GenerationBits = 8,
 			MinFreeIDs = 1024 //after this generation is incremented and we go back to zero
@@ -132,7 +132,12 @@ namespace xy
         */
         const ComponentMask& getComponentMask() const;
 
-        
+        /*!
+        \brief Returns true if this entity has a valid scene associated with it
+        ie it was created by Scene::createEntity()
+        */
+        bool isValid() const { return m_entityManager != nullptr; }
+
         bool operator == (Entity r)
         {
             return getIndex() == r.getIndex();
@@ -174,6 +179,7 @@ namespace xy
         friend class EntityManager;
 	};
 
+    class ComponentManager;
     class MessageBus;
     /*!
     \brief Manages the relationship between an Entity and its components
@@ -181,13 +187,13 @@ namespace xy
     class XY_EXPORT_API EntityManager final
     {
     public:
-        explicit EntityManager(MessageBus&);
+        EntityManager(MessageBus&, ComponentManager&);
 
         ~EntityManager() = default;
         EntityManager(const EntityManager&) = delete;
-        EntityManager(const EntityManager&&) = delete;
+        EntityManager(EntityManager&&) = delete;
         EntityManager& operator = (const EntityManager&) = delete;
-        EntityManager& operator = (const EntityManager&&) = delete;
+        EntityManager& operator = (EntityManager&&) = delete;
 
         /*!
         \brief Creates a new Entity
@@ -250,6 +256,7 @@ namespace xy
 
     private:
         MessageBus& m_messageBus;
+        ComponentManager& m_componentManager;
         std::deque<Entity::ID> m_freeIDs;
         std::vector<Entity::Generation> m_generations; // < indexed by entity ID
         std::vector<std::unique_ptr<Detail::Pool>> m_componentPools; // < index is component ID. Pool index is entity ID.

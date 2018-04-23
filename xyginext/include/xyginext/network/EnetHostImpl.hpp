@@ -44,6 +44,10 @@ namespace xy
     public:
         EnetHostImpl();
         ~EnetHostImpl();
+        EnetHostImpl(const EnetHostImpl&) = delete;
+        EnetHostImpl(EnetHostImpl&&) = delete;
+        EnetHostImpl& operator = (const EnetHostImpl&) = delete;
+        EnetHostImpl& operator = (EnetHostImpl&&) = delete;
 
         bool start(const std::string& address, sf::Uint16 port, std::size_t maxClient, std::size_t maxChannels, sf::Uint32 incoming, sf::Uint32 outgoing) override;
         void stop() override;

@@ -32,6 +32,7 @@ source distribution.
 #include "xyginext/core/App.hpp"
 #include "xyginext/core/editor/SceneEditor.hpp"
 #include "xyginext/ecs/Entity.hpp"
+#include "xyginext/ecs/Component.hpp"
 #include "xyginext/ecs/System.hpp"
 #include "xyginext/ecs/systems/CommandSystem.hpp"
 #include "xyginext/ecs/Director.hpp"
@@ -65,9 +66,9 @@ namespace xy
 
         ~Scene() = default;
         Scene(const Scene&) = delete;
-        Scene(const Scene&&) = delete;
+        Scene(Scene&&) = delete;
         Scene& operator = (const Scene&) = delete;
-        Scene& operator = (const Scene&&) = delete;
+        Scene& operator = (Scene&&) = delete;
 
         /*!
         \brief Executes one simulations step.
@@ -200,6 +201,7 @@ namespace xy
         std::vector<Entity> m_pendingEntities;
         std::vector<Entity> m_destroyedEntities;
 
+        ComponentManager m_componentManager;
         EntityManager m_entityManager;
         SystemManager m_systemManager;
 

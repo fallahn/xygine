@@ -39,6 +39,7 @@ source distribution.
 namespace xy
 {
     class Scene;
+    class ComponentManager;
 
     using UniqueType = std::type_index;
 
@@ -111,7 +112,8 @@ namespace xy
 
         /*!
         \brief Adds a component type to the list of components required by the
-        system for it to be interested in a particular entity.
+        system for it to be interested in a particular entity. This should only
+        be used in the constructor of the System else types will not be registered.
         */
         template <typename T>
         void requireComponent();
@@ -167,12 +169,17 @@ namespace xy
 
         bool m_active; //used by system manager to check if it has been added to the active list
         friend class SystemManager;
+
+        //list of types populated by requireComponent then processed by SystemManager
+        //when the system is created
+        std::vector<std::type_index> m_pendingTypes;
+        void processTypes(ComponentManager&);
     };
 
     class XY_EXPORT_API SystemManager final
     {
     public:
-        explicit SystemManager(Scene&);
+        SystemManager(Scene&, ComponentManager&);
 
         ~SystemManager() = default;
         SystemManager(const SystemManager&) = delete;
@@ -237,6 +244,7 @@ namespace xy
         void process(float);
     private:
         Scene& m_scene;
+        ComponentManager& m_componentManager;
         std::vector<std::unique_ptr<System>> m_systems;
         std::vector<System*> m_activeSystems;
 

@@ -76,7 +76,9 @@ namespace xy
         explicit StateStack(State::Context context);
         ~StateStack() = default;
         StateStack(const StateStack&) = delete;
-        const StateStack& operator = (const StateStack&) = delete;
+        StateStack(StateStack&&) = delete;
+        StateStack& operator = (const StateStack&) = delete;
+        StateStack& operator = (StateStack&&) = delete;
 
         /*!
         \brief Registers a custom state with its ID

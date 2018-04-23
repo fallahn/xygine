@@ -47,6 +47,11 @@ namespace xy
     AudioEmitter components are assigned to channel 0. For
     these AudioMixer settings to be applied a scene must
     have an active AudioSystem.
+
+    These functions are not threadsafe - so appropriate
+    care should be taken when accessing the AudioMixer from
+    multiple threads.
+
     \see AudioEmitter::setChannel()
     */
     class XY_EXPORT_API AudioMixer final

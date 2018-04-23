@@ -25,11 +25,12 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#include "xyginext/ecs/Component.hpp"
 #include "xyginext/ecs/System.hpp"
 
 using namespace xy;
 
-SystemManager::SystemManager(Scene& scene) : m_scene(scene) {}
+SystemManager::SystemManager(Scene& scene, ComponentManager& cm) : m_scene(scene), m_componentManager(cm) {}
 
 void SystemManager::addToSystems(Entity entity)
 {
