@@ -75,3 +75,14 @@ Scene* System::getScene()
     XY_ASSERT(m_scene, "Scene is nullptr - something went wrong!");
     return m_scene;
 }
+
+
+//private
+void System::processTypes(ComponentManager& cm)
+{
+    for (const auto& componentType : m_pendingTypes)
+    {
+        m_componentMask.set(cm.getFromTypeID(componentType));
+    }
+    m_pendingTypes.clear();
+}

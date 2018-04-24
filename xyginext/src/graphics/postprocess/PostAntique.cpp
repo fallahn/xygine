@@ -125,10 +125,10 @@ PostAntique::PostAntique()
 #endif //XY_DEBUG
 }
 
-PostAntique::~PostAntique()
-{
-    //xy::App::removeUserWindows(this);
-}
+//PostAntique::~PostAntique()
+//{
+//    //xy::App::removeUserWindows(this);
+//}
 
 //public
 void PostAntique::apply(const sf::RenderTexture& src, sf::RenderTarget& dst)

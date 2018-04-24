@@ -43,7 +43,6 @@ namespace xy
     {
     public:
         PostOldSchool();
-        ~PostOldSchool() = default;
 
         void apply(const sf::RenderTexture&, sf::RenderTarget&) override;
 

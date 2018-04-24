@@ -67,10 +67,10 @@ PostChromeAb::PostChromeAb(bool distort)
 #endif //XY_DEBUG
 }
 
-PostChromeAb::~PostChromeAb()
-{
-    //xy::App::removeUserWindows(this);
-}
+//PostChromeAb::~PostChromeAb()
+//{
+//    //xy::App::removeUserWindows(this);
+//}
 
 //public
 void PostChromeAb::apply(const sf::RenderTexture& src, sf::RenderTarget& dst)

@@ -122,7 +122,8 @@ bool EnetClientImpl::connect(const std::string& address, sf::Uint16 port, sf::Ui
 
     //wait for a success event from server - this part is blocking
     ENetEvent evt;
-    if (enet_host_service(m_client, &evt, timeout) > 0 && evt.type == ENET_EVENT_TYPE_CONNECT)
+    int returnVal = enet_host_service(m_client, &evt, timeout);
+    if (returnVal >= 0 && evt.type == ENET_EVENT_TYPE_CONNECT)
     {
         LOG("Connected to " + address, Logger::Type::Info);
         return true;
@@ -131,6 +132,7 @@ bool EnetClientImpl::connect(const std::string& address, sf::Uint16 port, sf::Ui
     enet_peer_reset(static_cast<_ENetPeer*>(const_cast<void*>(m_peer.getPeer())));
     m_peer.reset();
     Logger::log("Connection attempt timed out after " + std::to_string(timeout) + " milliseconds.", Logger::Type::Error);
+    Logger::log("Client connection failed: return value was " + std::to_string(returnVal) + " and event type was " + std::to_string(evt.type), Logger::Type::Error, Logger::Output::All);
     return false;
 }
 

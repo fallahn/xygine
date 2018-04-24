@@ -36,7 +36,7 @@ source distribution.
 
 xy::RenderSystem::RenderSystem(xy::MessageBus& mb)
     : xy::System(mb, typeid(xy::RenderSystem)),
-    m_wantsSorting(true)
+    m_wantsSorting  (true)
 {
     requireComponent<xy::Drawable>();
     requireComponent<xy::Transform>();
@@ -69,6 +69,11 @@ void xy::RenderSystem::process(float)
     }
 }
 
+void xy::RenderSystem::setCullingBorder(float size)
+{
+    m_cullingBorder = { size, size };
+}
+
 //private
 void xy::RenderSystem::onEntityAdded(xy::Entity)
 {
@@ -78,7 +83,7 @@ void xy::RenderSystem::onEntityAdded(xy::Entity)
 void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     auto view = rt.getView();
-    sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
+    sf::FloatRect viewableArea((view.getCenter() - (view.getSize() / 2.f)) - m_cullingBorder, view.getSize() + m_cullingBorder);
 
     for (auto entity : getEntities())
     {

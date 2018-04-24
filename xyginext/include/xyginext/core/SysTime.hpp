@@ -36,7 +36,9 @@ namespace xy
 {
     /*!
     \brief Static functions for common date/time queries
-    using the system clock.
+    using the system clock. These are not thread safe so
+    appropriate care should be taken when accessing the 
+    time from multiple threads.
     */
     class XY_EXPORT_API SysTime final
     {

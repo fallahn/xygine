@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2017 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2018 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,10 +35,11 @@
 
 namespace sf
 {
-class Window;
+class InputStream;
 class RenderTarget;
 class RenderTexture;
-class InputStream;
+class Text;
+class Window;
 
 ////////////////////////////////////////////////////////////
 /// \brief Image living on the graphics card that can be used for drawing
@@ -584,6 +585,7 @@ public:
 
 private:
 
+    friend class Text;
     friend class RenderTexture;
     friend class RenderTarget;
 

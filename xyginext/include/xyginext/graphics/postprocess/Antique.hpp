@@ -42,7 +42,7 @@ namespace xy
     {
     public:
         PostAntique();
-        ~PostAntique();
+        //~PostAntique();
 
         void apply(const sf::RenderTexture&, sf::RenderTarget&) override;
         void update(float) override;
