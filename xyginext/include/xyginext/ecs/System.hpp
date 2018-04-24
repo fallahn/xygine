@@ -235,6 +235,11 @@ namespace xy
         \brief Runs a simulation step by calling process() on each system
         */
         void process(float);
+        
+        /*!
+         \brief Retreives all the systems
+         */
+        std::vector<std::unique_ptr<System>>& getSystems();
     private:
         Scene& m_scene;
         std::vector<std::unique_ptr<System>> m_systems;

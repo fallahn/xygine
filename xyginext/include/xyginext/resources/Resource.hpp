@@ -72,7 +72,7 @@ namespace xy
         of the resource manager.
         \see errorHandle
         */
-        T& get(const std::string& path = "default")
+        std::shared_ptr<T> get(const std::string& path = "default")
         {
             //if we have a valid path check current resources and return if found
             if (!path.empty())
@@ -80,11 +80,11 @@ namespace xy
                 auto r = m_resources.find(path);
                 if (r != m_resources.end())
                 {
-                    return *r->second;
+                    return r->second;
                 }
             }
             //else attempt to load from file
-            std::unique_ptr<T> r = std::make_unique<T>();
+            std::shared_ptr<T> r = std::make_shared<T>();
             if (path.empty() || !r->loadFromFile(xy::FileSystem::getResourcePath() + path))
             {
                 m_resources[path] = errorHandle();
@@ -94,7 +94,7 @@ namespace xy
                 m_resources[path] = std::move(r);
             }
 
-            return *m_resources[path];
+            return m_resources[path];
         }
     protected:
         /*!
@@ -104,9 +104,9 @@ namespace xy
         a fallback instance of the resource type, should loading of the
         requested resource fail for some reason.
         */
-        virtual std::unique_ptr<T> errorHandle() = 0;
+        virtual std::shared_ptr<T> errorHandle() = 0;
     private:
-        std::unordered_map<std::string, std::unique_ptr<T>> m_resources;
+        std::unordered_map<std::string, std::shared_ptr<T>> m_resources;
     };
 
     /*!
@@ -120,9 +120,9 @@ namespace xy
         /*!
         \see BaseResource
         */
-        std::unique_ptr<sf::Texture> errorHandle() override
+        std::shared_ptr<sf::Texture> errorHandle() override
         {
-            std::unique_ptr<sf::Texture> t = std::make_unique<sf::Texture>();
+            std::shared_ptr<sf::Texture> t = std::shared_ptr<sf::Texture>();
             sf::Image i;
             i.create(20u, 20u, m_fallbackColour);
             t->loadFromImage(i);
@@ -139,7 +139,7 @@ namespace xy
         /*!
         \see BaseResource
         */
-        std::unique_ptr<sf::Image> errorHandle() override
+        std::shared_ptr<sf::Image> errorHandle() override
         {
             std::unique_ptr<sf::Image> i = std::make_unique<sf::Image>();
             i->create(20u, 20u, sf::Color::Green);
@@ -156,14 +156,14 @@ namespace xy
         FontResource();
     private:
         sf::Font m_font;
-        std::unique_ptr<sf::Font> errorHandle() override;
+        std::shared_ptr<sf::Font> errorHandle() override;
     };
     /*!
     \brief Resource manager for sound files
     */
     class XY_EXPORT_API SoundResource final : public BaseResource<sf::SoundBuffer>
     {
-        std::unique_ptr<sf::SoundBuffer> errorHandle() override
+        std::shared_ptr<sf::SoundBuffer> errorHandle() override
         {
             std::array<sf::Int16, 20u> buffer;
             std::memset(buffer.data(), 0, buffer.size());

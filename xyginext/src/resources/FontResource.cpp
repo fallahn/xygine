@@ -72,7 +72,7 @@ FontResource::FontResource()
 	m_font.loadFromMemory(&fontData, fontData.size());
 }
 
-std::unique_ptr<sf::Font> FontResource::errorHandle()
+std::shared_ptr<sf::Font> FontResource::errorHandle()
 {
-	return std::make_unique<sf::Font>(m_font);
+	return std::make_shared<sf::Font>(m_font);
 }

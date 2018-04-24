@@ -69,6 +69,28 @@ Entity EntityManager::createEntity()
     return e;
 }
 
+Entity EntityManager::createEntity(xy::Entity::ID id)
+{
+    Entity::ID idx(id);
+    while(id >= m_generations.size())
+    {
+        m_generations.push_back(0);
+    }
+    idx = static_cast<Entity::ID>(m_generations.size() - 1);
+        
+    XY_ASSERT(idx < (1 << Detail::IndexBits), "Index out of range");
+    if (idx >= m_componentMasks.size())
+    {
+        m_componentMasks.resize(m_componentMasks.size() + MinComponentMasks);
+    }
+    
+    XY_ASSERT(idx < m_generations.size(), "Index out of range");
+    Entity e(idx, m_generations[idx]);
+    e.m_entityManager = this;
+    
+    return e;
+}
+
 void EntityManager::destroyEntity(Entity entity)
 {
     const auto index = entity.getIndex();

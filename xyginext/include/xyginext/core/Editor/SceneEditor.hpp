@@ -29,26 +29,21 @@
 
 #include "xyginext/ecs/Entity.hpp"
 
+#include "xyginext/ecs/Scene.hpp"
+#include "xyginext/core/editor/EditorAsset.hpp"
+
 namespace xy
 {
-    // Forward declarations
-    class Scene;
-    
-    // Collection of free functions related to scene editing
-    namespace SceneEditor
-    {
-        void editScene(Scene& scene);
-    }
-    
     // Represents a scene asset in the editor
-    class SceneAsset
+    class SceneAsset : public EditorAsset
     {
-    private:
+    public:
+        SceneAsset();
         friend class Editor;
         friend class EditorSystem;
-        Scene*  scene;
-        Entity camera;
-        bool open = false;
-        bool dirty = false;
+        std::unique_ptr<Scene> scene;
+        void edit();
+        bool showDebug = false;
+        AssetType getType() const {return AssetType::Scene;}
     };
 }

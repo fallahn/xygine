@@ -47,11 +47,12 @@
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Audio/Sound.hpp>
 
-#include "../imgui/imgui_dock.hpp"
-#include "../imgui/imgui-SFML.h"
-#include "../imgui/imgui_internal.h"
-#include "../imgui/fonts/fa-solid-900.hpp"
+#include "../../imgui/imgui_dock.hpp"
+#include "../../imgui/imgui-SFML.h"
+#include "../../imgui/imgui_internal.h"
+#include "../../imgui/fonts/fa-solid-900.hpp"
 
 #include <map>
 #include <set>
@@ -60,18 +61,22 @@ using namespace xy;
 
 namespace
 {
+    // Whether the editor is enabled or not
     bool enabled = false;
     
-    // bc name clash with function and bc lazy...
+    // Flags whether to show certain editor windows
     bool shouldShowStyleEditor = false;
     bool shouldShowVideoSettings = false;
     bool shouldShowAudioSettings = false;
     bool shouldShowConsole = false;
     bool shouldShowAssetBrowser = false;
-    bool shouldShowSceneEditor = false;
     bool shouldOpenNewPopup = false;
     bool shouldShowSettings = false;
+    
+    // Buffer which the game renders to while the editor is active
     sf::RenderTexture viewportBuffer;
+    
+    // Video settings
     int currentResolution = 0;
     std::array<char, 300> resolutionNames{};
     std::vector<sf::Vector2u> resolutions;
@@ -79,26 +84,20 @@ namespace
     bool vSync = false;
     bool useFrameLimit = false;
     int frameLimit = 10;
+    
+    // Editor textures
+    xy::TextureResource textureResource;
+    
+    // Editor settings
     int snapInterval = 8; // value used when selecting tex rects etc.
     
-    TextureResource textureResource;
+    // map of assets, keyed by the file name
+    std::map<std::string, std::unique_ptr<EditorAsset>> assets;
     
-    // Any scenes which have the EditorSystem added
-    std::unordered_map<std::string, SceneAsset> editableScenes;
-    static int sceneCounter(0);
-    std::string selectedSceneName = "Select a scene";
-    Scene*  selectedScene = nullptr;
+    // To play sounds in the editor
+    std::vector<sf::Sound> playingSounds;
     
-    // Asset lists
-    std::map<std::string, SpriteSheetAsset> spriteSheets;
-    std::map<std::string, ParticleEmitter> particleEmitters;
-    std::map<std::string, std::unique_ptr<sf::Texture>> textures;
-    std::map<std::string, sf::Font> fonts;
-    std::map<std::string, std::fstream> textFiles;
-    std::set<std::string> tmxFiles;
-    std::map<std::string, std::unique_ptr<sf::SoundBuffer>> sounds;
-    
-    // bc we need to manage these ourselves...
+    // The different cursors we may use
     sf::Cursor moveCursor;
     sf::Cursor sizeTLBRCursor;
     sf::Cursor sizeTRBLCursor;
@@ -111,38 +110,46 @@ EditorSystem::EditorSystem(xy::MessageBus& mb, const std::string& sceneName) :
 xy::System(mb, typeid(EditorSystem)),
 m_sceneName(sceneName)
 {
-    //requireComponent<Editable>();
+    // The editor system doesn't require any components
+    // This means (intentionally or otherwise) All entities are added to the system
+    // And it gives us a nice interface to access all entities in a scene
 }
 
 void EditorSystem::onCreate()
 {
-    // Register the scene we've been added to with the editor
-    if (m_sceneName.empty())
+    // If no scene name provided, use a default one
+    /*if (m_sceneName.empty())
     {
         m_sceneName = "Unnamed scene " + std::to_string(sceneCounter++);
+        scenes[m_sceneName].scene = getScene();
     }
     
-    // We store the camera, as the editor may fiddle with it, we can restore later
-    // This will definitely cause a problem if the user is calling getActiveCamera() regularly
-    // instead of caching it...
-    editableScenes[m_sceneName].scene = getScene();
-    editableScenes[m_sceneName].camera = getScene()->getActiveCamera();
+    // Otherwise, check if the scene name matches an asset, in which case link it
+    // Could do with a better way of matching up user-created scenes to the assets
+    else if (scenes.find(m_sceneName) != scenes.end())
+    {
+        scenes.find(m_sceneName)->second.scene = getScene();
+    }*/
+    
 }
 
 EditorSystem::~EditorSystem()
 {
-    auto scene = getScene();
-    auto me = std::find_if(editableScenes.begin(),editableScenes.end(),[scene](const std::pair<std::string, SceneAsset>& m)
+    /*auto scene = getScene();
+    auto me = std::find_if(scenes.begin(),scenes.end(),[scene](const std::pair<std::string, SceneAsset>& m)
                            { return m.second.scene == scene; });
     
-    if (me != editableScenes.end())
+    if (me != scenes.end())
     {
-        editableScenes.erase(me);
-    }
+        scenes.erase(me);
+    }*/
 }
 
 void Editor::init()
 {
+    // We want imgui keyboard nav
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    
     // Merge in fontawesome icons
     auto& io = ImGui::GetIO();
     io.Fonts->AddFontDefault();
@@ -222,34 +229,39 @@ void Editor::init()
             // Would prefer a better way to handle file types - enum?
             if (ext == ".spt")
             {
-                spriteSheets[file].sheet.loadFromFile(filePath, textureResource);
-                spriteSheets[file].absPath = path + file;
+                auto ss = assets.emplace(file, std::make_unique<SpriteSheetAsset>());
+                auto newSheetAsset = dynamic_cast<SpriteSheetAsset*>(ss.first->second.get());
+                newSheetAsset->sheet.loadFromFile(filePath, textureResource);
+                newSheetAsset->m_path = path + "/" + file;
             }
             else if (ext == ".xyp")
             {
-                particleEmitters[file].settings.loadFromFile(filePath, textureResource);
+                // particle asset
             }
             else if (ext == ".png")
             {
-                textures[file] = std::make_unique<sf::Texture>();
-                textures[file]->loadFromFile(filePath);
+                // texture asset
             }
             else if (ext == ".ttf")
             {
-                fonts[file].loadFromFile(filePath);
-            }
-            else if (ext == ".txt")
-            {
-                textFiles[file].open(filePath);
-            }
-            else if (ext == ".tmx")
-            {
-                tmxFiles.emplace(filePath);
+                // font asset
             }
             else if (ext == ".wav" || ext == ".ogg")
             {
-                sounds[file] = std::make_unique<sf::SoundBuffer>();
-                sounds[file]->loadFromFile(filePath);
+                // audio asset
+            }
+            else if (ext == ".xyscn")
+            {
+                auto newAsset = assets.emplace(file, std::make_unique<SceneAsset>());
+                auto newScene = dynamic_cast<SceneAsset*>(newAsset.first->second.get());
+                newScene->m_path = filePath;
+                
+                newScene->scene.reset(new Scene(App::getActiveInstance()->getMessageBus(), filePath));
+                
+                // Add the editor system
+                newScene->scene->addSystem<EditorSystem>(App::getActiveInstance()->getMessageBus(), "Debug Scene!");
+                newScene->scene->addSystem<CameraSystem>(App::getActiveInstance()->getMessageBus());
+                
             }
             else
             {
@@ -260,10 +272,10 @@ void Editor::init()
     };
     
     // Check resource path and working directory (primarily required for apple...)
-    assetSearch(FileSystem::getResourcePath() + "assets");
+    //assetSearch(FileSystem::getResourcePath() + "assets");
     assetSearch("assets");
     
-    // Check for imgui style
+    // Check for imgui style config file
     auto stylePath = FileSystem::getConfigDirectory(App::getActiveInstance()->getApplicationName()) + "style.cfg";
     Nim::Style style;
     if (style.loadFromFile(stylePath))
@@ -276,6 +288,7 @@ void Editor::init()
     if (editorSettings.loadFromFile(FileSystem::getConfigDirectory(App::getActiveInstance()->getApplicationName()) + "editor.cfg"))
     {
         ConfigProperty* p;
+        // Open window flags
         if ( p = editorSettings.findProperty("assetsOpen"))
         {
             shouldShowAssetBrowser = p->getValue<bool>();
@@ -283,10 +296,6 @@ void Editor::init()
         if ( p = editorSettings.findProperty("consoleOpen"))
         {
             shouldShowConsole = p->getValue<bool>();
-        }
-        if ( p = editorSettings.findProperty("scenesOpen"))
-        {
-            shouldShowSceneEditor = p->getValue<bool>();
         }
         if ( p = editorSettings.findProperty("styleOpen"))
         {
@@ -310,13 +319,18 @@ void Editor::init()
         }
         
         // Check for any open spritesheets
+        // Would be better to just check any open assets?
         ConfigObject* o;
-        if (o = editorSettings.findObjectWithName("OpenSpriteSheets"))
+        if (o = editorSettings.findObjectWithName("OpenAssets"))
         {
             for (auto p : o->getProperties())
             {
                 auto name = p.getValue<std::string>();
-                spriteSheets[name].open = true;
+                auto ss = assets.find(name);
+                if (ss != assets.end())
+                {
+                    ss->second->m_open = true;
+                }
             }
         }
     }
@@ -324,18 +338,10 @@ void Editor::init()
 
 void Editor::shutdown()
 {
-    // Only really required bc I'm being lazy and using global sound resources
-    for (auto& s : sounds)
-    {
-        s.second.release();
-    }
-    
     // Save the editor config
-    // Check for an editor settings file
     ConfigFile editorSettings;
     editorSettings.addProperty("assetsOpen").setValue(shouldShowAssetBrowser);
     editorSettings.addProperty("consoleOpen").setValue(shouldShowConsole);
-    editorSettings.addProperty("scenesOpen").setValue(shouldShowSceneEditor);
     editorSettings.addProperty("styleOpen").setValue(shouldShowStyleEditor);
     editorSettings.addProperty("audioOpen").setValue(shouldShowAudioSettings);
     editorSettings.addProperty("videoOpen").setValue(shouldShowVideoSettings);
@@ -343,10 +349,10 @@ void Editor::shutdown()
     editorSettings.addProperty("snap").setValue(snapInterval);
     
     // store any open spritesheets
-    auto o = editorSettings.addObject("OpenSpriteSheets");
-    for (auto& ss : spriteSheets)
+    auto o = editorSettings.addObject("OpenAssets");
+    for (auto& ss : assets)
     {
-        if (ss.second.open)
+        if (ss.second->m_open)
         {
             // config item array required?
             o->addProperty("name").setValue(ss.first);
@@ -355,6 +361,11 @@ void Editor::shutdown()
     
     // Finally save
     editorSettings.save(FileSystem::getConfigDirectory(App::getActiveInstance()->getApplicationName()) + "editor.cfg");
+    
+    for (auto& asset : assets)
+    {
+        asset.second.release();
+    }
 }
 
 void Editor::toggle()
@@ -384,6 +395,8 @@ void Editor::draw()
     if (enabled)
     {
         // Probably shouldn't hardcode this
+        // But it's required to make sure the fontawesome font is used
+        // I may well be doing something wrong to cause this
         ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
         
         // Main menu bar first.
@@ -418,7 +431,6 @@ void Editor::draw()
                     ImGui::MenuItem("Audio", "", &shouldShowAudioSettings);
                     ImGui::MenuItem("Console", "ctrl + c", &shouldShowConsole);
                     ImGui::MenuItem("Assets", "ctrl + a", &shouldShowAssetBrowser);
-                    ImGui::MenuItem("Scenes", "", &shouldShowSceneEditor);
                     
                     ImGui::Separator();
                     ImGui::MenuItem("Editor settings","",&shouldShowSettings);
@@ -449,6 +461,7 @@ void Editor::draw()
             auto availableh = ImGui::GetContentRegionAvail().y;
             auto scale = std::min(availablew / vpw, availableh / vph);
             auto size = static_cast<sf::Vector2f>(viewportBuffer.getSize()) * scale;
+            viewportBuffer.display();
             ImGui::Image(viewportBuffer, size);
         }
         ImGui::EndDock();
@@ -483,12 +496,6 @@ void Editor::draw()
             Console::draw();
         }
         
-        // Scene editor
-        if (shouldShowSceneEditor)
-        {
-            showSceneEditor();
-        }
-        
         // Editor settings
         if (shouldShowSettings)
         {
@@ -499,18 +506,40 @@ void Editor::draw()
         showModalPopups();
         
         // Show any sprites open for editing
-        showSpriteEditor();
+        for (auto& asset : assets)
+        {
+            if (asset.second->m_open)
+            {
+                if (ImGui::BeginDock(asset.first.c_str()))
+                {
+                    asset.second->edit();
+                }
+                ImGui::EndDock();
+            }
+        }
         
         ImGui::EndDockspace();
         ImGui::End(); // Editor
         
         ImGui::PopFont();
+        
+        // If any scene assets are open, draw them
+        for (auto& asset : assets)
+        {
+            if (asset.second->getType() == AssetType::Scene)
+            {
+                if (asset.second->m_open)
+                {
+                    App::getActiveInstance()->getRenderTarget()->draw(*(dynamic_cast<SceneAsset*>(asset.second.get())->scene));
+                }
+            }
+        }
     }
     
     // Check for cursor type changes here
     switch (ImGui::GetMouseCursor())
     {
-        case ImGuiMouseCursor_Move:
+        case ImGuiMouseCursor_ResizeAll:
         {
             App::getActiveInstance()->m_renderWindow.setMouseCursor(moveCursor);
             break;
@@ -552,6 +581,7 @@ bool Editor::handleEvent(sf::Event& ev)
     
     switch(ev.type)
     {
+            // Keyboard shortcuts
         case sf::Event::KeyPressed:
         {
             switch(ev.key.code)
@@ -595,6 +625,21 @@ bool Editor::handleEvent(sf::Event& ev)
     }
     
     return false;
+}
+
+void Editor::update(float dt)
+{
+    // Update any debug scenes
+    for (auto& asset : assets)
+    {
+        if (asset.second->getType() == AssetType::Scene)
+        {
+            if (asset.second->m_open)
+            {
+                dynamic_cast<SceneAsset*>(asset.second.get())->scene->update(dt);
+            }
+        }
+    }
 }
 
 void Editor::showStyleEditor()
@@ -684,14 +729,10 @@ void Editor::showStyleEditor()
                 if (!filter.PassFilter(name))
                     continue;
                 ImGui::PushID(i);
-                auto& c = style.colours[i];
-                auto col = ImColor(c.r,c.g,c.b,c.a);
+                ImVec4 col = style.colours[i];
                 if (ImGui::ColorEdit4("##color", (float*)&col, ImGuiColorEditFlags_AlphaBar | alpha_flags))
                 {
-                    c.r = col.Value.w * 255;
-                    c.g = col.Value.x * 255;
-                    c.b = col.Value.y * 255;
-                    c.a = col.Value.z * 255;
+                    style.colours[i] = col;
                 }
                 ImGui::SameLine(0.0f, style.ItemInnerSpacing.x);
                 ImGui::TextUnformatted(name);
@@ -864,282 +905,10 @@ void Editor::showAssetBrowser()
 {
     if (ImGui::BeginDock("Assets"))
     {
-       // Spritesheets
-        if (spriteSheets.size())
+        for (auto& asset : assets)
         {
-            if (ImGui::TreeNode("SpriteSheets"))
-            {
-                for (auto& ss : spriteSheets)
-                {
-                    ImGui::Selectable(ss.first.c_str(), &ss.second.open);
-                }
-                ImGui::TreePop();
-            }
+            ImGui::Selectable(asset.first.c_str(), &asset.second->m_open);
         }
-        
-        // Textures
-        if (textures.size())
-        {
-            if (ImGui::TreeNode("Textures"))
-            {
-                for (auto& t : textures)
-                {
-                    if (ImGui::TreeNode(t.first.c_str()))
-                    {
-                        ImGui::Image(*t.second);
-                        ImGui::TreePop();
-                    }
-                }
-                ImGui::TreePop();
-            }
-        }
-        
-    }
-    ImGui::EndDock();
-}
-
-void Editor::showSpriteEditor()
-{
-    for (auto& ss : spriteSheets)
-    {
-        if (ss.second.open)
-        {
-            auto name = ss.first;
-            if (ss.second.dirty)
-            {
-                // This causes imgui funniness, as it think's its a new dock (because different ID)
-                // should be fixable in the imgui code - the previous tab stuff had an implementation for it
-               // name += " *";
-            }
-            if (ImGui::BeginDock(name.c_str()))
-            {
-                // Select which texture to use
-                auto file = FileSystem::getFileName(ss.second.sheet.getTexturePath());
-                std::string texName =  file.length() > 0 ? file : "Select a texture";
-                if (ImGui::BeginCombo("Texture", texName.c_str()))
-                {
-                    for (auto& tex : textures)
-                    {
-                        if (ImGui::Selectable(tex.first.c_str()))
-                        {
-                            texName = tex.first;
-                            ss.second.sheet.setTexturePath("assets/" + tex.first);
-                            ss.second.dirty = true;
-                        }
-                    }
-                    ImGui::EndCombo();
-                }
-                
-                // triple meh
-                if (texName != "Select a texture")
-                {
-                    
-                    // Select sprite to edit
-                    auto sprites = ss.second.sheet.getSprites();
-                    static std::string selectedSprite = "Select a sprite";
-                    if (ImGui::BeginCombo("Sprites", selectedSprite.c_str()))
-                    {
-                        for (auto& spr : sprites)
-                        {
-                            if (ImGui::Selectable(spr.first.c_str()))
-                            {
-                                selectedSprite = spr.first;
-                            }
-                        }
-                        ImGui::EndCombo();
-                    }
-                    
-                    // Add/delete sprite
-                    if (ImGui::Button("+##sprite"))
-                    {
-                        ss.second.sheet.setSprite("New Sprite", Sprite(*textures[texName]));
-                        selectedSprite = "New Sprite";
-                        ss.second.dirty = true;
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::Button("-##sprite"))
-                    {
-                        ss.second.sheet.removeSprite(selectedSprite);
-                        selectedSprite = "Select a sprite";
-                        ss.second.dirty = true;
-                    }
-                    
-                    // meh...
-                    if (selectedSprite != "Select a sprite")
-                    {
-                        // sprite name
-                        static std::array<char, MAX_INPUT> input = {{0}};
-                        selectedSprite.copy(input.data(), selectedSprite.length());
-                        
-                        auto spr = ss.second.sheet.getSprite(selectedSprite);
-                        
-                        if (ImGui::InputText("Name", input.data(), MAX_INPUT))
-                        {
-                            // much inefficient
-                            ss.second.sheet.removeSprite(selectedSprite);
-                            selectedSprite = std::string(input.data());
-                            ss.second.sheet.setSprite(selectedSprite, spr);
-                            ss.second.dirty = true;
-                        }
-                        
-                        ImGui::Separator();
-                        
-                        SpriteEditor::editSprite(spr);
-                        
-                        // Animation combo list
-                        static std::string selectedAnim = "Select an animation";
-                        if (ImGui::BeginCombo("Animations", selectedAnim.c_str()))
-                        {
-                            for (auto& anim : spr.getAnimations())
-                            {
-                                bool animSelected(false);
-                                ImGui::Selectable(anim.id.data(), &animSelected);
-                                if (animSelected)
-                                {
-                                    selectedAnim = anim.id.data();
-                                }
-                            }
-                            ImGui::EndCombo();
-                        }
-                        
-                        // Add/Remove animations
-                        if (ImGui::Button("+##anim"))
-                        {
-                            spr.getAnimations()[spr.getAnimationCount()] = Sprite::Animation();
-                            selectedAnim = "New Anim";
-                            selectedAnim.copy(spr.getAnimations()[spr.getAnimationCount()].id.data(), selectedAnim.length());
-                            spr.setAnimationCount(spr.getAnimationCount()+1);
-                            ss.second.sheet.setSprite(selectedSprite, spr);
-                            ss.second.dirty = true;
-                        }
-                        ImGui::SameLine();
-                        if (ImGui::Button("-##anim"))
-                        {
-                            auto& anims = spr.getAnimations();
-                            for (auto i = 0; i < spr.getAnimationCount(); i++)
-                            {
-                                if (std::string(anims[i].id.data()) == selectedAnim)
-                                {
-                                    // move all anims up one
-                                    for (auto j = i+1; j <= spr.getAnimationCount(); j++, i++)
-                                    {
-                                        anims[i] = anims[j];
-                                    }
-                                    break;
-                                }
-                            }
-                            ss.second.sheet.setSprite(selectedSprite, spr);
-                            ss.second.dirty = true;
-                        }
-                        
-                        // double meh...
-                        if (selectedAnim != "Select an animation")
-                        {
-                         
-                            for (auto i = 0 ; i < spr.getAnimationCount(); i++)
-                            {
-                                auto& anim = spr.getAnimations()[i];
-                                if (std::string(anim.id.data()) == selectedAnim)
-                                {
-                                    // Name
-                                    if (ImGui::InputText("Name##anim", anim.id.data(), Sprite::Animation::MaxAnimationIdLength))
-                                    {
-                                        selectedAnim = anim.id.data();
-                                    }
-                                    
-                                    // Properties
-                                    ImGui::InputFloat("Framerate", &anim.framerate);
-                                    ImGui::Checkbox("Loop", &anim.looped);
-                                    
-                                    // Frames
-                                    int fc = anim.frameCount;
-                                    if (ImGui::InputInt("Frame count", &fc, 1, 10, ImGuiInputTextFlags_EnterReturnsTrue))
-                                    {
-                                        anim.frameCount = fc;
-                                    }
-                                    static int currentFrame(0);
-                                    ImGui::SliderInt("Frames", &currentFrame, 0, anim.frameCount);
-                                    
-                                    // Tex rect of current frame
-                                    auto& frame = anim.frames[currentFrame];
-                                    auto texRect = static_cast<sf::IntRect>(frame);
-                                    if (ImGui::InputInt4("Texture Rect##anim", (int*)&texRect))
-                                    {
-                                        frame = (static_cast<sf::FloatRect>(texRect));
-                                    }
-                                }
-                            }
-                        }
-                        
-                        // should restructure to avoid this
-                        ss.second.sheet.setSprite(selectedSprite, spr);
-                    }
-                    
-                    // Save button
-                    if (ImGui::Button("Save"))
-                    {
-                        //not good
-                        ss.second.sheet.saveToFile("assets/" + ss.first);
-                    }
-                    
-                    // Add to scene
-                    ImGui::Separator();
-                    static std::string selectedScene("Select a scene");
-                    if (ImGui::BeginCombo("Scene", selectedScene.c_str()))
-                    {
-                        for (auto& scene : editableScenes)
-                        {
-                            if (ImGui::Selectable(scene.first.c_str()))
-                            {
-                                selectedScene = scene.first;
-                            }
-                        }
-                        ImGui::EndCombo();
-                    }
-                    if (ImGui::Button("Add to scene"))
-                    {
-                        auto scene = editableScenes[selectedScene];
-                        
-                        // Make sure the scene has the required systems
-                        scene.scene->addSystem<CameraSystem>(App::getActiveInstance()->getMessageBus());
-                        scene.scene->addSystem<RenderSystem>(App::getActiveInstance()->getMessageBus());
-                        scene.scene->addSystem<SpriteSystem>(App::getActiveInstance()->getMessageBus());
-                        
-                        auto ent = scene.scene->createEntity();
-                        ent.addComponent<Drawable>();
-                        ent.addComponent<Transform>();
-                        ent.addComponent(ss.second.sheet.getSprite(selectedSprite));
-                    }
-                }
-            }
-            ImGui::EndDock();
-        }
-    }
-}
-
-void Editor::showSceneEditor()
-{
-    if (ImGui::BeginDock("Scenes"))
-    {
-        // Show combo box to select scene first
-        if (ImGui::BeginCombo("Scenes", selectedSceneName.c_str()))
-        {
-            for (auto& s : editableScenes)
-            {
-                if (ImGui::Selectable(s.first.c_str()))
-                {
-                    selectedSceneName = s.first;
-                    selectedScene = s.second.scene;
-                }
-            }
-            ImGui::EndCombo();
-        }
-        
-        if (selectedScene)
-        {
-            SceneEditor::editScene(*selectedScene);
-        }
-        
     }
     ImGui::EndDock();
 }
@@ -1158,20 +927,42 @@ void Editor::showModalPopups()
         static int selectedType = 0;
         
         ImGui::RadioButton("Sprite Sheet", &selectedType, 0);
-        ImGui::RadioButton("Some other type...", &selectedType, 1);
-        ImGui::RadioButton("Yet to be implemented...", &selectedType, 2);
+        ImGui::RadioButton("Scene", &selectedType, 1);
         
         static std::array<char,MAX_INPUT> buf = {{0}};
-        if (ImGui::InputText("Name", buf.data(), MAX_INPUT, ImGuiInputTextFlags_EnterReturnsTrue) || ImGui::Button("Create"))
+        if (ImGui::InputText("Path", buf.data(), MAX_INPUT, ImGuiInputTextFlags_EnterReturnsTrue) || ImGui::Button("Create"))
         {
             switch(selectedType)
             {
                 case 0: // spritesheet
                 {
-                    spriteSheets[buf.data()].absPath = FileSystem::getResourcePath() + buf.data();
-                    spriteSheets[buf.data()].open = true;
-                    spriteSheets[buf.data()].dirty = true;
-                    ImGui::CloseCurrentPopup();
+                    auto ss = assets.emplace(buf.data(), std::make_unique<SpriteSheetAsset>());
+                    if (ss.second)
+                    {
+                        ss.first->second->m_path = buf.data();
+                        ss.first->second->m_open = true;
+                        ss.first->second->m_dirty = true;
+                        ImGui::CloseCurrentPopup();
+                    }
+                    break;
+                }
+                    
+                case 1: // Scene
+                {
+                    auto scene = assets.emplace(buf.data(), std::make_unique<SceneAsset>());
+                    if (scene.second)
+                    {
+                        scene.first->second->m_open = true;
+                        scene.first->second->m_dirty = true;
+                        scene.first->second->m_path = buf.data();
+                        auto scn = dynamic_cast<SceneAsset*>(scene.first->second.get());
+                        scn->scene.reset(new Scene(App::getActiveInstance()->getMessageBus()));
+                        
+                        // Make sure the new scene has the editor system and camera system
+                        scn->scene->addSystem<EditorSystem>(App::getActiveInstance()->getMessageBus());
+                        scn->scene->addSystem<CameraSystem>(App::getActiveInstance()->getMessageBus());
+                        ImGui::CloseCurrentPopup();
+                    }
                     break;
                 }
             }
@@ -1195,4 +986,24 @@ void Editor::showSettings()
         ImGui::InputInt("Snap (pixels)", &snapInterval);
     }
     ImGui::EndDock();
+}
+
+int Editor::getPixelSnap()
+{
+    return snapInterval;
+}
+
+std::unordered_map<std::string, SpriteSheetAsset*> Editor::getSpriteSheets()
+{
+    std::unordered_map<std::string, SpriteSheetAsset*> ret;
+    
+    for (auto& asset : assets)
+    {
+        if (asset.second->getType() == AssetType::Spritesheet)
+        {
+            ret[asset.first] = dynamic_cast<SpriteSheetAsset*>(asset.second.get());
+        }
+    }
+    
+    return ret;
 }

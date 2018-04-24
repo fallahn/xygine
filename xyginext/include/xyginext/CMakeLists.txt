@@ -7,7 +7,6 @@ set(PROJECT_SRC  ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/core/Assert.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/ConfigFile.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/Console.hpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/core/Editor.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/ConsoleClient.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/FileSystem.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/Log.hpp
@@ -16,6 +15,10 @@ set(PROJECT_SRC  ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/core/State.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/StateStack.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/SysTime.hpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/Editor.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/SpriteEditor.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/SceneEditor.hpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/detail/Operators.hpp
 

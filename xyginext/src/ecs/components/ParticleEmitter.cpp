@@ -71,7 +71,7 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             auto name = p.getName();
             if (name == "src")
             {
-                texture = &textureResource.get(p.getValue<std::string>());
+                texture = textureResource.get(p.getValue<std::string>()).get();
             }
             else if (name == "blendmode")
             {

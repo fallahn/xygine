@@ -27,22 +27,31 @@
 
 #pragma once
 
-#include "xyginext/core/Editor.hpp"
+#include "xyginext/core/editor/EditorAsset.hpp"
 
 #include "xyginext/ecs/components/Sprite.hpp"
+#include "xyginext/graphics/SpriteSheet.hpp"
+
+#include <map>
 
 namespace xy
 {
     // Collection of free functions related to sprite editing
     namespace SpriteEditor
     {
+        // Pass a sprite to show editing functions for it
         void editSprite(Sprite& sprite);
+        Sprite* selectSpriteFromAssets();
     }
     
     // Represents a spritesheet asset in the editor
-    struct SpriteSheetAsset : Asset
+    class SpriteSheetAsset : public EditorAsset
     {
+    public:
         SpriteSheet sheet; // The spritesheet asset itself
-        std::string absPath;
+        
+        // EditorAsset
+        void edit();
+        AssetType getType() const {return AssetType::Spritesheet;}
     };
 }

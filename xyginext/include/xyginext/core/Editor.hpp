@@ -29,15 +29,16 @@
 #define XY_EDITOR_HPP_
 
 #include <vector>
+#include <unordered_map>
 #include <SFML/Graphics/RenderTexture.hpp>
 
-#include "xyginext/core/editor/SceneEditor.hpp"
+#include "xyginext/core/editor/EditorAsset.hpp"
 #include "xyginext/ecs/System.hpp"
-#include "xyginext/ecs/components/Camera.hpp"
-#include "xyginext/graphics/SpriteSheet.hpp"
 
 namespace xy
 {
+    class SpriteSheetAsset;
+    
     // Editor system, add it to scenes you want to modify
     class EditorSystem : public xy::System
     {
@@ -52,7 +53,8 @@ namespace xy
         std::string m_sceneName;
         
         friend class Editor;
-        friend void SceneEditor::editScene(Scene&); //meh
+        friend class Scene;
+        friend class SceneAsset;
     };
     
     // Basically just a load of static/global stuff I haven't decided on a decent structure for yet
@@ -64,33 +66,26 @@ namespace xy
         static void shutdown();
         
         static bool isEnabled();
+        static bool isGamePaused();
+        static int  getPixelSnap();
+        static std::unordered_map<std::string, SpriteSheetAsset*> getSpriteSheets();
         
     private:
         static void toggle();
         static void draw();
         static bool handleEvent(sf::Event& ev);
+        static void update(float dt);
         
         static void showStyleEditor();
         static void showVideoSettings();
         static void showAudioSettings();
         static void showAssetBrowser();
-        static void showSpriteEditor();
-        static void showSceneEditor();
         static void showSettings();
         
         static void showModalPopups();
         
         friend class App;
         friend class Scene;
-    };
-    
-    // Inheritable class for things which the editor classes as "Assets"
-    class Asset
-    {
-    private:
-        friend class Editor;
-        bool open = false;
-        bool dirty = false;
     };
 }
 

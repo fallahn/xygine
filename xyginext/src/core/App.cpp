@@ -161,6 +161,11 @@ void App::run()
 
             update(timePerFrame);
             
+            if (Editor::isEnabled())
+            {
+                Editor::update(timePerFrame);
+            }
+            
         }
         
         ImGui::SFML::Update(m_renderWindow, sf::seconds(elapsedTime));
@@ -179,17 +184,10 @@ void App::run()
             // make sure to update rendertarget too
             renderTarget->clear();
             draw();
-            dynamic_cast<sf::RenderTexture*>(renderTarget)->display();
-            
             Editor::draw();
         }
         else
         {
-            if (m_renderWindow.setActive(true))
-            {
-                glCheck(glClearColor(clearColour.r / 255.f, clearColour.g / 255.f, clearColour.b / 255.f, clearColour.a / 255.f));
-                glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-            }
             draw();
         }
         

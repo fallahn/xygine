@@ -52,7 +52,7 @@ Sprite::Sprite(const sf::Texture& texture)
 //public
 void Sprite::setTexture(const sf::Texture& texture)
 {
-    m_texture = &texture;
+    m_texture = std::make_shared<sf::Texture>(texture);
     auto size = static_cast<sf::Vector2f>(texture.getSize());
     setTextureRect({ sf::Vector2f(), size });
 }
@@ -71,7 +71,7 @@ void Sprite::setColour(sf::Color c)
 
 const sf::Texture* Sprite::getTexture() const
 {
-    return m_texture;
+    return m_texture.get();
 }
 
 sf::Color Sprite::getColour() const

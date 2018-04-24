@@ -32,12 +32,41 @@ source distribution.
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 #include <array>
+#include "../../../../src/cereal/types/array.hpp"
+#include "../../../../src/cereal/types/vector.hpp"
+#include "../../../../src/cereal/types/memory.hpp"
 
-namespace sf
+namespace cereal
 {
-    class Texture;
+template<class Archive>
+void save(Archive& ar, sf::Texture const & tex)
+{
+    //lololololol
+    auto image = tex.copyToImage();
+    auto size = tex.getSize();
+    std::vector<unsigned char> pixels(size.x*size.y);
+    std::memcpy(pixels.data(), image.getPixelsPtr(), size.x*size.y);
+        
+    // store size then data
+    ar(size.x,size.y);
+    ar(pixels);
+        
+}
+
+template<class Archive>
+void load(Archive& ar, sf::Texture& tex)
+{
+    //lololololol
+    sf::Vector2u size;
+    ar(size.x,size.y);
+    tex.create(size.x, size.y);
+    std::vector<unsigned char> pixels(size.x*size.y);
+    ar(pixels);
+    tex.update(pixels.data());
+}
 }
 
 namespace xy
@@ -130,6 +159,20 @@ namespace xy
 
             bool looped = false;
             float framerate = 12.f;
+            
+            /*!
+             \see Cereal
+             */
+            template <class Archive>
+            void serialize( Archive & ar )
+            {
+                ar(id, frameCount, looped, framerate);
+                
+                for (auto f : frames)
+                {
+                    ar(f.left, f.top, f.width, f.height);
+                }
+            }     
         };
 
 
@@ -156,11 +199,30 @@ namespace xy
         Use getAnimationCount() to check how many of the animations are valid
         */
         const std::array<Animation, MaxAnimations>& getAnimations() const { return m_animations; }
+        
+        /*!
+         \see Cereal
+         */
+        template <class Archive>
+        void serialize( Archive & ar )
+        {
+            // Tex rect
+            ar(m_textureRect.left, m_textureRect.top, m_textureRect.width, m_textureRect.height);
+            
+            // Colour
+            ar(m_colour.r, m_colour.g, m_colour.b, m_colour.a);
+            
+            // Animations
+            ar(m_animationCount);
+            ar(m_animations);
+            
+            // lol
+            ar(m_texture);
+        }
 
     private:
-
         sf::FloatRect m_textureRect;
-        const sf::Texture* m_texture;
+        std::shared_ptr<sf::Texture> m_texture;
         sf::Color m_colour;
         bool m_dirty;
 

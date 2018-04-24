@@ -6,13 +6,16 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/core/App.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/ConfigFile.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/Console.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/core/Editor.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/ConsoleClient.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/FileSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/MessageBus.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/State.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/StateStack.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/SysTime.cpp
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/Editor.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/SceneEditor.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/SpriteEditor.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/detail/glad.c
   ${CMAKE_CURRENT_SOURCE_DIR}/detail/Operators.cpp

@@ -67,3 +67,8 @@ void SystemManager::process(float dt)
         system->process(dt);
     }
 }
+
+std::vector<std::unique_ptr<System>>& SystemManager::getSystems()
+{
+    return m_systems;
+}

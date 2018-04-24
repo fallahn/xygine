@@ -194,6 +194,10 @@ namespace xy
         */
         Entity createEntity();
         /*!
+         \brief Creates a new Entity with specified ID
+         */
+        Entity createEntity(xy::Entity::ID id);
+        /*!
         \brief Destroys the given Entity
         */
         void destroyEntity(Entity);

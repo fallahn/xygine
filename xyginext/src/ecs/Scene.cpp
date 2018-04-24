@@ -27,14 +27,21 @@ source distribution.
 
 #include "xyginext/core/App.hpp"
 #include "xyginext/core/Editor.hpp"
+#include "xyginext/core/ConfigFile.hpp"
 #include "xyginext/ecs/Scene.hpp"
 #include "xyginext/ecs/components/Camera.hpp"
 #include "xyginext/ecs/components/Transform.hpp"
 #include "xyginext/ecs/components/AudioListener.hpp"
+#include "xyginext/ecs/components/Sprite.hpp"
+
+#include "xyginext/ecs/systems/RenderSystem.hpp"
+#include "xyginext/ecs/systems/SpriteSystem.hpp"
 
 #include <SFML/Window/Event.hpp>
 
 #include "../imgui/imgui_dock.hpp"
+
+#include "../cereal/archives/binary.hpp"
 
 using namespace xy;
 
@@ -58,7 +65,7 @@ namespace
     }
 }
 
-Scene::Scene(MessageBus& mb)
+Scene::Scene(MessageBus& mb, const std::string& path)
     : m_messageBus      (mb),
     m_entityManager     (mb),
     m_systemManager     (*this)
@@ -81,6 +88,12 @@ Scene::Scene(MessageBus& mb)
             rt.draw(*r, states);
         }
     };
+    
+    // If a path has been passed, load it
+    if (path.length())
+    {
+        loadFromFile(path);
+    }
 }
 
 //public
@@ -222,12 +235,100 @@ void Scene::forwardMessage(const Message& msg)
             getEntity(m_defaultCamera).getComponent<Camera>().setViewport(getDefaultViewport());
         }
     }
-   
 }
 
-bool Scene::saveToFile(const std::string &file)
+bool Scene::saveToFile(const std::string &path)
 {
+    std::ofstream os(path.c_str(), std::ios::binary | std::ios::trunc);
+    cereal::BinaryOutputArchive archive(os);
     
+    // Store systems first
+    auto& systems = m_systemManager.getSystems();
+    
+    archive(systems.size());
+    for (auto& s : systems)
+    {
+        archive(std::string(s->getType().name()));
+    }
+    
+    // What to do when editor isn't active?
+    // Add serialise functions to entity manager?
+    auto entities = getSystem<EditorSystem>().getEntities();
+    archive(entities.size()-1); // -1 for default entity
+    
+    for (auto& e : entities)
+    {
+        // First store component mask
+        auto mask = e.getComponentMask();
+        archive(mask.to_string());
+        
+        // Loop through components and store them
+        // Need a smarter/generic way of doing this for all component types
+        for (int i=0; i < mask.size(); i++)
+        {
+            if (mask.test(i))
+            {
+                if (i == Component::getID<Sprite>())
+                {
+                    archive(e.getComponent<Sprite>());
+                }
+            }
+        }
+    }
+}
+
+bool Scene::loadFromFile(const std::string &path)
+{
+    std::ifstream is(path.c_str());
+    cereal::BinaryInputArchive archive(is);
+    
+    // Load systems first
+    std::size_t systemCount;
+    archive(systemCount);
+    while(systemCount--)
+    {
+        // madness
+        std::string name;
+        archive(name);
+        auto& mb = App::getActiveInstance()->getMessageBus();
+        RenderSystem rs(mb);
+        if (rs.getType().name() == name)
+        {
+            addSystem<RenderSystem>(mb);
+        }
+        SpriteSystem ss(mb);
+        if (ss.getType().name() == name)
+        {
+            addSystem<SpriteSystem>(mb);
+        }
+        EditorSystem es(mb);
+        if (es.getType().name() == name)
+        {
+            addSystem<EditorSystem>(mb);
+        }
+    }
+    // Then entities
+    std::size_t entityCount;
+    archive(entityCount);
+    while(entityCount--)
+    {
+        auto e = createEntity();
+        
+        std::string compMask;
+        archive(compMask);
+        ComponentMask mask(compMask);
+        
+        for (int i=0; i < mask.size(); i++)
+        {
+            if (mask.test(i))
+            {
+                if (i ==Component::getID<Sprite>())
+                {
+                    archive(e.addComponent<Sprite>());
+                }
+            }
+        }
+    }
 }
 
 //private

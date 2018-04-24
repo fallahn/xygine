@@ -30,7 +30,6 @@ source distribution.
 
 #include "xyginext/Config.hpp"
 #include "xyginext/core/App.hpp"
-#include "xyginext/core/editor/SceneEditor.hpp"
 #include "xyginext/ecs/Entity.hpp"
 #include "xyginext/ecs/System.hpp"
 #include "xyginext/ecs/systems/CommandSystem.hpp"
@@ -61,7 +60,7 @@ namespace xy
     class XY_EXPORT_API Scene final : public sf::Drawable
     {
     public:
-        explicit Scene(MessageBus&);
+        explicit Scene(MessageBus&, const std::string& path = "");
 
         ~Scene() = default;
         Scene(const Scene&) = delete;
@@ -186,12 +185,16 @@ namespace xy
          */
         bool saveToFile(const std::string& file);
         
+        
+    private:
+        
         /*!
          \brief Load the scene from a file
+                Making this private, to force loading on
+                scene creation. Helps maintain entity ID consistency
          */
         bool loadFromFile(const std::string& file);
         
-    private:
         MessageBus& m_messageBus;
         Entity::ID m_defaultCamera;
         Entity::ID m_activeCamera;
@@ -216,7 +219,7 @@ namespace xy
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
         
-        friend void SceneEditor::editScene(Scene&);
+        friend class SceneAsset;
     };
 
 #include "Scene.inl"
