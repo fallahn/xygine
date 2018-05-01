@@ -37,6 +37,7 @@ source distribution.
 #include <SFML/Graphics/Rect.hpp>
 
 #include <array>
+#include <string>
 
 namespace sf
 {
@@ -85,7 +86,9 @@ namespace xy
         sf::Vector2f spawnOffset; //! <initial spawn position is offset this much
         sf::Int32 releaseCount = 0; //! <number of particles release before stopping (0 for infinite)
         sf::Texture* texture = nullptr;
+        std::string texturePath = ""; // Jonny doesn't want to do this, but will, at least until new resource stuff is done
         bool loadFromFile(const std::string&, TextureResource&);
+        bool saveToFile(const std::string&);
     };
 
     /*!

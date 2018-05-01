@@ -17,8 +17,11 @@ set(PROJECT_SRC  ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/core/SysTime.hpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/core/Editor.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/EditorAsset.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/SpriteEditor.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/SceneEditor.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/ParticleEditor.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/TextureEditor.hpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/detail/Operators.hpp
 

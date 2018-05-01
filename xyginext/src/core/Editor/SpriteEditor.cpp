@@ -27,6 +27,7 @@
 
 #include "xyginext/core/Editor.hpp"
 #include "xyginext/core/editor/SpriteEditor.hpp"
+#include "xyginext/core/editor/TextureEditor.hpp"
 #include "xyginext/core/editor/IconFontAwesome5.hpp"
 #include "xyginext/ecs/Scene.hpp"
 #include "xyginext/ecs/systems/CameraSystem.hpp"
@@ -364,12 +365,15 @@ void showTextureRectSelector(Sprite& sprite)
         {
             if (ImGui::BeginCombo("Spritesheets", selectedSheetName.c_str()))
             {
-                for (auto& sheet : Editor::getSpriteSheets())
+                for (auto& asset : Editor::getAssets())
                 {
-                    if (ImGui::Selectable(sheet.first.c_str()))
+                    if (asset->getType() == AssetType::Spritesheet)
                     {
-                        selectedSheetName = sheet.first;
-                        selectedSheet = sheet.second;
+                        if (ImGui::Selectable(asset->m_path.c_str()))
+                        {
+                            selectedSheetName = asset->m_path;
+                            selectedSheet = dynamic_cast<SpriteSheetAsset*>(asset.get());
+                        }
                     }
                 }
                 
@@ -408,15 +412,18 @@ void SpriteSheetAsset::edit()
     std::string texName =  file.length() > 0 ? file : "Select a texture";
     if (ImGui::BeginCombo("Texture", texName.c_str()))
     {
-        /*for (auto& tex : m_textures)
+        for (auto& asset : Editor::getAssets())
         {
-            if (ImGui::Selectable(tex.first.c_str()))
+            if (asset->getType() == AssetType::Texture)
             {
-                texName = tex.first;
-                sheet.setTexturePath(tex.first);
-                m_dirty = true;
+                if (ImGui::Selectable(asset->m_path.c_str()))
+                {
+                    texName = asset->m_path;
+                    sheet.setTexturePath(asset->m_path);
+                    m_dirty = true;
+                }
             }
-        }*/
+        }
         ImGui::EndCombo();
     }
     

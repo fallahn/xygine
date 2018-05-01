@@ -71,7 +71,8 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             auto name = p.getName();
             if (name == "src")
             {
-                texture = textureResource.get(p.getValue<std::string>()).get();
+                texturePath = p.getValue<std::string>();
+                texture = &textureResource.get(texturePath);
             }
             else if (name == "blendmode")
             {
@@ -180,4 +181,49 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
     }
 
     return false;
+}
+
+bool EmitterSettings::saveToFile(const std::string& path)
+{
+    ConfigFile cfg("particle_system");
+    
+    cfg.addProperty("src").setValue(texturePath);
+    auto p = cfg.addProperty("blendmode");
+    if (blendmode == sf::BlendAdd)
+    {
+        p.setValue("add");
+    }
+    else if (blendmode == sf::BlendMultiply)
+    {
+        p.setValue("multiply");
+    }
+    else
+    {
+        p.setValue("alpha");
+    }
+    
+    cfg.addProperty("gravity").setValue(gravity);
+    cfg.addProperty("velocity").setValue(initialVelocity);
+    cfg.addProperty("spread").setValue(spread * 2.f); // Is the *2 correct? just copied from loadFromFile
+    cfg.addProperty("lifetime").setValue(lifetime);
+    cfg.addProperty("lifetime_variance").setValue(lifetimeVariance);
+    cfg.addProperty("colour").setValue(colour);
+    cfg.addProperty("random_initial_rotation").setValue(randomInitialRotation);
+    cfg.addProperty("rotation_speed").setValue(rotationSpeed);
+    cfg.addProperty("scale_affector").setValue(scaleModifier);
+    cfg.addProperty("size").setValue(size);
+    cfg.addProperty("emit_rate").setValue(emitRate);
+    cfg.addProperty("emit_count").setValue(emitCount);
+    cfg.addProperty("spawn_radius").setValue(spawnRadius);
+    cfg.addProperty("spawn_offset").setValue(spawnOffset);
+    cfg.addProperty("release_count").setValue(releaseCount);
+    
+    
+    auto forcesObj = cfg.addObject("forces");
+    for (auto& force : forces)
+    {
+        forcesObj->addProperty("force").setValue(force);
+    }
+    
+    return cfg.save(path);
 }

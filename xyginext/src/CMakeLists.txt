@@ -14,8 +14,10 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/core/SysTime.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/Editor.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/ParticleEditor.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/SceneEditor.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/SpriteEditor.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/TextureEditor.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/detail/glad.c
   ${CMAKE_CURRENT_SOURCE_DIR}/detail/Operators.cpp

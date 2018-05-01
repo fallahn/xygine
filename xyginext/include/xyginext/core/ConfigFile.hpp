@@ -90,6 +90,7 @@ namespace xy
         //sets the property's value
         void setValue(const std::string& v);
         void setValue(sf::Int32 v);
+        void setValue(sf::Uint32 v);
         void setValue(float v);
         void setValue(bool v);
         void setValue(sf::Vector2f v);

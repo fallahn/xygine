@@ -29,16 +29,14 @@
 #define XY_EDITOR_HPP_
 
 #include <vector>
-#include <unordered_map>
+#include <map>
 #include <SFML/Graphics/RenderTexture.hpp>
 
 #include "xyginext/core/editor/EditorAsset.hpp"
 #include "xyginext/ecs/System.hpp"
 
 namespace xy
-{
-    class SpriteSheetAsset;
-    
+{   
     // Editor system, add it to scenes you want to modify
     class EditorSystem : public xy::System
     {
@@ -68,7 +66,7 @@ namespace xy
         static bool isEnabled();
         static bool isGamePaused();
         static int  getPixelSnap();
-        static std::unordered_map<std::string, SpriteSheetAsset*> getSpriteSheets();
+        static std::vector<std::unique_ptr<EditorAsset>>& getAssets();
         
     private:
         static void toggle();

@@ -32,7 +32,6 @@ using namespace xy;
 
 Transform::Transform()
     : m_parent  (nullptr),
-    m_children(),
     m_depth     (0)
 {
 
@@ -46,8 +45,8 @@ Transform::~Transform()
         auto& siblings = m_parent->m_children;
         siblings.erase(
             std::remove_if(siblings.begin(), siblings.end(),
-                           [this](const std::shared_ptr<Transform> ptr)
-        {return ptr.get() == this; }),
+                [this](const Transform* ptr)
+        {return ptr == this; }),
             siblings.end());
     }
 
@@ -61,7 +60,7 @@ Transform::~Transform()
 
 Transform::Transform(Transform&& other)
 {
-    if (other.m_parent.get() != this)
+    if (other.m_parent != this)
     {
         m_parent = other.m_parent;
         m_depth = other.m_depth;
@@ -75,9 +74,9 @@ Transform::Transform(Transform&& other)
             auto& siblings = m_parent->m_children;
             for (auto& s : siblings)
             {
-                if (s.get() == &other)
+                if (s == &other)
                 {
-                    s.reset(this);
+                    s = this;
                     break;
                 }
             }
@@ -85,14 +84,14 @@ Transform::Transform(Transform&& other)
         m_children = std::move(other.m_children);
 
         //update the children's new parent
-        for (auto c : m_children)
+        for (auto* c : m_children)
         {
-            if (c.get() == this)
+            if (c == this)
             {
                 throw std::runtime_error("Transform already exists in child list");
             }
 
-            c->m_parent.reset(this);
+            c->m_parent = this;
             c->setDepth(m_depth + 1);
         }
 
@@ -115,7 +114,7 @@ Transform::Transform(Transform&& other)
 
 Transform& Transform::operator=(Transform&& other)
 {
-    if (&other != this && other.m_parent.get() != this)
+    if (&other != this && other.m_parent != this)
     {
         m_parent = other.m_parent;
         m_depth = other.m_depth;
@@ -129,9 +128,9 @@ Transform& Transform::operator=(Transform&& other)
             auto& siblings = m_parent->m_children;
             for (auto& s : siblings)
             {
-                if (s.get() == &other)
+                if (s == &other)
                 {
-                    s.reset(this);
+                    s = this;
                     break;
                 }
             }
@@ -142,11 +141,11 @@ Transform& Transform::operator=(Transform&& other)
         //update the children's new parent
         for (auto c : m_children)
         {
-            if (c.get() == this)
+            if (c == this)
             {
                 throw std::runtime_error("Transform exists in list of children");
             }
-            c->m_parent.reset(this);
+            c->m_parent = this;
             c->setDepth(m_depth + 1);
         }
 
@@ -178,34 +177,34 @@ void Transform::addChild(Transform& child)
     //remove old parent first
     if (child.m_parent)
     {
-        if (child.m_parent.get() == this)
+        if (child.m_parent == this)
         {
             return; //already added!
         }
 
         auto& otherSiblings = child.m_parent->m_children;
         otherSiblings.erase(std::remove_if(otherSiblings.begin(), otherSiblings.end(),
-                                           [&child](const std::shared_ptr<Transform> ptr)
+            [&child](const Transform* ptr) 
         {
-            return ptr.get() == &child;
+            return ptr == &child;
         }), otherSiblings.end());
     }
-    child.m_parent.reset(this);
+    child.m_parent = this;
     child.setDepth(m_depth + 1);
-    m_children.push_back(std::make_shared<Transform>(std::move(child)));
+    m_children.push_back(&child);
 }
 
 void Transform::removeChild(Transform& tx)
 {
-    if (tx.m_parent.get() != this) return;
+    if (tx.m_parent != this) return;
 
     tx.m_parent = nullptr;
     tx.setDepth(0);
 
     m_children.erase(std::remove_if(m_children.begin(), m_children.end(), 
-                                    [&tx](const std::shared_ptr<Transform> ptr)
+        [&tx](const Transform* ptr)
     {
-        return ptr.get() == &tx;
+        return ptr == &tx;
     }), m_children.end());
 }
 

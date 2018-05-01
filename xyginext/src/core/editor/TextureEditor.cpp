@@ -1,5 +1,5 @@
 /*********************************************************************
- (c) Jonny Paton 2017 - 2018
+ (c) Matt Marchant & Jonny Paton 2017 - 2018
  http://trederia.blogspot.com
  
  xygineXT - Zlib license.
@@ -25,28 +25,17 @@
  source distribution.
  *********************************************************************/
 
-#pragma once
+#include "xyginext/core/editor/TextureEditor.hpp"
 
-#include <string>
-
-// Enum of asset types
-enum class AssetType
+namespace xy
 {
-    Texture, // Any raw texture: png, jpeg, etc.
-    Spritesheet, // An xy::Spritesheet (.spt)
-    Sound, // Sound file: ogg, wav, etc.
-    Scene, // An xy::Scene (.something...)
-    ParticleEmitter, // An xy::ParticleEmitter (or rather, it's settings)
-};
-
-// Base class for anything representing an "Asset" in the editor
-class EditorAsset
+namespace TextureEditor
 {
-public:
-    virtual void edit() = 0; // Shows imgui edit controls
-    virtual AssetType getType() const = 0; // The type of this asset
     
-    bool m_open; // If the asset is open in the editor
-    bool m_dirty; // If the asset has unsaved changes in the editor
-    std::string m_path; // Path to the asset (relative to assets folder - bad idea?)
-};
+}
+    
+void TextureAsset::edit()
+{
+    
+}
+}// namespace xy

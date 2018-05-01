@@ -28,6 +28,8 @@
 #include "xyginext/core/Editor.hpp"
 #include "xyginext/core/editor/SpriteEditor.hpp"
 #include "xyginext/core/editor/SceneEditor.hpp"
+#include "xyginext/core/editor/ParticleEditor.hpp"
+#include "xyginext/core/editor/TextureEditor.hpp"
 #include "xyginext/core/editor/IconFontAwesome5.hpp"
 #include "xyginext/core/Log.hpp"
 #include "xyginext/core/App.hpp"
@@ -92,7 +94,7 @@ namespace
     int snapInterval = 8; // value used when selecting tex rects etc.
     
     // map of assets, keyed by the file name
-    std::map<std::string, std::unique_ptr<EditorAsset>> assets;
+    std::vector<std::unique_ptr<EditorAsset>> assets;
     
     // To play sounds in the editor
     std::vector<sf::Sound> playingSounds;
@@ -229,18 +231,28 @@ void Editor::init()
             // Would prefer a better way to handle file types - enum?
             if (ext == ".spt")
             {
-                auto ss = assets.emplace(file, std::make_unique<SpriteSheetAsset>());
-                auto newSheetAsset = dynamic_cast<SpriteSheetAsset*>(ss.first->second.get());
+                assets.emplace_back(std::make_unique<SpriteSheetAsset>());
+                auto newSheetAsset = dynamic_cast<SpriteSheetAsset*>(assets.back().get());
                 newSheetAsset->sheet.loadFromFile(filePath, textureResource);
-                newSheetAsset->m_path = path + "/" + file;
+                newSheetAsset->m_path = filePath;
             }
             else if (ext == ".xyp")
             {
                 // particle asset
+                assets.emplace_back(std::make_unique<ParticleEmitterAsset>());
+                auto newEmitter = dynamic_cast<ParticleEmitterAsset*>(assets.back().get());
+                newEmitter->m_open = true;
+                newEmitter->m_dirty = true;
+                newEmitter->m_path = filePath;
+                newEmitter->settings.loadFromFile(filePath, textureResource);
             }
             else if (ext == ".png")
             {
                 // texture asset
+                assets.emplace_back(std::make_unique<TextureAsset>());
+                auto newTex = dynamic_cast<TextureAsset*>(assets.back().get());
+                newTex->texture.loadFromFile(filePath);
+                newTex->m_path = filePath;
             }
             else if (ext == ".ttf")
             {
@@ -252,8 +264,8 @@ void Editor::init()
             }
             else if (ext == ".xyscn")
             {
-                auto newAsset = assets.emplace(file, std::make_unique<SceneAsset>());
-                auto newScene = dynamic_cast<SceneAsset*>(newAsset.first->second.get());
+                assets.emplace_back(std::make_unique<SceneAsset>());
+                auto newScene = dynamic_cast<SceneAsset*>(assets.back().get());
                 newScene->m_path = filePath;
                 
                 newScene->scene.reset(new Scene(App::getActiveInstance()->getMessageBus(), filePath));
@@ -326,10 +338,14 @@ void Editor::init()
             for (auto p : o->getProperties())
             {
                 auto name = p.getValue<std::string>();
-                auto ss = assets.find(name);
+                auto ss = std::find_if(assets.begin(), assets.end(),
+                                    [name](const std::unique_ptr<EditorAsset>& ass)
+                {
+                    return ass->m_path == name;
+                });
                 if (ss != assets.end())
                 {
-                    ss->second->m_open = true;
+                    (*ss)->m_open = true;
                 }
             }
         }
@@ -352,10 +368,10 @@ void Editor::shutdown()
     auto o = editorSettings.addObject("OpenAssets");
     for (auto& ss : assets)
     {
-        if (ss.second->m_open)
+        if (ss->m_open)
         {
             // config item array required?
-            o->addProperty("name").setValue(ss.first);
+            o->addProperty("name").setValue(ss->m_path);
         }
     }
     
@@ -364,7 +380,7 @@ void Editor::shutdown()
     
     for (auto& asset : assets)
     {
-        asset.second.release();
+        asset.release();
     }
 }
 
@@ -508,11 +524,11 @@ void Editor::draw()
         // Show any sprites open for editing
         for (auto& asset : assets)
         {
-            if (asset.second->m_open)
+            if (asset->m_open)
             {
-                if (ImGui::BeginDock(asset.first.c_str()))
+                if (ImGui::BeginDock(asset->m_path.c_str()))
                 {
-                    asset.second->edit();
+                    asset->edit();
                 }
                 ImGui::EndDock();
             }
@@ -526,11 +542,11 @@ void Editor::draw()
         // If any scene assets are open, draw them
         for (auto& asset : assets)
         {
-            if (asset.second->getType() == AssetType::Scene)
+            if (asset->getType() == AssetType::Scene)
             {
-                if (asset.second->m_open)
+                if (asset->m_open)
                 {
-                    App::getActiveInstance()->getRenderTarget()->draw(*(dynamic_cast<SceneAsset*>(asset.second.get())->scene));
+                    App::getActiveInstance()->getRenderTarget()->draw(*(dynamic_cast<SceneAsset*>(asset.get())->scene));
                 }
             }
         }
@@ -632,11 +648,11 @@ void Editor::update(float dt)
     // Update any debug scenes
     for (auto& asset : assets)
     {
-        if (asset.second->getType() == AssetType::Scene)
+        if (asset->getType() == AssetType::Scene)
         {
-            if (asset.second->m_open)
+            if (asset->m_open)
             {
-                dynamic_cast<SceneAsset*>(asset.second.get())->scene->update(dt);
+                dynamic_cast<SceneAsset*>(asset.get())->scene->update(dt);
             }
         }
     }
@@ -907,7 +923,7 @@ void Editor::showAssetBrowser()
     {
         for (auto& asset : assets)
         {
-            ImGui::Selectable(asset.first.c_str(), &asset.second->m_open);
+            ImGui::Selectable(asset->m_path.c_str(), &asset->m_open);
         }
     }
     ImGui::EndDock();
@@ -926,41 +942,56 @@ void Editor::showModalPopups()
     {
         static int selectedType = 0;
         
-        ImGui::RadioButton("Sprite Sheet", &selectedType, 0);
-        ImGui::RadioButton("Scene", &selectedType, 1);
+        ImGui::RadioButton("Sprite Sheet", &selectedType, static_cast<int>(AssetType::Spritesheet));
+        ImGui::RadioButton("Scene", &selectedType, static_cast<int>(AssetType::Scene));
+        ImGui::RadioButton("Particle Emitter", &selectedType, static_cast<int>(AssetType::ParticleEmitter));
         
         static std::array<char,MAX_INPUT> buf = {{0}};
         if (ImGui::InputText("Path", buf.data(), MAX_INPUT, ImGuiInputTextFlags_EnterReturnsTrue) || ImGui::Button("Create"))
         {
-            switch(selectedType)
+            switch(static_cast<AssetType>(selectedType))
             {
-                case 0: // spritesheet
+                case AssetType::Spritesheet:
                 {
-                    auto ss = assets.emplace(buf.data(), std::make_unique<SpriteSheetAsset>());
-                    if (ss.second)
+                    assets.emplace_back(std::make_unique<SpriteSheetAsset>());
+                    auto& ss = assets.back();
+                    if (ss)
                     {
-                        ss.first->second->m_path = buf.data();
-                        ss.first->second->m_open = true;
-                        ss.first->second->m_dirty = true;
+                        ss->m_path = buf.data();
+                        ss->m_open = true;
+                        ss->m_dirty = true;
                         ImGui::CloseCurrentPopup();
                     }
                     break;
                 }
                     
-                case 1: // Scene
+                case AssetType::Scene:
                 {
-                    auto scene = assets.emplace(buf.data(), std::make_unique<SceneAsset>());
-                    if (scene.second)
+                    assets.emplace_back(std::make_unique<SceneAsset>());
+                    auto scn = dynamic_cast<SceneAsset*>(assets.back().get());
+                    if (scn)
                     {
-                        scene.first->second->m_open = true;
-                        scene.first->second->m_dirty = true;
-                        scene.first->second->m_path = buf.data();
-                        auto scn = dynamic_cast<SceneAsset*>(scene.first->second.get());
+                        scn->m_open = true;
+                        scn->m_dirty = true;
+                        scn->m_path = buf.data();
                         scn->scene.reset(new Scene(App::getActiveInstance()->getMessageBus()));
                         
                         // Make sure the new scene has the editor system and camera system
                         scn->scene->addSystem<EditorSystem>(App::getActiveInstance()->getMessageBus());
                         scn->scene->addSystem<CameraSystem>(App::getActiveInstance()->getMessageBus());
+                        ImGui::CloseCurrentPopup();
+                    }
+                    break;
+                }
+                case AssetType::ParticleEmitter:
+                {
+                    assets.emplace_back(std::make_unique<ParticleEmitterAsset>());
+                    auto& emitter = assets.back();
+                    if (emitter)
+                    {
+                        emitter->m_open = true;
+                        emitter->m_dirty = true;
+                        emitter->m_path = buf.data();
                         ImGui::CloseCurrentPopup();
                     }
                     break;
@@ -993,17 +1024,7 @@ int Editor::getPixelSnap()
     return snapInterval;
 }
 
-std::unordered_map<std::string, SpriteSheetAsset*> Editor::getSpriteSheets()
+std::vector<std::unique_ptr<EditorAsset>>& Editor::getAssets()
 {
-    std::unordered_map<std::string, SpriteSheetAsset*> ret;
-    
-    for (auto& asset : assets)
-    {
-        if (asset.second->getType() == AssetType::Spritesheet)
-        {
-            ret[asset.first] = dynamic_cast<SpriteSheetAsset*>(asset.second.get());
-        }
-    }
-    
-    return ret;
+    return assets;
 }

@@ -27,11 +27,19 @@
 
 #pragma once
 
+#include <SFML/Graphics/Texture.hpp>
+
 #include "xyginext/core/editor/EditorAsset.hpp"
+
+namespace xy
+{
 
 class TextureAsset : public EditorAsset
 {
 public:
+    sf::Texture texture;
     void edit();
     AssetType getType() const {return AssetType::Texture;}
+};
+
 }

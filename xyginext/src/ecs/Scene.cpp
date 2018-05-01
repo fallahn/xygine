@@ -41,8 +41,6 @@ source distribution.
 
 #include "../imgui/imgui_dock.hpp"
 
-#include "../cereal/archives/binary.hpp"
-
 using namespace xy;
 
 namespace
@@ -239,7 +237,7 @@ void Scene::forwardMessage(const Message& msg)
 
 bool Scene::saveToFile(const std::string &path)
 {
-    std::ofstream os(path.c_str(), std::ios::binary | std::ios::trunc);
+    /*std::ofstream os(path.c_str(), std::ios::binary | std::ios::trunc);
     cereal::BinaryOutputArchive archive(os);
     
     // Store systems first
@@ -268,18 +266,14 @@ bool Scene::saveToFile(const std::string &path)
         {
             if (mask.test(i))
             {
-                if (i == Component::getID<Sprite>())
-                {
-                    archive(e.getComponent<Sprite>());
-                }
             }
         }
-    }
+    }*/
 }
 
 bool Scene::loadFromFile(const std::string &path)
 {
-    std::ifstream is(path.c_str());
+   /* std::ifstream is(path.c_str());
     cereal::BinaryInputArchive archive(is);
     
     // Load systems first
@@ -322,13 +316,9 @@ bool Scene::loadFromFile(const std::string &path)
         {
             if (mask.test(i))
             {
-                if (i ==Component::getID<Sprite>())
-                {
-                    archive(e.addComponent<Sprite>());
-                }
             }
         }
-    }
+    }*/
 }
 
 //private

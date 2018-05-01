@@ -34,9 +34,6 @@ source distribution.
 
 #include <vector>
 
-#include "../../../../src/cereal/types/memory.hpp" //meeeh
-#include "../../../../src/cereal/types/vector.hpp"
-
 namespace xy
 {
     /*!
@@ -85,45 +82,10 @@ namespace xy
         A value of 0 means it has no parent, 1 means one parent and so on
         */
         std::size_t getDepth() const { return m_depth; }
-        
-        /*!
-         \see Cereal
-         */
-        template <class Archive>
-        void save( Archive & ar ) const
-        {
-            // xy::Transform
-            ar(m_parent, m_children, m_depth);
-            
-            // sf::Transformable
-            auto scale = getScale();
-            auto pos = getPosition();
-            auto rot = getRotation();
-            ar(scale.x, scale.y, pos.x, pos.y, rot);
-        }
-        
-        /*!
-         \see Cereal
-         */
-        template <class Archive>
-        void load( Archive & ar )
-        {
-            // xy::Transform
-            ar(m_parent, m_children, m_depth);
-            
-            // sf::Transformable
-            sf::Vector2f scale;
-            sf::Vector2f pos;
-            float rot;
-            ar(scale.x, scale.y, pos.x, pos.y, rot);
-            setScale(scale);
-            setPosition(pos);
-            setRotation(rot);
-        }
 
     private:
-        std::shared_ptr<Transform> m_parent;
-        std::vector<std::shared_ptr<Transform>> m_children;
+        Transform* m_parent;
+        std::vector<Transform*> m_children;
         std::size_t m_depth;
 
         void setDepth(std::size_t);

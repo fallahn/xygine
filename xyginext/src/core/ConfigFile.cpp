@@ -55,6 +55,11 @@ void ConfigProperty::setValue(sf::Int32 value)
     m_value = std::to_string(value);
 }
 
+void ConfigProperty::setValue(sf::Uint32 value)
+{
+    m_value = std::to_string(value);
+}
+
 void ConfigProperty::setValue(float value)
 {
     m_value = std::to_string(value);

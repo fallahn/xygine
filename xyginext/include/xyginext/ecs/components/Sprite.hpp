@@ -35,9 +35,6 @@ source distribution.
 #include <SFML/Graphics/Texture.hpp>
 
 #include <array>
-#include "../../../../src/cereal/types/array.hpp"
-#include "../../../../src/cereal/types/vector.hpp"
-#include "../../../../src/cereal/types/memory.hpp"
 
 namespace cereal
 {
@@ -159,20 +156,6 @@ namespace xy
 
             bool looped = false;
             float framerate = 12.f;
-            
-            /*!
-             \see Cereal
-             */
-            template <class Archive>
-            void serialize( Archive & ar )
-            {
-                ar(id, frameCount, looped, framerate);
-                
-                for (auto f : frames)
-                {
-                    ar(f.left, f.top, f.width, f.height);
-                }
-            }     
         };
 
 
@@ -199,26 +182,6 @@ namespace xy
         Use getAnimationCount() to check how many of the animations are valid
         */
         const std::array<Animation, MaxAnimations>& getAnimations() const { return m_animations; }
-        
-        /*!
-         \see Cereal
-         */
-        template <class Archive>
-        void serialize( Archive & ar )
-        {
-            // Tex rect
-            ar(m_textureRect.left, m_textureRect.top, m_textureRect.width, m_textureRect.height);
-            
-            // Colour
-            ar(m_colour.r, m_colour.g, m_colour.b, m_colour.a);
-            
-            // Animations
-            ar(m_animationCount);
-            ar(m_animations);
-            
-            // lol
-            ar(m_texture);
-        }
 
     private:
         sf::FloatRect m_textureRect;

@@ -27,26 +27,27 @@
 
 #pragma once
 
-#include <string>
+#include "xyginext/core/editor/EditorAsset.hpp"
 
-// Enum of asset types
-enum class AssetType
-{
-    Texture, // Any raw texture: png, jpeg, etc.
-    Spritesheet, // An xy::Spritesheet (.spt)
-    Sound, // Sound file: ogg, wav, etc.
-    Scene, // An xy::Scene (.something...)
-    ParticleEmitter, // An xy::ParticleEmitter (or rather, it's settings)
-};
+#include <xyginext/ecs/components/ParticleEmitter.hpp>
 
-// Base class for anything representing an "Asset" in the editor
-class EditorAsset
+#include <map>
+
+namespace xy
 {
-public:
-    virtual void edit() = 0; // Shows imgui edit controls
-    virtual AssetType getType() const = 0; // The type of this asset
+    // Collection of free functions related to Particle editing
+    namespace ParticleEditor
+    {
+    }
     
-    bool m_open; // If the asset is open in the editor
-    bool m_dirty; // If the asset has unsaved changes in the editor
-    std::string m_path; // Path to the asset (relative to assets folder - bad idea?)
-};
+    // Represents a particle emitter (well, it's settings...) in the editor
+    class ParticleEmitterAsset : public EditorAsset
+    {
+    public:
+        xy::EmitterSettings settings; // The Particle emitter settings
+        
+        // EditorAsset
+        void edit() override;
+        AssetType getType() const override {return AssetType::ParticleEmitter;}
+    };
+}
