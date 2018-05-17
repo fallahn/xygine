@@ -449,7 +449,7 @@ void SpriteSheetAsset::edit()
         // Add/delete sprite
         if (ImGui::Button("+##sprite"))
         {
-            sheet.setSprite("New Sprite", Sprite());
+            sheet.setSprite("New Sprite", Sprite(*sheet.getSprites().begin()->second.getTexture())); // much stupid
             selectedSprite = "New Sprite";
             m_dirty = true;
         }

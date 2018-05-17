@@ -69,6 +69,13 @@ namespace xy
          \brief Set the current frame ID
          */
         void setFrameID(sf::Uint32 frameID) { m_frameID = frameID; }
+        
+        template<class Archive>
+        void serialize(Archive& ar)
+        {
+            ar(m_id,
+               m_playing);
+        }
 
     private:
         sf::Int32 m_id = -1;

@@ -88,3 +88,23 @@ void SpriteSystem::process(float)
         }
     }
 }
+
+void SpriteSystem::handleMessage(const xy::Message &msg)
+{
+    if (msg.id == Message::ResourceMessage)
+    {
+        auto data = msg.getData<Message::ResourceEvent>();
+        for (auto& e : getEntities())
+        {
+            auto& spr = e.getComponent<xy::Sprite>();
+            if (spr.getTextureResourceID() == data.id)
+            {
+                // Update texture but not rect
+                auto rect = spr.getTextureRect();
+                spr.setTexture(*static_cast<sf::Texture*>(data.resource));
+                spr.setTextureRect(rect);
+            }
+        }
+    }
+}
+

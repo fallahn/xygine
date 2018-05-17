@@ -248,3 +248,21 @@ void TextRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     }
     glDisable(GL_SCISSOR_TEST);
 }
+
+void TextRenderer::handleMessage(const xy::Message &msg)
+{
+    if (msg.id == Message::Type::ResourceMessage)
+    {
+        // Check if any fonts need to be reloaded
+        auto data = msg.getData<Message::ResourceEvent>();
+        for (auto& e : getEntities())
+        {
+            auto& t = e.getComponent<xy::Text>();
+            if (t.getFontResourceID() == data.id)
+            {
+                t.setFont(*reinterpret_cast<sf::Font*>(data.resource));
+            }
+        }
+    }
+}
+

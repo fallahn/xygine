@@ -26,6 +26,11 @@ source distribution.
 *********************************************************************/
 
 #include "xyginext/ecs/components/Text.hpp"
+#include "xyginext/detail/Serializers.hpp"
+
+#include "cereal/archives/binary.hpp"
+#include "cereal/archives/json.hpp"
+#include "cereal/types/string.hpp"
 
 using namespace xy;
 
@@ -58,6 +63,11 @@ void Text::setFont(const sf::Font& font)
 {
     m_font = &font;
     m_dirty = true;
+}
+
+void Text::setFontResourceID(const ResourceID id)
+{
+    m_fontResourceID = id;
 }
 
 void Text::setCharacterSize(sf::Uint32 size)
@@ -101,6 +111,11 @@ void Text::setBlendMode(sf::BlendMode mode)
 const sf::Font* Text::getFont() const
 {
     return m_font;
+}
+
+const ResourceID Text::getFontResourceID() const
+{
+    return m_fontResourceID;
 }
 
 sf::Uint32 Text::getCharacterSize() const
@@ -150,6 +165,24 @@ void Text::setAlignment(Text::Alignment alignment)
     m_alignment = alignment;
     m_dirty = true;
 }
+
+template<class Archive>
+void Text::serialize(Archive& ar)
+{
+    ar(m_string,
+       m_fontResourceID,
+       m_charSize,
+       m_fillColour,
+       m_alignment,
+       m_cropped,
+       m_croppingArea);
+}
+
+template void Text::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&);
+template void Text::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&);
+
+template void Text::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&);
+template void Text::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&);
 
 //private
 

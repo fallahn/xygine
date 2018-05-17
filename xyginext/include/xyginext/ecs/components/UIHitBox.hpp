@@ -30,6 +30,8 @@ source distribution.
 
 #include "xyginext/Config.hpp"
 
+#include "xyginext/detail/Serializers.hpp"
+
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
@@ -63,6 +65,12 @@ namespace xy
         bool active;
         std::array<sf::Uint32, CallbackID::Count> callbacks{};
         sf::Int32 ID = -1;
+        
+        template<class Archive>
+        void serialize(Archive& archive)
+        {
+            archive(area, active, ID);
+        }
     };
 }
 

@@ -27,6 +27,10 @@ source distribution.
 
 #include "xyginext/ecs/components/Transform.hpp"
 #include "xyginext/core/Assert.hpp"
+#include "xyginext/detail/Serializers.hpp"
+
+#include "cereal/archives/binary.hpp"
+#include "cereal/archives/json.hpp"
 
 using namespace xy;
 
@@ -221,6 +225,39 @@ sf::Vector2f Transform::getWorldPosition() const
 {
     return getWorldTransform().transformPoint({});
 }
+
+template<class Archive>
+void Transform::save(Archive &ar) const
+{
+    auto pos = getPosition(),
+    org = getOrigin(),
+    scale = getScale();
+    
+    auto rot = getRotation();
+    
+    ar(pos, org, scale, rot);
+}
+
+template<class Archive>
+void Transform::load(Archive &ar)
+{
+    sf::Vector2f pos, org, scale;
+    float rot;
+    ar(pos,
+       org,
+       scale,
+       rot);
+    setPosition(pos);
+    setOrigin(org);
+    setScale(scale);
+    setRotation(rot);
+}
+
+template void Transform::save<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&) const;
+template void Transform::load<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&);
+
+template void Transform::save<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&) const;
+template void Transform::load<cereal::JSONInputArchive>(cereal::JSONInputArchive&);
 
 //private
 void Transform::setDepth(std::size_t depth)

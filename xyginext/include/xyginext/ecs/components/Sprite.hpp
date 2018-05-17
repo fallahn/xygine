@@ -29,6 +29,7 @@ source distribution.
 #define XY_SPRITE_HPP_
 
 #include "xyginext/Config.hpp"
+#include "xyginext/resources/Resource.hpp"
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Vertex.hpp>
@@ -182,10 +183,18 @@ namespace xy
         Use getAnimationCount() to check how many of the animations are valid
         */
         const std::array<Animation, MaxAnimations>& getAnimations() const { return m_animations; }
+        
+        ResourceID getTextureResourceID();
+        
+        void setTextureResourceID(ResourceID id);
+        
+        template<class Archive>
+        void serialize(Archive& ar);
 
     private:
         sf::FloatRect m_textureRect;
         std::shared_ptr<sf::Texture> m_texture;
+        ResourceID m_textureResourceID;
         sf::Color m_colour;
         bool m_dirty;
 

@@ -73,17 +73,26 @@ Entity EntityManager::createEntity()
 Entity EntityManager::createEntity(xy::Entity::ID id)
 {
     Entity::ID idx(id);
-    while(id >= m_generations.size())
+    
+    // Check if ID is free
+    if (m_freeIDs.size() > Detail::MinFreeIDs)
+    {
+        auto match = std::find(m_freeIDs.begin(), m_freeIDs.end(), id);
+        XY_ASSERT(match != m_freeIDs.end(), "Requested Entity ID isn't free");
+        m_freeIDs.erase(match);
+    }
+    else
     {
         m_generations.push_back(0);
-    }
-    idx = static_cast<Entity::ID>(m_generations.size() - 1);
+        idx = static_cast<Entity::ID>(m_generations.size() - 1);
         
-    XY_ASSERT(idx < (1 << Detail::IndexBits), "Index out of range");
-    if (idx >= m_componentMasks.size())
-    {
-        m_componentMasks.resize(m_componentMasks.size() + MinComponentMasks);
+        XY_ASSERT(idx < (1 << Detail::IndexBits), "Index out of range");
+        if (idx >= m_componentMasks.size())
+        {
+            m_componentMasks.resize(m_componentMasks.size() + MinComponentMasks);
+        }
     }
+
     
     XY_ASSERT(idx < m_generations.size(), "Index out of range");
     Entity e(idx, m_generations[idx]);

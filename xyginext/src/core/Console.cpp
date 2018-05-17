@@ -234,8 +234,8 @@ void Console::draw()
         {
             nim::SetKeyboardFocusHere(-1);
         }
+        nim::EndDock();
     }
-    nim::EndDock();
 
     // Stats
     if (nim::BeginDock("Stats"))
@@ -246,8 +246,8 @@ void Console::draw()
         {
             nim::Text(line.c_str());
         }
+        nim::EndDock();
     }
-    nim::EndDock();
     m_debugLines.clear();
     m_debugLines.reserve(10);
     

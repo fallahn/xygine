@@ -26,6 +26,10 @@ source distribution.
 *********************************************************************/
 
 #include "xyginext/ecs/components/Sprite.hpp"
+#include "xyginext/detail/Serializers.hpp"
+
+#include "cereal/archives/binary.hpp"
+#include "cereal/archives/json.hpp"
 
 #include <SFML/Graphics/Texture.hpp>
 
@@ -77,5 +81,28 @@ const sf::Texture* Sprite::getTexture() const
 sf::Color Sprite::getColour() const
 {
     return m_colour;
-    
 }
+
+void Sprite::setTextureResourceID(xy::ResourceID id)
+{
+    m_textureResourceID = id;
+}
+
+ResourceID Sprite::getTextureResourceID()
+{
+    return m_textureResourceID;
+}
+
+template<class Archive>
+void Sprite::serialize(Archive &ar)
+{
+    ar(m_textureResourceID,
+       m_textureRect,
+       m_colour);
+}
+
+template void Sprite::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&);
+template void Sprite::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&);
+
+template void Sprite::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&);
+template void Sprite::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&);

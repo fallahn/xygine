@@ -28,7 +28,7 @@
 #pragma once
 
 #include "xyginext/ecs/Entity.hpp"
-
+#include "xyginext/resources/Resource.hpp"
 #include "xyginext/ecs/Scene.hpp"
 #include "xyginext/core/editor/EditorAsset.hpp"
 

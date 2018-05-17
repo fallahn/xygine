@@ -29,6 +29,11 @@ source distribution.
 #include "xyginext/resources/Resource.hpp"
 #include "xyginext/core/ConfigFile.hpp"
 
+#include "xyginext/detail/Serializers.hpp"
+
+#include "cereal/archives/binary.hpp"
+#include "cereal/archives/json.hpp"
+
 using namespace xy;
 
 ParticleEmitter::ParticleEmitter()
@@ -227,3 +232,16 @@ bool EmitterSettings::saveToFile(const std::string& path)
     
     return cfg.save(path);
 }
+
+template<class Archive>
+void ParticleEmitter::serialize(Archive& ar)
+{
+    ar(m_bounds,
+       m_releaseCount);
+}
+
+template void ParticleEmitter::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&);
+template void ParticleEmitter::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&);
+
+template void ParticleEmitter::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&);
+template void ParticleEmitter::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&);

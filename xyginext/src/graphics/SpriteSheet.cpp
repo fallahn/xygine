@@ -98,6 +98,7 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
             if (texture != nullptr)
             {
                 spriteComponent.setTexture(*texture);
+                spriteComponent.setTextureResourceID(textures.getID(m_texturePath));
             }
 
             //if (auto* p = spr.findProperty("blendmode"))

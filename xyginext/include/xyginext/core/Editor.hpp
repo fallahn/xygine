@@ -45,7 +45,7 @@ namespace xy
         ~EditorSystem();
         
     protected:
-        void onCreate();
+        void onCreate() override;
         
     private:
         std::string m_sceneName;
@@ -84,6 +84,7 @@ namespace xy
         
         friend class App;
         friend class Scene;
+        
     };
 }
 

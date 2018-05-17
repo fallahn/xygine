@@ -121,6 +121,9 @@ namespace xy
 
         static constexpr sf::Uint32 MaxParticles = 1000u;
         
+        template<class Archive>
+        void serialize(Archive& ar);
+        
     private:
 
         sf::Uint32 m_arrayIndex;

@@ -228,6 +228,9 @@ namespace xy
         Can be Playing, Paused or Stopped.
         */
         Status getStatus() const;
+        
+        template<class Archive>
+        void serialize(Archive& ar);
 
     private:
         sf::Uint8 m_mixerChannel;

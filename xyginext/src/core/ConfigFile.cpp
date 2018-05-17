@@ -100,9 +100,14 @@ void ConfigProperty::setValue(sf::Color v)
     m_value = std::to_string(v.r) + "," + std::to_string(v.g) + "," + std::to_string(v.b) + "," + std::to_string(v.a);
 }
 
-void ConfigProperty::setValue(xy::Vector4f v)
+void ConfigProperty::setValue(Vector4f v)
 {
     m_value = std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z) + "," + std::to_string(v.w);
+}
+
+void ConfigProperty::setValue(ResourceID v)
+{
+    m_value = std::to_string(v);
 }
 
 //private

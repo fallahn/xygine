@@ -32,6 +32,8 @@ source distribution.
 
 #include "xyginext/Config.hpp"
 #include "xyginext/core/FileSystem.hpp"
+#include "xyginext/core/Assert.hpp"
+#include "xyginext/core/App.hpp"
 
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Image.hpp>
@@ -45,6 +47,9 @@ source distribution.
 
 namespace xy
 {
+    
+    using ResourceID = std::size_t;
+    
     /*!
     \brief Abstract base class for resource management
 
@@ -52,6 +57,7 @@ namespace xy
     types given by derived classes. Resource management makes sure
     only a single instance of each resource, such as a texture or
     shader is loaded at a time.
+
     */
     template <class T>
     class XY_EXPORT_API BaseResource
@@ -95,8 +101,23 @@ namespace xy
             {
                 m_resources[path] = std::move(r);
             }
+            
+            // Broadcast message to hotload resource
+            auto msg = xy::App::getActiveInstance()->getMessageBus().post<Message::ResourceEvent>(Message::ResourceMessage);
+            msg->resource = reinterpret_cast<void*>(m_resources[path].get());
+            msg->id = getID(path);
 
             return *m_resources[path];
+        }
+        
+        /*!
+         \brief Get the unique ID representing this resource
+         
+         Basically just hashes the path
+         */
+        static ResourceID getID(const std::string& path)
+        {
+            return std::hash<std::string>{}(path);
         }
     protected:
         /*!

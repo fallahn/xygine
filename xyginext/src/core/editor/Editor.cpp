@@ -30,6 +30,7 @@
 #include "xyginext/core/editor/SceneEditor.hpp"
 #include "xyginext/core/editor/ParticleEditor.hpp"
 #include "xyginext/core/editor/TextureEditor.hpp"
+#include "xyginext/core/editor/FontEditor.hpp"
 #include "xyginext/core/editor/IconFontAwesome5.hpp"
 #include "xyginext/core/Log.hpp"
 #include "xyginext/core/App.hpp"
@@ -74,6 +75,7 @@ namespace
     bool shouldShowAssetBrowser = false;
     bool shouldOpenNewPopup = false;
     bool shouldShowSettings = false;
+    bool shouldShowViewport = true;
     
     // Buffer which the game renders to while the editor is active
     sf::RenderTexture viewportBuffer;
@@ -151,6 +153,9 @@ void Editor::init()
 {
     // We want imgui keyboard nav
     ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    
+    // Load dock settings
+    ImGui::InitDock();
     
     // Merge in fontawesome icons
     auto& io = ImGui::GetIO();
@@ -241,8 +246,6 @@ void Editor::init()
                 // particle asset
                 assets.emplace_back(std::make_unique<ParticleEmitterAsset>());
                 auto newEmitter = dynamic_cast<ParticleEmitterAsset*>(assets.back().get());
-                newEmitter->m_open = true;
-                newEmitter->m_dirty = true;
                 newEmitter->m_path = filePath;
                 newEmitter->settings.loadFromFile(filePath, textureResource);
             }
@@ -256,7 +259,10 @@ void Editor::init()
             }
             else if (ext == ".ttf")
             {
-                // font asset
+                assets.emplace_back(std::make_unique<FontAsset>());
+                auto newFont = dynamic_cast<FontAsset*>(assets.back().get());
+                newFont->m_path = filePath;
+                newFont->font.loadFromFile(filePath);
             }
             else if (ext == ".wav" || ext == ".ogg")
             {
@@ -325,6 +331,10 @@ void Editor::init()
         {
             shouldShowSettings = p->getValue<bool>();
         }
+        if ( p = editorSettings.findProperty("viewportOpen"))
+        {
+            shouldShowViewport = p->getValue<bool>();
+        }
         if ( p = editorSettings.findProperty("snap"))
         {
             snapInterval = p->getValue<int>();
@@ -362,7 +372,7 @@ void Editor::shutdown()
     editorSettings.addProperty("audioOpen").setValue(shouldShowAudioSettings);
     editorSettings.addProperty("videoOpen").setValue(shouldShowVideoSettings);
     editorSettings.addProperty("settingsOpen").setValue(shouldShowSettings);
-    editorSettings.addProperty("snap").setValue(snapInterval);
+    editorSettings.addProperty("viewportOpen").setValue(shouldShowViewport);
     
     // store any open spritesheets
     auto o = editorSettings.addObject("OpenAssets");
@@ -374,6 +384,8 @@ void Editor::shutdown()
             o->addProperty("name").setValue(ss->m_path);
         }
     }
+    
+    editorSettings.addProperty("snap").setValue(snapInterval);
     
     // Finally save
     editorSettings.save(FileSystem::getConfigDirectory(App::getActiveInstance()->getApplicationName()) + "editor.cfg");
@@ -447,6 +459,7 @@ void Editor::draw()
                     ImGui::MenuItem("Audio", "", &shouldShowAudioSettings);
                     ImGui::MenuItem("Console", "ctrl + c", &shouldShowConsole);
                     ImGui::MenuItem("Assets", "ctrl + a", &shouldShowAssetBrowser);
+                    ImGui::MenuItem("Viewport", "", &shouldShowViewport);
                     
                     ImGui::Separator();
                     ImGui::MenuItem("Editor settings","",&shouldShowSettings);
@@ -468,7 +481,7 @@ void Editor::draw()
         ImGui::BeginDockspace();
         
         // Show viewport
-        if (ImGui::BeginDock("Viewport", nullptr))
+        if (ImGui::BeginDock("Viewport", &shouldShowViewport))
         {
             // Make the viewport scale to available space
             auto vpw = viewportBuffer.getSize().x;
@@ -482,59 +495,29 @@ void Editor::draw()
         }
         ImGui::EndDock();
         
-        // Asset browser
-        if (shouldShowAssetBrowser)
-        {
-            showAssetBrowser();
-        }
-        
-        // Style editor
-        if (shouldShowStyleEditor)
-        {
-            showStyleEditor();
-        }
-        
-        // Video settings
-        if (shouldShowVideoSettings)
-        {
-            showVideoSettings();
-        }
-        
-        // Audio settings
-        if (shouldShowAudioSettings)
-        {
-            showAudioSettings();
-        }
-        
-        // Console
+        showAssetBrowser();
+        showStyleEditor();
+        showVideoSettings();
+        showAudioSettings();
         if (shouldShowConsole)
-        {
             Console::draw();
-        }
-        
-        // Editor settings
-        if (shouldShowSettings)
-        {
-            showSettings();
-        }
-        
-        // Show any open modals
-        showModalPopups();
+        showSettings();
         
         // Show any sprites open for editing
         for (auto& asset : assets)
         {
-            if (asset->m_open)
+            if (ImGui::BeginDock(asset->m_path.c_str(), &asset->m_open))
             {
-                if (ImGui::BeginDock(asset->m_path.c_str()))
-                {
-                    asset->edit();
-                }
-                ImGui::EndDock();
+                asset->edit();
             }
+            ImGui::EndDock();
         }
         
         ImGui::EndDockspace();
+        
+        // Show any open modals
+        showModalPopups();
+        
         ImGui::End(); // Editor
         
         ImGui::PopFont();
@@ -660,7 +643,7 @@ void Editor::update(float dt)
 
 void Editor::showStyleEditor()
 {
-    if (ImGui::BeginDock("Style Editor"))
+    if (ImGui::BeginDock("Style Editor", &shouldShowStyleEditor))
     {
         // Path to save to
         auto savePath = FileSystem::getConfigDirectory(App::getActiveInstance()->getApplicationName()) + "style.cfg";
@@ -844,13 +827,13 @@ void Editor::showStyleEditor()
         }
         ImGui::PopItemWidth();
         Nim::setStyle(style);
+        ImGui::EndDock();
     }
-    ImGui::EndDock();
 }
 
 void Editor::showVideoSettings()
 {
-    if (ImGui::BeginDock("Video"))
+    if (ImGui::BeginDock("Video", &shouldShowVideoSettings))
     {
         // Get the video settings
         auto settings = App::getActiveInstance()->getVideoSettings();
@@ -898,7 +881,7 @@ void Editor::showVideoSettings()
 
 void Editor::showAudioSettings()
 {
-    if (ImGui::BeginDock("Audio"), shouldShowAudioSettings)
+    if (ImGui::BeginDock("Audio", &shouldShowAudioSettings))
     {
         ImGui::Text("NOTE: only AudioSystem sounds are affected.");
         
@@ -913,20 +896,20 @@ void Editor::showAudioSettings()
             ImGui::SliderFloat(AudioMixer::getLabel(i).c_str(), &channelVol[i], 0.f, 1.f);
             AudioMixer::setVolume(channelVol[i], i);
         }
+        ImGui::EndDock();
     }
-    ImGui::EndDock();
 }
 
 void Editor::showAssetBrowser()
 {
-    if (ImGui::BeginDock("Assets"))
+    if (ImGui::BeginDock("Assets", &shouldShowAssetBrowser))
     {
         for (auto& asset : assets)
         {
             ImGui::Selectable(asset->m_path.c_str(), &asset->m_open);
         }
+        ImGui::EndDock();
     }
-    ImGui::EndDock();
 }
 
 void Editor::showModalPopups()
@@ -1012,7 +995,7 @@ void Editor::showModalPopups()
 void Editor::showSettings()
 {
     // Snap to grid
-    if (ImGui::BeginDock("Editor settings"))
+    if (ImGui::BeginDock("Editor settings"), &shouldShowSettings)
     {
         ImGui::InputInt("Snap (pixels)", &snapInterval);
     }

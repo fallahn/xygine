@@ -127,3 +127,9 @@ inline xy::Vector4f ConfigProperty::getValue<xy::Vector4f>() const
     auto values = valueAsArray();
     return { values[0], values[1], values[2], values[3] };
 }
+
+template <>
+inline xy::ResourceID ConfigProperty::getValue<xy::ResourceID>() const
+{
+    return std::stoul(m_value);
+}

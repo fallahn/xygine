@@ -28,6 +28,7 @@
 
 #include "xyginext/core/editor/SceneEditor.hpp"
 #include "xyginext/core/editor/SpriteEditor.hpp"
+#include "xyginext/core/editor/FontEditor.hpp"
 #include "xyginext/core/Editor.hpp"
 #include "xyginext/core/App.hpp"
 #include "xyginext/ecs/Scene.hpp"
@@ -146,19 +147,22 @@ namespace xy
                                 auto& t = e.getComponent<Text>();
                                 
                                 // Select font
-                               /* auto& fonts = Editor::getFonts();
                                 
                                 if (ImGui::BeginCombo("Font", "Select to change"))
                                 {
-                                    for (auto& f : fonts)
+                                    for (auto& a : Editor::getAssets())
                                     {
-                                        if (ImGui::Selectable(f.first.c_str()))
+                                        if (a->getType() == AssetType::Font)
                                         {
-                                            t.setFont(f.second);
+                                            if (ImGui::Selectable(a->m_path.c_str()))
+                                            {
+                                                t.setFont(dynamic_cast<FontAsset*>(a.get())->font);
+                                                t.setFontResourceID(xy::TextureResource::getID(a->m_path));
+                                            }
                                         }
                                     }
                                     ImGui::EndCombo();
-                                }*/
+                                }
                                 
                                 // Modify string
                                 std::array<char,MAX_INPUT> buf;

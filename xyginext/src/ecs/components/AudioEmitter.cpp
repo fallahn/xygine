@@ -29,6 +29,9 @@ source distribution.
 #include "xyginext/core/Assert.hpp"
 #include "xyginext/audio/Mixer.hpp"
 
+#include "cereal/archives/binary.hpp"
+#include "cereal/archives/json.hpp"
+
 #include <SFML/Audio/SoundBuffer.hpp>
 
 using namespace xy;
@@ -172,3 +175,17 @@ AudioEmitter::Status AudioEmitter::getStatus() const
     XY_ASSERT(m_impl, "No valid sound loaded");
     return static_cast<Status>(m_impl->getStatus());
 }
+
+template<class Archive>
+void AudioEmitter::serialize(Archive &ar)
+{
+    //incomplete
+    ar(m_mixerChannel,
+       m_volume);
+}
+
+template void AudioEmitter::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&);
+template void AudioEmitter::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&);
+
+template void AudioEmitter::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&);
+template void AudioEmitter::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&);

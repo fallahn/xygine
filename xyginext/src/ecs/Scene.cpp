@@ -29,13 +29,25 @@ source distribution.
 #include "xyginext/core/Editor.hpp"
 #include "xyginext/core/ConfigFile.hpp"
 #include "xyginext/ecs/Scene.hpp"
+#include "xyginext/ecs/components/Text.hpp"
 #include "xyginext/ecs/components/Camera.hpp"
+#include "xyginext/ecs/components/Drawable.hpp"
 #include "xyginext/ecs/components/Transform.hpp"
 #include "xyginext/ecs/components/AudioListener.hpp"
+#include "xyginext/ecs/components/ParticleEmitter.hpp"
+#include "xyginext/ecs/components/AudioEmitter.hpp"
+#include "xyginext/ecs/components/SpriteAnimation.hpp"
+#include "xyginext/ecs/components/UIHitBox.hpp"
 #include "xyginext/ecs/components/Sprite.hpp"
 
 #include "xyginext/ecs/systems/RenderSystem.hpp"
+#include "xyginext/ecs/systems/CameraSystem.hpp"
 #include "xyginext/ecs/systems/SpriteSystem.hpp"
+#include "xyginext/ecs/systems/TextRenderer.hpp"
+
+#include "cereal/archives/binary.hpp"
+#include "cereal/types/string.hpp"
+#include "cereal/types/bitset.hpp"
 
 #include <SFML/Window/Event.hpp>
 
@@ -63,7 +75,7 @@ namespace
     }
 }
 
-Scene::Scene(MessageBus& mb, const std::string& path)
+Scene::Scene(MessageBus& mb)
     : m_messageBus      (mb),
     m_entityManager     (mb, m_componentManager),
     m_systemManager     (*this, m_componentManager)
@@ -87,11 +99,21 @@ Scene::Scene(MessageBus& mb, const std::string& path)
         }
     };
     
-    // If a path has been passed, load it
-    if (path.length())
-    {
-        loadFromFile(path);
-    }
+    // Silly/lazy hack to try and enforce component ID consistency.
+    // This means scene loading (probably) won't work when the editor is not
+    // being used. Quite essential that this is fixed
+    m_componentManager.getID<Sprite>();
+    m_componentManager.getID<Text>();
+    m_componentManager.getID<ParticleEmitter>();
+    m_componentManager.getID<AudioEmitter>();
+    m_componentManager.getID<SpriteAnimation>();
+    m_componentManager.getID<UIHitBox>();
+}
+
+Scene::Scene(MessageBus& mb, const std::string& path) :
+Scene(mb)
+{
+    loadFromFile(path);
 }
 
 //public
@@ -237,88 +259,209 @@ void Scene::forwardMessage(const Message& msg)
 
 bool Scene::saveToFile(const std::string &path)
 {
-    /*std::ofstream os(path.c_str(), std::ios::binary | std::ios::trunc);
+    std::ofstream os(path, std::ios::binary);
     cereal::BinaryOutputArchive archive(os);
     
-    // Store systems first
+    // Store systems
     auto& systems = m_systemManager.getSystems();
-    
     archive(systems.size());
     for (auto& s : systems)
     {
+        // flaky af
         archive(std::string(s->getType().name()));
     }
     
-    // What to do when editor isn't active?
-    // Add serialise functions to entity manager?
     auto entities = getSystem<EditorSystem>().getEntities();
-    archive(entities.size()-1); // -1 for default entity
+    archive(entities.size());
     
     for (auto& e : entities)
     {
-        // First store component mask
-        auto mask = e.getComponentMask();
-        archive(mask.to_string());
+        // Ignore first entity - it's a default one and will already be created
+        if (e.getIndex() == 0)
+        {
+            continue;
+        }
         
-        // Loop through components and store them
-        // Need a smarter/generic way of doing this for all component types
+        archive(e.getIndex());
+        
+        auto mask = e.getComponentMask();
+        archive(mask);
+        
+        // Need a smarter/generic way of doing this for any/all component types
         for (int i=0; i < mask.size(); i++)
         {
             if (mask.test(i))
             {
+                if (i == m_componentManager.getID<xy::Text>())
+                {
+                    archive(e.getComponent<xy::Text>());
+                }
+                else if (i == m_componentManager.getID<xy::Drawable>())
+                {
+                    archive(e.getComponent<xy::Drawable>());
+                }
+
+                else if (i == m_componentManager.getID<xy::Transform>())
+                {
+                    archive(e.getComponent<xy::Transform>());
+                }
+                else if (i == m_componentManager.getID<xy::Sprite>())
+                {
+                    archive(e.getComponent<xy::Sprite>());
+                }
+                else if (i == m_componentManager.getID<xy::Camera>())
+                {
+                    archive(e.getComponent<xy::Camera>());
+                }
+                else if (i == m_componentManager.getID<xy::AudioListener>())
+                {
+                    archive(e.getComponent<xy::AudioListener>());
+                }
+                else if (i == m_componentManager.getID<xy::ParticleEmitter>())
+                {
+                    archive(e.getComponent<xy::ParticleEmitter>());
+                }
+                else if (i == m_componentManager.getID<xy::AudioEmitter>())
+                {
+                    archive(e.getComponent<xy::AudioEmitter>());
+                }
+                else if (i == m_componentManager.getID<xy::SpriteAnimation>())
+                {
+                    archive(e.getComponent<xy::SpriteAnimation>());
+                }
+                else if (i == m_componentManager.getID<xy::UIHitBox>())
+                {
+                    archive(e.getComponent<xy::UIHitBox>());
+                }
+                else
+                {
+                    xy::Logger::log("Component id " + std::to_string(i) + " not able to save in scene");
+                }
             }
         }
-    }*/
+    }
+    return true;
 }
 
 bool Scene::loadFromFile(const std::string &path)
 {
-   /* std::ifstream is(path.c_str());
+    std::ifstream is(path, std::ios::binary);
+    if (!is.good() || !is.is_open())
+    {
+        return false;
+    }
+    
     cereal::BinaryInputArchive archive(is);
     
-    // Load systems first
-    std::size_t systemCount;
+    size_t systemCount;
     archive(systemCount);
     while(systemCount--)
     {
-        // madness
         std::string name;
         archive(name);
+     
+        // this is madness
         auto& mb = App::getActiveInstance()->getMessageBus();
         RenderSystem rs(mb);
+        SpriteSystem ss(mb);
+        EditorSystem es(mb);
+        TextRenderer tr(mb);
+        CameraSystem cs(mb);
         if (rs.getType().name() == name)
         {
             addSystem<RenderSystem>(mb);
         }
-        SpriteSystem ss(mb);
-        if (ss.getType().name() == name)
+        else if (ss.getType().name() == name)
         {
             addSystem<SpriteSystem>(mb);
         }
-        EditorSystem es(mb);
-        if (es.getType().name() == name)
+        else if (es.getType().name() == name)
         {
             addSystem<EditorSystem>(mb);
         }
+        else if (tr.getType().name() == name)
+        {
+            addSystem<TextRenderer>(mb);
+        }
+        else if (cs.getType().name() == name)
+        {
+            addSystem<CameraSystem>(mb);
+        }
+        else
+        {
+            xy::Logger::log("System " + name + " loaded from scene " + path + " not recognised");
+        }
     }
-    // Then entities
-    std::size_t entityCount;
+    
+    size_t entityCount;
     archive(entityCount);
+    
+    // less 1 entity, for default one
+    entityCount -= 1;
+    
     while(entityCount--)
     {
-        auto e = createEntity();
+        Entity::ID idx;
+        archive(idx);
+        auto e = m_entityManager.createEntity(idx);
         
-        std::string compMask;
-        archive(compMask);
-        ComponentMask mask(compMask);
+        ComponentMask mask;
+        archive(mask);
         
         for (int i=0; i < mask.size(); i++)
         {
             if (mask.test(i))
             {
+                if (i == m_componentManager.getID<xy::Text>())
+                {
+                    archive(e.addComponent<xy::Text>());
+                }
+                else if (i == m_componentManager.getID<xy::Drawable>())
+                {
+                    archive(e.addComponent<xy::Drawable>());
+                }
+                else if (i == m_componentManager.getID<xy::Transform>())
+                {
+                    archive(e.addComponent<xy::Transform>());
+                }
+                else if (i == m_componentManager.getID<xy::Sprite>())
+                {
+                    archive(e.addComponent<xy::Sprite>());
+                }
+                else if (i == m_componentManager.getID<xy::Camera>())
+                {
+                    archive(e.addComponent<xy::Camera>());
+                }
+                else if (i == m_componentManager.getID<xy::AudioListener>())
+                {
+                    archive(e.addComponent<xy::AudioListener>());
+                }
+                else if (i == m_componentManager.getID<xy::ParticleEmitter>())
+                {
+                    archive(e.addComponent<xy::ParticleEmitter>());
+                }
+                else if (i == m_componentManager.getID<xy::AudioEmitter>())
+                {
+                    archive(e.addComponent<xy::AudioEmitter>());
+                }
+                else if (i == m_componentManager.getID<xy::SpriteAnimation>())
+                {
+                    archive(e.addComponent<xy::SpriteAnimation>());
+                }
+                else if (i == m_componentManager.getID<xy::UIHitBox>())
+                {
+                    archive(e.addComponent<xy::UIHitBox>());
+                }
+                else
+                {
+                    xy::Logger::log("Component id " + std::to_string(i) + " not able to load from scene");
+                }
             }
         }
-    }*/
+        
+        m_systemManager.addToSystems(e);
+    }
+    return true;
 }
 
 //private

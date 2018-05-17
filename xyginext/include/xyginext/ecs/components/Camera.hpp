@@ -121,6 +121,9 @@ namespace xy
         \brief Returns the current bounds of the camera
         */
         sf::FloatRect getBounds() const { return m_bounds; }
+        
+        template<class Archive>
+        void serialize(Archive& ar);
 
     private:
 

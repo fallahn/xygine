@@ -31,6 +31,7 @@ source distribution.
 #include "xyginext/Config.hpp"
 #include "xyginext/core/Log.hpp"
 #include "xyginext/core/Vector4.hpp"
+#include "xyginext/resources/Resource.hpp"
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -100,6 +101,7 @@ namespace xy
         void setValue(sf::FloatRect);
         void setValue(sf::Color);
         void setValue(xy::Vector4f);
+        void setValue(xy::ResourceID);
         
     private:
         std::string m_value;

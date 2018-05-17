@@ -22,8 +22,10 @@ set(PROJECT_SRC  ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/SceneEditor.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/ParticleEditor.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/TextureEditor.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/FontEditor.hpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/detail/Operators.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/detail/Serializers.hpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/Component.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/ComponentPool.hpp

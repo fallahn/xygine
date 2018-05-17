@@ -37,6 +37,7 @@ enum class AssetType
     Sound, // Sound file: ogg, wav, etc.
     Scene, // An xy::Scene (.something...)
     ParticleEmitter, // An xy::ParticleEmitter (or rather, it's settings)
+    Font, // A font file (.ttf or .otf)
 };
 
 // Base class for anything representing an "Asset" in the editor
@@ -46,7 +47,7 @@ public:
     virtual void edit() = 0; // Shows imgui edit controls
     virtual AssetType getType() const = 0; // The type of this asset
     
-    bool m_open; // If the asset is open in the editor
-    bool m_dirty; // If the asset has unsaved changes in the editor
+    bool m_open = false; // If the asset is open in the editor
+    bool m_dirty = false; // If the asset has unsaved changes in the editor
     std::string m_path; // Path to the asset (relative to assets folder - bad idea?)
 };
