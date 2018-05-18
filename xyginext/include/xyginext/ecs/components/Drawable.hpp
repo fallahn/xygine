@@ -174,7 +174,7 @@ namespace xy
         template<class Archive>
         void serialize(Archive& ar)
         {
-            //boop
+            ar(m_zDepth, m_cull);
         }
 
     private:

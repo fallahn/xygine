@@ -104,9 +104,9 @@ namespace xy
         const sf::Font* getFont() const;
         
         /*!
-         \brief Return a pointer to the active font
+         \brief Return the font resource ID
          */
-        const ResourceID getFontResourceID() const;
+        ResourceID getFontResourceID() const;
 
         /*!
         \brief Return the current character size of the text

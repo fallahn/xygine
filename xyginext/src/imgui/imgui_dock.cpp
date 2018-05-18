@@ -36,15 +36,15 @@ struct DockContext
 	struct Dock
 	{
 		Dock()
-			: id(0)
+			: label(nullptr)
+            , id(0)
 			, next_tab(nullptr)
-			, prev_tab(nullptr)
-			, parent(nullptr)
-			, pos(0, 0)
-			, size(-1, -1)
-			, active(true)
-			, status(Status_Float)
-			, label(nullptr)
+            , prev_tab(nullptr)
+            , parent(nullptr)
+            , active(true)
+            , pos(0, 0)
+            , size(-1, -1)
+            , status(Status_Float)
 			, opened(false)
         
 		{

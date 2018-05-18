@@ -113,7 +113,7 @@ const sf::Font* Text::getFont() const
     return m_font;
 }
 
-const ResourceID Text::getFontResourceID() const
+ResourceID Text::getFontResourceID() const
 {
     return m_fontResourceID;
 }

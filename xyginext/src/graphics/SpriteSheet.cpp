@@ -55,7 +55,7 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
     std::size_t count = 0;
 
     sf::Texture* texture = nullptr;
-    sf::BlendMode blendMode = sf::BlendAlpha;
+    //sf::BlendMode blendMode = sf::BlendAlpha;
 
     //validate sprites, increase count
     if (auto* p = sheetFile.findProperty("src"))
@@ -222,7 +222,7 @@ void SpriteSheet::setSprite(const std::string& name, const xy::Sprite& data)
     
     // Update the animations
     m_animations[name].clear();
-    for (auto i = 0; i < data.getAnimationCount(); i++)
+    for (auto i = 0u; i < data.getAnimationCount(); i++)
     {
         m_animations[name].push_back(data.getAnimations()[i].id.data());
     }

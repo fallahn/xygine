@@ -62,7 +62,7 @@ namespace
 
     std::list<std::string> history;
     const std::size_t MAX_HISTORY = 10;
-    std::size_t historyIndex = -1;
+    int historyIndex = -1;
 
     bool visible = false;
 
@@ -244,7 +244,7 @@ void Console::draw()
         nim::NewLine();
         for (auto& line : m_debugLines)
         {
-            nim::Text(line.c_str());
+            nim::TextUnformatted(line.c_str());
         }
         nim::EndDock();
     }
@@ -449,7 +449,7 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
         {
             if (historyIndex != -1)
             {
-                if (++historyIndex >= history.size())
+                if (++historyIndex >= static_cast<int>(history.size()))
                 {
                     historyIndex = -1;
                 }

@@ -93,7 +93,7 @@ namespace
     float toneMix = 0.95f;
 
     float vignetteRadius = 0.5f;
-    float vignetteSoftness = 0.4f;
+    //float vignetteSoftness = 0.4f; // unused
     float vignetteAmount = 0.5f;
 
     float flickerAmount = 0.05f;

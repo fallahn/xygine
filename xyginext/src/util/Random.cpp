@@ -165,5 +165,5 @@ std::vector<sf::Vector2f> xy::Util::Random::poissonDiscDistribution(const sf::Fl
         }
     }
 
-    return std::move(retVal);
+    return retVal;
 }

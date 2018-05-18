@@ -90,10 +90,10 @@ T& Scene::addPostProcess(Args&&... args)
     switch (m_postEffects.size())
     {
     case 2:
-        m_postBuffers[0].create(size.x, size.y, false);
+        m_postBuffers[0].create(size.x, size.y, xy::App::getActiveInstance()->getVideoSettings().ContextSettings);
         break;
     case 3:
-        m_postBuffers[1].create(size.x, size.y, false);
+        m_postBuffers[1].create(size.x, size.y, xy::App::getActiveInstance()->getVideoSettings().ContextSettings);
         break;
     default: break;
     }

@@ -202,22 +202,26 @@ void showTextureRectSelector(Sprite& sprite)
                 {
                     texRect.left += md.x;
                     texRect.width -= md.x;
+                    ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
                     break;
                 }
                 case RectDragPos::T:
                 {
                     texRect.top += md.y;
                     texRect.height -= md.y;
+                    ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
                     break;
                 }
                 case RectDragPos::R:
                 {
                     texRect.width += md.x;
+                    ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
                     break;
                 }
                 case RectDragPos::B:
                 {
                     texRect.height += md.y;
+                    ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
                     break;
                 }
                 case RectDragPos::MOVE:
@@ -227,6 +231,9 @@ void showTextureRectSelector(Sprite& sprite)
                     ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeAll);
                     break;
                 }
+                default:
+                    ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
+                    break;
             }
             // Snap it
             auto snap = Editor::getPixelSnap();
@@ -272,7 +279,7 @@ void showTextureRectSelector(Sprite& sprite)
         
         // Show current rect
         ImGui::SameLine();
-        ImGui::Text(("Top = " + std::to_string(newRect.top) + ", Left = " + std::to_string(newRect.left) + ", Width = " + std::to_string(newRect.width) + ", Height = " + std::to_string(newRect.height)).c_str());
+        ImGui::TextUnformatted(("Top = " + std::to_string(newRect.top) + ", Left = " + std::to_string(newRect.left) + ", Width = " + std::to_string(newRect.width) + ", Height = " + std::to_string(newRect.height)).c_str());
         ImGui::EndPopup();
     }
 }
@@ -319,7 +326,7 @@ void showTextureRectSelector(Sprite& sprite)
         if (selectedAnim != "Select an animation")
         {
             
-            for (auto i = 0 ; i < spr.getAnimationCount(); i++)
+            for (auto i = 0u ; i < spr.getAnimationCount(); i++)
             {
                 auto& anim = spr.getAnimations()[i];
                 if (std::string(anim.id.data()) == selectedAnim)

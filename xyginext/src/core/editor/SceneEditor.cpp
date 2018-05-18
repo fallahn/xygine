@@ -52,6 +52,7 @@ namespace xy
     {
         // To keep track of which entitie's sprites we are editing
         std::set<Entity> openSprites;
+        constexpr std::size_t MAX_INPUT_CHARS = 400;
     }
     
     SceneAsset::SceneAsset() :
@@ -69,7 +70,7 @@ namespace xy
             auto& systems = scene->m_systemManager.getSystems();
             for (auto& s : systems)
             {
-                ImGui::Text(s->getType().name());
+                ImGui::TextUnformatted(s->getType().name());
             }
             
             // Entities
@@ -165,9 +166,9 @@ namespace xy
                                 }
                                 
                                 // Modify string
-                                std::array<char,MAX_INPUT> buf;
+                                std::array<char,MAX_INPUT_CHARS> buf;
                                 t.getString().toAnsiString().copy(buf.begin(), t.getString().toAnsiString().length());
-                                if (ImGui::InputText("String",buf.data(),MAX_INPUT))
+                                if (ImGui::InputText("String",buf.data(),MAX_INPUT_CHARS))
                                 {
                                     t.setString(std::string(buf.data()));
                                 }

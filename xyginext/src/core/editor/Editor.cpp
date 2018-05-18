@@ -307,43 +307,41 @@ void Editor::init()
     {
         ConfigProperty* p;
         // Open window flags
-        if ( p = editorSettings.findProperty("assetsOpen"))
+        if (( p = editorSettings.findProperty("assetsOpen") ))
         {
             shouldShowAssetBrowser = p->getValue<bool>();
         }
-        if ( p = editorSettings.findProperty("consoleOpen"))
+        if (( p = editorSettings.findProperty("consoleOpen") ))
         {
             shouldShowConsole = p->getValue<bool>();
         }
-        if ( p = editorSettings.findProperty("styleOpen"))
+        if (( p = editorSettings.findProperty("styleOpen") ))
         {
             shouldShowStyleEditor = p->getValue<bool>();
         }
-        if ( p = editorSettings.findProperty("audioOpen"))
+        if (( p = editorSettings.findProperty("audioOpen") ))
         {
             shouldShowAudioSettings = p->getValue<bool>();
         }
-        if ( p = editorSettings.findProperty("videoOpen"))
+        if (( p = editorSettings.findProperty("videoOpen") ))
         {
             shouldShowVideoSettings = p->getValue<bool>();
         }
-        if ( p = editorSettings.findProperty("settingsOpen"))
+        if (( p = editorSettings.findProperty("settingsOpen") ))
         {
             shouldShowSettings = p->getValue<bool>();
         }
-        if ( p = editorSettings.findProperty("viewportOpen"))
+        if (( p = editorSettings.findProperty("viewportOpen") ))
         {
             shouldShowViewport = p->getValue<bool>();
         }
-        if ( p = editorSettings.findProperty("snap"))
+        if (( p = editorSettings.findProperty("snap") ))
         {
             snapInterval = p->getValue<int>();
         }
         
-        // Check for any open spritesheets
-        // Would be better to just check any open assets?
         ConfigObject* o;
-        if (o = editorSettings.findObjectWithName("OpenAssets"))
+        if (( o = editorSettings.findObjectWithName("OpenAssets") ))
         {
             for (auto p : o->getProperties())
             {
@@ -618,9 +616,14 @@ bool Editor::handleEvent(sf::Event& ev)
                     }
                 }
                 break;
+                default:
+                    break;
             }
             break;
         }
+            
+        default:
+            break;
     }
     
     return false;

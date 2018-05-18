@@ -167,7 +167,7 @@ void Scene::setPostEnabled(bool enabled)
         
         XY_ASSERT(App::getRenderTarget(), "no valid window");
         auto size = App::getRenderTarget()->getSize();
-        m_sceneBuffer.create(size.x, size.y, true);
+        m_sceneBuffer.create(size.x, size.y, xy::App::getActiveInstance()->getVideoSettings().ContextSettings);
         for (auto& p : m_postEffects) p->resizeBuffer(size.x, size.y);
     }
     else
@@ -288,7 +288,7 @@ bool Scene::saveToFile(const std::string &path)
         archive(mask);
         
         // Need a smarter/generic way of doing this for any/all component types
-        for (int i=0; i < mask.size(); i++)
+        for (auto i=0u; i < mask.size(); i++)
         {
             if (mask.test(i))
             {
@@ -408,7 +408,7 @@ bool Scene::loadFromFile(const std::string &path)
         ComponentMask mask;
         archive(mask);
         
-        for (int i=0; i < mask.size(); i++)
+        for (auto i=0u; i < mask.size(); i++)
         {
             if (mask.test(i))
             {

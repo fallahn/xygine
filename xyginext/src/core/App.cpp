@@ -80,7 +80,7 @@ namespace
 bool App::m_mouseCursorVisible = true;
 
 App::App(sf::ContextSettings contextSettings, const std::string& name)
-    : m_videoSettings   (),
+    : m_videoSettings   (contextSettings),
     m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
     m_applicationName   (name)
 {

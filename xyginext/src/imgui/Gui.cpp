@@ -127,7 +127,7 @@ const Nim::Style& Nim::getStyle()
     s.WindowPadding = style.WindowPadding;
     s.WindowRounding = style.WindowRounding;
     s.WindowTitleAlign = style.WindowTitleAlign;
-    for (int i=0; i < s.colours.size(); i++)
+    for (auto i=0u; i < s.colours.size(); i++)
         s.colours[i] = style.Colors[i];
     return currentStyle;
 }
@@ -165,7 +165,7 @@ void Nim::setStyle(const Nim::Style& style)
     s.WindowPadding = style.WindowPadding;
     s.WindowRounding = style.WindowRounding;
     s.WindowTitleAlign = style.WindowTitleAlign;
-    for (int i=0; i < style.colours.size(); i++)
+    for (auto i=0u; i < style.colours.size(); i++)
         s.Colors[i] = style.colours[i];
 }
 
@@ -203,7 +203,7 @@ bool Nim::Style::saveToFile(const std::string& path)
     styleFile.addProperty(GET_VARIABLE_NAME(WindowTitleAlign)).setValue(WindowTitleAlign);
     
     auto colourObj = styleFile.addObject("Colours");
-    for (int i=0; i<colours.size(); i++)
+    for (auto i=0u; i<colours.size(); i++)
     {
         colourObj->addProperty(std::to_string(i)).setValue(colours[i]);
     }
@@ -249,7 +249,7 @@ bool Nim::Style::loadFromFile(const std::string& path)
     WindowTitleAlign = styleFile.findProperty(GET_VARIABLE_NAME(WindowTitleAlign))->getValue<typeof(WindowTitleAlign)>();
     
     auto colourObj = styleFile.findObjectWithName("Colours");
-    for (int i=0; i<colours.size(); i++)
+    for (auto i=0u; i<colours.size(); i++)
     {
         // Need a better method for this...
         colours[i] = colourObj->findProperty(std::to_string(i))->getValue<sf::Color>();
