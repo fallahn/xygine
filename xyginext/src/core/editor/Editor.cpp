@@ -1000,7 +1000,7 @@ void Editor::showModalPopups()
 void Editor::showSettings()
 {
     // Snap to grid
-    if (ImGui::BeginDock("Editor settings"), &shouldShowSettings)
+    if (ImGui::BeginDock("Editor settings", &shouldShowSettings))
     {
         ImGui::InputInt("Snap (pixels)", &snapInterval);
     }
