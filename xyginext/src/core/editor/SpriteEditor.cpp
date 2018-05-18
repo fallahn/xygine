@@ -69,6 +69,8 @@ namespace
     // For selecting sprite from assets
     std::string selectedSheetName = "Select a sheet";
     SpriteSheetAsset*   selectedSheet;
+    
+    constexpr std::size_t MAX_INPUT_CHARS = 400;
 }
 
 
@@ -474,12 +476,12 @@ void SpriteSheetAsset::edit()
         if (selectedSprite != "Select a sprite")
         {
             // sprite name
-            static std::array<char, MAX_INPUT> input = {{0}};
+            static std::array<char, SpriteEditor::MAX_INPUT_CHARS> input = {{0}};
             selectedSprite.copy(input.data(), selectedSprite.length());
             
             auto spr = sheet.getSprite(selectedSprite);
             
-            if (ImGui::InputText("Name", input.data(), MAX_INPUT))
+            if (ImGui::InputText("Name", input.data(), SpriteEditor::MAX_INPUT_CHARS))
             {
                 // much inefficient
                 sheet.removeSprite(selectedSprite);

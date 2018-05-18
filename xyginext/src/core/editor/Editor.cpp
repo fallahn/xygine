@@ -108,6 +108,8 @@ namespace
     sf::Cursor sizeXCursor;
     sf::Cursor sizeYCursor;
     sf::Cursor arrowCursor;
+    
+    constexpr std::size_t MAX_INPUT_CHARS = 400;
 }
 
 EditorSystem::EditorSystem(xy::MessageBus& mb, const std::string& sceneName) :
@@ -932,8 +934,8 @@ void Editor::showModalPopups()
         ImGui::RadioButton("Scene", &selectedType, static_cast<int>(AssetType::Scene));
         ImGui::RadioButton("Particle Emitter", &selectedType, static_cast<int>(AssetType::ParticleEmitter));
         
-        static std::array<char,MAX_INPUT> buf = {{0}};
-        if (ImGui::InputText("Path", buf.data(), MAX_INPUT, ImGuiInputTextFlags_EnterReturnsTrue) || ImGui::Button("Create"))
+        static std::array<char,MAX_INPUT_CHARS> buf = {{0}};
+        if (ImGui::InputText("Path", buf.data(), MAX_INPUT_CHARS, ImGuiInputTextFlags_EnterReturnsTrue) || ImGui::Button("Create"))
         {
             switch(static_cast<AssetType>(selectedType))
             {
