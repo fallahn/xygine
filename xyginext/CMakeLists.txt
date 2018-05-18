@@ -110,7 +110,9 @@ endif()
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Install
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/xyginext DESTINATION include)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/xyginext
+		  ${CMAKE_CURRENT_SOURCE_DIR}/include/cereal
+		  DESTINATION include)
 
 install(TARGETS ${PROJECT_NAME} EXPORT xyginext-targets 
   LIBRARY DESTINATION lib
