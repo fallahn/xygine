@@ -23,7 +23,7 @@ before_script:
   g++ /usr/bin/g++-7 90; fi
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install enet; fi
 - git clone https://github.com/sfml/sfml && cd sfml
-- git checkout tags/2.4.2
+- git checkout tags/2.5.0
 - mkdir build && cd build
 - cmake .. $CMAKE_FLAGS && sudo cmake --build . --target install && cd ../..
 - git clone https://github.com/fallahn/tmxlite
