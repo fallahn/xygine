@@ -39,6 +39,8 @@
 #include "../../imgui/imgui.h"
 #include "../../imgui/imgui-SFML.h"
 
+#include <cmath>
+
 namespace xy
 {
 namespace SpriteEditor
