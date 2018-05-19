@@ -80,6 +80,7 @@ xygine isn't really an engine).
 
 /*********************************************************************  
 (c) Matt Marchant 2017 - 2018  
+(c) Jonny Paton 2017 - 2018  
 http://trederia.blogspot.com  
 
 xygineXT - Zlib license.  
