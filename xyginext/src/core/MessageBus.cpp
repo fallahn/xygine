@@ -51,9 +51,8 @@ MessageBus::MessageBus()
 
 const Message& MessageBus::poll()
 {
-    static auto size = sizeof(Message);
     const Message& m = *reinterpret_cast<Message*>(m_outPointer);
-    m_outPointer += (size + m.m_dataSize);
+    m_outPointer += (MessageSize + m.m_dataSize);
     m_currentCount--;
 
     return m;

@@ -35,25 +35,27 @@ source distribution.
 using namespace xy;
 
 Text::Text()
-    : m_font        (nullptr),
-    m_charSize      (30),
-    m_fillColour    (sf::Color::White),
-    m_dirty         (true),
-    m_alignment     (Alignment::Left),
-    m_croppingArea  (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
-    m_cropped       (false)
+    : m_font            (nullptr),
+    m_charSize          (30),
+    m_verticalSpacing   (0.f),
+    m_fillColour        (sf::Color::White),
+    m_dirty             (true),
+    m_alignment         (Alignment::Left),
+    m_croppingArea      (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
+    m_cropped           (false)
 {
 
 }
 
 Text::Text(const sf::Font& font)
-    : m_font        (nullptr),
-    m_charSize      (30),
-    m_fillColour    (sf::Color::White),
-    m_dirty         (true),
-    m_alignment     (Alignment::Left),
-    m_croppingArea  (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
-    m_cropped       (false)
+    : m_font            (nullptr),
+    m_charSize          (30),
+    m_verticalSpacing   (0.f),
+    m_fillColour        (sf::Color::White),
+    m_dirty             (true),
+    m_alignment         (Alignment::Left),
+    m_croppingArea      (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
+    m_cropped           (false)
 {
     setFont(font);
 }
@@ -73,6 +75,12 @@ void Text::setFontResourceID(const ResourceID id)
 void Text::setCharacterSize(sf::Uint32 size)
 {
     m_charSize = size;
+    m_dirty = true;
+}
+
+void Text::setVerticalSpacing(float spacing)
+{
+    m_verticalSpacing = spacing;
     m_dirty = true;
 }
 
@@ -121,6 +129,11 @@ ResourceID Text::getFontResourceID() const
 sf::Uint32 Text::getCharacterSize() const
 {
     return m_charSize;
+}
+
+float Text::getVerticalSpacing() const
+{
+    return m_verticalSpacing;
 }
 
 const sf::String& Text::getString() const

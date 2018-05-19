@@ -39,6 +39,8 @@ source distribution.
 
 namespace xy
 {
+    static constexpr std::size_t MessageSize = sizeof(Message);
+
     /*!
     \brief System wide message bus for custom event messaging
 
@@ -90,13 +92,13 @@ namespace xy
             if (!m_enabled) return static_cast<T*>((void*)m_pendingBuffer.data());
 
             auto dataSize = sizeof(T);
-            static auto msgSize = sizeof(Message);
+
             XY_ASSERT(dataSize < 128, "message size exceeds 128 bytes"); //limit custom data to 128 bytes
-            XY_ASSERT(m_pendingBuffer.size() - (m_inPointer - m_pendingBuffer.data()) > (dataSize + msgSize), "buffer overflow " + std::to_string(m_pendingCount)); //make sure we have enough room in the buffer
+            XY_ASSERT(m_pendingBuffer.size() - (m_inPointer - m_pendingBuffer.data()) > (dataSize + MessageSize), "buffer overflow " + std::to_string(m_pendingCount)); //make sure we have enough room in the buffer
             XY_WARNING(m_pendingBuffer.size() - (m_inPointer - m_pendingBuffer.data()) < 128, "Messagebus buffer is heavily contended!");
 
             Message* msg = new (m_inPointer)Message();
-            m_inPointer += msgSize;
+            m_inPointer += MessageSize;
             msg->id = id;
             msg->m_dataSize = dataSize;
             msg->m_data = new (m_inPointer)T();

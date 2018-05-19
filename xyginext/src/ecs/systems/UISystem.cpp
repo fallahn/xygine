@@ -423,6 +423,11 @@ void UISystem::selectInput(std::size_t idx)
     select(m_selectedIndex);
 }
 
+void UISystem::setJoypadCursorActive(bool active)
+{
+    m_joypadCursorActive = active;
+}
+
 //private
 void UISystem::selectNext()
 {
