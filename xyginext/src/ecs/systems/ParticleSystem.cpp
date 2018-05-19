@@ -253,7 +253,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
     
     //scale particles to match screen size
-    float ratio = static_cast<float>(App::getRenderWindow()->getSize().x) / viewableArea.width;
+    float ratio = static_cast<float>(rt.getSize().x) / viewableArea.width;
     m_shader.setUniform("u_screenScale", ratio);
 
     states.shader = &m_shader;

@@ -71,6 +71,11 @@ namespace xy
         void setCharacterSize(sf::Uint32);
 
         /*!
+        \brief Sets the vertical spacing between rows of text
+        */
+        void setVerticalSpacing(float);
+
+        /*!
         \brief Set the string to be rendered by the text
         */
         void setString(const sf::String&);
@@ -101,6 +106,11 @@ namespace xy
         \brief Return the current character size of the text
         */
         sf::Uint32 getCharacterSize() const;
+
+        /*!
+        \brief Retrurns the current vertical spacing between text rows
+        */
+        float getVerticalSpacing() const;
 
         /*!
         \brief Return the current string rendered by the text
@@ -162,6 +172,7 @@ namespace xy
         sf::String m_string;
         const sf::Font* m_font;
         sf::Uint32 m_charSize;
+        float m_verticalSpacing;
         sf::Color m_fillColour;
         std::vector<sf::Vertex> m_vertices;
         mutable sf::FloatRect m_localBounds;

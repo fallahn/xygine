@@ -129,7 +129,7 @@ void TextRenderer::process(float)
                         x += xOffset * 4.f; //4 spaces for tab suckas
                         break;
                     case '\n':
-                        y += yOffset;
+                        y += yOffset + text.m_verticalSpacing;
                         x = 0.f;
                         break;
                     }

@@ -131,7 +131,7 @@ namespace
     };
 }
 
-std::vector<sf::Vector2f> xy::Util::Random::poissonDiscDistribution(const sf::FloatRect& area, float minDist, std::size_t maxPoints)
+std::vector<sf::Vector2f> xy::Util::Random::poissonDiscDistribution(const sf::FloatRect& area, float minDist, std::size_t maxPoints, std::mt19937& engine)
 {
     std::vector<sf::Vector2f> workingPoints;
     std::vector<sf::Vector2f> retVal;
@@ -145,15 +145,15 @@ std::vector<sf::Vector2f> xy::Util::Random::poissonDiscDistribution(const sf::Fl
 
     while (!workingPoints.empty())
     {
-        auto idx = (workingPoints.size() == 1) ? 0 : value(0, workingPoints.size() - 1);
+        auto idx = (workingPoints.size() == 1) ? 0 : value(0, workingPoints.size() - 1, engine);
         centre = workingPoints[idx];
 
         workingPoints.erase(std::begin(workingPoints) + idx);
 
         for (auto i = 0u; i < maxPoints; ++i)
         {
-            float radius = minDist * (1.f + value(0.f, 1.f));
-            float angle = value(-1.f, 1.f) * xy::Util::Const::PI;
+            float radius = minDist * (1.f + value(0.f, 1.f, engine));
+            float angle = value(-1.f, 1.f, engine) * xy::Util::Const::PI;
             sf::Vector2f newPoint = centre + sf::Vector2f(std::sin(angle), std::cos(angle)) * radius;
 
             if (area.contains(newPoint) && !grid.hasNeighbour(newPoint, minDist))

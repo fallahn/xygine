@@ -50,31 +50,34 @@ namespace xy
             \brief Returns a pseudo random floating point value
             \param begin Minimum value
             \param end Maximum value
+            \param engine Seeded random engine to use. Defaults to (non-threadsafe) instance seeded with current time
             */
-            static inline float value(float begin, float end)
+            static inline float value(float begin, float end, std::mt19937& engine = rndEngine)
             {
                 XY_ASSERT(begin < end, "first value is not less than last value");
                 std::uniform_real_distribution<float> dist(begin, end);
-                return dist(rndEngine);
+                return dist(engine);
             }
             /*!
             \brief Returns a pseudo random integer value
             \param begin Minimum value
             \param end Maximum value
+            \param engine Seeded random engine to use. Defaults to (non-threadsafe) instance seeded with current time
             */
-            static inline int value(int begin, int end)
+            static inline int value(int begin, int end, std::mt19937& engine = rndEngine)
             {
                 XY_ASSERT(begin < end, "first value is not less than last value");
                 std::uniform_int_distribution<int> dist(begin, end);
-                return dist(rndEngine);
+                return dist(engine);
             }
             /*!
             \brief Returns a poission disc sampled distribution of points within a given area
             \param area sf::FloatRect within which the points are distributed
             \param minDist minimum distance between points
             \param maxPoints maximum number of points to try generating
+            \param engine Seeded random engine to use. Defaults to (non-threadsafe) instance seeded with current time
             */
-            XY_EXPORT_API std::vector<sf::Vector2f> poissonDiscDistribution(const sf::FloatRect& area, float minDist, std::size_t maxPoints);
+            XY_EXPORT_API std::vector<sf::Vector2f> poissonDiscDistribution(const sf::FloatRect& area, float minDist, std::size_t maxPoints, std::mt19937& engine = rndEngine);
         }
     }
 }
