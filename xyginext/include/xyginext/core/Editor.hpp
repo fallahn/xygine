@@ -38,7 +38,7 @@
 namespace xy
 {   
     // Editor system, add it to scenes you want to modify
-    class EditorSystem : public xy::System
+    class XY_EXPORT_API EditorSystem : public xy::System
     {
     public:
         EditorSystem(xy::MessageBus& mb, const std::string& sceneName = "");
