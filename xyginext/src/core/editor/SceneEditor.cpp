@@ -207,7 +207,7 @@ namespace xy
                                 
                                 // Modify string
                                 std::array<char,MAX_INPUT_CHARS> buf;
-                                t.getString().toAnsiString().copy(buf.begin(), t.getString().toAnsiString().length());
+                                t.getString().toAnsiString().copy(buf.data(), t.getString().toAnsiString().length());
                                 if (ImGui::InputText("String",buf.data(),MAX_INPUT_CHARS))
                                 {
                                     t.setString(std::string(buf.data()));

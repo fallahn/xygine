@@ -91,6 +91,9 @@
     <Filter Include="Source Files\core\dialogues\nfd">
       <UniqueIdentifier>{22ade682-fc97-4470-92a0-1c850fda1aa7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\core\editor">
+      <UniqueIdentifier>{6bd0190e-30cc-4b29-8261-79bf4e60108b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\App.cpp">
@@ -285,9 +288,6 @@
     <ClCompile Include="src\core\dialogues\nfd\nfd_win.cpp">
       <Filter>Source Files\core\dialogues\nfd</Filter>
     </ClCompile>
-    <ClCompile Include="src\imgui\imgui_tabs.cpp">
-      <Filter>Source Files\imgui</Filter>
-    </ClCompile>
     <ClCompile Include="src\imgui\imgui-SFML.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
@@ -296,6 +296,27 @@
     </ClCompile>
     <ClCompile Include="src\network\EnetHostImpl.cpp">
       <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_dock.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\editor\Editor.cpp">
+      <Filter>Source Files\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\editor\FontEditor.cpp">
+      <Filter>Source Files\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\editor\ParticleEditor.cpp">
+      <Filter>Source Files\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\editor\SceneEditor.cpp">
+      <Filter>Source Files\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\editor\SpriteEditor.cpp">
+      <Filter>Source Files\core\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\editor\TextureEditor.cpp">
+      <Filter>Source Files\core\editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

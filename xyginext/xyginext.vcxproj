@@ -134,6 +134,12 @@
     <ClCompile Include="src\core\ConsoleClient.cpp" />
     <ClCompile Include="src\core\dialogues\nfd\nfd_common.c" />
     <ClCompile Include="src\core\dialogues\nfd\nfd_win.cpp" />
+    <ClCompile Include="src\core\editor\Editor.cpp" />
+    <ClCompile Include="src\core\editor\FontEditor.cpp" />
+    <ClCompile Include="src\core\editor\ParticleEditor.cpp" />
+    <ClCompile Include="src\core\editor\SceneEditor.cpp" />
+    <ClCompile Include="src\core\editor\SpriteEditor.cpp" />
+    <ClCompile Include="src\core\editor\TextureEditor.cpp" />
     <ClCompile Include="src\core\FileSystem.cpp" />
     <ClCompile Include="src\core\MessageBus.cpp" />
     <ClCompile Include="src\core\State.cpp" />
@@ -182,8 +188,8 @@
     <ClCompile Include="src\imgui\imgui-SFML.cpp" />
     <ClCompile Include="src\imgui\imgui.cpp" />
     <ClCompile Include="src\imgui\imgui_demo.cpp" />
+    <ClCompile Include="src\imgui\imgui_dock.cpp" />
     <ClCompile Include="src\imgui\imgui_draw.cpp" />
-    <ClCompile Include="src\imgui\imgui_tabs.cpp" />
     <ClCompile Include="src\network\EnetClientImpl.cpp" />
     <ClCompile Include="src\network\EnetHostImpl.cpp" />
     <ClCompile Include="src\network\NetClient.cpp" />
