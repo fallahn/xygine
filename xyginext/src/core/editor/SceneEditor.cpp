@@ -29,6 +29,7 @@
 #include "xyginext/core/editor/SceneEditor.hpp"
 #include "xyginext/core/editor/SpriteEditor.hpp"
 #include "xyginext/core/editor/FontEditor.hpp"
+#include "xyginext/core/editor/IconFontAwesome5.hpp"
 #include "xyginext/core/Editor.hpp"
 #include "xyginext/core/App.hpp"
 #include "xyginext/ecs/Scene.hpp"
@@ -36,10 +37,12 @@
 #include "xyginext/ecs/components/Camera.hpp"
 #include "xyginext/ecs/components/Transform.hpp"
 #include "xyginext/ecs/components/Text.hpp"
+#include "xyginext/ecs/components/UIHitBox.hpp"
 #include "xyginext/ecs/systems/TextRenderer.hpp"
 #include "xyginext/ecs/systems/RenderSystem.hpp"
 #include "xyginext/ecs/systems/SpriteSystem.hpp"
 #include "xyginext/ecs/systems/CameraSystem.hpp"
+#include "xyginext/ecs/systems/UISystem.hpp"
 
 #include "../../imgui/imgui.h"
 #include "../../imgui/imgui-SFML.h"
@@ -114,7 +117,40 @@ namespace xy
                         }
                         if (e.hasComponent<Drawable>())
                         {
-                            ImGui::Selectable("Drawable");
+                            if (ImGui::TreeNode("Drawable"))
+                            {
+                                auto& d = e.getComponent<Drawable>();
+                                
+                                auto bounds = d.getLocalBounds();
+                                ImGui::Text("Local bounds: ");
+                                ImGui::TextUnformatted(("Left: " + std::to_string(bounds.left)).c_str());
+                                ImGui::TextUnformatted(("Top: " + std::to_string(bounds.top)).c_str());
+                                ImGui::TextUnformatted(("Width: " + std::to_string(bounds.width)).c_str());
+                                ImGui::TextUnformatted(("Height: " + std::to_string(bounds.height)).c_str());
+                                
+                                auto& verts = d.getVertices();
+                                ImGui::Text("Vertices:");
+                                ImGui::SameLine();
+                                if (ImGui::Button(ICON_FA_PLUS))
+                                {
+                                    verts.emplace_back();
+                                }
+                                int vertID = 0;
+                                for (auto& v : verts)
+                                {
+                                    if (ImGui::TreeNode(std::to_string(vertID++).c_str()))
+                                    {
+                                        ImGui::InputFloat2("Position", (float*)&v.position);
+                                        ImVec4 col = v.color;
+                                        if (ImGui::ColorEdit4("##color", (float*)&col))
+                                        {
+                                            v.color = col;
+                                        }
+                                        ImGui::TreePop();
+                                    }
+                                }
+                                ImGui::TreePop();
+                            }
                         }
                         if (e.hasComponent<Camera>())
                         {
@@ -126,18 +162,17 @@ namespace xy
                             {
                                 auto& t = e.getComponent<Transform>();
                                 
-                                auto x = t.getPosition().x;
-                                auto y = t.getPosition().y;
+                                ImVec2 pos = t.getPosition();
+                                ImVec2 org = t.getOrigin();
                                 
-                                if (ImGui::InputFloat("x", &x))
+                                if (ImGui::InputFloat2("Pos (x,y)", (float*)&pos))
                                 {
-                                    t.setPosition(x,y);
+                                    t.setPosition(pos);
                                 }
-                                if (ImGui::InputFloat("y", &y))
+                                if (ImGui::InputFloat2("Origin (x,y)", (float*)&org))
                                 {
-                                    t.setPosition(x,y);
+                                    t.setOrigin(org);
                                 }
-                                
                                 ImGui::TreePop();
                             }
                         }
@@ -147,7 +182,12 @@ namespace xy
                             {
                                 auto& t = e.getComponent<Text>();
                                 
-                                // Select font
+                                auto bounds = t.getLocalBounds();
+                                ImGui::Text("Local bounds: ");
+                                ImGui::TextUnformatted(("Left: " + std::to_string(bounds.left)).c_str());
+                                ImGui::TextUnformatted(("Top: " + std::to_string(bounds.top)).c_str());
+                                ImGui::TextUnformatted(("Width: " + std::to_string(bounds.width)).c_str());
+                                ImGui::TextUnformatted(("Height: " + std::to_string(bounds.height)).c_str());
                                 
                                 if (ImGui::BeginCombo("Font", "Select to change"))
                                 {
@@ -190,6 +230,30 @@ namespace xy
                                 ImGui::TreePop();
                             }
                         }
+                        if (e.hasComponent<UIHitBox>())
+                        {
+                            if (ImGui::TreeNode("UI Hitbox"))
+                            {
+                                auto& u = e.getComponent<UIHitBox>();
+                                ImGui::Checkbox("Active", &u.active);
+                                auto& area = u.area;
+                                sf::Vector2f pos = {area.left, area.top};
+                                sf::Vector2f size = {area.width, area.height};
+                                ImGui::Text("Area: ");
+                                
+                                if (ImGui::InputFloat2("Pos (x,y)", (float*)&pos))
+                                {
+                                    area.top = pos.y;
+                                    area.left = pos.x;
+                                }
+                                if (ImGui::InputFloat2("Size (x,y)", (float*)&size))
+                                {
+                                    area.width = size.x;
+                                    area.height = size.y;
+                                }
+                                ImGui::TreePop();
+                            }
+                        }
                         
                         // Add a new component to entity (And make sure requisite system is added
                         if (ImGui::BeginCombo("Add component", "Select type"))
@@ -222,6 +286,21 @@ namespace xy
                                 scene->getSystem<TextRenderer>().addEntity(e);
                                 scene->getSystem<RenderSystem>().addEntity(e);
                             }
+                            if (ImGui::Selectable("Drawable"))
+                            {
+                                scene->addSystem<RenderSystem>(App::getActiveInstance()->getMessageBus());
+                                e.addComponent<Drawable>();
+                                e.addComponent<Transform>();
+                                
+                                scene->getSystem<RenderSystem>().addEntity(e);
+                            }
+                            if (ImGui::Selectable("UI Hitbox"))
+                            {
+                                scene->addSystem<UISystem>(App::getActiveInstance()->getMessageBus());
+                                e.addComponent<UIHitBox>();
+                                
+                                scene->getSystem<UISystem>().addEntity(e);
+                            }
                             
                             ImGui::EndCombo();
                         }
@@ -240,6 +319,14 @@ namespace xy
             if (ImGui::Button("Create Entity"))
             {
                 scene->createEntity();
+            }
+            
+            // Path to save
+            std::array<char, MAX_INPUT_CHARS> buf = {{0}};
+            m_path.copy(buf.data(), m_path.length());
+            if (ImGui::InputText("rename (path)", buf.data(), buf.size(), ImGuiInputTextFlags_EnterReturnsTrue))
+            {
+                m_path = buf.data();
             }
             
             // Save scene

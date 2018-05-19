@@ -124,31 +124,33 @@ m_sceneName(sceneName)
 void EditorSystem::onCreate()
 {
     // If no scene name provided, use a default one
-    /*if (m_sceneName.empty())
+    if (m_sceneName.empty())
     {
-        m_sceneName = "Unnamed scene " + std::to_string(sceneCounter++);
-        scenes[m_sceneName].scene = getScene();
+        assets.push_back(std::make_unique<SceneAsset>());
+        auto newScene = dynamic_cast<SceneAsset*>(assets.back().get());
+        
+        newScene->scene.reset(getScene()); // naughty naughty, how to avoid?
+        newScene->m_path = "Unsaved scene"; // better way to do this?
     }
-    
-    // Otherwise, check if the scene name matches an asset, in which case link it
-    // Could do with a better way of matching up user-created scenes to the assets
-    else if (scenes.find(m_sceneName) != scenes.end())
+    else
     {
-        scenes.find(m_sceneName)->second.scene = getScene();
-    }*/
-    
+        // check if name matches existing asset. not ideal
+        for (auto& asset : assets)
+        {
+            if (asset->getType() == AssetType::Scene)
+            {
+                if (asset->m_path == m_sceneName)
+                {
+                    auto sceneAsset = dynamic_cast<SceneAsset*>(asset.get());
+                    sceneAsset->scene.reset(getScene());
+                }
+            }
+        }
+    }
 }
 
 EditorSystem::~EditorSystem()
 {
-    /*auto scene = getScene();
-    auto me = std::find_if(scenes.begin(),scenes.end(),[scene](const std::pair<std::string, SceneAsset>& m)
-                           { return m.second.scene == scene; });
-    
-    if (me != scenes.end())
-    {
-        scenes.erase(me);
-    }*/
 }
 
 void Editor::init()
@@ -275,13 +277,6 @@ void Editor::init()
                 assets.emplace_back(std::make_unique<SceneAsset>());
                 auto newScene = dynamic_cast<SceneAsset*>(assets.back().get());
                 newScene->m_path = filePath;
-                
-                newScene->scene.reset(new Scene(App::getActiveInstance()->getMessageBus(), filePath));
-                
-                // Add the editor system
-                newScene->scene->addSystem<EditorSystem>(App::getActiveInstance()->getMessageBus(), "Debug Scene!");
-                newScene->scene->addSystem<CameraSystem>(App::getActiveInstance()->getMessageBus());
-                
             }
             else
             {

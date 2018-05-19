@@ -44,6 +44,7 @@ source distribution.
 #include "xyginext/ecs/systems/CameraSystem.hpp"
 #include "xyginext/ecs/systems/SpriteSystem.hpp"
 #include "xyginext/ecs/systems/TextRenderer.hpp"
+#include "xyginext/ecs/systems/UISystem.hpp"
 
 #include "cereal/archives/binary.hpp"
 #include "cereal/types/string.hpp"
@@ -260,6 +261,12 @@ void Scene::forwardMessage(const Message& msg)
 bool Scene::saveToFile(const std::string &path)
 {
     std::ofstream os(path, std::ios::binary);
+    if (!os.is_open() || !os.good())
+    {
+        std::string error = strerror(errno);
+        xy::Logger::log("Error saving scene: " + error, xy::Logger::Type::Error);
+        return false;
+    }
     cereal::BinaryOutputArchive archive(os);
     
     // Store systems
@@ -348,7 +355,14 @@ bool Scene::loadFromFile(const std::string &path)
     std::ifstream is(path, std::ios::binary);
     if (!is.good() || !is.is_open())
     {
-        return false;
+        // Try loading from resource folder (MACOS)
+        is.open(xy::FileSystem::getResourcePath() + path);
+        if (!is.good() || !is.is_open())
+        {
+            std::string error = strerror(errno);
+            xy::Logger::log("Error loading scene: " + error, xy::Logger::Type::Error);
+            return false;
+        }
     }
     
     cereal::BinaryInputArchive archive(is);
@@ -367,6 +381,7 @@ bool Scene::loadFromFile(const std::string &path)
         EditorSystem es(mb);
         TextRenderer tr(mb);
         CameraSystem cs(mb);
+        UISystem     us(mb);
         if (rs.getType().name() == name)
         {
             addSystem<RenderSystem>(mb);
@@ -377,7 +392,7 @@ bool Scene::loadFromFile(const std::string &path)
         }
         else if (es.getType().name() == name)
         {
-            addSystem<EditorSystem>(mb);
+            addSystem<EditorSystem>(mb, path);
         }
         else if (tr.getType().name() == name)
         {
@@ -386,6 +401,10 @@ bool Scene::loadFromFile(const std::string &path)
         else if (cs.getType().name() == name)
         {
             addSystem<CameraSystem>(mb);
+        }
+        else if (us.getType().name() == name)
+        {
+            addSystem<UISystem>(mb);
         }
         else
         {
