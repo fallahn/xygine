@@ -53,5 +53,8 @@ namespace xy
         // EditorAsset
         void edit();
         AssetType getType() const {return AssetType::Spritesheet;}
+        
+    private:
+        sf::Texture* m_selectedTexture;
     };
 }

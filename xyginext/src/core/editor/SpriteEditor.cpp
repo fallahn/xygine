@@ -431,6 +431,7 @@ void SpriteSheetAsset::edit()
                 {
                     texName = asset->m_path;
                     sheet.setTexturePath(asset->m_path);
+                    m_selectedTexture = &dynamic_cast<TextureAsset*>(asset.get())->texture;
                     m_dirty = true;
                 }
             }
@@ -460,7 +461,7 @@ void SpriteSheetAsset::edit()
         // Add/delete sprite
         if (ImGui::Button("+##sprite"))
         {
-            sheet.setSprite("New Sprite", Sprite(*sheet.getSprites().begin()->second.getTexture())); // much stupid
+            sheet.setSprite("New Sprite", Sprite(*m_selectedTexture));
             selectedSprite = "New Sprite";
             m_dirty = true;
         }
