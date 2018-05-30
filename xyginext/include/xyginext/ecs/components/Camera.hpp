@@ -123,7 +123,7 @@ namespace xy
         sf::FloatRect getBounds() const { return m_bounds; }
         
         template<class Archive>
-        void serialize(Archive& ar);
+        void serialize(Archive& ar, const std::uint32_t version);
 
     private:
 

@@ -48,8 +48,16 @@ T& SystemManager::addSystem(Args&&... args)
     m_activeSystems.push_back(m_systems.back().get());
     m_systems.back()->m_active = true;
     m_systems.back()->onCreate();
+    
+    auto& retVal = *(dynamic_cast<T*>(m_systems.back().get()));
+    
+    // Sort by priority
+    std::sort(m_systems.begin(), m_systems.end(), [](const std::unique_ptr<System>& a,const std::unique_ptr<System>& b)
+    {
+        return a->getPriority() > b->getPriority();
+    });
 
-    return *(dynamic_cast<T*>(m_systems.back().get()));
+    return retVal;
 }
 
 template <typename T>

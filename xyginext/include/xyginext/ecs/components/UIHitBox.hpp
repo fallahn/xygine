@@ -67,7 +67,7 @@ namespace xy
         sf::Int32 ID = -1;
         
         template<class Archive>
-        void serialize(Archive& archive)
+        void serialize(Archive& archive, const std::uint32_t version)
         {
             archive(area, active, ID);
         }

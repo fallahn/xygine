@@ -230,7 +230,7 @@ namespace xy
         Status getStatus() const;
         
         template<class Archive>
-        void serialize(Archive& ar);
+        void serialize(Archive& ar, const std::uint32_t version);
 
     private:
         sf::Uint8 m_mixerChannel;

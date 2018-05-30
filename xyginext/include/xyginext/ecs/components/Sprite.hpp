@@ -37,36 +37,6 @@ source distribution.
 
 #include <array>
 
-namespace cereal
-{
-template<class Archive>
-void save(Archive& ar, sf::Texture const & tex)
-{
-    //lololololol
-    auto image = tex.copyToImage();
-    auto size = tex.getSize();
-    std::vector<unsigned char> pixels(size.x*size.y);
-    std::memcpy(pixels.data(), image.getPixelsPtr(), size.x*size.y);
-        
-    // store size then data
-    ar(size.x,size.y);
-    ar(pixels);
-        
-}
-
-template<class Archive>
-void load(Archive& ar, sf::Texture& tex)
-{
-    //lololololol
-    sf::Vector2u size;
-    ar(size.x,size.y);
-    tex.create(size.x, size.y);
-    std::vector<unsigned char> pixels(size.x*size.y);
-    ar(pixels);
-    tex.update(pixels.data());
-}
-}
-
 namespace xy
 {
     /*!
@@ -157,6 +127,9 @@ namespace xy
 
             bool looped = false;
             float framerate = 12.f;
+            
+            template<class Archive>
+            void serialize(Archive& ar, const std::uint32_t version);
         };
 
 
@@ -189,11 +162,11 @@ namespace xy
         void setTextureResourceID(ResourceID id);
         
         template<class Archive>
-        void serialize(Archive& ar);
+        void serialize(Archive& ar, const std::uint32_t version);
 
     private:
         sf::FloatRect m_textureRect;
-        std::shared_ptr<sf::Texture> m_texture;
+        const sf::Texture* m_texture;
         ResourceID m_textureResourceID;
         sf::Color m_colour;
         bool m_dirty;

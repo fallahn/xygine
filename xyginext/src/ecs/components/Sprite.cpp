@@ -30,6 +30,7 @@ source distribution.
 
 #include "cereal/archives/binary.hpp"
 #include "cereal/archives/json.hpp"
+#include "cereal/types/array.hpp"
 
 #include <SFML/Graphics/Texture.hpp>
 
@@ -56,7 +57,7 @@ Sprite::Sprite(const sf::Texture& texture)
 //public
 void Sprite::setTexture(const sf::Texture& texture)
 {
-    m_texture = std::make_shared<sf::Texture>(texture);
+    m_texture = &texture;
     auto size = static_cast<sf::Vector2f>(texture.getSize());
     setTextureRect({ sf::Vector2f(), size });
 }
@@ -75,7 +76,7 @@ void Sprite::setColour(sf::Color c)
 
 const sf::Texture* Sprite::getTexture() const
 {
-    return m_texture.get();
+    return m_texture;
 }
 
 sf::Color Sprite::getColour() const
@@ -94,15 +95,30 @@ ResourceID Sprite::getTextureResourceID()
 }
 
 template<class Archive>
-void Sprite::serialize(Archive &ar)
+void Sprite::serialize(Archive &ar, const std::uint32_t version)
 {
     ar(m_textureResourceID,
        m_textureRect,
        m_colour);
+    
+    // anims
+    ar(m_animationCount, m_animations);
 }
 
-template void Sprite::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&);
-template void Sprite::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&);
+template<class Archive>
+void Sprite::Animation::serialize(Archive &ar, const std::uint32_t version)
+{
+    ar(frames, framerate, frameCount, id);
+}
 
-template void Sprite::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&);
-template void Sprite::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&);
+template void Sprite::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&, const std::uint32_t);
+template void Sprite::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&, const std::uint32_t);
+
+template void Sprite::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&, const std::uint32_t);
+template void Sprite::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&, const std::uint32_t);
+
+template void Sprite::Animation::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&, const std::uint32_t);
+template void Sprite::Animation::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&, const std::uint32_t);
+
+template void Sprite::Animation::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&, const std::uint32_t);
+template void Sprite::Animation::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&, const std::uint32_t);

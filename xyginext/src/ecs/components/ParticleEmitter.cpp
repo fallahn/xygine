@@ -234,14 +234,14 @@ bool EmitterSettings::saveToFile(const std::string& path)
 }
 
 template<class Archive>
-void ParticleEmitter::serialize(Archive& ar)
+void ParticleEmitter::serialize(Archive& ar, const std::uint32_t version)
 {
-    ar(m_bounds,
-       m_releaseCount);
+    ar(m_bounds);
+    ar(m_releaseCount);
 }
 
-template void ParticleEmitter::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&);
-template void ParticleEmitter::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&);
+template void ParticleEmitter::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&, const std::uint32_t);
+template void ParticleEmitter::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&, const std::uint32_t);
 
-template void ParticleEmitter::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&);
-template void ParticleEmitter::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&);
+template void ParticleEmitter::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&, const std::uint32_t);
+template void ParticleEmitter::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&, const std::uint32_t);

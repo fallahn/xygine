@@ -38,9 +38,11 @@
 #include "xyginext/ecs/components/Transform.hpp"
 #include "xyginext/ecs/components/Text.hpp"
 #include "xyginext/ecs/components/UIHitBox.hpp"
+#include "xyginext/ecs/components/SpriteAnimation.hpp"
 #include "xyginext/ecs/systems/TextRenderer.hpp"
 #include "xyginext/ecs/systems/RenderSystem.hpp"
 #include "xyginext/ecs/systems/SpriteSystem.hpp"
+#include "xyginext/ecs/systems/SpriteAnimator.hpp"
 #include "xyginext/ecs/systems/CameraSystem.hpp"
 #include "xyginext/ecs/systems/UISystem.hpp"
 
@@ -109,10 +111,67 @@ namespace xy
                                         showSpriteSelector = false;
                                         e.getComponent<Sprite>() = *spr;
                                         e.addComponent<Drawable>();
-                                        e.addComponent<Transform>();
+                                        if (!e.hasComponent<Transform>())
+                                        {
+                                            // don't reset transform unnecessarily
+                                            e.addComponent<Transform>();
+                                        }
                                     }
                                 }
                                 ImGui::TreePop();
+                            }
+                            
+                            else if (ImGui::Button(ICON_FA_MINUS))
+                            {
+                                e.removeComponent<Sprite>();
+                            }
+                        }
+                        if (e.hasComponent<SpriteAnimation>())
+                        {
+                            if (ImGui::TreeNode("Sprite Animation"))
+                            {
+                                auto& anim = e.getComponent<SpriteAnimation>();
+                                auto spr = e.getComponent<Sprite>();
+                                
+                                // select anim
+                                static int selectedIndex(-1); // bad
+                                if (ImGui::BeginCombo("Animations", selectedIndex > -1 ? spr.getAnimations()[selectedIndex].id.data() : "Select an animation"))
+                                {
+                                    int index(0);
+                                    for (auto a : spr.getAnimations())
+                                    {
+                                        if (ImGui::Selectable(a.id.data()))
+                                        {
+                                            anim.play(index);
+                                            selectedIndex = index;
+                                        }
+                                        index++;
+                                    }
+                                    ImGui::EndCombo();
+                                }
+                                
+                                // Play/pause/stop controls
+                                if (anim.stopped())
+                                {
+                                    if (ImGui::Button(ICON_FA_PLAY))
+                                    {
+                                        anim.play(selectedIndex);
+                                    }
+                                }
+                                else
+                                {
+                                    if (ImGui::Button(ICON_FA_STOP))
+                                    {
+                                        anim.stop();
+                                    }
+                                }
+                                
+                                ImGui::TreePop();
+                            }
+                            
+                            else if (ImGui::Button(ICON_FA_MINUS))
+                            {
+                                e.removeComponent<SpriteAnimation>();
                             }
                         }
                         if (e.hasComponent<Drawable>())
@@ -151,6 +210,11 @@ namespace xy
                                 }
                                 ImGui::TreePop();
                             }
+                            
+                            else if (ImGui::Button(ICON_FA_MINUS))
+                            {
+                                e.removeComponent<Drawable>();
+                            }
                         }
                         if (e.hasComponent<Camera>())
                         {
@@ -174,6 +238,11 @@ namespace xy
                                     t.setOrigin(org);
                                 }
                                 ImGui::TreePop();
+                            }
+                            
+                            else if (ImGui::Button(ICON_FA_MINUS))
+                            {
+                                e.removeComponent<Transform>();
                             }
                         }
                         if (e.hasComponent<Text>())
@@ -229,6 +298,11 @@ namespace xy
                                 
                                 ImGui::TreePop();
                             }
+                            
+                            else if (ImGui::Button(ICON_FA_MINUS))
+                            {
+                                e.removeComponent<Text>();
+                            }
                         }
                         if (e.hasComponent<UIHitBox>())
                         {
@@ -252,6 +326,10 @@ namespace xy
                                     area.height = size.y;
                                 }
                                 ImGui::TreePop();
+                            }
+                            else if (ImGui::Button(ICON_FA_MINUS))
+                            {
+                                e.removeComponent<UIHitBox>();
                             }
                         }
                         
@@ -300,6 +378,13 @@ namespace xy
                                 e.addComponent<UIHitBox>();
                                 
                                 scene->getSystem<UISystem>().addEntity(e);
+                            }
+                            if (ImGui::Selectable("Sprite Animation"))
+                            {
+                                scene->addSystem<SpriteAnimator>(App::getActiveInstance()->getMessageBus());
+                                e.addComponent<SpriteAnimation>();
+                                
+                                scene->getSystem<SpriteAnimator>().addEntity(e);
                             }
                             
                             ImGui::EndCombo();

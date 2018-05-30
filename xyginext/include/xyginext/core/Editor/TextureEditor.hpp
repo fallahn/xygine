@@ -40,6 +40,8 @@ public:
     sf::Texture texture;
     void edit();
     AssetType getType() const {return AssetType::Texture;}
+    
+    bool selectRect( sf::FloatRect& currentRect);
 };
 
 }

@@ -78,7 +78,7 @@ namespace xy
         }
         
         template<class Archive>
-        void serialize(Archive& ar)
+        void serialize(Archive& ar, const std::uint32_t version)
         {
             ar(m_volume,
                m_depth);

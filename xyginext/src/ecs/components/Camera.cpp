@@ -103,14 +103,14 @@ bool Camera::rotationLocked() const
 }
 
 template<class Archive>
-void Camera::serialize(Archive &ar)
+void Camera::serialize(Archive &ar, const std::uint32_t version)
 {
-    ar(m_bounds,
-       m_lockRotation);
+    ar(m_bounds);
+    ar(m_lockRotation);
 }
 
-template void Camera::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&);
-template void Camera::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&);
+template void Camera::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&, const std::uint32_t);
+template void Camera::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&, const std::uint32_t);
 
-template void Camera::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&);
-template void Camera::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&);
+template void Camera::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&, const std::uint32_t);
+template void Camera::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&, const std::uint32_t);

@@ -180,22 +180,22 @@ void Text::setAlignment(Text::Alignment alignment)
 }
 
 template<class Archive>
-void Text::serialize(Archive& ar)
+void Text::serialize(Archive& ar, const std::uint32_t version)
 {
-    ar(m_string,
-       m_fontResourceID,
-       m_charSize,
-       m_fillColour,
-       m_alignment,
-       m_cropped,
-       m_croppingArea);
+    ar(m_string);
+    ar(m_fontResourceID);
+    ar(m_charSize);
+    ar(m_fillColour);
+    ar(m_alignment);
+    ar(m_cropped);
+    ar(m_croppingArea);
 }
 
-template void Text::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&);
-template void Text::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&);
+template void Text::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&, const std::uint32_t);
+template void Text::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&, const std::uint32_t);
 
-template void Text::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&);
-template void Text::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&);
+template void Text::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&, const std::uint32_t);
+template void Text::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&, const std::uint32_t);
 
 //private
 

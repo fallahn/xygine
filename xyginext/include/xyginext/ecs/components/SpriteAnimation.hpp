@@ -71,7 +71,7 @@ namespace xy
         void setFrameID(sf::Uint32 frameID) { m_frameID = frameID; }
         
         template<class Archive>
-        void serialize(Archive& ar)
+        void serialize(Archive& ar, const std::uint32_t version)
         {
             ar(m_id,
                m_playing);

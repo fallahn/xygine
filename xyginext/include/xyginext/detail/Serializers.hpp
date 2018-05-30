@@ -25,46 +25,45 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_SERIALIZERS_HPP_
-#define XY_SERIALIZERS_HPP_
+#pragma once
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/String.hpp>
 
 #include "cereal/types/string.hpp"
 
-namespace cereal
+// because cereal
+namespace sf
 {
     template<class Archive>
-    void serialize(Archive& ar, sf::Color& col)
+    void serialize(Archive& ar, Color& col, const std::uint32_t version)
     {
         ar(col.r, col.g, col.b, col.a);
     }
     
     template<class Archive>
-    void serialize(Archive& ar, sf::Vector2f& vec)
+    void serialize(Archive& ar, Vector2f& vec, const std::uint32_t version)
     {
         ar(vec.x, vec.y);
     }
     
     template<class Archive>
-    void serialize(Archive& ar, sf::FloatRect& rect)
+    void serialize(Archive& ar, FloatRect& rect, const std::uint32_t version)
     {
         ar(rect.left, rect.top, rect.width, rect.height);
     }
     
     template<class Archive>
-    void save(Archive& ar, const sf::String& str)
+    void save(Archive& ar, const String& str, const std::uint32_t version)
     {
         ar(str.toAnsiString());
     }
     
     template<class Archive>
-    void load(Archive& ar, sf::String& str)
+    void load(Archive& ar, String& str, const std::uint32_t version)
     {
         std::string string;
         ar(string);
         str = string;
     }
 }
-#endif //XY_SERIALIZERS_HPP_

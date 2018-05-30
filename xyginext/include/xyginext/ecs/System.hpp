@@ -107,6 +107,11 @@ namespace xy
         Systems can be activeated and deactivated with Scene::setSystemActive()
         */
         bool isActive() const { return m_active; }
+        
+        /*!
+         \brief Returns the priority - higher priorities will be updated first in the scene
+         */
+        std::uint16_t getPriority() const {return m_priority; }
 
     protected:
 
@@ -155,7 +160,12 @@ namespace xy
         \brief Returns a pointer to the scene to which this system belongs
         */
         Scene* getScene();
-
+        
+        /*!
+         \brief The systems priority
+         */
+        std::uint16_t m_priority = 0;
+        
     private:
         
 

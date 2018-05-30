@@ -28,6 +28,7 @@
 #pragma once
 
 #include "xyginext/core/editor/EditorAsset.hpp"
+#include "xyginext/core/editor/TextureEditor.hpp"
 
 #include "xyginext/ecs/components/Sprite.hpp"
 #include "xyginext/graphics/SpriteSheet.hpp"
@@ -48,13 +49,15 @@ namespace xy
     class SpriteSheetAsset : public EditorAsset
     {
     public:
-        SpriteSheet sheet; // The spritesheet asset itself
-        
+        SpriteSheetAsset(const std::string sheetPath, xy::TextureResource& textures);
         // EditorAsset
         void edit();
         AssetType getType() const {return AssetType::Spritesheet;}
         
     private:
-        sf::Texture* m_selectedTexture;
+        SpriteSheet sheet; // The spritesheet asset itself
+        TextureAsset m_textureAsset;
+        
+        friend Sprite* SpriteEditor::selectSpriteFromAssets();
     };
 }

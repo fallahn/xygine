@@ -45,6 +45,7 @@ source distribution.
 #include "xyginext/ecs/systems/SpriteSystem.hpp"
 #include "xyginext/ecs/systems/TextRenderer.hpp"
 #include "xyginext/ecs/systems/UISystem.hpp"
+#include "xyginext/ecs/systems/SpriteAnimator.hpp"
 
 #include "cereal/archives/binary.hpp"
 #include "cereal/types/string.hpp"
@@ -376,12 +377,13 @@ bool Scene::loadFromFile(const std::string &path)
      
         // this is madness
         auto& mb = App::getActiveInstance()->getMessageBus();
-        RenderSystem rs(mb);
-        SpriteSystem ss(mb);
-        EditorSystem es(mb);
-        TextRenderer tr(mb);
-        CameraSystem cs(mb);
-        UISystem     us(mb);
+        RenderSystem    rs(mb);
+        SpriteSystem    ss(mb);
+        EditorSystem    es(mb);
+        TextRenderer    tr(mb);
+        CameraSystem    cs(mb);
+        UISystem        us(mb);
+        SpriteAnimator  sa(mb);
         if (rs.getType().name() == name)
         {
             addSystem<RenderSystem>(mb);
@@ -405,6 +407,14 @@ bool Scene::loadFromFile(const std::string &path)
         else if (us.getType().name() == name)
         {
             addSystem<UISystem>(mb);
+        }
+        else if (us.getType().name() == name)
+        {
+            addSystem<UISystem>(mb);
+        }
+        else if(sa.getType().name() == name)
+        {
+            addSystem<SpriteAnimator>(mb);
         }
         else
         {

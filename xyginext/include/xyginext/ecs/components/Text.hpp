@@ -179,7 +179,7 @@ namespace xy
         Alignment getAlignment() const { return m_alignment; }
         
         template<class Archive>
-        void serialize(Archive&);
+        void serialize(Archive&, const std::uint32_t version);
 
     private:
 

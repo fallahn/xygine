@@ -240,9 +240,8 @@ void Editor::init()
             // Would prefer a better way to handle file types - enum?
             if (ext == ".spt")
             {
-                assets.emplace_back(std::make_unique<SpriteSheetAsset>());
+                assets.emplace_back(std::make_unique<SpriteSheetAsset>(filePath, textureResource));
                 auto newSheetAsset = dynamic_cast<SpriteSheetAsset*>(assets.back().get());
-                newSheetAsset->sheet.loadFromFile(filePath, textureResource);
                 newSheetAsset->m_path = filePath;
             }
             else if (ext == ".xyp")
@@ -575,7 +574,6 @@ bool Editor::handleEvent(sf::Event& ev)
     
     switch(ev.type)
     {
-            // Keyboard shortcuts
         case sf::Event::KeyPressed:
         {
             switch(ev.key.code)
@@ -616,8 +614,14 @@ bool Editor::handleEvent(sf::Event& ev)
                 default:
                     break;
             }
-            break;
+            return true;
         }
+            
+        case sf::Event::MouseButtonPressed:
+        {
+            return true;
+        }
+            
             
         default:
             break;
@@ -936,7 +940,7 @@ void Editor::showModalPopups()
             {
                 case AssetType::Spritesheet:
                 {
-                    assets.emplace_back(std::make_unique<SpriteSheetAsset>());
+                    assets.emplace_back(std::make_unique<SpriteSheetAsset>(buf.data(), textureResource));
                     auto& ss = assets.back();
                     if (ss)
                     {
@@ -1011,3 +1015,4 @@ std::vector<std::unique_ptr<EditorAsset>>& Editor::getAssets()
 {
     return assets;
 }
+

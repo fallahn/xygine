@@ -177,15 +177,15 @@ AudioEmitter::Status AudioEmitter::getStatus() const
 }
 
 template<class Archive>
-void AudioEmitter::serialize(Archive &ar)
+void AudioEmitter::serialize(Archive &ar, const std::uint32_t version)
 {
     //incomplete
     ar(m_mixerChannel,
        m_volume);
 }
 
-template void AudioEmitter::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&);
-template void AudioEmitter::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&);
+template void AudioEmitter::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&, const std::uint32_t);
+template void AudioEmitter::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&, const std::uint32_t);
 
-template void AudioEmitter::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&);
-template void AudioEmitter::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&);
+template void AudioEmitter::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&, const std::uint32_t);
+template void AudioEmitter::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&, const std::uint32_t);
