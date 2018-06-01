@@ -32,6 +32,8 @@ source distribution.
 
 #include <SFML/Graphics/View.hpp>
 
+#include <cstdint>
+
 namespace xy
 {
     /*!

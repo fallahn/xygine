@@ -59,7 +59,6 @@ void EntityManager::removeComponent(Entity entity)
 
     XY_ASSERT(entityID < m_componentMasks.size(), "Entity index out of range");
     m_componentMasks[entityID].set(componentID, false);
-    
 }
 
 template <typename T>

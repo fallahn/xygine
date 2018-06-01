@@ -48,6 +48,7 @@
 
 #include "../../imgui/imgui.h"
 #include "../../imgui/imgui-SFML.h"
+#include "../../imgui/imgui_dock.hpp"
 
 #include <set>
 
@@ -55,15 +56,12 @@ namespace xy
 {
     namespace
     {
-        // To keep track of which entitie's sprites we are editing
-        std::set<Entity> openSprites;
         constexpr std::size_t MAX_INPUT_CHARS = 400;
     }
     
     SceneAsset::SceneAsset() :
     scene(nullptr)
     {
-        
     }
     
     void SceneAsset::edit()
@@ -124,6 +122,10 @@ namespace xy
                             else if (ImGui::Button(ICON_FA_MINUS))
                             {
                                 e.removeComponent<Sprite>();
+                                
+                                // Because removeComponent doesn't remove entity from systems
+                                scene->m_systemManager.removeFromSystems(e);
+                                scene->m_systemManager.addToSystems(e);
                             }
                         }
                         if (e.hasComponent<SpriteAnimation>())
@@ -172,6 +174,10 @@ namespace xy
                             else if (ImGui::Button(ICON_FA_MINUS))
                             {
                                 e.removeComponent<SpriteAnimation>();
+                                
+                                // Because removeComponent doesn't remove entity from systems
+                                scene->m_systemManager.removeFromSystems(e);
+                                scene->m_systemManager.addToSystems(e);
                             }
                         }
                         if (e.hasComponent<Drawable>())
@@ -214,6 +220,10 @@ namespace xy
                             else if (ImGui::Button(ICON_FA_MINUS))
                             {
                                 e.removeComponent<Drawable>();
+                                
+                                // Because removeComponent doesn't remove entity from systems
+                                scene->m_systemManager.removeFromSystems(e);
+                                scene->m_systemManager.addToSystems(e);
                             }
                         }
                         if (e.hasComponent<Camera>())
@@ -243,6 +253,10 @@ namespace xy
                             else if (ImGui::Button(ICON_FA_MINUS))
                             {
                                 e.removeComponent<Transform>();
+                                
+                                // Because removeComponent doesn't remove entity from systems
+                                scene->m_systemManager.removeFromSystems(e);
+                                scene->m_systemManager.addToSystems(e);
                             }
                         }
                         if (e.hasComponent<Text>())
@@ -302,6 +316,10 @@ namespace xy
                             else if (ImGui::Button(ICON_FA_MINUS))
                             {
                                 e.removeComponent<Text>();
+                                
+                                // Because removeComponent doesn't remove entity from systems
+                                scene->m_systemManager.removeFromSystems(e);
+                                scene->m_systemManager.addToSystems(e);
                             }
                         }
                         if (e.hasComponent<UIHitBox>())
@@ -330,6 +348,10 @@ namespace xy
                             else if (ImGui::Button(ICON_FA_MINUS))
                             {
                                 e.removeComponent<UIHitBox>();
+                                
+                                // Because removeComponent doesn't remove entity from systems
+                                scene->m_systemManager.removeFromSystems(e);
+                                scene->m_systemManager.addToSystems(e);
                             }
                         }
                         
@@ -396,6 +418,11 @@ namespace xy
                         }
                         
                         ImGui::TreePop();
+                        scene->getSystem<xy::EditorSystem>().highlightEntity(e, sf::Color::Red);
+                    }
+                    else if (ImGui::IsItemHovered())
+                    {
+                        scene->getSystem<xy::EditorSystem>().highlightEntity(e, sf::Color::Yellow);
                     }
                 }
             }

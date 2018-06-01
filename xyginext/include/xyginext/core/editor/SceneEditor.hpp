@@ -45,5 +45,8 @@ namespace xy
         void edit();
         bool showDebug = false;
         AssetType getType() const {return AssetType::Scene;}
+        
+    private:
+        void highlightEntity(xy::Entity e);
     };
 }

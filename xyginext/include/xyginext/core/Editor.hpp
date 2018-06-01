@@ -38,17 +38,23 @@
 namespace xy
 {   
     // Editor system, add it to scenes you want to modify
-    class XY_EXPORT_API EditorSystem : public xy::System
+    class XY_EXPORT_API EditorSystem : public xy::System, sf::Drawable
     {
     public:
         EditorSystem(xy::MessageBus& mb, const std::string& sceneName = "");
         ~EditorSystem();
+        
+        void highlightEntity(xy::Entity e, sf::Color colour);
+        
+        void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
         
     protected:
         void onCreate() override;
         
     private:
         std::string m_sceneName;
+        sf::VertexArray m_highlightVertices;
+        xy::Entity m_highlightedEntity;
         
         friend class Editor;
         friend class Scene;

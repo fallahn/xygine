@@ -28,6 +28,7 @@ source distribution.
 #pragma once
 
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/String.hpp>
 
 #include "cereal/types/string.hpp"
@@ -51,6 +52,12 @@ namespace sf
     void serialize(Archive& ar, FloatRect& rect, const std::uint32_t version)
     {
         ar(rect.left, rect.top, rect.width, rect.height);
+    }
+    
+    template<class Archive>
+    void serialize(Archive& ar, Vertex& vertex, const std::uint32_t version)
+    {
+        ar(vertex.position, vertex.color, vertex.texCoords);
     }
     
     template<class Archive>

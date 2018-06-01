@@ -43,6 +43,7 @@
 #include "xyginext/ecs/components/Drawable.hpp"
 #include "xyginext/ecs/components/Sprite.hpp"
 #include "xyginext/ecs/components/Transform.hpp"
+#include "xyginext/ecs/components/Text.hpp"
 #include "xyginext/ecs/systems/RenderSystem.hpp"
 #include "xyginext/ecs/systems/SpriteSystem.hpp"
 #include "xyginext/ecs/systems/CameraSystem.hpp"
@@ -79,6 +80,7 @@ namespace
     
     // Buffer which the game renders to while the editor is active
     sf::RenderTexture viewportBuffer;
+    sf::VertexArray viewportDebugRects;
     
     // Video settings
     int currentResolution = 0;
@@ -152,6 +154,60 @@ void EditorSystem::onCreate()
 EditorSystem::~EditorSystem()
 {
 }
+
+void EditorSystem::highlightEntity(xy::Entity e, sf::Color colour)
+{
+    if (e == m_highlightedEntity)
+        return;
+    
+    auto& entities = getEntities();
+    auto entity = std::find(entities.begin(), entities.end(), e);
+    XY_ASSERT(entity != entities.end(), "Highlighted entity not found");
+    
+    m_highlightedEntity = e;
+    
+    //naughty
+    colour.a = 100;
+    
+    // Update the vertices
+    m_highlightVertices.clear();
+    m_highlightVertices.setPrimitiveType(sf::PrimitiveType::Triangles);
+    if (entity->hasComponent<xy::Drawable>())
+    {
+        auto& drawable = entity->getComponent<xy::Drawable>();
+        auto& transform = entity->getComponent<xy::Transform>();
+        auto bounds = transform.getWorldTransform().transformRect(drawable.getLocalBounds());
+        
+        m_highlightVertices.append({{bounds.left,bounds.top}, colour});
+        m_highlightVertices.append({{bounds.left + bounds.width, bounds.top}, colour});
+        m_highlightVertices.append({{bounds.left + bounds.width,bounds.top + bounds.height}, colour});
+        
+        m_highlightVertices.append({{bounds.left + bounds.width,bounds.top + bounds.height}, colour});
+        m_highlightVertices.append({{bounds.left,bounds.top + bounds.height}, colour});
+        m_highlightVertices.append({{bounds.left,bounds.top}, colour});
+    }
+    
+    if (entity->hasComponent<xy::Text>())
+    {
+        auto& text = entity->getComponent<xy::Text>();
+        auto& transform = entity->getComponent<xy::Transform>();
+        auto bounds = transform.getWorldTransform().transformRect(text.getLocalBounds());
+        
+        m_highlightVertices.append({{bounds.left,bounds.top}, colour});
+        m_highlightVertices.append({{bounds.left + bounds.width, bounds.top}, colour});
+        m_highlightVertices.append({{bounds.left + bounds.width,bounds.top + bounds.height}, colour});
+        
+        m_highlightVertices.append({{bounds.left + bounds.width,bounds.top + bounds.height}, colour});
+        m_highlightVertices.append({{bounds.left,bounds.top + bounds.height}, colour});;
+        m_highlightVertices.append({{bounds.left,bounds.top}, colour});
+    }
+}
+
+void EditorSystem::draw(sf::RenderTarget &target, sf::RenderStates states) const
+{
+    target.draw(m_highlightVertices);
+}
+
 
 void Editor::init()
 {
@@ -1015,4 +1071,3 @@ std::vector<std::unique_ptr<EditorAsset>>& Editor::getAssets()
 {
     return assets;
 }
-
