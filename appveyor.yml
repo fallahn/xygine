@@ -1,6 +1,6 @@
 image: Visual Studio 2017
 configuration: Release
-cache: c:\tools\vcpkg\installed\
+#cache: c:\tools\vcpkg\installed\
 build_script:
 - ps: >-
     cd C:/tools/vcpkg
