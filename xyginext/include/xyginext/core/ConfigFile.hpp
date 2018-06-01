@@ -101,7 +101,6 @@ namespace xy
         void setValue(sf::FloatRect);
         void setValue(sf::Color);
         void setValue(xy::Vector4f);
-        void setValue(xy::ResourceID);
         
     private:
         std::string m_value;
