@@ -308,7 +308,6 @@ bool Scene::saveToFile(const std::string &path)
                 {
                     archive(e.getComponent<xy::Drawable>());
                 }
-
                 else if (i == m_componentManager.getID<xy::Transform>())
                 {
                     archive(e.getComponent<xy::Transform>());

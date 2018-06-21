@@ -41,7 +41,7 @@ namespace xy
         SceneAsset();
         friend class Editor;
         friend class EditorSystem;
-        std::unique_ptr<Scene> scene;
+        Scene* scene;
         void edit();
         bool showDebug = false;
         AssetType getType() const {return AssetType::Scene;}

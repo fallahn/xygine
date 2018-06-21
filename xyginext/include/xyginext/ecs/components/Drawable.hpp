@@ -170,6 +170,7 @@ namespace xy
         not intersecting the current viewable area.
         */
         void setCulled(bool cull) { m_cull = cull; }
+        bool getCulled() { return m_cull; }
         
         template<class Archive>
         void serialize(Archive& ar, const std::uint32_t version);

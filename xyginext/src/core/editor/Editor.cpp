@@ -131,7 +131,7 @@ void EditorSystem::onCreate()
         assets.push_back(std::make_unique<SceneAsset>());
         auto newScene = dynamic_cast<SceneAsset*>(assets.back().get());
         
-        newScene->scene.reset(getScene()); // naughty naughty, how to avoid?
+        newScene->scene = getScene(); // naughty naughty, how to avoid?
         newScene->m_path = "Unsaved scene"; // better way to do this?
     }
     else
@@ -144,7 +144,7 @@ void EditorSystem::onCreate()
                 if (asset->m_path == m_sceneName)
                 {
                     auto sceneAsset = dynamic_cast<SceneAsset*>(asset.get());
-                    sceneAsset->scene.reset(getScene());
+                    sceneAsset->scene = getScene();
                 }
             }
         }
@@ -223,7 +223,7 @@ void Editor::init()
     static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
     ImFontConfig icons_config;
     icons_config.MergeMode = true;
-    icons_config.PixelSnapH = true;
+    //icons_config.PixelSnapH = true;
     icons_config.FontDataOwnedByAtlas = false;
     io.Fonts->AddFontFromMemoryTTF( fa_solid_900_ttf, fa_solid_900_ttf_len,  16.0f, &icons_config, icons_ranges );
     ImGui::SFML::UpdateFontTexture();
@@ -332,6 +332,8 @@ void Editor::init()
                 assets.emplace_back(std::make_unique<SceneAsset>());
                 auto newScene = dynamic_cast<SceneAsset*>(assets.back().get());
                 newScene->m_path = filePath;
+                newScene->scene = new Scene(App::getActiveInstance()->getMessageBus(), filePath); // leak?
+                newScene->scene->addSystem<EditorSystem>(App::getActiveInstance()->getMessageBus());
             }
             else
             {
@@ -1017,7 +1019,7 @@ void Editor::showModalPopups()
                         scn->m_open = true;
                         scn->m_dirty = true;
                         scn->m_path = buf.data();
-                        scn->scene.reset(new Scene(App::getActiveInstance()->getMessageBus()));
+                        scn->scene = new Scene(App::getActiveInstance()->getMessageBus()); // leak?
                         
                         // Make sure the new scene has the editor system and camera system
                         scn->scene->addSystem<EditorSystem>(App::getActiveInstance()->getMessageBus());

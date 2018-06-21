@@ -186,6 +186,13 @@ namespace xy
                             {
                                 auto& d = e.getComponent<Drawable>();
                                 
+                                auto culled = d.getCulled();
+                                if (ImGui::Checkbox("Cull", &culled))
+                                {
+                                    d.setCulled(culled);
+                                }
+
+                                
                                 auto bounds = d.getLocalBounds();
                                 ImGui::Text("Local bounds: ");
                                 ImGui::TextUnformatted(("Left: " + std::to_string(bounds.left)).c_str());
@@ -205,7 +212,10 @@ namespace xy
                                 {
                                     if (ImGui::TreeNode(std::to_string(vertID++).c_str()))
                                     {
-                                        ImGui::InputFloat2("Position", (float*)&v.position);
+                                        if (ImGui::InputFloat2("Position", (float*)&v.position))
+                                        {
+                                            d.updateLocalBounds();
+                                        }
                                         ImVec4 col = v.color;
                                         if (ImGui::ColorEdit4("##color", (float*)&col))
                                         {
