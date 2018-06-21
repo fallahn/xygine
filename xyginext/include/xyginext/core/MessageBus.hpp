@@ -57,7 +57,7 @@ namespace xy
         BadgerEvent //etc...
     };
     */
-    class XY_EXPORT_API MessageBus final
+    class XY_EXPORT_API MessageBus final 
     {
     public:
         MessageBus();

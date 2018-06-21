@@ -55,6 +55,11 @@ void ConfigProperty::setValue(sf::Int32 value)
     m_value = std::to_string(value);
 }
 
+void ConfigProperty::setValue(sf::Uint32 value)
+{
+    m_value = std::to_string(value);
+}
+
 void ConfigProperty::setValue(float value)
 {
     m_value = std::to_string(value);
@@ -66,6 +71,16 @@ void ConfigProperty::setValue(bool value)
 }
 
 void ConfigProperty::setValue(sf::Vector2f v)
+{
+    m_value = std::to_string(v.x) + "," + std::to_string(v.y);
+}
+
+void ConfigProperty::setValue(sf::Vector2i v)
+{
+    m_value = std::to_string(v.x) + "," + std::to_string(v.y);
+}
+
+void ConfigProperty::setValue(sf::Vector2u v)
 {
     m_value = std::to_string(v.x) + "," + std::to_string(v.y);
 }
@@ -85,10 +100,11 @@ void ConfigProperty::setValue(sf::Color v)
     m_value = std::to_string(v.r) + "," + std::to_string(v.g) + "," + std::to_string(v.b) + "," + std::to_string(v.a);
 }
 
-void ConfigProperty::setValue(xy::Vector4f v)
+void ConfigProperty::setValue(Vector4f v)
 {
     m_value = std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z) + "," + std::to_string(v.w);
 }
+
 
 //private
 std::vector<float> ConfigProperty::valueAsArray() const

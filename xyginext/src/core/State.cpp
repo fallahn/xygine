@@ -34,8 +34,8 @@ source distribution.
 
 using namespace xy;
 
-State::Context::Context(sf::RenderWindow& rw, App& app)
-    : renderWindow(rw), appInstance(app){}
+State::Context::Context( App& app)
+    : appInstance(app){}
 
 
 //-----------------------------------------------------
@@ -90,7 +90,7 @@ State::Context State::getContext() const
 void State::launchLoadingScreen()
 {
     m_context.appInstance.pause();
-    m_context.renderWindow.setActive(false);
+    m_context.appInstance.getRenderTarget()->setActive(false);
     m_threadRunning = true;
     m_loadingThread.launch();
 }
@@ -118,11 +118,11 @@ void State::loadingScreenThread()
         //consume events
         //while (m_context.renderWindow.pollEvent(evt)) {}
 
-        m_context.renderWindow.clear(App::getClearColour());
-        updateLoadingScreen(m_threadClock.restart().asSeconds(), m_context.renderWindow);
-        m_context.renderWindow.display();
+        m_context.appInstance.getRenderTarget()->clear(App::getClearColour());
+        updateLoadingScreen(m_threadClock.restart().asSeconds(), *(dynamic_cast<sf::RenderWindow*>(m_context.appInstance.getRenderTarget())));
+        dynamic_cast<sf::RenderWindow*>(m_context.appInstance.getRenderTarget())->display();
     }
-    m_context.renderWindow.setActive(false);
+    m_context.appInstance.getRenderTarget()->setActive(false);
 }
 
 std::size_t State::getStateCount() const

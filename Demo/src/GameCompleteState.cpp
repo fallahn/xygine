@@ -33,6 +33,8 @@ source distribution.
 #include "SpringFlower.hpp"
 #include "Localisation.hpp"
 
+#include <xyginext/core/Editor.hpp>
+
 #include <xyginext/gui/Gui.hpp>
 
 #include <xyginext/ecs/components/AudioEmitter.hpp>
@@ -136,9 +138,9 @@ bool GameCompleteState::update(float dt)
 
 void GameCompleteState::draw()
 {
-    auto& rt = getContext().renderWindow;
+    auto rt = xy::App::getRenderTarget();
 
-    rt.draw(m_scene);
+    rt->draw(m_scene);
 }
 
 //private

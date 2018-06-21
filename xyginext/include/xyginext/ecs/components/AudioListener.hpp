@@ -76,6 +76,13 @@ namespace xy
         { 
             m_depth = depth;
         }
+        
+        template<class Archive>
+        void serialize(Archive& ar, const std::uint32_t version)
+        {
+            ar(m_volume,
+               m_depth);
+        }
 
     private:
         friend class AudioSystem;

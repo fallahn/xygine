@@ -109,8 +109,8 @@ namespace xy
 		/*!
 		\brief Removes the component of this type if it exists
 		*/
-		/*template <typename T>
-		void removeComponent()*/;
+		template <typename T>
+		void removeComponent();
 
 		/*!
 		\brief returns true if the component type exists on thie entity
@@ -200,6 +200,10 @@ namespace xy
         */
         Entity createEntity();
         /*!
+         \brief Creates a new Entity with specified ID
+         */
+        Entity createEntity(xy::Entity::ID id);
+        /*!
         \brief Destroys the given Entity
         */
         void destroyEntity(Entity);
@@ -227,8 +231,8 @@ namespace xy
         /*!
         \brief Removes this component type for the given Entity
         */
-        /*template <typename T>
-        void removeComponent(Entity);*/
+        template <typename T>
+        void removeComponent(Entity);
 
         /*!
         \brief Returns true if the given Entity has a component of this type
@@ -264,6 +268,8 @@ namespace xy
 
         template <typename T>
         Detail::ComponentPool<T>& getPool();
+        
+        friend class Editor;
     };
 
 #include "Entity.inl"

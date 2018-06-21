@@ -13,6 +13,13 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/core/StateStack.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/SysTime.cpp
 
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/Editor.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/ParticleEditor.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/SceneEditor.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/SpriteEditor.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/TextureEditor.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/editor/FontEditor.cpp
+
   ${CMAKE_CURRENT_SOURCE_DIR}/detail/glad.c
   ${CMAKE_CURRENT_SOURCE_DIR}/detail/Operators.cpp
 
@@ -63,7 +70,7 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_demo.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_draw.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui-SFML.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_tabs.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_dock.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/network/EnetClientImpl.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/network/EnetHostImpl.cpp

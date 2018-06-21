@@ -27,6 +27,10 @@ source distribution.
 
 #include "xyginext/ecs/components/Drawable.hpp"
 #include "xyginext/core/Log.hpp"
+#include "xyginext/detail/Serializers.hpp"
+
+#include "../../cereal/archives/binary.hpp"
+#include "../../cereal/types/vector.hpp"
 
 #include <limits>
 
@@ -269,3 +273,23 @@ void Drawable::updateLocalBounds()
         }
     }
 }
+
+CEREAL_CLASS_VERSION(Drawable, 2)
+
+template<class Archive>
+void Drawable::serialize(Archive& ar, const std::uint32_t version)
+{
+    ar(m_zDepth, m_cull);
+    
+    if (version >= 1)
+    {
+        ar(m_vertices);
+    }
+    if (version >= 2)
+    {
+        ar(m_localBounds);
+    }
+}
+
+template void Drawable::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&, const std::uint32_t);
+template void Drawable::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&, const std::uint32_t);

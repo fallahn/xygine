@@ -129,7 +129,7 @@ namespace xy
         (or other 3D features) a context with OpenGL version 3.2 or 
         higher is needed, as well as a depth buffer.
         */
-        App(sf::ContextSettings contextSettings = sf::ContextSettings());
+        App(sf::ContextSettings contextSettings = sf::ContextSettings(), const std::string& name = APP_NAME);
         virtual ~App() = default;
         App(const App&) = delete;
         App(App&&) = delete;
@@ -208,9 +208,10 @@ namespace xy
         void setWindowIcon(const std::string&);
 
         /*!
-        \brief Returns a reference to the current render window
+        \brief Returns a reference to the current render target
+         This can be either an sf::Renderwindow or an sf::Rendertexture
         */
-        static sf::RenderWindow* getRenderWindow();
+        static sf::RenderTarget* getRenderTarget();
 
         /*!
         \brief Prints the name/value pair to the stats window
@@ -221,17 +222,7 @@ namespace xy
         \brief Returns a reference to the active App instance
         */
         static App* getActiveInstance();
-
-        /*!
-        \brief Sets the application name.
-        This is used when reading/writing config files such as window settings
-        to the current user directory. A directory with this name is created
-        to store the configurations files, and so should be unique to the application
-        to prevent cross pollution of settings between xygine apps. This is set
-        to "xygine_application" by default.
-        */
-        void setApplicationName(const std::string& name);
-
+        
         /*!
         \brief Returns the current application name string.
         */
@@ -315,6 +306,10 @@ namespace xy
         sf::RenderWindow m_renderWindow;
         sf::Image m_windowIcon;
         std::string m_applicationName;
+        
+        // Set the game's render target
+        // This just updates the anonymous pointer, which is only used for xy::App::getRenderTarget
+        void setRenderTarget(sf::RenderTarget* target);
 
         MessageBus m_messageBus;
 
@@ -337,6 +332,7 @@ namespace xy
         static void removeWindows(const GuiClient*);
 
         friend class GuiClient;
+        friend class Editor;
 
         void loadSettings();
         void saveSettings();

@@ -29,16 +29,13 @@ source distribution.
 #define XY_SPRITE_HPP_
 
 #include "xyginext/Config.hpp"
+#include "xyginext/resources/Resource.hpp"
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 #include <array>
-
-namespace sf
-{
-    class Texture;
-}
 
 namespace xy
 {
@@ -130,6 +127,9 @@ namespace xy
 
             bool looped = false;
             float framerate = 12.f;
+            
+            template<class Archive>
+            void serialize(Archive& ar, const std::uint32_t version);
         };
 
 
@@ -138,6 +138,12 @@ namespace xy
         from a sprite sheet definition file.
         */
         std::size_t getAnimationCount() const { return m_animationCount; }
+        
+        /*!
+         \brief Set the number of animations this sprite has
+         */
+        void setAnimationCount(std::size_t c) { m_animationCount = c; }
+
 
         /*!
         /brief Returns a reference to the sprites animation array.
@@ -150,11 +156,18 @@ namespace xy
         Use getAnimationCount() to check how many of the animations are valid
         */
         const std::array<Animation, MaxAnimations>& getAnimations() const { return m_animations; }
+        
+        ResourceID getTextureResourceID();
+        
+        void setTextureResourceID(ResourceID id);
+        
+        template<class Archive>
+        void serialize(Archive& ar, const std::uint32_t version);
 
     private:
-
         sf::FloatRect m_textureRect;
         const sf::Texture* m_texture;
+        ResourceID m_textureResourceID;
         sf::Color m_colour;
         bool m_dirty;
 

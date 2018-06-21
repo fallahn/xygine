@@ -45,6 +45,7 @@ namespace xy
         explicit TextRenderer(MessageBus&);
 
         void process(float) override;
+        void handleMessage(const Message& msg) override;
 
     private:
 

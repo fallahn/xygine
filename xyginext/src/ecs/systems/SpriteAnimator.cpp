@@ -36,6 +36,7 @@ using namespace xy;
 SpriteAnimator::SpriteAnimator(MessageBus& mb)
     : System(mb, typeid(SpriteAnimator))
 {
+    m_priority = 1;
     requireComponent<Sprite>();
     requireComponent<SpriteAnimation>();
 }

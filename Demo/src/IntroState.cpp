@@ -95,7 +95,7 @@ namespace
 
 IntroState::IntroState(xy::StateStack& stack, Context context)
     : xy::State(stack, context),
-    m_windowRatio(static_cast<float>(context.renderWindow.getSize().y) / context.defaultView.getSize().y),
+m_windowRatio(static_cast<float>(xy::App::getRenderTarget()->getSize().y) / context.defaultView.getSize().y),
     m_messageBus(context.appInstance.getMessageBus()),
     m_fadeTime(0.f),
     m_fade(Fade::In)
@@ -115,7 +115,7 @@ IntroState::IntroState(xy::StateStack& stack, Context context)
     m_sound.setBuffer(m_soundBuffer);
     m_sound.play();
 
-    context.renderWindow.setView(context.defaultView);
+    xy::App::getRenderTarget()->setView(context.defaultView);
 }
 
 //public
@@ -178,15 +178,15 @@ bool IntroState::update(float dt)
 
 void IntroState::draw()
 {
-    auto& rw = getContext().renderWindow;
-    rw.draw(m_sprite, &m_noiseShader);
+    auto rw = xy::App::getRenderTarget();
+    rw->draw(m_sprite, &m_noiseShader);
 
     if (xy::Util::Random::value(0, 10) == 0)
     {
         m_sprite.setPosition(9.f, -7.f);
-        rw.draw(m_sprite, &m_lineShader);
+        rw->draw(m_sprite, &m_lineShader);
         m_sprite.setPosition(0.f, 0.f);
     }
 
-    rw.draw(m_rectangleShape);
+    rw->draw(m_rectangleShape);
 }

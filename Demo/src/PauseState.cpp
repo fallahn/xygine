@@ -120,8 +120,8 @@ bool PauseState::update(float dt)
 
 void PauseState::draw()
 {
-    auto& rw = getContext().renderWindow;
-    rw.draw(m_scene);
+    auto rw = xy::App::getRenderTarget();
+    rw->draw(m_scene);
 }
 
 //private

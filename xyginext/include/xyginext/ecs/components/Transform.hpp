@@ -82,6 +82,12 @@ namespace xy
         A value of 0 means it has no parent, 1 means one parent and so on
         */
         std::size_t getDepth() const { return m_depth; }
+        
+        template<class Archive>
+        void save(Archive& ar) const;
+        
+        template<class Archive>
+        void load(Archive& ar);
 
     private:
         Transform* m_parent;

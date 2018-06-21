@@ -28,6 +28,7 @@ source distribution.
 #include "RemotePauseState.hpp"
 
 #include <xyginext/core/FileSystem.hpp>
+#include <xyginext/core/App.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -54,9 +55,9 @@ RemotePauseState::RemotePauseState(xy::StateStack& stack, xy::State::Context ctx
 void RemotePauseState::draw()
 {
     auto view = getContext().defaultView;
-    auto& rt = getContext().renderWindow;
-    rt.setView(view);
+    auto rt = xy::App::getRenderTarget();
+    rt->setView(view);
 
-    rt.draw(m_sprite);
-    rt.draw(m_text);
+    rt->draw(m_sprite);
+    rt->draw(m_text);
 }

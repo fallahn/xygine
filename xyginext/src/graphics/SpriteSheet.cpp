@@ -42,7 +42,11 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
     ConfigFile sheetFile;
     if (!sheetFile.loadFromFile(xy::FileSystem::getResourcePath() + path))
     {
-        return false;
+        // Check without resource path
+        if (!sheetFile.loadFromFile(path))
+        {
+            return false;
+        }
     }
 
     m_sprites.clear();
@@ -51,7 +55,7 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
     std::size_t count = 0;
 
     sf::Texture* texture = nullptr;
-    sf::BlendMode blendMode = sf::BlendAlpha;
+    //sf::BlendMode blendMode = sf::BlendAlpha;
 
     //validate sprites, increase count
     if (auto* p = sheetFile.findProperty("src"))
@@ -94,6 +98,7 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
             if (texture != nullptr)
             {
                 spriteComponent.setTexture(*texture);
+                spriteComponent.setTextureResourceID(textures.getID(m_texturePath));
             }
 
             //if (auto* p = spr.findProperty("blendmode"))
@@ -214,6 +219,13 @@ Sprite SpriteSheet::getSprite(const std::string& name) const
 void SpriteSheet::setSprite(const std::string& name, const xy::Sprite& data)
 {
     m_sprites[name] = data;
+    
+    // Update the animations
+    m_animations[name].clear();
+    for (auto i = 0u; i < data.getAnimationCount(); i++)
+    {
+        m_animations[name].push_back(data.getAnimations()[i].id.data());
+    }
 }
 
 void SpriteSheet::removeSprite(const std::string& name)

@@ -29,6 +29,7 @@ source distribution.
 #define XY_TEXT_HPP_
 
 #include "xyginext/Config.hpp"
+#include "xyginext/resources/Resource.hpp"
 
 #include <SFML/System/String.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -64,6 +65,11 @@ namespace xy
         \brief Set the font used with this text
         */
         void setFont(const sf::Font&);
+        
+        /*!
+         \brief Set the font resource ID to be used with this text
+         */
+        void setFontResourceID(const ResourceID);
 
         /*!
         \brief Set the character size of the text
@@ -101,6 +107,11 @@ namespace xy
         \brief Return a pointer to the active font
         */
         const sf::Font* getFont() const;
+        
+        /*!
+         \brief Return the font resource ID
+         */
+        ResourceID getFontResourceID() const;
 
         /*!
         \brief Return the current character size of the text
@@ -166,11 +177,15 @@ namespace xy
         \brief Returns the text's current alignment
         */
         Alignment getAlignment() const { return m_alignment; }
+        
+        template<class Archive>
+        void serialize(Archive&, const std::uint32_t version);
 
     private:
 
         sf::String m_string;
         const sf::Font* m_font;
+        ResourceID m_fontResourceID; // for use with ResourceEntry/ResourceDirectory
         sf::Uint32 m_charSize;
         float m_verticalSpacing;
         sf::Color m_fillColour;

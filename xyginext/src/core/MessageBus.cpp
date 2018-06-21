@@ -28,6 +28,8 @@ source distribution.
 #include "xyginext/core/MessageBus.hpp"
 #include "xyginext/core/Log.hpp"
 
+#include "../imgui/imgui_dock.hpp"
+
 using namespace xy;
 
 namespace

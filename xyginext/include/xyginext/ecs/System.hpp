@@ -107,6 +107,11 @@ namespace xy
         Systems can be activeated and deactivated with Scene::setSystemActive()
         */
         bool isActive() const { return m_active; }
+        
+        /*!
+         \brief Returns the priority - higher priorities will be updated first in the scene
+         */
+        std::uint16_t getPriority() const {return m_priority; }
 
     protected:
 
@@ -129,6 +134,11 @@ namespace xy
         \brief Optional callback performed when an entity is removed
         */
         virtual void onEntityRemoved(Entity) {}
+        
+        /*
+         \brief Called once a system has been created
+         */
+        virtual void onCreate() {} //
 
         /*!
         \brief Posts a message on the system wide message bus
@@ -150,8 +160,14 @@ namespace xy
         \brief Returns a pointer to the scene to which this system belongs
         */
         Scene* getScene();
-
+        
+        /*!
+         \brief The systems priority
+         */
+        std::uint16_t m_priority = 0;
+        
     private:
+        
 
         MessageBus& m_messageBus;
         UniqueType m_type;
@@ -236,6 +252,11 @@ namespace xy
         \brief Runs a simulation step by calling process() on each system
         */
         void process(float);
+        
+        /*!
+         \brief Retreives all the systems
+         */
+        std::vector<std::unique_ptr<System>>& getSystems();
     private:
         Scene& m_scene;
         ComponentManager& m_componentManager;

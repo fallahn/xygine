@@ -70,7 +70,7 @@ template <typename T, typename... Args>
 T& Scene::addPostProcess(Args&&... args)
 {
     static_assert(std::is_base_of<PostProcess, T>::value, "Must be a post process type");
-    auto size = App::getRenderWindow()->getSize();
+    auto size = App::getRenderTarget()->getSize();
     if (m_postEffects.empty())
     {
         if (m_sceneBuffer.create(size.x, size.y))
@@ -90,10 +90,10 @@ T& Scene::addPostProcess(Args&&... args)
     switch (m_postEffects.size())
     {
     case 2:
-        m_postBuffers[0].create(size.x, size.y, false);
+        m_postBuffers[0].create(size.x, size.y, xy::App::getActiveInstance()->getVideoSettings().ContextSettings);
         break;
     case 3:
-        m_postBuffers[1].create(size.x, size.y, false);
+        m_postBuffers[1].create(size.x, size.y, xy::App::getActiveInstance()->getVideoSettings().ContextSettings);
         break;
     default: break;
     }

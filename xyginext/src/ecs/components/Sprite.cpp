@@ -26,6 +26,11 @@ source distribution.
 *********************************************************************/
 
 #include "xyginext/ecs/components/Sprite.hpp"
+#include "xyginext/detail/Serializers.hpp"
+
+#include "cereal/archives/binary.hpp"
+#include "cereal/archives/json.hpp"
+#include "cereal/types/array.hpp"
 
 #include <SFML/Graphics/Texture.hpp>
 
@@ -77,5 +82,43 @@ const sf::Texture* Sprite::getTexture() const
 sf::Color Sprite::getColour() const
 {
     return m_colour;
-    
 }
+
+void Sprite::setTextureResourceID(xy::ResourceID id)
+{
+    m_textureResourceID = id;
+}
+
+ResourceID Sprite::getTextureResourceID()
+{
+    return m_textureResourceID;
+}
+
+template<class Archive>
+void Sprite::serialize(Archive &ar, const std::uint32_t version)
+{
+    ar(m_textureResourceID,
+       m_textureRect,
+       m_colour);
+    
+    // anims
+    ar(m_animationCount, m_animations);
+}
+
+template<class Archive>
+void Sprite::Animation::serialize(Archive &ar, const std::uint32_t version)
+{
+    ar(frames, framerate, frameCount, id);
+}
+
+template void Sprite::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&, const std::uint32_t);
+template void Sprite::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&, const std::uint32_t);
+
+template void Sprite::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&, const std::uint32_t);
+template void Sprite::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&, const std::uint32_t);
+
+template void Sprite::Animation::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&, const std::uint32_t);
+template void Sprite::Animation::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&, const std::uint32_t);
+
+template void Sprite::Animation::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&, const std::uint32_t);
+template void Sprite::Animation::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&, const std::uint32_t);

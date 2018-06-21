@@ -43,6 +43,8 @@ namespace xy
         explicit SpriteSystem(MessageBus&);
 
         void process(float) override;
+        
+        void handleMessage(const Message& msg) override;
 
     private:
 

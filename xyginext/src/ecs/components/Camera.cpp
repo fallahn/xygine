@@ -28,6 +28,11 @@ source distribution.
 #include "xyginext/ecs/components/Camera.hpp"
 #include "xyginext/core/Assert.hpp"
 
+#include "xyginext/detail/Serializers.hpp"
+
+#include "cereal/archives/binary.hpp"
+#include "cereal/archives/json.hpp"
+
 #include <limits>
 
 using namespace xy;
@@ -96,3 +101,16 @@ bool Camera::rotationLocked() const
 {
     return m_lockRotation;
 }
+
+template<class Archive>
+void Camera::serialize(Archive &ar, const std::uint32_t version)
+{
+    ar(m_bounds);
+    ar(m_lockRotation);
+}
+
+template void Camera::serialize<cereal::BinaryOutputArchive>(cereal::BinaryOutputArchive&, const std::uint32_t);
+template void Camera::serialize<cereal::BinaryInputArchive>(cereal::BinaryInputArchive&, const std::uint32_t);
+
+template void Camera::serialize<cereal::JSONOutputArchive>(cereal::JSONOutputArchive&, const std::uint32_t);
+template void Camera::serialize<cereal::JSONInputArchive>(cereal::JSONInputArchive&, const std::uint32_t);

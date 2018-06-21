@@ -31,6 +31,7 @@ source distribution.
 #include "xyginext/Config.hpp"
 #include "xyginext/core/Log.hpp"
 #include "xyginext/core/Vector4.hpp"
+#include "xyginext/resources/Resource.hpp"
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -90,9 +91,12 @@ namespace xy
         //sets the property's value
         void setValue(const std::string& v);
         void setValue(sf::Int32 v);
+        void setValue(sf::Uint32 v);
         void setValue(float v);
         void setValue(bool v);
         void setValue(sf::Vector2f v);
+        void setValue(sf::Vector2i v);
+        void setValue(sf::Vector2u v);
         void setValue(sf::Vector3f v);
         void setValue(sf::FloatRect);
         void setValue(sf::Color);

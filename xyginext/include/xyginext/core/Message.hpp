@@ -56,6 +56,7 @@ namespace xy
             WindowMessage,
             SceneMessage,
             StateMessage,
+            ResourceMessage,
             Count
         };
 
@@ -80,6 +81,13 @@ namespace xy
                 EntityDestroyed
             }event;
             sf::Int32 entityID = -1;
+        };
+        
+        using ResourceID = std::size_t;
+        struct ResourceEvent final
+        {
+            ResourceID id;
+            void*      resource;
         };
 
         /*!

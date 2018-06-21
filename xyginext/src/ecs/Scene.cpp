@@ -26,12 +26,34 @@ source distribution.
 *********************************************************************/
 
 #include "xyginext/core/App.hpp"
+#include "xyginext/core/Editor.hpp"
+#include "xyginext/core/ConfigFile.hpp"
 #include "xyginext/ecs/Scene.hpp"
+#include "xyginext/ecs/components/Text.hpp"
 #include "xyginext/ecs/components/Camera.hpp"
+#include "xyginext/ecs/components/Drawable.hpp"
 #include "xyginext/ecs/components/Transform.hpp"
 #include "xyginext/ecs/components/AudioListener.hpp"
+#include "xyginext/ecs/components/ParticleEmitter.hpp"
+#include "xyginext/ecs/components/AudioEmitter.hpp"
+#include "xyginext/ecs/components/SpriteAnimation.hpp"
+#include "xyginext/ecs/components/UIHitBox.hpp"
+#include "xyginext/ecs/components/Sprite.hpp"
+
+#include "xyginext/ecs/systems/RenderSystem.hpp"
+#include "xyginext/ecs/systems/CameraSystem.hpp"
+#include "xyginext/ecs/systems/SpriteSystem.hpp"
+#include "xyginext/ecs/systems/TextRenderer.hpp"
+#include "xyginext/ecs/systems/UISystem.hpp"
+#include "xyginext/ecs/systems/SpriteAnimator.hpp"
+
+#include "cereal/archives/binary.hpp"
+#include "cereal/types/string.hpp"
+#include "cereal/types/bitset.hpp"
 
 #include <SFML/Window/Event.hpp>
+
+#include "../imgui/imgui_dock.hpp"
 
 using namespace xy;
 
@@ -39,9 +61,9 @@ namespace
 {
     sf::FloatRect getDefaultViewport()
     {
-        if (App::getRenderWindow())
+        if (App::getRenderTarget())
         {
-            auto winSize = sf::Vector2f(App::getRenderWindow()->getSize());
+            auto winSize = sf::Vector2f(App::getRenderTarget()->getSize());
 
             float windowRatio = winSize.x / winSize.y;
             float viewRatio = DefaultSceneSize.x / DefaultSceneSize.y;
@@ -78,6 +100,22 @@ Scene::Scene(MessageBus& mb)
             rt.draw(*r, states);
         }
     };
+    
+    // Silly/lazy hack to try and enforce component ID consistency.
+    // This means scene loading (probably) won't work when the editor is not
+    // being used. Quite essential that this is fixed
+    m_componentManager.getID<Sprite>();
+    m_componentManager.getID<Text>();
+    m_componentManager.getID<ParticleEmitter>();
+    m_componentManager.getID<AudioEmitter>();
+    m_componentManager.getID<SpriteAnimation>();
+    m_componentManager.getID<UIHitBox>();
+}
+
+Scene::Scene(MessageBus& mb, const std::string& path) :
+Scene(mb)
+{
+    loadFromFile(path);
 }
 
 //public
@@ -129,9 +167,9 @@ void Scene::setPostEnabled(bool enabled)
     {
         currentRenderPath = std::bind(&Scene::postRenderPath, this, std::placeholders::_1, std::placeholders::_2);
         
-        XY_ASSERT(App::getRenderWindow(), "no valid window");
-        auto size = App::getRenderWindow()->getSize();
-        m_sceneBuffer.create(size.x, size.y, true);
+        XY_ASSERT(App::getRenderTarget(), "no valid window");
+        auto size = App::getRenderTarget()->getSize();
+        m_sceneBuffer.create(size.x, size.y, xy::App::getActiveInstance()->getVideoSettings().ContextSettings);
         for (auto& p : m_postEffects) p->resizeBuffer(size.x, size.y);
     }
     else
@@ -219,7 +257,239 @@ void Scene::forwardMessage(const Message& msg)
             getEntity(m_defaultCamera).getComponent<Camera>().setViewport(getDefaultViewport());
         }
     }
-   
+}
+
+bool Scene::saveToFile(const std::string &path)
+{
+    std::ofstream os(path, std::ios::binary);
+    if (!os.is_open() || !os.good())
+    {
+        std::string error = strerror(errno);
+        xy::Logger::log("Error saving scene: " + error, xy::Logger::Type::Error);
+        return false;
+    }
+    cereal::BinaryOutputArchive archive(os);
+    
+    // Store systems
+    auto& systems = m_systemManager.getSystems();
+    archive(systems.size());
+    for (auto& s : systems)
+    {
+        // flaky af
+        archive(std::string(s->getType().name()));
+    }
+    
+    auto entities = getSystem<EditorSystem>().getEntities();
+    archive(entities.size());
+    
+    for (auto& e : entities)
+    {
+        // Ignore first entity - it's a default one and will already be created
+        if (e.getIndex() == 0)
+        {
+            continue;
+        }
+        
+        archive(e.getIndex());
+        
+        auto mask = e.getComponentMask();
+        archive(mask);
+        
+        // Need a smarter/generic way of doing this for any/all component types
+        for (auto i=0u; i < mask.size(); i++)
+        {
+            if (mask.test(i))
+            {
+                if (i == m_componentManager.getID<xy::Text>())
+                {
+                    archive(e.getComponent<xy::Text>());
+                }
+                else if (i == m_componentManager.getID<xy::Drawable>())
+                {
+                    archive(e.getComponent<xy::Drawable>());
+                }
+                else if (i == m_componentManager.getID<xy::Transform>())
+                {
+                    archive(e.getComponent<xy::Transform>());
+                }
+                else if (i == m_componentManager.getID<xy::Sprite>())
+                {
+                    archive(e.getComponent<xy::Sprite>());
+                }
+                else if (i == m_componentManager.getID<xy::Camera>())
+                {
+                    archive(e.getComponent<xy::Camera>());
+                }
+                else if (i == m_componentManager.getID<xy::AudioListener>())
+                {
+                    archive(e.getComponent<xy::AudioListener>());
+                }
+                else if (i == m_componentManager.getID<xy::ParticleEmitter>())
+                {
+                    archive(e.getComponent<xy::ParticleEmitter>());
+                }
+                else if (i == m_componentManager.getID<xy::AudioEmitter>())
+                {
+                    archive(e.getComponent<xy::AudioEmitter>());
+                }
+                else if (i == m_componentManager.getID<xy::SpriteAnimation>())
+                {
+                    archive(e.getComponent<xy::SpriteAnimation>());
+                }
+                else if (i == m_componentManager.getID<xy::UIHitBox>())
+                {
+                    archive(e.getComponent<xy::UIHitBox>());
+                }
+                else
+                {
+                    xy::Logger::log("Component id " + std::to_string(i) + " not able to save in scene");
+                }
+            }
+        }
+    }
+    return true;
+}
+
+bool Scene::loadFromFile(const std::string &path)
+{
+    std::ifstream is(path, std::ios::binary);
+    if (!is.good() || !is.is_open())
+    {
+        // Try loading from resource folder (MACOS)
+        is.open(xy::FileSystem::getResourcePath() + path);
+        if (!is.good() || !is.is_open())
+        {
+            std::string error = strerror(errno);
+            xy::Logger::log("Error loading scene: " + error, xy::Logger::Type::Error);
+            return false;
+        }
+    }
+    
+    cereal::BinaryInputArchive archive(is);
+    
+    size_t systemCount;
+    archive(systemCount);
+    while(systemCount--)
+    {
+        std::string name;
+        archive(name);
+     
+        // this is madness
+        auto& mb = App::getActiveInstance()->getMessageBus();
+        RenderSystem    rs(mb);
+        SpriteSystem    ss(mb);
+        EditorSystem    es(mb);
+        TextRenderer    tr(mb);
+        CameraSystem    cs(mb);
+        UISystem        us(mb);
+        SpriteAnimator  sa(mb);
+        if (rs.getType().name() == name)
+        {
+            addSystem<RenderSystem>(mb);
+        }
+        else if (ss.getType().name() == name)
+        {
+            addSystem<SpriteSystem>(mb);
+        }
+        else if (es.getType().name() == name)
+        {
+            addSystem<EditorSystem>(mb, path);
+        }
+        else if (tr.getType().name() == name)
+        {
+            addSystem<TextRenderer>(mb);
+        }
+        else if (cs.getType().name() == name)
+        {
+            addSystem<CameraSystem>(mb);
+        }
+        else if (us.getType().name() == name)
+        {
+            addSystem<UISystem>(mb);
+        }
+        else if (us.getType().name() == name)
+        {
+            addSystem<UISystem>(mb);
+        }
+        else if(sa.getType().name() == name)
+        {
+            addSystem<SpriteAnimator>(mb);
+        }
+        else
+        {
+            xy::Logger::log("System " + name + " loaded from scene " + path + " not recognised");
+        }
+    }
+    
+    size_t entityCount;
+    archive(entityCount);
+    
+    // less 1 entity, for default one
+    entityCount -= 1;
+    
+    while(entityCount--)
+    {
+        Entity::ID idx;
+        archive(idx);
+        auto e = m_entityManager.createEntity(idx);
+        
+        ComponentMask mask;
+        archive(mask);
+        
+        for (auto i=0u; i < mask.size(); i++)
+        {
+            if (mask.test(i))
+            {
+                if (i == m_componentManager.getID<xy::Text>())
+                {
+                    archive(e.addComponent<xy::Text>());
+                }
+                else if (i == m_componentManager.getID<xy::Drawable>())
+                {
+                    archive(e.addComponent<xy::Drawable>());
+                }
+                else if (i == m_componentManager.getID<xy::Transform>())
+                {
+                    archive(e.addComponent<xy::Transform>());
+                }
+                else if (i == m_componentManager.getID<xy::Sprite>())
+                {
+                    archive(e.addComponent<xy::Sprite>());
+                }
+                else if (i == m_componentManager.getID<xy::Camera>())
+                {
+                    archive(e.addComponent<xy::Camera>());
+                }
+                else if (i == m_componentManager.getID<xy::AudioListener>())
+                {
+                    archive(e.addComponent<xy::AudioListener>());
+                }
+                else if (i == m_componentManager.getID<xy::ParticleEmitter>())
+                {
+                    archive(e.addComponent<xy::ParticleEmitter>());
+                }
+                else if (i == m_componentManager.getID<xy::AudioEmitter>())
+                {
+                    archive(e.addComponent<xy::AudioEmitter>());
+                }
+                else if (i == m_componentManager.getID<xy::SpriteAnimation>())
+                {
+                    archive(e.addComponent<xy::SpriteAnimation>());
+                }
+                else if (i == m_componentManager.getID<xy::UIHitBox>())
+                {
+                    archive(e.addComponent<xy::UIHitBox>());
+                }
+                else
+                {
+                    xy::Logger::log("Component id " + std::to_string(i) + " not able to load from scene");
+                }
+            }
+        }
+        
+        m_systemManager.addToSystems(e);
+    }
+    return true;
 }
 
 //private

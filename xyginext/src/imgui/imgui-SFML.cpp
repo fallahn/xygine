@@ -6,6 +6,7 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -143,6 +144,8 @@ namespace SFML
 
 void Init(sf::RenderTarget& target, bool loadDefaultFont)
 {
+    ImGui::CreateContext();
+    
     ImGuiIO& io = ImGui::GetIO();
 
     // init keyboard mapping
@@ -155,6 +158,7 @@ void Init(sf::RenderTarget& target, bool loadDefaultFont)
     io.KeyMap[ImGuiKey_PageDown] = sf::Keyboard::PageDown;
     io.KeyMap[ImGuiKey_Home] = sf::Keyboard::Home;
     io.KeyMap[ImGuiKey_End] = sf::Keyboard::End;
+    io.KeyMap[ImGuiKey_Space] = sf::Keyboard::Space;
 #ifdef ANDROID
     io.KeyMap[ImGuiKey_Backspace] = sf::Keyboard::Delete;
 #else
@@ -318,7 +322,7 @@ void Shutdown()
         s_fontTexture = NULL;
     }
 
-    ImGui::Shutdown(); // need to specify namespace here, otherwise ImGui::SFML::Shutdown would be called
+    ImGui::DestroyContext();
 }
 
 void UpdateFontTexture()
@@ -376,6 +380,33 @@ void Image(const sf::Texture& texture, const sf::Vector2f& size, const sf::Float
     ImVec2 uv1((textureRect.left + textureRect.width) / textureSize.x,
         (textureRect.top + textureRect.height) / textureSize.y);
     ImGui::Image((void*)texture.getNativeHandle(), size, uv0, uv1, tintColor, borderColor);
+}
+    
+void Image(const sf::RenderTexture& texture,
+               const sf::Color& tintColor, const sf::Color& borderColor)
+{
+    Image(texture, static_cast<sf::Vector2f>(texture.getSize()), tintColor, borderColor);
+}
+    
+void Image(const sf::RenderTexture& texture, const sf::Vector2f& size,
+               const sf::Color& tintColor, const sf::Color& borderColor)
+{
+    ImGui::Image((void*)texture.getTexture().getNativeHandle(), size, ImVec2(0, 1), ImVec2(1, 0), tintColor, borderColor);
+}
+    
+void Image(const sf::RenderTexture& texture, const sf::FloatRect& textureRect,
+               const sf::Color& tintColor, const sf::Color& borderColor)
+{
+    Image(texture, sf::Vector2f(std::abs(textureRect.width), std::abs(textureRect.height)), textureRect, tintColor, borderColor);
+}
+    
+void Image(const sf::RenderTexture& texture, const sf::Vector2f& size, const sf::FloatRect& textureRect,
+               const sf::Color& tintColor, const sf::Color& borderColor)
+{
+    sf::Vector2f textureSize = static_cast<sf::Vector2f>(texture.getSize());
+    ImVec2 uv0(textureRect.left / textureSize.x, (textureRect.top + textureRect.height) / textureSize.y);
+    ImVec2 uv1((textureRect.left + textureRect.width) / textureSize.x, textureRect.top / textureSize.y);
+    ImGui::Image((void*)texture.getTexture().getNativeHandle(), size, uv0, uv1, tintColor, borderColor);
 }
 
 void Image(const sf::Sprite& sprite,
@@ -449,7 +480,7 @@ void DrawRectFilled(const sf::FloatRect& rect, const sf::Color& color,
     float rounding, int rounding_corners)
 {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    draw_list->AddRect(
+    draw_list->AddRectFilled(
         getTopLeftAbsolute(rect),
         getDownRightAbsolute(rect),
         ColorConvertFloat4ToU32(color), rounding, rounding_corners);

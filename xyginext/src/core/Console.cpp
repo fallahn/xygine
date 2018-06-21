@@ -35,7 +35,7 @@ source distribution.
 #include "xyginext/gui/GuiClient.hpp"
 
 #include "../imgui/imgui.h"
-#include "../imgui/imgui_tabs.h"
+#include "../imgui/imgui_dock.hpp"
 
 #include <list>
 #include <unordered_map>
@@ -53,16 +53,6 @@ namespace
     std::vector<std::string>    m_debugLines;
     std::vector<std::pair<std::function<void()>, const GuiClient*>> m_statusControls;
     
-    std::vector<sf::Vector2u> resolutions;
-    //int currentAALevel = 0;
-    int currentResolution = 0;
-    std::array<char, 300> resolutionNames{};
-    bool fullScreen = false;
-    bool vSync = false;
-    bool useFrameLimit = false;
-    int frameLimit = 10;
-
-    
     std::string output;
 
     constexpr std::size_t MAX_INPUT_CHARS = 400;
@@ -72,7 +62,7 @@ namespace
 
     std::list<std::string> history;
     const std::size_t MAX_HISTORY = 10;
-    std::int32_t historyIndex = -1;
+    int historyIndex = -1;
 
     bool visible = false;
 
@@ -107,23 +97,6 @@ void Console::print(const std::string& line)
 void Console::show()
 {
     visible = !visible;
-
-    const auto& size = App::getRenderWindow()->getSize();
-    for (auto i = 0u; i < resolutions.size(); ++i)
-    {
-        if (resolutions[i].x == size.x && resolutions[i].y == size.y)
-        {
-            currentResolution = i;
-            break;
-        }
-    }
-
-    const auto& settings = App::getActiveInstance()->getVideoSettings();
-    fullScreen = (settings.WindowStyle & sf::Style::Fullscreen);
-
-    vSync = settings.VSync;
-    useFrameLimit = (settings.FrameLimit != 0);
-    frameLimit = settings.FrameLimit;
 }
 
 bool Console::isVisible()
@@ -239,114 +212,41 @@ void Console::removeCommands(const ConsoleClient* client)
 void Console::draw()
 {
 #ifdef USE_IMGUI
-    if (!visible) return;
-
-    nim::SetNextWindowSizeConstraints({ 640, 480 }, { 1024.f, 768.f });
-    if (!nim::Begin("Console", &visible))
-    {
-        //window is collapsed so save your effort..
-        nim::End();
-        return;
-    }
-    
-    nim::BeginTabBar("Tabs");
-    
     // Console
-    if (nim::TabItem("Console"))
+    if (nim::BeginDock("Console"))
     {
-        
-        nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
+        const float inputHeight = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing(); // 1 separator, 1 input text
+        nim::BeginChild("ScrollingRegion",{0,-inputHeight}, false, ImGuiWindowFlags_HorizontalScrollbar);
         nim::TextUnformatted(output.c_str(), output.c_str() + output.size());
-        nim::SetScrollHere();
         nim::EndChild();
 
         nim::Separator();
 
-        nim::PushItemWidth(620.f);
         if (nim::InputText("", input, MAX_INPUT_CHARS,
             ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory,
             textEditCallback))
         {
             doCommand(input);
         }
-        nim::PopItemWidth();
 
         if (nim::IsItemHovered() || (nim::IsRootWindowOrAnyChildFocused()
             && !nim::IsAnyItemActive() && !nim::IsMouseClicked(0)))
         {
             nim::SetKeyboardFocusHere(-1);
         }
-    }
-    
-    // Video options
-    if (nim::TabItem("Video"))
-    {       
-        nim::Combo("Resolution", &currentResolution, resolutionNames.data());
-
-        XY_ASSERT(App::getRenderWindow(), "no valid window");
-        
-        nim::Checkbox("Full Screen", &fullScreen);
-
-        nim::Checkbox("V-Sync", &vSync);
-        if (vSync)
-        {
-            useFrameLimit = false;
-        }
-        
-        bool oldFrameLimit = useFrameLimit;
-        nim::Checkbox("Limit Framerate", &useFrameLimit);
-        if (useFrameLimit)
-        {
-            vSync = false;
-        }
-
-        nim::SameLine();
-        nim::PushItemWidth(80.f);
-        nim::InputInt("Frame Rate", &frameLimit);
-        nim::PopItemWidth();
-        frameLimit = std::max(10, std::min(frameLimit, 360));
-
-        if (nim::Button("Apply", { 50.f, 20.f }))
-        {
-            //apply settings
-            auto settings = App::getActiveInstance()->getVideoSettings();
-            settings.VideoMode.width = resolutions[currentResolution].x;
-            settings.VideoMode.height = resolutions[currentResolution].y;
-            settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
-            settings.VSync = vSync;
-            settings.FrameLimit = useFrameLimit ? frameLimit : 0;
-
-            App::getActiveInstance()->applyVideoSettings(settings);
-        }
+        nim::EndDock();
     }
 
-    // Audio
-    if (nim::TabItem("Audio"))
-    {
-        nim::Text("NOTE: only AudioSystem sounds are affected.");
-
-        static float maxVol = AudioMixer::getMasterVolume();
-        nim::SliderFloat("Master", &maxVol, 0.f, 1.f);
-        AudioMixer::setMasterVolume(maxVol);
-
-        static std::array<float, AudioMixer::MaxChannels> channelVol;
-        for (auto i = 0u; i < AudioMixer::MaxChannels; ++i)
-        {
-            channelVol[i] = AudioMixer::getVolume(i);
-            nim::SliderFloat(AudioMixer::getLabel(i).c_str(), &channelVol[i], 0.f, 1.f);
-            AudioMixer::setVolume(channelVol[i], i);
-        }
-    }
-    
     // Stats
-    if (nim::TabItem("Stats"))
+    if (nim::BeginDock("Stats"))
     {
         nim::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         nim::NewLine();
         for (auto& line : m_debugLines)
         {
-            ImGui::Text(line.c_str());
+            nim::TextUnformatted(line.c_str());
         }
+        nim::EndDock();
     }
     m_debugLines.clear();
     m_debugLines.reserve(10);
@@ -355,51 +255,17 @@ void Console::draw()
     int count(0);
     for (const auto& func : m_statusControls)
     {
-        if (ImGui::TabItem(("Stat " + std::to_string(count)).c_str()))
+        if (ImGui::BeginDock(("Stat " + std::to_string(count)).c_str()))
         {
             func.first();
         }
     }
     
-    nim::EndTabBar();
-
-    nim::End();
 #endif //USE_IMGUI
 }
 
 void Console::init()
 {
-    auto modes = sf::VideoMode::getFullscreenModes();
-    for (const auto& mode : modes)
-    {
-        if (mode.bitsPerPixel == 32)
-        {
-            resolutions.emplace_back(mode.width, mode.height);
-        }
-    }
-    
-    std::reverse(std::begin(resolutions), std::end(resolutions));
-
-    int i = 0;
-    for (auto r = resolutions.begin(); r != resolutions.end(); ++r)
-    {
-        std::string width = std::to_string(r->x);
-        std::string height = std::to_string(r->y);
-
-        for (char c : width)
-        {
-            resolutionNames[i++] = c;
-        }
-        resolutionNames[i++] = ' ';
-        resolutionNames[i++] = 'x';
-        resolutionNames[i++] = ' ';
-        for (char c : height)
-        {
-            resolutionNames[i++] = c;
-        }
-        resolutionNames[i++] = '\0';
-    }
-
     //------default commands------//
     //list all available commands to the console
     addCommand("help",
@@ -546,7 +412,7 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
                 {
                     int c = 0;
                     bool all_candidates_matches = true;
-                    for (int i = 0; i < candidates.size() && all_candidates_matches; i++)
+                    for (size_t i = 0; i < candidates.size() && all_candidates_matches; i++)
                         if (i == 0)
                             c = toupper(candidates[i][match_len]);
                         else if (c == 0 || c != toupper(candidates[i][match_len]))
@@ -583,7 +449,7 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
         {
             if (historyIndex != -1)
             {
-                if (++historyIndex >= history.size())
+                if (++historyIndex >= static_cast<int>(history.size()))
                 {
                     historyIndex = -1;
                 }

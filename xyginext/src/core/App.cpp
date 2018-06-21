@@ -1,4 +1,4 @@
-/*********************************************************************
+ /*********************************************************************
 (c) Matt Marchant 2017 - 2018
 http://trederia.blogspot.com
 
@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include "xyginext/core/App.hpp"
+#include "xyginext/core/Editor.hpp"
 #include "xyginext/core/Log.hpp"
 #include "xyginext/core/Console.hpp"
 #include "xyginext/core/ConfigFile.hpp"
@@ -33,15 +34,14 @@ source distribution.
 #include "xyginext/detail/Operators.hpp"
 #include "xyginext/gui/GuiClient.hpp"
 
-#include "../imgui/imgui.h"
 #include "../imgui/imgui-SFML.h"
-#include "../imgui/imgui_internal.h"
 
 #include "../detail/GLCheck.hpp"
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 #include <algorithm>
 #include <fstream>
@@ -64,7 +64,7 @@ namespace
 
     sf::Clock frameClock;
 
-    sf::RenderWindow* renderWindow = nullptr;
+    sf::RenderTarget* renderTarget = nullptr;
 
     bool running = false;
 
@@ -79,13 +79,17 @@ namespace
 
 bool App::m_mouseCursorVisible = true;
 
-App::App(sf::ContextSettings contextSettings)
-    : m_videoSettings   (),
-    m_renderWindow      (m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
-    m_applicationName   (APP_NAME)
+App::App(sf::ContextSettings contextSettings, const std::string& name)
+    : m_videoSettings   (contextSettings),
+    m_renderWindow(m_videoSettings.VideoMode, windowTitle, m_videoSettings.WindowStyle, m_videoSettings.ContextSettings),
+    m_applicationName   (name)
 {
-    renderWindow = &m_renderWindow;
+    m_windowIcon.create(16u, 16u, defaultIcon);
 
+    renderTarget = &m_renderWindow;
+
+    // At this point we can safely assume the target will be a renderwindow.
+    // Perhaps in future add the ability to initialise with a rendertexture
     m_renderWindow.setVerticalSyncEnabled(m_videoSettings.VSync);
 
     //tiny icon looks awful in the dock
@@ -117,6 +121,8 @@ App::App(sf::ContextSettings contextSettings)
     {
         Logger::log("Something went wrong loading OpenGL. Particles may be unavailable", Logger::Type::Error, Logger::Output::All);
     }
+    
+    ImGui::SFML::Init(m_renderWindow);
 }
 
 //public
@@ -130,10 +136,13 @@ void App::run()
 
     //if we find a settings file apply those settings
     loadSettings();
-
-    ImGui::SFML::Init(m_renderWindow);
-    ImGui::StyleColorsLight(&ImGui::GetStyle());
+    
     Console::init();
+    
+    #ifdef XY_EDITOR
+        Editor::init();
+    #endif
+    
     initialise();
 
     running = true;
@@ -152,28 +161,45 @@ void App::run()
 
             update(timePerFrame);
             
+            if (Editor::isEnabled())
+            {
+                Editor::update(timePerFrame);
+            }
+            
         }
         
         ImGui::SFML::Update(m_renderWindow, sf::seconds(elapsedTime));
         
-        // Do imgui stuff (Console and any client windows)
-        Console::draw();
         for (auto& f : m_guiWindows) f.first();
         
-        //m_renderWindow.clear(clearColour);
         if (m_renderWindow.setActive(true))
         {
             glCheck(glClearColor(clearColour.r / 255.f, clearColour.g / 255.f, clearColour.b / 255.f, clearColour.a / 255.f));
             glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
         }
-        draw();       
+        
+        // Draw the editor, if enabled
+        if (Editor::isEnabled())
+        {
+            // make sure to update rendertarget too
+            renderTarget->clear();
+            draw();
+            Editor::draw();
+        }
+        else
+        {
+            draw();
+        }
+        
         ImGui::SFML::Render(m_renderWindow);
+        
         m_renderWindow.display();
     }
 
     m_messageBus.disable(); //prevents spamming with loads of entity quit messages
-    
+
     finalise();
+    Editor::shutdown();
     Console::finalise();  
     ImGui::SFML::Shutdown();
 
@@ -228,7 +254,7 @@ void App::applyVideoSettings(const VideoSettings& settings)
     msg->type = Message::WindowEvent::Resized;
     msg->width = settings.VideoMode.width;
     msg->height = settings.VideoMode.height;
-
+    
     //check if the AA level is the same as requested
     auto newAA = m_renderWindow.getSettings().antialiasingLevel;
     if (oldAA != newAA)
@@ -302,10 +328,15 @@ void App::setWindowIcon(const std::string& path)
     }
 }
 
-sf::RenderWindow* App::getRenderWindow()
+sf::RenderTarget* App::getRenderTarget()
 {
     //XY_ASSERT(renderWindow, "Window not created");
-    return renderWindow;
+    return renderTarget;
+}
+
+void App::setRenderTarget(sf::RenderTarget* rt)
+{
+    renderTarget = rt;
 }
 
 void App::printStat(const std::string& name, const std::string& value)
@@ -317,12 +348,6 @@ App* App::getActiveInstance()
 {
     //XY_ASSERT(appInstance, "No active app instance");
     return appInstance;
-}
-
-void App::setApplicationName(const std::string& name)
-{
-    XY_ASSERT(!name.empty(), "must be a valid name");
-    m_applicationName = name;
 }
 
 const std::string& App::getApplicationName() const
@@ -337,7 +362,7 @@ void App::setMouseCursorVisible(bool visible)
 
 bool App::isMouseCursorVisible()
 {
-    return m_mouseCursorVisible || Console::isVisible();
+    return m_mouseCursorVisible || Editor::isEnabled();
 }
 
 //protected
@@ -373,6 +398,12 @@ void App::handleEvents()
     while (m_renderWindow.pollEvent(evt))
     {
         ImGui::SFML::ProcessEvent(evt);
+        
+        if (Editor::handleEvent(evt))
+        {
+            // Editor has taken the event
+            continue;
+        }
 
         switch (evt.type)
         {
@@ -395,7 +426,7 @@ void App::handleEvents()
                 msg->width = m_renderWindow.getSize().x;
                 msg->height = m_renderWindow.getSize().y;
             }
-
+                
             continue;
         case sf::Event::Closed:
             quit();
@@ -410,23 +441,23 @@ void App::handleEvents()
             break;
         default: break;
         }
-
+        
         if (evt.type == sf::Event::KeyReleased)
         {
             switch (evt.key.code)
             {
             case sf::Keyboard::F1:
-                Console::show();
+                Editor::toggle();
                 break;
             case sf::Keyboard::F5:
                 saveScreenshot();
                 break;
             default:break;
-            }           
+            }
         }
-        
+            
         eventHandler(evt);
-    }   
+    }
 }
 
 void App::handleMessages()
