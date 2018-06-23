@@ -70,6 +70,16 @@ void ConfigProperty::setValue(sf::Vector2f v)
     m_value = std::to_string(v.x) + "," + std::to_string(v.y);
 }
 
+void ConfigProperty::setValue(sf::Vector2i v)
+{
+    m_value = std::to_string(v.x) + "," + std::to_string(v.y);
+}
+
+void ConfigProperty::setValue(sf::Vector2u v)
+{
+    m_value = std::to_string(v.x) + "," + std::to_string(v.y);
+}
+
 void ConfigProperty::setValue(sf::Vector3f v)
 {
     m_value = std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z);
