@@ -69,6 +69,33 @@ inline sf::Vector2f ConfigProperty::getValue<sf::Vector2f>() const
 }
 
 template <>
+inline sf::Vector2i ConfigProperty::getValue<sf::Vector2i>() const
+{
+    auto values = valueAsArray();
+    //sf::Vector2f retval; //loop allows for values to be the wrong size
+    //for (auto i = 0u; i < values.size() && i < 2; ++i)
+    //{
+    //    retval[i] = values[i];
+    //}
+    
+    return { static_cast<sf::Int32>(values[0]), static_cast<sf::Int32>(values[1]) };
+}
+
+template <>
+inline sf::Vector2u ConfigProperty::getValue<sf::Vector2u>() const
+{
+    auto values = valueAsArray();
+    //sf::Vector2f retval; //loop allows for values to be the wrong size
+    //for (auto i = 0u; i < values.size() && i < 2; ++i)
+    //{
+    //    retval[i] = values[i];
+    //}
+    
+    return { static_cast<sf::Uint32>(values[0]), static_cast<sf::Uint32>(values[1]) };
+}
+
+
+template <>
 inline sf::Vector3f ConfigProperty::getValue<sf::Vector3f>() const
 {
     auto values = valueAsArray();

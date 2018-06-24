@@ -22,8 +22,8 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_OPENGL_HPP
-#define SFML_OPENGL_HPP
+#ifndef SFML_GPUPREFERENCE_HPP
+#define SFML_GPUPREFERENCE_HPP
 
 
 ////////////////////////////////////////////////////////////
@@ -33,46 +33,42 @@
 
 
 ////////////////////////////////////////////////////////////
-/// This file just includes the OpenGL headers,
-/// which have actually different paths on each system
+/// \file
+///
+/// \brief File containing SFML_DEFINE_DISCRETE_GPU_PREFERENCE
+///
+////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////
+/// \def SFML_DEFINE_DISCRETE_GPU_PREFERENCE
+///
+/// \brief A macro to encourage usage of the discrete GPU
+///
+/// In order to inform the Nvidia/AMD driver that an SFML
+/// application could benefit from using the more powerful
+/// discrete GPU, special symbols have to be publicly
+/// exported from the final executable.
+///
+/// SFML defines a helper macro to easily do this.
+///
+/// Place SFML_DEFINE_DISCRETE_GPU_PREFERENCE in the
+/// global scope of a source file that will be linked into
+/// the final executable. Typically it is best to place it
+/// where the main function is also defined.
+///
 ////////////////////////////////////////////////////////////
 #if defined(SFML_SYSTEM_WINDOWS)
 
-    // The Visual C++ version of gl.h uses WINGDIAPI and APIENTRY but doesn't define them
-    #ifdef _MSC_VER
-        #include <windows.h>
-    #endif
+    #define SFML_DEFINE_DISCRETE_GPU_PREFERENCE \
+                extern "C" __declspec(dllexport) unsigned long NvOptimusEnablement = 1; \
+                extern "C" __declspec(dllexport) unsigned long AmdPowerXpressRequestHighPerformance = 1;
 
-    #include <GL/gl.h>
+#else
 
-#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD)
-
-    #if defined(SFML_OPENGL_ES)
-        #include <GLES/gl.h>
-        #include <GLES/glext.h>
-    #else
-        #include <GL/gl.h>
-    #endif
-
-#elif defined(SFML_SYSTEM_MACOS)
-
-    #include <OpenGL/gl.h>
-
-#elif defined (SFML_SYSTEM_IOS)
-
-    #include <OpenGLES/ES1/gl.h>
-    #include <OpenGLES/ES1/glext.h>
-
-#elif defined (SFML_SYSTEM_ANDROID)
-
-    #include <GLES/gl.h>
-    #include <GLES/glext.h>
-    
-    // We're not using OpenGL ES 2+ yet, but we can use the sRGB extension
-    #include <GLES2/gl2platform.h>
-    #include <GLES2/gl2ext.h>
+    #define SFML_DEFINE_DISCRETE_GPU_PREFERENCE
 
 #endif
 
 
-#endif // SFML_OPENGL_HPP
+#endif // SFML_GPUPREFERENCE_HPP

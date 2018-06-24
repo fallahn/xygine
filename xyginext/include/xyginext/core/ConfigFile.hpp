@@ -93,6 +93,8 @@ namespace xy
         void setValue(float v);
         void setValue(bool v);
         void setValue(sf::Vector2f v);
+        void setValue(sf::Vector2i v);
+        void setValue(sf::Vector2u v);
         void setValue(sf::Vector3f v);
         void setValue(sf::FloatRect);
         void setValue(sf::Color);

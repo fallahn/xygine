@@ -65,7 +65,7 @@ René Nyffenegger rene.nyffenegger@adp-gmbh.ch
 namespace tmx
 {
     //using inline here just to supress unused warnings on gcc
-    bool decompress(const char* source, std::vector<unsigned char>& dest, int inSize, int expectedSize);
+    bool decompress(const char* source, std::vector<unsigned char>& dest, std::size_t inSize, std::size_t expectedSize);
 
     static inline std::string base64_decode(std::string const& encoded_string)
     {
@@ -80,7 +80,7 @@ namespace tmx
             return (isalnum(c) || (c == '+') || (c == '/'));
         };
 
-        int in_len = encoded_string.size();
+        auto in_len = encoded_string.size();
         int i = 0;
         int j = 0;
         int in_ = 0;
@@ -165,7 +165,7 @@ namespace tmx
     }
 
     static inline std::string resolveFilePath(std::string path, const std::string& workingDir)
-    {
+    {      
         static const std::string match("../");
         std::size_t result = path.find(match);
         std::size_t count = 0;
@@ -176,6 +176,8 @@ namespace tmx
             result = path.find(match);
         }
 
+        if (workingDir.empty()) return path;
+
         std::string outPath = workingDir;
         for (auto i = 0u; i < count; ++i)
         {
@@ -185,7 +187,17 @@ namespace tmx
                 outPath = outPath.substr(0, result);
             }
         }
+// this does only work on windows		
+#ifndef __ANDROID__
         return std::move(outPath += '/' + path);
+#endif
+
+// todo: make resolveFilePath work with subfolders on 
+// android - currently only the root folder is working
+
+#ifdef __ANDROID__
+		return std::move(outPath = path);
+#endif
     }
 }
 

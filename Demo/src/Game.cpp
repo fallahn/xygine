@@ -38,9 +38,12 @@ source distribution.
 
 #include <SFML/Window/Event.hpp>
 
+#include <xyginext/gui/Gui.hpp>
+
 namespace
 {
     SharedStateData sharedData;
+    const std::string guiCfgPath = "guistyle.cfg";
     //sf::Cursor cursor;
 }
 
@@ -58,6 +61,17 @@ Game::Game()
   
     setWindowTitle("xygine - Castle Clamber (F1 for Options)");
     Locale::load("assets/localisation/chichewa.xyl");
+    
+    // Check for saved gui style
+    xy::Nim::Style style;
+    if (!style.loadFromFile(guiCfgPath))
+    {
+        xy::Logger::log("Gui style not found");
+    }
+    else
+    {
+        xy::Nim::setStyle(style);
+    }
 }
 
 //private
@@ -70,6 +84,14 @@ void Game::handleEvent(const sf::Event& evt)
         {
             default: break;
             case sf::Keyboard::Escape:
+                
+                // Save the gui style
+                auto style = xy::Nim::getStyle();
+                if (!style.saveToFile(guiCfgPath))
+                {
+                    xy::Logger::log("Failed to save gui style");
+                }
+                
                 xy::App::quit();
                 break;
         }
