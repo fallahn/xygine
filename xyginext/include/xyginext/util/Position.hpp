@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UTIL_POSITION_HPP_
-#define XY_UTIL_POSITION_HPP_
+#pragma once
 
 #include <SFML/Graphics/Text.hpp>
 
@@ -60,5 +59,3 @@ namespace xy
         }
     }
 }
-
-#endif //XY_UTIL_POSITION_HPP_

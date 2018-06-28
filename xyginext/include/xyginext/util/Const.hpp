@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UTIL_CONST_HPP_
-#define XY_UTIL_CONST_HPP_
+#pragma once
 
 namespace xy
 {
@@ -42,5 +41,3 @@ namespace xy
         } //Const
     }//Util
 }//xy
-
-#endif //XY_UTIL_CONST_HPP_

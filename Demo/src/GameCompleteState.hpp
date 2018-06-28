@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_COMPLETE_STATE_HPP_
-#define DEMO_COMPLETE_STATE_HPP_
+#pragma once
 
 #include "StateIDs.hpp"
 
@@ -63,5 +62,3 @@ private:
     void loadUI();
     void showSummary();
 };
-
-#endif //DEMO_COMPLETE_STATE_HPP_

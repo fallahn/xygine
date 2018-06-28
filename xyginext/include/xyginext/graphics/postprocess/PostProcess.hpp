@@ -27,8 +27,7 @@ source distribution.
 
 //abstract base class for full screen post process effects
 
-#ifndef XY_POST_PROCESS_HPP_
-#define XY_POST_PROCESS_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -116,5 +115,3 @@ namespace xy
         sf::Vector2i m_bufferSize;
     };
 }
-
-#endif //XY_POST_PROCESS_HPP_

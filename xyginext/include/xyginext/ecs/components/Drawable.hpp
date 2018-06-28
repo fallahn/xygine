@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_DRAWABLE_HPP_
-#define XY_DRAWABLE_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -200,5 +199,3 @@ namespace xy
         friend class RenderSystem;
     };
 }
-
-#endif //XY_DRAWABLE_HPP_

@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_CONSOLE_CLIENT_HPP_
-#define XY_CONSOLE_CLIENT_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -60,5 +59,3 @@ namespace xy
         void registerCommand(const std::string& command, const std::function<void(const std::string&)>& func);
     };
 }
-
-#endif //XY_CONSOLE_CLIENT_HPP_

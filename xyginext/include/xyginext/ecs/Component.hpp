@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_COMPONENT_HPP_
-#define XY_COMPONENT_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -62,5 +61,3 @@ namespace xy
         std::vector<std::type_index> m_IDs;     
     };
 }
-
-#endif //XY_COMPONENT_HPP_

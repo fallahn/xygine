@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_INTRO_STATE_HPP_
-#define DEMO_INTRO_STATE_HPP_
+#pragma once
 
 #include "StateIDs.hpp"
 
@@ -80,5 +79,3 @@ private:
     sf::SoundBuffer m_soundBuffer;
     sf::Sound m_sound;
 };
-
-#endif //DEMO_INTRO_STATE_HPP_

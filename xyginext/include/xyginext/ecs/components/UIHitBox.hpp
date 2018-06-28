@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UI_HITBOX_HPP_
-#define XY_UI_HITBOX_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -65,5 +64,3 @@ namespace xy
         sf::Int32 ID = -1;
     };
 }
-
-#endif //XY_UI_HITBOX_HPP_

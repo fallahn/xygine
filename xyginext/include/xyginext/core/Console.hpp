@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_CONSOLE_HPP_
-#define XY_CONSOLE_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include <SFML/Config.hpp>
@@ -125,5 +124,3 @@ namespace xy
 //#include "Console.inl"
 
 }
-
-#endif //XY_CONSOLE_HPP_

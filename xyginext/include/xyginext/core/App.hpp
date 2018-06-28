@@ -38,8 +38,7 @@ The older revision of xygine can be found <a href="https://github.com/fallahn/xy
 
 */
 
-#ifndef XY_APP_HPP_
-#define XY_APP_HPP_
+#pragma once
 
 #include "xyginext/core/StateStack.hpp"
 #include "xyginext/core/MessageBus.hpp"
@@ -342,4 +341,3 @@ namespace xy
         void saveSettings();
     };
 }
-#endif //XY_APP_HPP_

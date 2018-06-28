@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef ENET_CLIENT_IMPL_HPP_
-#define ENET_CLIENT_IMPL_HPP_
+#pragma once
 
 //implements the NetClient interface with enet
 #include "xyginext/network/NetImpl.hpp"
@@ -68,5 +67,3 @@ namespace xy
         NetPeer m_peer;
     };
 }
-
-#endif //ENET_CLIENT_IMPL_HPP_

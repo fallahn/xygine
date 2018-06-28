@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_REMOTE_PAUSE_STATE_HPP_
-#define DEMO_REMOTE_PAUSE_STATE_HPP_
+#pragma once
 
 #include "StateIDs.hpp"
 
@@ -56,5 +55,3 @@ private:
     sf::Text m_text;
     sf::Sprite m_sprite;
 };
-
-#endif //DEMO_REMOTE_PAUSE_STATE_HPP_

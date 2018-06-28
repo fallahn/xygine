@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_COMMAND_ID_HPP_
-#define DEMO_GAME_COMMAND_ID_HPP_
+#pragma once
 
 namespace CommandID
 {
@@ -60,5 +59,3 @@ namespace CommandID
         KeybindInput = 0x400000
     };
 }
-
-#endif //DEMO_GAME_COMMAND_ID_HPP_

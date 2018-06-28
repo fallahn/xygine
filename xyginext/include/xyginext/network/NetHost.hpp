@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_NETHOST_HPP_
-#define XY_NETHOST_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include <SFML/Config.hpp>
@@ -180,5 +179,3 @@ namespace xy
 
 #include "NetHost.inl"
 }
-
-#endif //XY_NETHOST_HPP_

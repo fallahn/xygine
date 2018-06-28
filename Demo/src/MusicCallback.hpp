@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_MUSIC_CALLBACK_HPP_
-#define DEMO_MUSIC_CALLBACK_HPP_
+#pragma once
 
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/Entity.hpp>
@@ -120,6 +119,3 @@ private:
     std::array<std::string, 3u> m_trackNames;
     std::size_t m_currentTrack;
 };
-
-
-#endif //DEMO_MUSIC_CALLBACK_HPP_

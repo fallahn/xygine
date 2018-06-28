@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_NET_CLIENT_HPP_
-#define XY_NET_CLIENT_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include <SFML/Config.hpp>
@@ -160,5 +159,3 @@ namespace xy
 
 #include "NetClient.inl"
 }
-
-#endif //XY_NET_CLIENT_HPP_

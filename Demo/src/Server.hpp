@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef GAME_DEMO_SERVER_HPP_
-#define GAME_DEMO_SERVER_HPP_
+#pragma once
 
 #include "MapData.hpp"
 
@@ -119,5 +118,3 @@ private:
     };
     std::array<Client, 2u> m_clients;
 };
-
-#endif //GAME_DEMO_SERVER_HPP_

@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_KEYMAP_HPP_
-#define DEMO_KEYMAP_HPP_
+#pragma once
 
 #include <SFML/Window/Keyboard.hpp>
 
@@ -138,5 +137,3 @@ static const std::map<sf::Keyboard::Key, std::string> KeyMap =
     std::make_pair(sf::Keyboard::F15, "F15"),
     std::make_pair(sf::Keyboard::Pause, "Pause")
 };
-
-#endif //DEMO_KEYMAP_HPP_

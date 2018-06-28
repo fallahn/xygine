@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_MENU_CALLBACKS_HPP_
-#define DEMO_MENU_CALLBACKS_HPP_
+#pragma once
 
 #include <xyginext/ecs/Entity.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -154,5 +153,3 @@ private:
     const sf::Vector2f& m_target;
     static constexpr float Speed = 5.f;
 };
-
-#endif //DEMO_MENU_CALLBACKS_HPP_

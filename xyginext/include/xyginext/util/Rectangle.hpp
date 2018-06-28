@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UTIL_RECTANGLE_HPP_
-#define XY_UTIL_RECTANGLE_HPP_
+#pragma once
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -69,4 +68,3 @@ namespace xy
         }
     }
 }
-#endif //XY_UTIL_RECTANGLE_HPP_

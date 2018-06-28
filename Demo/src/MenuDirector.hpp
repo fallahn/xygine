@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_MENU_DIRECTOR_HPP_
-#define DEMO_MENU_DIRECTOR_HPP_
+#pragma once
 
 #include <xyginext/ecs/Director.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -90,5 +89,3 @@ private:
 
     void spawnSprite(const Act&);
 };
-
-#endif //DEMO_MENU_DIRECTOR_HPP_

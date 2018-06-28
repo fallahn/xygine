@@ -1,5 +1,4 @@
-#ifndef XY_NET_PEER_INL_
-#define XY_NET_PEER_INL_
+#pragma once
 
 template <>
 inline std::string NetPeer::getAddress<_ENetPeer>() const
@@ -42,5 +41,3 @@ inline void NetPeer::setPeer(_ENetPeer* peer)
     IMPL_WARN
     m_peer = peer;
 }
-
-#endif //XY_NET_PEER_INL_

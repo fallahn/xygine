@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_LUGGAGE_DIRECTOR_HPP_
-#define DEMO_LUGGAGE_DIRECTOR_HPP_
+#pragma once
 
 #include <xyginext/ecs/Director.hpp>
 
@@ -63,5 +62,3 @@ public:
 private:
     xy::NetHost& m_host;
 };
-
-#endif //DEMO_LUGGAGE_DIRECTOR_HPP_

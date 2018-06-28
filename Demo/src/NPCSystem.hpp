@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_NPC_SYSTEM_HPP_
-#define DEMO_NPC_SYSTEM_HPP_
+#pragma once
 
 #include <xyginext/ecs/System.hpp>
 
@@ -86,5 +85,3 @@ private:
     void checkBounds(xy::Entity, float);
 
 };
-
-#endif //DEMO_NPC_SYSTEM_HPP_

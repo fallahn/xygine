@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_ENDING_DIRECTOR_HPP_
-#define DEMO_ENDING_DIRECTOR_HPP_
+#pragma once
 
 #include <xyginext/ecs/Director.hpp>
 #include <xyginext/ecs/Entity.hpp>
@@ -66,4 +65,3 @@ private:
     };
     void playSound(sf::Uint32, xy::Entity);
 };
-#endif //DEMO_ENDING_DIRECOTR_HPP_

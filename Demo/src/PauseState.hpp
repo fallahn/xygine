@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_PAUSE_STATE_HPP_
-#define DEMO_PAUSE_STATE_HPP_
+#pragma once
 
 #include "StateIDs.hpp"
 
@@ -58,5 +57,3 @@ private:
     void load();
     void unpause();
 };
-
-#endif //DEMO_PAUSE_STATE_HPP_

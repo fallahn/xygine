@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_PARTICLE_EMITTER_HPP_
-#define XY_PARTICLE_EMITTER_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -135,5 +134,3 @@ namespace xy
         friend class ParticleSystem;
     };
 }
-
-#endif //XY_PARTICLE_EMITTER_HPP_

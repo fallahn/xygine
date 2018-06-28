@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_LOCALISATION_HPP_
-#define DEMO_LOCALISATION_HPP_
+#pragma once
 
 #include <vector>
 #include <string>
@@ -156,5 +155,3 @@ namespace Locale
         }
     }
 }
-
-#endif //DEMO_LOCALISATION_HPP_

@@ -27,8 +27,7 @@ source distribution.
 
 //abstract base class for game states
 
-#ifndef XY_STATE_HPP_
-#define XY_STATE_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -196,4 +195,3 @@ namespace xy
         void loadingScreenThread();
     };
 }
-#endif //XY_STATE_HPP_

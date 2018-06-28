@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_SYSTIME_HPP_
-#define XY_SYSTIME_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -88,5 +87,3 @@ namespace xy
         //static Data m_data;
     };
 }
-
-#endif //XY_SYSTIME_HPP_

@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_GUI_CLIENT_HPP_
-#define XY_GUI_CLIENT_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -69,5 +68,3 @@ namespace xy
         void registerWindow(const std::function<void()>&);
     };
 }
-
-#endif //XY_GUI_CLIENT_HPP_

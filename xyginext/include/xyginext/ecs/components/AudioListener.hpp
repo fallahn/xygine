@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_AUDIO_LISTENER_HPP_
-#define XY_AUDIO_LISTENER_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -83,5 +82,3 @@ namespace xy
         float m_depth = 0.f;
     };
 }
-
-#endif //XY_AUDIO_LISTENER_HPP_

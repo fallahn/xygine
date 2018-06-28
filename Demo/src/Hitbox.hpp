@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_HITBOX_HPP_
-#define DEMO_HITBOX_HPP_
+#pragma once
 
 #include <xyginext/core/Assert.hpp>
 #include <xyginext/ecs/Entity.hpp>
@@ -128,5 +127,3 @@ private:
 
     friend class CollisionSystem;
 };
-
-#endif //DEMO_HITBOX_HPP_

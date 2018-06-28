@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_OPERATORS_HPP_
-#define XY_OPERATORS_HPP_
+#pragma once
 
 #include <SFML/Config.hpp>
 #include <SFML/Window/ContextSettings.hpp>
@@ -50,4 +49,3 @@ sf::Vector2<T> operator / (sf::Vector2<T>l, sf::Vector2<T> r)
 {
     return { l.x / r.x, l.y / r.y };
 }
-#endif //XY_OPERATORS_HPP_

@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_COMMAND_TARGET_HPP_
-#define XY_COMMAND_TARGET_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -55,5 +54,3 @@ namespace xy
         sf::Uint32 ID = 0;
     };
 }
-
-#endif //XY_COMMAND_ID_HPP_

@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_NET_INTERPOLATE_HPP_
-#define XY_NET_INTERPOLATE_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include <SFML/Config.hpp>
@@ -73,5 +72,3 @@ namespace xy
         friend class InterpolationSystem;
     };
 }
-
-#endif //XY_NET_INTERPOLATE_HPP_

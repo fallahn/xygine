@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_PLAYER_INPUT_HPP_
-#define DEMO_PLAYER_INPUT_HPP_
+#pragma once
 
 #include "InputBinding.hpp"
 
@@ -81,5 +80,3 @@ private:
 
     void checkControllerInput();
 };
-
-#endif //DEMO_PLAYER_INPUT_HPP_

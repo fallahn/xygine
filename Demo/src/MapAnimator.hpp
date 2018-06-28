@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_MAP_ANIMATOR_HPP_
-#define DEMO_MAP_ANIMATOR_HPP_
+#pragma once
 
 #include <xyginext/ecs/System.hpp>
 
@@ -58,5 +57,3 @@ private:
     void onEntityAdded(xy::Entity) override;
     void onEntityRemoved(xy::Entity) override;
 };
-
-#endif //DEMO_MAP_ANIMATOR_HPP_

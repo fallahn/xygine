@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_SYSTEM_HPP_
-#define XY_SYSTEM_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include "xyginext/ecs/Entity.hpp"
@@ -249,5 +248,3 @@ namespace xy
 #include "System.inl"
 #include "SystemManager.inl"
 }
-
-#endif //XY_SYSTEM_HPP_

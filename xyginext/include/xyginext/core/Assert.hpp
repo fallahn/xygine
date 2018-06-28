@@ -27,8 +27,7 @@ source distribution.
 
 //custom assertion macro which is more verbose than standard assert
 
-#ifndef XY_ASSERT_HPP_
-#define XY_ASSERT_HPP_
+#pragma once
 
 #include "xyginext/core/Log.hpp"
 
@@ -67,5 +66,3 @@ do \
 #define XY_WARNING(condition, message)
 
 #endif //XY_DEBUG
-
-#endif //XY_ASSERT_HPP_

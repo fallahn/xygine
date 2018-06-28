@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_CONFIG_FILE_HPP_
-#define XY_CONFIG_FILE_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include "xyginext/core/Log.hpp"
@@ -212,5 +211,3 @@ namespace xy
     using ConfigFile = xy::ConfigObject;
     
 }
-
-#endif // XY_CONFIG_FILE_HPP_

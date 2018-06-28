@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_STATE_HPP_
-#define DEMO_GAME_STATE_HPP_
+#pragma once
 
 #include <xyginext/core/State.hpp>
 #include <xyginext/core/ConfigFile.hpp>
@@ -133,5 +132,3 @@ private:
 
     void transitionToEnd();
 };
-
-#endif //DEMO_GAME_STATE_HPP_
