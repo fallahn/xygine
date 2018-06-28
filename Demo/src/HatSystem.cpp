@@ -197,10 +197,10 @@ void HatSystem::updateSpawning(xy::Entity entity, float dt)
     }
 
     const auto& collision = entity.getComponent<CollisionComponent>();
-    for (auto i = 0; i < collision.getHitboxCount(); ++i)
+    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
     {
         const auto& hitbox = collision.getHitboxes()[i];
-        for (auto j = 0; j < hitbox.getCollisionCount(); ++j)
+        for (auto j = 0u; j < hitbox.getCollisionCount(); ++j)
         {
             const auto& man = hitbox.getManifolds()[j];
             if ((man.otherType == CollisionType::Platform || man.otherType == CollisionType::Solid))
@@ -235,10 +235,10 @@ void HatSystem::updateSpawning(xy::Entity entity, float dt)
 void HatSystem::updateIdle(xy::Entity entity)
 {
     const auto& collision = entity.getComponent<CollisionComponent>();
-    for (auto i = 0; i < collision.getHitboxCount(); ++i)
+    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
     {
         const auto& hitbox = collision.getHitboxes()[i];
-        for (auto j = 0; j < hitbox.getCollisionCount(); ++j)
+        for (auto j = 0u; j < hitbox.getCollisionCount(); ++j)
         {
             const auto& man = hitbox.getManifolds()[j];
             if (man.otherType == CollisionType::Player)
@@ -302,10 +302,10 @@ void HatSystem::updateDying(xy::Entity entity, float dt)
 #endif
 
     const auto& collision = entity.getComponent<CollisionComponent>();
-    for (auto i = 0; i < collision.getHitboxCount(); ++i)
+    for (auto i = 0u; i < collision.getHitboxCount(); ++i)
     {
         const auto& hitbox = collision.getHitboxes()[i];
-        for (auto j = 0; j < hitbox.getCollisionCount(); ++j)
+        for (auto j = 0u; j < hitbox.getCollisionCount(); ++j)
         {
             const auto& man = hitbox.getManifolds()[j];
             if (man.otherType == CollisionType::HardBounds)

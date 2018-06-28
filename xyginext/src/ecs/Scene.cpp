@@ -131,7 +131,7 @@ void Scene::setPostEnabled(bool enabled)
         
         XY_ASSERT(App::getRenderWindow(), "no valid window");
         auto size = App::getRenderWindow()->getSize();
-        m_sceneBuffer.create(size.x, size.y, true);
+        m_sceneBuffer.create(size.x, size.y, sf::ContextSettings(32));
         for (auto& p : m_postEffects) p->resizeBuffer(size.x, size.y);
     }
     else

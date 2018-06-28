@@ -65,13 +65,13 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
         return false;
     }
 
-    /*if (auto* p = sheetFile.findProperty("blendmode"))
+    if (auto* p = sheetFile.findProperty("blendmode"))
     {
         std::string mode = p->getValue<std::string>();
         if (mode == "add") blendMode = sf::BlendAdd;
         else if (mode == "multiply") blendMode = sf::BlendMultiply;
         else if (mode == "none") blendMode = sf::BlendNone;
-    }*/
+    }
 
     if (auto* p = sheetFile.findProperty("smooth"))
     {

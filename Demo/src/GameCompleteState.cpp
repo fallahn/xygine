@@ -94,8 +94,8 @@ bool GameCompleteState::handleEvent(const sf::Event& evt)
     }
     
     if (evt.type == sf::Event::KeyReleased
-        || evt.type == sf::Event::JoystickButtonReleased
-        && inputDelay > 2.f)
+        || (evt.type == sf::Event::JoystickButtonReleased
+            && inputDelay > 2.f))
     {
         //skips to end screen
         if (!m_summaryShown)

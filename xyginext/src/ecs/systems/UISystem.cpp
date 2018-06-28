@@ -291,7 +291,7 @@ void UISystem::process(float)
         //-----movement input-----//
         auto area = tx.transformRect(input.area);
         bool contains = false;
-        if (contains = area.contains(m_eventPosition))
+        if ((contains = area.contains(m_eventPosition)))
         {
             if (!input.active)
             {

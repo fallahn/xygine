@@ -39,13 +39,13 @@ namespace
     float currFrametime = 0.f;
 
     const std::array<sf::IntRect, 5> frames =
-    {
+    {{
         sf::IntRect( 0,512,128,256 ),
         { 128,512,128,256 },
         { 256,512,128,256 },
         { 384,512,128,256 },
         { 512,512,128,256 }
-    };
+    }};
 }
 
 LoadingScreen::LoadingScreen()
