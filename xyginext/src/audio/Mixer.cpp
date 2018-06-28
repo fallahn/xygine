@@ -36,7 +36,7 @@ namespace
     
 }
 std::array<std::string, AudioMixer::MaxChannels> AudioMixer::m_labels
-{ 
+{{
     "Channel 0", 
     "Channel 1", 
     "Channel 2", 
@@ -53,10 +53,10 @@ std::array<std::string, AudioMixer::MaxChannels> AudioMixer::m_labels
     "Channel 13", 
     "Channel 14", 
     "Channel 15"
-};
+}};
 
 std::array<float, AudioMixer::MaxChannels> AudioMixer::m_channels
-{ 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
+{{ 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f }};
 
 float AudioMixer::m_masterVol = 1.f;
 

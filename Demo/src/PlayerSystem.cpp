@@ -54,8 +54,6 @@ namespace
     const sf::Uint32 UpMask = CollisionFlags::PlayerMask & ~(CollisionFlags::Bubble/*|CollisionFlags::Platform*/);
     const sf::Uint32 DownMask = CollisionFlags::PlayerMask;
 
-    const sf::Uint32 FootMask = (CollisionType::Platform | CollisionType::Solid | CollisionType::Bubble);
-
     const sf::Uint8 BodyClear = 0x1;
     const sf::Uint8 FootClear = 0x2;
     const sf::Uint8 PlayerClear = BodyClear | FootClear;

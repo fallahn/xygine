@@ -187,7 +187,7 @@ void CrateSystem::groundCollision(xy::Entity entity)
 
         if (hitboxes[i].getType() == CollisionType::Crate)
         {
-            for (auto j = 0; j < collisionCount; ++j)
+            for (auto j = 0u; j < collisionCount; ++j)
             {
                 switch (manifolds[j].otherType)
                 {
@@ -249,7 +249,7 @@ void CrateSystem::groundCollision(xy::Entity entity)
             auto collisions = collisionCount;
 
             //remove any contacts which shouldn't stop it from falling
-            for (auto j = 0; j < collisionCount; ++j)
+            for (auto j = 0u; j < collisionCount; ++j)
             {
                 switch (manifolds[j].otherType)
                 {
@@ -293,7 +293,7 @@ void CrateSystem::airCollision(xy::Entity entity)
 
         if (hitboxes[i].getType() == CollisionType::Crate)
         {
-            for (auto j = 0; j < collisionCount; ++j)
+            for (auto j = 0u; j < collisionCount; ++j)
             {
                 if (manifolds[j].otherType == CollisionType::Teleport)
                 {

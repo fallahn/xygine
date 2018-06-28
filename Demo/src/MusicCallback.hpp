@@ -55,11 +55,11 @@ public:
         m_currentTrack  (0)
     {
         m_trackNames = 
-        {
+        {{
             "assets/sound/music/01.ogg",
             "assets/sound/music/02.ogg",
             "assets/sound/music/03.ogg"
-        };
+        }};
     }
 
     void operator () (xy::Entity entity, float dt)

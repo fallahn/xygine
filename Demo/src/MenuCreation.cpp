@@ -558,20 +558,20 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
 void MenuState::createKeybindInputs(xy::Entity towerEnt, sf::Uint8 player)
 {
     static const std::array<sf::Vector2f, 4u> buttonPositions =
-    {
+    {{
         sf::Vector2f(64.f, 192.f),
         sf::Vector2f(64.f, 448.f),
         sf::Vector2f(64.f, 704.f),
         sf::Vector2f(64.f, 960.f)
-    };
+    }};
 
     static const std::array<sf::Vector2f, 4u> textPositions =
-    {
+    {{
         sf::Vector2f(160.f, 194.f),
         sf::Vector2f(160.f, 450.f),
         sf::Vector2f(160.f, 706.f),
         sf::Vector2f(160.f, 962.f)
-    };
+    }};
 
     auto& towerTx = towerEnt.getComponent<xy::Transform>();
     auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");

@@ -878,10 +878,10 @@ void GameServer::loadMap()
         //create hard edges - we could probably only do this once
         //as they don't change, but let's stick with the flow
         std::array<sf::FloatRect, 2u> bounds = 
-        {
-            sf::FloatRect(0.f, 0.f, 64.f, MapBounds.height),
-            sf::FloatRect(MapBounds.width - 64.f, 0.f, 64.f, MapBounds.height)
-        };
+        {{
+            sf::FloatRect({0.f, 0.f, 64.f, MapBounds.height}),
+            sf::FloatRect(MapBounds.width - 64.f, 0.f, 64.f, MapBounds.height)   
+        }};
         for (auto rect : bounds)
         {
             auto entity = m_scene.createEntity();

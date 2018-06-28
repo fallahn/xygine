@@ -293,7 +293,6 @@ void Console::draw()
             useFrameLimit = false;
         }
         
-        bool oldFrameLimit = useFrameLimit;
         nim::Checkbox("Limit Framerate", &useFrameLimit);
         if (useFrameLimit)
         {
@@ -345,7 +344,7 @@ void Console::draw()
         nim::NewLine();
         for (auto& line : m_debugLines)
         {
-            ImGui::Text(line.c_str());
+            ImGui::TextUnformatted(line.c_str());
         }
     }
     m_debugLines.clear();
@@ -546,7 +545,7 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
                 {
                     int c = 0;
                     bool all_candidates_matches = true;
-                    for (int i = 0; i < candidates.size() && all_candidates_matches; i++)
+                    for (auto i = 0u; i < candidates.size() && all_candidates_matches; i++)
                         if (i == 0)
                             c = toupper(candidates[i][match_len]);
                         else if (c == 0 || c != toupper(candidates[i][match_len]))
@@ -583,7 +582,7 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
         {
             if (historyIndex != -1)
             {
-                if (++historyIndex >= history.size())
+                if (++historyIndex >= static_cast<int>(history.size()))
                 {
                     historyIndex = -1;
                 }

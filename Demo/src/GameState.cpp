@@ -124,7 +124,7 @@ GameState::GameState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_scene             (ctx.appInstance.getMessageBus()),
     m_sharedData        (sharedData),
     m_loadingScreen     (ls),
-    m_playerInputs      ({ PlayerInput(m_client, sharedData.inputBindings[0]), PlayerInput(m_client, sharedData.inputBindings[1]) }),
+    m_playerInputs      ({{PlayerInput(m_client, sharedData.inputBindings[0]), PlayerInput(m_client, sharedData.inputBindings[1])}}),
     m_currentMapTexture (0)
 {
     launchLoadingScreen();
@@ -961,7 +961,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
 
         xy::Command cmd;
         cmd.targetFlags = CommandID::NetActor;
-        cmd.action = [state, this](xy::Entity entity, float)
+        cmd.action = [state](xy::Entity entity, float)
         {
             if (entity.getComponent<Actor>().id == state.actor.id)
             {
