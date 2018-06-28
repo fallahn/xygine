@@ -1,6 +1,5 @@
 image: Visual Studio 2017
 configuration: Release
-cache: c:\tools\vcpkg\installed\
 build_script:
 - ps: >-
     cd C:/tools/vcpkg
@@ -9,23 +8,13 @@ build_script:
 
     ./bootstrap-vcpkg.bat
 
-    vcpkg install sfml enet
+    vcpkg install sfml --head 
+    
+    vcpkg install enet
 
-    cd C:/projects/xygine/xyginext
+    cd C:/projects/
 
-    # Build xygine libs first
-
-    mkdir build; cd build
-
-    cmake .. -DCMAKE_TOOLCHAIN_FILE=C:/Tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX=C:/tools/vcpkg/installed
-
-    cmake --build . --target install
-
-    cmake --build . --target package
-
-    cd ../../../
-
-    # And tmxlite, which the demo requires
+    # Build/Install tmxlite, which the demo requires
 
     git clone https://github.com/fallahn/tmxlite
 
@@ -35,26 +24,26 @@ build_script:
 
     cmake --build . --target install --config Release
 
-    cd ../../../
+    cd ../../../xygine
 
-    # And then build demo
+    # Build xygine libs first
 
-    cd xygine/Demo; mkdir build; cd build
+    mkdir build; cd build
 
-    cmake .. -DCMAKE_TOOLCHAIN_FILE=C:/Tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX=C:/tools/vcpkg/installed
+    cmake .. -DCMAKE_TOOLCHAIN_FILE=C:/Tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX=C:/tools/vcpkg/installed -DBUILD_DEMO=ON
+
+    cmake --build . --target install
 
     cmake --build . --target package
 
 artifacts:
-  - path: 'xyginext/build/*.zip'
-    name: xygineLibs
-  - path: 'Demo/build/*.exe'
-    name: DemoInstaller
+  - path: 'build/*.zip'
+    name: xygine
 deploy:
   provider: GitHub
   auth_token:
     secure: Uh9bW+VtZC5N7CVz5UpuxZvPJ58SpbsXBvEz6Q4vQhLcjZEFzYMhH+bS9VAPV+S8
-  artifact: xygineLibs,DemoInstaller
+  artifact: xygine
   prerelease: true
   force_update: true
   on:

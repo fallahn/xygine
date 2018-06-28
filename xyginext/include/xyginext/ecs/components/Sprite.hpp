@@ -107,12 +107,12 @@ namespace xy
         /*!
         \brief Maximum number of frames in an animation
         */
-        static constexpr std::size_t MaxFrames = 100;
+        static constexpr std::size_t MaxFrames = 64;
 
         /*!
         \brief Maximum number of animations per sprite
         */
-        static constexpr std::size_t MaxAnimations = 10;
+        static constexpr std::size_t MaxAnimations = 32;
 
         /*!
         \brief Represents a single animation
@@ -122,7 +122,7 @@ namespace xy
             /*!
              \brief Maximum  length of animation id
              */
-            static constexpr std::size_t MaxAnimationIdLength = 16;
+            static constexpr std::size_t MaxAnimationIdLength = 32;
             
             std::array<char,MaxAnimationIdLength> id = {{0}};
             std::array<sf::FloatRect, MaxFrames> frames;

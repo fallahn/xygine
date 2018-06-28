@@ -42,7 +42,7 @@ namespace xy
         /*!
         \brief Play the animation at the given index if it exists
         */
-        void play(sf::Int32 index) { m_id = index; m_playing = true; }
+        void play(std::size_t index) { m_id = index; m_playing = true; }
 
         /*!
         \brief Pause the playing animation, if there is one
@@ -71,7 +71,7 @@ namespace xy
         void setFrameID(sf::Uint32 frameID) { m_frameID = frameID; }
 
     private:
-        sf::Int32 m_id = -1;
+        std::size_t m_id = 0;
         bool m_playing = false;
         float m_currentFrameTime = 0.f;
         sf::Uint32 m_frameID = 0;

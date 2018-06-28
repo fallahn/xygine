@@ -1,6 +1,6 @@
 #add source files used by your project here
-set(PROJECT_SRC 
-  ${PROJECT_SRC}
+set(DEMO_SRC 
+  ${DEMO_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/AnimationController.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/BonusSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/BubbleSystem.cpp
