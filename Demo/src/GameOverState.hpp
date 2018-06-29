@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_OVER_STATE_HPP_
-#define DEMO_OVER_STATE_HPP_
+#pragma once
 
 #include "StateIDs.hpp"
 
@@ -60,5 +59,3 @@ private:
     void loadContinue(const SharedStateData&);
     void loadGameOver(const SharedStateData&);
 };
-
-#endif //DEMO_OVER_STATE_HPP_

@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_POST_BLUR_HPP_
-#define XY_POST_BLUR_HPP_
+#pragma once
 
 #include "xyginext/graphics/postprocess/PostProcess.hpp"
 
@@ -87,5 +86,3 @@ namespace xy
         void downSample(const sf::RenderTexture&, sf::RenderTexture&);
     };
 }
-
-#endif //XY_POST_BLUR_HPP_

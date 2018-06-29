@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_SCENE_HPP_
-#define XY_SCENE_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include "xyginext/core/App.hpp"
@@ -210,5 +209,3 @@ namespace xy
 
 #include "Scene.inl"
 }
-
-#endif //XY_SCENE_HPP_

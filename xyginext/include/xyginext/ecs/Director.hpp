@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_DIRECTOR_HPP_
-#define XY_DIRECTOR_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include "xyginext/core/MessageBus.hpp"
@@ -109,5 +108,3 @@ namespace xy
         return m_messageBus->post<T>(id);
     }
 }
-
-#endif //XY_DIRECTOR_HPP_

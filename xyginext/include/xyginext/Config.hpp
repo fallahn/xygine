@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_CONFIG_HPP_
-#define XY_CONFIG_HPP_
+#pragma once
 
 //check which platform we're on and create export macros as necessary
 #if !defined(XY_STATIC)
@@ -70,5 +69,3 @@ namespace xy
 {
     static const sf::Vector2f DefaultSceneSize(1920.f, 1080.f);
 }
-
-#endif //XY_CONFIG_HPP_

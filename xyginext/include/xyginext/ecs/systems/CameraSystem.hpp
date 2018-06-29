@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_CAMERA_SYSTEM_HPP_
-#define XY_CAMERA_SYSTEM_HPP_
+#pragma once
 
 #include "xyginext/ecs/System.hpp"
 
@@ -48,5 +47,3 @@ namespace xy
         void process(float) override;
     };
 }
-
-#endif //XY_CAMERA_SYSTEM_HPP_

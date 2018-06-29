@@ -27,8 +27,7 @@ source distribution.
 
 //stack of game states
 
-#ifndef XY_STATESTACK_HPP_
-#define XY_STATESTACK_HPP_
+#pragma once
 
 #include <map>
 #include <functional>
@@ -205,4 +204,3 @@ namespace xy
 
     };
 }
-#endif //XY_STATESTACK_HPP_

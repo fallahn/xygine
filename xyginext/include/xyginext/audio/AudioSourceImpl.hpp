@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_AUDIO_SOURCE_IMPL_HPP_
-#define XY_AUDIO_SOURCE_IMPL_HPP_
+#pragma once
 
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Audio/Sound.hpp>
@@ -147,5 +146,3 @@ namespace xy
         };
     }
 }
-
-#endif //XY_AUDIO_SOURCE_IMPL_HPP_

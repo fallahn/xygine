@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_TOWER_DIRECTOR_HPP_
-#define DEMO_TOWER_DIRECTOR_HPP_
+#pragma once
 
 #include <xyginext/ecs/Director.hpp>
 
@@ -44,5 +43,3 @@ public:
 private:
 
 };
-
-#endif //DEMO_TOWER_DIRECTOR_HPP_

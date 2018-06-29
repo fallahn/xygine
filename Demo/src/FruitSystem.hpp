@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_FRUIT_SYSTEM_HPP_
-#define DEMO_FRUIT_SYSTEM_HPP_
+#pragma once
 
 #include <SFML/Config.hpp>
 
@@ -67,5 +66,3 @@ private:
 
     xy::NetHost& m_host;
 };
-
-#endif //DEMO_FRUIT_SYSTEM_HPP_

@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_CRATE_SYSTEM_HPP_
-#define DEMO_CRATE_SYSTEM_HPP_
+#pragma once
 
 #include "MapData.hpp"
 
@@ -101,5 +100,3 @@ private:
 
     void onEntityAdded(xy::Entity) override;
 };
-
-#endif //DEMO_CRATE_SYSTEM_HPP_

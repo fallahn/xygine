@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_SPRITE_IDS_HPP_
-#define DEMO_SPRITE_IDS_HPP_
+#pragma once
 
 namespace SpriteID
 {
@@ -52,5 +51,3 @@ namespace SpriteID
         Count
     };
 }
-
-#endif //DEMO_SPRITE_IDS_HPP_

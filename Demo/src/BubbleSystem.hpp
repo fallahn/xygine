@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_BUBBLE_SYSTEM_HPP_
-#define DEMO_BUBBLE_SYSTEM_HPP_
+#pragma once
 
 #include <xyginext/ecs/System.hpp>
 #include <xyginext/network/NetHost.hpp>
@@ -69,5 +68,3 @@ private:
     void doCollision(xy::Entity);
     void killBubble(xy::Entity);
 };
-
-#endif //DEMO_BUBBLE_SYSTEM_HPP_

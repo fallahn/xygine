@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_FX_DIRECTOR_HPP_
-#define DEMO_FX_DIRECTOR_HPP_
+#pragma once
 
 #include <xyginext/ecs/Director.hpp>
 #include <xyginext/resources/Resource.hpp>
@@ -55,5 +54,3 @@ private:
 
     void playSound(sf::SoundBuffer&);
 };
-
-#endif //DEMO_FX_DIRECTOR_HPP_

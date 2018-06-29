@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_AUDIO_SYSTEM_HPP_
-#define XY_AUDIO_SYSTEM_HPP_
+#pragma once
 
 #include "xyginext/ecs/System.hpp"
 
@@ -50,5 +49,3 @@ namespace xy
         void onEntityRemoved(xy::Entity) override;
     };
 }
-
-#endif //XY_AUDIO_SYSTEM_HPP_

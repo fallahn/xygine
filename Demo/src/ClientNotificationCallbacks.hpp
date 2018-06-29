@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_CLIENT_CALLBACKS_HPP_
-#define DEMO_CLIENT_CALLBACKS_HPP_
+#pragma once
 
 #include "CommandIDs.hpp"
 #include "ClientServerShared.hpp"
@@ -124,5 +123,3 @@ private:
     sf::Vector2f m_velocity;
     sf::Uint8 m_bounce = 4;
 };
-
-#endif //DEMO_CLIENTCALLBACKS_HPP_

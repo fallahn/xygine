@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_SPRITE_ANIMATION_HPP_
-#define XY_SPRITE_ANIMATION_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include <SFML/Config.hpp>
@@ -79,5 +78,3 @@ namespace xy
         friend class SpriteAnimator;
     };
 }
-
-#endif //XY_SPRITE_ANIMATION_HPP_

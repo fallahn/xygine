@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_ENDING_MESSAGES_HPP_
-#define DEMO_ENDING_MESSAGES_HPP_
+#pragma once
 
 #include <xyginext/core/Message.hpp>
 
@@ -73,5 +72,3 @@ struct SpriteEvent final
         ReachedBottom
     }event;
 };
-
-#endif //DEMO_ENDING MESSAGES_HPP_

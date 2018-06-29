@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_MESSAGE_IDS_HPP_
-#define DEMO_MESSAGE_IDS_HPP_
+#pragma once
 
 #include <SFML/Config.hpp>
 
@@ -158,5 +157,3 @@ struct GameEvent final
     }action;
     sf::Uint8 playerID = 0;
 };
-
-#endif //DEMO_MESSAGE_IDS_HPP_

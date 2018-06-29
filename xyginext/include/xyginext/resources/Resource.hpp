@@ -27,8 +27,7 @@ source distribution.
 
 //resource manager
 
-#ifndef XY_RESOURCES_HPP_
-#define XY_RESOURCES_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include "xyginext/core/FileSystem.hpp"
@@ -175,4 +174,3 @@ namespace xy
         }
     };
 }
-#endif //XY_RESOURCES_HPP_

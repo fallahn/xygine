@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_SHARED_STATE_DATA_HPP_
-#define DEMO_GAME_SHARED_STATE_DATA_HPP_
+#pragma once
 
 #include "InputBinding.hpp"
 
@@ -49,5 +48,3 @@ struct SharedStateData final
 
     std::array<InputBinding, 2u> inputBindings;
 };
-
-#endif //DEMO_GAME_SHARED_STATE_DATA_HPP_

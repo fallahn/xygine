@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_QUAD_TREE_ITEM_HPP_
-#define XY_QUAD_TREE_ITEM_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -59,5 +58,3 @@ namespace xy
         friend class QuadTreeNode;
     };
 }
-
-#endif //XY_QUAD_TREE_ITEM_HPP_

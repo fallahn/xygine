@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_ENET_HOST_IMPL_HPP_
-#define XY_ENET_HOST_IMPL_HPP_
+#pragma once
 
 #include "xyginext/network/NetImpl.hpp"
 #include "xyginext/Config.hpp"
@@ -63,5 +62,3 @@ namespace xy
         _ENetHost * m_host;
     };
 }
-
-#endif //XY_ENET_HOST_IMPL_HPP_

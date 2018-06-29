@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_INPUT_BINDING_HPP_
-#define DEMO_INPUT_BINDING_HPP_
+#pragma once
 
 #include <SFML/Window/Keyboard.hpp>
 
@@ -42,5 +41,3 @@ struct InputBinding final
     std::array<sf::Uint32, 2u> buttons = { {0, 1} };
     sf::Uint32 controllerID = 100;
 };
-
-#endif //DEMO_INPUT_BINDING_HPP_

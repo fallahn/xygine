@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_HAT_SYSTEM_HPP_
-#define DEMO_HAT_SYSTEM_HPP_
+#pragma once
 
 #include <xyginext/ecs/System.hpp>
 
@@ -71,5 +70,3 @@ private:
     void destroy(xy::Entity);
 
 };
-
-#endif //DEMO_HAT_SYSTEM_HPP_

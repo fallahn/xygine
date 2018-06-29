@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_NET_DATA_HPP_
-#define XY_NET_DATA_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include "xyginext/core/Assert.hpp"
@@ -193,5 +192,3 @@ namespace xy
 #include "NetData.inl"
 #include "NetPeer.inl"
 }
-
-#endif //XY_NET_DATA_HPP_

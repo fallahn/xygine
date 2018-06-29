@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_MESSAGE_HPP_
-#define XY_MESSAGE_HPP_
+#pragma once
 
 #include "xyginext/core/Assert.hpp"
 
@@ -112,5 +111,3 @@ namespace xy
         std::size_t m_dataSize;
     };
 }
-
-#endif //XY_MESSAGE_HPP_

@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_PACKET_IDS_HPP_
-#define DEMO_GAME_PACKET_IDS_HPP_
+#pragma once
 
 namespace PacketID
 {
@@ -65,4 +64,3 @@ namespace PacketID
         Count
     };
 }
-#endif //DEMO_GAME_PACKET_IDS_HPP_

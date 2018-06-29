@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_CAMERA_HPP_
-#define XY_CAMERA_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -135,6 +134,3 @@ namespace xy
         friend class CameraSystem;
     };
 }
-
-
-#endif //XY_CAMERA_HPP_
