@@ -397,7 +397,7 @@ std::string FileSystem::getRelativePath(std::string path, const std::string& roo
     
     int i = -1;
     auto pos = std::string::npos;
-    auto length = 0;
+    std::size_t length = 0;
     auto currentPos = std::string::npos;
 
     do
@@ -496,7 +496,7 @@ std::string FileSystem::getConfigDirectory(const std::string& appName)
         return {};
     }
     /* We don't try to create the AppData folder as it always exists already */
-    unsigned int appname_len = strlen(appname);
+    auto appname_len = strlen(appname);
     if (strlen(out) + 1 + appname_len + 1 + 1 > maxlen) 
     {
         out[0] = 0;

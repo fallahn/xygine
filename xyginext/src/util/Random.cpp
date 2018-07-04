@@ -145,7 +145,7 @@ std::vector<sf::Vector2f> xy::Util::Random::poissonDiscDistribution(const sf::Fl
 
     while (!workingPoints.empty())
     {
-        auto idx = (workingPoints.size() == 1) ? 0 : value(0, workingPoints.size() - 1, engine);
+        std::size_t idx = (workingPoints.size() == 1) ? 0 : value(0, workingPoints.size() - 1, engine);
         centre = workingPoints[idx];
 
         workingPoints.erase(std::begin(workingPoints) + idx);

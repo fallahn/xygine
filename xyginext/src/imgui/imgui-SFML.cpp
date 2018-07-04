@@ -334,7 +334,7 @@ void UpdateFontTexture()
     texture.create(width, height);
     texture.update(pixels);
 
-    io.Fonts->TexID = (void*)texture.getNativeHandle();
+    io.Fonts->TexID = (void*)((std::size_t)texture.getNativeHandle());
 
     io.Fonts->ClearInputData();
     io.Fonts->ClearTexData();
@@ -359,7 +359,7 @@ void Image(const sf::Texture& texture,
 void Image(const sf::Texture& texture, const sf::Vector2f& size,
     const sf::Color& tintColor, const sf::Color& borderColor)
 {
-    ImGui::Image((void*)texture.getNativeHandle(), size, ImVec2(0, 0), ImVec2(1, 1), tintColor, borderColor);
+    ImGui::Image((void*)((std::size_t)texture.getNativeHandle()), size, ImVec2(0, 0), ImVec2(1, 1), tintColor, borderColor);
 }
 
 void Image(const sf::Texture& texture, const sf::FloatRect& textureRect,
@@ -375,7 +375,7 @@ void Image(const sf::Texture& texture, const sf::Vector2f& size, const sf::Float
     ImVec2 uv0(textureRect.left / textureSize.x, textureRect.top / textureSize.y);
     ImVec2 uv1((textureRect.left + textureRect.width) / textureSize.x,
         (textureRect.top + textureRect.height) / textureSize.y);
-    ImGui::Image((void*)texture.getNativeHandle(), size, uv0, uv1, tintColor, borderColor);
+    ImGui::Image((void*)((std::size_t)texture.getNativeHandle()), size, uv0, uv1, tintColor, borderColor);
 }
 
 void Image(const sf::Sprite& sprite,
@@ -569,7 +569,7 @@ bool imageButtonImpl(const sf::Texture& texture, const sf::FloatRect& textureRec
     ImVec2 uv1((textureRect.left + textureRect.width)  / textureSize.x,
                (textureRect.top  + textureRect.height) / textureSize.y);
 
-    return ImGui::ImageButton((void*)texture.getNativeHandle(), size, uv0, uv1, framePadding, bgColor, tintColor);
+    return ImGui::ImageButton((void*)((std::size_t)texture.getNativeHandle()), size, uv0, uv1, framePadding, bgColor, tintColor);
 }
 
 } // end of anonymous namespace

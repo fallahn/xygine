@@ -571,7 +571,7 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
         {
             if (historyIndex == -1)
             {
-                historyIndex = history.size() - 1;
+                historyIndex = static_cast<std::int32_t>(history.size()) - 1;
             }
             else if (historyIndex > 0)
             {
@@ -582,14 +582,14 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
         {
             if (historyIndex != -1)
             {
-                if (++historyIndex >= static_cast<int>(history.size()))
+                if (++historyIndex >= static_cast<std::int32_t>(history.size()))
                 {
                     historyIndex = -1;
                 }
             }
         }
 
-        //a betterźimplementation would preserve the data on the current input line along with cursor position.
+        //a better implementation would preserve the data on the current input line along with cursor position.
         if (prev_history_pos != historyIndex)
         {
             data->CursorPos = data->SelectionStart = data->SelectionEnd = data->BufTextLen =
