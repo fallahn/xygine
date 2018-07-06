@@ -85,7 +85,7 @@ void QuadTree::process(float)
 #endif
 }
 
-std::vector<Entity> QuadTree::queryArea(sf::FloatRect area) const
+std::vector<Entity> QuadTree::queryArea(sf::FloatRect area, std::uint64_t filterFlags) const
 {
     m_queryVector.clear();
     
@@ -114,8 +114,9 @@ std::vector<Entity> QuadTree::queryArea(sf::FloatRect area) const
             //add any entities in this node
             for (const auto& entity : currentNode->getEntities())
             {
-                auto rect = entity.getComponent<xy::Transform>().getWorldTransform().transformRect(entity.getComponent<xy::QuadTreeItem>().m_area);
-                if (area.intersects(rect))
+                const auto& item = entity.getComponent<xy::QuadTreeItem>();
+                auto rect = entity.getComponent<xy::Transform>().getWorldTransform().transformRect(item.m_area);
+                if (area.intersects(rect) && (item.m_filterFlags & filterFlags))
                 {
                     m_queryVector.push_back(entity);
                 }
@@ -139,7 +140,7 @@ std::vector<Entity> QuadTree::queryArea(sf::FloatRect area) const
     return m_queryVector;
 }
 
-std::vector<Entity> QuadTree::queryPoint(sf::Vector2f point) const
+std::vector<Entity> QuadTree::queryPoint(sf::Vector2f point, std::uint64_t filterFlags) const
 {
     m_queryVector.clear();
 
@@ -168,8 +169,9 @@ std::vector<Entity> QuadTree::queryPoint(sf::Vector2f point) const
             //add any entities in this node
             for (const auto& entity : currentNode->getEntities())
             {
-                auto rect = entity.getComponent<xy::Transform>().getWorldTransform().transformRect(entity.getComponent<xy::QuadTreeItem>().m_area);
-                if (rect.contains(point))
+                const auto& item = entity.getComponent<xy::QuadTreeItem>();
+                auto rect = entity.getComponent<xy::Transform>().getWorldTransform().transformRect(item.m_area);
+                if (rect.contains(point) && (item.m_filterFlags & filterFlags))
                 {
                     m_queryVector.push_back(entity);
                 }
