@@ -31,6 +31,8 @@ source distribution.
 
 #include <SFML/Graphics/Rect.hpp>
 
+#include <cstdint>
+
 namespace xy
 {
     class QuadTree;

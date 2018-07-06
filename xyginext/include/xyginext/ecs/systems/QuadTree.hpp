@@ -39,6 +39,7 @@ source distribution.
 #include <memory>
 #include <array>
 #include <limits>
+#include <cstdint>
 
 namespace xy
 {
