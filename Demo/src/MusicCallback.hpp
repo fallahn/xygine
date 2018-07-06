@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_MUSIC_CALLBACK_HPP_
-#define DEMO_MUSIC_CALLBACK_HPP_
+#pragma once
 
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/Entity.hpp>
@@ -55,11 +54,11 @@ public:
         m_currentTrack  (0)
     {
         m_trackNames = 
-        {
+        {{
             "assets/sound/music/01.ogg",
             "assets/sound/music/02.ogg",
             "assets/sound/music/03.ogg"
-        };
+        }};
     }
 
     void operator () (xy::Entity entity, float dt)
@@ -120,6 +119,3 @@ private:
     std::array<std::string, 3u> m_trackNames;
     std::size_t m_currentTrack;
 };
-
-
-#endif //DEMO_MUSIC_CALLBACK_HPP_

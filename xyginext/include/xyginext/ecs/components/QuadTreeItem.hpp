@@ -25,12 +25,13 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_QUAD_TREE_ITEM_HPP_
-#define XY_QUAD_TREE_ITEM_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
 #include <SFML/Graphics/Rect.hpp>
+
+#include <cstdint>
 
 namespace xy
 {
@@ -47,7 +48,27 @@ namespace xy
     public:
         QuadTreeItem();
 
+        /*!
+        \brief Sets the area of the quad tree item in relative coordinates
+        */
         void setArea(sf::FloatRect);
+
+        /*!
+        \brief Allows filtering QuadTreeItems during QuadTree queries.
+        The filter consists of up to 64 flags allowing quad tree items
+        to be categorised. When the quad tree is queried only the items
+        matching the query flags are returned. For example setting the
+        flag to 4 will set the 3rd bit, and items matching a quad tree
+        query which includes the 3rd bit will be included in the results.
+        All flags are set by default, so all items are returned in a query
+        */
+        void setFilterFlags(std::uint64_t flags) { m_filterFlags = flags; }
+
+        /*!
+        \brief Returns the current flags for this item. Defaults to
+        the max size of uint64 (all flags set)
+        */
+        std::uint64_t getFilterFlags() const { return m_filterFlags; }
 
     private:
         sf::FloatRect m_area;
@@ -55,9 +76,9 @@ namespace xy
         QuadTree* m_quadTree;
         QuadTreeNode* m_node;
 
+        std::uint64_t m_filterFlags;
+
         friend class QuadTree;
         friend class QuadTreeNode;
     };
 }
-
-#endif //XY_QUAD_TREE_ITEM_HPP_

@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_ACTOR_SYSTEM_HPP_
-#define DEMO_GAME_ACTOR_SYSTEM_HPP_
+#pragma once
 
 #include "MapData.hpp"
 
@@ -47,5 +46,3 @@ public:
 private:
 
 };
-
-#endif //DEMO_GAME_ACTOR_SYSTEM_HPP_

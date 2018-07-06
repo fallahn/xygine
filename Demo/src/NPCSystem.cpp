@@ -47,18 +47,15 @@ namespace
 {
     const float WhirlybobSpeed = 100.f;
     const float ClocksySpeed = 86.f;
-    const float GooblySpeed = 300.f;
     const float BalldockSpeed = 90.f;
     const float BalldockBounceVelocity = 300.f;
     const float SquatmoSpeed = 110.f;
     const float angryMultiplier = 2.f;
     const float initialJumpVelocity = 940.f;
 
-    const std::array<float, 10> thinkTimes = { 20.f, 16.f, 12.f, 31.f, 15.4f, 14.9f, 25.f, 12.7f, 13.3f, 18.f };
+    const std::array<float, 10> thinkTimes = {{ 20.f, 16.f, 12.f, 31.f, 15.4f, 14.9f, 25.f, 12.7f, 13.3f, 18.f }};
     const float BubbleTime = 6.f;
     const float DieTime = 1.5f;
-
-    const sf::Uint32 FootMask = (CollisionType::Platform | CollisionType::Solid | CollisionType::Player);
 
     const float FailSafeTime = 8.f;
 }

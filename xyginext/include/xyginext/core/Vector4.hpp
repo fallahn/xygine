@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_VECTOR_FOUR_HPP_
-#define XY_VECTOR_FOUR_HPP_
+#pragma once
 
 namespace xy
 {
@@ -139,5 +138,3 @@ namespace xy
     using Vector4i =  Vector4<int>;
     using  Vector4f = Vector4<float>;
 }
-
-#endif //XY_VECTOR_FOUR_HPP_

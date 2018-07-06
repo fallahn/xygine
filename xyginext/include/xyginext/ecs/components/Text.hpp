@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_TEXT_HPP_
-#define XY_TEXT_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -188,5 +187,3 @@ namespace xy
         friend class TextRenderer;
     };
 }
-
-#endif //XY_TEXT_HPP_

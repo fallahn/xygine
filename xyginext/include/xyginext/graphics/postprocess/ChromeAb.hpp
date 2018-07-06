@@ -27,8 +27,7 @@ source distribution.
 
 //simulates chromatic aberration
 
-#ifndef XY_POST_CHROMEAB_HPP_
-#define XY_POST_CHROMEAB_HPP_
+#pragma once
 
 #include "xyginext/graphics/postprocess/PostProcess.hpp"
 
@@ -69,4 +68,3 @@ namespace xy
         sf::Shader m_shader;
     };
 }
-#endif //XY_POST_CHROMEAB_HPP_

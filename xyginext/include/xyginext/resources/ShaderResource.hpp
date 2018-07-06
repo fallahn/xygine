@@ -27,8 +27,7 @@ source distribution.
 
 //resource for caching shaders
 
-#ifndef XY_SHADER_RESOURCE_HPP_
-#define XY_SHADER_RESOURCE_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -112,4 +111,3 @@ namespace xy
         std::map<ID, std::unique_ptr<sf::Shader>> m_shaders;
     };
 }
-#endif //XY_SHADER_RESOURCE_HPP_

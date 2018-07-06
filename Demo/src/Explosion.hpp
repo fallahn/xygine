@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_EXPLOSION_HPP_
-#define DEMO_EXPLOSION_HPP_
+#pragma once
 
 #include "MapAnimator.hpp"
 
@@ -79,5 +78,3 @@ public:
 private:
     xy::NetHost& m_host;
 };
-
-#endif //DEMO_EXPLOSION_HPP_

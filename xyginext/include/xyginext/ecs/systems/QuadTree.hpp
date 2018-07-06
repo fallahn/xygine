@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_QUAD_TREE_HPP_
-#define XY_QUAD_TREE_HPP_
+#pragma once
 
 #include "xyginext/ecs/System.hpp"
 
@@ -39,6 +38,8 @@ source distribution.
 
 #include <memory>
 #include <array>
+#include <limits>
+#include <cstdint>
 
 namespace xy
 {
@@ -120,15 +121,21 @@ namespace xy
         \brief Queries the QuadTree with the given area.
         Returns a vector of entities whose QuadTreeItems are contained
         in tree nodes which intersect the given area.
+        /param area The area to query
+        /param filterFlags Only entities with QuadTreeItems matching
+        the given bit flags are returns. Defaults to all flags set.
         */
-        std::vector<xy::Entity> queryArea(sf::FloatRect area) const;
+        std::vector<xy::Entity> queryArea(sf::FloatRect area, std::uint64_t = std::numeric_limits<std::uint64_t>::max()) const;
 
         /*!
         \brief Queris the quad tree with the given position.
         Returns a vector of entities whose QuadTreeItems are contained
         in tree nodes which also contain the given point
+        /param area The area to query
+        /param filterFlags Only entities with QuadTreeItems matching
+        the given bit flags are returns. Defaults to all flags set.
         */
-        std::vector<xy::Entity> queryPoint(sf::Vector2f) const;
+        std::vector<xy::Entity> queryPoint(sf::Vector2f, std::uint64_t = std::numeric_limits<std::uint64_t>::max()) const;
 
         /*!
         \brief Returns the area with which the QuadTree was created
@@ -168,5 +175,3 @@ namespace xy
 #endif
     };
 }
-
-#endif //XY_QUAD_TREE_HPP_

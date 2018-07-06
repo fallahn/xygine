@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_STATE_IDS_HPP_
-#define DEMO_STATE_IDS_HPP_
+#pragma once
 
 enum StateID
 {
@@ -39,5 +38,3 @@ enum StateID
     GameOver,
     GameComplete
 };
-
-#endif //DEMO_STATE_IDS_HPP_

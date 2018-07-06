@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_AUDIO_EMITTER_HPP_
-#define XY_AUDIO_EMITTER_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include "xyginext/audio/AudioSourceImpl.hpp"
@@ -237,5 +236,3 @@ namespace xy
         friend class AudioSystem;
     };
 }
-
-#endif //XY_AUDIO_EMITTER_HPP_

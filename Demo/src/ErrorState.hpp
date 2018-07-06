@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_ERROR_STATE_HPP_
-#define DEMO_ERROR_STATE_HPP_
+#pragma once
 
 #include "StateIDs.hpp"
 
@@ -53,5 +52,3 @@ private:
     sf::Sprite m_backgroundSprite;
     std::string m_message;
 };
-
-#endif //DEMO_ERROR_STATE_HPP_

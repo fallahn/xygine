@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_CLIENT_SERVER_SHARED_HPP_
-#define DEMO_CLIENT_SERVER_SHARED_HPP_
+#pragma once
 
 #include "Hitbox.hpp"
 
@@ -161,5 +160,3 @@ const sf::Vector2f LuggageOffset(-58.f, -40.f);
 void createCollisionObject(xy::Scene& scene, const tmx::Object&, CollisionType::ID type);
 
 std::string getSha(const std::string&);
-
-#endif //DEMO_CLIENT_SERVER_SHARED_HPP_

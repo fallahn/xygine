@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_PLAYER_SYSTEM_HPP_
-#define DEMO_PLAYER_SYSTEM_HPP_
+#pragma once
 
 #include "Hitbox.hpp"
 
@@ -120,5 +119,3 @@ private:
     bool npcCollision(xy::Entity, const Manifold&); //returns true if this caused a state change
     bool explosionCollision(xy::Entity, const Manifold&); //as above
 };
-
-#endif //DEMO_PLAYER_SYSTEM_HPP_

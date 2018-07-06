@@ -104,7 +104,7 @@ void ConfigProperty::setValue(xy::Vector4f v)
 std::vector<float> ConfigProperty::valueAsArray() const
 {
     std::vector<float> retval;
-    auto start = 0u;
+    std::size_t start = 0u;
     auto next = m_value.find_first_of(',');
     while (next != std::string::npos && start < m_value.length())
     {

@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_DYNAMITE_HPP_
-#define DEMO_DYNAMITE_HPP_
+#pragma once
 
 #include <xyginext/ecs/System.hpp>
 
@@ -59,5 +58,3 @@ private:
 
     xy::NetHost& m_host;
 };
-
-#endif //DEMO_DYNAMITE_HPP_

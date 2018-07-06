@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_RENDER_SYSTEM_HPP_
-#define XY_RENDER_SYSTEM_HPP_
+#pragma once
 
 #include "xyginext/ecs/System.hpp"
 
@@ -68,5 +67,3 @@ namespace xy
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }
-
-#endif //XY_RENDER_SYSTEM_HPP_

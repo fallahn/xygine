@@ -27,8 +27,7 @@ source distribution.
 
 //message bus to allow inter-component communication
 
-#ifndef XY_MESSAGE_BUS_HPP_
-#define XY_MESSAGE_BUS_HPP_
+#pragma once
 
 #include "xyginext/core/State.hpp"
 #include "xyginext/core/Assert.hpp"
@@ -137,4 +136,3 @@ namespace xy
         bool m_enabled;
     };
 }
-#endif //XY_MESSAGE_BUS_HPP_

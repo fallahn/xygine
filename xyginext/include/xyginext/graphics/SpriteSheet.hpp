@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_SPRITE_SHEET_HPP_
-#define XY_SPRITE_SHEET_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 #include "xyginext/ecs/components/Sprite.hpp"
@@ -112,5 +111,3 @@ namespace xy
         bool m_smooth;
     };
 }
-
-#endif //XY_SPRITE_SHEET_HPP_

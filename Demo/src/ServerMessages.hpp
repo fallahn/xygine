@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_SERVER_MESSAGES_HPP_
-#define DEMO_SERVER_MESSAGES_HPP_
+#pragma once
 
 #include <array>
 #include <string>
@@ -50,10 +49,8 @@ namespace MessageIdent
 }
 
 static const std::array<std::string, MessageIdent::Count> serverMessages = 
-{
+{{
     "Stopping server",
     "Failed Loading Map",
     "Client Left Server"
-};
-
-#endif //DEMO_SERVER_MESSAGES_HPP_
+}};

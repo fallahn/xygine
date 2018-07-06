@@ -27,8 +27,7 @@ source distribution.
 
 //static functions for cross platform file handling
 
-#ifndef XY_FILE_SYS_HPP_
-#define XY_FILE_SYS_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -134,4 +133,3 @@ namespace xy
 
     };
 }
-#endif //XY_FILE_SYS_HPP_

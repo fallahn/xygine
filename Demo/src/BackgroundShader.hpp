@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_BACKGROUND_SHADER_HPP_
-#define DEMO_BACKGROUND_SHADER_HPP_
+#pragma once
 
 #include <xyginext/ecs/Entity.hpp>
 //#include <xyginext/ecs/components/Sprite.hpp>
@@ -103,5 +102,3 @@ private:
 
     static constexpr float TransitionTime = 2.5f;
 };
-
-#endif //DEMO_BACKGROUND_SHADER_HPP_

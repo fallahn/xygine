@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef  DEMO_LOADING_SCREEN_HPP_
-#define DEMO_LOADING_SCREEN_HPP_
+#pragma once
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -46,6 +45,3 @@ private:
 
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };
-
-
-#endif //DEMO_LOADING_SCREEN_HPP_

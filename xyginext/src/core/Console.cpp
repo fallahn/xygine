@@ -293,7 +293,6 @@ void Console::draw()
             useFrameLimit = false;
         }
         
-        bool oldFrameLimit = useFrameLimit;
         nim::Checkbox("Limit Framerate", &useFrameLimit);
         if (useFrameLimit)
         {
@@ -345,7 +344,7 @@ void Console::draw()
         nim::NewLine();
         for (auto& line : m_debugLines)
         {
-            ImGui::Text(line.c_str());
+            ImGui::TextUnformatted(line.c_str());
         }
     }
     m_debugLines.clear();
@@ -546,7 +545,7 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
                 {
                     int c = 0;
                     bool all_candidates_matches = true;
-                    for (int i = 0; i < candidates.size() && all_candidates_matches; i++)
+                    for (auto i = 0u; i < candidates.size() && all_candidates_matches; i++)
                         if (i == 0)
                             c = toupper(candidates[i][match_len]);
                         else if (c == 0 || c != toupper(candidates[i][match_len]))
@@ -572,7 +571,7 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
         {
             if (historyIndex == -1)
             {
-                historyIndex = history.size() - 1;
+                historyIndex = static_cast<std::int32_t>(history.size()) - 1;
             }
             else if (historyIndex > 0)
             {
@@ -583,14 +582,14 @@ int textEditCallback(ImGuiTextEditCallbackData* data)
         {
             if (historyIndex != -1)
             {
-                if (++historyIndex >= history.size())
+                if (++historyIndex >= static_cast<std::int32_t>(history.size()))
                 {
                     historyIndex = -1;
                 }
             }
         }
 
-        //a betterźimplementation would preserve the data on the current input line along with cursor position.
+        //a better implementation would preserve the data on the current input line along with cursor position.
         if (prev_history_pos != historyIndex)
         {
             data->CursorPos = data->SelectionStart = data->SelectionEnd = data->BufTextLen =

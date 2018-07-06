@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_TOWERGUY_CALLBACK_HPP_
-#define DEMO_TOWERGUY_CALLBACK_HPP_
+#pragma once
 
 #include "ClientServerShared.hpp"
 
@@ -55,5 +54,3 @@ private:
     xy::Scene& m_scene;
     sf::Vector2f m_velocity;
 };
-
-#endif //DEMO_TOWERGUY_CALLBACK_HPP_

@@ -27,8 +27,7 @@ source distribution.
 
 //flexible logging class
 
-#ifndef XY_LOGGER_HPP_
-#define XY_LOGGER_HPP_
+#pragma once
 
 #include "xyginext/core/FileSystem.hpp"
 #include "xyginext/core/Console.hpp"
@@ -169,5 +168,3 @@ std::stringstream ss; \
 ss << message << " (" << fileName << ", " << __LINE__ << ")"; \
 xy::Logger::log(ss.str(), type);}
 #endif //XY_DEBUG
-
-#endif //XY_LOGGER_HPP_

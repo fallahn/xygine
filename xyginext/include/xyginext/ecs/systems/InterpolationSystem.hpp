@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_INTERPOLATION_SYSTEM_HPP_
-#define XY_INTERPOLATION_SYSTEM_HPP_
+#pragma once
 
 #include "xyginext/ecs/System.hpp"
 
@@ -49,5 +48,3 @@ namespace xy
         void onEntityAdded(Entity) override;
     };
 }
-
-#endif //XY_INTERPOLATION_SYSTEM

@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_SCORE_TAG_HPP_
-#define DEMO_SCORE_TAG_HPP_
+#pragma once
 
 #include <xyginext/ecs/System.hpp>
 
@@ -46,5 +45,3 @@ public:
 
 private:
 };
-
-#endif //DEMO_SCORE_TAG_HPP_

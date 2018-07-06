@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include "xyginext/ecs/Entity.hpp"
+#include "xyginext/ecs/components/Transform.hpp"
 #include "xyginext/core/Assert.hpp"
 #include "xyginext/core/MessageBus.hpp"
 
@@ -78,6 +79,13 @@ void EntityManager::destroyEntity(Entity entity)
     ++m_generations[index];
     m_freeIDs.push_back(index);
     m_componentMasks[index].reset();
+
+    //this is a bit of a kludge because transform components
+    //need to be specifically reset to update the depth of any
+    //newly orphaned children. We *could* reset all components
+    //although this may just be unnecessary overhead.
+    auto& pool = getPool<xy::Transform>();
+    pool[index] = std::move(xy::Transform());
 
     //let the world know the entity was destroyed
     auto msg = m_messageBus.post<Message::SceneEvent>(Message::SceneMessage);

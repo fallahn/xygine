@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UTIL_WAVETABLE_HPP_
-#define XY_UTIL_WAVETABLE_HPP_
+#pragma once
 
 #include "xyginext/util/Const.hpp"
 #include "xyginext/core/Assert.hpp"
@@ -68,6 +67,3 @@ namespace xy
         }
     }
 }
-
-
-#endif //XY_UTIL_WAVETABLE_HPP_

@@ -193,7 +193,7 @@ void MenuState::loadKeybinds()
     xy::ConfigProperty* property = nullptr;
 
     //-----player one-----//
-    if (property = binds->findProperty("controller_id"))
+    if ((property = binds->findProperty("controller_id")))
     {
         m_sharedStateData.inputBindings[0].controllerID = property->getValue<sf::Int32>();
     }
@@ -204,7 +204,7 @@ void MenuState::loadKeybinds()
         needsUpdate = true;
     }
 
-    if (property = binds->findProperty("left"))
+    if ((property = binds->findProperty("left")))
     {
         m_sharedStateData.inputBindings[0].keys[InputBinding::Left] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
     }
@@ -215,7 +215,7 @@ void MenuState::loadKeybinds()
         needsUpdate = true;
     }
 
-    if (property = binds->findProperty("right"))
+    if ((property = binds->findProperty("right")))
     {
         m_sharedStateData.inputBindings[0].keys[InputBinding::Right] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
     }
@@ -226,7 +226,7 @@ void MenuState::loadKeybinds()
         needsUpdate = true;
     }
 
-    if (property = binds->findProperty("jump"))
+    if ((property = binds->findProperty("jump")))
     {
         m_sharedStateData.inputBindings[0].keys[InputBinding::Jump] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
     }
@@ -237,7 +237,7 @@ void MenuState::loadKeybinds()
         needsUpdate = true;
     }
 
-    if (property = binds->findProperty("shoot"))
+    if ((property = binds->findProperty("shoot")))
     {
         m_sharedStateData.inputBindings[0].keys[InputBinding::Shoot] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
     }
@@ -251,7 +251,7 @@ void MenuState::loadKeybinds()
 
     //-----player two-----//
     binds = m_keyBinds.findObjectWithName("player_two");
-    if (property = binds->findProperty("controller_id"))
+    if ((property = binds->findProperty("controller_id")))
     {
         m_sharedStateData.inputBindings[1].controllerID = property->getValue<sf::Int32>();
     }
@@ -262,7 +262,7 @@ void MenuState::loadKeybinds()
         needsUpdate = true;
     }
 
-    if (property = binds->findProperty("left"))
+    if ((property = binds->findProperty("left")))
     {
         m_sharedStateData.inputBindings[1].keys[InputBinding::Left] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
     }
@@ -273,7 +273,7 @@ void MenuState::loadKeybinds()
         needsUpdate = true;
     }
 
-    if (property = binds->findProperty("right"))
+    if ((property = binds->findProperty("right")))
     {
         m_sharedStateData.inputBindings[1].keys[InputBinding::Right] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
     }
@@ -284,7 +284,7 @@ void MenuState::loadKeybinds()
         needsUpdate = true;
     }
 
-    if (property = binds->findProperty("jump"))
+    if ((property = binds->findProperty("jump")))
     {
         m_sharedStateData.inputBindings[1].keys[InputBinding::Jump] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
     }
@@ -295,7 +295,7 @@ void MenuState::loadKeybinds()
         needsUpdate = true;
     }
 
-    if (property = binds->findProperty("shoot"))
+    if ((property = binds->findProperty("shoot")))
     {
         m_sharedStateData.inputBindings[1].keys[InputBinding::Shoot] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
     }
@@ -520,12 +520,12 @@ void MenuState::createHelp()
 
     //left tower
     static const std::array<sf::Vector2f, 4u> positions = 
-    {
+    {{
         sf::Vector2f(160.f, 96.f),
         {160.f, 352.f},
         {160.f, 608.f},
         {160.f, 864.f}
-    };
+    }};
     xy::SpriteSheet spriteSheet;
     spriteSheet.loadFromFile("assets/sprites/player.spt", m_textureResource);
 

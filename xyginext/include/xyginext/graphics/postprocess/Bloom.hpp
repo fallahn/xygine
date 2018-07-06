@@ -27,8 +27,7 @@ source distribution.
 
 //creates a 'bloom' effect via post process
 
-#ifndef XY_POST_BLOOM_HPP_
-#define XY_POST_BLOOM_HPP_
+#pragma once
 
 #include "xyginext/graphics/postprocess/PostProcess.hpp"
 #include "xyginext/resources/ShaderResource.hpp"
@@ -72,4 +71,3 @@ namespace xy
         void add(const sf::RenderTexture&, const sf::RenderTexture&, sf::RenderTarget&);
     };
 }
-#endif //XY_POST_BLOOM_HPP_

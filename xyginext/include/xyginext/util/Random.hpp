@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_UTIL_RANDOM_HPP_
-#define XY_UTIL_RANDOM_HPP_
+#pragma once
 
 #include "xyginext/core/Assert.hpp"
 
@@ -81,5 +80,3 @@ namespace xy
         }
     }
 }
-
-#endif //XY_UTIL_RANDOM_HPP_

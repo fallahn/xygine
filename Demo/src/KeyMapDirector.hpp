@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_KEYMAP_DIRECTOR_HPP_
-#define DEMO_KEYMAP_DIRECTOR_HPP_
+#pragma once
 
 #include "SharedStateData.hpp"
 
@@ -60,5 +59,3 @@ private:
     xy::ConfigObject& m_config;
     std::string m_cfgName;
 };
-
-#endif //DEMO_KEYMAP_DIRECTOR_HPP_

@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_SWARM_HPP_
-#define DEMO_SWARM_HPP_
+#pragma once
 
 #include <xyginext/ecs/System.hpp>
 
@@ -55,5 +54,3 @@ public:
 
     void process(float) override;
 };
-
-#endif //DEMO_SWARM_HPP_

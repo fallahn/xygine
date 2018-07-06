@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_GAME_MAP_DATA_HPP_
-#define DEMO_GAME_MAP_DATA_HPP_
+#pragma once
 
 #include "PlayerSystem.hpp"
 
@@ -149,7 +148,7 @@ namespace InputFlag
 struct InventoryUpdate final
 {
     sf::Uint8 playerID = 0;
-    sf::Uint32 score = 0;
+    sf::Int32 score = 0;
     sf::Uint32 amount = 0;
     sf::Uint8 lives = 0;
     sf::Uint8 bonusFlags = 0;
@@ -160,6 +159,3 @@ struct CollisionFlagsUpdate final
     sf::Int16 actor = -1;
     sf::Uint32 newflags = 0;
 };
-
-
-#endif //DEMO_GAME_MAP_DATA_HPP_

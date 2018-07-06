@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_ENTITY_HPP_
-#define XY_ENTITY_HPP_
+#pragma once
 
 #include "xyginext/core/Assert.hpp"
 #include "xyginext/Config.hpp"
@@ -271,5 +270,3 @@ namespace xy
 }
 
 XY_EXPORT_API bool operator < (const xy::Entity& l, const xy::Entity& r);
-
-#endif //XY_ENTITY_HPP_

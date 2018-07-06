@@ -45,7 +45,6 @@ namespace
     const sf::Uint32 PowerupScore = 750;
     const sf::Uint32 GooblyScore = 850;
     const sf::Uint32 SmallFruitScore = 350;
-    const sf::Uint32 LargeFruitScore = 1000;
     const sf::Uint32 BonusScore = 100;
     const sf::Uint32 BonusCompletionScore = 2500;
     const sf::Uint32 HatPickUpScore = 50;

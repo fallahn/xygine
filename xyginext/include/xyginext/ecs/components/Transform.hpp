@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_TRANSFORM_HPP_
-#define XY_TRANSFORM_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -91,5 +90,3 @@ namespace xy
         void setDepth(std::size_t);
     };
 }
-
-#endif //XY_TRANSFORM_HPP_

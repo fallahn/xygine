@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_NET_IMPL_HPP_
-#define XY_NET_IMPL_HPP_
+#pragma once
 
 #include <SFML/Config.hpp>
 #include "xyginext/Config.hpp"
@@ -103,4 +102,3 @@ namespace xy
         virtual std::uint16_t getPort() const { return 0; }
     };
 }
-#endif //XY_NET_IMPL_HPP_

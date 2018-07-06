@@ -81,7 +81,7 @@ void DynamiteSystem::process(float dt)
 
             const auto& collision = entity.getComponent<CollisionComponent>();
             const auto& hitbox = collision.getHitboxes()[0];
-            for (auto i = 0; i < hitbox.getCollisionCount(); ++i)
+            for (auto i = 0u; i < hitbox.getCollisionCount(); ++i)
             {
                 const auto& man = hitbox.getManifolds()[i];
                 if (man.otherType == CollisionType::Teleport)

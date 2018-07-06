@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_POWERUP_SYSTEM_HPP_
-#define DEMO_POWERUP_SYSTEM_HPP_
+#pragma once
 
 #include <xyginext/ecs/System.hpp>
 
@@ -100,5 +99,3 @@ private:
     void spawnFlame(sf::Vector2f position, sf::Uint8 player, Powerup::SpreadDirection, sf::Uint8 generation);
     void despawn(xy::Entity);
 };
-
-#endif //DEMO_POWERUP_SYSTEM_HPP_

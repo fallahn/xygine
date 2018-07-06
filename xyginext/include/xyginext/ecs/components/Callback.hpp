@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef XY_CALLBACK_HPP_
-#define XY_CALLBACK_HPP_
+#pragma once
 
 #include "xyginext/Config.hpp"
 
@@ -47,5 +46,3 @@ namespace xy
         CallbackFunction function;
     };
 }
-
-#endif //XY_CALLBACK_HPP_

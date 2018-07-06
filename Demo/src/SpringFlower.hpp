@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef DEMO_SPRING_FLOWER_HPP_
-#define DEMO_SPRING_FLOWER_HPP_
+#pragma once
 
 #include <xyginext/ecs/System.hpp>
 
@@ -70,5 +69,3 @@ private:
     std::vector<float> m_windModulator;
     std::size_t m_modulatorIndex;
 };
-
-#endif //DEMO_SPRING_FLOWER_HPP_
