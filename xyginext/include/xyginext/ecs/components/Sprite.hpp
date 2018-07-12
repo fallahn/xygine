@@ -28,6 +28,7 @@ source distribution.
 #pragma once
 
 #include "xyginext/Config.hpp"
+#include "xyginext/resources/ResourceHandler.hpp"
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Vertex.hpp>
@@ -57,12 +58,14 @@ namespace xy
         \brief Construct a sprite with a texture
         */
         explicit Sprite(const sf::Texture&);
+        //explicit Sprite(const xy::ResourceHandle&);
 
         /*!
         \brief Sets the texture with which to draw this sprite.
         By default sprites are resized to the size of this texture
         */
         void setTexture(const sf::Texture&);
+        //void setTexture(const xy::ResourceHandle&);
 
         /*!
         \brief Sets a sub rectangle of the current texture
@@ -154,6 +157,7 @@ namespace xy
 
         sf::FloatRect m_textureRect;
         const sf::Texture* m_texture;
+        ResourceHandle  m_textureHandle;
         sf::Color m_colour;
         bool m_dirty;
 

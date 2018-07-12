@@ -57,7 +57,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
 
     //one player button
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    entity.addComponent<xy::Sprite>().setTexture(m_resource.get<sf::Texture>(m_buttonRes));
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
@@ -116,7 +116,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
 
     //multiplayer button
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    entity.addComponent<xy::Sprite>().setTexture(m_resource.get<sf::Texture>(m_buttonRes));
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
@@ -168,7 +168,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
 
     //quit button
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    entity.addComponent<xy::Sprite>().setTexture(m_resource.get<sf::Texture>(m_buttonRes));
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
@@ -227,7 +227,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
 
     //local button
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    entity.addComponent<xy::Sprite>().setTexture(m_resource.get<sf::Texture>(m_buttonRes));
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
@@ -286,7 +286,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
 
     //network button
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    entity.addComponent<xy::Sprite>().setTexture(m_resource.get<sf::Texture>(m_buttonRes));
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
@@ -341,7 +341,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
 
     //back button
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    entity.addComponent<xy::Sprite>().setTexture(m_resource.get<sf::Texture>(m_buttonRes));
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
@@ -397,7 +397,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
 
     //host button
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    entity.addComponent<xy::Sprite>().setTexture(m_resource.get<sf::Texture>(m_buttonRes));
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
@@ -466,7 +466,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
 
     //join button
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    entity.addComponent<xy::Sprite>().setTexture(m_resource.get<sf::Texture>(m_buttonRes));
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 2.f });
     entity.addComponent<xy::Drawable>();
@@ -525,7 +525,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
 
     //back button
     entity = m_scene.createEntity();
-    entity.addComponent<xy::Sprite>().setTexture(m_textureResource.get("assets/images/button.png"));
+    entity.addComponent<xy::Sprite>().setTexture(m_resource.get<sf::Texture>(m_buttonRes));
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Sprite>().setTextureRect({ 0.f, 0.f, bounds.width, bounds.height / 4.f });
     entity.addComponent<xy::Drawable>();
@@ -584,7 +584,7 @@ void MenuState::createKeybindInputs(xy::Entity towerEnt, sf::Uint8 player)
     }};
 
     auto& towerTx = towerEnt.getComponent<xy::Transform>();
-    auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");
+    auto& font = m_resource.get<sf::Font>(m_caveStoryRes);
 
     for (auto i = 0u; i < 4u; ++i)
     {

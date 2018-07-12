@@ -35,7 +35,7 @@ source distribution.
 #include <xyginext/ecs/components/Drawable.hpp>
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
 #include <xyginext/graphics/SpriteSheet.hpp>
-#include <xyginext/resources/Resource.hpp>
+#include <xyginext/resources/ResourceHandler.hpp>
 
 #include <xyginext/util/Random.hpp>
 
@@ -133,7 +133,7 @@ namespace
     };
 }
 
-MenuDirector::MenuDirector(xy::TextureResource& tr)
+MenuDirector::MenuDirector(xy::ResourceHandler& tr)
     : m_currentAct  (0),
     m_timer         (5.f),
     m_acts          (19)

@@ -31,6 +31,9 @@ source distribution.
 #include <xyginext/core/ConfigFile.hpp>
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/resources/Resource.hpp>
+#include <xyginext/resources/ResourceHandler.hpp>
+
+#include <SFML/Graphics/Font.hpp>
 
 #include "StateIDs.hpp"
 #include "SharedStateData.hpp"
@@ -58,9 +61,19 @@ public:
 private:
     xy::Scene m_scene;
     xy::Scene m_helpScene;
-    xy::FontResource m_fontResource;
-    xy::TextureResource m_textureResource;
+
     xy::AudioResource m_audioResource;
+    xy::ResourceHandler m_resource;
+    
+    // Handles to resources we'll use
+    xy::ResourceHandle  m_menuBGRes,
+                        m_grassRes,
+                        m_flowerRes,
+                        m_helpSignRes,
+                        m_caveStoryRes,
+                        m_helpRes,
+                        m_keyBindsRes,
+                        m_buttonRes;
 
     SharedStateData& m_sharedStateData;
     LoadingScreen& m_loadingScreen;
