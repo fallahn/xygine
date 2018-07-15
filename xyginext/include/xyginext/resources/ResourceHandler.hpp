@@ -53,7 +53,7 @@ namespace stdx {
 }
 
 #else
-#error <experimental/optional> and <optional> not found
+#error <experimental/any> and <any> not found
 #endif
 
 namespace xy

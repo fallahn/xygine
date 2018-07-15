@@ -14,7 +14,7 @@ option(BUILD_SHARED_LIBS "Whether to build shared libraries" ON)
 option(BUILD_DEMO "Build the xygine demo" OFF)
 
 # We're using c++14
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # enable some warnings in debug builds with gcc/clang
