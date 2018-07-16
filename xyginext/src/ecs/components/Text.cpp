@@ -25,6 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#include <SFML/Graphics/Font.hpp>
+
 #include "xyginext/ecs/components/Text.hpp"
 
 using namespace xy;
@@ -145,8 +147,74 @@ sf::FloatRect Text::getLocalBounds() const
 {
     if (m_dirty)
     {
-        //TODO we want to be able to query this without having to wait for
-        //the scene to update at least once first - eg when creating text
+        // Calculate local bounds if needed.
+        // Mostly a copy from xy::TextRenderer, but other solutions would
+        // involve changing the add component flow
+        
+        float xOffset = static_cast<float>(m_font->getGlyph(L' ', m_charSize, false).advance);
+        float yOffset = static_cast<float>(m_font->getLineSpacing(m_charSize));
+        
+        float x = 0.f;
+        float y = static_cast<float>(m_charSize);
+        
+        float minX = x;
+        float minY = y;
+        float maxX = 0.f;
+        float maxY = 0.f;
+        sf::Uint32 prevChar = 0;
+        for (auto i = 0u; i < m_string.getSize(); ++i)
+        {
+            sf::Uint32 currChar = m_string[i];
+            
+            x += m_font->getKerning(prevChar, currChar, m_charSize);
+            prevChar = currChar;
+            
+            //whitespace chars
+            if (currChar == ' ' || currChar == '\t' || currChar == '\n')
+            {
+                minX = std::min(minX, x);
+                minY = std::min(minY, y);
+                
+                switch (currChar)
+                {
+                    default: break;
+                    case ' ':
+                        x += xOffset;
+                        break;
+                    case '\t':
+                        x += xOffset * 4.f; //4 spaces for tab suckas
+                        break;
+                    case '\n':
+                        y += yOffset + m_verticalSpacing;
+                        x = 0.f;
+                        break;
+                }
+                
+                maxX = std::max(maxX, x);
+                maxY = std::max(maxY, y);
+                
+                continue; //skip quad for whitespace
+            }
+            
+            const auto& glyph = m_font->getGlyph(currChar, m_charSize, false);
+            
+            float left = glyph.bounds.left;
+            float top = glyph.bounds.top;
+            float right = glyph.bounds.left + glyph.bounds.width;
+            float bottom = glyph.bounds.top + glyph.bounds.height;
+            
+            minX = std::min(minX, x + left);
+            maxX = std::max(maxX, x + right);
+            minY = std::min(minY, y + top);
+            maxY = std::max(maxY, y + bottom);
+            
+            x += glyph.advance;
+        }
+        
+        m_localBounds.left = minX;
+        m_localBounds.top = minY;
+        m_localBounds.width = maxX - minX;
+        m_localBounds.height = maxY - minY;
     }
 
     return m_localBounds;
