@@ -138,7 +138,11 @@ namespace xy
             m_resources.emplace_back(m_loaders[ti].loader(path));
             
             // If it wasn't loaded, use fallback
+            #ifdef __APPLE__
             if (m_resources.back().empty())
+            #else
+            if (m_resources.back().has_value())
+            #endif
             {
                 m_resources.back() = m_loaders[ti].fallback();
             }
