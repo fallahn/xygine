@@ -26,7 +26,7 @@ build_script:
 
     cd ../../../xygine
 
-    # Build xygine libs first
+    # Build xygine libs first, including demo
 
     mkdir build; cd build
 
@@ -35,6 +35,16 @@ build_script:
     cmake --build . --target install
 
     cmake --build . --target package
+
+    # Build the cmake template, to check cmake finds xyginext correctly
+
+    cd ../cmake_template
+    
+    mkdir build; cd build
+
+    cmake .. -DCMAKE_TOOLCHAIN_FILE=C:/Tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX=C:/tools/vcpkg/installed
+
+    cmake --build .
 
 artifacts:
   - path: 'build/*.zip'

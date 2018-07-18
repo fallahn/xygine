@@ -88,7 +88,9 @@ elseif(UNIX)
 endif()
 
 # Additional include directories
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/xyginext/include)
+target_include_directories(${PROJECT_NAME} PUBLIC 
+              "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/xyginext/include>"
+              "$<INSTALL_INTERFACE:include>")
 
 target_include_directories( ${PROJECT_NAME} PRIVATE
   ${ENET_INCLUDE_DIR})
@@ -126,17 +128,34 @@ if (BUILD_DEMO)
   install(TARGETS ${DEMO_NAME} DESTINATION .)
 endif()
 
+# CMake package config setup
+set(CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/generated/${PROJECT_NAME}-config.cmake")
+set(CONFIG_DEST "lib${LIB_SUFFIX}/cmake/${PROJECT_NAME}")
+set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/xygine-config.cmake.in"
+    ${CONFIG_FILE}
+    INSTALL_DESTINATION ${CONFIG_DEST}
+)
+
 # Install
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/xyginext/include/xyginext DESTINATION include)
 
-install(TARGETS ${PROJECT_NAME} EXPORT xyginext-targets 
+install(TARGETS ${PROJECT_NAME} EXPORT ${TARGETS_EXPORT_NAME}
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib)
 
+install(FILES ${CONFIG_FILE} DESTINATION ${CONFIG_DEST})
+
+install( EXPORT ${TARGETS_EXPORT_NAME}
+         DESTINATION "${CONFIG_DEST}")
+
 # Version number
-SET(CPACK_PACKAGE_VERSION_MAJOR 0)
-SET(CPACK_PACKAGE_VERSION_MINOR 2)
-SET(CPACK_PACKAGE_VERSION_PATCH 0)
+set(CPACK_PACKAGE_VERSION_MAJOR 0)
+set(CPACK_PACKAGE_VERSION_MINOR 2)
+set(CPACK_PACKAGE_VERSION_PATCH 0)
 
 # Configuration for packaging
 set(CPACK_GENERATOR "ZIP")
