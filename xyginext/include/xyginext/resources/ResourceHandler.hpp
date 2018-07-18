@@ -1,6 +1,5 @@
 /*********************************************************************
-(c) Matt Marchant 2017 - 2018
-http://trederia.blogspot.com
+(c) Jonny Paton 2018
 
 xygineXT - Zlib license.
 
@@ -63,7 +62,7 @@ namespace xy
      
      Basically just an index to the resource in the vector
      */
-    using ResourceHandle = std::uint16_t;
+    using ResourceHandle = std::size_t;
     
     /*!
      \brief Struct responsible for loading resources
@@ -155,7 +154,7 @@ namespace xy
          Get a resource from it's handle
          */
         template<class T>
-        T& get(const ResourceHandle& resource)
+        T& get(ResourceHandle resource)
         {
             XY_ASSERT(resource < m_resources.size(), "Invalid resource handle");
             return *stdx::any_cast<T>(&m_resources[resource]);
@@ -171,6 +170,14 @@ namespace xy
         ResourceLoader& getLoader()
         {
             return m_loaders[typeid(T)];
+        }
+        
+        template<class T>
+        const ResourceLoader& getLoader() const
+        {
+            const auto found = m_loaders.find(typeid(T));
+            XY_ASSERT(found != m_loaders.end(), "Requested loader not found");
+            return found->second;
         }
         
     private:
