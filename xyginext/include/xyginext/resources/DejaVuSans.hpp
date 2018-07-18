@@ -27,8 +27,9 @@ source distribution.
 
 #pragma once
 
+#include "xyginext/Config.hpp"
 #include <array>
 
 
-constexpr unsigned int DejaVuSans_Size = 720856;
-extern std::array<unsigned char, DejaVuSans_Size> DejaVuSans_ttf;
+static constexpr unsigned int DejaVuSans_Size = 720856;
+extern const std::array<unsigned char, DejaVuSans_Size> DejaVuSans_ttf;

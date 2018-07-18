@@ -87,39 +87,7 @@ namespace xy
     public:
         
         // Constructor
-        ResourceHandler()
-        {
-            // Add a texture loader
-            ResourceLoader texLoader;
-            texLoader.loader = [](const std::string& path)
-            {
-                sf::Texture tex;
-                return tex.loadFromFile(path) ? tex : stdx::any();
-            };
-            
-            texLoader.fallback = []()
-            {
-                return sf::Texture();
-            };
-            
-            // And a font loader
-            ResourceLoader fontLoader;
-            fontLoader.loader = [](const std::string& path)
-            {
-                sf::Font font;
-                return font.loadFromFile(path) ? font : stdx::any();
-            };
-            
-            fontLoader.fallback = []()
-            {
-                sf::Font font;
-                font.loadFromMemory(DejaVuSans_ttf.data(), DejaVuSans_Size);
-                return font;
-            };
-            
-            getLoader<sf::Texture>() = texLoader;
-            getLoader<sf::Font>() = fontLoader;
-        }
+        ResourceHandler();
         
         /*!
          \brief Load a resource

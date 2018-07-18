@@ -306,6 +306,12 @@
     <ClCompile Include="src\ecs\systems\DynamicTreeSystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\resources\DejaVuSans.cpp">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\ResourceHandler.cpp">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -536,6 +542,7 @@
     <ClInclude Include="include\xyginext\network\EnetHostImpl.hpp">
       <Filter>Header Files\network</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="include\xyginext\ecs\systems\TextSystem.hpp">
       <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
@@ -547,6 +554,13 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\systems\DynamicTreeSystem.hpp">
       <Filter>Header Files\ecs\systems</Filter>
+=======
+    <ClInclude Include="include\xyginext\resources\DejaVuSans.hpp">
+      <Filter>Header Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\resources\ResourceHandler.hpp">
+      <Filter>Header Files\resources</Filter>
+>>>>>>> moved resource holder constructor to own file
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
