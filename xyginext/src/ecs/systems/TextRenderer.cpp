@@ -99,7 +99,7 @@ void TextRenderer::process(float)
             float x = 0.f;
             float y = static_cast<float>(text.m_charSize);
 
-            float minX = y;
+            float minX = x;
             float minY = y;
             float maxX = 0.f;
             float maxY = 0.f;
