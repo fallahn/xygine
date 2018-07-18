@@ -1,4 +1,8 @@
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Font.hpp>
+
 #include "xyginext/resources/ResourceHandler.hpp"
+#include "xyginext/resources/DejaVuSans.hpp"
 
 using namespace xy;
 ResourceHandler::ResourceHandler()
@@ -8,7 +12,7 @@ ResourceHandler::ResourceHandler()
     texLoader.loader = [](const std::string& path)
     {
         sf::Texture tex;
-        return tex.loadFromFile(path) ? tex : stdx::any();
+        return tex.loadFromFile(xy::FileSystem::getResourcePath() + path) ? tex : stdx::any();
     };
 
     texLoader.fallback = []()
@@ -21,7 +25,7 @@ ResourceHandler::ResourceHandler()
     fontLoader.loader = [](const std::string& path)
     {
         sf::Font font;
-        return font.loadFromFile(path) ? font : stdx::any();
+        return font.loadFromFile(xy::FileSystem::getResourcePath() + path) ? font : stdx::any();
     };
 
     fontLoader.fallback = []()

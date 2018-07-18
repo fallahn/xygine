@@ -26,16 +26,10 @@ source distribution.
 
 #pragma once
 
-#include "xyginext/core/Log.hpp"
 #include "xyginext/core/Assert.hpp"
-#include "xyginext/resources/DejaVuSans.hpp"
 
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Font.hpp>
-
-#include <unordered_map>
-#include <vector>
 #include <typeindex>
+#include <unordered_map>
 
 // Fiddling for experimental features
 #if __has_include(<any>)
