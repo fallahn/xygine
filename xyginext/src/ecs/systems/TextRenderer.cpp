@@ -28,7 +28,6 @@ source distribution.
 #include "xyginext/ecs/systems/TextRenderer.hpp"
 #include "xyginext/ecs/components/Text.hpp"
 #include "xyginext/ecs/components/Transform.hpp"
-#include "xyginext/util/Rectangle.hpp"
 
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
@@ -47,29 +46,6 @@ TextRenderer::TextRenderer(MessageBus& mb)
 //public
 void TextRenderer::process(float)
 {
-    auto addQuad = [](Text& text, sf::Vector2f position, const sf::Glyph& glyph)
-    {
-        float left = glyph.bounds.left;
-        float top = glyph.bounds.top;
-        float right = glyph.bounds.left + glyph.bounds.width;
-        float bottom = glyph.bounds.top + glyph.bounds.height;
-
-        float u1 = static_cast<float>(glyph.textureRect.left);
-        float v1 = static_cast<float>(glyph.textureRect.top);
-        float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width);
-        float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height);
-
-        auto& vertices = text.m_vertices;
-        auto& colour = text.m_fillColour;
-
-        vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left, position.y + top), colour, sf::Vector2f(u1, v1)));
-        vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + top), colour, sf::Vector2f(u2, v1)));
-        vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left, position.y + bottom), colour, sf::Vector2f(u1, v2)));
-        vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left, position.y + bottom), colour, sf::Vector2f(u1, v2)));
-        vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + top), colour, sf::Vector2f(u2, v1)));
-        vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + bottom), colour, sf::Vector2f(u2, v2)));
-    };
-
     auto& entities = getEntities();
     m_texts.clear();
     m_texts.reserve(entities.size());
@@ -81,109 +57,7 @@ void TextRenderer::process(float)
         auto& text = entity.getComponent<Text>();
         if (text.m_dirty)
         {
-            text.m_dirty = false;
-
-            text.m_vertices.clear();
-            text.m_localBounds = {};
-
-            //skip if nothing to build
-            if (!text.m_font || text.m_string.isEmpty())
-            {
-                continue;
-            }
-
-            //update glyphs - TODO here we could check for bold fonts in the future
-            auto font = text.m_font;
-            float xOffset = static_cast<float>(font->getGlyph(L' ', text.m_charSize, false).advance);
-            float yOffset = static_cast<float>(font->getLineSpacing(text.m_charSize));
-            float x = 0.f;
-            float y = static_cast<float>(text.m_charSize);
-
-            float minX = x;
-            float minY = y;
-            float maxX = 0.f;
-            float maxY = 0.f;
-
-            sf::Uint32 prevChar = 0;
-            const auto& string = text.m_string;
-            for (auto i = 0u; i < string.getSize(); ++i)
-            {
-                sf::Uint32 currChar = string[i];
-
-                x += font->getKerning(prevChar, currChar, text.m_charSize);
-                prevChar = currChar;
-
-                //whitespace chars
-                if (currChar == ' ' || currChar == '\t' || currChar == '\n')
-                {
-                    minX = std::min(minX, x);
-                    minY = std::min(minY, y);
-
-                    switch (currChar)
-                    {
-                    default: break;
-                    case ' ':
-                        x += xOffset;
-                        break;
-                    case '\t':
-                        x += xOffset * 4.f; //4 spaces for tab suckas
-                        break;
-                    case '\n':
-                        y += yOffset + text.m_verticalSpacing;
-                        x = 0.f;
-                        break;
-                    }
-
-                    maxX = std::max(maxX, x);
-                    maxY = std::max(maxY, y);
-
-                    continue; //skip quad for whitespace
-                }
-
-                //create the quads.
-                const auto& glyph = font->getGlyph(currChar, text.m_charSize, false);
-                addQuad(text, sf::Vector2f(x, y), glyph);
-
-                float left = glyph.bounds.left;
-                float top = glyph.bounds.top;
-                float right = glyph.bounds.left + glyph.bounds.width;
-                float bottom = glyph.bounds.top + glyph.bounds.height;
-
-                minX = std::min(minX, x + left);
-                maxX = std::max(maxX, x + right);
-                minY = std::min(minY, y + top);
-                maxY = std::max(maxY, y + bottom);
-
-                x += glyph.advance;
-            }
-
-            text.m_localBounds.left = minX;
-            text.m_localBounds.top = minY;
-            text.m_localBounds.width = maxX - minX;
-            text.m_localBounds.height = maxY - minY;
-
-
-            //check for alignment
-            float offset = 0.f;
-            if (text.m_alignment == Text::Alignment::Centre)
-            {
-                offset = text.m_localBounds.width / 2.f;
-            }
-            else if (text.m_alignment == Text::Alignment::Right)
-            {
-                offset = text.m_localBounds.width;
-            }
-            if (offset > 0)
-            {
-                for (auto& v : text.m_vertices)
-                {
-                    v.position.x -= offset;
-                }
-                text.m_localBounds.left -= offset;
-            }
-
-            //use the local bounds to see if we want cropping or not
-            text.m_cropped = !Util::Rectangle::contains(text.m_croppingArea, text.m_localBounds);
+            text.updateVertices();
         }
 
         //TODO - shouldn't this be in the dirty loop above?
