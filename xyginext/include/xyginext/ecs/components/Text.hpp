@@ -30,6 +30,7 @@ source distribution.
 #include "xyginext/Config.hpp"
 
 #include <SFML/System/String.hpp>
+#include <SFML/Graphics/Glyph.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Vertex.hpp>
@@ -167,6 +168,9 @@ namespace xy
         Alignment getAlignment() const { return m_alignment; }
 
     private:
+        
+        void updateVertices();
+        void addQuad(sf::Vector2f position, const sf::Glyph& glyph);
 
         sf::String m_string;
         const sf::Font* m_font;
