@@ -124,9 +124,6 @@ namespace xy
         
         /*!
          \brief Get the loader for a resource type
-         
-         Could be getter & setter if preferred? I find this more convenient when
-         you just want to modify the fallback or something...
          */
         template<class T>
         ResourceLoader& getLoader()

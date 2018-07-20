@@ -11,8 +11,12 @@ ResourceHandler::ResourceHandler()
     ResourceLoader texLoader;
     texLoader.loader = [](const std::string& path)
     {
-        sf::Texture tex;
-        return tex.loadFromFile(xy::FileSystem::getResourcePath() + path) ? tex : stdx::any();
+        //a bit convoluted but prevents a copy operation
+        //which can throw occasional opengl errors
+        auto tex = std::make_any<sf::Texture>();
+        auto& tr = *std::any_cast<sf::Texture>(&tex);
+        tr.loadFromFile(xy::FileSystem::getResourcePath() + path);
+        return tex;
     };
 
     texLoader.fallback = []()
