@@ -102,12 +102,12 @@ namespace xy
             #ifdef __APPLE__
             if (m_resources.back().empty())
             #else
-            if (m_resources.back().has_value())
+            if (!m_resources.back().has_value())
             #endif
             {
                 m_resources.back() = m_loaders[ti].fallback();
             }
-            return static_cast<std::uint16_t>(m_resources.size()-1);
+            return m_resources.size()-1;
         }
         
         /*!
