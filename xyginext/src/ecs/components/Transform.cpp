@@ -62,6 +62,14 @@ Transform::Transform(Transform&& other)
 {
     if (other.m_parent != this)
     {
+        //orphan any children
+        for (auto c : m_children)
+        {
+            c->m_parent = nullptr;
+            c->setDepth(0);
+        }
+
+        //and adopt new
         m_parent = other.m_parent;
         m_depth = other.m_depth;
 
@@ -116,6 +124,13 @@ Transform& Transform::operator=(Transform&& other)
 {
     if (&other != this && other.m_parent != this)
     {
+        //orphan any children
+        for (auto c : m_children)
+        {
+            c->m_parent = nullptr;
+            c->setDepth(0);
+        }
+
         m_parent = other.m_parent;
         m_depth = other.m_depth;
 
