@@ -93,7 +93,8 @@ std::vector<Entity> QuadTree::queryArea(sf::FloatRect area, std::uint64_t filter
     for (const auto& entity : m_outsideRoot)
     {
         auto rect = entity.getComponent<xy::Transform>().getWorldTransform().transformRect(entity.getComponent<xy::QuadTreeItem>().m_area);
-        if (area.intersects(rect))
+        const auto& item = entity.getComponent<xy::QuadTreeItem>();
+        if (area.intersects(rect) && (item.m_filterFlags & filterFlags))
         {
             m_queryVector.push_back(entity);
         }
@@ -148,7 +149,8 @@ std::vector<Entity> QuadTree::queryPoint(sf::Vector2f point, std::uint64_t filte
     for (const auto& entity : m_outsideRoot)
     {
         auto rect = entity.getComponent<xy::Transform>().getWorldTransform().transformRect(entity.getComponent<xy::QuadTreeItem>().m_area);
-        if (rect.contains(point))
+        const auto& item = entity.getComponent<xy::QuadTreeItem>();
+        if (rect.contains(point) && (item.m_filterFlags & filterFlags))
         {
             m_queryVector.push_back(entity);
         }
