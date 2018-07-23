@@ -31,8 +31,8 @@ source distribution.
 using namespace xy;
 
 Transform::Transform()
-    : m_parent  (nullptr),
-    m_depth     (0)
+    : m_parent      (nullptr),
+    m_depth         (0)
 {
 
 }
@@ -59,9 +59,13 @@ Transform::~Transform()
 }
 
 Transform::Transform(Transform&& other)
+    : m_parent      (nullptr),
+    m_depth         (0)
 {
     if (other.m_parent != this)
     {
+        //LOG("Moved tx via ctor", xy::Logger::Type::Info);
+
         //orphan any children
         for (auto c : m_children)
         {
@@ -80,11 +84,11 @@ Transform::Transform(Transform&& other)
         if (m_parent)
         {
             auto& siblings = m_parent->m_children;
-            for (auto& s : siblings)
+            for (auto i = 0u; i < siblings.size(); ++i)
             {
-                if (s == &other)
+                if (siblings[i] == &other)
                 {
-                    s = this;
+                    siblings[i] = this;
                     break;
                 }
             }
@@ -124,6 +128,8 @@ Transform& Transform::operator=(Transform&& other)
 {
     if (&other != this && other.m_parent != this)
     {
+        //LOG("Moved tx via assignment", xy::Logger::Type::Info);
+
         //orphan any children
         for (auto c : m_children)
         {
@@ -141,11 +147,11 @@ Transform& Transform::operator=(Transform&& other)
         if (m_parent)
         {
             auto& siblings = m_parent->m_children;
-            for (auto& s : siblings)
+            for (auto i = 0u; i < siblings.size(); ++i)
             {
-                if (s == &other)
+                if (siblings[i] == &other)
                 {
-                    s = this;
+                    siblings[i] = this;
                     break;
                 }
             }

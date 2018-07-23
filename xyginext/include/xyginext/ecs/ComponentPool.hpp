@@ -43,13 +43,13 @@ namespace xy
 		};
 
 		/*!
-		\brief memory pooling for components - TODO map component to ID
+		\brief memory pooling for components
 		*/
 		template <class T>
 		class ComponentPool final : public Pool
 		{
 		public:
-			explicit ComponentPool(std::size_t size = 100){	resize(size); }
+			explicit ComponentPool(std::size_t size = 100) : m_pool(size) { }
 
 			bool empty() const { return m_pool.empty(); }
 			std::size_t size() const { return m_pool.size(); }
