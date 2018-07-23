@@ -226,14 +226,6 @@ void ParticleSystem::process(float dt)
     }
 }
 
-void ParticleSystem::setShaderSource(const std::string& vertex, const std::string& fragment)
-{
-    if (!m_shader.loadFromMemory(vertex, fragment))
-    {
-        xy::Logger::log("Failed to load custom particle shader from source", xy::Logger::Type::Error);
-    }
-}
-
 //private
 void ParticleSystem::onEntityAdded(xy::Entity)
 {

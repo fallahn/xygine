@@ -59,10 +59,9 @@ namespace xy
         void process(float) override;
 
         /*!
-        \brief Loads the particle shader with custom source.
-        Generally not needed unless some specific effect is required
+        \brief Returns a reference to the shader used by the particle system
         */
-        void setShaderSource(const std::string& vertex, const std::string& fragment);
+        sf::Shader& getShader() { return m_shader; }
 
     private:
 
