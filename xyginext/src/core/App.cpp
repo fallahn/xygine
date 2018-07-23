@@ -506,6 +506,7 @@ void App::loadSettings()
                 }
             }
 
+            vSettings.ContextSettings = m_videoSettings.ContextSettings; //not stored in the settings file so we use what was passed to the ctor
             vSettings.Title = windowTitle;
             applyVideoSettings(vSettings);
         }

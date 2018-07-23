@@ -124,9 +124,6 @@ namespace xy
         \param sf::ContextSettings. 
         Default context settings are supplied when inherting the App class,
         but provide the option to request a specific context if needed.
-        For example when creating a game which uses the Model component
-        (or other 3D features) a context with OpenGL version 3.2 or 
-        higher is needed, as well as a depth buffer.
         */
         App(sf::ContextSettings contextSettings = sf::ContextSettings());
         virtual ~App() = default;
