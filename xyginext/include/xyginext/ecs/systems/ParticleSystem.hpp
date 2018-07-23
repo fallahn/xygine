@@ -58,6 +58,12 @@ namespace xy
 
         void process(float) override;
 
+        /*!
+        \brief Loads the particle shader with custom source.
+        Generally not needed unless some specific effect is required
+        */
+        void setShaderSource(const std::string& vertex, const std::string& fragment);
+
     private:
 
         void onEntityAdded(xy::Entity) override;
