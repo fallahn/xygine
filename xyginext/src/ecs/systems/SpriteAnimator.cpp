@@ -59,12 +59,18 @@ void SpriteAnimator::process(float dt)
 
                 auto lastFrame = animation.m_frameID;
                 animation.m_frameID = (animation.m_frameID + 1) % sprite.m_animations[animation.m_id].frameCount;
-                animation.m_frameID = std::max(static_cast<std::size_t>(animation.m_frameID), sprite.m_animations[animation.m_id].loopStart);
 
-                if (animation.m_frameID < lastFrame && !sprite.m_animations[animation.m_id].looped)
+                if (animation.m_frameID < lastFrame)
                 {
-                    animation.stop();
-                    continue;
+                    if (!sprite.m_animations[animation.m_id].looped)
+                    {
+                        animation.stop();
+                        continue;
+                    }
+                    else
+                    {
+                        animation.m_frameID = std::max(static_cast<std::size_t>(animation.m_frameID), sprite.m_animations[animation.m_id].loopStart);
+                    }
                 }
 
                 sprite.setTextureRect(sprite.m_animations[animation.m_id].frames[animation.m_frameID]);
