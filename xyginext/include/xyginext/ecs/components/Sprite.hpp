@@ -126,7 +126,7 @@ namespace xy
             std::array<char,MaxAnimationIdLength> id = {{0}};
             std::array<sf::FloatRect, MaxFrames> frames;
             std::size_t frameCount = 0;
-
+            std::size_t loopStart = 0; //!< looped animations can jump to somewhere other than the beginning
             bool looped = false;
             float framerate = 12.f;
         };

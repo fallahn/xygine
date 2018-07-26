@@ -142,6 +142,10 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
                         {
                             anim.looped = p.getValue<bool>();
                         }
+                        else if (name == "loop_start")
+                        {
+                            anim.loopStart = p.getValue<sf::Int32>();
+                        }
                     }
 
                     auto animId = sprOb.getId();
