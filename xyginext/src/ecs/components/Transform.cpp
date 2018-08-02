@@ -213,6 +213,7 @@ void Transform::addChild(Transform& child)
     child.m_parent = this;
     child.setDepth(m_depth + 1);
     m_children.push_back(&child);
+    XY_ASSERT(m_depth < 250, "Too Deep!");
 }
 
 void Transform::removeChild(Transform& tx)
@@ -252,5 +253,5 @@ void Transform::setDepth(std::size_t depth)
         c->setDepth(depth + 1);
     }
 
-    XY_WARNING(m_depth > 10, "Transform added with depth " + std::to_string(m_depth));
+    XY_ASSERT(m_depth < 250, "Transform added with depth " + std::to_string(m_depth));
 }

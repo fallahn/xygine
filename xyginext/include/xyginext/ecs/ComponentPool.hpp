@@ -49,13 +49,17 @@ namespace xy
 		class ComponentPool final : public Pool
 		{
 		public:
-			explicit ComponentPool(std::size_t size = 100) : m_pool(size) { }
+			explicit ComponentPool(std::size_t size = 256) : m_pool(size) { }
 
 			bool empty() const { return m_pool.empty(); }
 			std::size_t size() const { return m_pool.size(); }
-			void resize(std::size_t size) { m_pool.resize(size); }
+			void resize(std::size_t size)
+            {
+                m_pool.resize(size); 
+                LOG("Warning component pool " + std::string(typeid(T).name()) + " has been resized - existing component references may be invalidated", xy::Logger::Type::Warning);
+            }
 			void clear() { m_pool.clear(); }
-			void add(T c) { m_pool.push_back(c); }
+			//void add(T c) { m_pool.push_back(c); }
 
             T& at(std::size_t idx) { return m_pool[idx]; }
             const T& at(std::size_t idx) const { return m_pool[idx]; }
