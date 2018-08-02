@@ -56,7 +56,7 @@ namespace xy
 			void resize(std::size_t size)
             {
                 m_pool.resize(size); 
-                LOG("Warning component pool " + std::string(typeid(T).name()) + " has been resized - existing component references may be invalidated", xy::Logger::Type::Warning);
+                LOG("Warning component pool " + std::string(typeid(T).name()) + " has been resized to " + std::to_string(m_pool.size()) + " - existing component references may be invalidated", xy::Logger::Type::Warning);
             }
 			void clear() { m_pool.clear(); }
 			//void add(T c) { m_pool.push_back(c); }

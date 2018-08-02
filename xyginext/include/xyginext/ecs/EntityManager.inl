@@ -36,7 +36,8 @@ void EntityManager::addComponent(Entity entity, T component)
     auto& pool = getPool<T>();
     if (entID >= pool.size())
     {
-        pool.resize(m_generations.size());
+        //don't resize to generations size becauase you're only making it 1 bigger each time...
+        pool.resize(pool.size() * 2);
     }
 
     pool[entID] = std::move(component);
