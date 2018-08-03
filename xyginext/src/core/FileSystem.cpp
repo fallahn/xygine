@@ -115,11 +115,11 @@ std::vector<std::string> FileSystem::listFiles(std::string path)
     else
         path.append(".");
 
-    struct dirent* dp;
+    
     DIR* dir = opendir(path.c_str());
-
     if (dir)
     {
+        struct dirent* dp;
         while ((dp = readdir(dir)) != nullptr)
         {
             std::string workingPath(path);
@@ -431,10 +431,10 @@ std::string FileSystem::getConfigDirectory(const std::string& appName)
     }
 
     static constexpr std::size_t maxlen = MAX_PATH;
-    char outStr[maxlen];
+    char out[maxlen];
     const char* appname = appName.c_str();
 
-    char* out = outStr;
+    //char* out = outStr;
 
 #ifdef __linux__
     const char *out_orig = out;

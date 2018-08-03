@@ -85,7 +85,7 @@ void EntityManager::destroyEntity(Entity entity)
     //newly orphaned children. We *could* reset all components
     //although this may just be unnecessary overhead.
     auto& pool = getPool<xy::Transform>();
-    pool[index] = std::move(xy::Transform());
+    pool[index] = /*std::move*/(xy::Transform());
 
     //let the world know the entity was destroyed
     auto msg = m_messageBus.post<Message::SceneEvent>(Message::SceneMessage);

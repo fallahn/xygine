@@ -69,7 +69,7 @@ void SpriteAnimator::process(float dt)
                     }
                     else
                     {
-                        animation.m_frameID = std::max(static_cast<std::size_t>(animation.m_frameID), sprite.m_animations[animation.m_id].loopStart);
+                        animation.m_frameID = std::max(animation.m_frameID, sprite.m_animations[animation.m_id].loopStart);
                     }
                 }
 
