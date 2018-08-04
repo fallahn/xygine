@@ -30,7 +30,12 @@ source distribution.
 
 using namespace xy;
 
-SystemManager::SystemManager(Scene& scene, ComponentManager& cm) : m_scene(scene), m_componentManager(cm) {}
+SystemManager::SystemManager(Scene& scene, ComponentManager& cm) 
+    : m_scene           (scene),
+    m_componentManager  (cm)
+{
+    m_systems.reserve(128);
+}
 
 void SystemManager::addToSystems(Entity entity)
 {

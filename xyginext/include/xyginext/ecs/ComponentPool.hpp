@@ -61,8 +61,8 @@ namespace xy
 			void clear() { m_pool.clear(); }
 			//void add(T c) { m_pool.push_back(c); }
 
-            T& at(std::size_t idx) { return m_pool[idx]; }
-            const T& at(std::size_t idx) const { return m_pool[idx]; }
+            T& at(std::size_t idx) { return m_pool.at(idx); }
+            const T& at(std::size_t idx) const { return m_pool.at(idx); }
 
 			T& operator [] (std::size_t index) { return m_pool[index]; }
 			const T& operator [] (std::size_t index) const { return m_pool[index]; }
