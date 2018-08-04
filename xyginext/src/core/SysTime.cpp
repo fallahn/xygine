@@ -98,22 +98,22 @@ std::uint64_t SysTime::epoch()
 
 std::string SysTime::dateString()
 {
-    Data data;
+    Data d;
     std::stringstream ss;
-    ss << std::setw(2) << std::setfill('0') << data.days() << "/"
-        << std::setw(2) << std::setfill('0') << data.months() << "/"
-        << data.year();
+    ss << std::setw(2) << std::setfill('0') << d.days() << "/"
+        << std::setw(2) << std::setfill('0') << d.months() << "/"
+        << d.year();
     
     return ss.str();
 }
 
 std::string SysTime::timeString()
 {
-    Data data;
+    Data d;
     std::stringstream ss;
-    ss << std::setw(2) << std::setfill('0') << data.hours() << ":"
-        << std::setw(2) << std::setfill('0') << data.minutes() << ":"
-        << std::setw(2) << std::setfill('0') << data.seconds();
+    ss << std::setw(2) << std::setfill('0') << d.hours() << ":"
+        << std::setw(2) << std::setfill('0') << d.minutes() << ":"
+        << std::setw(2) << std::setfill('0') << d.seconds();
 
     return ss.str();
 }
