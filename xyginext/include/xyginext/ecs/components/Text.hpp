@@ -148,7 +148,7 @@ namespace xy
         /*!
         \brief Returns the current cropping area
         */
-        sf::FloatRect getCroppingArea() const { return m_croppingArea; }
+        sf::FloatRect getCroppingArea() const { return /*m_croppingArea*/{}; }
 
         enum class Alignment
         {
@@ -169,25 +169,25 @@ namespace xy
 
     private:
         
-        void updateVertices();
-        void addQuad(sf::Vector2f position, const sf::Glyph& glyph);
+        void updateVertices(std::vector<sf::Vertex>&, sf::FloatRect&);
+        void addQuad(sf::Vector2f position, const sf::Glyph& glyph, std::vector<sf::Vertex>&);
 
         sf::String m_string;
         const sf::Font* m_font;
         sf::Uint32 m_charSize;
         float m_verticalSpacing;
         sf::Color m_fillColour;
-        std::vector<sf::Vertex> m_vertices;
-        mutable sf::FloatRect m_localBounds;
-        sf::FloatRect m_globalBounds;
+        //std::vector<sf::Vertex> m_vertices;
+        //mutable sf::FloatRect m_localBounds;
+        //sf::FloatRect m_globalBounds;
         bool m_dirty;
-        sf::RenderStates m_states;
+        //sf::RenderStates m_states;
         Alignment m_alignment;
 
-        sf::FloatRect m_croppingArea;
+        /*sf::FloatRect m_croppingArea;
         sf::FloatRect m_croppingWorldArea;
-        bool m_cropped;
+        bool m_cropped;*/
 
-        friend class TextRenderer;
+        friend class TextSystem;
     };
 }

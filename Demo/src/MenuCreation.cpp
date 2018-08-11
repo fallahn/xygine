@@ -50,6 +50,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::SinglePlayer]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    entity.addComponent<xy::Drawable>();
     auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
     auto& tx = entity.addComponent<xy::Transform>();
     tx.setOrigin(128.f, 45.f);
@@ -109,6 +110,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::Multiplayer]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    entity.addComponent<xy::Drawable>();
     auto& tx2 = entity.addComponent<xy::Transform>();
     tx2.setOrigin(108.f, -19.f);
 
@@ -159,6 +161,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.addComponent<xy::Text>(font).setString(Locale::Strings[Locale::Quit]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    entity.addComponent<xy::Drawable>();
     bounds = entity.getComponent<xy::Text>().getLocalBounds();
     auto& tx4 = entity.addComponent<xy::Transform>();
     tx4.setPosition(142.f, 15.f);

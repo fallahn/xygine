@@ -53,7 +53,7 @@ source distribution.
 
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
-#include <xyginext/ecs/systems/TextRenderer.hpp>
+#include <xyginext/ecs/systems/TextSystem.hpp>
 #include <xyginext/ecs/systems/UISystem.hpp>
 #include <xyginext/ecs/systems/AudioSystem.hpp>
 #include <xyginext/ecs/systems/CallbackSystem.hpp>
@@ -322,10 +322,10 @@ void MenuState::createScene()
     m_scene.addSystem<xy::QuadTree>(mb, sf::FloatRect(sf::Vector2f(), xy::DefaultSceneSize)); //actually this only needs to cover the bottom of the screen
     m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::SpriteSystem>(mb);
+    m_scene.addSystem<xy::TextSystem>(mb);
     m_scene.addSystem<SpringFlowerSystem>(mb);
     m_scene.addSystem<SwarmSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
-    m_scene.addSystem<xy::TextRenderer>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addDirector<TextboxDirector>(m_sharedStateData);
     m_scene.addDirector<MenuDirector>(m_textureResource);
@@ -476,8 +476,8 @@ void MenuState::createHelp()
     m_helpScene.addSystem<xy::CallbackSystem>(mb);
     m_helpScene.addSystem<xy::SpriteAnimator>(mb);
     m_helpScene.addSystem<xy::SpriteSystem>(mb);
+    m_helpScene.addSystem<xy::TextSystem>(mb);
     m_helpScene.addSystem<xy::RenderSystem>(mb);
-    m_helpScene.addSystem<xy::TextRenderer>(mb);
     m_helpScene.addDirector<KeyMapDirector>(m_sharedStateData, m_keyBinds);
 
     //clicker

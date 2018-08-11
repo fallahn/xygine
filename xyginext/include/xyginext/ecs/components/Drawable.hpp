@@ -197,5 +197,6 @@ namespace xy
         bool m_cull;
 
         friend class RenderSystem;
+        friend class TextSystem;
     };
 }
