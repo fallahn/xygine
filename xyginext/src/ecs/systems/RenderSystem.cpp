@@ -30,9 +30,12 @@ source distribution.
 #include "xyginext/ecs/components/Transform.hpp"
 #include "xyginext/ecs/components/Drawable.hpp"
 
+#include "xyginext/util/Rectangle.hpp"
+
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
+#include <SFML/OpenGL.hpp>
 
 xy::RenderSystem::RenderSystem(xy::MessageBus& mb)
     : xy::System(mb, typeid(xy::RenderSystem)),
@@ -53,6 +56,19 @@ void xy::RenderSystem::process(float)
         {
             drawable.m_wantsSorting = false;
             m_wantsSorting = true;
+        }
+
+        //update cropping area
+        drawable.m_cropped = !Util::Rectangle::contains(drawable.m_croppingArea, drawable.m_localBounds);
+
+        if (drawable.m_cropped)
+        {
+            const auto& xForm = entity.getComponent<Transform>().getWorldTransform();
+
+            //update world positions
+            drawable.m_croppingWorldArea = xForm.transformRect(drawable.m_croppingArea);
+            drawable.m_croppingWorldArea.top += drawable.m_croppingWorldArea.height;
+            drawable.m_croppingWorldArea.height = -drawable.m_croppingWorldArea.height;
         }
     }
 
@@ -85,6 +101,7 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     auto view = rt.getView();
     sf::FloatRect viewableArea((view.getCenter() - (view.getSize() / 2.f)) - m_cullingBorder, view.getSize() + m_cullingBorder);
 
+    glEnable(GL_SCISSOR_TEST);
     for (auto entity : getEntities())
     {
         const auto& drawable = entity.getComponent<xy::Drawable>();
@@ -132,7 +149,30 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
                 }
             }
 
+            if (drawable.m_cropped)
+            {
+                //convert cropping area to target coords (remember this might not be a window!)
+                sf::Vector2f start(drawable.m_croppingWorldArea.left, drawable.m_croppingWorldArea.top);
+                sf::Vector2f end(start.x + drawable.m_croppingWorldArea.width, start.y + drawable.m_croppingWorldArea.height);
+
+                auto scissorStart = rt.mapCoordsToPixel(start);
+                auto scissorEnd = rt.mapCoordsToPixel(end);
+                //Y coords are flipped...
+                auto rtHeight = rt.getSize().y;
+                scissorStart.y = rtHeight - scissorStart.y;
+                scissorEnd.y = rtHeight - scissorEnd.y;
+
+                glScissor(scissorStart.x, scissorStart.y, scissorEnd.x - scissorStart.x, scissorEnd.y - scissorStart.y);
+            }
+            else
+            {
+                //just set the scissor to the view
+                auto rtSize = rt.getSize();
+                glScissor(0, 0, rtSize.x, rtSize.y);
+            }
+
             rt.draw(drawable.m_vertices.data(), drawable.m_vertices.size(), drawable.m_primitiveType, states);
         }
     }
+    glDisable(GL_SCISSOR_TEST);
 }

@@ -32,7 +32,6 @@ source distribution.
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Font.hpp>
-#include <SFML/OpenGL.hpp>
 
 using namespace xy;
 

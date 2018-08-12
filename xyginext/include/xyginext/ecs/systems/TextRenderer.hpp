@@ -37,6 +37,7 @@ namespace xy
     \brief System for rendering text objects.
     Usually this would be added last to the Scene after
     existing drawable systems, as the text ought to be rendered on top of everything else
+    DEPRECATED: use the TextSystem and RenderSystem with Text components and Drawable components.
     */
     class XY_EXPORT_API TextRenderer final : public xy::System, public sf::Drawable
     {

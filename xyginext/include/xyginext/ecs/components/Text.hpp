@@ -156,7 +156,7 @@ namespace xy
         /*!
         \brief Returns the current cropping area
         */
-        sf::FloatRect getCroppingArea() const { return /*m_croppingArea*/{}; }
+        sf::FloatRect getCroppingArea() const;
 
         enum class Alignment
         {
@@ -185,16 +185,8 @@ namespace xy
         sf::Uint32 m_charSize;
         float m_verticalSpacing;
         sf::Color m_fillColour;
-        //std::vector<sf::Vertex> m_vertices;
-        //mutable sf::FloatRect m_localBounds;
-        //sf::FloatRect m_globalBounds;
         bool m_dirty;
-        //sf::RenderStates m_states;
         Alignment m_alignment;
-
-        /*sf::FloatRect m_croppingArea;
-        sf::FloatRect m_croppingWorldArea;
-        bool m_cropped;*/
 
         friend class TextSystem;
     };

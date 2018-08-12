@@ -52,10 +52,12 @@ void TextSystem::process(float)
 
         if (text.m_dirty)
         {
-            text.updateVertices(drawable.getVertices(), drawable.m_localBounds);
+            sf::FloatRect bounds;
+            text.updateVertices(drawable.getVertices(), bounds);
 
+            drawable.updateLocalBounds(bounds);
             drawable.setTexture(&text.getFont()->getTexture(text.getCharacterSize()));
-            drawable.m_primitiveType = sf::PrimitiveType::Triangles;
+            drawable.setPrimitiveType(sf::PrimitiveType::Triangles);
         }
     }
 }

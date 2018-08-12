@@ -29,7 +29,6 @@ source distribution.
 
 #include "xyginext/ecs/components/Text.hpp"
 #include <xyginext/core/Log.hpp>
-#include "xyginext/util/Rectangle.hpp"
 
 using namespace xy;
 
@@ -39,9 +38,7 @@ Text::Text()
     m_verticalSpacing   (0.f),
     m_fillColour        (sf::Color::White),
     m_dirty             (true),
-    m_alignment         (Alignment::Left)/*,
-    m_croppingArea      (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
-    m_cropped           (false)*/
+    m_alignment         (Alignment::Left)
 {
 
 }
@@ -52,9 +49,7 @@ Text::Text(const sf::Font& font)
     m_verticalSpacing   (0.f),
     m_fillColour        (sf::Color::White),
     m_dirty             (true),
-    m_alignment         (Alignment::Left)/*,
-    m_croppingArea      (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
-    m_cropped           (false)*/
+    m_alignment         (Alignment::Left)
 {
     setFont(font);
 }
@@ -91,25 +86,15 @@ void Text::setFillColour(sf::Color colour)
 {
     m_fillColour = colour;
     m_dirty = true;
-    //if (!m_dirty)
-    //{
-    //    for (auto& v : m_vertices)
-    //    {
-    //        v.color = colour;
-    //    }
-    //    return;
-    //}
 }
 
 void Text::setShader(sf::Shader* shader)
 {
-    //m_states.shader = shader;
     LOG("DEPRECATED: use Drawable::setShader() instead", xy::Logger::Type::Warning);
 }
 
 void Text::setBlendMode(sf::BlendMode mode)
 {
-    //m_states.blendMode = mode;
     LOG("DEPRECATED: use Drawable::setBlendMode() instead", xy::Logger::Type::Warning);
 }
 
@@ -141,32 +126,30 @@ sf::Color Text::getFillColour() const
 const sf::Shader* Text::getShader() const
 {
     LOG("DEPRECATED: use Drawable::getShader() instead", xy::Logger::Type::Warning);
-    return nullptr;// m_states.shader;
+    return nullptr;
 }
 
 sf::BlendMode Text::getBlendMode() const
 {
     LOG("DEPRECATED: use Drawable::getBlendMode() instead", xy::Logger::Type::Warning);
-    return {};// m_state.blendMode;
+    return {};
 }
 
 sf::FloatRect Text::getLocalBounds() const
 {
-    //if (m_dirty)
-    //{
-    //    const_cast<xy::Text*>(this)->updateVertices();
-    //}
-
-    //return m_localBounds;
     LOG("DEPRECATED: Use Drawable::getLocalBounds() instead.", xy::Logger::Type::Warning);
     return {};
 }
 
 void Text::setCroppingArea(sf::FloatRect area)
 {
-    //m_croppingArea = area;
-    //m_dirty = true;
     LOG("DEPRECATED: Use Drawable::setCroppingArea() instead.", xy::Logger::Type::Warning);
+}
+
+sf::FloatRect Text::getCroppingArea() const
+{
+    LOG("DEPRECATED: use Drawable::getCroppingArea() instead", xy::Logger::Type::Warning);
+    return {};
 }
 
 void Text::setAlignment(Text::Alignment alignment)
@@ -277,10 +260,6 @@ void Text::updateVertices(std::vector<sf::Vertex>& vertices, sf::FloatRect& loca
         }
         localBounds.left -= offset;
     }
-    
-    //use the local bounds to see if we want cropping or not
-    //m_cropped = !Util::Rectangle::contains(m_croppingArea, m_localBounds);
-    //TODO fix this
 }
 
 void Text::addQuad(sf::Vector2f position, const sf::Glyph& glyph, std::vector<sf::Vertex>& vertices)

@@ -51,7 +51,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     entity.addComponent<xy::Drawable>().setDepth(2);
-    auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
+    auto bounds = entity.getComponent<xy::Drawable>().getLocalBounds();
     auto& tx = entity.addComponent<xy::Transform>();
     tx.setOrigin(128.f, 45.f);
 
@@ -162,7 +162,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     entity.addComponent<xy::Drawable>().setDepth(2);
-    bounds = entity.getComponent<xy::Text>().getLocalBounds();
+    bounds = entity.getComponent<xy::Drawable>().getLocalBounds();
     auto& tx4 = entity.addComponent<xy::Transform>();
     tx4.setPosition(142.f, 15.f);
 
@@ -221,7 +221,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     entity.addComponent<xy::Drawable>().setDepth(2);
-    auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
+    auto bounds = entity.getComponent<xy::Drawable>().getLocalBounds();
     auto& tx = entity.addComponent<xy::Transform>();
     tx.setOrigin(52.f, 45.f);
 
@@ -335,7 +335,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     entity.addComponent<xy::Drawable>().setDepth(2);
-    bounds = entity.getComponent<xy::Text>().getLocalBounds();
+    bounds = entity.getComponent<xy::Drawable>().getLocalBounds();
     auto& tx4 = entity.addComponent<xy::Transform>();
     tx4.setPosition(144.f, 15.f);
 
@@ -391,7 +391,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     entity.addComponent<xy::Drawable>().setDepth(2);
-    auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
+    auto bounds = entity.getComponent<xy::Drawable>().getLocalBounds();
     auto& tx = entity.addComponent<xy::Transform>();
     tx.setOrigin(44.f, 45.f);
 
@@ -459,7 +459,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.addComponent<xy::Drawable>().setDepth(2);
     bounds.width -= 72.f;
     bounds.left -= 148.f;
-    entity.getComponent<xy::Text>().setCroppingArea(bounds);
+    entity.getComponent<xy::Drawable>().setCroppingArea(bounds);
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MenuText;
     auto& tx3 = entity.addComponent<xy::Transform>();
     tx3.setPosition(192.f, 146.f);
@@ -519,7 +519,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     entity.addComponent<xy::Drawable>().setDepth(2);
-    bounds = entity.getComponent<xy::Text>().getLocalBounds();
+    bounds = entity.getComponent<xy::Drawable>().getLocalBounds();
     auto& tx4 = entity.addComponent<xy::Transform>();
     tx4.setPosition(144.f, 15.f);
 

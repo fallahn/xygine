@@ -2066,7 +2066,7 @@ void GameState::updateLevelDisplay(sf::Uint8 level)
         c.targetFlags = CommandID::LevelCounter;
         c.action = [](xy::Entity ent, float)
         {
-            auto bounds = ent.getComponent<xy::Text>().getLocalBounds();
+            auto bounds = ent.getComponent<xy::Drawable>().getLocalBounds();
             auto pos = ent.getComponent<xy::Transform>().getPosition();
             pos.x = (MapBounds.width - bounds.width) / 2.f;
             ent.getComponent<xy::Transform>().setPosition(pos);

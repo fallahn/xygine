@@ -163,7 +163,7 @@ void PauseState::load()
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     entity.addComponent<xy::Drawable>().setDepth(2);
-    auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
+    auto bounds = entity.getComponent<xy::Drawable>().getLocalBounds();
     auto& tx = entity.addComponent<xy::Transform>();
     tx.setOrigin(72.f, 45.f);
 
