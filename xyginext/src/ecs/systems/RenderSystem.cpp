@@ -90,6 +90,8 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         const auto& drawable = entity.getComponent<xy::Drawable>();
         const auto& tx = entity.getComponent<xy::Transform>().getWorldTransform();
         const auto bounds = tx.transformRect(drawable.getLocalBounds());
+
+
         if (!drawable.m_cull || bounds.intersects(viewableArea))
         {
             states = drawable.m_states;

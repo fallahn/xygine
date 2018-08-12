@@ -70,7 +70,7 @@ source distribution.
 #include <xyginext/ecs/components/AudioListener.hpp>
 
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
-#include <xyginext/ecs/systems/TextRenderer.hpp>
+#include <xyginext/ecs/systems/TextSystem.hpp>
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/ecs/systems/CommandSystem.hpp>
 #include <xyginext/ecs/systems/InterpolationSystem.hpp>
@@ -387,9 +387,9 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::CommandSystem>(mb);
     m_scene.addSystem<xy::CallbackSystem>(mb);
     m_scene.addSystem<xy::SpriteSystem>(mb);
+    m_scene.addSystem<xy::TextSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
-    m_scene.addSystem<xy::ParticleSystem>(mb);
-    m_scene.addSystem<xy::TextRenderer>(mb);
+    m_scene.addSystem<xy::ParticleSystem>(mb);  
     m_scene.addSystem<xy::AudioSystem>(mb);
     
     //m_scene.addPostProcess<xy::PostOldSchool>();
@@ -714,6 +714,7 @@ void GameState::loadUI()
     ent.addComponent<xy::Transform>().setPosition(-410.f, 1010.f);
     ent.addComponent<xy::Text>(m_fontResource.get("assets/fonts/VeraMono.ttf"));
     ent.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    ent.addComponent<xy::Drawable>().setDepth(10);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::Timeout | CommandID::UIElement;
 
     //title texts
@@ -724,6 +725,7 @@ void GameState::loadUI()
     ent.getComponent<xy::Text>().setFillColour(sf::Color(255, 212, 0));
     ent.getComponent<xy::Text>().setString("PLAYER ONE");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.addComponent<xy::Drawable>().setDepth(10);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
     
     ent = m_scene.createEntity();
@@ -733,6 +735,7 @@ void GameState::loadUI()
     ent.getComponent<xy::Text>().setString("HIGH SCORE");
     ent.getComponent<xy::Text>().setCharacterSize(60);
     ent.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
+    ent.addComponent<xy::Drawable>().setDepth(10);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
     
     ent = m_scene.createEntity();
@@ -741,6 +744,7 @@ void GameState::loadUI()
     ent.getComponent<xy::Text>().setFillColour(sf::Color(255, 0, 212));
     ent.getComponent<xy::Text>().setString("PLAYER TWO");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.addComponent<xy::Drawable>().setDepth(10);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
     
     //score texts
@@ -749,6 +753,7 @@ void GameState::loadUI()
     ent.addComponent<xy::Text>(font);
     ent.getComponent<xy::Text>().setString("0");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.addComponent<xy::Drawable>().setDepth(10);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::ScoreOne | CommandID::UIElement;
 
     ent = m_scene.createEntity();
@@ -757,6 +762,7 @@ void GameState::loadUI()
     ent.getComponent<xy::Text>().setString(m_scores.getProperties()[0].getValue<std::string>());
     ent.getComponent<xy::Text>().setCharacterSize(60);
     ent.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
+    ent.addComponent<xy::Drawable>().setDepth(10);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::HighScore | CommandID::UIElement;
 
     ent = m_scene.createEntity();
@@ -764,6 +770,7 @@ void GameState::loadUI()
     ent.addComponent<xy::Text>(font);
     ent.getComponent<xy::Text>().setString("0");
     ent.getComponent<xy::Text>().setCharacterSize(60);
+    ent.addComponent<xy::Drawable>().setDepth(10);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::ScoreTwo | CommandID::UIElement;
 
 
@@ -792,6 +799,7 @@ void GameState::loadUI()
     ent.addComponent<xy::Text>(font).setString("1");
     ent.getComponent<xy::Text>().setCharacterSize(60);
     ent.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
+    ent.addComponent<xy::Drawable>().setDepth(10);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::LevelCounter | CommandID::UIElement;
 
     ent = m_scene.createEntity();
@@ -800,6 +808,7 @@ void GameState::loadUI()
     ent.getComponent<xy::Text>().setCharacterSize(60);
     ent.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     ent.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    ent.addComponent<xy::Drawable>().setDepth(10);
     ent.addComponent<xy::CommandTarget>().ID = CommandID::UIElement;
 
     //bonus display
@@ -1310,14 +1319,6 @@ sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, co
         }
     }
 
-    //attempt at making a 'shadow' - needs darkening without changing the colour of every vertex
-    //sf::RenderStates states;
-    //states.transform.translate(16.f, 16.f);
-    //for (const auto& v : vertexArrays)
-    //{
-    //    states.texture = v.first;
-    //    m_mapTextures[m_currentMapTexture].draw(v.second.data(), v.second.size(), sf::Quads, states);
-    //}
 
     for (const auto& v : vertexArrays)
     {
@@ -1737,6 +1738,7 @@ void GameState::spawnWarning()
     entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString(Locale::Strings[Locale::Hurry]);
     entity.getComponent<xy::Text>().setCharacterSize(200);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    entity.addComponent<xy::Drawable>().setDepth(2);
     entity.addComponent<xy::Callback>().active = true;
     entity.getComponent<xy::Callback>().function = Flasher(m_scene);
 
@@ -1857,6 +1859,7 @@ void GameState::updateUI(const InventoryUpdate& data)
         scoreEnt.addComponent<xy::Transform>().setPosition(pos);
         scoreEnt.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf"));
         scoreEnt.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
+        scoreEnt.addComponent<xy::Drawable>().setDepth(2);
 
         if (data.amount == std::numeric_limits<sf::Uint32>::max())
         {

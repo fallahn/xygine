@@ -41,7 +41,7 @@ source distribution.
 #include <xyginext/ecs/components/Callback.hpp>
 
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
-#include <xyginext/ecs/systems/TextRenderer.hpp>
+#include <xyginext/ecs/systems/TextSystem.hpp>
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/ecs/systems/UISystem.hpp>
 #include <xyginext/ecs/systems/CallbackSystem.hpp>
@@ -140,8 +140,8 @@ void GameoverState::initScene()
     m_scene.addSystem<xy::UISystem>(mb);
     m_scene.addSystem<xy::CallbackSystem>(mb);
     m_scene.addSystem<xy::SpriteSystem>(mb);
-    m_scene.addSystem<xy::RenderSystem>(mb);
-    m_scene.addSystem<xy::TextRenderer>(mb);
+    m_scene.addSystem<xy::TextSystem>(mb);
+    m_scene.addSystem<xy::RenderSystem>(mb);   
     
     //background
     auto entity = m_scene.createEntity();
@@ -160,6 +160,7 @@ void GameoverState::loadContinue(const SharedStateData& data)
     entity.getComponent<xy::Text>().setCharacterSize(260);
     entity.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    entity.addComponent<xy::Drawable>().setDepth(2);
 
     entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
@@ -168,6 +169,7 @@ void GameoverState::loadContinue(const SharedStateData& data)
     entity.getComponent<xy::Text>().setCharacterSize(70);
     entity.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    entity.addComponent<xy::Drawable>().setDepth(2);
 
     entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
@@ -176,6 +178,7 @@ void GameoverState::loadContinue(const SharedStateData& data)
     entity.getComponent<xy::Text>().setCharacterSize(80);
     entity.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    entity.addComponent<xy::Drawable>().setDepth(2);
     entity.addComponent<xy::Callback>().active = true;
     entity.getComponent<xy::Callback>().function = Timer(getContext().appInstance.getMessageBus());
 
@@ -232,6 +235,7 @@ void GameoverState::loadContinue(const SharedStateData& data)
     entity.addComponent<xy::Text>(m_font).setString(Locale::Strings[Locale::Yes]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    entity.addComponent<xy::Drawable>().setDepth(2);
     auto& tx2 = entity.addComponent<xy::Transform>();
     tx2.setOrigin(38.f, 45.f);
 
@@ -285,6 +289,7 @@ void GameoverState::loadContinue(const SharedStateData& data)
     entity.addComponent<xy::Text>(m_font).setString(Locale::Strings[Locale::No]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    entity.addComponent<xy::Drawable>().setDepth(2);
     auto& tx = entity.addComponent<xy::Transform>();
     tx.setOrigin(32.f, 45.f);
 
@@ -343,6 +348,7 @@ void GameoverState::loadGameOver(const SharedStateData& data)
     entity.getComponent<xy::Text>().setCharacterSize(260);
     entity.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
+    entity.addComponent<xy::Drawable>().setDepth(2);
 
     //score text
     for (auto i = 0u; i < data.playerCount; ++i)
@@ -351,6 +357,7 @@ void GameoverState::loadGameOver(const SharedStateData& data)
         entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
         entity.addComponent<xy::Text>(m_font).setFillColour(sf::Color::Red);
         entity.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
+        entity.addComponent<xy::Drawable>().setDepth(2);
 
         if (data.playerCount == 1)
         {
@@ -398,6 +405,7 @@ void GameoverState::loadGameOver(const SharedStateData& data)
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     entity.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
+    entity.addComponent<xy::Drawable>().setDepth(2);
     auto& tx2 = entity.addComponent<xy::Transform>();
     //tx2.setOrigin(38.f, 45.f);
 

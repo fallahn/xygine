@@ -47,6 +47,14 @@ namespace xy
 {
     /*!
     \brief ECS friendly implementation of Text.
+    Text components should appear on entities which
+    also have a transform and drawable component. Text
+    is drawn with a RenderSystem. NOTE As text is rendered
+    via a drawable component in the same way as sprites and other
+    drawables, the drawable component should use setDepth() to
+    increase the depth value of a text renderable so that it
+    appears above other drawables. This should be the first
+    thing to check if text appears 'invisible'.
     */
     class XY_EXPORT_API Text final
     {

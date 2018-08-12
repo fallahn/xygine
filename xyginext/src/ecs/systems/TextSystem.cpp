@@ -55,6 +55,7 @@ void TextSystem::process(float)
             text.updateVertices(drawable.getVertices(), drawable.m_localBounds);
 
             drawable.setTexture(&text.getFont()->getTexture(text.getCharacterSize()));
+            drawable.m_primitiveType = sf::PrimitiveType::Triangles;
         }
     }
 }

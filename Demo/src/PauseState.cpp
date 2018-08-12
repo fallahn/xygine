@@ -39,7 +39,7 @@ source distribution.
 #include <xyginext/ecs/components/Camera.hpp>
 
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
-#include <xyginext/ecs/systems/TextRenderer.hpp>
+#include <xyginext/ecs/systems/TextSystem.hpp>
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/ecs/systems/UISystem.hpp>
 
@@ -130,8 +130,8 @@ void PauseState::load()
     auto& mb = getContext().appInstance.getMessageBus();
     m_scene.addSystem<xy::UISystem>(mb);
     m_scene.addSystem<xy::SpriteSystem>(mb);
-    m_scene.addSystem<xy::RenderSystem>(mb);
-    m_scene.addSystem<xy::TextRenderer>(mb);
+    m_scene.addSystem<xy::TextSystem>(mb);
+    m_scene.addSystem<xy::RenderSystem>(mb);   
 
     //background
     auto entity = m_scene.createEntity();
@@ -162,6 +162,7 @@ void PauseState::load()
     entity.addComponent<xy::Text>(m_font).setString(Locale::Strings[Locale::Resume]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    entity.addComponent<xy::Drawable>().setDepth(2);
     auto bounds = entity.getComponent<xy::Text>().getLocalBounds();
     auto& tx = entity.addComponent<xy::Transform>();
     tx.setOrigin(72.f, 45.f);
@@ -211,6 +212,7 @@ void PauseState::load()
     entity.addComponent<xy::Text>(m_font).setString(Locale::Strings[Locale::Quit]);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    entity.addComponent<xy::Drawable>().setDepth(2);
     auto& tx2 = entity.addComponent<xy::Transform>();
     tx2.setOrigin(48.f, 45.f);
 

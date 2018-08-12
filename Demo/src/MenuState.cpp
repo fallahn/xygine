@@ -636,6 +636,7 @@ To Change It)";
     entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setFillColour({ 127, 127, 127 });
     entity.getComponent<xy::Text>().setString(helpText);
     entity.getComponent<xy::Text>().setCharacterSize(60u);
+    entity.addComponent<xy::Drawable>().setDepth(2);
     m_helpTextTarget = entity.getComponent<xy::Transform>().getPosition();
     entity.addComponent<xy::Callback>().function = MenuSliderCallback(m_helpTextTarget);
     entity.getComponent<xy::Callback>().active = true;

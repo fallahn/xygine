@@ -33,7 +33,12 @@ namespace xy
 {
     /*!
     \brief Updates the vertices of the drawable components
-    associated with Text components.
+    associated with Text components. NOTE As text is rendered
+    via a drawable component in the same way as sprites and other
+    drawables, the drawable component should use setDepth() to
+    increase the depth value of a text renderable so that it
+    appears above other drawables. This should be the first
+    thing to check if text appears 'invisible'.
     */
     class XY_EXPORT_API TextSystem final : public xy::System
     {
