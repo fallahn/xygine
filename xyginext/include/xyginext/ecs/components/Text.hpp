@@ -97,12 +97,14 @@ namespace xy
         \brief Set the shader to be applied when rendering this text.
         Passing nullptr removes any active shader.
         */
+        [[deprecated("Use Drawable::setShader() instead.")]]
         void setShader(sf::Shader*);
 
         /*!
         \brief Sets the blend mode used when rendering this text.
         Defaults to sf::BlendAlpha
         */
+        [[deprecated("Use Drawable::setBlendMode() instead.")]]
         void setBlendMode(sf::BlendMode);
 
         /*!
@@ -134,16 +136,19 @@ namespace xy
         \brief Returns a pointer to this text's active shader.
         May be nullptr.
         */
+        [[deprecated("Use Drawable::getShader() instead.")]]
         const sf::Shader* getShader() const;
 
         /*!
         \brief Returns this text's current blend mode
         */
+        [[deprecated("Use Drawable::getBlendMode() instead.")]]
         sf::BlendMode getBlendMode() const;
 
         /*!
         \brief Returns the local (pre-transform) AABB of the text
         */
+        [[deprecated("Use Drawable::getLocalBounds() instead.")]]
         sf::FloatRect getLocalBounds() const;
 
         /*!
@@ -151,11 +156,13 @@ namespace xy
         The given rectangle should be in local coordinates, relative to
         the text.
         */
+        [[deprecated("Use Drawable::setCroppingArea() instead.")]]
         void setCroppingArea(sf::FloatRect);
 
         /*!
         \brief Returns the current cropping area
         */
+        [[deprecated("Use Drawable::getCroppingArea() instead.")]]
         sf::FloatRect getCroppingArea() const;
 
         enum class Alignment
