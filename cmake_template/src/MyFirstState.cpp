@@ -1,6 +1,5 @@
 /*********************************************************************
-(c) Matt Marchant 2017
-http://trederia.blogspot.com
+(c) Jonny Paton 2018
 
 xygineXT - Zlib license.
 
@@ -25,55 +24,40 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "Game.hpp"
-#include "States.hpp"
 #include "MyFirstState.hpp"
+#include "States.hpp"
 
-#include <SFML/Window/Event.hpp>
-
-Game::Game()
-    : xy::App   (/*sf::ContextSettings(0, 0, 0, 3, 2, sf::ContextSettings::Core)*/),
-    m_stateStack({ *getRenderWindow(), *this })
+MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx) :
+xy::State(ss,ctx),
+m_scene(ctx.appInstance.getMessageBus())
 {
 
 }
 
-//private
-void Game::handleEvent(const sf::Event& evt)
-{    
-    m_stateStack.handleEvent(evt);
-}
-
-void Game::handleMessage(const xy::Message& msg)
-{    
-    m_stateStack.handleMessage(msg);
-}
-
-void Game::updateApp(float dt)
+bool MyFirstState::handleEvent(const sf::Event& evt)
 {
-    m_stateStack.update(dt);
+    m_scene.forwardEvent(evt);
+    return true;
 }
 
-void Game::draw()
+void MyFirstState::handleMessage(const xy::Message& msg)
 {
-    m_stateStack.draw();
+    m_scene.forwardMessage(msg);
 }
 
-void Game::initialise()
+bool MyFirstState::update(float dt)
 {
-    registerStates();
-    m_stateStack.pushState(States::MyFirstState);
-
-    getRenderWindow()->setKeyRepeatEnabled(false);
+    m_scene.update(dt);
+    return true;
 }
 
-void Game::finalise()
+void MyFirstState::draw()
 {
-    m_stateStack.clearStates();
-    m_stateStack.applyPendingChanges();
+    auto rw = getContext().appInstance.getRenderWindow();
+    rw->draw(m_scene);
 }
 
-void Game::registerStates()
+xy::StateID MyFirstState::stateID() const
 {
-    m_stateStack.registerState<MyFirstState>(States::MyFirstState);
+    return States::MyFirstState;
 }

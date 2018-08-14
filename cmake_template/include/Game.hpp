@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef GAME_HPP_
-#define GAME_HPP_
+#pragma once
 
 #include <xyginext/core/App.hpp>
 
@@ -52,6 +51,3 @@ private:
     void initialise() override;
     void finalise() override;
 };
-
-
-#endif //GAME_HPP_

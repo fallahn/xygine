@@ -1,6 +1,5 @@
 /*********************************************************************
-(c) Matt Marchant 2017
-http://trederia.blogspot.com
+(c) Jonny Paton 2018
 
 xygineXT - Zlib license.
 
@@ -25,55 +24,27 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "Game.hpp"
-#include "States.hpp"
-#include "MyFirstState.hpp"
+#pragma once
 
-#include <SFML/Window/Event.hpp>
+#include <xyginext/core/State.hpp>
+#include <xyginext/ecs/Scene.hpp>
 
-Game::Game()
-    : xy::App   (/*sf::ContextSettings(0, 0, 0, 3, 2, sf::ContextSettings::Core)*/),
-    m_stateStack({ *getRenderWindow(), *this })
+class MyFirstState final : public xy::State
 {
+public:
+    MyFirstState(xy::StateStack&, xy::State::Context);
 
-}
-
-//private
-void Game::handleEvent(const sf::Event& evt)
-{    
-    m_stateStack.handleEvent(evt);
-}
-
-void Game::handleMessage(const xy::Message& msg)
-{    
-    m_stateStack.handleMessage(msg);
-}
-
-void Game::updateApp(float dt)
-{
-    m_stateStack.update(dt);
-}
-
-void Game::draw()
-{
-    m_stateStack.draw();
-}
-
-void Game::initialise()
-{
-    registerStates();
-    m_stateStack.pushState(States::MyFirstState);
-
-    getRenderWindow()->setKeyRepeatEnabled(false);
-}
-
-void Game::finalise()
-{
-    m_stateStack.clearStates();
-    m_stateStack.applyPendingChanges();
-}
-
-void Game::registerStates()
-{
-    m_stateStack.registerState<MyFirstState>(States::MyFirstState);
-}
+private:
+    bool handleEvent(const sf::Event &evt) override;
+    
+    void handleMessage(const xy::Message &) override;
+    
+    bool update(float dt) override;
+    
+    void draw() override;
+    
+    xy::StateID stateID() const override;
+    
+    xy::Scene m_scene;
+    
+};
