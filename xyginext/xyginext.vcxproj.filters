@@ -297,6 +297,9 @@
     <ClCompile Include="src\network\EnetHostImpl.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\systems\TextSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -526,6 +529,9 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\network\EnetHostImpl.hpp">
       <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\TextSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

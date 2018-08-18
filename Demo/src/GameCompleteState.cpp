@@ -56,7 +56,7 @@ source distribution.
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/ecs/systems/SpriteAnimator.hpp>
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
-#include <xyginext/ecs/systems/TextRenderer.hpp>
+#include <xyginext/ecs/systems/TextSystem.hpp>
 #include <xyginext/ecs/systems/UISystem.hpp>
 
 #include <xyginext/graphics/SpriteSheet.hpp>
@@ -151,9 +151,9 @@ void GameCompleteState::loadAssets()
     m_scene.addSystem<xy::CallbackSystem>(mb);
     m_scene.addSystem<xy::UISystem>(mb);
     m_scene.addSystem<xy::SpriteSystem>(mb);
+    m_scene.addSystem<xy::TextSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
-    m_scene.addSystem<xy::ParticleSystem>(mb);
-    m_scene.addSystem<xy::TextRenderer>(mb);
+    m_scene.addSystem<xy::ParticleSystem>(mb);   
     m_scene.addSystem<xy::AudioSystem>(mb);
 
     m_scene.addDirector<EndingDirector>(m_soundResource, m_textureResource, mb);
@@ -263,6 +263,7 @@ void GameCompleteState::loadUI()
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
+    entity.addComponent<xy::Drawable>().setDepth(2);
     entity.addComponent<xy::CommandTarget>().ID = Command::Clearable;
 }
 
@@ -277,6 +278,7 @@ void GameCompleteState::showSummary()
         auto entity = m_scene.createEntity();
         entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
         entity.addComponent<xy::Text>(font).setFillColour(sf::Color::Red);
+        entity.addComponent<xy::Drawable>().setDepth(2);
 
         if (m_sharedData.playerCount == 1)
         {
@@ -322,6 +324,7 @@ void GameCompleteState::showSummary()
     entity.addComponent<xy::Text>(font).setString("OK");
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
+    entity.addComponent<xy::Drawable>().setDepth(2);
     auto& tx = entity.addComponent<xy::Transform>();
     tx.setOrigin(32.f, 45.f);
 

@@ -25,56 +25,29 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "xyginext/ecs/components/Sprite.hpp"
+#pragma once
 
-#include <SFML/Graphics/Texture.hpp>
+#include "xyginext/ecs/System.hpp"
 
-using namespace xy;
-
-Sprite::Sprite()
-    : m_texture     (nullptr),
-    m_colour        (sf::Color::White),
-    m_dirty         (true),
-    m_animationCount(0)
+namespace xy
 {
+    /*!
+    \brief Updates the vertices of the drawable components
+    associated with Text components. NOTE As text is rendered
+    via a drawable component in the same way as sprites and other
+    drawables, the drawable component should use setDepth() to
+    increase the depth value of a text renderable so that it
+    appears above other drawables. This should be the first
+    thing to check if text appears 'invisible'.
+    */
+    class XY_EXPORT_API TextSystem final : public xy::System
+    {
+    public:
+        explicit TextSystem(xy::MessageBus&);
 
-}
+        void process(float) override;
 
-Sprite::Sprite(const sf::Texture& texture)
-    : m_texture     (nullptr),
-    m_colour        (sf::Color::White),
-    m_dirty         (true),
-    m_animationCount(0)
-{
-    setTexture(texture);
-}
+    private:
 
-//public
-void Sprite::setTexture(const sf::Texture& texture)
-{
-    m_texture = &texture;
-    auto size = static_cast<sf::Vector2f>(texture.getSize());
-    setTextureRect({ sf::Vector2f(), size });
-}
-
-void Sprite::setTextureRect(sf::FloatRect rect)
-{
-    m_textureRect = rect;
-    m_dirty = true;
-}
-
-void Sprite::setColour(sf::Color c)
-{
-    m_colour = c;
-    m_dirty = true;
-}
-
-const sf::Texture* Sprite::getTexture() const
-{
-    return m_texture;
-}
-
-sf::Color Sprite::getColour() const
-{
-    return m_colour;
+    };
 }

@@ -28,6 +28,7 @@ source distribution.
 #pragma once
 
 #include "xyginext/Config.hpp"
+#include "xyginext/ecs/Entity.hpp"
 
 #include <SFML/System/String.hpp>
 #include <SFML/Graphics/Glyph.hpp>
@@ -45,8 +46,18 @@ namespace sf
 
 namespace xy
 {
+    class Drawable;
+
     /*!
     \brief ECS friendly implementation of Text.
+    Text components should appear on entities which
+    also have a transform and drawable component. Text
+    is drawn with a RenderSystem. NOTE As text is rendered
+    via a drawable component in the same way as sprites and other
+    drawables, the drawable component should use setDepth() to
+    increase the depth value of a text renderable so that it
+    appears above other drawables. This should be the first
+    thing to check if text appears 'invisible'.
     */
     class XY_EXPORT_API Text final
     {
@@ -89,12 +100,14 @@ namespace xy
         \brief Set the shader to be applied when rendering this text.
         Passing nullptr removes any active shader.
         */
+        [[deprecated("Use Drawable::setShader() instead.")]]
         void setShader(sf::Shader*);
 
         /*!
         \brief Sets the blend mode used when rendering this text.
         Defaults to sf::BlendAlpha
         */
+        [[deprecated("Use Drawable::setBlendMode() instead.")]]
         void setBlendMode(sf::BlendMode);
 
         /*!
@@ -126,29 +139,35 @@ namespace xy
         \brief Returns a pointer to this text's active shader.
         May be nullptr.
         */
+        [[deprecated("Use Drawable::getShader() instead.")]]
         const sf::Shader* getShader() const;
 
         /*!
         \brief Returns this text's current blend mode
         */
+        [[deprecated("Use Drawable::getBlendMode() instead.")]]
         sf::BlendMode getBlendMode() const;
 
         /*!
         \brief Returns the local (pre-transform) AABB of the text
+        You must pass in an entity which has at least a Text and
+        Drawable component attached to it
         */
-        sf::FloatRect getLocalBounds() const;
+        static sf::FloatRect getLocalBounds(xy::Entity);
 
         /*!
         \brief Set an area to which to crop the text.
         The given rectangle should be in local coordinates, relative to
         the text.
         */
+        [[deprecated("Use Drawable::setCroppingArea() instead.")]]
         void setCroppingArea(sf::FloatRect);
 
         /*!
         \brief Returns the current cropping area
         */
-        sf::FloatRect getCroppingArea() const { return m_croppingArea; }
+        [[deprecated("Use Drawable::getCroppingArea() instead.")]]
+        sf::FloatRect getCroppingArea() const;
 
         enum class Alignment
         {
@@ -169,25 +188,17 @@ namespace xy
 
     private:
         
-        void updateVertices();
-        void addQuad(sf::Vector2f position, const sf::Glyph& glyph);
+        void updateVertices(Drawable&);
+        void addQuad(sf::Vector2f position, const sf::Glyph& glyph, std::vector<sf::Vertex>&);
 
         sf::String m_string;
         const sf::Font* m_font;
         sf::Uint32 m_charSize;
         float m_verticalSpacing;
         sf::Color m_fillColour;
-        std::vector<sf::Vertex> m_vertices;
-        mutable sf::FloatRect m_localBounds;
-        sf::FloatRect m_globalBounds;
         bool m_dirty;
-        sf::RenderStates m_states;
         Alignment m_alignment;
 
-        sf::FloatRect m_croppingArea;
-        sf::FloatRect m_croppingWorldArea;
-        bool m_cropped;
-
-        friend class TextRenderer;
+        friend class TextSystem;
     };
 }

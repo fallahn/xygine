@@ -28,8 +28,9 @@ source distribution.
 #include <SFML/Graphics/Font.hpp>
 
 #include "xyginext/ecs/components/Text.hpp"
+#include "xyginext/ecs/components/Drawable.hpp"
 
-#include "xyginext/util/Rectangle.hpp"
+#include "xyginext/core/Log.hpp"
 
 using namespace xy;
 
@@ -39,9 +40,7 @@ Text::Text()
     m_verticalSpacing   (0.f),
     m_fillColour        (sf::Color::White),
     m_dirty             (true),
-    m_alignment         (Alignment::Left),
-    m_croppingArea      (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
-    m_cropped           (false)
+    m_alignment         (Alignment::Left)
 {
 
 }
@@ -52,9 +51,7 @@ Text::Text(const sf::Font& font)
     m_verticalSpacing   (0.f),
     m_fillColour        (sf::Color::White),
     m_dirty             (true),
-    m_alignment         (Alignment::Left),
-    m_croppingArea      (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
-    m_cropped           (false)
+    m_alignment         (Alignment::Left)
 {
     setFont(font);
 }
@@ -90,24 +87,17 @@ void Text::setString(const sf::String& str)
 void Text::setFillColour(sf::Color colour)
 {
     m_fillColour = colour;
-    if (!m_dirty)
-    {
-        for (auto& v : m_vertices)
-        {
-            v.color = colour;
-        }
-        return;
-    }
+    m_dirty = true;
 }
 
 void Text::setShader(sf::Shader* shader)
 {
-    m_states.shader = shader;
+    LOG("DEPRECATED: use Drawable::setShader() instead", xy::Logger::Type::Warning);
 }
 
 void Text::setBlendMode(sf::BlendMode mode)
 {
-    m_states.blendMode = mode;
+    LOG("DEPRECATED: use Drawable::setBlendMode() instead", xy::Logger::Type::Warning);
 }
 
 const sf::Font* Text::getFont() const
@@ -137,28 +127,40 @@ sf::Color Text::getFillColour() const
 
 const sf::Shader* Text::getShader() const
 {
-    return m_states.shader;
+    LOG("DEPRECATED: use Drawable::getShader() instead", xy::Logger::Type::Warning);
+    return nullptr;
 }
 
 sf::BlendMode Text::getBlendMode() const
 {
-    return m_states.blendMode;
+    LOG("DEPRECATED: use Drawable::getBlendMode() instead", xy::Logger::Type::Warning);
+    return {};
 }
 
-sf::FloatRect Text::getLocalBounds() const
+sf::FloatRect Text::getLocalBounds(xy::Entity entity)
 {
-    if (m_dirty)
-    {
-        const_cast<xy::Text*>(this)->updateVertices();
-    }
+   XY_ASSERT(entity.hasComponent<xy::Text>() && entity.hasComponent<xy::Drawable>(), "Invalid Entity");
 
-    return m_localBounds;
+    auto& text = entity.getComponent<xy::Text>();
+    auto& drawable = entity.getComponent<xy::Drawable>();
+    if (text.m_dirty)
+    {
+        text.updateVertices(drawable);
+        drawable.setTexture(&text.getFont()->getTexture(text.getCharacterSize()));
+        drawable.setPrimitiveType(sf::PrimitiveType::Triangles);
+    }
+    return drawable.getLocalBounds();
 }
 
 void Text::setCroppingArea(sf::FloatRect area)
 {
-    m_croppingArea = area;
-    m_dirty = true;
+    LOG("DEPRECATED: Use Drawable::setCroppingArea() instead.", xy::Logger::Type::Warning);
+}
+
+sf::FloatRect Text::getCroppingArea() const
+{
+    LOG("DEPRECATED: use Drawable::getCroppingArea() instead", xy::Logger::Type::Warning);
+    return {};
 }
 
 void Text::setAlignment(Text::Alignment alignment)
@@ -168,16 +170,19 @@ void Text::setAlignment(Text::Alignment alignment)
 }
 
 //private
-void Text::updateVertices()
+void Text::updateVertices(Drawable& drawable)
 {
     m_dirty = false;
     
-    m_vertices.clear();
-    m_localBounds = {};
+    auto& vertices = drawable.getVertices();
+
+    vertices.clear();
+    sf::FloatRect localBounds;
     
     //skip if nothing to build
     if (!m_font || m_string.isEmpty())
     {
+        drawable.updateLocalBounds(localBounds);
         return;
     }
     
@@ -230,7 +235,7 @@ void Text::updateVertices()
         
         //create the quads.
         const auto& glyph = m_font->getGlyph(currChar, m_charSize, false);
-        addQuad(sf::Vector2f(x, y), glyph);
+        addQuad(sf::Vector2f(x, y), glyph, vertices);
         
         float left = glyph.bounds.left;
         float top = glyph.bounds.top;
@@ -245,37 +250,35 @@ void Text::updateVertices()
         x += glyph.advance;
     }
     
-    m_localBounds.left = minX;
-    m_localBounds.top = minY;
-    m_localBounds.width = maxX - minX;
-    m_localBounds.height = maxY - minY;
+    localBounds.left = minX;
+    localBounds.top = minY;
+    localBounds.width = maxX - minX;
+    localBounds.height = maxY - minY;
     
     
     //check for alignment
     float offset = 0.f;
     if (m_alignment == Text::Alignment::Centre)
     {
-        offset = m_localBounds.width / 2.f;
+        offset = localBounds.width / 2.f;
     }
     else if (m_alignment == Text::Alignment::Right)
     {
-        offset = m_localBounds.width;
+        offset = localBounds.width;
     }
     if (offset > 0)
     {
-        for (auto& v : m_vertices)
+        for (auto& v : vertices)
         {
             v.position.x -= offset;
         }
-        m_localBounds.left -= offset;
+        localBounds.left -= offset;
     }
-    
-    //use the local bounds to see if we want cropping or not
-    m_cropped = !Util::Rectangle::contains(m_croppingArea, m_localBounds);
-    
+
+    drawable.updateLocalBounds(localBounds);
 }
 
-void Text::addQuad(sf::Vector2f position, const sf::Glyph& glyph)
+void Text::addQuad(sf::Vector2f position, const sf::Glyph& glyph, std::vector<sf::Vertex>& vertices)
 {
     float left = glyph.bounds.left;
     float top = glyph.bounds.top;
@@ -287,11 +290,11 @@ void Text::addQuad(sf::Vector2f position, const sf::Glyph& glyph)
     float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width);
     float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height);
     
-    m_vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left, position.y + top), m_fillColour, sf::Vector2f(u1, v1)));
-    m_vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + top), m_fillColour, sf::Vector2f(u2, v1)));
-    m_vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left, position.y + bottom), m_fillColour, sf::Vector2f(u1, v2)));
-    m_vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left, position.y + bottom), m_fillColour, sf::Vector2f(u1, v2)));
-    m_vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + top), m_fillColour, sf::Vector2f(u2, v1)));
-    m_vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + bottom), m_fillColour, sf::Vector2f(u2, v2)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left, position.y + top), m_fillColour, sf::Vector2f(u1, v1)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + top), m_fillColour, sf::Vector2f(u2, v1)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left, position.y + bottom), m_fillColour, sf::Vector2f(u1, v2)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left, position.y + bottom), m_fillColour, sf::Vector2f(u1, v2)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + top), m_fillColour, sf::Vector2f(u2, v1)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + bottom), m_fillColour, sf::Vector2f(u2, v2)));
 }
 

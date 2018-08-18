@@ -128,6 +128,18 @@ namespace xy
         sf::Int32 getDepth() const { return m_zDepth; }
 
         /*!
+        \brief Set an area to which to crop the drawable.
+        The given rectangle should be in local coordinates, relative to
+        the text.
+        */
+        void setCroppingArea(sf::FloatRect);
+
+        /*!
+        \brief Returns the current cropping area
+        */
+        sf::FloatRect getCroppingArea() const { return m_croppingArea; }
+
+        /*!
         \brief Returns a reference to the vertex array used when drawing.
         */
         std::vector<sf::Vertex>& getVertices() { return m_vertices; }
@@ -158,6 +170,7 @@ namespace xy
         will not be drawn if the bounds have not been updated.
         */
         void updateLocalBounds();
+        void updateLocalBounds(sf::FloatRect);
 
         /*!
         \brief Enables or disables viewport culling.
@@ -195,6 +208,10 @@ namespace xy
         std::size_t m_matCount;
 
         bool m_cull;
+
+        sf::FloatRect m_croppingArea;
+        sf::FloatRect m_croppingWorldArea;
+        bool m_cropped;
 
         friend class RenderSystem;
     };

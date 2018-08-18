@@ -25,56 +25,37 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "xyginext/ecs/components/Sprite.hpp"
+#include "xyginext/ecs/systems/TextSystem.hpp"
+#include "xyginext/ecs/components/Drawable.hpp"
+#include "xyginext/ecs/components/Text.hpp"
+#include "xyginext/ecs/components/Transform.hpp"
 
-#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Font.hpp>
 
 using namespace xy;
 
-Sprite::Sprite()
-    : m_texture     (nullptr),
-    m_colour        (sf::Color::White),
-    m_dirty         (true),
-    m_animationCount(0)
+TextSystem::TextSystem(xy::MessageBus& mb)
+    : xy::System(mb, typeid(TextSystem))
 {
-
+    requireComponent<Drawable>();
+    requireComponent<Text>();
+    requireComponent<Transform>();
 }
 
-Sprite::Sprite(const sf::Texture& texture)
-    : m_texture     (nullptr),
-    m_colour        (sf::Color::White),
-    m_dirty         (true),
-    m_animationCount(0)
+void TextSystem::process(float)
 {
-    setTexture(texture);
-}
+    auto entities = getEntities();
+    for (auto entity : entities)
+    {
+        auto& drawable = entity.getComponent<Drawable>();
+        auto& text = entity.getComponent<Text>();
 
-//public
-void Sprite::setTexture(const sf::Texture& texture)
-{
-    m_texture = &texture;
-    auto size = static_cast<sf::Vector2f>(texture.getSize());
-    setTextureRect({ sf::Vector2f(), size });
-}
+        if (text.m_dirty)
+        {
+            text.updateVertices(drawable);
 
-void Sprite::setTextureRect(sf::FloatRect rect)
-{
-    m_textureRect = rect;
-    m_dirty = true;
-}
-
-void Sprite::setColour(sf::Color c)
-{
-    m_colour = c;
-    m_dirty = true;
-}
-
-const sf::Texture* Sprite::getTexture() const
-{
-    return m_texture;
-}
-
-sf::Color Sprite::getColour() const
-{
-    return m_colour;
+            drawable.setTexture(&text.getFont()->getTexture(text.getCharacterSize()));
+            drawable.setPrimitiveType(sf::PrimitiveType::Triangles);
+        }
+    }
 }

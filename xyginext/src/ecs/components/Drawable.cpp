@@ -39,7 +39,9 @@ Drawable::Drawable()
     m_vec3Count     (0),
     m_boolCount     (0),
     m_matCount      (0),
-    m_cull          (true)
+    m_cull          (true),
+    m_croppingArea  (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
+    m_cropped       (false)
 {
 
 }
@@ -51,7 +53,9 @@ Drawable::Drawable(const sf::Texture& texture)
     m_vec3Count     (0),
     m_boolCount     (0),
     m_matCount      (0),
-    m_cull          (true)
+    m_cull          (true),
+    m_croppingArea  (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
+    m_cropped       (false)
 {
     m_states.texture = &texture;
 }
@@ -226,6 +230,11 @@ void Drawable::setBlendMode(sf::BlendMode mode)
     m_states.blendMode = mode;
 }
 
+void Drawable::setCroppingArea(sf::FloatRect area)
+{
+    m_croppingArea = area;
+}
+
 sf::Texture* Drawable::getTexture()
 {
     return const_cast<sf::Texture*>(m_states.texture);
@@ -268,4 +277,9 @@ void Drawable::updateLocalBounds()
             m_localBounds.height = v.position.y - m_localBounds.top;
         }
     }
+}
+
+void Drawable::updateLocalBounds(sf::FloatRect rect)
+{
+    m_localBounds = rect;
 }

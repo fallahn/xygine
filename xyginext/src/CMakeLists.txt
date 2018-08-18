@@ -46,6 +46,7 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/SpriteAnimator.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/SpriteSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/TextRenderer.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/TextSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/UISystem.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/graphics/SpriteSheet.cpp
