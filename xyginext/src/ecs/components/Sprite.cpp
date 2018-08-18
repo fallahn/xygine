@@ -77,5 +77,4 @@ const sf::Texture* Sprite::getTexture() const
 sf::Color Sprite::getColour() const
 {
     return m_colour;
-    
 }

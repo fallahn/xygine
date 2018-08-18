@@ -28,7 +28,9 @@ source distribution.
 #include <SFML/Graphics/Font.hpp>
 
 #include "xyginext/ecs/components/Text.hpp"
-#include <xyginext/core/Log.hpp>
+#include "xyginext/ecs/components/Drawable.hpp"
+
+#include "xyginext/core/Log.hpp"
 
 using namespace xy;
 
@@ -135,10 +137,19 @@ sf::BlendMode Text::getBlendMode() const
     return {};
 }
 
-sf::FloatRect Text::getLocalBounds() const
+sf::FloatRect Text::getLocalBounds(xy::Entity entity)
 {
-    LOG("DEPRECATED: Use Drawable::getLocalBounds() instead.", xy::Logger::Type::Warning);
-    return {};
+   XY_ASSERT(entity.hasComponent<xy::Text>() && entity.hasComponent<xy::Drawable>(), "Invalid Entity");
+
+    auto& text = entity.getComponent<xy::Text>();
+    auto& drawable = entity.getComponent<xy::Drawable>();
+    if (text.m_dirty)
+    {
+        text.updateVertices(drawable);
+        drawable.setTexture(&text.getFont()->getTexture(text.getCharacterSize()));
+        drawable.setPrimitiveType(sf::PrimitiveType::Triangles);
+    }
+    return drawable.getLocalBounds();
 }
 
 void Text::setCroppingArea(sf::FloatRect area)
@@ -159,16 +170,19 @@ void Text::setAlignment(Text::Alignment alignment)
 }
 
 //private
-void Text::updateVertices(std::vector<sf::Vertex>& vertices, sf::FloatRect& localBounds)
+void Text::updateVertices(Drawable& drawable)
 {
     m_dirty = false;
     
+    auto& vertices = drawable.getVertices();
+
     vertices.clear();
-    localBounds = {};
+    sf::FloatRect localBounds;
     
     //skip if nothing to build
     if (!m_font || m_string.isEmpty())
     {
+        drawable.updateLocalBounds(localBounds);
         return;
     }
     
@@ -260,6 +274,8 @@ void Text::updateVertices(std::vector<sf::Vertex>& vertices, sf::FloatRect& loca
         }
         localBounds.left -= offset;
     }
+
+    drawable.updateLocalBounds(localBounds);
 }
 
 void Text::addQuad(sf::Vector2f position, const sf::Glyph& glyph, std::vector<sf::Vertex>& vertices)

@@ -28,6 +28,7 @@ source distribution.
 #pragma once
 
 #include "xyginext/Config.hpp"
+#include "xyginext/ecs/Entity.hpp"
 
 #include <SFML/System/String.hpp>
 #include <SFML/Graphics/Glyph.hpp>
@@ -45,6 +46,8 @@ namespace sf
 
 namespace xy
 {
+    class Drawable;
+
     /*!
     \brief ECS friendly implementation of Text.
     Text components should appear on entities which
@@ -147,9 +150,10 @@ namespace xy
 
         /*!
         \brief Returns the local (pre-transform) AABB of the text
+        You must pass in an entity which has at least a Text and
+        Drawable component attached to it
         */
-        [[deprecated("Use Drawable::getLocalBounds() instead.")]]
-        sf::FloatRect getLocalBounds() const;
+        static sf::FloatRect getLocalBounds(xy::Entity);
 
         /*!
         \brief Set an area to which to crop the text.
@@ -184,7 +188,7 @@ namespace xy
 
     private:
         
-        void updateVertices(std::vector<sf::Vertex>&, sf::FloatRect&);
+        void updateVertices(Drawable&);
         void addQuad(sf::Vector2f position, const sf::Glyph& glyph, std::vector<sf::Vertex>&);
 
         sf::String m_string;

@@ -51,7 +51,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.getComponent<xy::Text>().setCharacterSize(60);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Black);
     entity.addComponent<xy::Drawable>().setDepth(2);
-    auto bounds = entity.getComponent<xy::Drawable>().getLocalBounds();
+    auto bounds = xy::Text::getLocalBounds(entity);
     auto& tx = entity.addComponent<xy::Transform>();
     tx.setOrigin(128.f, 45.f);
 
