@@ -228,6 +228,14 @@ namespace xy
         */
         Status getStatus() const;
 
+
+        /*!
+        \brief Applies the current mixer channel settings.
+        Generally only used by audio systems which need to update
+        an emitter with any changes in the mixer panel
+        */
+        void applyMixerSettings();
+
     private:
         sf::Uint8 m_mixerChannel;
         float m_volume;

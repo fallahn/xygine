@@ -172,3 +172,8 @@ AudioEmitter::Status AudioEmitter::getStatus() const
     XY_ASSERT(m_impl, "No valid sound loaded");
     return static_cast<Status>(m_impl->getStatus());
 }
+
+void AudioEmitter::applyMixerSettings()
+{
+    m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel));
+}
