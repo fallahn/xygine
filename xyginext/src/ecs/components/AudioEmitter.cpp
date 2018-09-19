@@ -89,7 +89,7 @@ void AudioEmitter::setVolume(float vol)
     m_volume = std::max(0.f, vol);
 }
 
-void AudioEmitter::setPosition(sf::Vector2f position)
+void AudioEmitter::setPosition(sf::Vector3f position)
 {
     XY_ASSERT(m_impl, "No valid sound loaded");
     m_impl->setPosition(position);
@@ -137,7 +137,7 @@ float AudioEmitter::getVolume() const
     return m_volume;
 }
 
-sf::Vector2f AudioEmitter::getPosition() const
+sf::Vector3f AudioEmitter::getPosition() const
 {
     XY_ASSERT(m_impl, "No valid sound loaded");
     return m_impl->getPosition();

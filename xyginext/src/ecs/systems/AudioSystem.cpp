@@ -64,7 +64,8 @@ void AudioSystem::process(float)
         const auto& tx = entity.getComponent<xy::Transform>();
         auto& audio = entity.getComponent<xy::AudioEmitter>();
 
-        audio.setPosition(tx.getWorldTransform().transformPoint({}));
+        auto pos = tx.getWorldTransform().transformPoint({});
+        audio.setPosition({ pos.x, pos.y, 0 });
 
         //update volume according to global mixer
         audio.m_impl->setVolume(audio.m_volume * AudioMixer::m_channels[audio.m_mixerChannel]);

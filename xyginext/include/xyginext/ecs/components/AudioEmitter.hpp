@@ -132,14 +132,14 @@ namespace xy
         void setVolume(float);
 
         /*!
-        \brief Set the 2D position of the emitter in world
-        coordinates. This is automatically overriden is the
+        \brief Set the 3D position of the emitter in world
+        coordinates. This is automatically overriden if the
         entity to which this emitter is attached also has a
         Transform component and exists in a scene that contains
         an AudioSystem. This also has no effect if the source
         for this component is stereo
         */
-        void setPosition(sf::Vector2f);
+        void setPosition(sf::Vector3f);
 
         /*!
         \brief Sets whether or not this sound is panned relatively
@@ -187,12 +187,12 @@ namespace xy
         float getVolume() const;
 
         /*!
-        \brief Returns the current 2D position of the emitter in 
-        world coordinates'
+        \brief Returns the current 3D position of the emitter in 
+        world coordinates
         This only applies to mono sounds which are not automatically
         panned by their entitiy's transform component.
         */
-        sf::Vector2f getPosition() const;
+        sf::Vector3f getPosition() const;
 
         /*!
         \brief Returns whether or not this emitter is set tot be panned
