@@ -95,7 +95,7 @@ namespace
     };
 }
 
-EndingDirector::EndingDirector(xy::SoundResource& ar, xy::TextureResource& tr, xy::MessageBus& mb)
+EndingDirector::EndingDirector(xy::AudioResource& ar, xy::TextureResource& tr, xy::MessageBus& mb)
     : m_soundResource   (ar),
     m_textureResource   (tr),
     m_messageBus        (mb)

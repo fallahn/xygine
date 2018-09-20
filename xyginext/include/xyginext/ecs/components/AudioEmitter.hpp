@@ -75,6 +75,17 @@ namespace xy
         AudioEmitter();
 
         /*!
+        \brief Move constructor.
+        AudioEmitters are moveable but non-copyable.
+        */
+        AudioEmitter(AudioEmitter&&) = default;
+        AudioEmitter& operator = (AudioEmitter&&) = default;
+
+        ~AudioEmitter() = default;
+        AudioEmitter(const AudioEmitter&) = delete;
+        AudioEmitter& operator = (const AudioEmitter&) = delete;
+
+        /*!
         \brief Sets the source of the emitter to a buffer
         shared between one or more emitters to play sounds
         fully loaded in memory. This is usually applied to
@@ -170,7 +181,7 @@ namespace xy
         the volume of all sounds assigned to the channel. For example
         you may wish to assign all sound effects to channel 2, and UI
         sounds to channel 3. This way sound effects can have their volume
-        adjusted independently oif UI effects. By default all emitters
+        adjusted independently of UI effects. By default all emitters
         are assigned to channel 0
         \see Mixer
         */

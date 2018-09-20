@@ -126,6 +126,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\audio\AudioScape.cpp" />
     <ClCompile Include="src\audio\AudioSourceImpl.cpp" />
     <ClCompile Include="src\audio\Mixer.cpp" />
     <ClCompile Include="src\core\App.cpp" />
@@ -197,6 +198,7 @@
     <ClCompile Include="src\util\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\xyginext\audio\AudioScape.hpp" />
     <ClInclude Include="include\xyginext\audio\AudioSourceImpl.hpp" />
     <ClInclude Include="include\xyginext\audio\Mixer.hpp" />
     <ClInclude Include="include\xyginext\Config.hpp" />

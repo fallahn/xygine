@@ -33,21 +33,21 @@ source distribution.
 
 namespace xy
 {
-    class SoundResource;
+    class AudioResource;
     class TextureResource;
 }
 
 class EndingDirector final : public xy::Director
 {
 public:
-    EndingDirector(xy::SoundResource&, xy::TextureResource&, xy::MessageBus&);
+    EndingDirector(xy::AudioResource&, xy::TextureResource&, xy::MessageBus&);
 
     void handleMessage(const xy::Message&) override;
     void handleEvent(const sf::Event&) override;
     void process(float) override;
 
 private:
-    xy::SoundResource& m_soundResource;
+    xy::AudioResource& m_soundResource;
     xy::TextureResource& m_textureResource;
     xy::MessageBus& m_messageBus;
     xy::SpriteSheet m_spriteSheet;

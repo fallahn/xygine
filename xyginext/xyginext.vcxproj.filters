@@ -300,6 +300,9 @@
     <ClCompile Include="src\ecs\systems\TextSystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\audio\AudioScape.cpp">
+      <Filter>Source Files\audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -532,6 +535,9 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\systems\TextSystem.hpp">
       <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\audio\AudioScape.hpp">
+      <Filter>Header Files\audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

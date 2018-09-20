@@ -54,7 +54,7 @@ private:
     xy::Scene m_scene;
     xy::TextureResource m_textureResource;
     xy::FontResource m_fontResource;
-    xy::SoundResource m_soundResource;
+    xy::AudioResource m_soundResource;
     bool m_summaryShown;
 
     void loadAssets();
