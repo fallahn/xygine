@@ -188,6 +188,11 @@ namespace xy
         void setChannel(sf::Uint8);
 
         /*!
+        \brief Set the playing offset in Time since the beginning
+        */
+        void setPlayingOffset(sf::Time);
+
+        /*!
         \brief Returns the current playback pitch of the emitter
         */
         float getPitch() const;
@@ -238,6 +243,18 @@ namespace xy
         Can be Playing, Paused or Stopped.
         */
         Status getStatus() const;
+
+        /*!
+        \brief Returns the total duration of the audio associated
+        with this emitter
+        */
+        sf::Time getDuration() const;
+
+        /*!
+        \brief Returns the current playing offset from the beginning
+        of the audio associated with this emitter
+        */
+        sf::Time getPlayingOffset() const;
 
         /*!
         \brief Applies the current mixer channel settings.

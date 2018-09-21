@@ -65,6 +65,9 @@ namespace xy
             virtual bool isLooped() const = 0;
 
             virtual sf::Int32 getStatus() const = 0;
+            virtual sf::Time getDuration() const = 0;
+            virtual sf::Time getPlayingOffset() const = 0;
+            virtual void setPlayingOffset(sf::Time) = 0;
 
             enum class Type
             {
@@ -100,6 +103,9 @@ namespace xy
             bool isLooped() const override;
 
             sf::Int32 getStatus() const override;
+            sf::Time getDuration() const override;
+            sf::Time getPlayingOffset() const override;
+            void setPlayingOffset(sf::Time) override;
 
             Type getType() const override { return Type::Sound; }
 
@@ -134,6 +140,9 @@ namespace xy
             bool isLooped() const override;
 
             sf::Int32 getStatus() const override;
+            sf::Time getDuration() const override;
+            sf::Time getPlayingOffset() const override;
+            void setPlayingOffset(sf::Time);
 
             bool isValid() const { return m_valid; }
 

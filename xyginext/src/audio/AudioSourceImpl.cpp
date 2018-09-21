@@ -135,6 +135,21 @@ sf::Int32 AudioSound::getStatus() const
     return m_sound.getStatus();
 }
 
+sf::Time AudioSound::getDuration() const
+{
+    return m_sound.getBuffer()->getDuration();
+}
+
+sf::Time AudioSound::getPlayingOffset() const
+{
+    return m_sound.getPlayingOffset();
+}
+
+void AudioSound::setPlayingOffset(sf::Time offset)
+{
+    m_sound.setPlayingOffset(offset);
+}
+
 //--------------------------------------------------
 
 AudioMusic::AudioMusic(const std::string& path)
@@ -235,4 +250,19 @@ bool AudioMusic::isLooped() const
 sf::Int32 AudioMusic::getStatus() const
 {
     return m_music.getStatus();
+}
+
+sf::Time AudioMusic::getDuration() const
+{
+    return m_music.getDuration();
+}
+
+sf::Time AudioMusic::getPlayingOffset() const
+{
+    return m_music.getPlayingOffset();
+}
+
+void AudioMusic::setPlayingOffset(sf::Time offset)
+{
+    m_music.setPlayingOffset(offset);
 }

@@ -122,8 +122,15 @@ void AudioEmitter::setLooped(bool loop)
 void AudioEmitter::setChannel(sf::Uint8 chan)
 {
     XY_ASSERT(chan < AudioMixer::MaxChannels, "Channel out of range");
+    XY_ASSERT(m_impl, "No valid sound loaded");
     m_mixerChannel = chan;
     m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel));
+}
+
+void AudioEmitter::setPlayingOffset(sf::Time offset)
+{
+    XY_ASSERT(m_impl, "No valid sound loaded");
+    m_impl->setPlayingOffset(offset);
 }
 
 float AudioEmitter::getPitch() const
@@ -171,6 +178,18 @@ AudioEmitter::Status AudioEmitter::getStatus() const
 {
     XY_ASSERT(m_impl, "No valid sound loaded");
     return static_cast<Status>(m_impl->getStatus());
+}
+
+sf::Time AudioEmitter::getDuration() const
+{
+    XY_ASSERT(m_impl, "No valid sound loaded");
+    return m_impl->getDuration();
+}
+
+sf::Time AudioEmitter::getPlayingOffset() const
+{
+    XY_ASSERT(m_impl, "No valid sound loaded");
+    return m_impl->getPlayingOffset();
 }
 
 void AudioEmitter::applyMixerSettings()
