@@ -95,12 +95,27 @@ namespace xy
         bool loadFromFile(const std::string& path);
 
         /*!
+        \brief Saves the AudioScape configuration to a given path.
+        AudioScape files normally have the extension *.xas
+        */
+        bool saveToFile(const std::string& path);
+
+        /*!
         \brief Returns an AudioEmitter configured with the given name from
         the loaded confugration, if it exists, else returns an Uninitialised
         AudioEmitter. Use AudioEmitter::hasSource() to check validity of the
         returned emitter.
         */
         AudioEmitter getEmitter(const std::string& name) const;
+
+        /*!
+        \brief Adds an emitter configuration to the AudioScape.
+        \param name Name of the AudioEmitter as it appears in the configuration.
+        If an emitter with the name already exists then it will be overwritten.
+        \param emitter An AudioEmitter whose current settings will be saved in the
+        configuration file.
+        */
+        void addEmitter(const std::string& name, const AudioEmitter& emitter);
 
     private:
         AudioResource& m_audioResource;

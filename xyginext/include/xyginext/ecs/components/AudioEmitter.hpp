@@ -239,13 +239,18 @@ namespace xy
         */
         Status getStatus() const;
 
-
         /*!
         \brief Applies the current mixer channel settings.
         Generally only used by audio systems which need to update
         an emitter with any changes in the mixer panel
         */
         void applyMixerSettings();
+
+        /*!
+        \brief Returns true if the audio is from a streaming source,
+        else returns false
+        */
+        bool isStreaming() const;
 
     private:
         sf::Uint8 m_mixerChannel;

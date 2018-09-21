@@ -177,3 +177,12 @@ void AudioEmitter::applyMixerSettings()
 {
     m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel));
 }
+
+bool AudioEmitter::isStreaming() const
+{
+    if (hasSource())
+    {
+        return m_impl->getType() == Detail::AudioSourceImpl::Type::Music;
+    }
+    return false;
+}

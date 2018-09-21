@@ -83,6 +83,21 @@ bool AudioScape::loadFromFile(const std::string& path)
     return !m_emitterConfigs.empty();
 }
 
+bool AudioScape::saveToFile(const std::string& path)
+{
+    if (!m_emitterConfigs.empty())
+    {
+        ConfigFile file("audio_scape");
+        for (const auto& cfg : m_emitterConfigs)
+        {
+            file.addObject(cfg.second);
+        }
+        return file.save(path);
+    }
+
+    return false;
+}
+
 AudioEmitter AudioScape::getEmitter(const std::string& name) const
 {
     AudioEmitter emitter;
@@ -142,4 +157,24 @@ AudioEmitter AudioScape::getEmitter(const std::string& name) const
         emitter.applyMixerSettings(); //makes sure volume is applied immediately to prevent loud bursts
     }
     return emitter;
+}
+
+void AudioScape::addEmitter(const std::string& name, const AudioEmitter& emitter)
+{
+    Logger::log("Adding emitters is currently not implemented until file paths are retrievable", xy::Logger::Type::Error);
+    return;
+
+
+    ConfigObject obj("emitter", name);
+    obj.addProperty("path", "buns. we need to put the path to the buffer file here");
+    obj.addProperty("streaming", emitter.isStreaming() ? "true" : "false");
+    obj.addProperty("pitch", std::to_string(emitter.getPitch()));
+    obj.addProperty("volume", std::to_string(emitter.getVolume()));
+    obj.addProperty("relative_listener", emitter.isRelativeToListener() ? "true" : "false");
+    obj.addProperty("min_distance", std::to_string(emitter.getMinDistance()));
+    obj.addProperty("attenuation", std::to_string(emitter.getAttenuation()));
+    obj.addProperty("looped", emitter.isLooped() ? "true" : "false");
+    obj.addProperty("mixer_channel", std::to_string(emitter.getChannel()));
+
+    m_emitterConfigs[name] = obj;
 }
