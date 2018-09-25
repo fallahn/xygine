@@ -44,7 +44,7 @@ public:
 
 private:
 
-    xy::SoundResource m_soundResource;
+    xy::AudioResource m_soundResource;
 
     std::size_t m_nextFreeEntity;
     std::vector<xy::Entity> m_entities;

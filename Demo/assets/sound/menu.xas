@@ -1,0 +1,21 @@
+audio_scape menu
+{
+    emitter button_select
+    {
+        path = "assets/sound/collect.wav"
+        streaming = false
+        volume = 1.5
+        attenuation = 0
+        mixer_channel = 0
+        pitch = 0.3
+    }
+
+    emitter music
+    {
+        path = "assets/sound/music/menu.ogg"
+        streaming = true
+        mixer_channel = 1
+        looped = true
+        volume = 0.25
+    }
+}

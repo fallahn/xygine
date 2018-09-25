@@ -35,7 +35,7 @@ using namespace xy;
 
 AudioEmitter::AudioEmitter()
     : m_mixerChannel    (0),
-    m_volume            (0.f)
+    m_volume            (1.f)
 {
 
 }
@@ -89,7 +89,7 @@ void AudioEmitter::setVolume(float vol)
     m_volume = std::max(0.f, vol);
 }
 
-void AudioEmitter::setPosition(sf::Vector2f position)
+void AudioEmitter::setPosition(sf::Vector3f position)
 {
     XY_ASSERT(m_impl, "No valid sound loaded");
     m_impl->setPosition(position);
@@ -122,8 +122,15 @@ void AudioEmitter::setLooped(bool loop)
 void AudioEmitter::setChannel(sf::Uint8 chan)
 {
     XY_ASSERT(chan < AudioMixer::MaxChannels, "Channel out of range");
+    XY_ASSERT(m_impl, "No valid sound loaded");
     m_mixerChannel = chan;
     m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel));
+}
+
+void AudioEmitter::setPlayingOffset(sf::Time offset)
+{
+    XY_ASSERT(m_impl, "No valid sound loaded");
+    m_impl->setPlayingOffset(offset);
 }
 
 float AudioEmitter::getPitch() const
@@ -137,7 +144,7 @@ float AudioEmitter::getVolume() const
     return m_volume;
 }
 
-sf::Vector2f AudioEmitter::getPosition() const
+sf::Vector3f AudioEmitter::getPosition() const
 {
     XY_ASSERT(m_impl, "No valid sound loaded");
     return m_impl->getPosition();
@@ -171,4 +178,30 @@ AudioEmitter::Status AudioEmitter::getStatus() const
 {
     XY_ASSERT(m_impl, "No valid sound loaded");
     return static_cast<Status>(m_impl->getStatus());
+}
+
+sf::Time AudioEmitter::getDuration() const
+{
+    XY_ASSERT(m_impl, "No valid sound loaded");
+    return m_impl->getDuration();
+}
+
+sf::Time AudioEmitter::getPlayingOffset() const
+{
+    XY_ASSERT(m_impl, "No valid sound loaded");
+    return m_impl->getPlayingOffset();
+}
+
+void AudioEmitter::applyMixerSettings()
+{
+    m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel));
+}
+
+bool AudioEmitter::isStreaming() const
+{
+    if (hasSource())
+    {
+        return m_impl->getType() == Detail::AudioSourceImpl::Type::Music;
+    }
+    return false;
 }

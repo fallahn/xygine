@@ -70,9 +70,9 @@ void AudioSound::setVolume(float vol)
     m_sound.setVolume(vol * 100.f);
 }
 
-void AudioSound::setPosition(sf::Vector2f pos)
+void AudioSound::setPosition(sf::Vector3f pos)
 {
-    m_sound.setPosition({ pos.x, pos.y, 0.f });
+    m_sound.setPosition(pos);
 }
 
 void AudioSound::setRelativeTolistener(bool rel)
@@ -105,10 +105,9 @@ float AudioSound::getVolume() const
     return m_sound.getVolume() / 100.f;
 }
 
-sf::Vector2f AudioSound::getPosition() const
+sf::Vector3f AudioSound::getPosition() const
 {
-    auto pos = m_sound.getPosition();
-    return { pos.x, pos.y };
+    return m_sound.getPosition();
 }
 
 bool AudioSound::isRelativeToListener() const
@@ -134,6 +133,21 @@ bool AudioSound::isLooped() const
 sf::Int32 AudioSound::getStatus() const
 {
     return m_sound.getStatus();
+}
+
+sf::Time AudioSound::getDuration() const
+{
+    return m_sound.getBuffer()->getDuration();
+}
+
+sf::Time AudioSound::getPlayingOffset() const
+{
+    return m_sound.getPlayingOffset();
+}
+
+void AudioSound::setPlayingOffset(sf::Time offset)
+{
+    m_sound.setPlayingOffset(offset);
 }
 
 //--------------------------------------------------
@@ -173,9 +187,9 @@ void AudioMusic::setVolume(float vol)
     m_music.setVolume(vol * 100.f);
 }
 
-void AudioMusic::setPosition(sf::Vector2f pos)
+void AudioMusic::setPosition(sf::Vector3f pos)
 {
-    m_music.setPosition({ pos.x, pos.y, 0.f });
+    m_music.setPosition(pos);
 }
 
 void AudioMusic::setRelativeTolistener(bool rel)
@@ -208,10 +222,9 @@ float AudioMusic::getVolume() const
     return m_music.getVolume() / 100.f;
 }
 
-sf::Vector2f AudioMusic::getPosition() const
+sf::Vector3f AudioMusic::getPosition() const
 {
-    auto pos = m_music.getPosition();
-    return { pos.x, pos.y };
+    return m_music.getPosition();
 }
 
 bool AudioMusic::isRelativeToListener() const
@@ -237,4 +250,19 @@ bool AudioMusic::isLooped() const
 sf::Int32 AudioMusic::getStatus() const
 {
     return m_music.getStatus();
+}
+
+sf::Time AudioMusic::getDuration() const
+{
+    return m_music.getDuration();
+}
+
+sf::Time AudioMusic::getPlayingOffset() const
+{
+    return m_music.getPlayingOffset();
+}
+
+void AudioMusic::setPlayingOffset(sf::Time offset)
+{
+    m_music.setPlayingOffset(offset);
 }

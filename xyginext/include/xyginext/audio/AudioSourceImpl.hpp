@@ -50,7 +50,7 @@ namespace xy
 
             virtual void setPitch(float) = 0;
             virtual void setVolume(float) = 0;
-            virtual void setPosition(sf::Vector2f) = 0;
+            virtual void setPosition(sf::Vector3f) = 0;
             virtual void setRelativeTolistener(bool) = 0;
             virtual void setMinDistance(float) = 0;
             virtual void setAttenuation(float) = 0;
@@ -58,13 +58,16 @@ namespace xy
 
             virtual float getPitch() const = 0;
             virtual float getVolume() const = 0;
-            virtual sf::Vector2f getPosition() const = 0;
+            virtual sf::Vector3f getPosition() const = 0;
             virtual bool isRelativeToListener() const = 0;
             virtual float getMinDistance() const = 0;
             virtual float getAttenuation() const = 0;
             virtual bool isLooped() const = 0;
 
             virtual sf::Int32 getStatus() const = 0;
+            virtual sf::Time getDuration() const = 0;
+            virtual sf::Time getPlayingOffset() const = 0;
+            virtual void setPlayingOffset(sf::Time) = 0;
 
             enum class Type
             {
@@ -85,7 +88,7 @@ namespace xy
 
             void setPitch(float) override;
             void setVolume(float) override;
-            void setPosition(sf::Vector2f) override;
+            void setPosition(sf::Vector3f) override;
             void setRelativeTolistener(bool) override;
             void setMinDistance(float) override;
             void setAttenuation(float) override;
@@ -93,13 +96,16 @@ namespace xy
 
             float getPitch() const override;
             float getVolume() const override;
-            sf::Vector2f getPosition() const override;
+            sf::Vector3f getPosition() const override;
             bool isRelativeToListener() const override;
             float getMinDistance() const override;
             float getAttenuation() const override;
             bool isLooped() const override;
 
             sf::Int32 getStatus() const override;
+            sf::Time getDuration() const override;
+            sf::Time getPlayingOffset() const override;
+            void setPlayingOffset(sf::Time) override;
 
             Type getType() const override { return Type::Sound; }
 
@@ -119,7 +125,7 @@ namespace xy
 
             void setPitch(float) override;
             void setVolume(float) override;
-            void setPosition(sf::Vector2f) override;
+            void setPosition(sf::Vector3f) override;
             void setRelativeTolistener(bool) override;
             void setMinDistance(float) override;
             void setAttenuation(float) override;
@@ -127,13 +133,16 @@ namespace xy
 
             float getPitch() const override;
             float getVolume() const override;
-            sf::Vector2f getPosition() const override;
+            sf::Vector3f getPosition() const override;
             bool isRelativeToListener() const override;
             float getMinDistance() const override;
             float getAttenuation() const override;
             bool isLooped() const override;
 
             sf::Int32 getStatus() const override;
+            sf::Time getDuration() const override;
+            sf::Time getPlayingOffset() const override;
+            void setPlayingOffset(sf::Time);
 
             bool isValid() const { return m_valid; }
 

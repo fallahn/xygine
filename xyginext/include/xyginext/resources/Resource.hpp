@@ -162,7 +162,7 @@ namespace xy
     /*!
     \brief Resource manager for sound files
     */
-    class XY_EXPORT_API SoundResource final : public BaseResource<sf::SoundBuffer>
+    class XY_EXPORT_API AudioResource final : public BaseResource<sf::SoundBuffer>
     {
         std::unique_ptr<sf::SoundBuffer> errorHandle() override
         {

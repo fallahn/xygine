@@ -166,12 +166,27 @@ namespace xy
         ConfigProperty& addProperty(const std::string& name, const std::string& value = "");
 
         /*!
+        \brief Adds a copy of the given ConfigProperty to this objects
+        list of properties.
+        WARNING this will most likely invalidate any pointers retreived
+        with findProperty()
+        */
+        void addProperty(const ConfigProperty& prop);
+
+        /*!
         \brief Adds an object with the given name and optional id to this object
         and returns a pointer to it.
         WARNING this will likely invalidate any existing pointers to objects
         retreived with findObject()
         */
         ConfigObject* addObject(const std::string& name, const std::string& id = "");
+
+        /*!
+        \brief Adds a copy of an existing object to this object.
+        WARNING this will likely invalidate any existing pointers to objects
+        retreived with findObject()
+        */
+        void addObject(const ConfigObject& obj);
 
         /*!
         \brief Removes a property with the given name from this object if it exists

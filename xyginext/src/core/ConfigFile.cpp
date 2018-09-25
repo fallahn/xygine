@@ -316,6 +316,11 @@ ConfigObject* ConfigObject::findObjectWithId(const std::string& id) const
     return nullptr;
 }
 
+void ConfigObject::addProperty(const ConfigProperty& prop)
+{
+    m_properties.push_back(prop);
+}
+
 ConfigObject* ConfigObject::findObjectWithName(const std::string& name) const
 {
     auto result = std::find_if(m_objects.begin(), m_objects.end(),
@@ -337,6 +342,11 @@ ConfigObject* ConfigObject::findObjectWithName(const std::string& name) const
     }
 
     return nullptr;
+}
+
+void ConfigObject::addObject(const ConfigObject& object)
+{
+    m_objects.push_back(object);
 }
 
 const std::vector<ConfigProperty>& ConfigObject::getProperties() const

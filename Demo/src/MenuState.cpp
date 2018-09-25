@@ -61,6 +61,8 @@ source distribution.
 #include <xyginext/ecs/systems/ParticleSystem.hpp>
 #include <xyginext/ecs/systems/QuadTree.hpp>
 
+#include <xyginext/audio/AudioScape.hpp>
+
 #include <xyginext/graphics/postprocess/Blur.hpp>
 #include <xyginext/graphics/SpriteSheet.hpp>
 
@@ -341,11 +343,13 @@ void MenuState::createScene()
     entity.addComponent<xy::Transform>();
     entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/menu_background.png"));
     entity.addComponent<xy::Drawable>().setDepth(-10);
-    entity.addComponent<xy::AudioEmitter>().setSource("assets/sound/music/menu.ogg");
-    entity.getComponent<xy::AudioEmitter>().setChannel(1);
-    entity.getComponent<xy::AudioEmitter>().setLooped(true);
-    entity.getComponent<xy::AudioEmitter>().setVolume(0.25f);
-    entity.getComponent<xy::AudioEmitter>().play();
+
+    xy::AudioScape as(m_audioResource);
+    if (as.loadFromFile("assets/sound/menu.xas"))
+    {
+        entity.addComponent<xy::AudioEmitter>() = as.getEmitter("music");
+        entity.getComponent<xy::AudioEmitter>().play();
+    }
 
 
     //grass at front

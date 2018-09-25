@@ -75,6 +75,17 @@ namespace xy
         AudioEmitter();
 
         /*!
+        \brief Move constructor.
+        AudioEmitters are moveable but non-copyable.
+        */
+        AudioEmitter(AudioEmitter&&) = default;
+        AudioEmitter& operator = (AudioEmitter&&) = default;
+
+        ~AudioEmitter() = default;
+        AudioEmitter(const AudioEmitter&) = delete;
+        AudioEmitter& operator = (const AudioEmitter&) = delete;
+
+        /*!
         \brief Sets the source of the emitter to a buffer
         shared between one or more emitters to play sounds
         fully loaded in memory. This is usually applied to
@@ -132,14 +143,14 @@ namespace xy
         void setVolume(float);
 
         /*!
-        \brief Set the 2D position of the emitter in world
-        coordinates. This is automatically overriden is the
+        \brief Set the 3D position of the emitter in world
+        coordinates. This is automatically overriden if the
         entity to which this emitter is attached also has a
         Transform component and exists in a scene that contains
         an AudioSystem. This also has no effect if the source
         for this component is stereo
         */
-        void setPosition(sf::Vector2f);
+        void setPosition(sf::Vector3f);
 
         /*!
         \brief Sets whether or not this sound is panned relatively
@@ -170,11 +181,16 @@ namespace xy
         the volume of all sounds assigned to the channel. For example
         you may wish to assign all sound effects to channel 2, and UI
         sounds to channel 3. This way sound effects can have their volume
-        adjusted independently oif UI effects. By default all emitters
+        adjusted independently of UI effects. By default all emitters
         are assigned to channel 0
         \see Mixer
         */
         void setChannel(sf::Uint8);
+
+        /*!
+        \brief Set the playing offset in Time since the beginning
+        */
+        void setPlayingOffset(sf::Time);
 
         /*!
         \brief Returns the current playback pitch of the emitter
@@ -187,12 +203,12 @@ namespace xy
         float getVolume() const;
 
         /*!
-        \brief Returns the current 2D position of the emitter in 
-        world coordinates'
+        \brief Returns the current 3D position of the emitter in 
+        world coordinates
         This only applies to mono sounds which are not automatically
         panned by their entitiy's transform component.
         */
-        sf::Vector2f getPosition() const;
+        sf::Vector3f getPosition() const;
 
         /*!
         \brief Returns whether or not this emitter is set tot be panned
@@ -227,6 +243,31 @@ namespace xy
         Can be Playing, Paused or Stopped.
         */
         Status getStatus() const;
+
+        /*!
+        \brief Returns the total duration of the audio associated
+        with this emitter
+        */
+        sf::Time getDuration() const;
+
+        /*!
+        \brief Returns the current playing offset from the beginning
+        of the audio associated with this emitter
+        */
+        sf::Time getPlayingOffset() const;
+
+        /*!
+        \brief Applies the current mixer channel settings.
+        Generally only used by audio systems which need to update
+        an emitter with any changes in the mixer panel
+        */
+        void applyMixerSettings();
+
+        /*!
+        \brief Returns true if the audio is from a streaming source,
+        else returns false
+        */
+        bool isStreaming() const;
 
     private:
         sf::Uint8 m_mixerChannel;

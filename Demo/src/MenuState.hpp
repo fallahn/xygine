@@ -60,6 +60,7 @@ private:
     xy::Scene m_helpScene;
     xy::FontResource m_fontResource;
     xy::TextureResource m_textureResource;
+    xy::AudioResource m_audioResource;
 
     SharedStateData& m_sharedStateData;
     LoadingScreen& m_loadingScreen;
