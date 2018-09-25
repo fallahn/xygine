@@ -40,9 +40,10 @@ namespace xy
         namespace Rectangle
         {
             /*!
-            \brief Returns true if the second given FloatRect is fully contained within the first
+            \brief Returns true if the second given Rect is fully contained within the first
             */
-            static inline bool contains(const sf::FloatRect& first, const sf::FloatRect& second)
+            template <typename T>
+            bool contains(const sf::Rect<T>& first, const sf::Rect<T>& second)
             {
                 if (second.left < first.left) return false;
                 if (second.top < first.top) return false;
@@ -51,19 +52,48 @@ namespace xy
 
                 return true;
             }
+
             /*!
-            \brief Returns the centre point of a given FloatRect
+            \brief Returns the centre point of a given Rect
             */
-            static inline sf::Vector2f centre(const sf::FloatRect& rect)
+            template <typename T>
+            sf::Vector2<T> centre(const sf::Rect<T>& rect)
             {
-                return sf::Vector2f(rect.left + (rect.width / 2.f), rect.top + (rect.height / 2.f));
+                return sf::Vector2<T>(rect.left + (rect.width / 2.f), rect.top + (rect.height / 2.f));
             }
+
             /*!
-            \brief Returns a new FloatRect from the given upper and lower bounds.
+            \brief Returns a new Rect from the given upper and lower bounds.
             */
-            static inline sf::FloatRect fromBounds(const sf::Vector2f& lower, const sf::Vector2f& upper)
+            template <typename T>
+            sf::Rect<T> fromBounds(const sf::Vector2<T>& lower, const sf::Vector2<T>& upper)
             {
-                return sf::FloatRect(lower.x, lower.y, upper.x - lower.x, upper.y - lower.y);
+                return sf::Rect<T>(lower.x, lower.y, upper.x - lower.x, upper.y - lower.y);
+            }
+
+            /*!
+            \brief Returns the total perimeter of the given rectangle
+            */
+            template <typename T>
+            T getPerimeter(sf::Rect<T> rect)
+            {
+                return 2 * (rect.width + rect.height);
+            }
+
+            /*!
+            \brief Merges 2 given rectangles and returns the result
+            */
+            template <typename T>
+            sf::Rect<T> combine(sf::Rect<T> a, sf::Rect<T> b)
+            {
+                sf::Rect<T> ret(std::min(a.left, b.left),
+                    std::min(a.top, b.top),
+                    std::max(a.left + a.width, b.left + b.width),
+                    std::max(a.top + a.height, b.top + b.height));
+                ret.width -= ret.left;
+                ret.height -= ret.top;
+
+                return ret;
             }
         }
     }

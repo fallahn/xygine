@@ -36,38 +36,38 @@ source distribution.
 
 namespace xy
 {
-    class QuadTree;
-    class QuadTreeNode;
-
     /*!
-    \brief Entities with a QuadTreeItem and Transform
-    component will be actively partitioned an in QuadTree
-    system which is added to the entities scene.
+    \brief Entities with broadphase components are returned
+    from dynamic tree queries, which can then be used in collision
+    testing. Narrow phase collision should be performed independently
+    \see DynamicTreeSystem
     */
-    class XY_EXPORT_API QuadTreeItem final
+    struct XY_EXPORT_API BroadphaseComponent final
     {
     public:
         /*!
         \brief Default constructor
         */
-        QuadTreeItem();
+        BroadphaseComponent() = default;
 
         /*!
-        \brief Construct a QuadTreeItem from a given area and filter flags
+        \brief Construct a broadphase component from given FloatRect and flags
         */
-        QuadTreeItem(sf::FloatRect area, std::uint64_t flags = std::numeric_limits<std::uint64_t>::max());
+        BroadphaseComponent(sf::FloatRect rect, std::uint64_t flags = std::numeric_limits<std::uint64_t>::max())
+            : m_bounds(rect), m_filterFlags(flags) {}
 
         /*!
-        \brief Sets the area of the quad tree item in relative coordinates
+        \brief Set the area within the world which
+        this component's enity covers, in local coordinates.
         */
-        void setArea(sf::FloatRect);
+        void setArea(sf::FloatRect area) { m_bounds = area; }
 
         /*!
-        \brief Allows filtering QuadTreeItems during QuadTree queries.
-        The filter consists of up to 64 flags allowing quad tree items
-        to be categorised. When the quad tree is queried only the items
+        \brief Allows filtering BroadphaseComponents during DynamicTree queries.
+        The filter consists of up to 64 flags allowing items
+        to be categorised. When the dynamic tree is queried only the items
         matching the query flags are returned. For example setting the
-        flag to 4 will set the 3rd bit, and items matching a quad tree
+        flag to 4 will set the 3rd bit, and items matching a dynamic tree
         query which includes the 3rd bit will be included in the results.
         All flags are set by default, so all items are returned in a query
         */
@@ -80,14 +80,12 @@ namespace xy
         std::uint64_t getFilterFlags() const { return m_filterFlags; }
 
     private:
-        sf::FloatRect m_area;
+        sf::FloatRect m_bounds; //<! AABB of the entity
+        std::int32_t m_treeID = -1;
+        std::uint64_t m_filterFlags = std::numeric_limits<std::uint64_t>::max();
+        sf::Vector2f m_lastWorldPosition;
 
-        QuadTree* m_quadTree;
-        QuadTreeNode* m_node;
-
-        std::uint64_t m_filterFlags;
-
-        friend class QuadTree;
-        friend class QuadTreeNode;
+        friend class DynamicTreeSystem;
     };
+
 }

@@ -39,6 +39,7 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/CallbackSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/CameraSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/CommandSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/DynamicTreeSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/InterpolationSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/ParticleSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/QuadTree.cpp

@@ -27,8 +27,6 @@ source distribution.
 
 #include "xyginext/ecs/components/QuadTreeItem.hpp"
 
-#include <limits>
-
 using namespace xy;
 
 QuadTreeItem::QuadTreeItem()
@@ -36,6 +34,15 @@ QuadTreeItem::QuadTreeItem()
     m_quadTree      (nullptr),
     m_node          (nullptr),
     m_filterFlags   (std::numeric_limits<std::uint64_t>::max())
+{
+
+}
+
+QuadTreeItem::QuadTreeItem(sf::FloatRect area, std::uint64_t flags)
+    : m_area        (area),
+    m_quadTree      (nullptr),
+    m_node          (nullptr),
+    m_filterFlags   (flags)
 {
 
 }

@@ -303,6 +303,9 @@
     <ClCompile Include="src\audio\AudioScape.cpp">
       <Filter>Source Files\audio</Filter>
     </ClCompile>
+    <ClCompile Include="src\ecs\systems\DynamicTreeSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -538,6 +541,12 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\audio\AudioScape.hpp">
       <Filter>Header Files\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\BroadPhaseComponent.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\DynamicTreeSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

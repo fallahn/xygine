@@ -100,7 +100,10 @@ namespace xy
     \brief Partition system for entities with QuadTreeItem components.
     Entities are sorted in a tree hierarchy which can be queried with a
     given area to return a set of entities which are contained or intersect
-    said area.
+    said area. Generally more useful for scenes with a lot of static entities
+    such as a platform game with fixed scenery. If using a scene with a lot
+    of dynamic objects consider using xy::DynamicTreeSystem instead.
+    \see DynamicTreeSystem
     */
     class XY_EXPORT_API QuadTree final : public xy::System
 #ifdef DDRAW
@@ -128,7 +131,7 @@ namespace xy
         std::vector<xy::Entity> queryArea(sf::FloatRect area, std::uint64_t = std::numeric_limits<std::uint64_t>::max()) const;
 
         /*!
-        \brief Queris the quad tree with the given position.
+        \brief Queries the quad tree with the given position.
         Returns a vector of entities whose QuadTreeItems are contained
         in tree nodes which also contain the given point
         /param area The area to query
