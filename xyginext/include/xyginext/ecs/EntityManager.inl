@@ -97,7 +97,7 @@ Detail::ComponentPool<T>& EntityManager::getPool()
 
     if (!m_componentPools[componentID])
     {
-        m_componentPools[componentID] = std::make_unique<Detail::ComponentPool<T>>();
+        m_componentPools[componentID] = std::make_unique<Detail::ComponentPool<T>>(m_initialPoolSize);
     }
 
     return *(dynamic_cast<Detail::ComponentPool<T>*>(m_componentPools[componentID].get()));

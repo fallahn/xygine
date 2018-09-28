@@ -37,10 +37,11 @@ namespace
     const std::size_t MinComponentMasks = 50;
 }
 
-EntityManager::EntityManager(MessageBus& mb, ComponentManager& cm)
+EntityManager::EntityManager(MessageBus& mb, ComponentManager& cm, std::size_t poolSize)
     : m_messageBus      (mb),
     m_componentManager  (cm),
-    m_componentPools    (Detail::MaxComponents)
+    m_componentPools    (Detail::MaxComponents),
+    m_initialPoolSize   (poolSize)
 {}
 
 //public

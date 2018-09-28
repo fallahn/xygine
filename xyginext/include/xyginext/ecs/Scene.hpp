@@ -60,7 +60,18 @@ namespace xy
     class XY_EXPORT_API Scene final : public sf::Drawable
     {
     public:
-        explicit Scene(MessageBus&);
+        /*!
+        \brief Constructor.
+        \param messageBus Reference to the active message bus
+        \param initialPoolSize Components are pooled in memory, and this
+        is the initial number of components for which memory is allocated.
+        Memory pools will resize at runtime if necessary, but an initial
+        size can be set here. The default is 256 components. As the maximum
+        number of entity IDs is 1024 before they are recycled, values greater
+        than this have no effect other than allocating unusable memory.
+        */
+        Scene(MessageBus& messageBus, std::size_t initialPoolSize = 256);
+
 
         ~Scene() = default;
         Scene(const Scene&) = delete;

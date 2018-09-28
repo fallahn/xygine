@@ -55,9 +55,9 @@ namespace
     }
 }
 
-Scene::Scene(MessageBus& mb)
+Scene::Scene(MessageBus& mb, std::size_t poolSize)
     : m_messageBus      (mb),
-    m_entityManager     (mb, m_componentManager),
+    m_entityManager     (mb, m_componentManager, poolSize),
     m_systemManager     (*this, m_componentManager)
 {
     auto defaultCamera = createEntity();

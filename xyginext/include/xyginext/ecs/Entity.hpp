@@ -186,7 +186,7 @@ namespace xy
     class XY_EXPORT_API EntityManager final
     {
     public:
-        EntityManager(MessageBus&, ComponentManager&);
+        EntityManager(MessageBus&, ComponentManager&, std::size_t = 256);
 
         ~EntityManager() = default;
         EntityManager(const EntityManager&) = delete;
@@ -259,6 +259,7 @@ namespace xy
         std::deque<Entity::ID> m_freeIDs;
         std::vector<Entity::Generation> m_generations; // < indexed by entity ID
         std::vector<std::unique_ptr<Detail::Pool>> m_componentPools; // < index is component ID. Pool index is entity ID.
+        std::size_t m_initialPoolSize;
         std::vector<ComponentMask> m_componentMasks;
 
         template <typename T>
