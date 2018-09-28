@@ -30,7 +30,8 @@ source distribution.
 using namespace xy;
 
 NetInterpolate::NetInterpolate()
-    : m_targetTimestamp (0.f),
+    : m_enabled         (true),
+    m_targetTimestamp   (0.f),
     m_elapsedTime       (0.f),
     m_timeDifference    (0.f),
     m_previousTimestamp (0.f)
@@ -47,4 +48,14 @@ void NetInterpolate::setTarget(sf::Vector2f targetPosition, sf::Int32 timestamp)
     m_targetTimestamp = static_cast<float>(timestamp) / 1000.f;
     m_timeDifference = m_targetTimestamp - m_previousTimestamp;
     m_targetPosition = targetPosition;
+}
+
+void NetInterpolate::setEnabled(bool enabled)
+{
+    m_enabled = true;
+}
+
+bool NetInterpolate::getEnabled() const
+{
+    return m_enabled;
 }

@@ -59,7 +59,18 @@ namespace xy
         */
         void setTarget(sf::Vector2f pos, sf::Int32 timestamp);
 
+        /*!
+        \brief Sets whether or not this component is enabled
+        */
+        void setEnabled(bool);
+
+        /*!
+        \brief Returns whether or not this component is enabled
+        */
+        bool getEnabled() const;
+
     private:
+        bool m_enabled;
         sf::Vector2f m_targetPosition;
         float m_targetTimestamp;
 

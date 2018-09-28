@@ -56,23 +56,30 @@ void InterpolationSystem::process(float dt)
         auto& interp = entity.getComponent<NetInterpolate>();
 
         //if time has been reset we ought to have reached the previous target by now.
-        if (interp.m_elapsedTime == 0)
+        if (interp.m_elapsedTime == 0 && interp.m_enabled)
         {
             tx.setPosition(interp.m_previousPosition);
         }
 
         interp.m_elapsedTime += dt;
         
+        //jump if a very large difference
         auto diff = (interp.m_targetPosition - interp.m_previousPosition);
         if (Util::Vector::lengthSquared(diff) > MaxDistSqr)
         {
             interp.m_elapsedTime = 0;
-            tx.setPosition(interp.m_targetPosition);
+            if (interp.m_enabled)
+            {
+                tx.setPosition(interp.m_targetPosition);
+            }
             return;
         }
 
         //previous position + diff * timePassed
-        tx.setPosition(interp.m_previousPosition + (diff * std::min(interp.m_elapsedTime / interp.m_timeDifference, 1.f)));
+        if (interp.m_enabled)
+        {
+            tx.setPosition(interp.m_previousPosition + (diff * std::min(interp.m_elapsedTime / interp.m_timeDifference, 1.f)));
+        }
     }
 }
 
