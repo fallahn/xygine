@@ -52,7 +52,7 @@ void NetInterpolate::setTarget(sf::Vector2f targetPosition, sf::Int32 timestamp)
 
 void NetInterpolate::setEnabled(bool enabled)
 {
-    m_enabled = true;
+    m_enabled = enabled;
 }
 
 bool NetInterpolate::getEnabled() const
