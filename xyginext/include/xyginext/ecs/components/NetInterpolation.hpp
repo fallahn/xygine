@@ -69,6 +69,11 @@ namespace xy
         */
         bool getEnabled() const;
 
+        /*!
+        \brief Overrides the current position with the given position
+        */
+        void resetPosition(sf::Vector2f);
+
     private:
         bool m_enabled;
         sf::Vector2f m_targetPosition;

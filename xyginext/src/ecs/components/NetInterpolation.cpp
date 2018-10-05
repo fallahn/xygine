@@ -59,3 +59,8 @@ bool NetInterpolate::getEnabled() const
 {
     return m_enabled;
 }
+
+void NetInterpolate::resetPosition(sf::Vector2f position)
+{
+    m_previousPosition = m_targetPosition = position;
+}
