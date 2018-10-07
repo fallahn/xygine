@@ -124,35 +124,49 @@ bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& texture
             {
                 if (sprOb.getName() == "animation")
                 {
-                    auto& anim = spriteComponent.m_animations[spriteComponent.m_animationCount];
-                    
-                    const auto& properties = sprOb.getProperties();
-                    for (const auto& p : properties)
+                    if (spriteComponent.m_animationCount < Sprite::MaxAnimations)
                     {
-                        std::string name = p.getName();
-                        if (name == "frame")
-                        {
-                            anim.frames[anim.frameCount++] = p.getValue<sf::FloatRect>();
-                        }
-                        else if (name == "framerate")
-                        {
-                            anim.framerate = p.getValue<float>();
-                        }
-                        else if (name == "loop")
-                        {
-                            anim.looped = p.getValue<bool>();
-                        }
-                        else if (name == "loop_start")
-                        {
-                            anim.loopStart = p.getValue<sf::Int32>();
-                        }
-                    }
+                        auto& anim = spriteComponent.m_animations[spriteComponent.m_animationCount];
 
-                    auto animId = sprOb.getId();
-                    m_animations[spriteName].push_back(animId);
-                    animId.copy(anim.id.data(), animId.length());
-                    
-                    spriteComponent.m_animationCount++;
+                        const auto& properties = sprOb.getProperties();
+                        for (const auto& p : properties)
+                        {
+                            std::string name = p.getName();
+                            if (name == "frame")
+                            {
+                                if (anim.frameCount < Sprite::MaxFrames)
+                                {
+                                    anim.frames[anim.frameCount++] = p.getValue<sf::FloatRect>();
+                                }
+                                else
+                                {
+                                    Logger::log("Skipping animation frame as maximum frames is " + std::to_string(Sprite::MaxFrames), Logger::Type::Warning);
+                                }
+                            }
+                            else if (name == "framerate")
+                            {
+                                anim.framerate = p.getValue<float>();
+                            }
+                            else if (name == "loop")
+                            {
+                                anim.looped = p.getValue<bool>();
+                            }
+                            else if (name == "loop_start")
+                            {
+                                anim.loopStart = p.getValue<sf::Int32>();
+                            }
+                        }
+
+                        auto animId = sprOb.getId();
+                        m_animations[spriteName].push_back(animId);
+                        animId.copy(anim.id.data(), animId.length());
+
+                        spriteComponent.m_animationCount++;
+                    }
+                    else
+                    {
+                        Logger::log("Skipping animation, maximum number of sprite animations is " + std::to_string(Sprite::MaxAnimations), Logger::Type::Warning);
+                    }
                 }
             }
 
