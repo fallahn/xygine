@@ -114,6 +114,7 @@ if (BUILD_DEMO)
       MACOSX_BUNDLE TRUE
       MACOSX_BUNDLE_ICON_FILE icon.icns
       RESOURCE "${RESOURCE_FILES}")
+  endif(APPLE)
 
   add_dependencies(${DEMO_NAME} ${PROJECT_NAME})
 
