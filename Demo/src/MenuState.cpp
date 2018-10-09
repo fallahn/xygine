@@ -529,7 +529,7 @@ void MenuState::createHelp()
         sf::Image i;
         i.create(20u, 20u, sf::Color::White);
         t.loadFromImage(i);
-        return stdx::any(t);
+        return std::any(t);
     });
     auto size = entity.addComponent<xy::Sprite>(m_resource.get<sf::Texture>(0)).getSize();
     entity.addComponent<xy::Transform>().setScale(xy::DefaultSceneSize.x / size.x, xy::DefaultSceneSize.y / size.y);

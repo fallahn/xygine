@@ -13,7 +13,7 @@ option(CMAKE_BUILD_TYPE "Choose the type of build (Debug or Release)" Debug)
 option(BUILD_SHARED_LIBS "Whether to build shared libraries" ON)
 option(BUILD_DEMO "Build the xygine demo" OFF)
 
-# We're using c++14
+# We're using c++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -102,16 +102,19 @@ endif()
 # The demo target
 if (BUILD_DEMO)
   add_subdirectory(Demo/src)
+  add_executable(${DEMO_NAME} ${DEMO_SRC})
+
+# on macOS and iOS, create a bundle with the resources
   if (APPLE)
-    set_source_files_properties( 
-    ${CMAKE_SOURCE_DIR}/Demo/assets PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
-    set_source_files_properties(
-    ${CMAKE_SOURCE_DIR}/Demo/macOS/icon.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
-    add_executable(${DEMO_NAME} MACOSX_BUNDLE ${DEMO_SRC} ${CMAKE_SOURCE_DIR}/Demo/assets ${CMAKE_SOURCE_DIR}/Demo/macOS/icon.icns)
-    set_target_properties(${DEMO_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE icon.icns)
-  else()
-    add_executable(${DEMO_NAME} ${DEMO_SRC})
-  endif()
+    set(RESOURCE_FILES
+      ${CMAKE_SOURCE_DIR}/Demo/assets
+      ${CMAKE_SOURCE_DIR}/Demo/macOS/icon.icns)
+
+    set_target_properties(${DEMO_NAME} PROPERTIES
+      MACOSX_BUNDLE TRUE
+      MACOSX_BUNDLE_ICON_FILE icon.icns
+      RESOURCE "${RESOURCE_FILES}")
+
   add_dependencies(${DEMO_NAME} ${PROJECT_NAME})
 
   find_package(TMXLITE REQUIRED)

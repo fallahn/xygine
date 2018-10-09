@@ -30,24 +30,7 @@ source distribution.
 
 #include <typeindex>
 #include <unordered_map>
-
-// Fiddling for experimental features
-#if __has_include(<any>)
-
 #include <any>
-namespace stdx {
-    using namespace ::std;
-}
-#elif __has_include(<experimental/any>)
-#include <experimental/any>
-namespace stdx {
-    using namespace ::std;
-    using namespace ::std::experimental;
-}
-
-#else
-#error <experimental/any> and <any> not found
-#endif
 
 namespace xy
 {
@@ -65,8 +48,8 @@ namespace xy
      */
     struct ResourceLoader
     {
-        std::function<stdx::any(const std::string&)>   loader;
-        std::function<stdx::any()>                     fallback;
+        std::function<std::any(const std::string&)>   loader;
+        std::function<std::any()>                     fallback;
     };
     
     /*!
@@ -99,11 +82,7 @@ namespace xy
             m_resources.emplace_back(m_loaders[ti].loader(path));
             
             // If it wasn't loaded, use fallback
-            #ifdef __APPLE__
-            if (m_resources.back().empty())
-            #else
             if (!m_resources.back().has_value())
-            #endif
             {
                 m_resources.back() = m_loaders[ti].fallback();
             }
@@ -119,7 +98,7 @@ namespace xy
         T& get(ResourceHandle resource)
         {
             XY_ASSERT(resource < m_resources.size(), "Invalid resource handle");
-            return *stdx::any_cast<T>(&m_resources[resource]);
+            return *std::any_cast<T>(&m_resources[resource]);
         }
         
         /*!
@@ -141,7 +120,7 @@ namespace xy
         
     private:
         // Container of the resources
-        std::vector<stdx::any> m_resources;
+        std::vector<std::any> m_resources;
         
         // Resource loaders mapped by their type index
         std::unordered_map<std::type_index, ResourceLoader> m_loaders;

@@ -29,7 +29,7 @@ ResourceHandler::ResourceHandler()
     fontLoader.loader = [](const std::string& path)
     {
         sf::Font font;
-        return font.loadFromFile(xy::FileSystem::getResourcePath() + path) ? font : stdx::any();
+        return font.loadFromFile(xy::FileSystem::getResourcePath() + path) ? font : std::any();
     };
 
     fontLoader.fallback = []()
