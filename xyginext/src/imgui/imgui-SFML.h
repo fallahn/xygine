@@ -22,7 +22,7 @@ namespace SFML
 {
     void Init(sf::RenderTarget& target, bool loadDefaultFont = true);
 
-    void ProcessEvent(const sf::Event& event);
+    bool ProcessEvent(const sf::Event& event);
 
     void Update(sf::RenderWindow& window, sf::Time dt);
     void Update(sf::Window& window, sf::RenderTarget& target, sf::Time dt);

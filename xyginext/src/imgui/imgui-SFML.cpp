@@ -186,7 +186,7 @@ void Init(sf::RenderTarget& target, bool loadDefaultFont)
     }
 }
 
-void ProcessEvent(const sf::Event& event)
+bool ProcessEvent(const sf::Event& event)
 {
     ImGuiIO& io = ImGui::GetIO();
     if (s_windowHasFocus) {
@@ -225,12 +225,12 @@ void ProcessEvent(const sf::Event& event)
                 io.KeyCtrl = event.key.control;
                 io.KeyShift = event.key.shift;
                 io.KeyAlt = event.key.alt;
-                break;
+                return io.WantCaptureKeyboard;
             case sf::Event::TextEntered:
                 if (event.text.unicode > 0 && event.text.unicode < 0x10000) {
                     io.AddInputCharacter(static_cast<ImWchar>(event.text.unicode));
                 }
-                break;
+                return io.WantCaptureKeyboard;
             default:
                 break;
         }
@@ -247,6 +247,8 @@ void ProcessEvent(const sf::Event& event)
         default:
             break;
     }
+
+    return false;
 }
 
 void Update(sf::RenderWindow& window, sf::Time dt)

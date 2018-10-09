@@ -372,7 +372,25 @@ void App::handleEvents()
 
     while (m_renderWindow.pollEvent(evt))
     {
-        ImGui::SFML::ProcessEvent(evt);
+        if (evt.type == sf::Event::KeyReleased)
+        {
+            switch (evt.key.code)
+            {
+            case sf::Keyboard::F1:
+                Console::show();
+                break;
+            case sf::Keyboard::F5:
+                saveScreenshot();
+                break;
+            default:break;
+            }
+        }
+
+        if (Console::isVisible() &&
+            ImGui::SFML::ProcessEvent(evt))
+        {
+            continue; //imgui consumes keyboard events
+        }
 
         switch (evt.type)
         {
@@ -409,20 +427,6 @@ void App::handleEvents()
         }
             break;
         default: break;
-        }
-
-        if (evt.type == sf::Event::KeyReleased)
-        {
-            switch (evt.key.code)
-            {
-            case sf::Keyboard::F1:
-                Console::show();
-                break;
-            case sf::Keyboard::F5:
-                saveScreenshot();
-                break;
-            default:break;
-            }           
         }
         
         eventHandler(evt);
