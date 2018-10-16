@@ -107,7 +107,7 @@ if (BUILD_DEMO)
 # on macOS and iOS, create a bundle with the resources
   if (APPLE)
     set(RESOURCE_FILES
-      ${CMAKE_SOURCE_DIR}/Demo/assets
+      ${CMAKE_SOURCE_DIR}/Demo/assets/*
       ${CMAKE_SOURCE_DIR}/Demo/macOS/icon.icns)
 
     set_target_properties(${DEMO_NAME} PROPERTIES
@@ -127,7 +127,6 @@ if (BUILD_DEMO)
   
   target_link_libraries(${DEMO_NAME} ${PROJECT_NAME} ${TMXLITE_LIBRARIES} sfml-graphics sfml-audio)
   target_include_directories(${DEMO_NAME} PRIVATE ${TMXLITE_INCLUDE_DIR} $<TARGET_PROPERTY:${PROJECT_NAME},INTERFACE_INCLUDE_DIRECTORIES>)
-  
   
   install(TARGETS ${DEMO_NAME} DESTINATION .)
 endif()
