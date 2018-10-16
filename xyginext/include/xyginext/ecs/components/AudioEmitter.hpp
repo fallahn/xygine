@@ -269,10 +269,19 @@ namespace xy
         */
         bool isStreaming() const;
 
+        /*!
+        \brief Used by AudioSystem to update the internal state.
+        Calling this else where will probably have no effect.
+        */
+        void update();
+
     private:
         sf::Uint8 m_mixerChannel;
         float m_volume;
         std::unique_ptr<Detail::AudioSourceImpl> m_impl;
+
+        Status m_nextStatus;
+        Status m_prevStatus;
 
         friend class AudioSystem;
     };

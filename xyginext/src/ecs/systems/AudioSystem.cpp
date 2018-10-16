@@ -67,6 +67,7 @@ void AudioSystem::process(float)
         auto pos = tx.getWorldTransform().transformPoint({});
         audio.setPosition({ pos.x, pos.y, 0.f });
         audio.applyMixerSettings();
+        audio.update();
     }
 }
 

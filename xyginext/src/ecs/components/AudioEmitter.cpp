@@ -35,7 +35,9 @@ using namespace xy;
 
 AudioEmitter::AudioEmitter()
     : m_mixerChannel    (0),
-    m_volume            (1.f)
+    m_volume            (1.f),
+    m_nextStatus        (Status::Stopped),
+    m_prevStatus        (Status::Stopped)
 {
 
 }
@@ -62,7 +64,11 @@ bool AudioEmitter::hasSource() const
 void AudioEmitter::play()
 {
     XY_ASSERT(m_impl, "No valid sound loaded");
-    m_impl->play();
+    //m_impl->play();
+
+    //this is delayed to allow any position updates
+    //to be applied by the system before audio starts playing
+    m_nextStatus = Status::Playing;
 }
 
 void AudioEmitter::pause()
@@ -204,4 +210,36 @@ bool AudioEmitter::isStreaming() const
         return m_impl->getType() == Detail::AudioSourceImpl::Type::Music;
     }
     return false;
+}
+
+void AudioEmitter::update()
+{
+    XY_ASSERT(m_impl, "No valid sound loaded");
+    auto status = m_impl->getStatus();
+
+    //check if we stopped or paused
+    if (m_prevStatus != status)
+    {
+        m_nextStatus = static_cast<AudioEmitter::Status>(status);
+        m_prevStatus = m_nextStatus;
+    }
+
+    else if (m_nextStatus != status)
+    {
+        switch (m_nextStatus)
+        {
+        default: 
+        case Status::Stopped:
+            m_impl->stop();
+            break;
+        case Status::Paused:
+            m_impl->pause();
+            break;
+        case Status::Playing:
+            m_impl->play();
+            break;
+        }
+
+        m_prevStatus = m_nextStatus;
+    }
 }
