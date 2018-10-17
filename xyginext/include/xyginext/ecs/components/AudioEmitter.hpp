@@ -51,10 +51,10 @@ namespace xy
     \brief Audio emitter component.
     Audio emitter provide points within the scene to play
     audio, either one shot effects or streaming music. If the
-    buffer used to supply the audio is mono, and the scene contains
-    an AudioSystem, then the AudioEmitter will be panned spatially
-    relative to the current listener (usually the active scene camera),
-    unless it has been set to absolute positioning.
+    buffer used to supply the audio is monothen the AudioEmitter
+    will be panned spatially relative to the current listener 
+    (usually the active scene camera), unless it has been set
+    to absolute positioning. Requires a scene to have an AudioSystem.
     */
     class XY_EXPORT_API AudioEmitter final
     {
@@ -271,7 +271,9 @@ namespace xy
 
         /*!
         \brief Used by AudioSystem to update the internal state.
-        Calling this else where will probably have no effect.
+        Calling this else where will probably have no effect,
+        however should be called once per frame by any custom
+        audio systems.
         */
         void update();
 
@@ -281,7 +283,6 @@ namespace xy
         std::unique_ptr<Detail::AudioSourceImpl> m_impl;
 
         Status m_nextStatus;
-        Status m_prevStatus;
 
         friend class AudioSystem;
     };

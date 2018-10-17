@@ -34,6 +34,7 @@ source distribution.
 #include <SFML/System/Vector2.hpp>
 
 #include <string>
+#include <iostream>
 
 namespace xy
 {

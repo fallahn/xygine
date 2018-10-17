@@ -1738,7 +1738,7 @@ void GameState::spawnWarning()
     entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString(Locale::Strings[Locale::Hurry]);
     entity.getComponent<xy::Text>().setCharacterSize(200);
     entity.getComponent<xy::Text>().setFillColour(sf::Color::Red);
-    entity.addComponent<xy::Drawable>().setDepth(2);
+    entity.addComponent<xy::Drawable>().setDepth(20);
     entity.addComponent<xy::Callback>().active = true;
     entity.getComponent<xy::Callback>().function = Flasher(m_scene);
 

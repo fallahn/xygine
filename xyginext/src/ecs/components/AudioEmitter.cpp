@@ -36,8 +36,7 @@ using namespace xy;
 AudioEmitter::AudioEmitter()
     : m_mixerChannel    (0),
     m_volume            (1.f),
-    m_nextStatus        (Status::Stopped),
-    m_prevStatus        (Status::Stopped)
+    m_nextStatus        (Status::Stopped)
 {
 
 }
@@ -183,7 +182,12 @@ bool AudioEmitter::isLooped() const
 AudioEmitter::Status AudioEmitter::getStatus() const
 {
     XY_ASSERT(m_impl, "No valid sound loaded");
-    return static_cast<Status>(m_impl->getStatus());
+
+    //we're expecting to be playing if we had a request so status should reflect that
+
+    return m_nextStatus == Status::Stopped ? 
+        static_cast<Status>(m_impl->getStatus())
+        : Status::Playing; 
 }
 
 sf::Time AudioEmitter::getDuration() const
@@ -215,31 +219,10 @@ bool AudioEmitter::isStreaming() const
 void AudioEmitter::update()
 {
     XY_ASSERT(m_impl, "No valid sound loaded");
-    auto status = m_impl->getStatus();
 
-    //check if we stopped or paused
-    if (m_prevStatus != status)
+    if (m_nextStatus != Status::Stopped)
     {
-        m_nextStatus = static_cast<AudioEmitter::Status>(status);
-        m_prevStatus = m_nextStatus;
-    }
-
-    else if (m_nextStatus != status)
-    {
-        switch (m_nextStatus)
-        {
-        default: 
-        case Status::Stopped:
-            m_impl->stop();
-            break;
-        case Status::Paused:
-            m_impl->pause();
-            break;
-        case Status::Playing:
-            m_impl->play();
-            break;
-        }
-
-        m_prevStatus = m_nextStatus;
+        m_impl->play();
+        m_nextStatus = Status::Stopped;
     }
 }
