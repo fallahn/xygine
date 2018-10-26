@@ -27,6 +27,10 @@ source distribution.
 
 #include "xyginext/ecs/components/Drawable.hpp"
 #include "xyginext/core/Log.hpp"
+#include "xyginext/core/Assert.hpp"
+
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <limits>
 
@@ -282,4 +286,56 @@ void Drawable::updateLocalBounds()
 void Drawable::updateLocalBounds(sf::FloatRect rect)
 {
     m_localBounds = rect;
+}
+
+sf::RenderStates Drawable::getStates() const
+{
+    return m_states;
+}
+
+void Drawable::applyShader() const
+{
+    XY_ASSERT(m_states.shader, "No shader set!");
+
+    sf::Shader* shader = const_cast<sf::Shader*>(m_states.shader);
+    for (auto i = 0u; i < m_textureCount; ++i)
+    {
+        //TODO C++17 yo
+        //auto& [name, value] = m_textureBindings[i];
+        //shader->setUniform(name, *value);
+
+        const auto& pair = m_textureBindings[i];
+        shader->setUniform(pair.first, *pair.second);
+    }
+    for (auto i = 0u; i < m_floatCount; ++i)
+    {
+        const auto& pair = m_floatBindings[i];
+        shader->setUniform(pair.first, pair.second);
+    }
+    for (auto i = 0u; i < m_vec2Count; ++i)
+    {
+        const auto& pair = m_vec2Bindings[i];
+        shader->setUniform(pair.first, pair.second);
+    }
+    for (auto i = 0u; i < m_vec3Count; ++i)
+    {
+        const auto& pair = m_vec3Bindings[i];
+        shader->setUniform(pair.first, pair.second);
+    }
+    for (auto i = 0u; i < m_boolCount; ++i)
+    {
+        const auto& pair = m_boolBindings[i];
+        shader->setUniform(pair.first, pair.second);
+    }
+    for (auto i = 0u; i < m_matCount; ++i)
+    {
+        const auto& pair = m_matBindings[i];
+        shader->setUniform(pair.first, sf::Glsl::Mat4(pair.second));
+    }
+}
+
+//private
+void Drawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    rt.draw(m_vertices.data(), m_vertices.size(), m_primitiveType, states);
 }

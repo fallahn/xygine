@@ -116,37 +116,7 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 
             if (states.shader)
             {
-                sf::Shader* shader = const_cast<sf::Shader*>(states.shader);
-                for (auto i = 0u; i < drawable.m_textureCount; ++i)
-                {
-                    const auto& pair = drawable.m_textureBindings[i];
-                    shader->setUniform(pair.first, *pair.second);
-                }
-                for (auto i = 0u; i < drawable.m_floatCount; ++i)
-                {
-                    const auto& pair = drawable.m_floatBindings[i];
-                    shader->setUniform(pair.first, pair.second);
-                }
-                for (auto i = 0u; i < drawable.m_vec2Count; ++i)
-                {
-                    const auto& pair = drawable.m_vec2Bindings[i];
-                    shader->setUniform(pair.first, pair.second);
-                }
-                for (auto i = 0u; i < drawable.m_vec3Count; ++i)
-                {
-                    const auto& pair = drawable.m_vec3Bindings[i];
-                    shader->setUniform(pair.first, pair.second);
-                }
-                for (auto i = 0u; i < drawable.m_boolCount; ++i)
-                {
-                    const auto& pair = drawable.m_boolBindings[i];
-                    shader->setUniform(pair.first, pair.second);
-                }
-                for (auto i = 0u; i < drawable.m_matCount; ++i)
-                {
-                    const auto& pair = drawable.m_matBindings[i];
-                    shader->setUniform(pair.first, sf::Glsl::Mat4(pair.second));
-                }
+                drawable.applyShader();
             }
 
             if (drawable.m_cropped)

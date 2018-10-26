@@ -32,6 +32,7 @@ source distribution.
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Drawable.hpp>
 #include <SFML/System/Vector3.hpp>
 
 #include <vector>
@@ -48,7 +49,7 @@ namespace xy
     and custom drawable types in a single drawing pass with variable depth. A Scene
     must have a RenderSystem added to it to enable any drawable entities.
     */
-    class XY_EXPORT_API Drawable final
+    class XY_EXPORT_API Drawable final : public sf::Drawable
     {
     public:
         Drawable();
@@ -175,13 +176,28 @@ namespace xy
         /*!
         \brief Enables or disables viewport culling.
         By default Drawables are culled from rendering when not in the
-        viewable area of the active camer. Setting this to true will cause
+        viewable area of the active camera. Setting this to true will cause
         the drawable to always be rendered, even if it falls outside the active
         camera's view.
         \param cull Set to true to have the drawble culled from rendering when
         not intersecting the current viewable area.
         */
         void setCulled(bool cull) { m_cull = cull; }
+
+        /*!
+        \brief Returns the RenderStates containing the current blend mode,
+        PrimitiveType and Shader of the drawable.
+        Generally not required, unless implementing a custom renderer.
+        */
+        sf::RenderStates getStates() const;
+
+        /*!
+        \brief Applies all the unform bindings to the current shader.
+        Generally not used unless implementing a custom render system,
+        in which case this should be called immediately before the
+        component is drawn.
+        */
+        void applyShader() const;
 
     private:
         sf::PrimitiveType m_primitiveType = sf::Quads;
@@ -214,5 +230,7 @@ namespace xy
         bool m_cropped;
 
         friend class RenderSystem;
+
+        void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }
