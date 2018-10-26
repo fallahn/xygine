@@ -49,6 +49,15 @@ Sprite::Sprite(const sf::Texture& texture)
     setTexture(texture);
 }
 
+/*Sprite::Sprite(const ResourceHandle& texture)
+: m_texture     (nullptr),
+m_colour        (sf::Color::White),
+m_dirty         (true),
+m_animationCount(0)
+{
+    setTexture(texture);
+}*/
+
 //public
 void Sprite::setTexture(const sf::Texture& texture)
 {
@@ -56,6 +65,14 @@ void Sprite::setTexture(const sf::Texture& texture)
     auto size = static_cast<sf::Vector2f>(texture.getSize());
     setTextureRect({ sf::Vector2f(), size });
 }
+
+/*
+void Sprite::setTexture(const ResourceHandle& texture)
+{
+    // hrm...
+    m_textureHandle = texture;
+}
+ */
 
 void Sprite::setTextureRect(sf::FloatRect rect)
 {

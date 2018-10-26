@@ -306,6 +306,12 @@
     <ClCompile Include="src\ecs\systems\DynamicTreeSystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
+    <ClCompile Include="src\resources\ResourceHandler.cpp">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\DejaVuSans.cpp">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -547,6 +553,12 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\ecs\systems\DynamicTreeSystem.hpp">
       <Filter>Header Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\resources\ResourceHandler.hpp">
+      <Filter>Header Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\resources\DejaVuSans.hpp">
+      <Filter>Header Files\resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

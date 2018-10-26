@@ -23,9 +23,9 @@ before_script:
   g++ /usr/bin/g++-7 90; fi
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install enet; fi
 - git clone https://github.com/sfml/sfml && cd sfml
-- git checkout tags/2.5.0
+- git checkout tags/2.5.1
 - mkdir build && cd build
-- cmake .. $CMAKE_FLAGS && sudo cmake --build . --target install && cd ../..
+- cmake .. -G"$GENERATOR" $CMAKE_FLAGS && sudo cmake --build . --target install && cd ../..
 - git clone https://github.com/fallahn/tmxlite
 - cd tmxlite/tmxlite && mkdir build && cd build
 - cmake .. -G"$GENERATOR" $CMAKE_FLAGS -DCMAKE_BUILD_TYPE=Release && sudo cmake --build
@@ -52,18 +52,18 @@ matrix:
     - GENERATOR="Unix Makefiles"
     - CMAKE_FLAGS=""
   - os: osx
-    osx_image: xcode9
+    osx_image: xcode10
     env:
     - GENERATOR="Xcode"
     - CMAKE_FLAGS=""
   - os: osx
-    osx_image: xcode9
+    osx_image: xcode10
     env:
     - GENERATOR="Xcode"
     - CMAKE_FLAGS="-DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake"
   allow_failures:
   - os: osx
-    osx_image: xcode9
+    osx_image: xcode10
     env:
     - GENERATOR="Xcode"
     - CMAKE_FLAGS="-DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake"

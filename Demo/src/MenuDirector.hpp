@@ -35,13 +35,13 @@ source distribution.
 
 namespace xy
 {
-    class TextureResource;
+    class ResourceHandler;
 }
 
 class MenuDirector final : public xy::Director
 {
 public:
-    explicit MenuDirector(xy::TextureResource&);
+    explicit MenuDirector(xy::ResourceHandler&);
 
     void handleMessage(const xy::Message&) override {}
 

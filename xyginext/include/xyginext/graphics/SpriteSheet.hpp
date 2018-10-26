@@ -36,6 +36,7 @@ source distribution.
 namespace xy
 {
     class TextureResource;
+    class ResourceHandler;
 
     /*!
     \brief Supports loading multiple sprites from a single
@@ -53,6 +54,7 @@ namespace xy
         \returns true if successful, else false
         */
         bool loadFromFile(const std::string& path, TextureResource& rx);
+        bool loadFromFile(const std::string& path, ResourceHandler& rx);
 
         /*!
         \brief Attempts to save a ConfigFile at the given path.

@@ -73,6 +73,8 @@ set(PROJECT_SRC  ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/network/NetImpl.hpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/resources/Resource.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/resources/DejaVuSans.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/resources/ResourceHandler.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/resources/ShaderResource.hpp
   
   ${CMAKE_CURRENT_SOURCE_DIR}/util/Random.hpp

@@ -45,6 +45,7 @@ namespace sf
 namespace xy
 {
     class TextureResource;
+    class ResourceHandler;
 
     /*!
     \brief Represents a single particle in a system
@@ -85,6 +86,7 @@ namespace xy
         sf::Int32 releaseCount = 0; //! <number of particles release before stopping (0 for infinite)
         sf::Texture* texture = nullptr;
         bool loadFromFile(const std::string&, TextureResource&);
+        bool loadFromFile(const std::string&, ResourceHandler&);
     };
 
     /*!

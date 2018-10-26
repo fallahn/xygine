@@ -82,6 +82,15 @@ MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     : xy::State(stack, ctx),
     m_scene             (ctx.appInstance.getMessageBus()),
     m_helpScene         (ctx.appInstance.getMessageBus()),
+    m_resource          (),
+    m_menuBGRes         (m_resource.load<sf::Texture>("assets/images/menu_background.png")),
+    m_grassRes          (m_resource.load<sf::Texture>("assets/images/grass.png")),
+    m_flowerRes         (m_resource.load<sf::Texture>("assets/images/flower.png")),
+    m_helpSignRes       (m_resource.load<sf::Texture>("assets/images/help_sign.png")),
+    m_caveStoryRes      (m_resource.load<sf::Font>("assets/fonts/Cave-Story.ttf")),
+    m_helpRes           (m_resource.load<sf::Texture>("assets/images/help.png")),
+    m_keyBindsRes       (m_resource.load<sf::Texture>("assets/images/keybinds.png")),
+    m_buttonRes         (m_resource.load<sf::Texture>("assets/images/button.png")),
     m_sharedStateData   (sharedData),
     m_loadingScreen     (ls),
     m_helpShown         (false),
@@ -330,7 +339,7 @@ void MenuState::createScene()
     m_scene.addSystem<xy::RenderSystem>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addDirector<TextboxDirector>(m_sharedStateData);
-    m_scene.addDirector<MenuDirector>(m_textureResource);
+    m_scene.addDirector<MenuDirector>(m_resource);
 
     m_blurEffect = &m_scene.addPostProcess<xy::PostBlur>();
     m_blurEffect->setFadeSpeed(2.5f);
@@ -341,7 +350,7 @@ void MenuState::createScene()
     //background
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>();
-    entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/menu_background.png"));
+    entity.addComponent<xy::Sprite>().setTexture(m_resource.get<sf::Texture>(m_menuBGRes));
     entity.addComponent<xy::Drawable>().setDepth(-10);
 
     xy::AudioScape as(m_audioResource);
@@ -354,11 +363,11 @@ void MenuState::createScene()
 
     //grass at front
     entity = m_scene.createEntity();
-    auto bounds = entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/grass.png")).getTextureBounds();
+    auto bounds = entity.addComponent<xy::Sprite>(m_resource.get<sf::Texture>(m_grassRes)).getTextureBounds();
     bounds.width = xy::DefaultSceneSize.x;
     entity.addComponent<xy::Transform>().setPosition(0.f, xy::DefaultSceneSize.y - (bounds.height * 0.9f));
     entity.getComponent<xy::Sprite>().setTextureRect(bounds);
-    m_textureResource.get("assets/images/grass.png").setRepeated(true);
+    m_resource.get<sf::Texture>(m_grassRes).setRepeated(true);
     entity.addComponent<xy::Drawable>().setDepth(10);
 
 #ifndef XY_DEBUG
@@ -382,7 +391,7 @@ void MenuState::createScene()
         entity.getComponent<SpringFlower>().mass = 0.4f;
         entity.getComponent<SpringFlower>().stiffness = -28.f;
         entity.getComponent<SpringFlower>().damping = -0.4f;
-        entity.addComponent<xy::Drawable>(m_textureResource.get("assets/images/grass.png"));
+        entity.addComponent<xy::Drawable>(m_resource.get<sf::Texture>(m_grassRes));
         entity.addComponent<xy::Transform>().setPosition(xPos, xy::DefaultSceneSize.y - xy::Util::Random::value(5.f, 11.f));
 
         xPos += xy::Util::Random::value(80.f, 112.f);
@@ -398,7 +407,7 @@ void MenuState::createScene()
         entity.addComponent<SpringFlower>(-256.f).headPos.x += xy::Util::Random::value(-12.f, 14.f);
         entity.getComponent<SpringFlower>().textureRect = { 0.f, 0.f, 64.f, 256.f };
         entity.getComponent<SpringFlower>().colour = { darkness, darkness, darkness };
-        entity.addComponent<xy::Drawable>(m_textureResource.get("assets/images/flower.png")).setDepth(depth);
+        entity.addComponent<xy::Drawable>(m_resource.get<sf::Texture>(m_flowerRes)).setDepth(depth);
         entity.addComponent<xy::Transform>().setPosition(xPos, xy::DefaultSceneSize.y + xy::Util::Random::value(0.f, 64.f));
 
         if ((i%4) == 0)
@@ -418,7 +427,7 @@ void MenuState::createScene()
 
     //help sign
     entity = m_scene.createEntity();
-    bounds = entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/help_sign.png")).getTextureBounds();
+    bounds = entity.addComponent<xy::Sprite>(m_resource.get<sf::Texture>(m_helpSignRes)).getTextureBounds();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize.x - (bounds.width + 202.f), xy::DefaultSceneSize.y - bounds.height);
     entity.addComponent<xy::Drawable>().setDepth(9);
     entity.addComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
@@ -456,7 +465,7 @@ void MenuState::createMenu()
     });
     
 
-    auto& font = m_fontResource.get("assets/fonts/Cave-Story.ttf");
+    auto& font = m_resource.get<sf::Font>(m_caveStoryRes);
     auto parentEnt = m_scene.createEntity();
     auto& tx = parentEnt.addComponent<xy::Transform>();
     parentEnt.addComponent<xy::Callback>().active = true;
@@ -505,7 +514,7 @@ void MenuState::createHelp()
 
     //help menu
     entity = m_helpScene.createEntity();
-    entity.addComponent<xy::Sprite>(m_textureResource.get("assets/images/help.png"));
+    entity.addComponent<xy::Sprite>(m_resource.get<sf::Texture>(m_helpRes));
     entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::Transform>().setPosition(0.f, HelpMenuCallback::HidePosition);
     entity.getComponent<xy::Transform>().addChild(tx);
@@ -514,8 +523,15 @@ void MenuState::createHelp()
 
     //background
     entity = m_helpScene.createEntity();
-    m_textureResource.setFallbackColour(sf::Color::White);
-    auto size = entity.addComponent<xy::Sprite>(m_textureResource.get("help_background")).getSize();
+    m_resource.getLoader<sf::Texture>().fallback = ([]()
+    {
+        sf::Texture t;
+        sf::Image i;
+        i.create(20u, 20u, sf::Color::White);
+        t.loadFromImage(i);
+        return std::any(t);
+    });
+    auto size = entity.addComponent<xy::Sprite>(m_resource.get<sf::Texture>(0)).getSize();
     entity.addComponent<xy::Transform>().setScale(xy::DefaultSceneSize.x / size.x, xy::DefaultSceneSize.y / size.y);
     entity.addComponent<xy::Drawable>().setDepth(-1);
     entity.getComponent<xy::Sprite>().setColour(sf::Color::Transparent);
@@ -531,10 +547,10 @@ void MenuState::createHelp()
         {160.f, 864.f}
     }};
     xy::SpriteSheet spriteSheet;
-    spriteSheet.loadFromFile("assets/sprites/player.spt", m_textureResource);
+    spriteSheet.loadFromFile("assets/sprites/player.spt", m_resource);
 
     auto towerEnt = m_helpScene.createEntity();
-    auto bounds = towerEnt.addComponent<xy::Sprite>(m_textureResource.get("assets/images/keybinds.png")).getTextureBounds();
+    auto bounds = towerEnt.addComponent<xy::Sprite>(m_resource.get<sf::Texture>(m_keyBindsRes)).getTextureBounds();
     towerEnt.addComponent<xy::Drawable>().setDepth(1);
     auto& towerLeftTx = towerEnt.addComponent<xy::Transform>();
     towerEnt.addComponent<xy::Callback>().function = MenuSliderCallback(m_leftMenuTarget);
@@ -582,7 +598,7 @@ void MenuState::createHelp()
 
     //right tower
     towerEnt = m_helpScene.createEntity();
-    bounds = towerEnt.addComponent<xy::Sprite>(m_textureResource.get("assets/images/keybinds.png")).getTextureBounds();
+    bounds = towerEnt.addComponent<xy::Sprite>(m_resource.get<sf::Texture>(m_keyBindsRes)).getTextureBounds();
     towerEnt.addComponent<xy::Drawable>().setDepth(1);
     auto& towerRightTx = towerEnt.addComponent<xy::Transform>();
     towerEnt.addComponent<xy::Callback>().function = MenuSliderCallback(m_rightMenuTarget);
@@ -637,7 +653,7 @@ To Change It)";
 
     entity = m_helpScene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(364.f, xy::DefaultSceneSize.y);
-    entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setFillColour({ 127, 127, 127 });
+    entity.addComponent<xy::Text>(m_resource.get<sf::Font>(m_caveStoryRes)).setFillColour({ 127, 127, 127 });
     entity.getComponent<xy::Text>().setString(helpText);
     entity.getComponent<xy::Text>().setCharacterSize(60u);
     entity.addComponent<xy::Drawable>().setDepth(2);

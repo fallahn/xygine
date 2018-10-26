@@ -23,6 +23,10 @@ development of systems with a data-driven approach, as well as the
 removal of 3D support. If you're interested in a 3D, crossplatform, mobile
 compatible framework with a very similar API, check out [crogine](https://github.com/fallahn/crogine).
 
+xygine uses C++17 features so an up to date compiler is required, for
+example XCode 10 on macOS, Visual Studio 2017 on windows or recent versions
+of gcc and clang.
+
 ###### What's new?
 All new modular ECS providing a flexible and performant API for implementing
 custom components and systems, which compliment the systems included in the library

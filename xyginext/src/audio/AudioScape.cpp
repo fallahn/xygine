@@ -110,11 +110,11 @@ AudioEmitter AudioScape::getEmitter(const std::string& name) const
 
         if (streaming)
         {
-            emitter.setSource(xy::FileSystem::getResourcePath() + path);
+            emitter.setSource(path);
         }
         else
         {
-            emitter.setSource(m_audioResource.get(xy::FileSystem::getResourcePath() + path));
+            emitter.setSource(m_audioResource.get(path));
         }
 
         const auto& properties = cfg->second.getProperties();
