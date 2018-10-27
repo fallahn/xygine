@@ -2,7 +2,7 @@
 #include <SFML/Graphics/Font.hpp>
 
 #include "xyginext/resources/ResourceHandler.hpp"
-#include "xyginext/resources/DejaVuSans.hpp"
+#include "xyginext/resources/SystemFont.hpp"
 
 using namespace xy;
 ResourceHandler::ResourceHandler()
@@ -35,7 +35,8 @@ ResourceHandler::ResourceHandler()
     fontLoader.fallback = []()
     {
         sf::Font font;
-        font.loadFromMemory(DejaVuSans_ttf.data(), DejaVuSans_ttf.size());
+        //font.loadFromMemory(DejaVuSans_ttf.data(), DejaVuSans_ttf.size());
+        font.loadFromFile(getFontPath());
         return font;
     };
 

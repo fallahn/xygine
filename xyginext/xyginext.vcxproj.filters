@@ -560,6 +560,9 @@
     <ClInclude Include="include\xyginext\resources\DejaVuSans.hpp">
       <Filter>Header Files\resources</Filter>
     </ClInclude>
+    <ClInclude Include="include\xyginext\resources\SystemFont.hpp">
+      <Filter>Header Files\resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl">
