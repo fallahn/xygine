@@ -300,37 +300,33 @@ void Drawable::applyShader() const
     sf::Shader* shader = const_cast<sf::Shader*>(m_states.shader);
     for (auto i = 0u; i < m_textureCount; ++i)
     {
-        //TODO C++17 yo
-        //auto& [name, value] = m_textureBindings[i];
-        //shader->setUniform(name, *value);
-
-        const auto& pair = m_textureBindings[i];
-        shader->setUniform(pair.first, *pair.second);
+        const auto& [name, value] = m_textureBindings[i];
+        shader->setUniform(name, *value);
     }
     for (auto i = 0u; i < m_floatCount; ++i)
     {
-        const auto& pair = m_floatBindings[i];
-        shader->setUniform(pair.first, pair.second);
+        const auto&[name, value] = m_floatBindings[i];
+        shader->setUniform(name, value);
     }
     for (auto i = 0u; i < m_vec2Count; ++i)
     {
-        const auto& pair = m_vec2Bindings[i];
-        shader->setUniform(pair.first, pair.second);
+        const auto&[name, value] = m_vec2Bindings[i];
+        shader->setUniform(name, value);
     }
     for (auto i = 0u; i < m_vec3Count; ++i)
     {
-        const auto& pair = m_vec3Bindings[i];
-        shader->setUniform(pair.first, pair.second);
+        const auto&[name, value] = m_vec3Bindings[i];
+        shader->setUniform(name, value);
     }
     for (auto i = 0u; i < m_boolCount; ++i)
     {
-        const auto& pair = m_boolBindings[i];
-        shader->setUniform(pair.first, pair.second);
+        const auto&[name, value] = m_boolBindings[i];
+        shader->setUniform(name, value);
     }
     for (auto i = 0u; i < m_matCount; ++i)
     {
-        const auto& pair = m_matBindings[i];
-        shader->setUniform(pair.first, sf::Glsl::Mat4(pair.second));
+        const auto&[name, value] = m_matBindings[i];
+        shader->setUniform(name, sf::Glsl::Mat4(value));
     }
 }
 
