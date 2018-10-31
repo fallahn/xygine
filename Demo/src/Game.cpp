@@ -116,7 +116,7 @@ void Game::draw()
     m_stateStack.draw();
 }
 
-void Game::initialise()
+bool Game::initialise()
 {
     setWindowIcon("assets/images/icon.png");
     
@@ -129,6 +129,8 @@ void Game::initialise()
 
     XY_ASSERT(getRenderWindow(), "no valid window");
     getRenderWindow()->setKeyRepeatEnabled(false);
+
+    return true;
 }
 
 void Game::finalise()

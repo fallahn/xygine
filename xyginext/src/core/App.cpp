@@ -134,9 +134,8 @@ void App::run()
     ImGui::SFML::Init(m_renderWindow);
     ImGui::StyleColorsLight(&ImGui::GetStyle());
     Console::init();
-    initialise();
+    running = initialise();
 
-    running = true;
     frameClock.restart();
     while (running)
     {
@@ -341,7 +340,7 @@ bool App::isMouseCursorVisible()
 }
 
 //protected
-void App::initialise() {}
+bool App::initialise() { return true; }
 
 void App::finalise() {}
 

@@ -293,8 +293,11 @@ namespace xy
         operations which may throw exceptions such as loading configuration
         data, which should not be performed in the constructor of a derived
         application.
+        If initialisation is successful then this should return true, else
+        return false. Returning false will prevent the application running
+        and cause it to attempt to perform a clean shutdown with finalise();
         */
-        virtual void initialise();
+        virtual bool initialise();
 
         /*!
         \brief Called when the application shuts down

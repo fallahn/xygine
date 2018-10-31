@@ -52,6 +52,6 @@ private:
     void updateApp(float dt) override;
     void draw() override;
 
-    void initialise() override;
+    bool initialise() override;
     void finalise() override;
 };
