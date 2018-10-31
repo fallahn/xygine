@@ -59,12 +59,14 @@ void Game::draw()
     m_stateStack.draw();
 }
 
-void Game::initialise()
+bool Game::initialise()
 {
     registerStates();
     m_stateStack.pushState(States::MyFirstState);
 
     getRenderWindow()->setKeyRepeatEnabled(false);
+
+    return true;
 }
 
 void Game::finalise()
