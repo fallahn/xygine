@@ -57,10 +57,15 @@ static inline sf::String getFontDir()
 #elif defined (_APPLE_)
 #define FONT_PATH "/Library/Fonts/"
 #else
-//linux may not technically have a fonts directory
-//but if you're playing games we'll assume you're at
-//least running a desktop environment :)
-#define FONT_PATH "/usr/share/fonts/ttf/"
+//linux is an odd case because every distro is different
+//and certain paths require admin rights - so the user
+//will have to supply their own font directory path
+#ifndef LINUX_FONT_PATH
+#warning "define LINUX_FONT <fontpath> if a fallback font is required"
+#define FONT_PATH "/usr/share/fonts/"
+#else
+#define FONT_PATH LINUX_FONT_PATH
+#endif
 #endif
 
 static inline std::string getFontPath()
@@ -91,9 +96,10 @@ static inline std::string getFontPath()
     }
     else
     {
-        //some platforms have searchable subdirs (hello linux!)
-        //auto dirList = xy::FileSystem::listDirectories(fontPath);
         xy::Logger::log("Could not find candidate font file for fallback font!", xy::Logger::Type::Error);
+#if defined(_LINUX_) && !defined(LINUX_FONT_PATH)
+        xy::Logger::log("define LINUX_FONT_PATH as a path to default font directory", xy::Logger::Type::Info);
+#endif
     }
     return {};
 }
