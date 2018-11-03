@@ -75,8 +75,8 @@ static inline std::string getFontPath()
     static const std::array<std::string, 4u> fontNames =
     {
         "arial.ttf",
+        "Arial.ttf",
         "tahoma.ttf",
-        "georgia.ttf",
         "VeraMono.ttf"
     };
 
