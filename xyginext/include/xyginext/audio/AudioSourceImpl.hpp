@@ -143,7 +143,7 @@ namespace xy
             sf::Int32 getStatus() const override;
             sf::Time getDuration() const override;
             sf::Time getPlayingOffset() const override;
-            void setPlayingOffset(sf::Time);
+            void setPlayingOffset(sf::Time) override;
 
             bool isValid() const { return m_valid; }
 
