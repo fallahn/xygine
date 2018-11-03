@@ -196,7 +196,6 @@
     <ClCompile Include="src\network\NetEvent.cpp" />
     <ClCompile Include="src\network\NetHost.cpp" />
     <ClCompile Include="src\network\NetPeer.cpp" />
-    <ClCompile Include="src\resources\DejaVuSans.cpp" />
     <ClCompile Include="src\resources\FontResource.cpp" />
     <ClCompile Include="src\resources\ResourceHandler.cpp" />
     <ClCompile Include="src\resources\ShaderResource.cpp" />
@@ -271,7 +270,6 @@
     <ClInclude Include="include\xyginext\network\NetData.hpp" />
     <ClInclude Include="include\xyginext\network\NetHost.hpp" />
     <ClInclude Include="include\xyginext\network\NetImpl.hpp" />
-    <ClInclude Include="include\xyginext\resources\DejaVuSans.hpp" />
     <ClInclude Include="include\xyginext\resources\Resource.hpp" />
     <ClInclude Include="include\xyginext\resources\ResourceHandler.hpp" />
     <ClInclude Include="include\xyginext\resources\ShaderResource.hpp" />

@@ -309,9 +309,6 @@
     <ClCompile Include="src\resources\ResourceHandler.cpp">
       <Filter>Source Files\resources</Filter>
     </ClCompile>
-    <ClCompile Include="src\resources\DejaVuSans.cpp">
-      <Filter>Source Files\resources</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -555,9 +552,6 @@
       <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
     <ClInclude Include="include\xyginext\resources\ResourceHandler.hpp">
-      <Filter>Header Files\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="include\xyginext\resources\DejaVuSans.hpp">
       <Filter>Header Files\resources</Filter>
     </ClInclude>
     <ClInclude Include="include\xyginext\resources\SystemFont.hpp">
