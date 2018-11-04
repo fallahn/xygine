@@ -54,7 +54,7 @@ static inline sf::String getFontDir()
     return {};
 }
 #define FONT_PATH getFontDir().toAnsiString();
-#elif defined (_APPLE_)
+#elif defined (__APPLE__)
 #define FONT_PATH "/Library/Fonts/"
 #else
 //linux is an odd case because every distro is different
@@ -97,7 +97,7 @@ static inline std::string getFontPath()
     else
     {
         xy::Logger::log("Could not find candidate font file for fallback font!", xy::Logger::Type::Error);
-#if defined(_LINUX_) && !defined(LINUX_FONT_PATH)
+#if defined(__linux__) && !defined(LINUX_FONT_PATH)
         xy::Logger::log("define LINUX_FONT_PATH as a path to default font directory", xy::Logger::Type::Info);
 #endif
     }
