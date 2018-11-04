@@ -328,7 +328,7 @@ std::vector<std::string> FileSystem::listDirectories(const std::string& path)
         } while (FindNextFile(hFind, &findFileData) != 0);
     }
 #else
-    DIR *dp;
+    DIR *dp = nullptr;
     struct dirent *dirp;
     if ((dp = opendir(fullPath.c_str())) == nullptr)
     {
@@ -341,7 +341,7 @@ std::vector<std::string> FileSystem::listDirectories(const std::string& path)
         std::string str(dirp->d_name);
         if (str != "." && str != "..")
         {
-            bool isDir;
+            bool isDir = false;
             if (dirp->d_type != DT_UNKNOWN && dirp->d_type != DT_LNK)
             {
                 isDir = (dirp->d_type == DT_DIR);
