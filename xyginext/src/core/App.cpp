@@ -385,7 +385,7 @@ void App::handleEvents()
             }
         }
 
-        if (Console::isVisible() &&
+        if (/*Console::isVisible() &&*/
             ImGui::SFML::ProcessEvent(evt))
         {
             continue; //imgui consumes keyboard events
