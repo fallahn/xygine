@@ -27,7 +27,6 @@ source distribution.
 
 #pragma once
 
-#include "xyginext/core/FileSystem.hpp"
 #include "xyginext/core/Log.hpp"
 
 #include <SFML/System/String.hpp>
@@ -70,29 +69,11 @@ static inline sf::String getFontDir()
 
 static inline std::string getFontPath()
 {
-    //candidate font names on various platforms - feel free to add
-    //any for your platform of choice!!
-    static const std::array<std::string, 4u> fontNames =
-    {
-        "arial.ttf",
-        "Arial.ttf",
-        "tahoma.ttf",
-        "VeraMono.ttf"
-    };
-
     auto fontPath = FONT_PATH;
-    auto fileList = xy::FileSystem::listFiles(fontPath);
 
-    if (!fileList.empty())
+    if (!fontPath.empty())
     {
-        for (const auto& fontName : fontNames)
-        {
-            if (auto result = std::find(fileList.begin(), fileList.end(), fontName);
-                result != fileList.end())
-            {
-                return fontPath + *result;
-            }
-        }
+        return fontPath;
     }
     else
     {
