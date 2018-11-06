@@ -41,7 +41,7 @@ FontResource::FontResource()
         "VeraMono.ttf"
     };
 
-    auto fullPath = getFontPath();
+    std::string fullPath = getFontPath();
     for (const auto& font : fontNames)
     {
         if (m_font.loadFromFile(fullPath + font))

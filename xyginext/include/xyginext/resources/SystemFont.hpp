@@ -69,7 +69,7 @@ static inline sf::String getFontDir()
 
 static inline std::string getFontPath()
 {
-    auto fontPath = FONT_PATH;
+    std::string fontPath = FONT_PATH;
 
     if (!fontPath.empty())
     {
