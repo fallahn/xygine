@@ -50,7 +50,7 @@ namespace xy
 			MaxComponents = 64, //this is max number of types on a single entity (and max bits in a bitset)
 			IndexBits = 24,
 			GenerationBits = 8,
-			MinFreeIDs = 1024 //after this generation is incremented and we go back to zero
+			MaxIDsPerGeneration = 1024 //max number of IDs (and therefore max component buffer size) to generate before looking to recycle ID
 		};
 	}
 	

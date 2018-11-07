@@ -47,8 +47,8 @@ EntityManager::EntityManager(MessageBus& mb, ComponentManager& cm, std::size_t p
 //public
 Entity EntityManager::createEntity()
 {
-    Entity::ID idx;
-    if (m_freeIDs.size() > Detail::MinFreeIDs)
+    Entity::ID idx = 0;
+    if (m_generations.size() == Detail::MaxIDsPerGeneration)
     {
         idx = m_freeIDs.front();
         m_freeIDs.pop_front();
@@ -76,6 +76,7 @@ void EntityManager::destroyEntity(Entity entity)
 {
     const auto index = entity.getIndex();
     XY_ASSERT(index < m_generations.size(), "Index out of range");
+    XY_ASSERT(m_generations[index] < 255, "Max generations reached!");
 
     ++m_generations[index];
     m_freeIDs.push_back(index);
@@ -86,7 +87,10 @@ void EntityManager::destroyEntity(Entity entity)
     //newly orphaned children. We *could* reset all components
     //although this may just be unnecessary overhead.
     auto& pool = getPool<xy::Transform>();
-    pool[index] = /*std::move*/(xy::Transform());
+    if (index < pool.size())
+    {
+        pool[index] = /*std::move*/(xy::Transform());
+    }
 
     //let the world know the entity was destroyed
     auto msg = m_messageBus.post<Message::SceneEvent>(Message::SceneMessage);
