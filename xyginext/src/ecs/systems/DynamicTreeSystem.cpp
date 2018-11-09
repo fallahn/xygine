@@ -108,7 +108,7 @@ std::vector<xy::Entity> DynamicTreeSystem::query(sf::FloatRect area, std::uint64
         if (area.intersects(node.fatBounds))
         {
             //TODO it would be nice to precache the filter fetch, but it would miss changes at the component level
-            if (node.isLeaf()
+            if (node.isLeaf() && node.entity.isValid()
                 && (node.entity.getComponent<BroadphaseComponent>().m_filterFlags & filter)) 
             {
                 //we have a candidate, stash
