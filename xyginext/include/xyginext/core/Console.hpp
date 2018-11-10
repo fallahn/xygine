@@ -120,7 +120,4 @@ namespace xy
         
         static void draw();
     };
-
-//#include "Console.inl"
-
 }

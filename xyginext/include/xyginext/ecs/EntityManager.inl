@@ -59,7 +59,7 @@ T& EntityManager::addComponent(Entity entity, Args&&... args)
 //    const auto componentID = Component::getID<T>();
 //    const auto entityID = entity.getIndex();
 //
-//    CRO_ASSERT(entityID < m_componentMasks.size(), "Entity index out of range");
+//    XY_ASSERT(entityID < m_componentMasks.size(), "Entity index out of range");
 //    m_componentMasks[entityID].set(componentID, false);
 //    
 //}

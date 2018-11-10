@@ -45,8 +45,8 @@ namespace xy
     namespace Nim
     {
         /*!
-         \see ImGui::ImGuiStyle
-         */
+        \see ImGui::ImGuiStyle
+        */
         struct Style
         {
             // Enumeration for colours

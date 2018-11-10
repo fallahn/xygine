@@ -121,7 +121,7 @@ namespace xy
         sf::Uint32 getCharacterSize() const;
 
         /*!
-        \brief Retrurns the current vertical spacing between text rows
+        \brief Returns the current vertical spacing between text rows
         */
         float getVerticalSpacing() const;
 

@@ -35,17 +35,17 @@ source distribution.
 namespace xy
 {
     /*!
-     \brief Handle for a Resource
+    \brief Handle for a Resource
      
-     Basically just an index to the resource in the vector
-     */
+    Basically just an index to the resource in the vector
+    */
     using ResourceHandle = std::size_t;
     
     /*!
-     \brief Struct responsible for loading resources
+    \brief Struct responsible for loading resources
      
-     Contains a method to load from a path, and a fallback if the resource isn't found
-     */
+    Contains a method to load from a path, and a fallback if the resource isn't found
+    */
     struct ResourceLoader
     {
         std::function<std::any(const std::string&)>   loader;
@@ -53,35 +53,35 @@ namespace xy
     };
     
     /*!
-     \brief Class for generic resource management using handles
+    \brief Class for generic resource management using handles
      
-     The user must explicitly load resources, and store the returned handle.
-     Then they can use the handle to retreive the resource when required
+    The user must explicitly load resources, and store the returned handle.
+    Then they can use the handle to retreive the resource when required
      
-     */
+    */
     class XY_EXPORT_API ResourceHandler
     {
     public:
         
-        // Constructor
+        //Constructor
         ResourceHandler();
         
         /*!
-         \brief Load a resource
+        \brief Load a resource
          
-         Load a resource from a path, returns a handle to the resource
-         */
+        Load a resource from a path, returns a handle to the resource
+        */
         template<class T>
         ResourceHandle load(const std::string& path)
         {
-            // Find the correct loader for the type
+            //Find the correct loader for the type
             std::type_index ti = typeid(T);
             
             XY_ASSERT(m_loaders.count(ti), std::string("Resource loader not found for ") + std::string(ti.name()));
             
             m_resources.emplace_back(m_loaders[ti].loader(path));
             
-            // If it wasn't loaded, use fallback
+            //If it wasn't loaded, use fallback
             if (!m_resources.back().has_value())
             {
                 m_resources.back() = m_loaders[ti].fallback();
@@ -90,10 +90,10 @@ namespace xy
         }
         
         /*!
-         \brief Get a resource
+        \brief Get a resource
          
-         Get a resource from it's handle
-         */
+        Get a resource from it's handle
+        */
         template<class T>
         T& get(ResourceHandle resource)
         {
@@ -102,8 +102,8 @@ namespace xy
         }
         
         /*!
-         \brief Get the loader for a resource type
-         */
+        \brief Get the loader for a resource type
+        */
         template<class T>
         ResourceLoader& getLoader()
         {
@@ -119,10 +119,10 @@ namespace xy
         }
         
     private:
-        // Container of the resources
+        //Container of the resources
         std::vector<std::any> m_resources;
         
-        // Resource loaders mapped by their type index
+        //Resource loaders mapped by their type index
         std::unordered_map<std::type_index, ResourceLoader> m_loaders;
     };
 }

@@ -81,6 +81,12 @@ hence xy, followed by the gine part of engine (although technically
 xygine isn't really an engine).
 
 
+xygine uses native file dialogue  
+https://github.com/mlabbe/nativefiledialog  
+and dear imgui  
+https://github.com/ocornut/imgui  
+https://github.com/eliasdaler/imgui-sfml  
+
 
 /*********************************************************************  
 (c) Matt Marchant 2017 - 2018  

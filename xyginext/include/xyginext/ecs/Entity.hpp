@@ -81,15 +81,9 @@ namespace xy
 		Generation getGeneration() const;
 
 		/*!
-		\brief Marks the entity for destruction
-		*/
-		//void destroy();
-
-		/*!
 		\brief Returns true if the entity is marked for destruction
 		*/
 		bool destroyed() const;
-
 
 		/*!
 		\brief Adds a copy of the given instance of a component to
@@ -104,12 +98,6 @@ namespace xy
 		*/
 		template <typename T, typename... Args>
 		T& addComponent(Args&&...);
-
-		/*!
-		\brief Removes the component of this type if it exists
-		*/
-		/*template <typename T>
-		void removeComponent()*/;
 
 		/*!
 		\brief returns true if the component type exists on thie entity
@@ -222,12 +210,6 @@ namespace xy
         */
         template <typename T, typename... Args>
         T& addComponent(Entity, Args&&... args);
-
-        /*!
-        \brief Removes this component type for the given Entity
-        */
-        /*template <typename T>
-        void removeComponent(Entity);*/
 
         /*!
         \brief Returns true if the given Entity has a component of this type

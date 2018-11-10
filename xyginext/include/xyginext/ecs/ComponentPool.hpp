@@ -59,7 +59,6 @@ namespace xy
                 LOG("Warning component pool " + std::string(typeid(T).name()) + " has been resized to " + std::to_string(m_pool.size()) + " - existing component references may be invalidated", xy::Logger::Type::Warning);
             }
 			void clear() { m_pool.clear(); }
-			//void add(T c) { m_pool.push_back(c); }
 
             T& at(std::size_t idx) { return m_pool.at(idx); }
             const T& at(std::size_t idx) const { return m_pool.at(idx); }

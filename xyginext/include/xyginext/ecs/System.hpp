@@ -59,7 +59,6 @@ namespace xy
         Pass in a reference to the concrete implementation to generate
         a unique type ID for this system.
         */
-        //template <typename T>
         System(MessageBus& mb, UniqueType t) 
             : m_messageBus(mb), m_type(t), m_scene(nullptr), m_active(false){}
 

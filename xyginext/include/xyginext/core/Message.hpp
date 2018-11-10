@@ -100,8 +100,6 @@ namespace xy
         template <typename T>
         const T& getData() const
         {
-            //this isn't working on MSVC
-            //static_assert(std::is_trivially_constructible<T>::value && std::is_trivially_destructible<T>::value, "");
             XY_ASSERT(sizeof(T) == m_dataSize, "size of supplied type is not equal to data size");
             return *static_cast<T*>(m_data);
         }

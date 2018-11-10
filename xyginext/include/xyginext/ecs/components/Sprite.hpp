@@ -45,6 +45,7 @@ namespace xy
     /*!
     \brief Sprite component optimised to work with the ECS.
     Sprite components require their entity to also have a Drawable component
+    and a Transform component.
     */
     class XY_EXPORT_API Sprite final
     {
@@ -122,8 +123,8 @@ namespace xy
         struct Animation final
         {
             /*!
-             \brief Maximum  length of animation id
-             */
+            \brief Maximum  length of animation id
+            */
             static constexpr std::size_t MaxAnimationIdLength = 32;
             
             std::array<char,MaxAnimationIdLength> id = {{0}};

@@ -70,23 +70,23 @@ namespace xy
         Sprite getSprite(const std::string& name) const;
         
         /*!
-         \brief Set the data of a sprite in the spritesheet
+        \brief Set the data of a sprite in the spritesheet
          
-         \param name The name of the sprite to set
-         \param data The sprite component data to assign
+        \param name The name of the sprite to set
+        \param data The sprite component data to assign
          
-         \warning if sprite already exists it will be overwritten
-         */
+        \warning if sprite already exists it will be overwritten
+        */
         void setSprite(const std::string& name, const Sprite& data);
         
         /*!
-         \brief Remove a sprite from the sheet
-         */
+        \brief Remove a sprite from the sheet
+        */
         void removeSprite(const std::string& name);
         
         /*!
-         \brief Returns all sprites in this spritesheet
-         */
+        \brief Returns all sprites in this spritesheet
+        */
         const std::unordered_map<std::string, Sprite>& getSprites() const;
 
         /*!
@@ -96,13 +96,13 @@ namespace xy
         std::size_t getAnimationIndex(const std::string& name, const std::string& sprite) const;
         
         /*!
-         \brief Returns the path of the texture used by this spritesheet
-         */
+        \brief Returns the path of the texture used by this spritesheet
+        */
         const std::string& getTexturePath() const;
         
         /*!
-         \brief Set the path of the texture used by this spritesheet
-         */
+        \brief Set the path of the texture used by this spritesheet
+        */
         void setTexturePath(const std::string& path);
 
     private:

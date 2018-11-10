@@ -84,6 +84,6 @@ namespace xy
         */
         static std::string timeString();
     private:
-        //static Data m_data;
+        
     };
 }

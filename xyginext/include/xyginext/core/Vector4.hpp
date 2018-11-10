@@ -55,10 +55,10 @@ namespace xy
         template <typename U>
         explicit Vector4(const Vector4<U>& vector);
 
-        T x; ///< X coordinate of the vector
-        T y; ///< Y coordinate of the vector
-        T z; ///< Z coordinate of the vector
-        T w; ///< W coordinate of the vector
+        T x; //!< X coordinate of the vector
+        T y; //!< Y coordinate of the vector
+        T z; //!< Z coordinate of the vector
+        T w; //!< W coordinate of the vector
     };
 
     /*!
