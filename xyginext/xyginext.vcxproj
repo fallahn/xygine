@@ -130,6 +130,10 @@
   <ItemGroup>
     <ClCompile Include="src\audio\AudioScape.cpp" />
     <ClCompile Include="src\audio\AudioSourceImpl.cpp" />
+    <ClCompile Include="src\audio\midi\Event.cpp" />
+    <ClCompile Include="src\audio\midi\File.cpp" />
+    <ClCompile Include="src\audio\midi\Message.cpp" />
+    <ClCompile Include="src\audio\midi\Track.cpp" />
     <ClCompile Include="src\audio\Mixer.cpp" />
     <ClCompile Include="src\core\App.cpp" />
     <ClCompile Include="src\core\ConfigFile.cpp" />
@@ -204,6 +208,10 @@
   <ItemGroup>
     <ClInclude Include="include\xyginext\audio\AudioScape.hpp" />
     <ClInclude Include="include\xyginext\audio\AudioSourceImpl.hpp" />
+    <ClInclude Include="include\xyginext\audio\midi\Event.hpp" />
+    <ClInclude Include="include\xyginext\audio\midi\File.hpp" />
+    <ClInclude Include="include\xyginext\audio\midi\Message.hpp" />
+    <ClInclude Include="include\xyginext\audio\midi\Track.hpp" />
     <ClInclude Include="include\xyginext\audio\Mixer.hpp" />
     <ClInclude Include="include\xyginext\Config.hpp" />
     <ClInclude Include="include\xyginext\core\App.hpp" />

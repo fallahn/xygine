@@ -4,6 +4,11 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/audio/AudioSourceImpl.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/audio/Mixer.cpp
 
+  ${CMAKE_CURRENT_SOURCE_DIR}/audio/midi/Event.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/audio/midi/File.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/audio/midi/Message.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/audio/midi/Track.cpp
+
   ${CMAKE_CURRENT_SOURCE_DIR}/core/App.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/ConfigFile.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/Console.cpp

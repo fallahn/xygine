@@ -91,6 +91,12 @@
     <Filter Include="Source Files\core\dialogues\nfd">
       <UniqueIdentifier>{22ade682-fc97-4470-92a0-1c850fda1aa7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\audio\midi">
+      <UniqueIdentifier>{7b4d64bb-81a1-4177-8a93-55424dac743f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\audio\midi">
+      <UniqueIdentifier>{e31b3790-7f68-4152-9f99-10dba5319c67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\App.cpp">
@@ -308,6 +314,18 @@
     </ClCompile>
     <ClCompile Include="src\resources\ResourceHandler.cpp">
       <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio\midi\Message.cpp">
+      <Filter>Source Files\audio\midi</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio\midi\Event.cpp">
+      <Filter>Source Files\audio\midi</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio\midi\Track.cpp">
+      <Filter>Source Files\audio\midi</Filter>
+    </ClCompile>
+    <ClCompile Include="src\audio\midi\File.cpp">
+      <Filter>Source Files\audio\midi</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -556,6 +574,18 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\resources\SystemFont.hpp">
       <Filter>Header Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\audio\midi\Message.hpp">
+      <Filter>Header Files\audio\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\audio\midi\Event.hpp">
+      <Filter>Header Files\audio\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\audio\midi\Track.hpp">
+      <Filter>Header Files\audio\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\audio\midi\File.hpp">
+      <Filter>Header Files\audio\midi</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
