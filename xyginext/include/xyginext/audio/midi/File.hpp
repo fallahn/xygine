@@ -14,11 +14,11 @@ namespace xy
         /*!
         \brief Loads a Midi file to be played via xy::Midi::Player.
         */
-        XY_EXPORT_API class File final : private std::vector<Track>
+        class XY_EXPORT_API File final : private std::vector<Track>
         {
         public:
             /*!
-            \breif Default constructor.
+            \brief Default constructor.
             */
             File();
 
@@ -71,7 +71,7 @@ namespace xy
 
             std::uint16_t m_timeDivision;
 
-            void readHeader(std::fstream&);
+            bool readHeader(std::fstream&);
             void readTrack(std::fstream&);
             void readEvent(std::fstream&, Event&, bool&, std::uint8_t&);
             void readUnknown(std::fstream&);

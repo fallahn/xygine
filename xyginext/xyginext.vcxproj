@@ -290,6 +290,7 @@
     <ClInclude Include="include\xyginext\util\String.hpp" />
     <ClInclude Include="include\xyginext\util\Vector.hpp" />
     <ClInclude Include="include\xyginext\util\Wavetable.hpp" />
+    <ClInclude Include="src\audio\midi\endianness.hpp" />
     <ClInclude Include="src\detail\GLCheck.hpp" />
     <ClInclude Include="src\network\NetConf.hpp" />
   </ItemGroup>

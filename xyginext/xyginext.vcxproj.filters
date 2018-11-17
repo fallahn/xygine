@@ -587,6 +587,9 @@
     <ClInclude Include="include\xyginext\audio\midi\File.hpp">
       <Filter>Header Files\audio\midi</Filter>
     </ClInclude>
+    <ClInclude Include="src\audio\midi\endianness.hpp">
+      <Filter>Header Files\audio\midi</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl">

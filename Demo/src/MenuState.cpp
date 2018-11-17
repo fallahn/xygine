@@ -77,6 +77,11 @@ source distribution.
 
 #include <array>
 
+#include <xyginext/audio/midi/File.hpp>
+namespace
+{
+    xy::Midi::File midiFile;
+}
 
 MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData, LoadingScreen& ls)
     : xy::State(stack, ctx),
@@ -96,6 +101,8 @@ MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_helpShown         (false),
     m_blurEffect        (nullptr)
 {
+    midiFile.loadFromFile("assets/test.mid");
+
     launchLoadingScreen();
     loadKeybinds();
     createScene();
