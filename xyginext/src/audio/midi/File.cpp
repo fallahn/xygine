@@ -2,7 +2,7 @@
 #include "xyginext/core/Log.hpp"
 #include "xyginext/core/Assert.hpp"
 
-#include "endianness.hpp"
+#include "Util.hpp"
 
 using namespace xy;
 using namespace xy::Midi;
