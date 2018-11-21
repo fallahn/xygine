@@ -1,8 +1,8 @@
 xygineXT
 --------
 
-[![Build Status](https://img.shields.io/travis/fallahn/xygine.svg?label=*nix)](https://travis-ci.org/fallahn/xygine)
-[![Build status](https://ci.appveyor.com/api/projects/status/0g672m1laa8mutdw?svg=true)](https://ci.appveyor.com/project/fallahn/xygine)
+[![Build Status](https://travis-ci.org/fallahn/xygine.svg?branch=master)](https://travis-ci.org/fallahn/xygine)
+[![Build status](https://ci.appveyor.com/api/projects/status/0g672m1laa8mutdw/branch/master?svg=true)](https://ci.appveyor.com/project/fallahn/xygine)
 
 
 The next iteration of xygine....
