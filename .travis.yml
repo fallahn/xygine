@@ -11,6 +11,7 @@ addons:
     - libvorbis-dev
     - libenet-dev
     - libgtk-3-dev
+    - librtmidi-dev
     - g++-7
     - gcc-7
     - clang
@@ -21,7 +22,7 @@ before_script:
   gcc /usr/bin/gcc-7 90; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/g++
   g++ /usr/bin/g++-7 90; fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install enet; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install enet; brew install rtmidi; fi
 - git clone https://github.com/sfml/sfml && cd sfml
 - git checkout tags/2.5.1
 - mkdir build && cd build

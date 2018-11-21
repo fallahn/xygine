@@ -12,6 +12,8 @@ build_script:
     
     vcpkg install enet
 
+    vcpkg install rtmidi
+
     cd C:/projects/
 
     # Build/Install tmxlite, which the demo requires
