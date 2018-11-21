@@ -133,6 +133,7 @@
     <ClCompile Include="src\audio\midi\Event.cpp" />
     <ClCompile Include="src\audio\midi\File.cpp" />
     <ClCompile Include="src\audio\midi\Message.cpp" />
+    <ClCompile Include="src\audio\midi\Player.cpp" />
     <ClCompile Include="src\audio\midi\Track.cpp" />
     <ClCompile Include="src\audio\Mixer.cpp" />
     <ClCompile Include="src\core\App.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="include\xyginext\audio\midi\Event.hpp" />
     <ClInclude Include="include\xyginext\audio\midi\File.hpp" />
     <ClInclude Include="include\xyginext\audio\midi\Message.hpp" />
+    <ClInclude Include="include\xyginext\audio\midi\Player.hpp" />
     <ClInclude Include="include\xyginext\audio\midi\Track.hpp" />
     <ClInclude Include="include\xyginext\audio\Mixer.hpp" />
     <ClInclude Include="include\xyginext\Config.hpp" />

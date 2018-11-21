@@ -6,6 +6,7 @@
 #include <SFML/System/Time.hpp>
 
 #include <fstream>
+#include <atomic>
 
 namespace xy
 {
@@ -75,6 +76,9 @@ namespace xy
             void readTrack(std::fstream&);
             void readEvent(std::fstream&, Event&, bool&, std::uint8_t&);
             void readUnknown(std::fstream&);
+
+            friend class Player;
+            mutable std::atomic_bool m_playing;
         };
     }
 }

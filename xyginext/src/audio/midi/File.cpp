@@ -7,10 +7,11 @@
 using namespace xy;
 using namespace xy::Midi;
 
-File::File() : m_timeDivision(500) {}
+File::File() : m_timeDivision(500), m_playing(false) {}
 
 File::File(const std::string& path)
-    : m_timeDivision(500)
+    : m_timeDivision(500),
+    m_playing       (false)
 {
     loadFromFile(path);
 }
@@ -18,6 +19,12 @@ File::File(const std::string& path)
 //public
 bool File::loadFromFile(const std::string& path)
 {
+    if (m_playing)
+    {
+        xy::Logger::log("Cannot open " + path + " - file is already playing. Stop the playback first.", xy::Logger::Type::Error);
+        return false;
+    }
+
     clear();
 
     std::fstream file(path, std::ios::in | std::ios::binary);

@@ -23,6 +23,9 @@ namespace xy
             using ByteVector::begin;
             using ByteVector::end;
             using ByteVector::at;
+            using ByteVector::data;
+            using ByteVector::size;
+            using ByteVector::operator[];
 
             enum Type
             {

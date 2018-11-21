@@ -12,6 +12,9 @@ namespace xy
             Event& addEvent();
             std::string getName() const;
 
+            using std::vector<Event>::size;
+            using std::vector<Event>::operator[];
+
         private:
         };
     }

@@ -78,9 +78,11 @@ source distribution.
 #include <array>
 
 #include <xyginext/audio/midi/File.hpp>
+#include <xyginext/audio/midi/Player.hpp>
 namespace
 {
     xy::Midi::File midiFile;
+    xy::Midi::Player midiPlayer;
 }
 
 MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateData& sharedData, LoadingScreen& ls)
@@ -102,6 +104,7 @@ MenuState::MenuState(xy::StateStack& stack, xy::State::Context ctx, SharedStateD
     m_blurEffect        (nullptr)
 {
     midiFile.loadFromFile("assets/test.mid");
+    midiPlayer.play(midiFile);
 
     launchLoadingScreen();
     loadKeybinds();

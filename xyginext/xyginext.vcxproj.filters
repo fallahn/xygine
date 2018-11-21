@@ -327,6 +327,9 @@
     <ClCompile Include="src\audio\midi\File.cpp">
       <Filter>Source Files\audio\midi</Filter>
     </ClCompile>
+    <ClCompile Include="src\audio\midi\Player.cpp">
+      <Filter>Source Files\audio\midi</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -588,6 +591,9 @@
       <Filter>Header Files\audio\midi</Filter>
     </ClInclude>
     <ClInclude Include="src\audio\midi\Util.hpp">
+      <Filter>Header Files\audio\midi</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\audio\midi\Player.hpp">
       <Filter>Header Files\audio\midi</Filter>
     </ClInclude>
   </ItemGroup>
