@@ -6,6 +6,7 @@
 #include "xyginext/core/Assert.hpp"
 
 #include <SFML/System/Sleep.hpp>
+#include <RtMidi.h>
 
 #include <limits>
 

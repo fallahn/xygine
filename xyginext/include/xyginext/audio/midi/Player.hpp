@@ -1,7 +1,5 @@
 #pragma once
 
-#include <rtmidi/RtMidi.h>
-
 #include "xyginext/Config.hpp"
 
 #include <SFML/System/Clock.hpp>
@@ -11,6 +9,7 @@
 #include <atomic>
 #include <vector>
 
+class RtMidiOut;
 namespace xy
 {
     namespace Midi
