@@ -3,6 +3,12 @@ cmake_minimum_required(VERSION 3.1)
 # Rename this variable to change the project name
 set(PROJECT_NAME xyginext)
 set(DEMO_NAME xy-demo)
+
+# Xcode 10 will default to Mojave (must be done BEFORE project())
+if (APPLE)
+ set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version")
+endif()
+
 project(${PROJECT_NAME})
 
 # Set the path to our find modules
