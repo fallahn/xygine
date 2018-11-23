@@ -37,7 +37,8 @@ modern CMake syntax as well as being Visual Studio compatible.
 All new reliable network connection classes dedicated to creating
 gameplay oriented connections based upon the indomitable [Enet](http://enet.bespin.org/)
 
-
+There is also a collection of utilites which may be useful for development
+of projects in the 'extras' directory.
 
 ###### Contributions
 Contributions should be acknowledged and are gratefully accepted from:  
@@ -61,7 +62,8 @@ It features a very similar API to xygine too.
 The physics binding of Box2D has been removed, mostly because I wasn't using it.
 It may return in the future, but thanks to the new ECS API implementing your
 own binding to any physics engine of choice, or even implementing your own
-collision detection is super easy.
+collision detection is super easy. There's an example of a Chipmunk2D binding
+in the 'extras' directory.
 
 ###### ...and the Tiled map support?
 This had already been spun out into [tmxlite](https://github.com/fallahn/tmxlite)
