@@ -28,7 +28,7 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/AudioEmitter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/Camera.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/Drawable.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/NetInterpolation.cpp
+  #${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/NetInterpolation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/ParticleEmitter.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/QuadTreeItem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/Sprite.cpp
@@ -40,7 +40,7 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/CameraSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/CommandSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/DynamicTreeSystem.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/InterpolationSystem.cpp
+  #${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/InterpolationSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/ParticleSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/QuadTree.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/QuadTreeNode.cpp

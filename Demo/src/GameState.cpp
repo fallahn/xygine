@@ -51,6 +51,7 @@ source distribution.
 #include "HatSystem.hpp"
 #include "Localisation.hpp"
 #include "LuggageDirector.hpp"
+#include "InterpolationSystem.hpp"
 
 #include <xyginext/core/App.hpp>
 #include <xyginext/core/FileSystem.hpp>
@@ -60,7 +61,6 @@ source distribution.
 #include <xyginext/ecs/components/Text.hpp>
 #include <xyginext/ecs/components/Drawable.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
-#include <xyginext/ecs/components/NetInterpolation.hpp>
 #include <xyginext/ecs/components/SpriteAnimation.hpp>
 #include <xyginext/ecs/components/AudioEmitter.hpp>
 #include <xyginext/ecs/components/Camera.hpp>
@@ -73,7 +73,6 @@ source distribution.
 #include <xyginext/ecs/systems/TextSystem.hpp>
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/ecs/systems/CommandSystem.hpp>
-#include <xyginext/ecs/systems/InterpolationSystem.hpp>
 #include <xyginext/ecs/systems/SpriteAnimator.hpp>
 #include <xyginext/ecs/systems/AudioSystem.hpp>
 #include <xyginext/ecs/systems/CameraSystem.hpp>
@@ -230,7 +229,7 @@ void GameState::handleMessage(const xy::Message& msg)
                 m_playerInputs[i].setEnabled(true);
             }
             m_scene.setSystemActive<CollisionSystem>(true);
-            m_scene.setSystemActive<xy::InterpolationSystem>(true);
+            m_scene.setSystemActive<InterpolationSystem>(true);
 
             //send OK to server to continue game
             for (auto i = 0u; i < m_sharedData.playerCount; ++i)
@@ -376,7 +375,7 @@ void GameState::loadAssets()
     m_scene.addSystem<xy::QuadTree>(mb, MapBounds);
     m_scene.addSystem<CollisionSystem>(mb);
     m_scene.addSystem<PlayerSystem>(mb);   
-    m_scene.addSystem<xy::InterpolationSystem>(mb);
+    m_scene.addSystem<InterpolationSystem>(mb);
     m_scene.addSystem<AnimationControllerSystem>(mb);
     m_scene.addSystem<MapAnimatorSystem>(mb);
     m_scene.addSystem<ScoreTagSystem>(mb);
@@ -974,7 +973,11 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         {
             if (entity.getComponent<Actor>().id == state.actor.id)
             {
-                entity.getComponent<xy::NetInterpolate>().setTarget({ state.x, state.y }, state.serverTime);
+                InterpolationPoint point;
+                point.position = { state.x, state.y };
+                point.timestamp = state.serverTime;
+
+                entity.getComponent<InterpolationComponent>().setTarget(point);
                 //DPRINT("Timestamp", std::to_string(state.timestamp));
                 auto& anim = entity.getComponent<AnimationController>();
                 anim.nextAnimation = static_cast<AnimationController::Animation>(state.animationID);
@@ -1331,12 +1334,12 @@ sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, co
 void GameState::spawnActor(const ActorEvent& actorEvent)
 {
     auto msg = getContext().appInstance.getMessageBus().post<SceneEvent>(MessageID::SceneMessage);
-    
+    //TODO we should have server time when spawning to correctly set initial interpolator state
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(actorEvent.x, actorEvent.y);
     entity.addComponent<Actor>() = actorEvent.actor;
     entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
-    entity.addComponent<xy::NetInterpolate>();
+    entity.addComponent<InterpolationComponent>();
     entity.addComponent<AnimationController>();
 
     msg->entity = entity;
@@ -1529,7 +1532,7 @@ void GameState::spawnClient(const ClientData& data)
     {
         //add interp controller
         entity.getComponent<xy::CommandTarget>().ID |= CommandID::NetActor;
-        entity.addComponent<xy::NetInterpolate>();
+        entity.addComponent<InterpolationComponent>();
     }
 }
 
@@ -1649,7 +1652,7 @@ void GameState::switchMap(const MapData& data)
         m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
         m_scene.setSystemActive<CollisionSystem>(false);
-        m_scene.setSystemActive<xy::InterpolationSystem>(false);
+        m_scene.setSystemActive<InterpolationSystem>(false);
     }
 }
 
@@ -1664,7 +1667,7 @@ void GameState::spawnMapActors()
         entity.addComponent<xy::Transform>().setOrigin(WhirlyBobOrigin);
         entity.addComponent<Actor>() = m_mapData.NPCs[i];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
-        entity.addComponent<xy::NetInterpolate>();      
+        entity.addComponent<InterpolationComponent>();      
 
         /*
         Even though these are only actors NPCs require collision with the player to
@@ -1718,7 +1721,7 @@ void GameState::spawnMapActors()
         entity.addComponent<xy::Transform>().setOrigin(CrateOrigin);
         entity.addComponent<Actor>() = m_mapData.crates[i];
         entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
-        entity.addComponent<xy::NetInterpolate>();
+        entity.addComponent<InterpolationComponent>();
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::Crate];
         entity.addComponent<xy::Drawable>().setDepth(-1);
         entity.addComponent<CollisionComponent>().addHitbox(CrateBounds, CollisionType::Crate);

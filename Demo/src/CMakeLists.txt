@@ -18,6 +18,8 @@ set(DEMO_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/GameOverState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/GameState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/HatSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/InterpolationComponent.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/InterpolationSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/IntroState.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/InventoryDirector.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KeyMapDirector.cpp

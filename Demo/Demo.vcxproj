@@ -145,6 +145,8 @@
     <ClCompile Include="src\GameOverState.cpp" />
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\HatSystem.cpp" />
+    <ClCompile Include="src\InterpolationComponent.cpp" />
+    <ClCompile Include="src\InterpolationSystem.cpp" />
     <ClCompile Include="src\IntroState.cpp" />
     <ClCompile Include="src\InventoryDirector.cpp" />
     <ClCompile Include="src\KeyMapDirector.cpp" />
@@ -176,6 +178,7 @@
     <ClInclude Include="src\BackgroundShader.hpp" />
     <ClInclude Include="src\BonusSystem.hpp" />
     <ClInclude Include="src\BubbleSystem.hpp" />
+    <ClInclude Include="src\CircularBuffer.hpp" />
     <ClInclude Include="src\ClientNotificationCallbacks.hpp" />
     <ClInclude Include="src\ClientServerShared.hpp" />
     <ClInclude Include="src\CollisionSystem.hpp" />

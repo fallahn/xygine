@@ -12,7 +12,10 @@ Contributions via pull requests are welcome, however. Currently available are:
 for drawaing debug output.
 - PhysicsSystem.hpp Acts as a binding for the Chipmunk2D physics simulation library
 allowing it to be used with xygine's ECS. Requires linking to [chipmunk2D](https://chipmunk-physics.net/)
-
+- InterpolationSystem.hpp Useful for client side interpolation when creating multiplayer
+games, although can be useful when following a path for example.
+- CircularBuffer.hpp A templated, heap allocated fixed size circular buffer. If you know
+what that is, then maybe it'll be useful :)
 
 /*********************************************************************  
 (c) Matt Marchant 2017 - 2018  
