@@ -75,13 +75,15 @@ source distribution.
 
 namespace
 {
-    const float tickRate = 1.f / 25.f;
+    const float tickRate = 1.f / 33.f;
     const float updateRate = 1.f / 60.f;
     const float endOfRoundTime = 6.f;
     const float defaultRoundTime = 39.f; //after this everything is angry
     const float roundWarnTime = 2.5f; //allows time for clients to do warning
     const float watchdogTime = 20.f; //change map this many seconds after round time regardless
     const float MaxPauseTime = 5.f * 60.f;
+
+    GameServer* ServerInstance = nullptr;
 }
 
 std::bitset<4> GameServer::GameOverOrPaused = { (1 << GameOver) | (1 << Paused) }; //should be constexpr but makes g++ cry
@@ -106,6 +108,8 @@ GameServer::GameServer()
     m_clients[1].data.spawnX = PlayerTwoSpawn.x;
     m_clients[1].data.spawnY = PlayerTwoSpawn.y;
     m_clients[1].data.playerNumber = 1;
+
+    ServerInstance = this;
 }
 
 GameServer::~GameServer()
@@ -114,6 +118,12 @@ GameServer::~GameServer()
 }
 
 //public
+sf::Int32 GameServer::getServerTime()
+{
+    XY_ASSERT(ServerInstance, "");
+    return ServerInstance->m_serverTime.getElapsedTime().asMilliseconds();
+}
+
 void GameServer::start()
 {
     //we can log these locally, as we'd be in the same thread

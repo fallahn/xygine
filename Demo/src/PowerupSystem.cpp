@@ -35,6 +35,7 @@ source distribution.
 #include "NPCSystem.hpp"
 #include "MessageIDs.hpp"
 #include "CrateSystem.hpp"
+#include "Server.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
@@ -436,6 +437,7 @@ void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
     evt.x = spawnPos.x;
     evt.y = spawnPos.y;
     evt.type = ActorEvent::Spawned;
+    evt.serverTime = GameServer::getServerTime();
 
     m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 }
@@ -471,6 +473,7 @@ void PowerupSystem::spawnFlame(sf::Vector2f position, sf::Uint8 player, Powerup:
     evt.x = position.x;
     evt.y = position.y;
     evt.type = ActorEvent::Spawned;
+    evt.serverTime = GameServer::getServerTime();
 
     m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 }

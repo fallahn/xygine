@@ -330,8 +330,31 @@ bool GameState::update(float dt)
         break;
     }*/
 
-#endif //XY_DEBUG
-    
+    static std::size_t packetSize = 0;
+    static std::size_t frameCount = 0;
+    static float bw = 0.f;
+
+    xy::NetEvent evt;
+    while (m_client.pollEvent(evt))
+    {
+        if (evt.type == xy::NetEvent::PacketReceived)
+        {
+            packetSize += evt.packet.getSize();
+
+            handlePacket(evt);
+            m_clientTimeout.restart();
+        }
+    }
+
+    frameCount++;
+    if (frameCount == 60)
+    {
+        bw = static_cast<float>(packetSize * 8) / 1000.f;
+        frameCount = 0;
+        packetSize = 0;
+    }
+    xy::Console::printStat("Current data rate", std::to_string(bw) + "Kbps");
+#else
     xy::NetEvent evt;
     while (m_client.pollEvent(evt))
     {
@@ -341,6 +364,8 @@ bool GameState::update(float dt)
             m_clientTimeout.restart();
         }
     }
+#endif //XY_DEBUG
+
     handleTimeout();
     
     for (auto i = 0u; i < m_sharedData.playerCount; ++i)
@@ -1334,12 +1359,16 @@ sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, co
 void GameState::spawnActor(const ActorEvent& actorEvent)
 {
     auto msg = getContext().appInstance.getMessageBus().post<SceneEvent>(MessageID::SceneMessage);
-    //TODO we should have server time when spawning to correctly set initial interpolator state
+    
+    InterpolationPoint point;
+    point.position = { actorEvent.x, actorEvent.y };
+    point.timestamp = actorEvent.serverTime;
+
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(actorEvent.x, actorEvent.y);
     entity.addComponent<Actor>() = actorEvent.actor;
     entity.addComponent<xy::CommandTarget>().ID = CommandID::NetActor | CommandID::MapItem;
-    entity.addComponent<InterpolationComponent>();
+    entity.addComponent<InterpolationComponent>(point);
     entity.addComponent<AnimationController>();
 
     msg->entity = entity;

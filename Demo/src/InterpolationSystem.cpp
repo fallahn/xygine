@@ -98,25 +98,5 @@ void InterpolationSystem::process(float dt)
 //private
 void InterpolationSystem::onEntityAdded(xy::Entity entity)
 {
-    //make sure the initial transform is applied
-    auto& tx = entity.getComponent<xy::Transform>();
-    auto pos = tx.getPosition();
-    auto rotation = tx.getRotation();
-    
-    InterpolationPoint point;
-    point.position = pos;
-    point.rotation = rotation;
-    point.timestamp = 1;
 
-    auto& interp = entity.getComponent<InterpolationComponent>();
-    interp.m_previousPoint = point;
-    interp.m_targetPoint = point;
-    interp.m_timeDifference = 0.01f;
-
-    //point.timestamp = 50;
-    ////for (auto i = 0u; i < 4u; ++i)
-    //{
-    //    interp.setTarget(point);
-    //    //point.timestamp++;
-    //}
 }

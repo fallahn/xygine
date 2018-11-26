@@ -33,6 +33,7 @@ source distribution.
 #include "PacketIDs.hpp"
 #include "AnimationController.hpp"
 #include "CommandIDs.hpp"
+#include "Server.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/QuadTreeItem.hpp>
@@ -94,6 +95,7 @@ void FruitSystem::handleMessage(const xy::Message& msg)
                 evt.x = data.x;
                 evt.y = data.y;
                 evt.type = ActorEvent::Spawned;
+                evt.serverTime = GameServer::getServerTime();
 
                 m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
             }

@@ -37,6 +37,7 @@ source distribution.
 #include "PowerupSystem.hpp"
 #include "CrateSystem.hpp"
 #include "Explosion.hpp"
+#include "Server.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/Scene.hpp>
@@ -92,6 +93,7 @@ void NPCSystem::handleMessage(const xy::Message& msg)
                 evt.type = ActorEvent::Spawned;
                 evt.x = entity.getComponent<xy::Transform>().getPosition().x;
                 evt.y = entity.getComponent<xy::Transform>().getPosition().y;
+                evt.serverTime = GameServer::getServerTime();
 
                 m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
             }            

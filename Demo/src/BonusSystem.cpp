@@ -34,6 +34,7 @@ source distribution.
 #include "PacketIDs.hpp"
 #include "AnimationController.hpp"
 #include "MessageIDs.hpp"
+#include "Server.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/CommandTarget.hpp>
@@ -197,6 +198,7 @@ void BonusSystem::spawn(float x, float y)
     evt.x = x;
     evt.y = y;
     evt.type = ActorEvent::Spawned;
+    evt.serverTime = GameServer::getServerTime();
 
     m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 }

@@ -33,6 +33,7 @@ source distribution.
 #include "MapData.hpp"
 #include "CommandIDs.hpp"
 #include "PacketIDs.hpp"
+#include "Server.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
@@ -100,6 +101,7 @@ void HatSystem::handleMessage(const xy::Message& msg)
             evt.x = position.x;
             evt.y = position.y;
             evt.type = ActorEvent::Spawned;
+            evt.serverTime = GameServer::getServerTime();
 
             m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
         }
@@ -174,6 +176,7 @@ void HatSystem::process(float dt)
             evt.x = position.x;
             evt.y = position.y;
             evt.type = ActorEvent::Spawned;
+            evt.serverTime = GameServer::getServerTime();
 
             m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
         }

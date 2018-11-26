@@ -37,6 +37,7 @@ source distribution.
 #include "NPCSystem.hpp"
 #include "MessageIDs.hpp"
 #include "DynamiteSystem.hpp"
+#include "Server.hpp"
 
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
@@ -394,6 +395,7 @@ void CrateSystem::destroy(xy::Entity entity)
         evt.x = position.x;
         evt.y = position.y;
         evt.type = ActorEvent::Spawned;
+        evt.serverTime = GameServer::getServerTime();
 
         m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
     };
@@ -426,6 +428,7 @@ void CrateSystem::destroy(xy::Entity entity)
             //broadcast to clients
             evt.actor = dynEnt.getComponent<Actor>();
             evt.type = ActorEvent::Spawned;
+            evt.serverTime = GameServer::getServerTime();
 
             m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
         }
@@ -470,6 +473,7 @@ void CrateSystem::spawn(Crate crate)
     evt.x = crate.spawnPosition.x;
     evt.y = crate.spawnPosition.y;
     evt.type = ActorEvent::Spawned;
+    evt.serverTime = GameServer::getServerTime();
 
     m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 }

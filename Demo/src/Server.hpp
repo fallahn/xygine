@@ -53,6 +53,8 @@ public:
 
     bool ready() { return m_ready; }
 
+    static sf::Int32 getServerTime();
+
 private:
     xy::NetHost m_host;
     std::atomic<bool> m_ready;
