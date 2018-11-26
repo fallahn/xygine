@@ -27,10 +27,12 @@ source distribution.
 
 #include "InterpolationSystem.hpp"
 
-InterpolationComponent::InterpolationComponent()
+InterpolationComponent::InterpolationComponent(InterpolationPoint initialPoint)
     : m_enabled         (true),
-    m_timeDifference    (0.f),
-    m_started           (true)
+    m_targetPoint       (initialPoint),
+    m_previousPoint     (initialPoint),
+    m_timeDifference    (0.0001f),
+    m_started           (false)
 {
 
 }
@@ -41,8 +43,13 @@ void InterpolationComponent::setTarget(const InterpolationPoint& target)
     if(m_buffer.size() < m_buffer.capacity())
     {
         m_buffer.push_back(target);
-        applyNextTarget();
     }
+
+    if (!m_started && m_buffer.size() == m_buffer.capacity())
+    {
+        m_started = true;
+    }
+    applyNextTarget();
 }
 
 void InterpolationComponent::setEnabled(bool enabled)
@@ -82,6 +89,5 @@ void InterpolationComponent::applyNextTarget()
         auto targetTimestamp = static_cast<float>(target.timestamp) / 1000.f;
         m_timeDifference = targetTimestamp - static_cast<float>(m_previousPoint.timestamp) / 1000.f;
         m_targetPoint = target;
-        //std::cout << m_timeDifference << "\n";
     }
 }

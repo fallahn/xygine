@@ -27,7 +27,6 @@ source distribution.
 
 #include "InterpolationSystem.hpp"
 
-#include <xyginext/ecs/components/NetInterpolation.hpp>
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/util/Math.hpp>
 

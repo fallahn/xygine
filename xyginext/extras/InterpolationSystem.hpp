@@ -30,6 +30,7 @@ source distribution.
 #include "CircularBuffer.hpp"
 #include <xyginext/ecs/System.hpp>
 
+
 /*!
 \brief Contains information required for a inperpolation to occur
 */
@@ -59,7 +60,14 @@ Requires:
 class InterpolationComponent final
 {
 public:
-    InterpolationComponent();
+    /*!
+    \brief Constructor
+    Interpolation components should be passed an interpolation
+    point containing the initial transform and server time of the
+    actor to prevent large lags between the default timestamp (0)
+    and the first server update
+    */
+    explicit InterpolationComponent(InterpolationPoint = {});
 
     /*!
     \brief Sets the target position and timestamp.
