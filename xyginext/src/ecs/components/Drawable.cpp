@@ -44,7 +44,8 @@ Drawable::Drawable()
     m_boolCount     (0),
     m_matCount      (0),
     m_cull          (true),
-    m_croppingArea  (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
+    m_croppingArea  (-std::numeric_limits<float>::max() / 2.f, -std::numeric_limits<float>::max() / 2.f,
+                    std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
     m_cropped       (false)
 {
 
@@ -58,7 +59,8 @@ Drawable::Drawable(const sf::Texture& texture)
     m_boolCount     (0),
     m_matCount      (0),
     m_cull          (true),
-    m_croppingArea  (-DefaultSceneSize / 2.f, DefaultSceneSize * 2.f),
+    m_croppingArea  (-std::numeric_limits<float>::max() / 2.f, -std::numeric_limits<float>::max() / 2.f,
+                    std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
     m_cropped       (false)
 {
     m_states.texture = &texture;
