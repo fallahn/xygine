@@ -68,12 +68,12 @@ namespace xy
         /*!
         \brief Implement to handle Events
         */
-        virtual void handleEvent(const sf::Event&) = 0;
+        virtual void handleEvent(const sf::Event&) {}
 
         /*!
         \brief Implement to process time based data
         */
-        virtual void process(float) = 0;
+        virtual void process(float) {}
 
         /*
         \brief Places a message on the system wide MessageBus
