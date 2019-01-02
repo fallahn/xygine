@@ -2,26 +2,10 @@
   Native File Dialog
 
   http://www.frogtoss.com/labs
-
-  This software is provided 'as-is', without any express or implied
-warranty.  In no event will the authors be held liable for any damages
-arising from the use of this software.
-
-Permission is granted to anyone to use this software for any purpose,
-including commercial applications, and to alter it and redistribute it
-freely, subject to the following restrictions:
-
-1. The origin of this software must not be misrepresented; you must not
-   claim that you wrote the original software. If you use this software
-   in a product, an acknowledgment in the product documentation would be
-   appreciated but is not required.
-2. Altered source versions must be plainly marked as such, and must not be
-   misrepresented as being the original software.
-3. This notice may not be removed or altered from any source distribution.
  */
 
 #include <AppKit/AppKit.h>
-#include "include/nfd.h"
+#include "nfd.h"
 #include "nfd_common.h"
 
 static NSArray *BuildAllowedFileTypes( const char *filterList )
@@ -133,7 +117,7 @@ static nfdresult_t AllocPathSet( NSArray *urls, nfdpathset_t *pathset )
 /* public */
 
 
-nfdresult_t NFD_OpenDialog( const char *filterList,
+nfdresult_t NFD_OpenDialog( const nfdchar_t *filterList,
                             const nfdchar_t *defaultPath,
                             nfdchar_t **outPath )
 {
@@ -162,6 +146,7 @@ nfdresult_t NFD_OpenDialog( const char *filterList,
         if ( !*outPath )
         {
             [pool release];
+            [keyWindow makeKeyAndOrderFront:nil];            
             return NFD_ERROR;
         }
         memcpy( *outPath, utf8Path, len+1 ); /* copy null term */
@@ -179,6 +164,7 @@ nfdresult_t NFD_OpenDialogMultiple( const nfdchar_t *filterList,
                                     nfdpathset_t *outPaths )
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSWindow *keyWindow = [[NSApplication sharedApplication] keyWindow];
     
     NSOpenPanel *dialog = [NSOpenPanel openPanel];
     [dialog setAllowsMultipleSelection:YES];
@@ -197,12 +183,14 @@ nfdresult_t NFD_OpenDialogMultiple( const nfdchar_t *filterList,
         if ( [urls count] == 0 )
         {
             [pool release];
+            [keyWindow makeKeyAndOrderFront:nil];            
             return NFD_CANCEL;
         }
 
         if ( AllocPathSet( urls, outPaths ) == NFD_ERROR )
         {
             [pool release];
+            [keyWindow makeKeyAndOrderFront:nil];            
             return NFD_ERROR;
         }
 
@@ -210,6 +198,7 @@ nfdresult_t NFD_OpenDialogMultiple( const nfdchar_t *filterList,
     }
     [pool release];
 
+    [keyWindow makeKeyAndOrderFront:nil];    
     return nfdResult;
 }
 
@@ -219,7 +208,8 @@ nfdresult_t NFD_SaveDialog( const nfdchar_t *filterList,
                             nfdchar_t **outPath )
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
+    NSWindow *keyWindow = [[NSApplication sharedApplication] keyWindow];
+    
     NSSavePanel *dialog = [NSSavePanel savePanel];
     [dialog setExtensionHidden:NO];
     
@@ -241,6 +231,7 @@ nfdresult_t NFD_SaveDialog( const nfdchar_t *filterList,
         if ( !*outPath )
         {
             [pool release];
+            [keyWindow makeKeyAndOrderFront:nil];            
             return NFD_ERROR;
         }
         memcpy( *outPath, utf8Path, byteLen );
@@ -248,7 +239,7 @@ nfdresult_t NFD_SaveDialog( const nfdchar_t *filterList,
     }
 
     [pool release];
-
+    [keyWindow makeKeyAndOrderFront:nil];
     return nfdResult;
 }
 
@@ -257,7 +248,7 @@ nfdresult_t NFD_PickFolder(const nfdchar_t *defaultPath,
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    NSWindow *keyWindow = [[NSApplication sharedApplication] keyWindow];    
+    NSWindow *keyWindow = [[NSApplication sharedApplication] keyWindow];
     NSOpenPanel *dialog = [NSOpenPanel openPanel];
     [dialog setAllowsMultipleSelection:NO];
     [dialog setCanChooseDirectories:YES];
@@ -280,6 +271,7 @@ nfdresult_t NFD_PickFolder(const nfdchar_t *defaultPath,
         if ( !*outPath )
         {
             [pool release];
+            [keyWindow makeKeyAndOrderFront:nil];            
             return NFD_ERROR;
         }
         memcpy( *outPath, utf8Path, len+1 ); /* copy null term */

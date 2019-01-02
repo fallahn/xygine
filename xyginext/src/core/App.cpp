@@ -371,6 +371,7 @@ void App::handleEvents()
 
     while (m_renderWindow.pollEvent(evt))
     {
+        ImGui::SFML::ProcessEvent(evt);
         if (evt.type == sf::Event::KeyReleased)
         {
             switch (evt.key.code)
@@ -385,11 +386,11 @@ void App::handleEvents()
             }
         }
 
-        if (/*Console::isVisible() &&*/
-            ImGui::SFML::ProcessEvent(evt))
-        {
-            continue; //imgui consumes keyboard events
-        }
+        //if (/*Console::isVisible() &&*/
+        //    ImGui::SFML::ProcessEvent(evt))
+        //{
+        //    continue; //imgui consumes keyboard events
+        //}
 
         switch (evt.type)
         {
