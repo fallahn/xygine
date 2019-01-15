@@ -9,16 +9,18 @@ although some maybe require linking external libraries. These files may or may n
 Contributions via pull requests are welcome, however. Currently available are:
 
 - ShapeUtils.hpp Creates basic geometric shapes from `xy::Drawable` components, useful
-for drawaing debug output.
+for drawing debug output.
 - PhysicsSystem.hpp Acts as a binding for the Chipmunk2D physics simulation library
 allowing it to be used with xygine's ECS. Requires linking to [chipmunk2D](https://chipmunk-physics.net/)
-- InterpolationSystem.hpp Useful for client side interpolation when creating multiplayer
-games, although can be useful when following a path for example.
+- InterpolationSystem.hpp Designed for client side interpolation when creating multiplayer
+games, although can be used when following a path for example.
 - CircularBuffer.hpp A templated, heap allocated fixed size circular buffer. If you know
 what that is, then maybe it'll be useful :)
+- SliderSystem.hpp A system for creating simple 'slide' animations, such as those used
+in the menu of the xygine Demo application.
 
 /*********************************************************************  
-(c) Matt Marchant 2017 - 2018  
+(c) Matt Marchant 2017 - 2019  
 http://trederia.blogspot.com  
 
 xygineXT - Zlib license.  
