@@ -37,31 +37,33 @@ source distribution.
 using namespace xy;
 
 Drawable::Drawable()
-    : m_textureCount(0),
-    m_floatCount    (0),
-    m_vec2Count     (0),
-    m_vec3Count     (0),
-    m_boolCount     (0),
-    m_matCount      (0),
-    m_cull          (true),
-    m_croppingArea  (-std::numeric_limits<float>::max() / 2.f, -std::numeric_limits<float>::max() / 2.f,
-                    std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
-    m_cropped       (false)
+    : m_textureCount    (0),
+    m_floatCount        (0),
+    m_vec2Count         (0),
+    m_vec3Count         (0),
+    m_boolCount         (0),
+    m_matCount          (0),
+    m_currentTexCount   (0),
+    m_cull              (true),
+    m_croppingArea      (-std::numeric_limits<float>::max() / 2.f, -std::numeric_limits<float>::max() / 2.f,
+                        std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
+    m_cropped           (false)
 {
 
 }
 
 Drawable::Drawable(const sf::Texture& texture)
-    : m_textureCount(0),
-    m_floatCount    (0),
-    m_vec2Count     (0),
-    m_vec3Count     (0),
-    m_boolCount     (0),
-    m_matCount      (0),
-    m_cull          (true),
-    m_croppingArea  (-std::numeric_limits<float>::max() / 2.f, -std::numeric_limits<float>::max() / 2.f,
-                    std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
-    m_cropped       (false)
+    : m_textureCount    (0),
+    m_floatCount        (0),
+    m_vec2Count         (0),
+    m_vec3Count         (0),
+    m_boolCount         (0),
+    m_matCount          (0),
+    m_currentTexCount   (0),
+    m_cull              (true),
+    m_croppingArea      (-std::numeric_limits<float>::max() / 2.f, -std::numeric_limits<float>::max() / 2.f,
+                        std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
+    m_cropped           (false)
 {
     m_states.texture = &texture;
 }
@@ -231,6 +233,18 @@ void Drawable::bindUniform(const std::string& name, const float* matrix)
     }
 }
 
+void Drawable::bindUniformToCurrentTexture(const std::string& name)
+{
+    if (m_currentTexCount < MaxBindings)
+    {
+        auto result = std::find(m_currentTexBindings.begin(), m_currentTexBindings.end(), name);
+        if (result == m_currentTexBindings.end())
+        {
+            m_currentTexBindings[m_currentTexCount++] = name;
+        }
+    }
+}
+
 void Drawable::setBlendMode(sf::BlendMode mode)
 {
     m_states.blendMode = mode;
@@ -329,6 +343,10 @@ void Drawable::applyShader() const
     {
         const auto&[name, value] = m_matBindings[i];
         shader->setUniform(name, sf::Glsl::Mat4(value));
+    }
+    for (auto i = 0u; i < m_currentTexCount; ++i)
+    {
+        shader->setUniform(m_currentTexBindings[i], sf::Shader::CurrentTexture);
     }
 }
 

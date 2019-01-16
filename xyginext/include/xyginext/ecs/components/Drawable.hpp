@@ -95,6 +95,12 @@ namespace xy
         void bindUniform(const std::string& name, const float* value);
 
         /*!
+        \brief Binds the given uniform to the value of sf::Shader::CurrentTexture.
+        Up to 6 uniforms may be bound to this value.
+        */
+        void bindUniformToCurrentTexture(const std::string& name);
+
+        /*!
         \brief Sets the blend mode used when drawing
         */
         void setBlendMode(sf::BlendMode);
@@ -216,12 +222,14 @@ namespace xy
         std::array<std::pair<std::string, sf::Vector3f>, MaxBindings> m_vec3Bindings;
         std::array<std::pair<std::string, bool>, MaxBindings> m_boolBindings;
         std::array<std::pair<std::string, const float*>, MaxBindings> m_matBindings;
+        std::array<std::string, MaxBindings> m_currentTexBindings;
         std::size_t m_textureCount;
         std::size_t m_floatCount;
         std::size_t m_vec2Count;
         std::size_t m_vec3Count;
         std::size_t m_boolCount;
         std::size_t m_matCount;
+        std::size_t m_currentTexCount;
 
         bool m_cull;
 
