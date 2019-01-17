@@ -73,6 +73,7 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             if (name == "src")
             {
                 texture = &textureResource.get(p.getValue<std::string>());
+                texturePath = p.getValue<std::string>();
             }
             else if (name == "blendmode")
             {
@@ -308,3 +309,48 @@ bool EmitterSettings::loadFromFile(const std::string& path, ResourceHandler& tex
     return false;
 }
 
+bool EmitterSettings::save(const std::string& path)
+{
+    auto emitterName = xy::FileSystem::getFileName(path);
+    emitterName = emitterName.substr(0, emitterName.size() - 4);
+
+    ConfigFile cfg("particle_system", emitterName);
+    cfg.addProperty("src", "\"" + texturePath + "\"");
+    
+    if (blendmode == sf::BlendAdd)
+    {
+        cfg.addProperty("blendmode", "add");
+    }
+    else if (blendmode == sf::BlendMultiply)
+    {
+        cfg.addProperty("blendmode", "multiply");
+    }
+    else
+    {
+        cfg.addProperty("blendmode", "alpha");
+    }
+
+    cfg.addProperty("gravity").setValue(gravity);
+    cfg.addProperty("velocity").setValue(initialVelocity);
+    cfg.addProperty("spread").setValue(spread * 2.f);
+    cfg.addProperty("lifetime").setValue(lifetime);
+    cfg.addProperty("lifetime_variance").setValue(lifetimeVariance);
+    cfg.addProperty("colour").setValue(colour);
+    cfg.addProperty("random_inital_rotation").setValue(randomInitialRotation);
+    cfg.addProperty("rotation_speed").setValue(rotationSpeed);
+    cfg.addProperty("scale_affector").setValue(scaleModifier);
+    cfg.addProperty("size").setValue(size);
+    cfg.addProperty("emit_rate").setValue(emitRate);
+    cfg.addProperty("emit_count").setValue(static_cast<sf::Int32>(emitCount));
+    cfg.addProperty("spawn_radius").setValue(spawnRadius);
+    cfg.addProperty("spawn_offset").setValue(spawnOffset);
+    cfg.addProperty("release_count").setValue(releaseCount);
+
+    auto forceObj = cfg.addObject("forces");
+    for (const auto& f : forces)
+    {
+        forceObj->addProperty("force").setValue(f);
+    }
+
+    return cfg.save(path);
+}

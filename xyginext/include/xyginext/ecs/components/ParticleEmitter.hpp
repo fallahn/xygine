@@ -85,8 +85,10 @@ namespace xy
         sf::Vector2f spawnOffset; //! <initial spawn position is offset this much
         sf::Int32 releaseCount = 0; //! <number of particles release before stopping (0 for infinite)
         sf::Texture* texture = nullptr;
+        std::string texturePath;
         bool loadFromFile(const std::string&, TextureResource&);
         bool loadFromFile(const std::string&, ResourceHandler&);
+        bool save(const std::string& path); //! <saves the current settings to a config file
     };
 
     /*!

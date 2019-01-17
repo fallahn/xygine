@@ -162,7 +162,7 @@ std::string FileSystem::getFileName(const std::string& path)
             return(path.substr(i + 1, path.length() - i));
         }
 
-        return "";
+        return path;
     };
     
 
