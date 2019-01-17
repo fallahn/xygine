@@ -309,7 +309,7 @@ bool EmitterSettings::loadFromFile(const std::string& path, ResourceHandler& tex
     return false;
 }
 
-bool EmitterSettings::save(const std::string& path)
+bool EmitterSettings::saveToFile(const std::string& path)
 {
     auto emitterName = xy::FileSystem::getFileName(path);
     emitterName = emitterName.substr(0, emitterName.size() - 4);

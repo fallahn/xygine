@@ -32,6 +32,7 @@ source distribution.
 #include <xyginext/ecs/components/Camera.hpp>
 
 #include <xyginext/ecs/systems/ParticleSystem.hpp>
+#include <xyginext/gui/Gui.hpp>
 
 MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx)
     : xy::State         (ss,ctx),
@@ -78,8 +79,55 @@ void MyFirstState::setup()
 
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
+    entity.getComponent<xy::Transform>().move(100.f, 0.f);
     entity.addComponent<xy::ParticleEmitter>().start();
 
     m_emitterSettings = &entity.getComponent<xy::ParticleEmitter>().settings;
 
+    auto windowFunc = [&, entity]() mutable
+    {
+        xy::Nim::setNextWindowSize(400.f, 550.f);
+        xy::Nim::setNextWindowConstraints(400.f, 550.f, 400.f, 550.f);
+        xy::Nim::begin("Emitter Settings");
+
+        xy::Nim::slider("Gravity X", m_emitterSettings->gravity.x, -1000.f, 1000.f);
+        xy::Nim::slider("Gravity Y", m_emitterSettings->gravity.y, -1000.f, 1000.f);
+        
+        xy::Nim::slider("Velocity X", m_emitterSettings->initialVelocity.x, -1000.f, 1000.f);
+        xy::Nim::slider("Velocity Y", m_emitterSettings->initialVelocity.y, -1000.f, 1000.f);
+
+        xy::Nim::slider("Spread", m_emitterSettings->spread, 0.f, 360.f);
+        xy::Nim::slider("Lifetime", m_emitterSettings->lifetime, 0.f, 10.f);
+        xy::Nim::slider("Lifetime Variance", m_emitterSettings->lifetimeVariance, 0.f, 10.f);
+
+        xy::Nim::slider("Rotation Speed", m_emitterSettings->rotationSpeed, 0.f, 500.f);
+        xy::Nim::slider("Scale Affector", m_emitterSettings->scaleModifier, 0.f, 5.f);
+        xy::Nim::slider("Size", m_emitterSettings->size, 0.f, 600.f);
+
+        xy::Nim::slider("Emit Rate", m_emitterSettings->emitRate, 0.f, 150.f);
+        //TODO numeric up/down for emit count
+
+        xy::Nim::slider("Spawn Radius", m_emitterSettings->spawnRadius, 0.f, 500.f);
+        xy::Nim::slider("Spawn Offset X", m_emitterSettings->spawnOffset.x, 0.f, 500.f);
+        xy::Nim::slider("Spawn Offset Y", m_emitterSettings->spawnOffset.y, 0.f, 500.f);
+
+        //TODO numeric up/down for release count
+
+        xy::Nim::checkbox("Random Initial Rotation", &m_emitterSettings->randomInitialRotation);
+        //TODO colour picker
+
+        if (xy::Nim::button("Reset"))
+        {
+            entity.getComponent<xy::ParticleEmitter>().settings = xy::EmitterSettings();
+        }
+
+        //TODO texture browser
+        //TODO blendmode drop down
+        //TODO start/stop buttons
+        //TODO load button
+        //TODO save button        
+
+        xy::Nim::end();
+    };
+    registerWindow(windowFunc);
 }

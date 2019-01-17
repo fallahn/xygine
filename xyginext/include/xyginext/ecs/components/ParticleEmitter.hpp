@@ -88,7 +88,7 @@ namespace xy
         std::string texturePath;
         bool loadFromFile(const std::string&, TextureResource&);
         bool loadFromFile(const std::string&, ResourceHandler&);
-        bool save(const std::string& path); //! <saves the current settings to a config file
+        bool saveToFile(const std::string&); //! <saves the current settings to a config file
     };
 
     /*!
