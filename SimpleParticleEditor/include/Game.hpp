@@ -1,5 +1,5 @@
 /*********************************************************************
-(c) Matt Marchant 2017
+(c) Matt Marchant 2019
 http://trederia.blogspot.com
 
 xygineXT - Zlib license.

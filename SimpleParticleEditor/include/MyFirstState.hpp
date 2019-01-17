@@ -1,5 +1,6 @@
 /*********************************************************************
 (c) Jonny Paton 2018
+(c) Matt Marchant 2019
 
 xygineXT - Zlib license.
 
@@ -26,15 +27,22 @@ source distribution.
 
 #pragma once
 
+#include "States.hpp"
+
 #include <xyginext/core/State.hpp>
 #include <xyginext/ecs/Scene.hpp>
+#include <xyginext/gui/GuiClient.hpp>
 
-class MyFirstState final : public xy::State
+namespace xy
+{
+    struct EmitterSettings;
+}
+
+class MyFirstState final : public xy::State, public xy::GuiClient
 {
 public:
     MyFirstState(xy::StateStack&, xy::State::Context);
 
-private:
     bool handleEvent(const sf::Event &evt) override;
     
     void handleMessage(const xy::Message &) override;
@@ -43,8 +51,11 @@ private:
     
     void draw() override;
     
-    xy::StateID stateID() const override;
-    
+    xy::StateID stateID() const override { return States::MyFirstState; }
+
+private:    
     xy::Scene m_scene;
-    
+    xy::EmitterSettings* m_emitterSettings;
+
+    void setup();
 };

@@ -26,13 +26,22 @@ source distribution.
 *********************************************************************/
 
 #include "MyFirstState.hpp"
-#include "States.hpp"
 
-MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx) :
-xy::State(ss,ctx),
-m_scene(ctx.appInstance.getMessageBus())
+#include <xyginext/ecs/components/Transform.hpp>
+#include <xyginext/ecs/components/ParticleEmitter.hpp>
+#include <xyginext/ecs/components/Camera.hpp>
+
+#include <xyginext/ecs/systems/ParticleSystem.hpp>
+
+MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx)
+    : xy::State         (ss,ctx),
+    m_scene             (ctx.appInstance.getMessageBus()),
+    m_emitterSettings   (nullptr)
 {
+    setup();
 
+    m_scene.getActiveCamera().getComponent<xy::Camera>().setView(ctx.defaultView.getSize());
+    m_scene.getActiveCamera().getComponent<xy::Camera>().setViewport(ctx.defaultView.getViewport());
 }
 
 bool MyFirstState::handleEvent(const sf::Event& evt)
@@ -58,7 +67,19 @@ void MyFirstState::draw()
     rw->draw(m_scene);
 }
 
-xy::StateID MyFirstState::stateID() const
+
+//private
+void MyFirstState::setup()
 {
-    return States::MyFirstState;
+    auto& mb = xy::App::getActiveInstance()->getMessageBus();
+
+    m_scene.addSystem<xy::ParticleSystem>(mb);
+
+
+    auto entity = m_scene.createEntity();
+    entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
+    entity.addComponent<xy::ParticleEmitter>().start();
+
+    m_emitterSettings = &entity.getComponent<xy::ParticleEmitter>().settings;
+
 }
