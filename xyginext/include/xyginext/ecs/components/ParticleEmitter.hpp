@@ -36,6 +36,7 @@ source distribution.
 #include <SFML/Graphics/Rect.hpp>
 
 #include <array>
+#include <string>
 
 namespace sf
 {
