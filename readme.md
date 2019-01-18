@@ -91,7 +91,7 @@ https://github.com/eliasdaler/imgui-sfml
 
 
 /*********************************************************************  
-(c) Matt Marchant 2017 - 2018  
+(c) Matt Marchant & contributors 2017 - 2019  
 http://trederia.blogspot.com  
 
 xygineXT - Zlib license.  
