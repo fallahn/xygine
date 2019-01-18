@@ -121,6 +121,28 @@ void Nim::showToolTip(const std::string& message)
     }
 }
 
+bool Nim::colourPicker(const std::string& label, sf::Color& output)
+{
+    float op[4] = 
+    {
+        static_cast<float>(output.r) / 255.f,
+        static_cast<float>(output.g) / 255.f, 
+        static_cast<float>(output.b) / 255.f, 
+        static_cast<float>(output.a) / 255.f 
+    };
+
+    if (ImGui::ColorEdit4(label.c_str(), op))
+    {
+        output.r = static_cast<sf::Uint8>(op[0] * 255.f);
+        output.g = static_cast<sf::Uint8>(op[1] * 255.f);
+        output.b = static_cast<sf::Uint8>(op[2] * 255.f);
+        output.a = static_cast<sf::Uint8>(op[3] * 255.f);
+
+        return true;
+    }
+    return false;
+}
+
 void Nim::end()
 {
     ImGui::End();

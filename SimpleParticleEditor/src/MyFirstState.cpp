@@ -39,7 +39,7 @@ namespace
 {
     const float ItemWidth = 160.f;
     const float WindowWidth = 350.f;
-    const float WindowHeight = 580.f;
+    const float WindowHeight = 640.f;
 }
 
 MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx)
@@ -100,6 +100,27 @@ void MyFirstState::setup()
         xy::Nim::setNextWindowConstraints(WindowWidth, WindowHeight, WindowWidth, WindowHeight);
         xy::Nim::begin("Emitter Settings");
 
+        xy::Nim::text(m_workingDirectory);
+        if (xy::Nim::button("Browse Path"))
+        {
+            auto path = xy::FileSystem::openFolderDialogue();
+            if (!path.empty())
+            {
+                m_workingDirectory = path;
+
+                //try trimming the loaded texture path
+                if (!m_emitterSettings->texturePath.empty())
+                {
+                    if (m_emitterSettings->texturePath.find(path) != std::string::npos)
+                    {
+                        m_emitterSettings->texturePath = m_emitterSettings->texturePath.substr(path.size());
+                    }
+                }
+            }
+        }
+        xy::Nim::sameLine(); xy::Nim::showToolTip("Current working directory. Set this to your project directory and textures will be loaded and saved in a path relative to this");
+        xy::Nim::separator();
+
         xy::Nim::slider("Gravity X", m_emitterSettings->gravity.x, -1000.f, 1000.f, ItemWidth);
         xy::Nim::sameLine(); xy::Nim::showToolTip("Gravitational force applied to the velocity");
         xy::Nim::slider("Gravity Y", m_emitterSettings->gravity.y, -1000.f, 1000.f, ItemWidth);
@@ -144,7 +165,8 @@ void MyFirstState::setup()
 
         xy::Nim::checkbox("Random Initial Rotation", &m_emitterSettings->randomInitialRotation);
         xy::Nim::sameLine(); xy::Nim::showToolTip("Applies a random initial rotation to spawned particles. Textured particles only");
-        //TODO colour picker
+        
+        xy::Nim::colourPicker("Colour", m_emitterSettings->colour);
 
         xy::Nim::separator();
 
@@ -174,7 +196,7 @@ void MyFirstState::setup()
         {
             xy::Nim::text(m_emitterSettings->texturePath);
         }
-        //xy::Nim::sameLine();
+
         if (xy::Nim::button("Browse Texture"))
         {
             auto path = xy::FileSystem::openFileDialogue("png,jpg,bmp");
@@ -193,7 +215,7 @@ void MyFirstState::setup()
                 m_emitterSettings->texturePath = path;
             }
         }
-        xy::Nim::sameLine(); xy::Nim::showToolTip("For a relative path to a texture set the working directory, below");
+        xy::Nim::sameLine(); xy::Nim::showToolTip("For a relative path to a texture set the working directory, above");
 
         xy::Nim::separator();
 
@@ -243,6 +265,7 @@ void MyFirstState::setup()
                         m_emitterSettings->texture = &m_textures.get(texPath);
                     }
                 }
+                entity.getComponent<xy::ParticleEmitter>().stop();
             }
         }
         xy::Nim::sameLine();
@@ -258,26 +281,6 @@ void MyFirstState::setup()
                 m_emitterSettings->saveToFile(path);
             }
         }
-
-        xy::Nim::text(m_workingDirectory);
-        if (xy::Nim::button("Browse Path"))
-        {
-            auto path = xy::FileSystem::openFolderDialogue();
-            if (!path.empty())
-            {
-                m_workingDirectory = path;
-
-                //try trimming the loaded texture path
-                if (!m_emitterSettings->texturePath.empty())
-                {
-                    if (m_emitterSettings->texturePath.find(path) != std::string::npos)
-                    {
-                        m_emitterSettings->texturePath = m_emitterSettings->texturePath.substr(path.size());
-                    }
-                }
-            }
-        }
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Current working directory. Set this to your project directory and textures will be loaded and saved in a path relative to this");
 
         xy::Nim::end();
     };

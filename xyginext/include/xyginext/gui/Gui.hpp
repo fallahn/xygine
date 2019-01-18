@@ -202,6 +202,12 @@ namespace xy
         XY_EXPORT_API void showToolTip(const std::string& message);
 
         /*!
+        \brief Displays an RGBA colour picker and places the result in output
+        \param output Reference to an sf::Colour in which to store the result
+        */
+        XY_EXPORT_API bool colourPicker(const std::string& label, sf::Color& output);
+
+        /*!
         \see ImGui::End()
         */
         XY_EXPORT_API void end();

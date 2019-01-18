@@ -8,6 +8,12 @@ and previewed in real time. Created particle systems can then be loaded by any x
 project which uses the ParticleEmitter components and ParticleSystem.
 
 
+When first launching the editor remember to set the working directory via the on screen
+menu to that of your project. The editor will still work without it, but the exported
+*.xyp files will need to be manually edited for the correct texture paths.
+
+
+Improvements and suggestions are welcome via github.
 
 /*********************************************************************  
 (c) Matt Marchant 2019  

@@ -61,7 +61,7 @@ void Game::draw()
 
 bool Game::initialise()
 {
-    setWindowTitle("Simple Particle Editor");
+    setWindowTitle("Simple Particle Editor - Press F1 for Options");
 
     registerStates();
     m_stateStack.pushState(States::MyFirstState);
