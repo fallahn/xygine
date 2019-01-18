@@ -32,6 +32,9 @@ source distribution.
 #include <xyginext/core/State.hpp>
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/gui/GuiClient.hpp>
+#include <xyginext/resources/Resource.hpp>
+
+#include <string>
 
 namespace xy
 {
@@ -56,6 +59,11 @@ public:
 private:    
     xy::Scene m_scene;
     xy::EmitterSettings* m_emitterSettings;
+
+    std::int32_t m_selectedBlendMode;
+
+    xy::TextureResource m_textures;
+    std::string m_workingDirectory;
 
     void setup();
 };

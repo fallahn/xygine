@@ -530,11 +530,17 @@ std::string FileSystem::getConfigDirectory(const std::string& appName)
     return { out };
 }
 
-std::string FileSystem::openFileDialogue()
+std::string FileSystem::openFileDialogue(const std::string& filter)
 {
     // Show native file dialog, blocking call
     nfdchar_t* outPath = nullptr;
-    nfdresult_t result = NFD_OpenDialog(nullptr, nullptr, &outPath);
+    const nfdchar_t* pFilter = nullptr;
+    if (!filter.empty())
+    {
+        pFilter = filter.c_str();
+    }
+
+    nfdresult_t result = NFD_OpenDialog(pFilter, nullptr, &outPath);
     
     if (result == NFD_OKAY)
     {
@@ -575,6 +581,35 @@ std::string FileSystem::openFolderDialogue()
         xy::Logger::log("Error during native file dialog: " + error);
         return {};
     }
+}
+
+std::string FileSystem::saveFileDialogue(const std::string& filter)
+{
+    nfdchar_t* outPath = nullptr;
+    const nfdchar_t* pFilter = nullptr;
+    if (!filter.empty())
+    {
+        pFilter = filter.c_str();
+    }
+
+    nfdresult_t result = NFD_SaveDialog(pFilter, nullptr, &outPath);
+
+    if (result == NFD_OKAY)
+    {
+        return outPath;
+    }
+    else if (result == NFD_CANCEL)
+    {
+        xy::Logger::log("User cancelled native file dialog");
+        return {};
+    }
+    else
+    {
+        std::string error = NFD_GetError();
+        xy::Logger::log("Error during native file dialog: " + error);
+        return{};
+    }
+    return {};
 }
 
 std::string FileSystem::getResourcePath()

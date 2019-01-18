@@ -55,6 +55,7 @@ void ParticleEmitter::start()
 void ParticleEmitter::stop()
 {
     m_running = false;
+    m_releaseCount = -1;
 }
 
 
@@ -72,8 +73,20 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             auto name = p.getName();
             if (name == "src")
             {
-                texture = &textureResource.get(p.getValue<std::string>());
-                texturePath = p.getValue<std::string>();
+                //make sure to replace windows back slashes
+                auto path = p.getValue<std::string>();
+                if (!path.empty())
+                {
+                    std::replace(path.begin(), path.end(), '\\', '/');
+
+                    if (path[0] == '/')
+                    {
+                        path = path.substr(1);
+                    }
+
+                    texture = &textureResource.get(path);
+                    texturePath = path;
+                }
             }
             else if (name == "blendmode")
             {
@@ -315,7 +328,18 @@ bool EmitterSettings::saveToFile(const std::string& path)
     emitterName = emitterName.substr(0, emitterName.size() - 4);
 
     ConfigFile cfg("particle_system", emitterName);
-    cfg.addProperty("src", "\"" + texturePath + "\"");
+
+    auto texPath = texturePath;
+    std::replace(texPath.begin(), texPath.end(), '\\', '/');
+    if (!texPath.empty())
+    {
+        if (texPath[0] == '/')
+        {
+            texPath = texPath.substr(1);
+        }
+    }
+
+    cfg.addProperty("src", "\"" + texPath + "\"");
     
     if (blendmode == sf::BlendAdd)
     {
