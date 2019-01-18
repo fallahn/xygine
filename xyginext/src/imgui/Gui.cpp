@@ -1,5 +1,5 @@
 /*********************************************************************
-(c) Matt Marchant 2017 - 2018
+(c) Matt Marchant 2017 - 2019
 http://trederia.blogspot.com
 
 xygineXT - Zlib license.
@@ -75,9 +75,50 @@ void Nim::checkbox(const std::string& title, bool* value)
     ImGui::Checkbox(title.c_str(), value);
 }
 
-void Nim::slider(const std::string& title, float& value, float min, float max)
+void Nim::slider(const std::string& title, float& value, float min, float max, float itemWidth)
 {
+    ImGui::PushItemWidth(itemWidth);
     ImGui::SliderFloat(title.c_str(), &value, min, max);
+    ImGui::PopItemWidth();
+}
+
+void Nim::separator()
+{
+    ImGui::Separator();
+}
+
+void Nim::sameLine(float posX, float spacing)
+{
+    ImGui::SameLine(posX, spacing);
+}
+
+bool Nim::simpleCombo(const std::string& label, std::int32_t& index, const char* items, float itemWidth)
+{
+    ImGui::PushItemWidth(itemWidth);
+    auto result = ImGui::Combo(label.c_str(), &index, items);
+    ImGui::PopItemWidth();
+    return result;
+}
+
+bool Nim::input(const std::string& label, std::int32_t& value, float itemWidth)
+{
+    ImGui::PushItemWidth(itemWidth);
+    auto result = ImGui::InputInt(label.c_str(), &value);
+    ImGui::PopItemWidth();
+    return result;
+}
+
+void Nim::showToolTip(const std::string& message)
+{
+    ImGui::TextDisabled("(?)");
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(450.0f);
+        ImGui::TextUnformatted(message.c_str());
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
 }
 
 void Nim::end()

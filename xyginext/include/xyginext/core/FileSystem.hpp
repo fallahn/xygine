@@ -1,5 +1,5 @@
 /*********************************************************************
-(c) Matt Marchant 2017 - 2018
+(c) Matt Marchant 2017 - 2019
 http://trederia.blogspot.com
 
 xygineXT - Zlib license.
@@ -111,9 +111,10 @@ namespace xy
 
         /*!
         \brief Show a native file dialog to open a file
+        \param filter File extention filter in the format "png,jpg,bmp"
         \returns path the path selected by the user
         */
-        static std::string openFileDialogue();
+        static std::string openFileDialogue(const std::string& filter = "");
 
         /*!
         \brief Show a native file dialog to open a folder
@@ -121,6 +122,13 @@ namespace xy
         */
         static std::string openFolderDialogue();
         
+        /*!
+        \brief Show a platform native file dialogue for saving files.
+        \param filter String containing file extension filter in the format "png,jpg,bmp"
+        \returns string containing the selected file path
+        */
+        static std::string saveFileDialogue(const std::string& filter = "");
+
         /*!
          \brief Currently only relevent on macOS when creating an app bundle.
          Basically a wrapper around the SFML resourcePath() function.

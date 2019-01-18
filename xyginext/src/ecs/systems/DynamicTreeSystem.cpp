@@ -1,6 +1,6 @@
 /*********************************************************************
 Copyright (c) 2009 Erin Catto http://www.box2d.org
-(c) Matt Marchant 2017 - 2018
+(c) Matt Marchant 2017 - 2019
 http://trederia.blogspot.com
 
 xygineXT - Zlib license.

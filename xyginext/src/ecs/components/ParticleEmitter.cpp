@@ -1,5 +1,5 @@
 /*********************************************************************
-(c) Matt Marchant 2017 - 2018
+(c) Matt Marchant 2017 - 2019
 http://trederia.blogspot.com
 
 xygineXT - Zlib license.
@@ -55,6 +55,7 @@ void ParticleEmitter::start()
 void ParticleEmitter::stop()
 {
     m_running = false;
+    m_releaseCount = -1;
 }
 
 
@@ -72,7 +73,20 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             auto name = p.getName();
             if (name == "src")
             {
-                texture = &textureResource.get(p.getValue<std::string>());
+                //make sure to replace windows back slashes
+                auto path = p.getValue<std::string>();
+                if (!path.empty())
+                {
+                    std::replace(path.begin(), path.end(), '\\', '/');
+
+                    if (path[0] == '/')
+                    {
+                        path = path.substr(1);
+                    }
+
+                    texture = &textureResource.get(path);
+                    texturePath = path;
+                }
             }
             else if (name == "blendmode")
             {
@@ -308,3 +322,59 @@ bool EmitterSettings::loadFromFile(const std::string& path, ResourceHandler& tex
     return false;
 }
 
+bool EmitterSettings::saveToFile(const std::string& path)
+{
+    auto emitterName = xy::FileSystem::getFileName(path);
+    emitterName = emitterName.substr(0, emitterName.size() - 4);
+
+    ConfigFile cfg("particle_system", emitterName);
+
+    auto texPath = texturePath;
+    std::replace(texPath.begin(), texPath.end(), '\\', '/');
+    if (!texPath.empty())
+    {
+        if (texPath[0] == '/')
+        {
+            texPath = texPath.substr(1);
+        }
+    }
+
+    cfg.addProperty("src", "\"" + texPath + "\"");
+    
+    if (blendmode == sf::BlendAdd)
+    {
+        cfg.addProperty("blendmode", "add");
+    }
+    else if (blendmode == sf::BlendMultiply)
+    {
+        cfg.addProperty("blendmode", "multiply");
+    }
+    else
+    {
+        cfg.addProperty("blendmode", "alpha");
+    }
+
+    cfg.addProperty("gravity").setValue(gravity);
+    cfg.addProperty("velocity").setValue(initialVelocity);
+    cfg.addProperty("spread").setValue(spread * 2.f);
+    cfg.addProperty("lifetime").setValue(lifetime);
+    cfg.addProperty("lifetime_variance").setValue(lifetimeVariance);
+    cfg.addProperty("colour").setValue(colour);
+    cfg.addProperty("random_inital_rotation").setValue(randomInitialRotation);
+    cfg.addProperty("rotation_speed").setValue(rotationSpeed);
+    cfg.addProperty("scale_affector").setValue(scaleModifier);
+    cfg.addProperty("size").setValue(size);
+    cfg.addProperty("emit_rate").setValue(emitRate);
+    cfg.addProperty("emit_count").setValue(static_cast<sf::Int32>(emitCount));
+    cfg.addProperty("spawn_radius").setValue(spawnRadius);
+    cfg.addProperty("spawn_offset").setValue(spawnOffset);
+    cfg.addProperty("release_count").setValue(releaseCount);
+
+    auto forceObj = cfg.addObject("forces");
+    for (const auto& f : forces)
+    {
+        forceObj->addProperty("force").setValue(f);
+    }
+
+    return cfg.save(path);
+}

@@ -1,5 +1,5 @@
 /*********************************************************************
-(c) Matt Marchant 2017 - 2018
+(c) Matt Marchant 2017 - 2019
 http://trederia.blogspot.com
 
 xygineXT - Zlib license.
@@ -170,7 +170,36 @@ namespace xy
         /*!
         \see ImGui::FloatSlider()
         */
-        XY_EXPORT_API void slider(const std::string& title, float& value, float min, float max);
+        XY_EXPORT_API void slider(const std::string& title, float& value, float min, float max, float itemWidth = 200.f);
+
+        /*!
+        \see ImGui::Separator()
+        */
+        XY_EXPORT_API void separator();
+
+        /*!
+        \see ImGui::SameLine()
+        */
+        XY_EXPORT_API void sameLine(float posX = 0.f, float spacing = -1.f);
+
+        /*!
+        \brief Simple combo box
+        \param name String containing the label of the combobox
+        \param index Reference to the integer variable which holds the selected index
+        \param items A string containing a null delimited list of items eg "item01\0item02\0item the third\0\0"
+        */
+        XY_EXPORT_API bool simpleCombo(const std::string& title, std::int32_t& index, const char* items, float itemWidth = 200.f);
+
+        /*!
+        \see ImGui::InputInt()
+        */
+        XY_EXPORT_API bool input(const std::string& label, std::int32_t& value, float itemWidth = 200.f);
+
+        /*!
+        \brief Displays a tool tip when the previously drawn item is hovered.
+        \param message String containing the message to display
+        */
+        XY_EXPORT_API void showToolTip(const std::string& message);
 
         /*!
         \see ImGui::End()

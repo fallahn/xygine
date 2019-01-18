@@ -1,5 +1,5 @@
 /*********************************************************************
-(c) Matt Marchant 2017 - 2018
+(c) Matt Marchant 2017 - 2019
 http://trederia.blogspot.com
 
 xygineXT - Zlib license.
@@ -36,6 +36,7 @@ source distribution.
 #include <SFML/Graphics/Rect.hpp>
 
 #include <array>
+#include <string>
 
 namespace sf
 {
@@ -69,24 +70,26 @@ namespace xy
     {
         sf::BlendMode blendmode = sf::BlendAlpha;
         sf::Vector2f gravity;
-        sf::Vector2f initialVelocity;
+        sf::Vector2f initialVelocity = { 0.f, -100.f };
         float spread = 0.f;
         std::array<sf::Vector2f, 4> forces{};
         float lifetime = 1.f;
         float lifetimeVariance = 0.f;
-        sf::Color colour;
+        sf::Color colour = sf::Color::White;
         float rotationSpeed = 0.f;
         bool randomInitialRotation = true;
         float scaleModifier = 0.f;
-        float size = 1.f; //! <diameter of particle
-        float emitRate = 1.f; //! <particles per second
-        sf::Uint32 emitCount = 1; //! <amount relased at once
-        float spawnRadius = 0.f;
+        float size = 10.f; //! <diameter of particle
+        float emitRate = 10.f; //! <particles per second
+        sf::Uint32 emitCount = 1; //! <amount released at once
+        float spawnRadius = 10.f;
         sf::Vector2f spawnOffset; //! <initial spawn position is offset this much
-        sf::Int32 releaseCount = 0; //! <number of particles release before stopping (0 for infinite)
+        sf::Int32 releaseCount = 0; //! <number of particles released before stopping (0 for infinite)
         sf::Texture* texture = nullptr;
+        std::string texturePath;
         bool loadFromFile(const std::string&, TextureResource&);
         bool loadFromFile(const std::string&, ResourceHandler&);
+        bool saveToFile(const std::string&); //! <saves the current settings to a config file
     };
 
     /*!
