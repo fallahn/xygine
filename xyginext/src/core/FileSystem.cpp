@@ -166,12 +166,12 @@ std::string FileSystem::getFileName(const std::string& path)
     };
     
 
-#ifdef _WIN32 //try windows formatted paths first
+//#ifdef _WIN32 //try windows formatted paths first
     std::string retVal = searchFunc('\\', path);
-    if (!retVal.empty()) return retVal;
-#endif
-
-    return searchFunc('/', path);
+    return searchFunc('/', retVal);
+//#else
+//    return searchFunc('/', path);
+//#endif
 }
 
 std::string FileSystem::getFilePath(const std::string& path)
