@@ -244,6 +244,15 @@ sf::Vector2f Transform::getWorldPosition() const
     return getWorldTransform().transformPoint({});
 }
 
+float Transform::getWorldRotation() const
+{
+    if (m_parent)
+    {
+        return m_parent->getWorldRotation() + getRotation();
+    }
+    return getRotation();
+}
+
 //private
 void Transform::setDepth(std::size_t depth)
 {

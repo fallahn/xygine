@@ -134,7 +134,7 @@ void ParticleSystem::process(float dt)
                 if (emitter.m_nextFreeParticle < emitter.m_particles.size() - 1)
                 {
                     auto& tx = entity.getComponent<Transform>();
-                    auto rotation = tx.getRotation();
+                    auto rotation = tx.getWorldRotation();
 
                     const auto& settings = emitter.settings;
                     XY_ASSERT(settings.emitRate > 0, "Emit rate must be grater than 0");

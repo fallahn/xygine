@@ -77,6 +77,12 @@ namespace xy
         sf::Vector2f getWorldPosition() const;
 
         /*!
+        \brief Returns the sum of this and all the transform's parents rotations
+        if they exist, else returns the transform's current rotation
+        */
+        float getWorldRotation() const;
+
+        /*!
         \brief Returns the depth of this transform in the scene hierachy.
         A value of 0 means it has no parent, 1 means one parent and so on
         */
