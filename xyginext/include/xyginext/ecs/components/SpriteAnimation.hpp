@@ -44,6 +44,12 @@ namespace xy
         void play(std::size_t index) { m_id = index; m_playing = true; }
 
         /*!
+        \brief Returns the currently playing animation index, or the
+        last played index if the animation is currently not playing
+        */
+        std::size_t getAnimationIndex() const { return m_id; }
+
+        /*!
         \brief Pause the playing animation, if there is one
         */
         void pause() { m_playing = false; }
