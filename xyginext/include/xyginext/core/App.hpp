@@ -332,6 +332,9 @@ namespace xy
         static void addStatusControl(const std::function<void()>&, const GuiClient*);
         static void removeStatusControls(const GuiClient*);
 
+        static void addConsoleTab(const std::string&, const std::function<void()>&, const GuiClient*);
+        static void removeConsoleTab(const GuiClient*);
+
         static void addWindow(const std::function<void()>&, const GuiClient*);
         static void removeWindows(const GuiClient*);
 

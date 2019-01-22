@@ -41,6 +41,7 @@ source distribution.
 #include <unordered_map>
 #include <algorithm>
 #include <array>
+#include <tuple>
 
 using namespace xy;
 namespace nim = ImGui;
@@ -53,6 +54,9 @@ namespace
     std::vector<std::string>    m_debugLines;
     std::vector<std::pair<std::function<void()>, const GuiClient*>> m_statusControls;
     
+    using ConsoleTab = std::tuple<std::string, std::function<void()>, const GuiClient*>;
+    std::vector<ConsoleTab> m_consoleTabs;
+
     std::vector<sf::Vector2u> resolutions;
     //int currentAALevel = 0;
     int currentResolution = 0;
@@ -360,6 +364,16 @@ void Console::draw()
         }
     }
     
+    //display registered tabs
+    for (const auto& tab : m_consoleTabs)
+    {
+        const auto&[name, func, c] = tab;
+        if (ImGui::TabItem(name.c_str()))
+        {
+            func();
+        }
+    }
+
     nim::EndTabBar();
 
     nim::End();
@@ -617,6 +631,22 @@ void Console::removeStatusControls(const GuiClient* c)
                                           {
                                               return pair.second == c;
                                           }), std::end(m_statusControls));
+}
+
+void Console::addConsoleTab(const std::string& name, const std::function<void()>& f, const GuiClient* c)
+{
+    m_consoleTabs.push_back(std::make_tuple(name, f, c));
+}
+
+void Console::removeConsoleTab(const GuiClient* c)
+{
+    m_consoleTabs.erase(std::remove_if(std::begin(m_consoleTabs),
+        std::end(m_consoleTabs),
+        [c](const ConsoleTab& tab)
+    {
+        const auto&[name, f, p] = tab;
+        return c == p;
+    }), std::end(m_consoleTabs));
 }
 
 void Console::printStat(const std::string& name, const std::string& value)

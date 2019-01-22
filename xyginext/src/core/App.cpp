@@ -453,6 +453,16 @@ void App::removeStatusControls(const GuiClient* c)
     Console::removeStatusControls(c);
 }
 
+void App::addConsoleTab(const std::string& name, const std::function<void()>& func, const GuiClient* c)
+{
+    Console::addConsoleTab(name, func, c);
+}
+
+void App::removeConsoleTab(const GuiClient* c)
+{
+    Console::removeConsoleTab(c);
+}
+
 void App::addWindow(const std::function<void()>& func, const GuiClient* c)
 {
     XY_ASSERT(appInstance, "App not properly instanciated!");

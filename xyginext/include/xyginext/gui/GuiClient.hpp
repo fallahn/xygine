@@ -56,8 +56,21 @@ namespace xy
         appear between the Begin() and End() commands *without* Begin() and End()
         themselves. These controls will then appear in the default status window
         all the time the object which inherits this interface exists.
+        DEPRECATED
         */
+        [[deprecated("Prefer registerConsoleTab()")]]
         void registerStatusControls(const std::function<void()>&);
+
+        /*!
+        \brief Registers one or more gui controls with the console window.
+        The given function should include the Nim/ImGui functions as they would
+        appear between the Begin() and End() commands *without* Begin() and End()
+        themselves. These controls will then appear in a new tab in the console window
+        all the time the object which inherits this interface exists.
+        \param name Title to give the new tab
+        \param function Gui function to render the contents of the tab
+        */
+        void registerConsoleTab(const std::string& name, const std::function<void()>&);
 
         /*!
         \brief Registers a custom window with the ImGui renderer.
