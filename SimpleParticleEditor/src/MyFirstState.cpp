@@ -140,7 +140,7 @@ void MyFirstState::setup()
         xy::Nim::sameLine(); xy::Nim::showToolTip("Rotation in degrees per second - textured particles only");
         xy::Nim::slider("Scale Affector", m_emitterSettings->scaleModifier, -5.f, 5.f, ItemWidth);
         xy::Nim::sameLine(); xy::Nim::showToolTip("How rapidly a particle is scaled in size over its lifetime");
-        xy::Nim::slider("Size", m_emitterSettings->size, 0.1f, 600.f, ItemWidth);
+        xy::Nim::slider("Size", m_emitterSettings->size, 0.1f, 100.f, ItemWidth);
         xy::Nim::sameLine(); xy::Nim::showToolTip("Initial size of a particle");
 
         xy::Nim::slider("Emit Rate", m_emitterSettings->emitRate, 0.f, 150.f, ItemWidth);
