@@ -35,7 +35,6 @@ source distribution.
 #include "xyginext/gui/GuiClient.hpp"
 
 #include "../imgui/imgui.h"
-#include "../imgui/imgui_tabs.h"
 
 #include <list>
 #include <unordered_map>
@@ -256,7 +255,7 @@ void Console::draw()
     nim::BeginTabBar("Tabs");
     
     // Console
-    if (nim::TabItem("Console"))
+    if (nim::BeginTabItem("Console"))
     {
         
         nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
@@ -280,10 +279,11 @@ void Console::draw()
         {
             nim::SetKeyboardFocusHere(-1);
         }
+        nim::EndTabItem();
     }
     
     // Video options
-    if (nim::TabItem("Video"))
+    if (nim::BeginTabItem("Video"))
     {       
         nim::Combo("Resolution", &currentResolution, resolutionNames.data());
 
@@ -321,10 +321,11 @@ void Console::draw()
 
             App::getActiveInstance()->applyVideoSettings(settings);
         }
+        nim::EndTabItem();
     }
 
     // Audio
-    if (nim::TabItem("Audio"))
+    if (nim::BeginTabItem("Audio"))
     {
         nim::Text("NOTE: only AudioSystem sounds are affected.");
 
@@ -339,10 +340,11 @@ void Console::draw()
             nim::SliderFloat(AudioMixer::getLabel(i).c_str(), &channelVol[i], 0.f, 1.f);
             AudioMixer::setVolume(channelVol[i], i);
         }
+        nim::EndTabItem();
     }
     
     // Stats
-    if (nim::TabItem("Stats"))
+    if (nim::BeginTabItem("Stats"))
     {
         nim::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         nim::NewLine();
@@ -350,6 +352,7 @@ void Console::draw()
         {
             ImGui::TextUnformatted(line.c_str());
         }
+        nim::EndTabItem();
     }
     m_debugLines.clear();
     m_debugLines.reserve(10);
@@ -358,9 +361,10 @@ void Console::draw()
     int count(0);
     for (const auto& func : m_statusControls)
     {
-        if (ImGui::TabItem(("Stat " + std::to_string(count)).c_str()))
+        if (ImGui::BeginTabItem(("Stat " + std::to_string(count)).c_str()))
         {
             func.first();
+            nim::EndTabItem();
         }
     }
     
@@ -368,9 +372,10 @@ void Console::draw()
     for (const auto& tab : m_consoleTabs)
     {
         const auto&[name, func, c] = tab;
-        if (ImGui::TabItem(name.c_str()))
+        if (ImGui::BeginTabItem(name.c_str()))
         {
             func();
+            nim::EndTabItem();
         }
     }
 
