@@ -137,7 +137,7 @@ namespace xy
         /*!
         \brief Set an area to which to crop the drawable.
         The given rectangle should be in local coordinates, relative to
-        the text.
+        the drawable.
         */
         void setCroppingArea(sf::FloatRect);
 

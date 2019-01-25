@@ -78,9 +78,13 @@ std::vector<std::string> FileSystem::listFiles(std::string path)
 
 #ifdef _WIN32
     if (path.back() != '/')
+    {
         path.append("/*");
+    }
     else
+    {
         path.append("*");
+    }
 
     //convert to wide chars for windows
     std::basic_string<TCHAR> wPath;
@@ -111,9 +115,13 @@ std::vector<std::string> FileSystem::listFiles(std::string path)
     return results;
 #else
     if (path.back() != '/')
+    {
         path.append("/.");
+    }
     else
+    {
         path.append(".");
+    }
 
     
     DIR* dir = opendir(path.c_str());
@@ -144,9 +152,13 @@ std::vector<std::string> FileSystem::listFiles(std::string path)
 std::string FileSystem::getFileExtension(const std::string& path)
 {
     if (path.find_last_of(".") != std::string::npos)
+    {
         return path.substr(path.find_last_of("."));
+    }
     else
+    {
         return "";
+    }
 }
 
 std::string FileSystem::getFileName(const std::string& path)
@@ -191,12 +203,13 @@ std::string FileSystem::getFilePath(const std::string& path)
     };
 
 
-#ifdef _WIN32 //try windows formatted paths first
+//#ifdef _WIN32 //try windows formatted paths first
     std::string retVal = searchFunc('\\', path);
-    if (!retVal.empty()) return retVal;
-#endif
+    //if (!retVal.empty()) return retVal;
+    return searchFunc('/', retVal);
+//#endif
 
-    return searchFunc('/', path);
+//    return searchFunc('/', path);
 }
 
 bool FileSystem::fileExists(const std::string& path)
