@@ -84,7 +84,7 @@ namespace
     ConfigFile convars;
     const std::string convarName("convars.cfg");
 }
-int textEditCallback(ImGuiTextEditCallbackData* data);
+int textEditCallback(ImGuiInputTextCallbackData* data);
 
 //public
 void Console::print(const std::string& line)
@@ -245,143 +245,143 @@ void Console::draw()
     if (!visible) return;
 
     nim::SetNextWindowSizeConstraints({ 640, 480 }, { 1024.f, 768.f });
-    if (!nim::Begin("Console", &visible))
+    if (nim::Begin("Console", &visible))
     {
-        //window is collapsed so save your effort..
+        if (nim::BeginTabBar("Tabs"))
+        {
+            // Console
+            if (nim::BeginTabItem("Console"))
+            {
+
+                nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
+                nim::TextUnformatted(output.c_str(), output.c_str() + output.size());
+                nim::SetScrollHereY();
+                nim::EndChild();
+
+                nim::Separator();
+
+                nim::PushItemWidth(620.f);
+
+                bool focus = false;
+                if (focus = ImGui::InputText("Input", input, MAX_INPUT_CHARS,
+                    ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory,
+                    &textEditCallback))
+                {
+                    doCommand(input);
+                }
+
+                nim::PopItemWidth();
+
+                ImGui::SetItemDefaultFocus();
+                if (focus || ImGui::IsItemHovered())
+                {
+                    ImGui::SetKeyboardFocusHere(-1);
+                }
+
+                nim::EndTabItem();
+            }
+
+            // Video options
+            if (nim::BeginTabItem("Video"))
+            {
+                nim::Combo("Resolution", &currentResolution, resolutionNames.data());
+
+                XY_ASSERT(App::getRenderWindow(), "no valid window");
+
+                nim::Checkbox("Full Screen", &fullScreen);
+
+                nim::Checkbox("V-Sync", &vSync);
+                if (vSync)
+                {
+                    useFrameLimit = false;
+                }
+
+                nim::Checkbox("Limit Framerate", &useFrameLimit);
+                if (useFrameLimit)
+                {
+                    vSync = false;
+                }
+
+                nim::SameLine();
+                nim::PushItemWidth(80.f);
+                nim::InputInt("Frame Rate", &frameLimit);
+                nim::PopItemWidth();
+                frameLimit = std::max(10, std::min(frameLimit, 360));
+
+                if (nim::Button("Apply", { 50.f, 20.f }))
+                {
+                    //apply settings
+                    auto settings = App::getActiveInstance()->getVideoSettings();
+                    settings.VideoMode.width = resolutions[currentResolution].x;
+                    settings.VideoMode.height = resolutions[currentResolution].y;
+                    settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
+                    settings.VSync = vSync;
+                    settings.FrameLimit = useFrameLimit ? frameLimit : 0;
+
+                    App::getActiveInstance()->applyVideoSettings(settings);
+                }
+                nim::EndTabItem();
+            }
+
+            // Audio
+            if (nim::BeginTabItem("Audio"))
+            {
+                nim::Text("NOTE: only AudioSystem sounds are affected.");
+
+                static float maxVol = AudioMixer::getMasterVolume();
+                nim::SliderFloat("Master", &maxVol, 0.f, 1.f);
+                AudioMixer::setMasterVolume(maxVol);
+
+                static std::array<float, AudioMixer::MaxChannels> channelVol;
+                for (auto i = 0u; i < AudioMixer::MaxChannels; ++i)
+                {
+                    channelVol[i] = AudioMixer::getVolume(i);
+                    nim::SliderFloat(AudioMixer::getLabel(i).c_str(), &channelVol[i], 0.f, 1.f);
+                    AudioMixer::setVolume(channelVol[i], i);
+                }
+                nim::EndTabItem();
+            }
+
+            // Stats
+            if (nim::BeginTabItem("Stats"))
+            {
+                nim::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                nim::NewLine();
+                for (auto& line : m_debugLines)
+                {
+                    ImGui::TextUnformatted(line.c_str());
+                }
+                nim::EndTabItem();
+            }
+            m_debugLines.clear();
+            m_debugLines.reserve(10);
+
+            //display any registered controls
+            int count(0);
+            for (const auto& func : m_statusControls)
+            {
+                if (ImGui::BeginTabItem(("Stat " + std::to_string(count)).c_str()))
+                {
+                    func.first();
+                    nim::EndTabItem();
+                }
+            }
+
+            //display registered tabs
+            for (const auto& tab : m_consoleTabs)
+            {
+                const auto&[name, func, c] = tab;
+                if (ImGui::BeginTabItem(name.c_str()))
+                {
+                    func();
+                    nim::EndTabItem();
+                }
+            }
+
+            nim::EndTabBar();
+        }
         nim::End();
-        return;
     }
-    
-    nim::BeginTabBar("Tabs");
-    
-    // Console
-    if (nim::BeginTabItem("Console"))
-    {
-        
-        nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
-        nim::TextUnformatted(output.c_str(), output.c_str() + output.size());
-        nim::SetScrollHere();
-        nim::EndChild();
-
-        nim::Separator();
-
-        nim::PushItemWidth(620.f);
-        if (nim::InputText("", input, MAX_INPUT_CHARS,
-            ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory,
-            textEditCallback))
-        {
-            doCommand(input);
-        }
-        nim::PopItemWidth();
-
-        if (nim::IsItemHovered() || (nim::IsRootWindowOrAnyChildFocused()
-            && !nim::IsAnyItemActive() && !nim::IsMouseClicked(0)))
-        {
-            nim::SetKeyboardFocusHere(-1);
-        }
-        nim::EndTabItem();
-    }
-    
-    // Video options
-    if (nim::BeginTabItem("Video"))
-    {       
-        nim::Combo("Resolution", &currentResolution, resolutionNames.data());
-
-        XY_ASSERT(App::getRenderWindow(), "no valid window");
-        
-        nim::Checkbox("Full Screen", &fullScreen);
-
-        nim::Checkbox("V-Sync", &vSync);
-        if (vSync)
-        {
-            useFrameLimit = false;
-        }
-        
-        nim::Checkbox("Limit Framerate", &useFrameLimit);
-        if (useFrameLimit)
-        {
-            vSync = false;
-        }
-
-        nim::SameLine();
-        nim::PushItemWidth(80.f);
-        nim::InputInt("Frame Rate", &frameLimit);
-        nim::PopItemWidth();
-        frameLimit = std::max(10, std::min(frameLimit, 360));
-
-        if (nim::Button("Apply", { 50.f, 20.f }))
-        {
-            //apply settings
-            auto settings = App::getActiveInstance()->getVideoSettings();
-            settings.VideoMode.width = resolutions[currentResolution].x;
-            settings.VideoMode.height = resolutions[currentResolution].y;
-            settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
-            settings.VSync = vSync;
-            settings.FrameLimit = useFrameLimit ? frameLimit : 0;
-
-            App::getActiveInstance()->applyVideoSettings(settings);
-        }
-        nim::EndTabItem();
-    }
-
-    // Audio
-    if (nim::BeginTabItem("Audio"))
-    {
-        nim::Text("NOTE: only AudioSystem sounds are affected.");
-
-        static float maxVol = AudioMixer::getMasterVolume();
-        nim::SliderFloat("Master", &maxVol, 0.f, 1.f);
-        AudioMixer::setMasterVolume(maxVol);
-
-        static std::array<float, AudioMixer::MaxChannels> channelVol;
-        for (auto i = 0u; i < AudioMixer::MaxChannels; ++i)
-        {
-            channelVol[i] = AudioMixer::getVolume(i);
-            nim::SliderFloat(AudioMixer::getLabel(i).c_str(), &channelVol[i], 0.f, 1.f);
-            AudioMixer::setVolume(channelVol[i], i);
-        }
-        nim::EndTabItem();
-    }
-    
-    // Stats
-    if (nim::BeginTabItem("Stats"))
-    {
-        nim::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        nim::NewLine();
-        for (auto& line : m_debugLines)
-        {
-            ImGui::TextUnformatted(line.c_str());
-        }
-        nim::EndTabItem();
-    }
-    m_debugLines.clear();
-    m_debugLines.reserve(10);
-    
-    //display any registered controls
-    int count(0);
-    for (const auto& func : m_statusControls)
-    {
-        if (ImGui::BeginTabItem(("Stat " + std::to_string(count)).c_str()))
-        {
-            func.first();
-            nim::EndTabItem();
-        }
-    }
-    
-    //display registered tabs
-    for (const auto& tab : m_consoleTabs)
-    {
-        const auto&[name, func, c] = tab;
-        if (ImGui::BeginTabItem(name.c_str()))
-        {
-            func();
-            nim::EndTabItem();
-        }
-    }
-
-    nim::EndTabBar();
-
-    nim::End();
 #endif //USE_IMGUI
 }
 
@@ -512,7 +512,7 @@ void Console::finalise()
     convars.save(FileSystem::getConfigDirectory(APP_NAME) + convarName);
 }
 
-int textEditCallback(ImGuiTextEditCallbackData* data)
+int textEditCallback(ImGuiInputTextCallbackData* data)
 {
     //use this to scroll up and down through command history
 
