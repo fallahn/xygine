@@ -263,7 +263,7 @@ void Console::draw()
                 nim::PushItemWidth(620.f);
 
                 bool focus = false;
-                if (focus = ImGui::InputText("Input", input, MAX_INPUT_CHARS,
+                if (focus = ImGui::InputText(" ", input, MAX_INPUT_CHARS,
                     ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory,
                     &textEditCallback))
                 {
@@ -380,8 +380,9 @@ void Console::draw()
 
             nim::EndTabBar();
         }
-        nim::End();
+        
     }
+    nim::End();
 #endif //USE_IMGUI
 }
 
