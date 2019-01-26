@@ -5,6 +5,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/Window/Joystick.hpp>
 
 namespace sf
 {
@@ -20,9 +21,10 @@ namespace ImGui
 {
 namespace SFML
 {
-    void Init(sf::RenderTarget& target, bool loadDefaultFont = true);
+    void Init(sf::RenderWindow& window, bool loadDefaultFont = true);
+    void Init(sf::Window& window, sf::RenderTarget& target, bool loadDefaultFont = true);
 
-    bool ProcessEvent(const sf::Event& event);
+    void ProcessEvent(const sf::Event& event);
 
     void Update(sf::RenderWindow& window, sf::Time dt);
     void Update(sf::Window& window, sf::RenderTarget& target, sf::Time dt);
@@ -34,6 +36,17 @@ namespace SFML
 
     void UpdateFontTexture();
     sf::Texture& GetFontTexture();
+
+    // joystick functions
+    void SetActiveJoystickId(unsigned int joystickId);
+    void SetJoytickDPadThreshold(float threshold);
+    void SetJoytickLStickThreshold(float threshold);
+
+    void SetJoystickMapping(int action, unsigned int joystickButton);
+    void SetDPadXAxis(sf::Joystick::Axis dPadXAxis, bool inverted = false);
+    void SetDPadYAxis(sf::Joystick::Axis dPadYAxis, bool inverted = false);
+    void SetLStickXAxis(sf::Joystick::Axis lStickXAxis, bool inverted = false);
+    void SetLStickYAxis(sf::Joystick::Axis lStickYAxis, bool inverted = false);
 }
 
 // custom ImGui widgets for SFML stuff

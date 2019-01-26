@@ -39,7 +39,7 @@ namespace
 {
     const float ItemWidth = 160.f;
     const float WindowWidth = 350.f;
-    const float WindowHeight = 640.f;
+    const float WindowHeight = 680.f;
 }
 
 MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx)

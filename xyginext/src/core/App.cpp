@@ -132,7 +132,7 @@ void App::run()
     loadSettings();
 
     ImGui::SFML::Init(m_renderWindow);
-    ImGui::StyleColorsLight(&ImGui::GetStyle());
+    ImGui::StyleColorsDark(&ImGui::GetStyle());
     Console::init();
     running = initialise();
 
