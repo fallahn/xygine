@@ -38,13 +38,13 @@ namespace xy
 {
     class AudioResource;
 
-    /*
+    /*!
     \brief Contains one or more definitions used to create AudioEmitter components.
     Similarly to the SpriteSheet class used for loading Sprites from configuration
     files, AudioScapes can be used to define the settings used to create AudioEmitter
     components. AudioScape files usually have the extension *.xas with the following
     ConfigFile compatible layout:
-
+    \code
     audio_scape NAME
     {
         emitter NAME_ONE
@@ -73,7 +73,7 @@ namespace xy
             mixer_channel = INT
         }
     }
-
+    \endcode
     Emitter properties are optional (except path and streaming) and any omitted properties
     will fall back to their default values.
     */
