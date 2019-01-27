@@ -18,6 +18,8 @@ games, although can be used when following a path for example.
 what that is, then maybe it'll be useful :)
 - SliderSystem.hpp A system for creating simple 'slide' animations, such as those used
 in the menu of the xygine Demo application.
+ - SoundEffectsDirector.hpp/cpp An entity pool used for efficiently playing sound effects
+ based on events received on the message bus. Implements the xy::Director interface
 
 /*********************************************************************  
 (c) Matt Marchant 2017 - 2019  
