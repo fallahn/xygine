@@ -27,11 +27,134 @@ source distribution.
 
 #include "xyginext/audio/AudioSourceImpl.hpp"
 #include "xyginext/core/FileSystem.hpp"
+#include "xyginext/core/Log.hpp"
 
 using namespace xy;
 using namespace xy::Detail;
 
 //-------------------------------------------------
+AudioNull::AudioNull()
+{
+
+}
+
+void AudioNull::play()
+{
+    LOG("No sound loaded.", xy::Logger::Type::Warning);
+}
+
+void AudioNull::pause()
+{
+    LOG("No sound loaded.", xy::Logger::Type::Warning);
+}
+
+void AudioNull::stop()
+{
+    LOG("No sound loaded.", xy::Logger::Type::Warning);
+}
+
+void AudioNull::setPitch(float)
+{
+    LOG("No sound loaded. Pitch not set", xy::Logger::Type::Warning);
+}
+
+void AudioNull::setVolume(float)
+{
+    LOG("No sound loaded. Volume not set", xy::Logger::Type::Warning);
+}
+
+void AudioNull::setPosition(sf::Vector3f)
+{
+    LOG("No sound loaded. Position not set", xy::Logger::Type::Warning);
+}
+
+void AudioNull::setRelativeTolistener(bool)
+{
+    LOG("No sound loaded. Relativity not set", xy::Logger::Type::Warning);
+}
+
+void AudioNull::setMinDistance(float)
+{
+    LOG("No sound loaded. MinDistance not set", xy::Logger::Type::Warning);
+}
+
+void AudioNull::setAttenuation(float)
+{
+    LOG("No sound loaded. Attenuation not set", xy::Logger::Type::Warning);
+}
+
+void AudioNull::setLooped(bool)
+{
+    LOG("No sound loaded. Loop not set", xy::Logger::Type::Warning);
+}
+
+float AudioNull::getPitch() const
+{
+    LOG("No sound loaded. Pitch not set", xy::Logger::Type::Warning);
+    return 0.f;
+}
+
+float AudioNull::getVolume() const
+{
+    LOG("No sound loaded. Volume not set", xy::Logger::Type::Warning);
+    return 0.f;
+}
+
+sf::Vector3f AudioNull::getPosition() const
+{
+    LOG("No sound loaded. Position not set", xy::Logger::Type::Warning);
+    return {};
+}
+
+bool AudioNull::isRelativeToListener() const
+{
+    LOG("No sound loaded.", xy::Logger::Type::Warning);
+    return false;
+}
+
+float AudioNull::getMinDistance() const
+{
+    LOG("No sound loaded. MinDistance not set", xy::Logger::Type::Warning);
+    return 0.f;
+}
+
+float AudioNull::getAttenuation() const
+{
+    LOG("No sound loaded. Attenuation not set", xy::Logger::Type::Warning);
+    return 0.f;
+}
+
+bool AudioNull::isLooped() const
+{
+    LOG("No sound loaded. No loop set", xy::Logger::Type::Warning);
+    return false;
+}
+
+sf::Int32 AudioNull::getStatus() const
+{
+    LOG("No sound loaded. Sound not playing", xy::Logger::Type::Warning);
+    return sf::Sound::Status::Stopped;
+}
+
+sf::Time AudioNull::getDuration() const
+{
+    LOG("No sound loaded. No duration", xy::Logger::Type::Warning);
+    return sf::seconds(0.f);
+}
+
+sf::Time AudioNull::getPlayingOffset() const
+{
+    LOG("No sound loaded. Offset not set", xy::Logger::Type::Warning);
+    return sf::seconds(0.f);
+}
+
+void AudioNull::setPlayingOffset(sf::Time offset)
+{
+    LOG("No sound loaded. Offset not set", xy::Logger::Type::Warning);
+}
+
+//--------------------------------------------------
+
 AudioSound::AudioSound(const sf::SoundBuffer& buff)
 {
     m_sound.setBuffer(buff);

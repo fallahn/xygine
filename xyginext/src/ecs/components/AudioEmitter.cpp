@@ -38,7 +38,7 @@ AudioEmitter::AudioEmitter()
     m_volume            (1.f),
     m_nextStatus        (Status::Stopped)
 {
-
+    m_impl = std::make_unique<Detail::AudioNull>();
 }
 
 //public

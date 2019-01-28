@@ -72,15 +72,48 @@ namespace xy
 
             enum class Type
             {
-                Sound, Music
+                Sound, Music, Null
             };
             virtual Type getType() const = 0;
+        };
+
+        class AudioNull final : public AudioSourceImpl
+        {
+        public:
+            AudioNull();
+
+            void play() override;
+            void pause() override;
+            void stop() override;
+
+            void setPitch(float) override;
+            void setVolume(float) override;
+            void setPosition(sf::Vector3f) override;
+            void setRelativeTolistener(bool) override;
+            void setMinDistance(float) override;
+            void setAttenuation(float) override;
+            void setLooped(bool) override;
+
+            float getPitch() const override;
+            float getVolume() const override;
+            sf::Vector3f getPosition() const override;
+            bool isRelativeToListener() const override;
+            float getMinDistance() const override;
+            float getAttenuation() const override;
+            bool isLooped() const override;
+
+            sf::Int32 getStatus() const override;
+            sf::Time getDuration() const override;
+            sf::Time getPlayingOffset() const override;
+            void setPlayingOffset(sf::Time) override;
+
+            Type getType() const override { return Type::Null; }
         };
 
         class AudioSound final : public AudioSourceImpl
         {
         public:
-            AudioSound(const sf::SoundBuffer&);
+            explicit AudioSound(const sf::SoundBuffer&);
             ~AudioSound();
 
             void play() override;
@@ -117,7 +150,7 @@ namespace xy
         class AudioMusic final : public AudioSourceImpl
         {
         public:
-            AudioMusic(const std::string&);
+            explicit AudioMusic(const std::string&);
             ~AudioMusic();
 
             void play() override;
