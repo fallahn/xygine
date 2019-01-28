@@ -243,19 +243,18 @@ void Console::draw()
 {
 #ifdef USE_IMGUI
     if (!visible) return;
-
+    //ImGui::ShowDemoWindow();
     nim::SetNextWindowSizeConstraints({ 640, 480 }, { 1024.f, 768.f });
-    if (nim::Begin("Console", &visible))
+    if (nim::Begin("Console", &visible, ImGuiWindowFlags_NoScrollbar))
     {
         if (nim::BeginTabBar("Tabs"))
         {
             // Console
             if (nim::BeginTabItem("Console"))
             {
-
                 nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
                 nim::TextUnformatted(output.c_str(), output.c_str() + output.size());
-                nim::SetScrollHereY();
+                nim::SetScrollHereY(1.f); //TODO track when the user scrolled and set to correct position
                 nim::EndChild();
 
                 nim::Separator();
@@ -263,9 +262,9 @@ void Console::draw()
                 nim::PushItemWidth(620.f);
 
                 bool focus = false;
-                if (focus = ImGui::InputText(" ", input, MAX_INPUT_CHARS,
+                if ((focus = ImGui::InputText(" ", input, MAX_INPUT_CHARS,
                     ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory,
-                    &textEditCallback))
+                    &textEditCallback)))
                 {
                     doCommand(input);
                 }
@@ -273,7 +272,9 @@ void Console::draw()
                 nim::PopItemWidth();
 
                 ImGui::SetItemDefaultFocus();
-                if (focus || ImGui::IsItemHovered())
+                if (focus || ImGui::IsItemHovered()
+                    || (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) 
+                        && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0)))
                 {
                     ImGui::SetKeyboardFocusHere(-1);
                 }

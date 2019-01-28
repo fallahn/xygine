@@ -208,6 +208,31 @@ namespace xy
         XY_EXPORT_API bool colourPicker(const std::string& label, sf::Color& output);
 
         /*!
+        \see ImGui::BeginMenuBar()
+        */
+        XY_EXPORT_API bool beginMenuBar();
+
+        /*!
+        \see ImGui::EndMenuBar()
+        */
+        XY_EXPORT_API void endMenuBar();
+
+        /*!
+        \see ImGui::BeginMenu()
+        */
+        XY_EXPORT_API bool beginMenu(const std::string& title);
+
+        /*!
+        \see ImGui::EndMenu()
+        */
+        XY_EXPORT_API void endMenu();
+
+        /*!
+        \see ImGui::MenuItem()
+        */
+        XY_EXPORT_API bool menuItem(const std::string& title, bool& selected);
+
+        /*!
         \see ImGui::End()
         */
         XY_EXPORT_API void end();

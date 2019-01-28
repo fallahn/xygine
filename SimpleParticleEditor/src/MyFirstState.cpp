@@ -100,6 +100,22 @@ void MyFirstState::setup()
         xy::Nim::setNextWindowConstraints(WindowWidth, WindowHeight, WindowWidth, WindowHeight);
         xy::Nim::begin("Emitter Settings");
 
+        bool load = false;
+        bool save = false;
+
+        if (xy::Nim::beginMenuBar())
+        {
+            if (xy::Nim::beginMenu("File"))
+            {
+                xy::Nim::menuItem("Load", load);
+                xy::Nim::menuItem("Save", save);
+
+                xy::Nim::endMenu();
+            }
+
+            xy::Nim::endMenuBar();
+        }
+
         xy::Nim::text(m_workingDirectory);
         if (xy::Nim::button("Browse Path"))
         {
@@ -239,7 +255,7 @@ void MyFirstState::setup()
 
         //load button
         //save button
-        if (xy::Nim::button("Load"))
+        if (load)
         {
             auto path = xy::FileSystem::openFileDialogue("xyp");
             if (!path.empty())
@@ -268,8 +284,8 @@ void MyFirstState::setup()
                 entity.getComponent<xy::ParticleEmitter>().stop();
             }
         }
-        xy::Nim::sameLine();
-        if (xy::Nim::button("Save"))
+
+        if (save)
         {
             auto path = xy::FileSystem::saveFileDialogue("xyp");
             if (!path.empty())

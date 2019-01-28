@@ -42,7 +42,7 @@ namespace
 
 void Nim::begin(const std::string& title, bool* b)
 {
-    ImGui::Begin(title.c_str(), b);
+    ImGui::Begin(title.c_str(), b, ImGuiWindowFlags_MenuBar);
 }
 
 void Nim::setNextWindowSize(float x, float y)
@@ -141,6 +141,31 @@ bool Nim::colourPicker(const std::string& label, sf::Color& output)
         return true;
     }
     return false;
+}
+
+bool Nim::beginMenuBar()
+{
+    return ImGui::BeginMenuBar();
+}
+
+void Nim::endMenuBar()
+{
+    ImGui::EndMenuBar();
+}
+
+bool Nim::beginMenu(const std::string& title)
+{
+    return ImGui::BeginMenu(title.c_str());
+}
+
+void Nim::endMenu()
+{
+    ImGui::EndMenu();
+}
+
+bool Nim::menuItem(const std::string& title, bool& selected)
+{
+    return ImGui::MenuItem(title.c_str(), nullptr, &selected);
 }
 
 void Nim::end()
