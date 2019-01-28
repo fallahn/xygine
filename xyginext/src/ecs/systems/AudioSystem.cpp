@@ -47,6 +47,22 @@ AudioSystem::AudioSystem(MessageBus& mb)
 }
 
 //public
+void AudioSystem::handleMessage(const xy::Message& msg)
+{
+    if (msg.id == Message::AudioMessage)
+    {
+        const auto& data = msg.getData<Message::AudioEvent>();
+        if (data.type == Message::AudioEvent::ChannelVolumeChanged)
+        {
+            auto& entities = getEntities();
+            for (auto entity : entities)
+            {
+                entity.getComponent<AudioEmitter>().applyMixerSettings();
+            }
+        }
+    }
+}
+
 void AudioSystem::process(float)
 {
     //set listener position to active camera

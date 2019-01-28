@@ -43,6 +43,8 @@ namespace xy
     public:
         explicit AudioSystem(MessageBus&);
 
+        void handleMessage(const xy::Message&) override;
+
         void process(float) override;
 
     private:

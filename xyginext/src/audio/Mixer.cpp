@@ -28,6 +28,8 @@ source distribution.
 #include "xyginext/audio/Mixer.hpp"
 #include "xyginext/util/Math.hpp"
 #include "xyginext/core/Assert.hpp"
+#include "xyginext/core/Message.hpp"
+#include "xyginext/core/App.hpp"
 
 using namespace xy;
 
@@ -74,6 +76,9 @@ void AudioMixer::setVolume(float vol, sf::Uint8 channel)
 {
     XY_ASSERT(channel < MaxChannels, "Channel index out of range");
     AudioMixer::m_channels[channel] = Util::Math::clamp(vol, 0.f, 10.f);
+
+    auto* msg = xy::App::getActiveInstance()->getMessageBus().post<Message::AudioEvent>(Message::AudioMessage);
+    msg->type = Message::AudioEvent::ChannelVolumeChanged;
 }
 
 float AudioMixer::getVolume(sf::Uint8 channel)

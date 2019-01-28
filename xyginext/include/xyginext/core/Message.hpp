@@ -60,6 +60,14 @@ namespace xy
 
         ID id = -1;
 
+        struct AudioEvent final
+        {
+            enum
+            {
+                ChannelVolumeChanged
+            }type;
+        };
+
         struct WindowEvent final
         {
             enum
