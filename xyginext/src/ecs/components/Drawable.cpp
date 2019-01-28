@@ -42,6 +42,7 @@ Drawable::Drawable()
     m_vec2Count         (0),
     m_vec3Count         (0),
     m_boolCount         (0),
+    m_colourCount       (0),
     m_matCount          (0),
     m_currentTexCount   (0),
     m_cull              (true),
@@ -58,6 +59,7 @@ Drawable::Drawable(const sf::Texture& texture)
     m_vec2Count         (0),
     m_vec3Count         (0),
     m_boolCount         (0),
+    m_colourCount       (0),
     m_matCount          (0),
     m_currentTexCount   (0),
     m_cull              (true),
@@ -212,6 +214,31 @@ void Drawable::bindUniform(const std::string& name, bool value)
     }
 }
 
+void Drawable::bindUniform(const std::string& name, sf::Color value)
+{
+    if (m_colourCount < MaxBindings)
+    {
+        auto result = std::find_if(m_colourBindings.begin(), m_colourBindings.end(),
+            [&name](const std::pair<std::string, sf::Glsl::Vec4>& pair)
+        {
+            return pair.first == name;
+        });
+        if (result == m_colourBindings.end())
+        {
+            m_colourBindings[m_colourCount] = std::make_pair(name, value);
+            m_colourCount++;
+        }
+        else
+        {
+            result->second = value;
+        }
+    }
+    else
+    {
+        Logger::log(name + ": uniform not bound, MaxBindings reached", xy::Logger::Type::Info);
+    }
+}
+
 void Drawable::bindUniform(const std::string& name, const float* matrix)
 {
     if (m_matCount < MaxBindings)
@@ -337,6 +364,11 @@ void Drawable::applyShader() const
     for (auto i = 0u; i < m_boolCount; ++i)
     {
         const auto&[name, value] = m_boolBindings[i];
+        shader->setUniform(name, value);
+    }
+    for (auto i = 0u; i < m_colourCount; ++i)
+    {
+        const auto&[name, value] = m_colourBindings[i];
         shader->setUniform(name, value);
     }
     for (auto i = 0u; i < m_matCount; ++i)
