@@ -36,11 +36,14 @@ source distribution.
 
 #include "../imgui/imgui.h"
 
+#include <SFML/System/Err.hpp>
+
 #include <list>
 #include <unordered_map>
 #include <algorithm>
 #include <array>
 #include <tuple>
+#include <streambuf>
 
 using namespace xy;
 namespace nim = ImGui;
@@ -50,7 +53,72 @@ namespace nim = ImGui;
 
 namespace
 {
-    std::vector<std::string>    m_debugLines;
+    /*
+    Used to redirect sfml's sf::err() to xy's log output
+    */
+    class LogStreamBuf : public std::streambuf
+    {
+    public:
+        LogStreamBuf()
+        {
+            static const std::size_t size = 64;
+            auto buffer = std::make_unique<char[]>(size);
+            setp(buffer.get(), buffer.get() + size);
+        }
+        ~LogStreamBuf()
+        {
+            //sync();
+        }
+
+    private:
+        int overflow(int character) override
+        {
+            if ((character != EOF) && (pptr() != epptr()))
+            {
+                return sputc(static_cast<char>(character));
+            }
+            else if (character != EOF)
+            {
+                sync();
+                return overflow(character);
+            }
+            else
+            {
+                return sync();
+            }
+        }
+
+        int sync() override
+        {
+            if (pbase() != pptr())
+            {
+                //print the contents of the write buffer into the logger
+                std::size_t size = static_cast<int>(pptr() - pbase());
+
+                m_stringstream.write(pbase(), size);
+
+                if (m_stringstream.str().find_first_of('\n') != std::string::npos)
+                {
+                    std::string str;
+                    std::getline(m_stringstream, str);
+                    Logger::log("sfml - " + str, xy::Logger::Type::Error);
+                    
+                    m_stringstream = std::stringstream();
+                }
+
+                setp(pbase(), epptr());
+            }
+
+            return 0;
+        }
+
+        std::stringstream m_stringstream;
+    };
+    LogStreamBuf logBuf;
+    std::ostream logStream(&logBuf);
+
+    //static vars used by the console renderer
+    std::vector<std::string> m_debugLines;
     std::vector<std::pair<std::function<void()>, const GuiClient*>> m_statusControls;
     
     using ConsoleTab = std::tuple<std::string, std::function<void()>, const GuiClient*>;
@@ -389,6 +457,9 @@ void Console::draw()
 
 void Console::init()
 {
+    //divert sf::err to our log stream
+    //sf::err().rdbuf(logStream.rdbuf());
+
     auto modes = sf::VideoMode::getFullscreenModes();
     for (const auto& mode : modes)
     {

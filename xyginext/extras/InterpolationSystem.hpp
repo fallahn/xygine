@@ -42,7 +42,7 @@ struct InterpolationPoint final
 };
 
 /*!
-\brief Interpolates positionand rotation received from a server.
+\brief Interpolates position and rotation received from a server.
 When receiving infrequent (say 100ms or so) position updates from
 a remote server entities can have their position interpolated via
 this component. The component, when coupled with an InterpolationSystem
