@@ -322,20 +322,21 @@ void UISystem::process(float)
 
 
         //----button input----//
+        if (contains)
+        {
+            for (auto f : m_mouseDownEvents)
+            {
+                m_buttonCallbacks[input.callbacks[UIHitBox::MouseDown]](e, f);
+            }
+
+            for (auto f : m_mouseUpEvents)
+            {
+                m_buttonCallbacks[input.callbacks[UIHitBox::MouseUp]](e, f);
+            }
+        }
+
         if (currentIndex == m_selectedIndex)
         {
-            if (contains)
-            {
-                for (auto f : m_mouseDownEvents)
-                {
-                    m_buttonCallbacks[input.callbacks[UIHitBox::MouseDown]](e, f);
-                }
-
-                for (auto f : m_mouseUpEvents)
-                {
-                    m_buttonCallbacks[input.callbacks[UIHitBox::MouseUp]](e, f);
-                }
-            }
             for (auto key : m_keyDownEvents)
             {
                 m_keyboardCallbacks[input.callbacks[UIHitBox::KeyDown]](e, key);
