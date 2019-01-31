@@ -55,17 +55,17 @@ void AudioNull::stop()
 
 void AudioNull::setPitch(float)
 {
-    LOG("No sound loaded. Pitch not set", xy::Logger::Type::Warning);
+    //LOG("No sound loaded. Pitch not set", xy::Logger::Type::Warning);
 }
 
 void AudioNull::setVolume(float)
 {
-    LOG("No sound loaded. Volume not set", xy::Logger::Type::Warning);
+    //LOG("No sound loaded. Volume not set", xy::Logger::Type::Warning);
 }
 
 void AudioNull::setPosition(sf::Vector3f)
 {
-    LOG("No sound loaded. Position not set", xy::Logger::Type::Warning);
+    //LOG("No sound loaded. Position not set", xy::Logger::Type::Warning);
 }
 
 void AudioNull::setRelativeTolistener(bool)
@@ -75,12 +75,12 @@ void AudioNull::setRelativeTolistener(bool)
 
 void AudioNull::setMinDistance(float)
 {
-    LOG("No sound loaded. MinDistance not set", xy::Logger::Type::Warning);
+    //LOG("No sound loaded. MinDistance not set", xy::Logger::Type::Warning);
 }
 
 void AudioNull::setAttenuation(float)
 {
-    LOG("No sound loaded. Attenuation not set", xy::Logger::Type::Warning);
+    //LOG("No sound loaded. Attenuation not set", xy::Logger::Type::Warning);
 }
 
 void AudioNull::setLooped(bool)
@@ -90,19 +90,19 @@ void AudioNull::setLooped(bool)
 
 float AudioNull::getPitch() const
 {
-    LOG("No sound loaded. Pitch not set", xy::Logger::Type::Warning);
+    //LOG("No sound loaded. Pitch not set", xy::Logger::Type::Warning);
     return 0.f;
 }
 
 float AudioNull::getVolume() const
 {
-    LOG("No sound loaded. Volume not set", xy::Logger::Type::Warning);
+    //LOG("No sound loaded. Volume not set", xy::Logger::Type::Warning);
     return 0.f;
 }
 
 sf::Vector3f AudioNull::getPosition() const
 {
-    LOG("No sound loaded. Position not set", xy::Logger::Type::Warning);
+    //LOG("No sound loaded. Position not set", xy::Logger::Type::Warning);
     return {};
 }
 
@@ -114,13 +114,13 @@ bool AudioNull::isRelativeToListener() const
 
 float AudioNull::getMinDistance() const
 {
-    LOG("No sound loaded. MinDistance not set", xy::Logger::Type::Warning);
+    //LOG("No sound loaded. MinDistance not set", xy::Logger::Type::Warning);
     return 0.f;
 }
 
 float AudioNull::getAttenuation() const
 {
-    LOG("No sound loaded. Attenuation not set", xy::Logger::Type::Warning);
+    //LOG("No sound loaded. Attenuation not set", xy::Logger::Type::Warning);
     return 0.f;
 }
 
@@ -132,7 +132,7 @@ bool AudioNull::isLooped() const
 
 sf::Int32 AudioNull::getStatus() const
 {
-    LOG("No sound loaded. Sound not playing", xy::Logger::Type::Warning);
+    //LOG("No sound loaded. Sound not playing", xy::Logger::Type::Warning);
     return sf::Sound::Status::Stopped;
 }
 

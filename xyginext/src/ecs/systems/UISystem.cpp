@@ -279,6 +279,9 @@ void UISystem::process(float)
         m_controllerMask = 0;
     }
 
+    auto view = App::getRenderWindow()->getView();
+    sf::FloatRect viewableArea((view.getCenter() - (view.getSize() / 2.f)), view.getSize());
+
     //TODO we probably want some partitioning? Checking every entity for a collision could be a bit pants
     std::size_t currentIndex = 0;
     auto& entities = getEntities();
@@ -290,6 +293,13 @@ void UISystem::process(float)
 
         //-----movement input-----//
         auto area = tx.transformRect(input.area);
+
+        //skip UI elements currently out of view
+        if (!area.intersects(viewableArea))
+        {
+            continue;
+        }
+
         bool contains = false;
         if ((contains = area.contains(m_eventPosition)))
         {
