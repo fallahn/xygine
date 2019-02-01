@@ -2,6 +2,9 @@
 (c) Matt Marchant 2017 - 2019
 http://trederia.blogspot.com
 
+Glyph calculation code
+Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+
 xygineXT - Zlib license.
 
 This software is provided 'as-is', without any express or
