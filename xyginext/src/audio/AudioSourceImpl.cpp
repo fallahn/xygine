@@ -126,7 +126,7 @@ float AudioNull::getAttenuation() const
 
 bool AudioNull::isLooped() const
 {
-    LOG("No sound loaded. No loop set", xy::Logger::Type::Warning);
+    //LOG("No sound loaded. No loop set", xy::Logger::Type::Warning);
     return false;
 }
 

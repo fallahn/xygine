@@ -86,12 +86,10 @@ void MyFirstState::setup()
 
     m_scene.addSystem<xy::ParticleSystem>(mb);
 
-
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
     entity.getComponent<xy::Transform>().move(100.f, 0.f);
     entity.addComponent<xy::ParticleEmitter>().start();
-
     m_emitterSettings = &entity.getComponent<xy::ParticleEmitter>().settings;
 
     auto windowFunc = [&, entity]() mutable

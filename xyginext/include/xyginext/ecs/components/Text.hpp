@@ -97,6 +97,16 @@ namespace xy
         void setFillColour(sf::Color);
 
         /*!
+        \brief Set the outline colour of the text
+        */
+        void setOutlineColour(sf::Color);
+
+        /*!
+        \brief Set the outline thickness
+        */
+        void setOutlineThickness(float);
+
+        /*!
         \brief Set the shader to be applied when rendering this text.
         Passing nullptr removes any active shader.
         */
@@ -134,6 +144,16 @@ namespace xy
         \brief Return the current fill colour of the text
         */
         sf::Color getFillColour() const;
+
+        /*!
+        \brief Return the current outline colour
+        */
+        sf::Color getOutlineColour() const;
+
+        /*!
+        \brief Return the current outline thickness
+        */
+        float getOutlineThickness() const;
 
         /*!
         \brief Returns a pointer to this text's active shader.
@@ -189,13 +209,15 @@ namespace xy
     private:
         
         void updateVertices(Drawable&);
-        void addQuad(sf::Vector2f position, const sf::Glyph& glyph, std::vector<sf::Vertex>&);
+        void addQuad(std::vector<sf::Vertex>&, sf::Vector2f position, sf::Color, const sf::Glyph& glyph, float = 0.f);
 
         sf::String m_string;
         const sf::Font* m_font;
         sf::Uint32 m_charSize;
         float m_verticalSpacing;
         sf::Color m_fillColour;
+        sf::Color m_outlineColour;
+        float m_outlineThickness;
         bool m_dirty;
         Alignment m_alignment;
 

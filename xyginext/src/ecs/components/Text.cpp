@@ -39,6 +39,7 @@ Text::Text()
     m_charSize          (30),
     m_verticalSpacing   (0.f),
     m_fillColour        (sf::Color::White),
+    m_outlineThickness  (0.f),
     m_dirty             (true),
     m_alignment         (Alignment::Left)
 {
@@ -50,6 +51,7 @@ Text::Text(const sf::Font& font)
     m_charSize          (30),
     m_verticalSpacing   (0.f),
     m_fillColour        (sf::Color::White),
+    m_outlineThickness  (0.f),
     m_dirty             (true),
     m_alignment         (Alignment::Left)
 {
@@ -86,8 +88,31 @@ void Text::setString(const sf::String& str)
 
 void Text::setFillColour(sf::Color colour)
 {
-    m_fillColour = colour;
-    m_dirty = true;
+    if (m_fillColour != colour)
+    {
+        //TODO rather than dirty just update the vert
+        //colours if the text is not already dirty
+        m_fillColour = colour;
+        m_dirty = true;
+    }
+}
+
+void Text::setOutlineColour(sf::Color colour)
+{
+    if (m_outlineColour != colour)
+    {
+        m_outlineColour = colour;
+        m_dirty = true;
+    }
+}
+
+void Text::setOutlineThickness(float thickness)
+{
+    if (m_outlineThickness != thickness)
+    {
+        m_outlineThickness = thickness;
+        m_dirty = true;
+    }
 }
 
 void Text::setShader(sf::Shader* shader)
@@ -123,6 +148,16 @@ const sf::String& Text::getString() const
 sf::Color Text::getFillColour() const
 {
     return m_fillColour;
+}
+
+sf::Color Text::getOutlineColour() const
+{
+    return m_outlineColour;
+}
+
+float Text::getOutlineThickness() const
+{
+    return m_outlineThickness;
 }
 
 const sf::Shader* Text::getShader() const
@@ -234,19 +269,53 @@ void Text::updateVertices(Drawable& drawable)
         }
         
         //create the quads.
+        auto addOutline = [&]()
+        {
+            const auto& glyph = m_font->getGlyph(currChar, m_charSize, false, m_outlineThickness);
+
+            float left = glyph.bounds.left;
+            float top = glyph.bounds.top;
+            float right = glyph.bounds.left + glyph.bounds.width;
+            float bottom = glyph.bounds.top + glyph.bounds.height;
+
+            //add the outline glyph to the vertices
+            addQuad(vertices, sf::Vector2f(x, y), m_outlineColour, glyph, m_outlineThickness);
+
+            minX = std::min(minX, x + left - m_outlineThickness);
+            maxX = std::max(maxX, x + right - m_outlineThickness);
+            minY = std::min(minY, y + top - m_outlineThickness);
+            maxY = std::max(maxY, y + bottom - m_outlineThickness);
+        };
+
+        //if outline is larger, add first
+        if (m_outlineThickness > 0)
+        {
+            addOutline();
+        }
+
         const auto& glyph = m_font->getGlyph(currChar, m_charSize, false);
-        addQuad(sf::Vector2f(x, y), glyph, vertices);
+        addQuad(vertices, sf::Vector2f(x, y), m_fillColour, glyph);
         
-        float left = glyph.bounds.left;
-        float top = glyph.bounds.top;
-        float right = glyph.bounds.left + glyph.bounds.width;
-        float bottom = glyph.bounds.top + glyph.bounds.height;
-        
-        minX = std::min(minX, x + left);
-        maxX = std::max(maxX, x + right);
-        minY = std::min(minY, y + top);
-        maxY = std::max(maxY, y + bottom);
-        
+        //else add outline on top
+        if (m_outlineThickness < 0)
+        {
+            addOutline();
+        }
+
+        //only do this if not outlined
+        if (m_outlineThickness == 0)
+        {
+            float left = glyph.bounds.left;
+            float top = glyph.bounds.top;
+            float right = glyph.bounds.left + glyph.bounds.width;
+            float bottom = glyph.bounds.top + glyph.bounds.height;
+
+            minX = std::min(minX, x + left);
+            maxX = std::max(maxX, x + right);
+            minY = std::min(minY, y + top);
+            maxY = std::max(maxY, y + bottom);
+        }
+
         x += glyph.advance;
     }
     
@@ -278,7 +347,7 @@ void Text::updateVertices(Drawable& drawable)
     drawable.updateLocalBounds(localBounds);
 }
 
-void Text::addQuad(sf::Vector2f position, const sf::Glyph& glyph, std::vector<sf::Vertex>& vertices)
+void Text::addQuad(std::vector<sf::Vertex>& vertices, sf::Vector2f position, sf::Color colour, const sf::Glyph& glyph,  float outlineThickness)
 {
     float left = glyph.bounds.left;
     float top = glyph.bounds.top;
@@ -290,11 +359,11 @@ void Text::addQuad(sf::Vector2f position, const sf::Glyph& glyph, std::vector<sf
     float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width);
     float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height);
     
-    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left, position.y + top), m_fillColour, sf::Vector2f(u1, v1)));
-    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + top), m_fillColour, sf::Vector2f(u2, v1)));
-    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left, position.y + bottom), m_fillColour, sf::Vector2f(u1, v2)));
-    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left, position.y + bottom), m_fillColour, sf::Vector2f(u1, v2)));
-    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + top), m_fillColour, sf::Vector2f(u2, v1)));
-    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right, position.y + bottom), m_fillColour, sf::Vector2f(u2, v2)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left - outlineThickness, position.y + top - outlineThickness), colour, sf::Vector2f(u1, v1)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right - outlineThickness, position.y + top - outlineThickness), colour, sf::Vector2f(u2, v1)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left - outlineThickness, position.y + bottom - outlineThickness), colour, sf::Vector2f(u1, v2)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left - outlineThickness, position.y + bottom - outlineThickness), colour, sf::Vector2f(u1, v2)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right - outlineThickness, position.y + top - outlineThickness), colour, sf::Vector2f(u2, v1)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right - outlineThickness, position.y + bottom - outlineThickness), colour, sf::Vector2f(u2, v2)));
 }
 
