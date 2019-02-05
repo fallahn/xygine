@@ -61,17 +61,6 @@ Game::Game()
   
     setWindowTitle("xygine - Castle Clamber (F1 for Options)");
     Locale::load("assets/localisation/chichewa.xyl");
-    
-    // Check for saved gui style
-    xy::Nim::Style style;
-    if (!style.loadFromFile(guiCfgPath))
-    {
-        xy::Logger::log("Gui style not found");
-    }
-    else
-    {
-        xy::Nim::setStyle(style);
-    }
 }
 
 //private

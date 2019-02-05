@@ -30,6 +30,7 @@ source distribution.
 #include "xyginext/Config.hpp"
 
 #include <functional>
+#include <any>
 
 namespace xy
 {
@@ -44,5 +45,6 @@ namespace xy
     {
         bool active = false; //!< disabling callbacks when not in use can avoid unnecessary cache misses looking up callback functions
         CallbackFunction function;
+        std::any userData; //!< Optionally store any data required by the function here (or use a functor)
     };
 }
