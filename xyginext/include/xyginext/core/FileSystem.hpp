@@ -111,10 +111,11 @@ namespace xy
 
         /*!
         \brief Show a native file dialog to open a file
+        \param defaultDir Default path to open (optional)
         \param filter File extention filter in the format "png,jpg,bmp"
         \returns path the path selected by the user
         */
-        static std::string openFileDialogue(const std::string& filter = "");
+        static std::string openFileDialogue(const std::string& defaultDir = "", const std::string& filter = "");
 
         /*!
         \brief Show a native file dialog to open a folder
@@ -124,10 +125,11 @@ namespace xy
         
         /*!
         \brief Show a platform native file dialogue for saving files.
+        \param defaultDir Default directory to save to - optional
         \param filter String containing file extension filter in the format "png,jpg,bmp"
         \returns string containing the selected file path
         */
-        static std::string saveFileDialogue(const std::string& filter = "");
+        static std::string saveFileDialogue(const std::string& defaultDir = "", const std::string& filter = "");
 
         /*!
          \brief Currently only relevent on macOS when creating an app bundle.

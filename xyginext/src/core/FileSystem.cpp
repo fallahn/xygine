@@ -543,7 +543,7 @@ std::string FileSystem::getConfigDirectory(const std::string& appName)
     return { out };
 }
 
-std::string FileSystem::openFileDialogue(const std::string& filter)
+std::string FileSystem::openFileDialogue(const std::string& defaultDir, const std::string& filter)
 {
     // Show native file dialog, blocking call
     nfdchar_t* outPath = nullptr;
@@ -553,7 +553,13 @@ std::string FileSystem::openFileDialogue(const std::string& filter)
         pFilter = filter.c_str();
     }
 
-    nfdresult_t result = NFD_OpenDialog(pFilter, nullptr, &outPath);
+    const nfdchar_t* defaultPath = nullptr;
+    if (!defaultDir.empty())
+    {
+        defaultPath = defaultDir.c_str();
+    }
+
+    nfdresult_t result = NFD_OpenDialog(pFilter, defaultPath, &outPath);
     
     if (result == NFD_OKAY)
     {
@@ -596,7 +602,7 @@ std::string FileSystem::openFolderDialogue()
     }
 }
 
-std::string FileSystem::saveFileDialogue(const std::string& filter)
+std::string FileSystem::saveFileDialogue(const std::string& defaultDir, const std::string& filter)
 {
     nfdchar_t* outPath = nullptr;
     const nfdchar_t* pFilter = nullptr;
@@ -605,7 +611,13 @@ std::string FileSystem::saveFileDialogue(const std::string& filter)
         pFilter = filter.c_str();
     }
 
-    nfdresult_t result = NFD_SaveDialog(pFilter, nullptr, &outPath);
+    const nfdchar_t* defaultPath = nullptr;
+    if (!defaultDir.empty())
+    {
+        defaultPath = defaultDir.c_str();
+    }
+
+    nfdresult_t result = NFD_SaveDialog(pFilter, defaultPath, &outPath);
 
     if (result == NFD_OKAY)
     {
