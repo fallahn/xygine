@@ -34,6 +34,11 @@ source distribution.
 #include <string>
 #include <array>
 
+namespace sf
+{
+    class Texture;
+}
+
 namespace xy
 {
     /*!
@@ -231,6 +236,14 @@ namespace xy
         \see ImGui::MenuItem()
         */
         XY_EXPORT_API bool menuItem(const std::string& title, bool& selected);
+
+        /*!
+        \brief Draws an image using the given texture
+        \param texture Texture to use when drawing the image
+        \param tint Colour to multiply with the texture when drawing
+        \param border Colour to use when drawing the border
+        */
+        XY_EXPORT_API void image(const sf::Texture& texture, sf::Color tint = sf::Color::White, sf::Color border = sf::Color::Black);
 
         /*!
         \see ImGui::End()

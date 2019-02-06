@@ -29,6 +29,7 @@ source distribution.
 #include "xyginext/core/ConfigFile.hpp"
 
 #include "imgui.h"
+#include "imgui-SFML.h"
 
 // Saves the hassle of mapping strings to all style vars
 #define GET_VARIABLE_NAME(Variable) (#Variable)
@@ -166,6 +167,11 @@ void Nim::endMenu()
 bool Nim::menuItem(const std::string& title, bool& selected)
 {
     return ImGui::MenuItem(title.c_str(), nullptr, &selected);
+}
+
+void Nim::image(const sf::Texture& t, sf::Color tint, sf::Color border)
+{
+    ImGui::Image(t, tint, border);
 }
 
 void Nim::end()

@@ -51,6 +51,11 @@ MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx)
 {
     setup();
 
+    registerConsoleTab("Help", [&]
+    {
+        xy::Nim::image(m_textures.get("assets/images/help.png"));
+    });
+
     m_scene.getActiveCamera().getComponent<xy::Camera>().setView(ctx.defaultView.getSize());
     m_scene.getActiveCamera().getComponent<xy::Camera>().setViewport(ctx.defaultView.getViewport());
 }
