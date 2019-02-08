@@ -44,7 +44,7 @@ namespace xy
     /*!
     \brief Exposes a selection of ImGui functions to the public API.
     These can be used to create stand-alone windows or to add useful
-    information to the status window via App::registerStatusOutput().
+    information to the status window via GuiClient::registerTabControl().
     \see GuiClient
     */
     namespace Nim
@@ -54,10 +54,10 @@ namespace xy
         */
         struct Style
         {
-            // Enumeration for colours
-            enum class Colour
+            //Enumeration for colours - used to index Style::colours array
+            enum Colour
             {
-                Text,
+                Text = 0,
                 TextDisabled,
                 WindowBg,              // Background of normal windows
                 ChildBg,               // Background of child windows
@@ -129,7 +129,7 @@ namespace xy
             bool            AntiAliasedFill = true;            // Enable anti-aliasing on filled shapes (rounded rectangles, circles, etc.)
             float           CurveTessellationTol = 1.25f;       // Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.
             
-            std::array<sf::Color, static_cast<size_t>(Colour::Count)>         colours;
+            std::array<sf::Color, Colour::Count>         colours;
             
             XY_EXPORT_API   bool loadFromFile(const std::string& path);
             XY_EXPORT_API   bool saveToFile(const std::string& path);

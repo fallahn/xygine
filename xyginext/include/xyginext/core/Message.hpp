@@ -60,6 +60,9 @@ namespace xy
 
         ID id = -1;
 
+        /*!
+        \brief Events raised by the AudioSystem
+        */
         struct AudioEvent final
         {
             enum
@@ -68,6 +71,9 @@ namespace xy
             }type;
         };
 
+        /*!
+        \brief Events raised by the RenderWindow
+        */
         struct WindowEvent final
         {
             enum
@@ -80,6 +86,9 @@ namespace xy
             sf::Uint32 width, height;
         };
 
+        /*!
+        \brief Events raised by the Scecne class
+        */
         struct SceneEvent final
         {
             enum
@@ -87,6 +96,18 @@ namespace xy
                 EntityDestroyed
             }event;
             sf::Int32 entityID = -1;
+        };
+
+        /*!
+        \brief Events raised by the StateStack
+        */
+        struct StateEvent final
+        {
+            enum
+            {
+                Pushed, Popped, Cleared
+            }type;
+            std::int32_t id = -1;
         };
 
         /*!

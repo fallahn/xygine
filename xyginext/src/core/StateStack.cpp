@@ -137,7 +137,7 @@ State::Ptr StateStack::createState(StateID id)
 void StateStack::applyPendingChanges()
 {
     m_activeChanges.swap(m_pendingChanges);
-    for (auto& change : m_activeChanges)
+    for (const auto& change : m_activeChanges)
     {
         switch (change.action)
         {
@@ -150,12 +150,23 @@ void StateStack::applyPendingChanges()
 
             m_stack.emplace_back(createState(change.id));
             m_stack.emplace_back(std::make_unique<BufferState>(*this, m_context));
+
+            {
+                auto* msg = m_context.appInstance.getMessageBus().post<Message::StateEvent>(Message::StateMessage);
+                msg->type = Message::StateEvent::Pushed;
+                msg->id = change.id;
+            }
+
             break;
         case Action::Pop:
         {
             auto id = m_stack.back()->stateID();
             m_stack.pop_back();
             
+            auto* msg = m_context.appInstance.getMessageBus().post<Message::StateEvent>(Message::StateMessage);
+            msg->type = Message::StateEvent::Popped;
+            msg->id = id;
+
             if (!m_suspended.empty() && m_suspended.back().first == id)
             {
                 //restore suspended state
@@ -171,6 +182,12 @@ void StateStack::applyPendingChanges()
         case Action::Clear:
             m_stack.clear();
             m_suspended.clear();
+
+            {
+                auto* msg = m_context.appInstance.getMessageBus().post<Message::StateEvent>(Message::StateMessage);
+                msg->type = Message::StateEvent::Cleared;
+            }
+
             break;
         default: break;
         }

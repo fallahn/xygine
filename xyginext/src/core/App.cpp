@@ -208,13 +208,14 @@ void App::applyVideoSettings(const VideoSettings& settings)
 
     auto oldAA = settings.ContextSettings.antialiasingLevel;
     if (settings.WindowStyle != m_videoSettings.WindowStyle
-        || settings.ContextSettings != m_videoSettings.ContextSettings)
+        || settings.ContextSettings != m_videoSettings.ContextSettings
+        || settings.VideoMode != m_videoSettings.VideoMode)
     {
         m_renderWindow.create(settings.VideoMode, settings.Title, settings.WindowStyle, settings.ContextSettings);
-    }
+    /*}
     else
-    {
-        m_renderWindow.setSize({ settings.VideoMode.width, settings.VideoMode.height });
+    {*/
+        //m_renderWindow.setSize({ settings.VideoMode.width, settings.VideoMode.height });
         m_renderWindow.setTitle(settings.Title);
 
         sf::Vector2u windowPos = { sf::VideoMode::getDesktopMode().width / 2, sf::VideoMode::getDesktopMode().height / 2 };
@@ -236,7 +237,7 @@ void App::applyVideoSettings(const VideoSettings& settings)
     }
 
     m_renderWindow.setVerticalSyncEnabled(settings.VSync);
-    //only set frame limiter is not vSync
+    //only set frame limiter if not vSync
     if (settings.FrameLimit && !settings.VSync)
     {
         m_renderWindow.setFramerateLimit(settings.FrameLimit);
