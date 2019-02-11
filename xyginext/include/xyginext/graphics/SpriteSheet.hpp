@@ -111,5 +111,7 @@ namespace xy
 
         std::string m_texturePath;
         bool m_smooth;
+
+        bool loadFromFile(const std::string& path, std::function<sf::Texture*(const std::string&)>&);
     };
 }

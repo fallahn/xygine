@@ -40,269 +40,23 @@ SpriteSheet::SpriteSheet()
 //public
 bool SpriteSheet::loadFromFile(const std::string& path, TextureResource& textures)
 {
-    ConfigFile sheetFile;
-    if (!sheetFile.loadFromFile(xy::FileSystem::getResourcePath() + path))
+    std::function<sf::Texture*(const std::string&)> getTexture = [&](const std::string& texPath)->sf::Texture*
     {
-        return false;
-    }
+        return &textures.get(texPath);
+    };
 
-    m_sprites.clear();
-    m_animations.clear();
-
-    std::size_t count = 0;
-
-    sf::Texture* texture = nullptr;
-    sf::BlendMode blendMode = sf::BlendAlpha;
-
-    //validate sprites, increase count
-    if (auto* p = sheetFile.findProperty("src"))
-    {
-        m_texturePath = p->getValue<std::string>();
-        texture = &textures.get(m_texturePath);
-    }
-    else
-    {
-        LOG(sheetFile.getId() + " missing texture property", Logger::Type::Error);
-        return false;
-    }
-
-    if (auto* p = sheetFile.findProperty("blendmode"))
-    {
-        std::string mode = p->getValue<std::string>();
-        if (mode == "add") blendMode = sf::BlendAdd;
-        else if (mode == "multiply") blendMode = sf::BlendMultiply;
-        else if (mode == "none") blendMode = sf::BlendNone;
-    }
-
-    if (auto* p = sheetFile.findProperty("smooth"))
-    {
-        texture->setSmooth(p->getValue<bool>());
-    }
-
-    const auto& sheetObjs = sheetFile.getObjects();
-    for (const auto& spr : sheetObjs)
-    {
-        if (spr.getName() == "sprite")
-        {
-            std::string spriteName = spr.getId();
-            if (m_sprites.count(spriteName) > 0)
-            {
-                Logger::log(spriteName + " already exists in sprite sheet", Logger::Type::Error);
-                continue;
-            }
-
-            Sprite spriteComponent;
-            if (texture != nullptr)
-            {
-                spriteComponent.setTexture(*texture);
-            }
-
-            //if (auto* p = spr.findProperty("blendmode"))
-            //{
-            //    //override sheet mode
-            //    std::string mode = p->getValue<std::string>();
-            //    if (mode == "add") spriteComponent.setBlendMode(sf::BlendAdd);
-            //    else if (mode == "multiply") spriteComponent.setBlendMode(sf::BlendMultiply);
-            //    else if (mode == "none") spriteComponent.setBlendMode(sf::BlendNone);
-            //}
-            //else
-            //{
-            //    spriteComponent.setBlendMode(blendMode);
-            //}
-
-            if (auto* p = spr.findProperty("bounds"))
-            {
-                spriteComponent.setTextureRect(p->getValue<sf::FloatRect>());
-            }
-
-            if (auto* p = spr.findProperty("colour"))
-            {
-                spriteComponent.setColour(p->getValue<sf::Color>());
-            }
-
-            const auto& spriteObjs = spr.getObjects();
-            for (const auto& sprOb : spriteObjs)
-            {
-                if (sprOb.getName() == "animation")
-                {
-                    if (spriteComponent.m_animationCount < Sprite::MaxAnimations)
-                    {
-                        auto& anim = spriteComponent.m_animations[spriteComponent.m_animationCount];
-
-                        const auto& properties = sprOb.getProperties();
-                        for (const auto& p : properties)
-                        {
-                            std::string name = p.getName();
-                            if (name == "frame")
-                            {
-                                if (anim.frameCount < Sprite::MaxFrames)
-                                {
-                                    anim.frames[anim.frameCount++] = p.getValue<sf::FloatRect>();
-                                }
-                                else
-                                {
-                                    Logger::log("Skipping animation frame as maximum frames is " + std::to_string(Sprite::MaxFrames), Logger::Type::Warning);
-                                }
-                            }
-                            else if (name == "framerate")
-                            {
-                                anim.framerate = p.getValue<float>();
-                            }
-                            else if (name == "loop")
-                            {
-                                anim.looped = p.getValue<bool>();
-                            }
-                            else if (name == "loop_start")
-                            {
-                                anim.loopStart = p.getValue<sf::Int32>();
-                            }
-                        }
-
-                        auto animId = sprOb.getId();
-                        m_animations[spriteName].push_back(animId);
-                        animId.copy(anim.id.data(), animId.length());
-
-                        spriteComponent.m_animationCount++;
-                    }
-                    else
-                    {
-                        Logger::log("Skipping animation, maximum number of sprite animations is " + std::to_string(Sprite::MaxAnimations), Logger::Type::Warning);
-                    }
-                }
-            }
-
-            m_sprites.insert(std::make_pair(spriteName, spriteComponent));
-            count++;
-        }
-    }
-
-    //LOG("Found " + std::to_string(count) + " sprites in " + path, Logger::Type::Info);
-    return count > 0;
+    return loadFromFile(path, getTexture);
 }
 
 bool SpriteSheet::loadFromFile(const std::string& path, ResourceHandler& textures)
 {
-    ConfigFile sheetFile;
-    if (!sheetFile.loadFromFile(xy::FileSystem::getResourcePath() + path))
+    std::function<sf::Texture*(const std::string&)> getTexture =  [&](const std::string& texPath)->sf::Texture*
     {
-        return false;
-    }
-    
-    m_sprites.clear();
-    m_animations.clear();
-    
-    std::size_t count = 0;
-    
-    sf::Texture* texture = nullptr;
-    sf::BlendMode blendMode = sf::BlendAlpha;
-    
-    //validate sprites, increase count
-    if (auto* p = sheetFile.findProperty("src"))
-    {
-        m_texturePath = p->getValue<std::string>();
-        auto handle = textures.load<sf::Texture>(m_texturePath);
-        texture = &textures.get<sf::Texture>(handle);
-    }
-    else
-    {
-        LOG(sheetFile.getId() + " missing texture property", Logger::Type::Error);
-        return false;
-    }
-    
-    if (auto* p = sheetFile.findProperty("blendmode"))
-    {
-        std::string mode = p->getValue<std::string>();
-        if (mode == "add") blendMode = sf::BlendAdd;
-        else if (mode == "multiply") blendMode = sf::BlendMultiply;
-        else if (mode == "none") blendMode = sf::BlendNone;
-    }
-    
-    if (auto* p = sheetFile.findProperty("smooth"))
-    {
-        texture->setSmooth(p->getValue<bool>());
-    }
-    
-    const auto& sheetObjs = sheetFile.getObjects();
-    for (const auto& spr : sheetObjs)
-    {
-        if (spr.getName() == "sprite")
-        {
-            std::string spriteName = spr.getId();
-            if (m_sprites.count(spriteName) > 0)
-            {
-                Logger::log(spriteName + " already exists in sprite sheet", Logger::Type::Error);
-                continue;
-            }
-            
-            Sprite spriteComponent;
-            if (texture != nullptr)
-            {
-                spriteComponent.setTexture(*texture);
-            }
-            
-            //if (auto* p = spr.findProperty("blendmode"))
-            //{
-            //    //override sheet mode
-            //    std::string mode = p->getValue<std::string>();
-            //    if (mode == "add") spriteComponent.setBlendMode(sf::BlendAdd);
-            //    else if (mode == "multiply") spriteComponent.setBlendMode(sf::BlendMultiply);
-            //    else if (mode == "none") spriteComponent.setBlendMode(sf::BlendNone);
-            //}
-            //else
-            //{
-            //    spriteComponent.setBlendMode(blendMode);
-            //}
-            
-            if (auto* p = spr.findProperty("bounds"))
-            {
-                spriteComponent.setTextureRect(p->getValue<sf::FloatRect>());
-            }
-            
-            if (auto* p = spr.findProperty("colour"))
-            {
-                spriteComponent.setColour(p->getValue<sf::Color>());
-            }
-            
-            const auto& spriteObjs = spr.getObjects();
-            for (const auto& sprOb : spriteObjs)
-            {
-                if (sprOb.getName() == "animation")
-                {
-                    auto& anim = spriteComponent.m_animations[spriteComponent.m_animationCount];
-                    
-                    const auto& properties = sprOb.getProperties();
-                    for (const auto& p : properties)
-                    {
-                        std::string name = p.getName();
-                        if (name == "frame")
-                        {
-                            anim.frames[anim.frameCount++] = p.getValue<sf::FloatRect>();
-                        }
-                        else if (name == "framerate")
-                        {
-                            anim.framerate = p.getValue<float>();
-                        }
-                        else if (name == "loop")
-                        {
-                            anim.looped = p.getValue<bool>();
-                        }
-                    }
-                    
-                    auto animId = sprOb.getId();
-                    m_animations[spriteName].push_back(animId);
-                    animId.copy(anim.id.data(), animId.length());
-                    
-                    spriteComponent.m_animationCount++;
-                }
-            }
-            
-            m_sprites.insert(std::make_pair(spriteName, spriteComponent));
-            count++;
-        }
-    }
-    
-    //LOG("Found " + std::to_string(count) + " sprites in " + path, Logger::Type::Info);
-    return count > 0;
+        auto handle = textures.load<sf::Texture>(texPath);
+        return &textures.get<sf::Texture>(handle); 
+    };
+
+    return loadFromFile(path, getTexture);
 }
 
 bool SpriteSheet::saveToFile(const std::string &path)
@@ -381,4 +135,130 @@ std::size_t SpriteSheet::getAnimationIndex(const std::string& name, const std::s
         return std::distance(anims.cbegin(), result);
     }
     return 0;
+}
+
+
+//private
+bool SpriteSheet::loadFromFile(const std::string& path, std::function<sf::Texture*(const std::string&)>& getTexture)
+{
+    ConfigFile sheetFile;
+    if (!sheetFile.loadFromFile(xy::FileSystem::getResourcePath() + path))
+    {
+        return false;
+    }
+
+    m_sprites.clear();
+    m_animations.clear();
+
+    std::size_t count = 0;
+
+    sf::Texture* texture = nullptr;
+    sf::BlendMode blendMode = sf::BlendAlpha;
+
+    //validate sprites, increase count
+    if (auto* p = sheetFile.findProperty("src"))
+    {
+        m_texturePath = p->getValue<std::string>();
+        texture = getTexture(m_texturePath);
+    }
+    else
+    {
+        LOG(sheetFile.getId() + " missing texture property", Logger::Type::Error);
+        return false;
+    }
+
+    if (auto* p = sheetFile.findProperty("blendmode"))
+    {
+        std::string mode = p->getValue<std::string>();
+        if (mode == "add") blendMode = sf::BlendAdd;
+        else if (mode == "multiply") blendMode = sf::BlendMultiply;
+        else if (mode == "none") blendMode = sf::BlendNone;
+    }
+
+    if (auto* p = sheetFile.findProperty("smooth"))
+    {
+        texture->setSmooth(p->getValue<bool>());
+    }
+
+    const auto& sheetObjs = sheetFile.getObjects();
+    for (const auto& spr : sheetObjs)
+    {
+        if (spr.getName() == "sprite")
+        {
+            std::string spriteName = spr.getId();
+            if (m_sprites.count(spriteName) > 0)
+            {
+                Logger::log(spriteName + " already exists in sprite sheet", Logger::Type::Error);
+                continue;
+            }
+
+            Sprite spriteComponent;
+            if (texture != nullptr)
+            {
+                spriteComponent.setTexture(*texture);
+            }
+
+            //if (auto* p = spr.findProperty("blendmode"))
+            //{
+            //    //override sheet mode
+            //    std::string mode = p->getValue<std::string>();
+            //    if (mode == "add") spriteComponent.setBlendMode(sf::BlendAdd);
+            //    else if (mode == "multiply") spriteComponent.setBlendMode(sf::BlendMultiply);
+            //    else if (mode == "none") spriteComponent.setBlendMode(sf::BlendNone);
+            //}
+            //else
+            //{
+            //    spriteComponent.setBlendMode(blendMode);
+            //}
+
+            if (auto* p = spr.findProperty("bounds"))
+            {
+                spriteComponent.setTextureRect(p->getValue<sf::FloatRect>());
+            }
+
+            if (auto* p = spr.findProperty("colour"))
+            {
+                spriteComponent.setColour(p->getValue<sf::Color>());
+            }
+
+            const auto& spriteObjs = spr.getObjects();
+            for (const auto& sprOb : spriteObjs)
+            {
+                if (sprOb.getName() == "animation")
+                {
+                    auto& anim = spriteComponent.m_animations[spriteComponent.m_animationCount];
+
+                    const auto& properties = sprOb.getProperties();
+                    for (const auto& p : properties)
+                    {
+                        std::string name = p.getName();
+                        if (name == "frame")
+                        {
+                            anim.frames[anim.frameCount++] = p.getValue<sf::FloatRect>();
+                        }
+                        else if (name == "framerate")
+                        {
+                            anim.framerate = p.getValue<float>();
+                        }
+                        else if (name == "loop")
+                        {
+                            anim.looped = p.getValue<bool>();
+                        }
+                    }
+
+                    auto animId = sprOb.getId();
+                    m_animations[spriteName].push_back(animId);
+                    animId.copy(anim.id.data(), animId.length());
+
+                    spriteComponent.m_animationCount++;
+                }
+            }
+
+            m_sprites.insert(std::make_pair(spriteName, spriteComponent));
+            count++;
+        }
+    }
+
+    //LOG("Found " + std::to_string(count) + " sprites in " + path, Logger::Type::Info);
+    return count > 0;
 }
