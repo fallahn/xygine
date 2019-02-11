@@ -5,6 +5,8 @@
 #include "xyginext/resources/ResourceHandler.hpp"
 #include "xyginext/resources/SystemFont.hpp"
 
+#include <cstring>
+
 using namespace xy;
 ResourceHandler::ResourceHandler()
 {
