@@ -92,7 +92,7 @@ namespace xy
         /*!
         \brief Get a resource
          
-        Get a resource from it's handle
+        Get a resource from its handle
         */
         template<class T>
         T& get(ResourceHandle resource)

@@ -1,5 +1,6 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 
 #include "xyginext/resources/ResourceHandler.hpp"
 #include "xyginext/resources/SystemFont.hpp"
@@ -35,11 +36,29 @@ ResourceHandler::ResourceHandler()
     fontLoader.fallback = []()
     {
         sf::Font font;
-        //font.loadFromMemory(DejaVuSans_ttf.data(), DejaVuSans_ttf.size());
         font.loadFromFile(getFontPath());
         return font;
     };
 
+    //sound buffer loader
+    ResourceLoader soundLoader;
+    soundLoader.loader = [](const std::string& path)
+    {
+        sf::SoundBuffer buffer;
+        return buffer.loadFromFile(xy::FileSystem::getResourcePath() + path) ? buffer : std::any();
+    };
+
+    soundLoader.fallback = []()
+    {
+        std::array<sf::Int16, 20u> buffer;
+        std::memset(buffer.data(), 0, buffer.size());
+        
+        sf::SoundBuffer sb;
+        sb.loadFromSamples(buffer.data(), buffer.size(), 1, 48000);
+        return sb;
+    };
+
     getLoader<sf::Texture>() = texLoader;
     getLoader<sf::Font>() = fontLoader;
+    getLoader<sf::SoundBuffer>() = soundLoader;
 }
