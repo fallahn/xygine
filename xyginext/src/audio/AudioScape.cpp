@@ -61,16 +61,24 @@ bool AudioScape::loadFromFile(const std::string& path)
             }
 
             //check we have min required properties
-            if (obj.findProperty("path") == nullptr)
+            auto* path = obj.findProperty("path");
+            auto* streaming = obj.findProperty("streaming");
+            if (path == nullptr)
             {
                 xy::Logger::log("Skipping " + name + " no source file information found", xy::Logger::Type::Warning);
                 continue;
             }
 
-            if (obj.findProperty("streaming") == nullptr)
+            if (streaming == nullptr)
             {
                 xy::Logger::log("Skipping " + name + " no streaming property found", xy::Logger::Type::Warning);
                 continue;
+            }
+
+            //preload the file if not streaming
+            if (!streaming->getValue<bool>())
+            {
+                m_audioResource.get(path->getValue<std::string>());
             }
 
             if (m_emitterConfigs.count(name) == 0)
