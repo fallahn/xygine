@@ -109,6 +109,11 @@ bool Nim::input(const std::string& label, std::int32_t& value, float itemWidth)
     return result;
 }
 
+bool Nim::radioButton(const std::string& title, std::int32_t& output, std::int32_t value)
+{
+    return ImGui::RadioButton(title.c_str(), &output, value);
+}
+
 void Nim::showToolTip(const std::string& message)
 {
     ImGui::TextDisabled("(?)");

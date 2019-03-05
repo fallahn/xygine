@@ -201,6 +201,14 @@ namespace xy
         XY_EXPORT_API bool input(const std::string& label, std::int32_t& value, float itemWidth = 200.f);
 
         /*!
+        \param title String containing title of the radio button
+        \param output Reference to an integer to hold the value of the selected radio button
+        \param value The value of the radio button which will be placed in output when the radio button is selected
+        \see ImGui::RadioButton
+        */
+        XY_EXPORT_API bool radioButton(const std::string& title, std::int32_t& output, std::int32_t value);
+
+        /*!
         \brief Displays a tool tip when the previously drawn item is hovered.
         \param message String containing the message to display
         */
