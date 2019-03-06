@@ -30,10 +30,15 @@ source distribution.
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/ParticleEmitter.hpp>
 #include <xyginext/ecs/components/Camera.hpp>
+#include <xyginext/ecs/components/Callback.hpp>
+#include <xyginext/ecs/components/Drawable.hpp>
 
 #include <xyginext/ecs/systems/ParticleSystem.hpp>
+#include <xyginext/ecs/systems/CallbackSystem.hpp>
+#include <xyginext/ecs/systems/RenderSystem.hpp>
 #include <xyginext/gui/Gui.hpp>
 #include <xyginext/core/FileSystem.hpp>
+#include <xyginext/util/Vector.hpp>
 
 namespace
 {
@@ -90,12 +95,65 @@ void MyFirstState::setup()
     auto& mb = xy::App::getActiveInstance()->getMessageBus();
 
     m_scene.addSystem<xy::ParticleSystem>(mb);
+    m_scene.addSystem<xy::CallbackSystem>(mb);
+    m_scene.addSystem<xy::RenderSystem>(mb);
 
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
     entity.getComponent<xy::Transform>().move(100.f, 0.f);
     entity.addComponent<xy::ParticleEmitter>().start();
     m_emitterSettings = &entity.getComponent<xy::ParticleEmitter>().settings;
+    entity.addComponent<sf::Vector2f>() = {0.707f, 0.707f};
+    entity.addComponent<xy::Callback>().function = 
+        [](xy::Entity e, float dt)
+    {
+        const float Speed = 400.f;
+        auto vel = e.getComponent<sf::Vector2f>();
+        auto& tx = e.getComponent<xy::Transform>();
+        tx.move(vel * Speed * dt);
+
+        auto pos = tx.getPosition();
+        if (pos.x > xy::DefaultSceneSize.x)
+        {
+            vel = xy::Util::Vector::reflect(vel, { -1.f, 0.f });
+            e.getComponent<sf::Vector2f>() = vel;
+            pos.x = xy::DefaultSceneSize.x;
+            tx.setPosition(pos);
+            tx.setRotation(xy::Util::Vector::rotation(vel));
+        }
+        else if (pos.x < 0.f)
+        {
+            vel = xy::Util::Vector::reflect(vel, { 1.f, 0.f });
+            e.getComponent<sf::Vector2f>() = vel;
+            pos.x = 0.f;
+            tx.setPosition(pos);
+            tx.setRotation(xy::Util::Vector::rotation(vel));
+        }
+
+        if (pos.y < 0.f)
+        {
+            vel = xy::Util::Vector::reflect(vel, { 0.f, 1.f });
+            e.getComponent<sf::Vector2f>() = vel;
+            pos.y = 0.f;
+            tx.setPosition(pos);
+            tx.setRotation(xy::Util::Vector::rotation(vel));
+        }
+        else if (pos.y > xy::DefaultSceneSize.y)
+        {
+            vel = xy::Util::Vector::reflect(vel, { 0.f, -1.f });
+            e.getComponent<sf::Vector2f>() = vel;
+            pos.y = xy::DefaultSceneSize.y;
+            tx.setPosition(pos);
+            tx.setRotation(xy::Util::Vector::rotation(vel));
+        }
+    };
+
+    auto& verts = entity.addComponent<xy::Drawable>().getVertices();
+    verts.emplace_back(sf::Vector2f(0.f, -12.f), sf::Color::Green);
+    verts.emplace_back(sf::Vector2f(12.f, 0.f), sf::Color::Green);
+    verts.emplace_back(sf::Vector2f(0.f, 12.f), sf::Color::Green);
+    entity.getComponent<xy::Drawable>().setPrimitiveType(sf::LineStrip);
+    entity.getComponent<xy::Drawable>().updateLocalBounds();
 
     auto windowFunc = [&, entity]() mutable
     {
@@ -185,6 +243,18 @@ void MyFirstState::setup()
         xy::Nim::checkbox("Random Initial Rotation", &m_emitterSettings->randomInitialRotation);
         xy::Nim::sameLine(); xy::Nim::showToolTip("Applies a random initial rotation to spawned particles. Textured particles only");
         
+        bool oldState = entity.getComponent<xy::Callback>().active;
+        bool newState = oldState;
+        xy::Nim::checkbox("Animate Movement", &newState);
+        xy::Nim::sameLine(); xy::Nim::showToolTip("Enable emitter movement");
+
+        if (oldState != newState)
+        {
+            entity.getComponent<xy::Callback>().active = newState;
+            float rotation = newState ? xy::Util::Vector::rotation(entity.getComponent<sf::Vector2f>()) : 0.f;
+            entity.getComponent<xy::Transform>().setRotation(rotation);
+        }
+
         xy::Nim::colourPicker("Colour", m_emitterSettings->colour);
 
         xy::Nim::separator();
@@ -251,6 +321,9 @@ void MyFirstState::setup()
         if (xy::Nim::button("Reset"))
         {
             entity.getComponent<xy::ParticleEmitter>().settings = xy::EmitterSettings();
+            entity.getComponent<xy::Callback>().active = false;
+            entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
+            entity.getComponent<xy::Transform>().setRotation(0.f);
         }
         xy::Nim::sameLine(); xy::Nim::showToolTip("Reset the properties to their default values");
 
