@@ -360,7 +360,7 @@ bool EmitterSettings::saveToFile(const std::string& path)
     cfg.addProperty("lifetime").setValue(lifetime);
     cfg.addProperty("lifetime_variance").setValue(lifetimeVariance);
     cfg.addProperty("colour").setValue(colour);
-    cfg.addProperty("random_inital_rotation").setValue(randomInitialRotation);
+    cfg.addProperty("random_initial_rotation").setValue(randomInitialRotation);
     cfg.addProperty("rotation_speed").setValue(rotationSpeed);
     cfg.addProperty("scale_affector").setValue(scaleModifier);
     cfg.addProperty("size").setValue(size);
