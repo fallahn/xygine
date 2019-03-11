@@ -127,7 +127,7 @@ namespace
     std::vector<sf::Vector2u> resolutions;
     //int currentAALevel = 0;
     int currentResolution = 0;
-    std::array<char, 300> resolutionNames{};
+    std::array<char, 1024> resolutionNames{};
     bool fullScreen = false;
     bool vSync = false;
     bool useFrameLimit = false;
@@ -476,6 +476,12 @@ void Console::init()
     {
         std::string width = std::to_string(r->x);
         std::string height = std::to_string(r->y);
+
+        auto totalLen = width.size() + height.size() + 4; // x \0
+        if (i >= resolutionNames.size() - totalLen)
+        {
+            break;
+        }
 
         for (char c : width)
         {
