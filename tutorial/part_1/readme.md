@@ -1,4 +1,4 @@
-# Getting started with xygine
+# Getting started with xygine - Part 1
 
 ### Introduction
 Xygine is a small game framework based around SFML that I have developed over the past
