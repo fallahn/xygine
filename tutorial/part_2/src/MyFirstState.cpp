@@ -31,6 +31,7 @@ source distribution.
 #include <xyginext/ecs/components/Text.hpp>
 #include <xyginext/ecs/components/Drawable.hpp>
 #include <xyginext/ecs/components/UIHitBox.hpp>
+#include <xyginext/ecs/components/Camera.hpp>
 
 #include <xyginext/ecs/systems/TextSystem.hpp>
 #include <xyginext/ecs/systems/RenderSystem.hpp>
@@ -41,6 +42,9 @@ xy::State(ss,ctx),
 m_scene(ctx.appInstance.getMessageBus())
 {
     createScene();
+
+    m_scene.getActiveCamera().getComponent<xy::Camera>().setView(ctx.defaultView.getSize());
+    m_scene.getActiveCamera().getComponent<xy::Camera>().setViewport(ctx.defaultView.getViewport());
 }
 
 bool MyFirstState::handleEvent(const sf::Event& evt)

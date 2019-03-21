@@ -68,6 +68,7 @@ bool Game::initialise()
     m_stateStack.pushState(States::MyFirstState);
 
     getRenderWindow()->setKeyRepeatEnabled(false);
+    getRenderWindow()->setView(m_stateStack.updateView());
 
     return true;
 }

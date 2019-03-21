@@ -4,8 +4,7 @@
 
 In the first part of the tutorial we created a basic menu using the `MyFirstState` 
 project template. Continuing on from that we'll add a new state, `GameState`, to host 
-the game play logic, before taking a look at xygine's `Director` class and 
-`CommandSystem` class.
+the game play logic, before taking a look at xygine's `CommandSystem` class.
 
 ### The Game State
 

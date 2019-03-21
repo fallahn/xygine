@@ -32,7 +32,10 @@ source distribution.
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Drawable.hpp>
+#include <xyginext/ecs/components/Camera.hpp>
+#include <xyginext/ecs/components/Sprite.hpp>
 
+#include <xyginext/ecs/systems/SpriteSystem.hpp>
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 
 GameState::GameState(xy::StateStack& ss, xy::State::Context ctx) :
@@ -40,7 +43,9 @@ xy::State(ss,ctx),
 m_gameScene(ctx.appInstance.getMessageBus())
 {
     createScene();
-    xy::Logger::log("entered game state", xy::Logger::Type::Info);
+    
+    m_gameScene.getActiveCamera().getComponent<xy::Camera>().setView(ctx.defaultView.getSize());
+    m_gameScene.getActiveCamera().getComponent<xy::Camera>().setViewport(ctx.defaultView.getViewport());
 }
 
 bool GameState::handleEvent(const sf::Event& evt)
@@ -75,7 +80,18 @@ void GameState::createScene()
 {
     //add the systems
     auto& messageBus = getContext().appInstance.getMessageBus();
+    m_gameScene.addSystem<xy::SpriteSystem>(messageBus);
     m_gameScene.addSystem<xy::RenderSystem>(messageBus);
+
+    m_paddleTexture.loadFromFile("assets/images/paddle.png");
+
+    auto entity = m_gameScene.createEntity();
+    entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize.x / 2.f, xy::DefaultSceneSize.y - 40.f);
+    entity.addComponent<xy::Sprite>(m_paddleTexture);
+    entity.addComponent<xy::Drawable>();
+
+    auto paddleBounds = entity.getComponent<xy::Sprite>().getTextureBounds();
+    entity.getComponent<xy::Transform>().setOrigin(paddleBounds.width / 2.f, paddleBounds.height / 2.f);
 }
 
 

@@ -32,6 +32,8 @@ source distribution.
 #include <xyginext/core/State.hpp>
 #include <xyginext/ecs/Scene.hpp>
 
+#include <SFML/Graphics/Texture.hpp>
+
 class GameState final : public xy::State
 {
 public:
@@ -49,6 +51,8 @@ private:
     xy::StateID stateID() const override;
     
     xy::Scene m_gameScene;
+
+    sf::Texture m_paddleTexture;
 
     void createScene();
 };
