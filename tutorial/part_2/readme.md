@@ -4,7 +4,8 @@
 
 In the first part of the tutorial we created a basic menu using the `MyFirstState` 
 project template. Continuing on from that we'll add a new state, `GameState`, to host 
-the game play logic, before taking a look at xygine's `CommandSystem` class.
+the game play logic, before taking a look at xygine's `Sprite` component and the 
+`CommandSystem` class.
 
 ### The Game State
 
@@ -91,4 +92,105 @@ have a console window open press F1 to open the xygine console, where the timest
 message will be displayed.
 
 ---
+
+### Scene Setup
+
+Now that the `GameState` is created we have an arena to finally start implementing the 
+game. Firstly, to ensure a consistent experience, the camera needs to be fixed to a set 
+size across all states, and at all window resolutions. xygine uses a default size of 
+1920x1080 world units, which is automatically applied to a view inside the `StateStack` 
+when the window is resized. This way the same view is automatically letterboxed and 
+mapped to the window. To apply the calculated view on startup, navigate to 
+`Game::initialise()` in Game.cpp, and below the line which says 
+
+    getRenderWindow()->setKeyRepeatEnabled(false);
+
+add
+
+    getRenderWindow()->setView(m_stateStack.updateView());
+
+This line will force the stack to calculate an up-to-date view and immediately apply it 
+to the RenderWindow when the game is initialised.
+
+xygine also has a `Camera` component, used by a `Scene` to dictate what should be 
+rendered to the screen. By default this component is uninitialised as it makes no 
+assumptions as for what it shall be used (for instance a `Camera` may only show a small 
+area in a `Scene` used to create a mini-map) so for our two states we'll need to 
+initialise it to the StateStack's calculated view. Handily this view is passed as one of
+the properties of the `Context` struct which is given to the constructor of every state.
+In the constructor of both `MyFirstState` and `GameState`, below the call to 
+`createScene()`, update the state's `Scene` with the view stored in the context:
+
+    m_scene.getActiveCamera().getComponent<xy::Camera>().setView(ctx.defaultView.getSize());
+    m_scene.getActiveCamera().getComponent<xy::Camera>().setViewport(ctx.defaultView.getViewport());
+
+adjusting the `Scene` variable name accordingly for each state.
+
+
+### Adding a Paddle
+
+Now that the camera is set up it's time to start on our paddle entity. Creating the 
+entity will be very similar to creating the `Text` entities in `MyFirstState`, only the 
+`Text` component will be replaced with a `Sprite` component. At the top of the file add 
+two includes for the `Sprite` component and the `SpriteSystem`
+
+    xyginext/ecs/components/Sprite.hpp
+    xyginect/ecs/systems/SpriteSystem.hpp
+
+The `Drawable` component and `RenderSystem` headers should already be there, but if not 
+add those too
+
+    xyginext/ecs/components/Drawable.hpp
+    xyginext/ecs/systems/RenderSystem.hpp
+
+In `createScene()` an instance of the `SpriteSystem` needs to be added to the `Scene` 
+one line before the `RenderSystem` is added
+
+    m_gameScene.addSystem<xy::SpriteSystem>(messageBus);
+
+The rest of the `createScene()` function follows the same pattern as MyFirstState. As 
+we're using a `Sprite` instead of a `Text`, however, the font from `MyFirstState` is 
+replaced with an `sf::Texture`. For now add a new member to the `GameState` class 
+`sf::Texture m_paddleTexture`. This will eventually be replaced with a resource holder, 
+but for now it will do. Back in the definition of `createScene()` load the paddle image 
+into the texture
+
+    m_paddleTexture.loadFromFile("assets/images/paddle.png");
+
+The image is included in the tutorial repository, but you will need to make sure the 
+path is set correctly relative to your working directory, depending on your development 
+environment.
+
+Assuming the texture is now loaded correctly we can create a single entity to act as the
+paddle.
+
+    auto entity = m_gameScene.createEntity();
+    entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize.x / 2.f, xy::DefaultSceneSize.y - 40.f);
+    entity.addComponent<xy::Sprite>(m_texture);
+    entity.addComponent<xy::Drawable>();
+
+This looks very similar to creating a text entity in `MyFirstState`, with the difference
+that the `Text` component / font combo is replaced with a `Sprite` component and 
+texture. The paddle is positioned based on a built-in constant `xy::DefaultSceneSize`. 
+This is the same size as the StateStack's calculated view, so we can be sure that the 
+paddle will be aligned relative to the bottom centre of the screen as we expect, 
+regardless of the size or resolution of the window.
+
+To neaten up the layout of the paddle we can take the Sprite's texture bounds and use it
+to align the origin to the centre of the `Sprite`
+
+    auto paddleBounds = entity.getComponent<xy::Sprite>().getTextureBounds();
+    entity.getComponent<xy::Transform>().setOrigin(paddleBounds.width / 2.f, paddleBounds.height / 2.f);
+
+The `Sprite` function `getTextureBounds()` differs from `getTextureRect()` in the fact 
+that it returns the resulting size of the `Sprite` based on the current texture bounds, 
+without the offset coordinates into the texture itself. In other words it is the same 
+size as the current texture bounds, but the left and top properties are always zero.
+
+Build and run the tutorial, then click Play on the menu. At the bottom centre of the 
+screen you'll see our newly created paddle!
+
+---
+
+### Player Input
 
