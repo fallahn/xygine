@@ -45,6 +45,8 @@ m_scene(ctx.appInstance.getMessageBus())
 
     m_scene.getActiveCamera().getComponent<xy::Camera>().setView(ctx.defaultView.getSize());
     m_scene.getActiveCamera().getComponent<xy::Camera>().setViewport(ctx.defaultView.getViewport());
+
+    ctx.appInstance.setMouseCursorVisible(true);
 }
 
 bool MyFirstState::handleEvent(const sf::Event& evt)

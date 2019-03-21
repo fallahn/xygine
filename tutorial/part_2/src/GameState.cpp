@@ -29,14 +29,21 @@ source distribution.
 
 #include "GameState.hpp"
 #include "States.hpp"
+#include "CommandIDs.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Drawable.hpp>
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Sprite.hpp>
+#include <xyginext/ecs/components/CommandTarget.hpp>
 
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
+#include <xyginext/ecs/systems/CommandSystem.hpp>
 #include <xyginext/ecs/systems/RenderSystem.hpp>
+
+#include <xyginext/core/App.hpp>
+
+#include <SFML/Window/Event.hpp>
 
 GameState::GameState(xy::StateStack& ss, xy::State::Context ctx) :
 xy::State(ss,ctx),
@@ -46,10 +53,34 @@ m_gameScene(ctx.appInstance.getMessageBus())
     
     m_gameScene.getActiveCamera().getComponent<xy::Camera>().setView(ctx.defaultView.getSize());
     m_gameScene.getActiveCamera().getComponent<xy::Camera>().setViewport(ctx.defaultView.getViewport());
+
+    ctx.appInstance.setMouseCursorVisible(false);
 }
 
 bool GameState::handleEvent(const sf::Event& evt)
 {
+    //look for mouse move events and send them to the paddle
+    if(evt.type == sf::Event::MouseMoved)
+    {
+        auto worldMousePosition = xy::App::getRenderWindow()->mapPixelToCoords({evt.mouseMove.x, evt.mouseMove.y});
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::Paddle;
+        cmd.action = [worldMousePosition](xy::Entity entity, float)
+        {
+            //clamp the X position in the screen area minus the sprite width
+            float posX = worldMousePosition.x;
+            auto spriteWidth = entity.getComponent<xy::Sprite>().getTextureBounds().width / 2.f;
+            posX = std::max(spriteWidth, worldMousePosition.x);
+            posX = std::min(posX, xy::DefaultSceneSize.x - spriteWidth);
+
+            auto& tx = entity.getComponent<xy::Transform>();
+            auto currentPosition = tx.getPosition();
+            currentPosition.x = posX;
+            tx.setPosition(currentPosition);
+        };
+        m_gameScene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
+
     m_gameScene.forwardEvent(evt);
     return true;
 }
@@ -80,6 +111,7 @@ void GameState::createScene()
 {
     //add the systems
     auto& messageBus = getContext().appInstance.getMessageBus();
+    m_gameScene.addSystem<xy::CommandSystem>(messageBus);
     m_gameScene.addSystem<xy::SpriteSystem>(messageBus);
     m_gameScene.addSystem<xy::RenderSystem>(messageBus);
 
@@ -89,6 +121,7 @@ void GameState::createScene()
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize.x / 2.f, xy::DefaultSceneSize.y - 40.f);
     entity.addComponent<xy::Sprite>(m_paddleTexture);
     entity.addComponent<xy::Drawable>();
+    entity.addComponent<xy::CommandTarget>().ID = CommandID::Paddle;
 
     auto paddleBounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Transform>().setOrigin(paddleBounds.width / 2.f, paddleBounds.height / 2.f);
