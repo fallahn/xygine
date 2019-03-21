@@ -194,3 +194,115 @@ screen you'll see our newly created paddle!
 
 ### Player Input
 
+To make the paddle respond to mouse input we can use xygine's `CommandTarget` component 
+with a `CommandSystem` added to the `Scene`. The `CommandTarget` merely holds an integer
+ID used to identify which entities should be responding to specific commands. Add a new 
+header file to the include directory and name it `CommandIDs.hpp`. Inside create a new 
+namespace `CommandID` and add an anonymous enum. This enum will contain all the command 
+IDs which we'll eventually create - to start with add a member named `Paddle` and give 
+it the value 0x1. Each time a new member is added *its value should double* that of the 
+previous member. This is so that multiple IDs can be OR'd together as flags. For more 
+information on this see the `CommandTarget` documentation on the xygine wiki. When you 
+have done this include the file at the top of GameState.cpp. If you're using the CMake 
+files to build the project don't forget to add the CommandIDs.hpp entry to the 
+CMakeLists.txt in  the include directory.
+
+To assign the ID to our paddle include the header for the `CommandTarget` component
+
+    xyginext/ecs/components/CommandTarget.hpp
+
+and add the component to the paddle entity in `createScene()`. Because `addComponent()` 
+returns a reference to the newly created component we can also assign the command ID 
+immediately
+
+    entity.addComponent<xy::CommandTarget>().ID = CommandID::Paddle;
+
+To be able to process the commands we're going to send we also need an instance of the 
+`CommandSystem` in the `Scene`. Include the `CommandSystem` header
+
+    xyginext/ecs/systems/CommandSystem.hpp
+
+and add it to the `Scene` before the `SpriteSystem` in `createScene()`
+
+    m_gameScene.addSystem<xy::CommandSystem>(messageBus);
+
+Now we're ready to start sending commands!
+
+The `GameState` class has a function named `handleEvents()` in which we can pick up any 
+mouse movement events passed down from the `Game` class. To identify events first 
+include the SFML event header
+
+    SFML/Window/Event.hpp
+
+before moving to `handleEvent()`. At the top of the `handleEvent()` function add
+
+    if(evt.type == sf::Event::MouseMoved)
+    {
+        auto worldMousePosition = xy::App::getRenderWindow()->mapPixelToCoords({evt.mouseMove.x, evt.mouseMove.y});
+        xy::Command cmd;
+        cmd.targetFlags = CommandID::Paddle;
+        cmd.action = [worldMousePosition](xy::Entity entity, float)
+        {
+            //clamp the X position in the screen area minus the sprite width
+            float posX = worldMousePosition.x;
+            auto spriteWidth = entity.getComponent<xy::Sprite>().getTextureBounds().width / 2.f;
+            posX = std::max(spriteWidth, worldMousePosition.x);
+            posX = std::min(posX, xy::DefaultSceneSize.x - spriteWidth);
+    
+            auto& tx = entity.getComponent<xy::Transform>();
+            auto currentPosition = tx.getPosition();
+            currentPosition.x = posX;
+            tx.setPosition(currentPosition);
+        };
+        m_gameScene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+    }
+
+This is simpler than it looks once we break it down:
+
+First the event type is checked to make sure that it's a `MouseMoved` event. If it is, 
+grab the mouse position contained in the event, which is in window coordinates. These 
+are then converted to world coordinates using the `sf::RenderWindow` function 
+`mapPixelToCoords()`. For more information on what this does see the SFML documentation, 
+however for our purposes it converts the mouse coordinates into values which are relative 
+to our `Scene` coordinates.
+
+With the coordinates in hand we can now create our command
+
+    xy::Command cmd;
+
+and tell it to target our paddle entity by setting the target flags to the `CommandID` 
+we gave the paddle.
+
+    cmd.targetFlags = CommandID::Paddle;
+
+The important part of the command is the lambda expression assigned to `cmd.action`. The 
+signature takes an entity and a float as a parameter. When this command is executed the 
+target entity, in this case the paddle, is passed in, along with the elapsed or delta 
+time of the current frame. In this instance the delta time is not used so the parameter 
+is omitted.
+
+The mouse position is also copy-captured as it is needed to set the position of the 
+paddle. In the body of the lambda the size of the paddle sprite is obtained and used to 
+clamp the x position of the mouse coords. This prevents the paddle from leaving the 
+screen area. Then the current paddle position is read, the x position updated, and the 
+new position applied.
+
+Once the lambda has been defined the command can be sent.
+
+    m_gameScene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+
+Here it should be noted that commands are not executed immediately, rather they are 
+placed on a stack, ready for the next frame. At the beginning of the next frame the 
+entire stack is parsed and all the commands are executed at once. This is important 
+when creating a lambda expression for the action, should it capture any variables by 
+reference - the lambda is not executed in the same scope as it is written!!
+
+If you build and run the tutorial now you'll find that when you move the mouse left or 
+right the paddle will follow it. As a final touch we can hide the mouse cursor in the 
+`GameState`. In the `GameState` constructor add a line after initialising the camera
+
+    ctx.appInstance.setMouseCursorVisible(false);
+
+That's it! In the next part of the tutorial we'll be looking at creating custom 
+components and systems to add a ball entity, and make it collide with the edges of the 
+play area.
