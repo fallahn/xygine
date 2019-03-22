@@ -41,8 +41,8 @@ struct Ball final
         Waiting, Active
     }state = State::Waiting;
 
-    sf::Vector2f velocity;
-    static constexpr float Speed = 300.f;
+    sf::Vector2f velocity = {0.f, -1.f};
+    static constexpr float Speed = 800.f;
 };
 
 //this is a component added to the paddle entity
@@ -62,4 +62,4 @@ public:
 
 private:
 
-}
+};

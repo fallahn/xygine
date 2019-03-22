@@ -27,36 +27,42 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#pragma once
+#include "BallSystem.hpp"
 
-#include <xyginext/core/State.hpp>
+#include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/Scene.hpp>
-#include <xyginext/resources/ResourceHandler.hpp>
 
-#include <SFML/Graphics/Texture.hpp>
+BallSystem::BallSystem(xy::MessageBus& mb)
+ : xy::System(mb, typeid(BallSystem))
+ {
+     requireComponent<Ball>();
+     requireComponent<xy::Transform>();
+ }
 
-class GameState final : public xy::State
-{
-public:
-    GameState(xy::StateStack&, xy::State::Context);
+ //public
+ void BallSystem::process(float dt)
+ {
+     auto& entities = getEntities();
+     for(auto entity : entities)
+     {
+         auto& ball = entity.getComponent<Ball>();
+         switch(ball.state)
+         {
+             default:
+             case Ball::State::Waiting:             
+                 break;
+             case Ball::State::Active:
+            {
+                auto& tx = entity.getComponent<xy::Transform>();
+                tx.move(ball.velocity * Ball::Speed * dt);
 
-private:
-    bool handleEvent(const sf::Event &evt) override;
-    
-    void handleMessage(const xy::Message &) override;
-    
-    bool update(float dt) override;
-    
-    void draw() override;
-    
-    xy::StateID stateID() const override;
-    
-    xy::Scene m_gameScene;
-
-    xy::ResourceHandler m_resources;
-
-    void createScene();
-    void loadResources();
-
-    void spawnBall();
-};
+                sf::FloatRect bounds(sf::Vector2f(), xy::DefaultSceneSize);
+                if(!bounds.contains(tx.getPosition()))
+                {
+                    getScene()->destroyEntity(entity);
+                }
+            }
+                break;
+         }
+     }
+ }

@@ -31,6 +31,7 @@ source distribution.
 #include "States.hpp"
 #include "CommandIDs.hpp"
 #include "ResourceIDs.hpp"
+#include "BallSystem.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/Drawable.hpp>
@@ -81,6 +82,33 @@ bool GameState::handleEvent(const sf::Event& evt)
         };
         m_gameScene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
+    else if(evt.type == sf::Event::MouseButtonReleased)
+    {
+        if(evt.mouseButton.button == sf::Mouse::Left)
+        {
+            //send a command to the paddle to launch the ball if it has one
+            //else spawn a new ball
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::Paddle;
+            cmd.action = [&](xy::Entity entity, float)
+            {
+                auto& paddle = entity.getComponent<Paddle>();
+                if(paddle.ball.isValid())
+                {
+                    paddle.ball.getComponent<Ball>().state = Ball::State::Active;
+                    auto ballBounds = paddle.ball.getComponent<xy::Sprite>().getTextureBounds();
+                    paddle.ball.getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Transform>().getPosition() + sf::Vector2f(0.f, -ballBounds.height / 2.f));
+                    entity.getComponent<xy::Transform>().removeChild(paddle.ball.getComponent<xy::Transform>());
+                    paddle.ball = {};
+                }
+                else
+                {
+                    spawnBall();
+                }
+            };
+            m_gameScene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+        }
+    }
 
     m_gameScene.forwardEvent(evt);
     return true;
@@ -112,6 +140,7 @@ void GameState::createScene()
 {
     //add the systems
     auto& messageBus = getContext().appInstance.getMessageBus();
+    m_gameScene.addSystem<BallSystem>(messageBus);
     m_gameScene.addSystem<xy::CommandSystem>(messageBus);
     m_gameScene.addSystem<xy::SpriteSystem>(messageBus);
     m_gameScene.addSystem<xy::RenderSystem>(messageBus);
@@ -123,9 +152,12 @@ void GameState::createScene()
     entity.addComponent<xy::Sprite>(m_resources.get<sf::Texture>(TextureID::handles[TextureID::Paddle]));
     entity.addComponent<xy::Drawable>();
     entity.addComponent<xy::CommandTarget>().ID = CommandID::Paddle;
+    entity.addComponent<Paddle>();
 
     auto paddleBounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.getComponent<xy::Transform>().setOrigin(paddleBounds.width / 2.f, paddleBounds.height / 2.f);
+
+    spawnBall();
 }
 
 void GameState::loadResources()
@@ -134,4 +166,25 @@ void GameState::loadResources()
     TextureID::handles[TextureID::Paddle] = m_resources.load<sf::Texture>("assets/images/paddle.png");
 }
 
+void GameState::spawnBall()
+{
+    xy::Command cmd;
+    cmd.targetFlags = CommandID::Paddle;
+    cmd.action = [&](xy::Entity entity, float)
+    {
+        auto& paddle = entity.getComponent<Paddle>();
+        paddle.ball = m_gameScene.createEntity();
+        paddle.ball.addComponent<xy::Transform>();
+        paddle.ball.addComponent<xy::Sprite>(m_resources.get<sf::Texture>(TextureID::handles[TextureID::Ball]));
+        paddle.ball.addComponent<xy::Drawable>();
+        paddle.ball.addComponent<Ball>();
 
+        auto ballBounds = paddle.ball.getComponent<xy::Sprite>().getTextureBounds();
+        auto paddleBounds = entity.getComponent<xy::Sprite>().getTextureBounds();
+        paddle.ball.getComponent<xy::Transform>().setOrigin(ballBounds.width / 2.f, ballBounds.height / 2.f);
+        paddle.ball.getComponent<xy::Transform>().setPosition(paddleBounds.width / 2.f, -ballBounds.height / 2.f);
+
+        entity.getComponent<xy::Transform>().addChild(paddle.ball.getComponent<xy::Transform>());
+    };
+    m_gameScene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+}
