@@ -1,18 +1,18 @@
 # Getting started with xygine - Part 1
 
 ### Introduction
-Xygine is a small game framework based around SFML that I have developed over the past
+xygine is a small game framework based around SFML that I have developed over the past
 few years to create 2D games, which runs on Windows, linux and macOS. It has become
 mature enough now, I think, that it’s time to attempt to document the process of
 creating a small breakout style game, in order to (hopefully) better explain xygine’s
 features and the functionality it provides. If you’re reading this I’m going to assume
 some knowledge on your part of C++ as well as potentially SFML, and that you are here
 because you want a shortcut to skip creating much of the boilerplate code required for
-creating a game in favour of diving into creating a game. Let’s begin!
+creating a game in favour of diving right in. Let’s begin!
 
 
 ### Getting started
-Xygine is a fully open-source project, licensed under the zlib license. The best way to
+xygine is a fully open-source project, licensed under the zlib license. The best way to
 get started is to clone the repository available on github, and build it yourself. The
 repository can be found at https://github.com/fallahn/xygine and the build instructions
 are on the wiki: https://github.com/fallahn/xygine/wiki/Building 
@@ -28,47 +28,47 @@ if your IDE has support (such as Visual Studio 2017) or create a new project, ad
 the source and header files included in the template folder, and linking to the SFML
 and xygine libraries as appropriate (eg the correct debug/release versions). If you are
 taking the cmake route then the src and include subdirectories both contain a
-CMakeLists.txt file, which will need to be updated if you add any new source files to
+CMakeLists.txt file, which will need to be updated when you add any new source files to
 your project. Once you have the project configured it should be possible to build and
 run it, which will open a console window (on Windows) and a blank game window titled
 “xyginext game”. Pressing F1 will open a console window which displays any messages
-printed with the Logger class, and provides basic video and audio options. More
+printed with the `Logger` class, and provides basic video and audio options. More
 information on the console can be found in the documentation:
 https://github.com/fallahn/xygine/wiki 
 
 
 ### A closer look at the source files
 
-The template project contains 3 sources files. 
+The template project contains 3 sources files.  
 Main.cpp contains the entry point into the program, which instantiates a Game object
 and runs it. There’s not much else done here and the file will probably not be brought
 up again in the rest of the tutorial.
 
 Game.cpp is where the magic begins to happen. The `Game` class inherits the `xy::App`
-class which is the root of any xygine game or application. The App class contains the
+class which is the root of any xygine game or application. The `App` class contains the
 render window instance, as well as manages events and system messages, making sure that
-they are dispatched correctly to the rest of the game. Documentation on App specific
+they are dispatched correctly to the rest of the game. Documentation on `App` specific
 features (such as the message bus) can be found on the xygine wiki
-https://github.com/fallahn/xygine/wiki . Because the Game class inherits App it has
-access to these features through the App interface. The Game class is home to the
-StateStack - which will be covered later - and makes sure that events, messages and
+https://github.com/fallahn/xygine/wiki . Because the `Game` class inherits `App` it has
+access to these features through the `App` interface. The `Game` class is home to the
+`StateStack` - which will be covered later - and makes sure that events, messages and
 updates are correctly forwarded, as well as ensuring the active states are rendered.
-Most important to note about the Game class, however, are the `initialise()` and
-`finalise()` functions, which are overrides of the App class functions. These are used
+Most important to note about the `Game` class, however, are the `initialise()` and
+`finalise()` functions, which are overrides of the `App` class functions. These are used
 to correctly create, configure and tidy up any extra game-wide resources which you may
 use throughout the lifetime of the application. They are called automatically on startup
 and shutdown and should be used if a game requires any third party libraries such as a
 physics system which requires specific initialisation and shutdown. The initialise
 function returns a bool - this  should return false if any initialisation errors occur,
 particularly if initialising a third party library, as this will cause xygine to quit
-safely, rather than continue.
+safely, rather than try to continue.
 
-MyFirstState.cpp implements a simple State. States are used with xygine’s StateStack
-class, which is optional but recommended. The StateStack is a concept which allows
+MyFirstState.cpp implements a simple `State`. States are used with xygine’s `StateStack`
+class, which is optional but recommended. The `StateStack` is a concept which allows
 several states to be active at any one time, and controls how events and updates are
-passed down through the active states. A State object encapsulates a particular state
+passed down through the active states. A `State` object encapsulates a particular state
 of the game, such as the main menu, a gameplay state, or a pause menu. The advantage of
-a StateStack is the ability to keep existing states alive, such as a game state, while
+a `StateStack` is the ability to keep existing states alive, such as a game state, while
 placing a another state on top. States are rendered from the bottom of the stack
 upwards, and updated from the top down. This means that a game state at the bottom will
 be drawn first, with a menu (for example) in a pause state drawn on top. Conversely the
@@ -79,16 +79,16 @@ while preventing the lower game state from being updated, effectively pausing it
 Popping the the pause state from the top of the stack then allows the game state below
 to continue to execute as it starts to receive events and updates again. When used
 correctly this can be a very powerful and useful concept. For a more detailed look at
-the implementation of a StateStack I suggest reading ‘SFML Game Development’ by
+the implementation of a `StateStack` I suggest reading ‘SFML Game Development’ by
 Jan Haller, Henrik Vogelius Hansson and Artur Moreira - a book which was very
 influential when I started creating xygine.
-MyFirstState itself implements the interface of `xy::State`.
-The functions are similar to that of the Game class - `handleEvent()` which passes
+`MyFirstState` itself implements the interface of `xy::State`.
+The functions are similar to that of the `Game` class - `handleEvent()` which passes
 SFML events such as keyboard and mouse input down to any game classes which need them,
 `handleMessage()` used to forward system messages to interested parties, `update()`
 which processes delta-time critical logic functions, and `draw()`, used to render the
-active state to the screen. The state also returns an identifier via `stateID()` which
-is used when registering the state with the StateStack in the `Game::initialise()`
+state to the screen. The state also returns an identifier via `stateID()` which
+is used when registering the state with the `StateStack` in the `Game::initialise()`
 function. The specifics of this are covered later. Usually when creating a new project
 it is preferable to rename the `MyFirstState` class to something more coherent such as
 `MenuState` - but for this particular case I will leave it as it is.
@@ -96,7 +96,7 @@ it is preferable to rename the `MyFirstState` class to something more coherent s
 
 ### Setting the Scene
 
-MyFirstState contains an instance of a `xy::Scene` object. Scenes are used to
+`MyFirstState` contains an instance of a `xy::Scene` object. Scenes are used to
 encapsulate the Entity Component System or ECS of xygine, and multiple scenes can exist
 within a single state - for example one might be used to create the game area, and
 another to display the user interface. Entities are effectively no more than an integer
@@ -107,10 +107,10 @@ some provide a selection of functions to create a cleaner interface, such as
 `xy::Sprite`. The key point is, however, that there is no logic held within a component,
 this is all performed by a series of Systems. A system class will look at all the active
 entities in a Scene and process each one based on the data held within its components.
-Xygine already has several component and system classes for often used tasks, but the
-ECS really shines when, later on, you create your own custom systems, and their
+xygine already has several component and system classes for often used tasks, but the
+ECS really shines when, later on, you create your own custom systems and their
 corresponding components. To start with we’ll use some of the existing components and
-systems to create a basic menu in MyFirstState. At the top of the cpp file include
+systems to create a basic menu in `MyFirstState`. At the top of the cpp file include
 
     xyginext/ecs/components/Transform.hpp
     xyginext/ecs/components/Text.hpp
@@ -127,16 +127,16 @@ emitters cannot be correctly placed. Transforms can also be parented to one anot
 form a ‘scene graph’. More information can be found about this in the wiki
 https://github.com/fallahn/xygine/wiki 
 
-Text components are very similar to the Text class in SFML, although slightly modified
+Text components are very similar to the `Text` class in SFML, although slightly modified
 to better fit the ECS. The interface is nearly the same, including functions such as
 `setString() setFillColour()` etc, and require an instance of `sf::Font` to render. For
-now a font can be added as a member to MyFirstScene as `m_font` for example - later this
+now a font can be added as a member to `MyFirstScene` as `m_font` for example - later this
 will be replaced with a resource manager.
 
 Drawable components are required for any entities which are rendered to the screen. They
 contain an `sf::VertexArray` which, in this case, will be updated by the `TextSystem`
-with data held in the Text component. Sprites and the SpriteSystem work in a similar way.
-Later, when creating custom systems, the Drawable component can be used to draw
+with data held in the `Text` component. Sprites and the `SpriteSystem` work in a similar way.
+Later, when creating custom systems, the `Drawable` component can be used to draw
 arbitrary shapes, having their vertex data updated via the custom system. Drawable
 components also have texture and shader properties, which allow SFML resources
 `sf::Texture` and `sf::Shader` to be applied to them. This will be covered later, and
@@ -153,9 +153,9 @@ which have a `Drawable` component, and render them to the screen.
 
 ### Setting up the ECS
 
-With the correct files included, the Scene can now be initialised. For convenience
-create a private member function in MyFirstState called `createScene()`, and call it
-from the MyFirstState constructor. Then define createScene()
+With the correct files included, the `Scene` can now be initialised. For convenience
+create a private member function in `MyFirstState` called `createScene()`, and call it
+from the `MyFirstState` constructor. Then define `createScene()`
 
     void MyFirstState::createScene()
     {
@@ -186,16 +186,15 @@ Systems are updated and drawn in the order in which they are added to the scene,
 is sometimes important. In this case we want the `Text` components to be updated before
 the `RenderSystem` draws them.
 
-Next the font is loaded, which was added as a member to MyFirstState as `m_font`. This
+Next the font is loaded, which was added as a member to `MyFirstState` as `m_font`. This
 will eventually be replaced with a resource manager. Note that when loading the font
 there are no defaults supplied with xygine - you need to provide a path to your own. If
 the text is not visible then this is probably the first thing to check.
 
 Finally a new entity is created. Entities are created through a Scene’s factory function
 `createEntity()`. This is important because it ensures that the entity is correctly
-registered to its parent scene. The entity class is trivial, however, and instances can
-happily be overwritten to create new entities, while the existing one lives on. For
-example:
+registered to its parent scene. The entity class is merely a handle, however, and instances
+can happily be overwritten when creating new entities. For example:
 
     auto entity = m_scene.createEntity();
     //add components to entity
@@ -210,23 +209,28 @@ mark them for garbage collection:
 
 This generally means that entities will exist until the end of the current frame.
 
+NOTE: xygine has a hard limit of 1024 active entities at a time. While this can be changed
+by modifying the source code it is usually enough as long as expired entities are explicitly
+destroyed. There is little overhead in removing and creating entities at runtime because
+xygine automatically pools and reallocates the memory required.
+
 Components are added to an entity with `addComponent<T>()`. Similarly to the Scene’s 
 `addSystem()` function, the entity’s `addComponent()` function is templated, taking the
 component type as a type parameter. The function also forwards any parameters to the
 component constructor, such as in this example where a reference to the font is
-forwarded to the Text component. `Entity::addComponent()` will return a reference to the
+forwarded to the `Text` component. `Entity::addComponent()` will return a reference to the
 newly created component allowing properties to be immediately set, for example the
 string used in the `Text` component. A reference to a component can also be retrieved
 with `entity.getComponent<T>()`, allowing other component properties to be updated, or
 components to be copied elsewhere. Note that not all components are copyable, for 
-xample the `Transform` component is only moveable.
+example the `Transform` component is only moveable.
 
 
 Building and running the project should now display the window as before, only with the
 words “Hello World!” in the top corner. 
 
-From here I encourage you to experiment with the entities and components - try updating
-the `createScene()` function to create 3 entities, each with a different text string:
+From here I encourage you to experiment with the entities and components - update
+the `createScene()` function to create 3 entities, each with a different text strings:
 A title, one which says ‘Play’ and another which says ‘Quit’. Try updating different 
 component properties such as the scale, position or rotation of the `Transform`
 component, or character size or fill colour of the `Text` component. When you have a
@@ -238,7 +242,7 @@ basic menu laid out, move on to the next section.
 ### Adding interactivity
 
 To make the menu usable ideally the entities rendering the text will need to act as
-buttons when clicked on. Xygine includes a `UIHitBox` component and a `UISystem` for
+buttons when clicked on. xygine includes a `UIHitBox` component and a `UISystem` for
 this purpose. At the top of the MyFirstState.cpp include
 
     xyginext/ecs/components/UIHitBox.hpp
@@ -287,9 +291,9 @@ components, should those components wish to perform the same thing.
             }
         });
 
-This looks a little wordy, so let’s break it down. A reference to the UISystem can be
+This looks a little wordy, so let’s break it down. A reference to the `UISystem` can be
 retrieved from the scene with `getSystem<T>()`. Then a lambda expression is passed to
-`addMouseButtonCallback()`. The lambda signature for mouse button callbacks passes in a
+`addMouseButtonCallback()`. The lambda signature for a mouse button callback passes in a
 copy of the entity which is executing the callback - that is, the entity which has the
 `UIHitBox` component attached to it, and a copy of the event flags. Event flags can be
 used to check which mouse button was pressed. In this case we’re looking for the left

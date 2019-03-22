@@ -34,24 +34,24 @@ source distribution.
 
 BallSystem::BallSystem(xy::MessageBus& mb)
  : xy::System(mb, typeid(BallSystem))
- {
-     requireComponent<Ball>();
-     requireComponent<xy::Transform>();
- }
+{
+    requireComponent<Ball>();
+    requireComponent<xy::Transform>();
+}
 
  //public
- void BallSystem::process(float dt)
- {
-     auto& entities = getEntities();
-     for(auto entity : entities)
-     {
-         auto& ball = entity.getComponent<Ball>();
-         switch(ball.state)
-         {
-             default:
-             case Ball::State::Waiting:             
-                 break;
-             case Ball::State::Active:
+void BallSystem::process(float dt)
+{
+    auto& entities = getEntities();
+    for(auto entity : entities)
+    {
+        auto& ball = entity.getComponent<Ball>();
+        switch(ball.state)
+        {
+            default:
+            case Ball::State::Waiting:             
+                break;
+            case Ball::State::Active:
             {
                 auto& tx = entity.getComponent<xy::Transform>();
                 tx.move(ball.velocity * Ball::Speed * dt);
@@ -63,6 +63,6 @@ BallSystem::BallSystem(xy::MessageBus& mb)
                 }
             }
                 break;
-         }
-     }
- }
+        }
+    }
+}

@@ -23,7 +23,7 @@ there'll be another scene added to contain the user interface. Rename the class 
 `m_scene` references to `m_gameScene` and all `MyFirstState` references to `GameState`. 
 This includes changing the name of the included header file "MyFirstState.hpp" to 
 "GameState.hpp" at the top of the document. There's no need to include the headers for 
-the Text component or TextSystem either, but leave the remaining includes as they will 
+the `Text` component or `TextSystem` either, but leave the remaining includes as they will 
 be used later on. The contents of `createScene()` can be removed too, although you can 
 leave the lines where the `RenderSystem` is added, as that'll be used when drawing the 
 game. The line 
@@ -31,7 +31,7 @@ game. The line
     m_scene.getSystem<xy::UISystem>().handleEvent(evt);
 
 needs to be removed from `GameState::handleEvent()` as there is no `UISystem` in use in 
-the GameState.
+the `GameState`.
 
 A little book keeping is required if you're using the CMake files to build the tutorial.
 In the include directory edit the `CMakeLists.txt` file and add a new line referencing 
@@ -39,7 +39,7 @@ GameState.hpp. In the src directory repeat the edit for GameState.cpp.
 
 To register the state with the game the `GameState` needs a unique ID to return from the
 function `GameState::stateID()`. Open the States.hpp file and add a new member to the 
-State enum called GameState. Modify the `GameState::stateID()` function to return 
+`State` enum called `GameState`. Modify the `GameState::stateID()` function to return 
 `States::GameState`. This is important because the `StateStack` needs to be able to 
 identify individual states. With this done open Game.cpp and below the include line 
 for "MyFirstState.hpp" add an include directive for "GameState.hpp". Then in the 
@@ -47,19 +47,19 @@ function body of `Game::registerStates()` add
 
     m_stateStack.registerState<GameState>(States::GameState);
 
-This will associate the specific state type (GameState) with its enum value. This way 
+This will associate the specific state type (`GameState`) with its enum value. This way 
 requesting a new state on the stack can be done with a single ID. Finally, to launch 
 this new state, we need to modify `MyFirstState`.
 
 Open MyFirstState.cpp and go to the definition of `createScene()`. The process of adding
- a new callback is the same as adding the quit button callback, only this time it should
- be added to the entity with the text component that says 'Play'. The lambda expression 
+a new callback is the same as adding the quit button callback, only this time it should
+be added to the entity with the text component that says 'Play'. The lambda expression 
 used in the callback needs to be modified, however, else clicking Play will close the 
 game! The callback should look like this:
 
     auto callbackID = 
     m_scene.getSystem<xy::UISystem>().addMouseButtonCallback(
-        [&](xy::Entity e, sf::Uint64 flags)
+        [&](xy::Entity, sf::Uint64 flags)
         {
             if(flags & xy::UISystem::LeftMouse)
             {
@@ -113,10 +113,10 @@ This line will force the stack to calculate an up-to-date view and immediately a
 to the RenderWindow when the game is initialised.
 
 xygine also has a `Camera` component, used by a `Scene` to dictate what should be 
-rendered to the screen. By default this component is uninitialised as it makes no 
-assumptions as for what it shall be used (for instance a `Camera` may only show a small 
-area in a `Scene` used to create a mini-map) so for our two states we'll need to 
-initialise it to the StateStack's calculated view. Handily this view is passed as one of
+rendered to the screen. By default this component is initialised to the window size as
+it makes no assumptions as for what it shall be used (for instance a `Camera` may only
+show a small area in a `Scene` used to create a mini-map) so for our two states we'll need
+to initialise it to the StateStack's calculated view. Handily this view is passed as one of
 the properties of the `Context` struct which is given to the constructor of every state.
 In the constructor of both `MyFirstState` and `GameState`, below the call to 
 `createScene()`, update the state's `Scene` with the view stored in the context:
@@ -148,7 +148,7 @@ one line before the `RenderSystem` is added
 
     m_gameScene.addSystem<xy::SpriteSystem>(messageBus);
 
-The rest of the `createScene()` function follows the same pattern as MyFirstState. As 
+The rest of the `createScene()` function follows the same pattern as `MyFirstState`. As 
 we're using a `Sprite` instead of a `Text`, however, the font from `MyFirstState` is 
 replaced with an `sf::Texture`. For now add a new member to the `GameState` class 
 `sf::Texture m_paddleTexture`. This will eventually be replaced with a resource holder, 
@@ -293,7 +293,7 @@ Once the lambda has been defined the command can be sent.
 
 Here it should be noted that commands are not executed immediately, rather they are 
 placed on a stack, ready for the next frame. At the beginning of the next frame the 
-entire stack is parsed and all the commands are executed at once. This is important 
+entire stack is parsed and all the commands are executed sequentially. This is important 
 when creating a lambda expression for the action, should it capture any variables by 
 reference - the lambda is not executed in the same scope as it is written!!
 
@@ -304,5 +304,4 @@ right the paddle will follow it. As a final touch we can hide the mouse cursor i
     ctx.appInstance.setMouseCursorVisible(false);
 
 That's it! In the next part of the tutorial we'll be looking at creating custom 
-components and systems to add a ball entity, and make it collide with the edges of the 
-play area.
+components and systems to add a ball entity, and resource management for fonts and textures.
