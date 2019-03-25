@@ -40,5 +40,5 @@ namespace TextureID
         Count
     };
 
-    static std::array<std::int32_t, TextureID::Count> handles = {};
+    static std::array<std::size_t, TextureID::Count> handles = {};
 }

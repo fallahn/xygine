@@ -42,7 +42,7 @@ add a namespace named `TextureID` and an anonymous enum like so:
             Count
         };
 
-        static std::array<std::int32_t, TextureID::Count> handles = {};
+        static std::array<std::size_t, TextureID::Count> handles = {};
     }
 
 Note the `std::array` named `handles`. This will hold the IDs returned from the resource 
