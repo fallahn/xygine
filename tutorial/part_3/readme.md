@@ -86,14 +86,30 @@ the menu.
 
 ### Balls.
 
-The essence of an ECS is to 'break apart' deeply inherited classes, isolating the data of an object into smaller groups such as transform data (position, rotation etc) and render data (texture IDs, render states) and storing it in sets of structs, away from the logic part of the entity. These structs become our components, providing the ability to select which sets of data are associated with an entity, while the logic used for processing is placed within a system. Systems have a filter applied to them which states component requirements an entity must have for the system to be interested in it. An entity may have more components than a system requires - but not less.
+The essence of an ECS is to 'break apart' deeply inherited classes, isolating the data 
+of an object into smaller groups such as transform data (position, rotation etc) and 
+render data (texture IDs, render states) and storing it in sets of structs, away from 
+the logic part of the entity. These structs become our components, providing the ability
+to select which sets of data are associated with an entity, while the logic used for 
+processing is placed within a system. Systems have a filter applied to them which states
+component requirements an entity must have for the system to be interested in it. An 
+entity may have more components than a system requires - but not less.
 
-xygine already provides the Transform and Sprite components needed to make a ball appear on screen, but a Ball needs other data such as velocity and state (is the ball active? is it waiting to be launched?) which we can encapsulate in a custom struct. To make the ball move as we expect it also requires some logic to act upon the data stored in the Ball struct, which can be implemented in a BallSystem. It may seem like a lot of code for a single ball, but when you consider what it takes to add 1 extra ball - or 100 extra balls suddenly the ability to scale with no extra code becomes apparent. Creating any new entity behaviour in xygine more or less follows this procedure.
+xygine already provides the `Transform` and `Sprite` components needed to make a ball 
+appear on screen, but a `Ball` needs other data such as velocity and state (is the ball 
+active? is it waiting to be launched?) which we can encapsulate in a custom struct. To 
+make the ball move as we expect it also requires some logic to act upon the data stored 
+in the `Ball` struct, which can be implemented in a `BallSystem`. It may seem like a lot
+of code for a single ball, but when you consider what it takes to add 1 extra ball - or 
+100 extra balls suddenly the ability to scale with no extra code becomes apparent. 
+Creating any new entity behaviour in xygine more or less follows this procedure.
 
 
 #### Implementing the ball
 
-Add a new file to the include directory and call it BallSystem.hpp. Update the CMakeLists.txt file too if you're using it. We'll add both the component and the system declarations to the header file as the component declaration is trivial.
+Add a new file to the include directory and call it `BallSystem.hpp`. Update the 
+CMakeLists.txt file too if you're using it. We'll add both the component and the 
+system declarations to the header file as the component declaration is trivial.
 
     struct Ball final
     {
@@ -106,9 +122,20 @@ Add a new file to the include directory and call it BallSystem.hpp. Update the C
         static constexpr float Speed = 800.f;
     };
 
-This is the Ball component. It contains an enum class declaring its state - then a ball is sat on the paddle waiting to be launched it'll be in the Waiting state. Once launched it'll be Active. The velocity is a normalised vector indicating the ball's current direction. It's initialised so that when it launches it'll move straight up. Lastly the constexpr value Speed is used to define the base speed of all balls. It makes more semantic sense to list it here than anywhere else.
+This is the `Ball` component. It contains an enum class declaring its state - then a 
+ball is sat on the paddle waiting to be launched it'll be in the `Waiting` state. Once 
+launched it'll be `Active`. The velocity is a normalised vector indicating the ball's 
+current direction. It's initialised so that when it launches it'll move straight up. 
+Lastly the constexpr value `Speed` is used to define the base speed of all balls. It 
+makes more semantic sense to list it here than anywhere else.
 
-After the component add the declaration of the BallSystem. It needs to publicly inherit the xygine System base class, and implement some of its interface. At the very least we need to fill out the process() function, although there are other virtual functions in System which may be useful. For a full breakdown of these see the xygine documentation or wiki. The System base class also needs to be constructed with a reference to the active MessageBus, so the BallSystem will need to take that as a paramter to the constructor.
+After the component add the declaration of the `BallSystem`. It needs to publicly 
+inherit the xygine `System` base class, and implement some of its interface. At the 
+very least we need to fill out the `process()` function, although there are other 
+virtual functions in `System` which may be useful. For a full breakdown of these see 
+the xygine documentation or wiki. The `System` base class also needs to be constructed 
+with a reference to the active `MessageBus`, so the `BallSystem` will need to take that 
+as a paramter to the constructor.
 
     class BallSystem final : public xy::System
     {
@@ -121,9 +148,19 @@ After the component add the declaration of the BallSystem. It needs to publicly 
 
     };
 
-With these declared, create BallSystem.cpp in the src directory and update the CMakeLists.txt file. In BallSystem.cpp include the BallSystem header, as well as the xygine headers for the Transform component and Scene class. These classes will both be referenced by the system's process function.
+With these declared, create BallSystem.cpp in the src directory and update the 
+CMakeLists.txt file. In BallSystem.cpp include the `BallSystem` header, as well as the 
+xygine headers for the `Transform` component and `Scene` class. These classes will both 
+be referenced by the system's process function.
 
-The constructor of the BallSystem requires a couple of special things. First the initialiser list needs to correctly initialise the base class by forwarding the reference to the MessageBus passed in through the constructor, as well as providing the typeid of the BallSystem. This is used internally by xygine when the Scene processes all of its systems. The body of the constructor is also used to set up the 'filter' by which the system decides which entities it should operate on. In this case we want to make sure that an entity has a Ball component and a Transform component. This is because the system will be modifying the position of the ball.
+The constructor of the `BallSystem` requires a couple of special things. First the 
+initialiser list needs to correctly initialise the base class by forwarding the 
+reference to the `MessageBus` passed in through the constructor, as well as providing 
+the typeid of the `BallSystem`. This is used internally by xygine when the `Scene` 
+processes all of its systems. The body of the constructor is also used to set up the 
+'filter' by which the system decides which entities it should operate on. In this case 
+we want to make sure that an entity has a `Ball` component and a `Transform` component. 
+This is because the system will be modifying the position of the ball.
 
     BallSystem::BallSystem(xy::MessageBus& mb)
         : xy::System(mb, typeid(BallSystem))
@@ -132,7 +169,10 @@ The constructor of the BallSystem requires a couple of special things. First the
         requireComponent<xy::Transform>();
     }
 
-Next the process() function needs to be defined. This function is called once per frame by the Scene on every active system. The current frame time, or delta time, is passed in as a float. We'll be using this when moving the ball to make sure it moves the correct amount each frame.
+Next the `process()` function needs to be defined. This function is called once per 
+frame by the `Scene` on every active system. The current frame time, or delta time, is 
+passed in as a float. We'll be using this when moving the ball to make sure it moves 
+the correct amount each frame.
 
     void BallSystem::process(float dt)
     {
@@ -161,28 +201,43 @@ Next the process() function needs to be defined. This function is called once pe
         }
     }
 
-The function getEntities() returns a vector of entities which are active in the current system. By taking this and iterating over it, we can update each entity one at a time. For each entity then, we find its Ball component and check its state. If it is currently Waiting... do nothing. The Ball is on the Paddle. If the Ball is Active, on the other hand, then move it by its velocity multiplied by the Ball::Speed constant multiplied by the frame time.
+The function `getEntities()` returns a vector of entities which are active in the 
+current system. By taking this and iterating over it, we can update each entity one at 
+a time. For each entity then, we find its `Ball` component and check its state. If it is currently `Waiting`... do nothing. The `Ball` is on the `Paddle`. If the `Ball` is `Active`, on the other hand, then move it by its velocity multiplied by the `Ball::Speed` constant multiplied by the frame time.
 
-After the ball is moved there is a simple check which takes the Scene size and looks to see if the Ball is still within the Scene area. If it is not the ball entity is destroyed. This will be removed once collision is implemented, but for now it's required for testing.
+After the ball is moved there is a simple check which takes the `Scene` size and looks 
+to see if the `Ball` is still within the `Scene` area. If it is not the ball entity is 
+destroyed. This will be removed once collision is implemented, but for now it'll do for 
+testing.
 
-Before we can start testing though the BallSystem has to be added to the Scene. Open the GameState.cpp file, include BallSystem.hpp and add an instance of the system to the Scene in createScene(), on the line before adding the SpriteSystem.
+Before we can start testing though the `BallSystem` has to be added to the `Scene`. 
+Open the GameState.cpp file, include BallSystem.hpp and add an instance of the system 
+to the `Scene` in `createScene()`, on the line before adding the `SpriteSystem`.
 
     m_gameScene.addSystem<BallSystem>(messageBus);
 
-Unlike the paddle the Ball isn't created once in createScene(). When the game runs we'll want to request multiple balls, so add a new function called spawnBall() to GameState.
+Unlike the paddle the `Ball` isn't created once in `createScene()`. When the game runs 
+we'll want to request multiple balls, so add a new function called `spawnBall()` to 
+`GameState`.
 
-When the ball is spawned into the game it needs to be placed on the the paddle and follow the paddle around until it is launched. To do this we can create a Paddle component which references the active Ball entity. In BallSystem.hpp add a new struct
+When the ball is spawned into the game it needs to be placed on the the paddle and 
+follow the paddle around until it is launched. To do this we can create a `Paddle` 
+component which references the active `Ball` entity. In BallSystem.hpp add a new struct
 
     struct Paddle final
     {
         xy::Entity ball;
     };
 
-and add an instance of it as a component to the paddle entity in createScene()
+and add an instance of it as a component to the paddle entity in `createScene()`
 
     entity.addComponent<Paddle>();
 
-As the Entity class is a handle for entities within the Scene it is also nullable and, in fact, is null by default. It has a function isValid() which returns true if the entity contains a valid handle. Using this we can tell whether or not the Paddle has a Ball entity waiting to be launched, and reset it as necessary with the spawnBall() function.
+As the Entity class is a handle for entities within the `Scene` it is also nullable and, 
+in fact, is null by default. It has a function `isValid()` which returns true if the 
+entity contains a valid handle. Using this we can tell whether or not the `Paddle` has 
+a `Ball` entity waiting to be launched, and reset it as necessary with the `spawnBall()` 
+function.
 
     void GameState::spawnBall()
     {
@@ -207,4 +262,58 @@ As the Entity class is a handle for entities within the Scene it is also nullabl
         m_gameScene.getSystem<xy::CommandSystem>().sendCommand(cmd);
     }
 
-The function works by sending a command to the Paddle entity. We set up the CommandSystem in the previous tutorial to receive player input from the mouse. We can also use this command to tell the Paddle we want a new Ball, and to attach that Ball to itelf. The Transform component has the option to add 'child' transforms, which in this case will the Transform of the Ball. While the Ball Transform is parented to the Paddle Transform it will follow the Paddle on screen.
+The function works by sending a command to the `Paddle` entity. We set up the 
+`CommandSystem` in the previous tutorial to receive player input from the mouse. We can 
+also use this system to tell the `Paddle` we want a new `Ball`, and to attach that 
+`Ball` to the `Paddle`. The `Transform` component has the option to add 'child' 
+transforms, which in this case will be the `Transform` of the `Ball`. While the `Ball` 
+transform is parented to the `Paddle` transform it will follow the `Paddle` on screen, 
+which is what we want while the `Ball` is waiting to be launched.
+
+To test this we can modify `handleEvent()` in `GameState` so that when the left mouse 
+button is pressed it checks the `Paddle` to see if the `Ball` property is valid. If not 
+it spawns a new `Ball`, else if it *is* valid then set the state of the `Ball` to 
+`Active`, and unparent it from the `Paddle`.
+Add this under where we check the MouseMove event.
+
+    else if(evt.type == sf::Event::MouseButtonReleased)
+    {
+        if(evt.mouseButton.button == sf::Mouse::Left)
+        {
+            //send a command to the paddle to launch the ball if it has one
+            //else spawn a new ball
+            xy::Command cmd;
+            cmd.targetFlags = CommandID::Paddle;
+            cmd.action = [&](xy::Entity entity, float)
+            {
+                auto& paddle = entity.getComponent<Paddle>();
+                if(paddle.ball.isValid())
+                {
+                    paddle.ball.getComponent<Ball>().state = Ball::State::Active;
+                    auto ballBounds = paddle.ball.getComponent<xy::Sprite>().getTextureBounds();
+                    paddle.ball.getComponent<xy::Transform>().setPosition(entity.getComponent<xy::Transform>().getPosition() + sf::Vector2f(0.f, -ballBounds.height / 2.f));
+                    entity.getComponent<xy::Transform>().removeChild(paddle.ball.getComponent<xy::Transform>());
+                    paddle.ball = {};
+                }
+                else
+                {
+                    spawnBall();
+                }
+            };
+            m_gameScene.getSystem<xy::CommandSystem>().sendCommand(cmd);
+        }
+    }
+
+Again we're using the `CommandSystem` to address the `Paddle` directly. Note also that 
+when unparenting a `Ball` from the `Paddle` that the ball's position needs to be 
+updated. While parented a `Transform`'s coordinates are relative to the parent (in this 
+case the `Paddle`), so when unparenting the `Ball` its position needs to be set in world 
+space coordinates. Finally, when unparenting the `Ball`, the `Paddle`'s ball property is 
+reset with the default constructor, effectively nullifying it.
+
+If you build and run the project now you should find that first clicking the left mouse 
+button places a `Ball` on the paddle, and a second click fires the `Ball` in a straight 
+line across the screen.
+
+Now that we have the `Ball` and `Paddle` in place we need some basic collision detection
+and physics, which will be the topic of the next tutorial.
