@@ -77,7 +77,7 @@ void CollisionSystem::process(float)
     }
 
     //iterate the list of collisions, correct the overlap
-    //and call any callbacks if they exist
+    //and call any callbacks if they exist (narrow phase)
     for (auto& c : m_collisions)
     {
         auto itemA = c.first;

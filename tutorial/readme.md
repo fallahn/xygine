@@ -11,3 +11,8 @@ with the caveat of no warranty of accuracy. Source code licenses
 can be found within the relative source files.
 
 Comments, suggestions and corrections are welcome via github.
+
+### Part 1 - Setting up a new project and creating a basic menu
+### Part 2 - Creating a new state and sending commands to entities
+### Part 3 - Asset management and creating a Bat & Ball with custom systems
+### Part 4 - Collision detection and using the Message Bus
