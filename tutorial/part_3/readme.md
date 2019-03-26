@@ -122,7 +122,7 @@ system declarations to the header file as the component declaration is trivial.
         static constexpr float Speed = 800.f;
     };
 
-This is the `Ball` component. It contains an enum class declaring its state - then a 
+This is the `Ball` component. It contains an enum class declaring its state - when a 
 ball is sat on the paddle waiting to be launched it'll be in the `Waiting` state. Once 
 launched it'll be `Active`. The velocity is a normalised vector indicating the ball's 
 current direction. It's initialised so that when it launches it'll move straight up. 
@@ -135,7 +135,7 @@ very least we need to fill out the `process()` function, although there are othe
 virtual functions in `System` which may be useful. For a full breakdown of these see 
 the xygine documentation or wiki. The `System` base class also needs to be constructed 
 with a reference to the active `MessageBus`, so the `BallSystem` will need to take that 
-as a paramter to the constructor.
+as a parameter to the constructor.
 
     class BallSystem final : public xy::System
     {

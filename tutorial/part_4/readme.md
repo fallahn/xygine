@@ -26,7 +26,7 @@ it because it's worth knowing about when scaling up a xygine project to somethin
 complex.
 
 Firstly, then, add the include directive for the `DynamicTreeSystem` to `GameState`, and 
-add it to the list of Scene systems in `createScene()`
+add it to the list of `Scene` systems in `createScene()`
 
     xyginext/ecs/systems/DynamicTreeSystem.hpp
 
@@ -45,7 +45,7 @@ We'll come back to deploying the `BroadphaseComponents`, but before that let's s
 `CollisionSystem`.
 
 ### Collision System Overview
-The CollisionSystem requires much the same initial set up as our Ball system. We'll add 
+The `CollisionSystem` requires much the same initial set up as our `BallSystem`. We'll add 
 `CollisionSystem.hpp` and `CollisionSystem.cpp` to the relevant directories, and update the 
 CMake files. The header is used to declare the `Collider` component as well as the 
 `CollisionSystem` which, as before, inherits `xy::System` and implements the `process()` 
@@ -100,13 +100,13 @@ If it is dynamic, however, then let's check to see if it collided with anything.
 This is where the `BroadphaseComponent` comes in (in fact we're performing the broad phase 
 right here!) - taking the AABB of the dynamic object's `BroadphaseComponent` we can query 
 the Scene's `DynamicTreeSystem`, which returns a list of entities that are *close by* the 
-dynamic object, saving us from having to check every single object in the Scene.
+dynamic object, saving us from having to check every single object in the `Scene`.
 
     auto others = getScene()->getSystem<xy::DynamicTreeSystem>().query(bounds);
 
-With this list of entities to hand, next check the AABB of each one to see if it intersects 
+With this list of entities in hand, next check the AABB of each one to see if it intersects 
 with the dynamic object's AABB. If it does, insert it into a 
-`std::set<std::pair<Entity, Entity>> m_collisions`, which is a member of `CollisionSystem`.
+`std::set<std::pair<xy::Entity, xy::Entity>> m_collisions`, which is a member of `CollisionSystem`.
 
     m_collisions.insert(std::minmax(entity, other));
 
@@ -116,8 +116,8 @@ once from the perspective of each entity in the collision.
 
 Once the broad phase is complete and the entire list of entities has been iterated over 
 we're left with a set of colliding pairs. These are now operated on by iterating over the 
-set in a 'narrow phase'. For each pair the overlap is calculated and used to create the 
-manifold. If either of the pair are dynamic then the position is corrected so that neither 
+set in a 'narrow phase'. For each pair in `m_collisions` the overlap is calculated and used to create the 
+manifold. If either of the pair are dynamic then the position of the dynamic object is corrected so that neither 
 of the objects are overlapping. Finally, if there is a callback attached, the callback is 
 executed for each of the colliders.
 
@@ -125,7 +125,7 @@ Phew.
 
 ### Deploying the CollisionSystem
 With the system complete it's time to start hooking it up to the `Scene`. Include the header 
-file and add an instance to the `Scene` in `createScene()`. When adding the 
+file in GameState.cpp and add an instance to the `Scene` in `createScene()`. When adding the 
 `CollisionSystem` to the `Scene` it's probably worth making sure that it's added right 
 after the `DynamicTreeSystem`, so that when the `CollisionSystem` is processed and it 
 queries the `DynamicTreeSystem` we're sure the `DynamicTreeSystem` is up to date.
@@ -171,7 +171,7 @@ NOTE: The ball is not immediately set as a dynamic collider, as it's not conside
 while is sits on the paddle. In the event handler, which launches the ball on a button 
 press, the `Collider` is also updated and its 'dynamic' property set to true.
 
-Speaking of walls, we can't really test the collision while the ball is free to fly out of 
+Currently we can't really test the collision while the ball is free to fly out of 
 the arena. In `createScene()`, below where the paddle entity is created, create three new 
 entities, one for the top wall, and two for the left and right sides. These entities need 
 only a `Transform` component along with the `Broadphase` and `Collider` components to 
@@ -180,7 +180,7 @@ AABBs for the three entities. Of course it would be nice to also see these entit
 can be done by adding sprites with new textures added to the `TextureID` namespace. 
 Alternatively the 'extras' directory in the xygine repository contains a header file called 
 `ShapeUtils.hpp`. Adding this to your project will provide functions for quickly creating 
-rectangle or circle shapes which are useful for debugging. The wall entities  need only a 
+rectangle or circle shapes which are useful for prototyping. The wall entities  need only a 
 `Drawable` component added for this:
 
     Shape::setRectangle(entity.addComponent<xy::Drawable>(), { wallBounds.width, wallBounds.height });

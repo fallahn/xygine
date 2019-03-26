@@ -1,0 +1,20 @@
+spritesheet sprites
+{
+    src="assets/images/sprites.png"
+    blend = alpha
+
+    sprite Paddle
+    {
+        bounds = 0,0,160,22
+    }
+
+    sprite Ball
+    {
+        bounds = 0, 22, 32, 32
+    }
+
+    sprite Block
+    {
+        bounds = 32,22,64,32
+    }
+}
