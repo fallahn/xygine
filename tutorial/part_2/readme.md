@@ -22,7 +22,7 @@ there'll be another scene added to contain the user interface. Rename the class 
 `MyFirstState` to `GameState`. In GameState.cpp the process is similar: rename all 
 `m_scene` references to `m_gameScene` and all `MyFirstState` references to `GameState`. 
 This includes changing the name of the included header file "MyFirstState.hpp" to 
-"GameState.hpp" at the top of the document. There's no need to include the headers for 
+"GameState.hpp" at the top of the file. There's no need to include the headers for 
 the `Text` component or `TextSystem` either, but leave the remaining includes as they will 
 be used later on. The contents of `createScene()` can be removed too, although you can 
 leave the lines where the `RenderSystem` is added, as that'll be used when drawing the 
@@ -150,7 +150,7 @@ one line before the `RenderSystem` is added
 
 The rest of the `createScene()` function follows the same pattern as `MyFirstState`. As 
 we're using a `Sprite` instead of a `Text`, however, the font from `MyFirstState` is 
-replaced with an `sf::Texture`. For now add a new member to the `GameState` class 
+replaced with an `sf::Texture`. Add a new member to the `GameState` class 
 `sf::Texture m_paddleTexture`. This will eventually be replaced with a resource holder, 
 but for now it will do. Back in the definition of `createScene()` load the paddle image 
 into the texture
@@ -172,11 +172,11 @@ paddle.
 This looks very similar to creating a text entity in `MyFirstState`, with the difference
 that the `Text` component / font combo is replaced with a `Sprite` component and 
 texture. The paddle is positioned based on a built-in constant `xy::DefaultSceneSize`. 
-This is the same size as the StateStack's calculated view, so we can be sure that the 
+This is the same size as the `StateStack`'s calculated view, so we can be sure that the 
 paddle will be aligned relative to the bottom centre of the screen as we expect, 
 regardless of the size or resolution of the window.
 
-To neaten up the layout of the paddle we can take the Sprite's texture bounds and use it
+To neaten up the layout of the paddle we can take the `Sprite`'s texture bounds and use it
 to align the origin to the centre of the `Sprite`
 
     auto paddleBounds = entity.getComponent<xy::Sprite>().getTextureBounds();

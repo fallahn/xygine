@@ -8,7 +8,7 @@ Creating collisions requires only two xygine systems, one of which already comes
 xygine, but they require some explanation. Because of this I've tried to cut back on 
 explanation of other code, such as adding new graphical entities, as these are already 
 covered in the previous parts of the tutorial. The collision process is based on a blog 
-post I wrote some time back, which you can read here: 
+post I wrote some time ago, which you can read here: 
 https://trederia.blogspot.com/2016/02/2d-physics-101-pong.html 
 I'll try to refrain from reiterating anything too much and stick to explaining the actual 
 implementation - so I highly recommend reading the blog post first to give you some idea of 
@@ -123,6 +123,8 @@ executed for each of the colliders.
 
 Phew.
 
+---
+
 ### Deploying the CollisionSystem
 With the system complete it's time to start hooking it up to the `Scene`. Include the header 
 file in GameState.cpp and add an instance to the `Scene` in `createScene()`. When adding the 
@@ -190,6 +192,7 @@ Running the game will give us the paddle and ball from before, but now when clic
 mouse the ball should move until it hits the top wall, and bounce off. Hitting the ball 
 with different parts of the paddle will change its velocity angle. Awesome!
 
+---
 
 ### Adding some polish with Messages
 By now you've probably noticed that it's possible to spawn many balls at once by repeatedly 
@@ -219,7 +222,7 @@ such as playing a sound or reducing the player's ball count. We can also use it 
 new ball.
 
 Create a new header file called `MessageIDs.hpp` and add a reference to it to the relevant 
-CMake file. Include the xygine Messages header
+CMake file. Include the xygine `Message` header
 
     xygine/core/Message.hpp
 
@@ -249,7 +252,7 @@ Underneath the namespace add a new struct to hold the message data
     }
 
 This should contain everything we'll need elsewhere in the game when the ball is spawned or 
-removed from the area.
+removed from the play area.
 
 In `BallSystem::process()` find the line which checks to see if the ball has left the play 
 area. Underneath raise a new message:
@@ -260,7 +263,7 @@ area. Underneath raise a new message:
 
 That's all it takes to create a new message. Note that `postMessage()` exists in all 
 `System` classes, and takes the event data type (`BallEvent` in this case) as the template 
-parameter. `MessageID::BallMessage` is passed as a parameter so that the data can be 
+parameter. `MessageID::BallMessage` is passed as a function parameter so that the data can be 
 correctly identified by any message handler that may receive it. The function returns a 
 pointer to the newly created message so that any information about the event can be filled 
 out.
@@ -287,8 +290,10 @@ That's it! Messages are quite a powerful concept in xygine and you should get us
 raising them for all pertinent events such as collisions, spawning, despawning as it makes 
 tracking the state of the game much easier.
 
+---
+
 ### Final Step
-As I stated at the beginning, this tutorial section is somewhat long so, as an exercise, 
+As I stated at the beginning, this tutorial section is somewhat long so 
 I'm not going to cover creating the blocks explicitly. By now you should know enough about 
 creating entities, adding sprites, collision data and even the mechanism for destroying 
 blocks (hint: Collider callback) to be able to implement them on your own. Also try raising

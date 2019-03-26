@@ -21,6 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tutorial", "Tutorial", "{C1
 		tutorial\part_2\readme.md = tutorial\part_2\readme.md
 		tutorial\part_3\readme.md = tutorial\part_3\readme.md
 		tutorial\part_4\readme.md = tutorial\part_4\readme.md
+		tutorial\part_5\readme.md = tutorial\part_5\readme.md
 	EndProjectSection
 EndProject
 Global

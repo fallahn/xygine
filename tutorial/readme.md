@@ -17,3 +17,4 @@ Comments, suggestions and corrections are welcome via github.
 ### Part 3 - Asset management and creating a Bat & Ball with custom systems
 ### Part 4 - Collision detection and using the Message Bus
 ### Part 5 - Sprite sheets and UI
+### Part 6 - Pop & Sparkle with Directors, audio and particles

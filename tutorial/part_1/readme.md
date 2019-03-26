@@ -7,8 +7,9 @@ mature enough now, I think, that it’s time to attempt to document the process of
 creating a small breakout style game, in order to (hopefully) better explain xygine’s
 features and the functionality it provides. If you’re reading this I’m going to assume
 some knowledge on your part of C++ as well as potentially SFML, and that you are here
-because you want a shortcut to skip creating much of the boilerplate code required for
-creating a game in favour of diving right in. Let’s begin!
+because you want a shortcut to skip writing much of the boilerplate code required for
+creating a game in favour of diving right in. This is not a beginner's tutorial in 
+gamedev, rather an exploration of what xygine has to offer. Let’s begin!
 
 
 ### Getting started
@@ -20,29 +21,29 @@ are on the wiki: https://github.com/fallahn/xygine/wiki/Building
 Once you have configured, built and installed xygine for your platform of choice, it’s
 time to create your first project! The repository contains a folder named
 `cmake_template`. This folder has all the files necessary to start a new project,
-including a default cmake file. Create a copy of this directory and rename it to
-something else such as ‘breakout’. If you want to use the included cmake file then open
+including a default CMake file. Create a copy of this directory and rename it to
+something else such as ‘breakout’. If you want to use the included CMake file then open
 that in your text editor of choice and edit the PROJECT_NAME variable to something more
-relevant too. If, like me, you prefer using an IDE you can open the cmake file directly
+relevant too. If, like me, you prefer using an IDE you can open the CMake file directly
 if your IDE has support (such as Visual Studio 2017) or create a new project, adding
 the source and header files included in the template folder, and linking to the SFML
 and xygine libraries as appropriate (eg the correct debug/release versions). If you are
-taking the cmake route then the src and include subdirectories both contain a
+taking the CMake route then the src and include subdirectories both contain a
 CMakeLists.txt file, which will need to be updated when you add any new source files to
 your project. Once you have the project configured it should be possible to build and
 run it, which will open a console window (on Windows) and a blank game window titled
 “xyginext game”. Pressing F1 will open a console window which displays any messages
-printed with the `Logger` class, and provides basic video and audio options. More
+printed with the `xy::Logger` class, and provides basic video and audio options. More
 information on the console can be found in the documentation:
 https://github.com/fallahn/xygine/wiki 
 
 
 ### A closer look at the source files
 
-The template project contains 3 sources files.  
-Main.cpp contains the entry point into the program, which instantiates a Game object
+The template project contains three sources files.  
+Main.cpp contains the entry point into the program, which instantiates a `Game` object
 and runs it. There’s not much else done here and the file will probably not be brought
-up again in the rest of the tutorial.
+up again for the rest of the tutorial.
 
 Game.cpp is where the magic begins to happen. The `Game` class inherits the `xy::App`
 class which is the root of any xygine game or application. The `App` class contains the
@@ -57,7 +58,7 @@ Most important to note about the `Game` class, however, are the `initialise()` a
 `finalise()` functions, which are overrides of the `App` class functions. These are used
 to correctly create, configure and tidy up any extra game-wide resources which you may
 use throughout the lifetime of the application. They are called automatically on startup
-and shutdown and should be used if a game requires any third party libraries such as a
+and shutdown and should be used if a game uses any third party libraries such as a
 physics system which requires specific initialisation and shutdown. The initialise
 function returns a bool - this  should return false if any initialisation errors occur,
 particularly if initialising a third party library, as this will cause xygine to quit
@@ -121,7 +122,7 @@ systems to create a basic menu in `MyFirstState`. At the top of the cpp file inc
 
 A brief explanation:  
 The transform component is used by almost all entities to correctly place them in the
-Scene. There are very few cases where an entity will not need a transform - text and
+`Scene`. There are very few cases where an entity will not need a transform - text and
 sprites cannot be drawn without one, buttons and UI components will not work, and audio
 emitters cannot be correctly placed. Transforms can also be parented to one another to
 form a ‘scene graph’. More information can be found about this in the wiki
@@ -129,7 +130,7 @@ https://github.com/fallahn/xygine/wiki
 
 Text components are very similar to the `Text` class in SFML, although slightly modified
 to better fit the ECS. The interface is nearly the same, including functions such as
-`setString() setFillColour()` etc, and require an instance of `sf::Font` to render. For
+`setString()`, `setFillColour()` etc, and require an instance of `sf::Font` to render. For
 now a font can be added as a member to `MyFirstScene` as `m_font` for example - later this
 will be replaced with a resource manager.
 
@@ -139,8 +140,8 @@ with data held in the `Text` component. Sprites and the `SpriteSystem` work in a
 Later, when creating custom systems, the `Drawable` component can be used to draw
 arbitrary shapes, having their vertex data updated via the custom system. Drawable
 components also have texture and shader properties, which allow SFML resources
-`sf::Texture` and `sf::Shader` to be applied to them. This will be covered later, and
-more information can also be found in the documentation. Drawables have another
+`sf::Texture` and `sf::Shader` to be applied to them. This is not covered here, but
+more information can be found in the documentation. Drawables have another
 important feature: the depth property. The `setDepth()` and `getDepth()` accessors can
 be used to define the ‘z depth’ of a drawable, providing runtime sorting of visible
 drawables. Setting a depth with a higher value ensures that the drawable is drawn in
@@ -191,7 +192,7 @@ will eventually be replaced with a resource manager. Note that when loading the 
 there are no defaults supplied with xygine - you need to provide a path to your own. If
 the text is not visible then this is probably the first thing to check.
 
-Finally a new entity is created. Entities are created through a Scene’s factory function
+Finally a new entity is created. Entities are created through a `Scene`’s factory function
 `createEntity()`. This is important because it ensures that the entity is correctly
 registered to its parent scene. The entity class is merely a handle, however, and instances
 can happily be overwritten when creating new entities. For example:
@@ -211,14 +212,14 @@ This generally means that entities will exist until the end of the current frame
 
 NOTE: xygine has a hard limit of 1024 active entities at a time. While this can be changed
 by modifying the source code it is usually enough as long as expired entities are explicitly
-destroyed. There is little overhead in removing and creating entities at runtime because
+destroyed. There is very little overhead in removing and creating entities at runtime because
 xygine automatically pools and reallocates the memory required.
 
-Components are added to an entity with `addComponent<T>()`. Similarly to the Scene’s 
+Components are added to an entity with `addComponent<T>()`. Similarly to the `Scene`’s 
 `addSystem()` function, the entity’s `addComponent()` function is templated, taking the
 component type as a type parameter. The function also forwards any parameters to the
 component constructor, such as in this example where a reference to the font is
-forwarded to the `Text` component. `Entity::addComponent()` will return a reference to the
+forwarded to the constructor of the `Text` component. `Entity::addComponent()` will return a reference to the
 newly created component allowing properties to be immediately set, for example the
 string used in the `Text` component. A reference to a component can also be retrieved
 with `entity.getComponent<T>()`, allowing other component properties to be updated, or
@@ -248,7 +249,7 @@ this purpose. At the top of the MyFirstState.cpp include
     xyginext/ecs/components/UIHitBox.hpp
     xyginext/ecs/systems/UISystem.hpp
 
-Now in `createScene()`  add a `UISystem` to the scene, right before adding the
+Now in `createScene()` add a `UISystem` to the scene, right before adding the
 `RenderSystem`
 
     m_scene.addSystem<xy::UISystem>(messageBus);

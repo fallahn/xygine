@@ -92,7 +92,7 @@ render data (texture IDs, render states) and storing it in sets of structs, away
 the logic part of the entity. These structs become our components, providing the ability
 to select which sets of data are associated with an entity, while the logic used for 
 processing is placed within a system. Systems have a filter applied to them which states
-component requirements an entity must have for the system to be interested in it. An 
+the component requirements an entity must have for the system to be interested in it. An 
 entity may have more components than a system requires - but not less.
 
 xygine already provides the `Transform` and `Sprite` components needed to make a ball 
@@ -100,8 +100,8 @@ appear on screen, but a `Ball` needs other data such as velocity and state (is t
 active? is it waiting to be launched?) which we can encapsulate in a custom struct. To 
 make the ball move as we expect it also requires some logic to act upon the data stored 
 in the `Ball` struct, which can be implemented in a `BallSystem`. It may seem like a lot
-of code for a single ball, but when you consider what it takes to add 1 extra ball - or 
-100 extra balls suddenly the ability to scale with no extra code becomes apparent. 
+of code for a single ball, but when you consider what it takes to add 1 extra ball, or 
+100 extra balls, suddenly the ability to scale with no extra code becomes apparent. 
 Creating any new entity behaviour in xygine more or less follows this procedure.
 
 
@@ -203,12 +203,18 @@ the correct amount each frame.
 
 The function `getEntities()` returns a vector of entities which are active in the 
 current system. By taking this and iterating over it, we can update each entity one at 
-a time. For each entity then, we find its `Ball` component and check its state. If it is currently `Waiting`... do nothing. The `Ball` is on the `Paddle`. If the `Ball` is `Active`, on the other hand, then move it by its velocity multiplied by the `Ball::Speed` constant multiplied by the frame time.
+a time. For each entity then, we find its `Ball` component and check its state. If it is 
+currently `Waiting`... do nothing. The `Ball` is on the `Paddle`. If the `Ball` is 
+`Active`, on the other hand, then move it by its velocity multiplied by the 
+`Ball::Speed` constant multiplied by the frame time.
 
 After the ball is moved there is a simple check which takes the `Scene` size and looks 
 to see if the `Ball` is still within the `Scene` area. If it is not the ball entity is 
-destroyed. This will be removed once collision is implemented, but for now it'll do for 
-testing.
+destroyed.
+
+*A side note:* it is possible for a `System` to be made `Drawable` by inheriting `sf::Drawable.` 
+The `Scene` will attempt to draw all `System`s in the order in which they are added to 
+the `Scene`.
 
 Before we can start testing though the `BallSystem` has to be added to the `Scene`. 
 Open the GameState.cpp file, include BallSystem.hpp and add an instance of the system 
@@ -218,7 +224,7 @@ to the `Scene` in `createScene()`, on the line before adding the `SpriteSystem`.
 
 Unlike the paddle the `Ball` isn't created once in `createScene()`. When the game runs 
 we'll want to request multiple balls, so add a new function called `spawnBall()` to 
-`GameState`.
+`GameState`. Call this immediately after creating the `Paddle` entity.
 
 When the ball is spawned into the game it needs to be placed on the the paddle and 
 follow the paddle around until it is launched. To do this we can create a `Paddle` 
@@ -233,7 +239,7 @@ and add an instance of it as a component to the paddle entity in `createScene()`
 
     entity.addComponent<Paddle>();
 
-As the Entity class is a handle for entities within the `Scene` it is also nullable and, 
+As the `Entity` class is a handle for entities within the `Scene` it is also nullable and, 
 in fact, is null by default. It has a function `isValid()` which returns true if the 
 entity contains a valid handle. Using this we can tell whether or not the `Paddle` has 
 a `Ball` entity waiting to be launched, and reset it as necessary with the `spawnBall()` 
@@ -264,7 +270,7 @@ function.
 
 The function works by sending a command to the `Paddle` entity. We set up the 
 `CommandSystem` in the previous tutorial to receive player input from the mouse. We can 
-also use this system to tell the `Paddle` we want a new `Ball`, and to attach that 
+also use this system to tell the `Paddle` we want a new `Ball`, and to immediately attach that 
 `Ball` to the `Paddle`. The `Transform` component has the option to add 'child' 
 transforms, which in this case will be the `Transform` of the `Ball`. While the `Ball` 
 transform is parented to the `Paddle` transform it will follow the `Paddle` on screen, 
