@@ -7,8 +7,8 @@ it can be used to add some of the finer details to the game with the `AudioEmitt
 
 ### The Director
 The `Director` class in xygine differs slightly from the other ECS based classes, in 
-that while it is a member of the `Scene`, it doesn't interact directly with any of the 
-entities. The `Director` class instead monitors the `Scene` via the event queue and 
+that while it is a member of the `Scene`, it doesn't interact directly with it.
+The `Director` class instead monitors the `Scene` via the event queue and 
 `MessageBus`, and dispatches commands or creates new entities based on what it has 
 observed - hence the title `Director`.
 
@@ -54,12 +54,12 @@ I have created a particle settings file for this tutorial, which can be loaded w
 `xy::EmitterSettings::loadFromFile()` at runtime.
 
 The `ParticleSystem` class is used to render the `ParticleEmitter` component. Particles 
-are unique as renderables in that they do not require a `Drawable` component, due to the 
-fact that they use GPU side effects when rendering. This means that when adding the 
-`ParticleSystem` to `m_gameScene` it needs to be added *after* the `xy::RenderSystem`, 
-so that particles are drawn on top of everything else. While this does provide the 
-benefit of GPU accelerated particles, it has the drawback of not being depth sorted with 
-other `Drawable` entities, unfortunately.
+are unique as renderables in that they do not require a `Drawable` component, and are 
+therefore not drawn by the `RenderSystem`. This is due to the fact that they use a 
+special GPU assisted render path. When adding the `ParticleSystem` to `m_gameScene` it 
+needs to be added *after* the `xy::RenderSystem`, so that particles are drawn on top of 
+everything else. While this does provide the benefit of GPU accelerated particles, it has 
+the drawback of not being depth sorted with other `Drawable` entities, unfortunately.
 
 ---
 
@@ -68,7 +68,7 @@ So now we're familiar with the components we want to use and the `AudioSystem` a
 `ParticleSystem` have been added to the `Scene`, we can start crafting our `FXDirector`. 
 The idea is this: listen for `BlockEvent` messages in the message handler, then when we 
 see a `Block` being destroyed dispatch an entity with an `AudioEmitter` and 
-`ParticleEmitter` attached to play their effects at the position held in the the 
+`ParticleEmitter` attached to it to play their effects at the position held in the the 
 `BlockEvent` message.
 
 Create a new header file in the include directory and call it `FXDirector.hpp`. Update 
@@ -156,7 +156,7 @@ components.
 
 The message handler picks up any incoming `BlockEvent` messages, and when a `Block` is 
 destroyed uses `doEffect()` to dispatch an entity to the correct position. As an 
-exercise I encourage you to expand this later on with messages raised by the ball 
+exercise I encourage you to expand on this later with messages raised by the ball 
 bouncing off the walls to play a different sound.
 
     void FXDirector::process(float)
@@ -206,7 +206,7 @@ active count updated.
     }
 
 These two functions are used for book keeping of the entity pool. The first finds the 
-next available entity and returns it. If the pool is currently full of active entities 
+next available entity and returns it. If the pool currently has no free entities 
 then the function below is called to resize the pool. This is where entities are 
 actually created, adding the `Transform`, `AudioEmitter` and `ParticleEmitter` 
 components. Note that here the audio source is applied to the `AudioEmitter` and the 
@@ -224,7 +224,7 @@ Finally `doEffect()` requests the next free entity from the pool, applies the po
 and starts the effects.
 
 To use the `FXDirector` in the `Scene` it needs to be added similarly to a `System` 
-class. In `GameState::createScene(`) underneath where the last System is added to 
+class. In `GameState::createScene()` underneath where the last System is added to 
 `m_gameScene` add
 
     m_gameScene.addDirector<FXDirector>(m_resources);
@@ -250,7 +250,11 @@ many more features that are available, a few of which are:
    are available in xygine. If they are compatible with SFML then they can be applied 
    any `xy::Drawable` component, and Scene-wide via the `PostProcess` class. xygine 
    contains a few built in `PostProcess` effects that can be added to the `Scene` via 
-   `addPostProcess<T>()`, and of course you can implement your own.
+   `Scene::addPostProcess<T>()`, and of course you can implement your own.
+
+ - Animated Sprites. `xy::Sprite` fully supports multiframe animation via the 
+   `SpriteAnimator` system, in combinations with the `SpriteAnimation` component and 
+   metadata provided by the `SpriteSheet` format.
 
  - Networking. xygine has complete network support via the Enet game networking library.
    The Demo application in the xygine repository implements a 2 player online network 

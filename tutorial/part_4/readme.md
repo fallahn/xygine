@@ -41,7 +41,7 @@ created `CollisionSystem`, namely an AABB (axis aligned bounding box) in the for
 `sf::FloatRect`. This AABB is used by the dynamic tree to parition the `Scene`, and quickly 
 retrieve only other AABBs that are nearby.
 
-We'll come back to deploying the `BroadphaseComponents`, but before that let's start on the 
+We'll come back to deploying the `BroadphaseComponent`s, but before that let's start on the 
 `CollisionSystem`.
 
 ### Collision System Overview
@@ -59,8 +59,8 @@ The collider component is a simple struct with two members:
         std::function<void(xy::Entity, xy::Entity, Manifold)> callback;
     };
 
-The dynamic bool is used to indicate if the collidable moves, or is static geometry. In the 
-game we're creating the only moving object is the ball - while the paddle is moved by the 
+The `dynamic` bool is used to indicate if the collidable moves, or is static geometry. In the 
+game the only moving object is the ball - while the paddle is moved by the 
 mouse it's not considered 'dynamic' as it doesn't react to collisions.
 
 The `std::function` is a little more complicated. Here we optionally add a callback 
@@ -111,7 +111,7 @@ with the dynamic object's AABB. If it does, insert it into a
     m_collisions.insert(std::minmax(entity, other));
 
 I'm using `std::set` as it will make sure that each collision pair (when sorted with 
-`minmax()`) is inserted only once. This way the same collision isn't calculated twice, 
+`minmax()`) is inserted only once. Otherwise the same collision would be calculated twice, 
 once from the perspective of each entity in the collision.
 
 Once the broad phase is complete and the entire list of entities has been iterated over 
@@ -139,7 +139,7 @@ For the paddle and ball to collide we need to add both a `BroadphaseComponent` a
     entity.addComponent<Collider>();
 
 The AABB is set on the `BroadphaseComponent` using the size of the `Sprite`, which we 
-handily already have. In `spawnBall()` do the same, again using the `Sprite` size for the 
+handily already have in `paddleBounds`. In `spawnBall()` do the same, again using the `Sprite` size for the 
 AABB bounds. Crucially here, however, we add a callback to the collider so that the `Ball` 
 knows how to behave once it has collided.
 

@@ -3,7 +3,7 @@
 ### Overview
 In part four of the tutorial I left the task of creating block entities as an exercise 
 for the reader, so I'll not be covering the code here. If you haven't added the blocks 
-yet the source code for this part of the tutorial includes the code in 
+yet the source code for this part of the tutorial includes the block code in 
 `GameState::createBlocks()`. From here I'm going to assume the block code is functioning 
 as we concentrate on tidying up the assets with a `SpriteSheet` and implementing a game 
 UI overlay.
@@ -20,7 +20,7 @@ named `sprites.spt`. The `.spt` extension is used to denote sprite sheets used w
 xygine, although the format of the text file is the same `xy::ConfigFile` format used by 
 all xygine description files, such as particle systems. More about the `xy::ConfigFile` 
 format can be found in the documentation, but for now know that the `.spt` file contains 
-information about the image source, sprite names from which it is composed, sub-regions 
+information about the image source, sprite names from which the image is composed, sub-regions 
 describing the area of the atlas used by a specific sprite, as well as having the option
 to describe animation data used by animated sprites. This system allows easy editing of 
 sprite data externally from xygine, without having to recompile the game each time an 
@@ -59,7 +59,7 @@ preloaded sprites can easily be fetched from the array. For example the `Paddle`
 
     paddle.ball.addComponent<xy::Sprite>() = SpriteID::sprites[SpriteID::Ball];
 
-For more information on the SpriteSheet class and how to handle animated sprites, see 
+For more information on the `SpriteSheet` class and how to handle animated sprites, see 
 the xygine documentation, or review the source of the demo game included in the xygine 
 repository.
 
@@ -133,7 +133,7 @@ that the UI scene is correctly added to `handleEvent()`, `handleMessage()`, `upd
 and `draw()`.
 
 ### Updating the UI
-In part four we covered using the `MessageBus` to raise messages when the `Ball` went 
+In part four we covered using the `MessageBus` to raise messages if the `Ball` went 
 out of play, and using the message handler to spawn a new `Ball` when it did. Hopefully, 
 when creating the `Block` entities, you employed this technique to raise a 
 `BlockEvent` message when a `Block` is destroyed. If not, reviewing the source in the 
@@ -149,11 +149,11 @@ Initialise these to 0 and 3 respectively. Now in `handleMessage()` these can be 
 appropriately: if we get a message saying the `Ball` despawned, reduce the player's 
 lives by one. Only respawn the `Ball` if the lives are not at 0. If we get a message 
 saying a `Block` was broken increase the score. For the example I've incremented the 
-score by 100 each time, but feel free to experiment with the scoring system. For example 
+score by 100 each time, but feel free to experiment with the scoring system. For instance 
 the amount of points awarded could increase with each block broken before the `Ball` 
 hits the `Paddle` again.
 
-Updating the score display from the message handler is simple, using the `CommandSystem` 
+Updating the score display from within the message handler is simple, using the `CommandSystem` 
 we added to `m_uiScene`.
 
     xy::Command cmd;
