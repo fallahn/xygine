@@ -1,0 +1,27 @@
+particle_system impact
+{
+    src = "assets/images/star.png"
+    blendmode = alpha
+    gravity = 0.000000,191.781006
+    velocity = 0.000000,-68.492996
+    spread = 720.000000
+    lifetime = 1.000000
+    lifetime_variance = 0.000000
+    colour = 255,255,255,255
+    random_initial_rotation = true
+    rotation_speed = 10.582000
+    scale_affector = 0.000000
+    size = 3.521000
+    emit_rate = 81.164001
+    emit_count = 1
+    spawn_radius = 30.822001
+    spawn_offset = 0.000000,0.000000
+    release_count = 6
+    forces 
+    {
+        force = 0.000000,0.000000
+        force = 0.000000,0.000000
+        force = 0.000000,0.000000
+        force = 0.000000,0.000000
+    }
+}

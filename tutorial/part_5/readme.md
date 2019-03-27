@@ -10,7 +10,7 @@ UI overlay.
 
 ### Sprite Sheets
 In part three we refactored asset management so that we are now using an instance of 
-`xy::ResourceManager` to book keep the textures in use. However, rather than loading 
+`xy::ResourceHandler` to book keep the textures in use. However, rather than loading 
 multiple textures it is possible, using `xy::SpriteSheet`, to merge the textures into a 
 single file, a texture atlas, and load a text-based configuration file describing the 
 `Sprite`s contained within. The assets directory for this part of the tutorial now 
@@ -44,7 +44,7 @@ copying the sprite data out of it and letting it drop out of scope when we're do
     spriteSheet.loadFromFile("assets/sprites/sprites.spt", m_resources);
 
 Note that a reference to the resource manager is passed to the function, so that any 
-loaded textures are still kept by the `ResourceManager` as usual.
+loaded textures are still kept by the `ResourceHandler` as usual.
 
 When the sprite sheet is loaded (`xy::SpriteSheet::loadFromFile()` returns true on 
 success) we can grab the loaded sprite data and store it in the `SpriteID` array
@@ -123,7 +123,7 @@ remembering to use the `Entity` factory function from `m_uiScene`!
 
 Notice that the resource manager now also handles the font we want to use. Refer back 
 to `MyFirstState` to see how fonts are loaded if you modified it to use a 
-`ResourceManager` in part three. It is also the same technique used when loading 
+`ResourceHandler` in part three. It is also the same technique used when loading 
 textures and storing their resource handles, only within a `FontID` namespace instead of 
 a `TextureID`.
 

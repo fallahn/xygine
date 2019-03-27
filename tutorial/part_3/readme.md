@@ -16,16 +16,16 @@ to create custom components and systems to add a ball.
 In the last part to get the paddle rendering on the screen we added an `sf::Texture` 
 member to the `GameState`, `m_paddleTexture` which is used to draw the paddle. As we'll 
 be progressively be adding more textures from now on, it's time to do a small amount of 
-refactoring. xygine has a `ResourceManager` class which provides an interface for 
+refactoring. xygine has a `ResourceHandler` class which provides an interface for 
 loading multiple types of SFML resources such as fonts, textures, images and even sound 
 buffers. Shaders are, however, a special case and won't be covered in this tutorial. The
-`ResourceManager` is designed to ensure that only a single instance of any resource 
+`ResourceHandler` is designed to ensure that only a single instance of any resource 
 exists at one time and provides fast lookup of loaded resources via an integer ID. It 
 also provides a fallback mechanism allowing you to handle any errors which may occur 
 should loading a resource fail. For now we'll be using it to load all of the textures 
 required for the game.
 
-When a resource is loaded the `ResourceManager` returns a unique ID for that resource, 
+When a resource is loaded the `ResourceHandler` returns a unique ID for that resource, 
 which can be used to quickly retreive it when it is needed at run time. A little book 
 keeping is needed then, to store these IDs.
 
@@ -49,14 +49,14 @@ Note the `std::array` named `handles`. This will hold the IDs returned from the 
 manager, and will be indexed by the enum values above it. From now on whenever we add a 
 new texture to the game we'll create a new member in the enum.
 
-With this created open GameState.hpp and include the header for the `ResourceManager`
+With this created open GameState.hpp and include the header for the `ResourceHandler`
 
-    xyginext/resources/ResourceManager.hpp
+    xyginext/resources/ResourceHandler.hpp
 
 and remove the include directive for `sf::Texture`. Below that remove the member 
 `m_paddleTexture` and replace it with
 
-    xy::ResourceManager m_resources;
+    xy::ResourceHandler m_resources;
 
 Underneath `createScene()` add a new function, `loadResources()`. In GameState.cpp 
 go to the definition of `createScene()` and find the line where the paddle texture is 
@@ -68,7 +68,7 @@ Right now we're only using the paddle texture so add the line
 
     TextureID::handles[TextureID::Paddle] = m_resources.load<sf::Texture>("assets/images/paddle.png");
 
-The `ResourceManager::load()` function is templated and can be used to load different 
+The `ResourceHandler::load()` function is templated and can be used to load different 
 kinds of resources. When loading fonts or images the same pattern of namespacing and 
 handle array can be used.
 
@@ -79,7 +79,7 @@ the paddle entity so that it uses the new resource manager.
 
 Build and run the project to check that every thing is OK, you should see the same 
 paddle sprite as it was before. If you're feeling bold refactor `MyFirstState` in the 
-same way, replacing `m_font` with a `ResourceManager`, and use it curate the font used in 
+same way, replacing `m_font` with a `ResourceHandler`, and use it curate the font used in 
 the menu.
 
 ---
