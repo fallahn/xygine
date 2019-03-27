@@ -58,9 +58,15 @@ namespace xy
 
         /*!
         \brief Set the area within the world which
-        this component's enity covers, in local coordinates.
+        this component's entity covers, in local coordinates.
         */
         void setArea(sf::FloatRect area) { m_bounds = area; }
+
+        /*!
+        \brief Returns the local bounds of the component as applied in the
+        constructor oe with setArea()
+        */
+        sf::FloatRect getArea() const { return m_bounds; }
 
         /*!
         \brief Allows filtering BroadphaseComponents during DynamicTree queries.
