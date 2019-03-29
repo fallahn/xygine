@@ -27,6 +27,11 @@ xygine uses C++17 features so an up to date compiler is required, for
 example XCode 10 on macOS, Visual Studio 2017 on windows or recent versions
 of gcc and clang.
 
+A full tutorial covering the process of creating a xygine game can be found in the
+[tutorial](https://github.com/fallahn/xygine/tree/master/tutorial) directory of the repository.
+
+See some of the games I've made with xygine [here](https://github.com/fallahn/xygine/wiki/Games-made-with-xygine)!
+
 ###### What's new?
 All new modular ECS providing a flexible and performant API for implementing
 custom components and systems, which compliment the systems included in the library
