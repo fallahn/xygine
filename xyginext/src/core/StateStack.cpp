@@ -42,6 +42,14 @@ StateStack::StateStack(State::Context context)
 }
 
 //public
+void StateStack::unregisterState(StateID id)
+{
+    if (m_factories.count(id) != 0)
+    {
+        m_factories.erase(id);
+    }
+}
+
 void StateStack::update(float dt)
 {
     applyPendingChanges();

@@ -112,6 +112,11 @@ namespace xy
         }
 
         /*!
+        \brief Unregisters a State with the given ID
+        */
+        void unregisterState(StateID id);
+
+        /*!
         \brief Updates each currently active state
 
         This should be called from the App::update function
