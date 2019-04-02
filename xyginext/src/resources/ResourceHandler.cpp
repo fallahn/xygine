@@ -38,7 +38,28 @@ ResourceHandler::ResourceHandler()
     fontLoader.fallback = []()
     {
         sf::Font font;
-        font.loadFromFile(getFontPath());
+        static const std::array<std::string, 4u> fontNames =
+        {
+            "arial.ttf",
+            "Arial.ttf",
+            "tahoma.ttf",
+            "VeraMono.ttf"
+        };
+
+        std::string fullPath = getFontPath();
+        for (const auto& fn : fontNames)
+        {
+            if (font.loadFromFile(fullPath + fn))
+            {
+
+                xy::Logger::log("Loaded default font " + fullPath + fn, xy::Logger::Type::Info);
+                break;
+            }
+            else
+            {
+                xy::Logger::log("Failed to load fallback font at " + fullPath + fn, xy::Logger::Type::Warning);
+            }
+        }
         return font;
     };
 
