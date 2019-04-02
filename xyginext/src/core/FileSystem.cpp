@@ -402,6 +402,17 @@ std::string FileSystem::getCurrentDirectory()
 #endif //_WIN32
 }
 
+bool FileSystem::setCurrentDirectory(std::string path)
+{
+#ifdef _WIN32
+    auto windowsPath = path;
+    std::replace(windowsPath.begin(), windowsPath.end(), '/', '\\');
+    return _chdir(windowsPath.c_str()) == 0;
+#else
+    return chdir(path.c_str()) == 0;
+#endif
+}
+
 std::string FileSystem::getRelativePath(std::string path, const std::string& root)
 {
     auto currentPath = root;

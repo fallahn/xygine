@@ -88,6 +88,13 @@ namespace xy
         \brief Returns the absolute path of the current working directory
         */
         static std::string getCurrentDirectory();
+        /*!
+        \brief Sets the current working directory to the given absolute path
+        \param path String containing the path to attempt to set to cwd
+        \returns false on failure
+        */
+        static bool setCurrentDirectory(std::string path);
+
         /*! 
         \brief Attempts to convert the given absolute path to a path relative to the given root directory
         \param path Absolute path to convert
