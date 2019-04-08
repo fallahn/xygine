@@ -565,93 +565,123 @@ std::string FileSystem::openFileDialogue(const std::string& defaultDir, const st
     }
 
     const nfdchar_t* defaultPath = nullptr;
-    if (!defaultDir.empty())
-    {
-        defaultPath = defaultDir.c_str();
-    }
+if (!defaultDir.empty())
+{
+	defaultPath = defaultDir.c_str();
+}
 
-    nfdresult_t result = NFD_OpenDialog(pFilter, defaultPath, &outPath);
-    
-    if (result == NFD_OKAY)
-    {
-        return outPath;
-    }
-    else if (result == NFD_CANCEL)
-    {
-        xy::Logger::log("User cancelled native file dialog");
-        return {};
-    }
-    else 
-    {
-        std::string error = NFD_GetError();
-        xy::Logger::log("Error during native file dialog: " + error);
-        return{};
-    }
-    return {};
+nfdresult_t result = NFD_OpenDialog(pFilter, defaultPath, &outPath);
+
+if (result == NFD_OKAY)
+{
+	return outPath;
+}
+else if (result == NFD_CANCEL)
+{
+	xy::Logger::log("User cancelled native file dialog");
+	return {};
+}
+else
+{
+	std::string error = NFD_GetError();
+	xy::Logger::log("Error during native file dialog: " + error);
+	return{};
+}
+return {};
 }
 
 std::string FileSystem::openFolderDialogue()
 {
-    // Show native file dialog, blocking call
-    nfdchar_t* outPath = nullptr;
-    nfdresult_t result = NFD_PickFolder(nullptr, &outPath);
-    
-    if (result == NFD_OKAY)
-    {
-        return outPath;
-    }
-    else if (result == NFD_CANCEL)
-    {
-        xy::Logger::log("User cancelled native file dialog");
-        return {};
-    }
-    else 
-    {
-        std::string error = NFD_GetError();
-        xy::Logger::log("Error during native file dialog: " + error);
-        return {};
-    }
+	// Show native file dialog, blocking call
+	nfdchar_t* outPath = nullptr;
+	nfdresult_t result = NFD_PickFolder(nullptr, &outPath);
+
+	if (result == NFD_OKAY)
+	{
+		return outPath;
+	}
+	else if (result == NFD_CANCEL)
+	{
+		xy::Logger::log("User cancelled native file dialog");
+		return {};
+	}
+	else
+	{
+		std::string error = NFD_GetError();
+		xy::Logger::log("Error during native file dialog: " + error);
+		return {};
+	}
 }
 
 std::string FileSystem::saveFileDialogue(const std::string& defaultDir, const std::string& filter)
 {
-    nfdchar_t* outPath = nullptr;
-    const nfdchar_t* pFilter = nullptr;
-    if (!filter.empty())
-    {
-        pFilter = filter.c_str();
-    }
+	nfdchar_t* outPath = nullptr;
+	const nfdchar_t* pFilter = nullptr;
+	if (!filter.empty())
+	{
+		pFilter = filter.c_str();
+	}
 
-    const nfdchar_t* defaultPath = nullptr;
-    if (!defaultDir.empty())
-    {
-        defaultPath = defaultDir.c_str();
-    }
+	const nfdchar_t* defaultPath = nullptr;
+	if (!defaultDir.empty())
+	{
+		defaultPath = defaultDir.c_str();
+	}
 
-    nfdresult_t result = NFD_SaveDialog(pFilter, defaultPath, &outPath);
+	nfdresult_t result = NFD_SaveDialog(pFilter, defaultPath, &outPath);
 
-    if (result == NFD_OKAY)
-    {
-        return outPath;
-    }
-    else if (result == NFD_CANCEL)
-    {
-        xy::Logger::log("User cancelled native file dialog");
-        return {};
-    }
-    else
-    {
-        std::string error = NFD_GetError();
-        xy::Logger::log("Error during native file dialog: " + error);
-        return{};
-    }
-    return {};
+	if (result == NFD_OKAY)
+	{
+		return outPath;
+	}
+	else if (result == NFD_CANCEL)
+	{
+		xy::Logger::log("User cancelled native file dialog");
+		return {};
+	}
+	else
+	{
+		std::string error = NFD_GetError();
+		xy::Logger::log("Error during native file dialog: " + error);
+		return{};
+	}
+	return {};
 }
 
 std::string FileSystem::getResourcePath()
 {
 #ifdef __APPLE__
-    return resourcePath();
+	return resourcePath() + m_resourceDirectory;
 #endif
-    return "";
+	return m_resourceDirectory;
 }
+
+void FileSystem::setResourceDirectory(const std::string& path)
+{
+	m_resourceDirectory = path;
+
+	if (!path.empty())
+	{
+		//strip preceeding slashes
+		if(m_resourceDirectory[0] == '\\'
+			|| m_resourceDirectory[0] == '/')
+		{
+			m_resourceDirectory = m_resourceDirectory.substr(1);
+		}
+
+		//and add post slashes if missing
+		if (m_resourceDirectory.find('/') != std::string::npos
+			&& m_resourceDirectory.back() != '/')
+		{
+			m_resourceDirectory.push_back('/');
+		}
+		else if (m_resourceDirectory.find('\\') != std::string::npos
+			&& m_resourceDirectory.back() != '\\')
+		{
+			m_resourceDirectory.push_back('\\');
+		}
+	}
+}
+
+//private
+std::string FileSystem::m_resourceDirectory = std::string();

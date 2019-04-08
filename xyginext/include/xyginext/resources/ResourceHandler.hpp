@@ -125,4 +125,7 @@ namespace xy
         //Resource loaders mapped by their type index
         std::unordered_map<std::type_index, ResourceLoader> m_loaders;
     };
+
+	//just because I keep typing this incorrectly
+	using ResourceHolder = ResourceHandler;
 }

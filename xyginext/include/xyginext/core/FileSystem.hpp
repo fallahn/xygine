@@ -139,14 +139,21 @@ namespace xy
         static std::string saveFileDialogue(const std::string& defaultDir = "", const std::string& filter = "");
 
         /*!
-         \brief Currently only relevent on macOS when creating an app bundle.
+         \brief Currently only relevant on macOS when creating an app bundle.
          Basically a wrapper around the SFML resourcePath() function.
          Might potentially provide some portable way of bundling resources nicely in the future.
          \returns path to the resource directory
          */
         static std::string getResourcePath();
 
-    private:
+		/*!
+		\brief Sets the resource directory relative to the working directory.
+		When using getResourcePath() this path will be appended to the working directory.
+		Used, for example, when setting a sub-directory as a resource directory
+		*/
+		static void setResourceDirectory(const std::string& path);
 
+    private:
+		static std::string m_resourceDirectory;
     };
 }
