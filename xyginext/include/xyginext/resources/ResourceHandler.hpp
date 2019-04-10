@@ -1,5 +1,6 @@
 /*********************************************************************
 (c) Jonny Paton 2018
+(c) Matt Marchant 2019
 
 xygineXT - Zlib license.
 
@@ -84,9 +85,15 @@ namespace xy
             //If it wasn't loaded, use fallback
             if (!m_resources.back().has_value())
             {
-                m_resources.back() = m_loaders[ti].fallback();
+				//check to see if we already cached the fallback
+				if (m_fallbackHandles.count(ti) == 0)
+				{
+					m_resources.back() = m_loaders[ti].fallback();
+					m_fallbackHandles[ti] = m_resources.size() - 1;
+				}
+				m_fallbackHandles[ti];
             }
-            return m_resources.size()-1;
+			return m_resources.size() - 1;
         }
         
         /*!
@@ -124,6 +131,9 @@ namespace xy
         
         //Resource loaders mapped by their type index
         std::unordered_map<std::type_index, ResourceLoader> m_loaders;
+
+		//fallback indices mapped by their type index
+		std::unordered_map<std::type_index, ResourceHandle> m_fallbackHandles;
     };
 
 	//just because I keep typing this incorrectly

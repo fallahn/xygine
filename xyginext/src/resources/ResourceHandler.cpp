@@ -24,7 +24,14 @@ ResourceHandler::ResourceHandler()
 
     texLoader.fallback = []()
     {
-        return sf::Texture();
+		sf::Image img;
+		img.create(16, 16, sf::Color::Magenta);
+
+		auto tex = std::make_any<sf::Texture>();
+		auto& tr = *std::any_cast<sf::Texture>(&tex);
+		tr.loadFromImage(img);
+
+        return tex;
     };
 
     // And a font loader
