@@ -58,13 +58,13 @@ std::array<std::string, AudioMixer::MaxChannels> AudioMixer::m_labels
 }};
 
 std::array<float, AudioMixer::MaxChannels> AudioMixer::m_channels
-{{ 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f }};
+{{ 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f }};
 
-float AudioMixer::m_masterVol = 1.f;
+float AudioMixer::m_masterVol = 0.5f;
 
 void AudioMixer::setMasterVolume(float vol)
 {
-    AudioMixer::m_masterVol = Util::Math::clamp(vol, 0.f, 10.f);
+    AudioMixer::m_masterVol = Util::Math::clamp(vol, 0.f, 1.f);
 }
 
 float AudioMixer::getMasterVolume()
@@ -75,7 +75,7 @@ float AudioMixer::getMasterVolume()
 void AudioMixer::setVolume(float vol, sf::Uint8 channel)
 {
     XY_ASSERT(channel < MaxChannels, "Channel index out of range");
-    AudioMixer::m_channels[channel] = Util::Math::clamp(vol, 0.f, 10.f);
+    AudioMixer::m_channels[channel] = Util::Math::clamp(vol, 0.f, 1.f);
 
     auto* msg = xy::App::getActiveInstance()->getMessageBus().post<Message::AudioEvent>(Message::AudioMessage);
     msg->type = Message::AudioEvent::ChannelVolumeChanged;
