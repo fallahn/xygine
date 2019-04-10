@@ -134,7 +134,7 @@ namespace xy
         }
 
     private:
-        void* m_data;
-        std::size_t m_dataSize;
+        void* m_data = nullptr;
+        std::size_t m_dataSize = 0;
     };
 }
