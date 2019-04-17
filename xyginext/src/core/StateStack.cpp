@@ -61,7 +61,10 @@ void StateStack::update(float dt)
 
 void StateStack::draw()
 {
-    for (auto& s : m_stack) s->draw();
+    for (auto& s : m_stack)
+    {
+        s->draw();
+    }
 }
 
 void StateStack::handleEvent(const sf::Event& evt)
@@ -74,8 +77,8 @@ void StateStack::handleEvent(const sf::Event& evt)
 
 void StateStack::handleMessage(const Message& msg)
 {   
-    for (auto& s : m_stack) s->handleMessage(msg);
-
+    //update the view first so that any states handling this
+    //will have an up-to-date context available.
     if (msg.id == Message::WindowMessage)
     {
         const auto& data = msg.getData<Message::WindowEvent>();
@@ -83,6 +86,11 @@ void StateStack::handleMessage(const Message& msg)
         {
             updateView();
         }
+    }
+
+    for (auto& s : m_stack)
+    {
+        s->handleMessage(msg);
     }
 }
 
@@ -128,8 +136,10 @@ sf::View StateStack::updateView()
     m_context.defaultView.setViewport({ { 0.f, top }, { 1.f, sizeY } });
 
     for (auto& state : m_stack)
+    {
         state->setContext(m_context);
-
+    }
+    
     return m_context.defaultView;
 }
 
