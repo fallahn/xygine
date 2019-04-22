@@ -91,7 +91,7 @@ namespace xy
 					m_resources.back() = m_loaders[ti].fallback();
 					m_fallbackHandles[ti] = m_resources.size() - 1;
 				}
-				m_fallbackHandles[ti];
+				return m_fallbackHandles[ti];
             }
 			return m_resources.size() - 1;
         }
