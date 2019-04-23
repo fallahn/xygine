@@ -35,19 +35,21 @@ using namespace xy;
 Camera::Camera()
     : m_lockAxis    (None),
     m_axisValue     (0.f),
-    m_lockRotation  (false)
+    m_lockRotation  (false),
+    m_zoom          (1.f)
 {
     m_view.setSize(DefaultSceneSize);
     m_view.setCenter(DefaultSceneSize / 2.f);
 
-    auto maxFloat = std::numeric_limits<float>::max();
+    constexpr float maxFloat = std::numeric_limits<float>::max();
     m_bounds = { -maxFloat / 2.f, -maxFloat / 2.f, maxFloat, maxFloat };
 }
 
 //public
 void Camera::setView(sf::Vector2f view)
 {
-    m_view.setSize(view);
+    m_viewSize = view;
+    m_view.setSize(view / m_zoom);
 }
 
 void Camera::setViewport(sf::FloatRect viewport)
@@ -74,12 +76,21 @@ void Camera::setBounds(sf::FloatRect bounds)
 void Camera::zoom(float zoom)
 {
     XY_ASSERT(zoom > 0, "Value must be larger than 0");
-    m_view.zoom(1.f / zoom);
+
+    m_zoom *= zoom;
+    setView(m_viewSize);
+}
+
+void Camera::setZoom(float zoom)
+{
+    XY_ASSERT(zoom > 0, "Value must be larger than 0");
+    m_zoom = zoom;
+    setView(m_viewSize);
 }
 
 sf::Vector2f Camera::getView() const
 {
-    return m_view.getSize();
+    return m_viewSize;
 }
 
 sf::FloatRect Camera::getViewport() const

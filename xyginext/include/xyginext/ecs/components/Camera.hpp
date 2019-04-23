@@ -88,7 +88,7 @@ namespace xy
         void setBounds(sf::FloatRect);
 
         /*!
-        \brief Sets the zoom level relative to the current view size.
+        \brief Multiplies the current zoom level.
         Contrary to default SFML views a value of 2 will make the scene
         appear 2x larger, and a value of less than 1 will zoom out.
         Values must be greater than 0
@@ -96,7 +96,15 @@ namespace xy
         void zoom(float);
 
         /*!
-        \brief Returns the current view of the camera, in world units
+        \brief Sets the zoom level relative to the current view size.
+        Setting this to 2x when the view size is 320x240, for example
+        will display an area 160x120 units in size. Must be greater than 0
+        */
+        void setZoom(float);
+
+        /*!
+        \brief Returns the current view of the camera, in world units.
+        This is the pre-zoomed value, or the view with a zoom of 1x
         */
         sf::Vector2f getView() const;
 
@@ -121,14 +129,21 @@ namespace xy
         */
         sf::FloatRect getBounds() const { return m_bounds; }
 
+        /*!
+        \brief Returns the current zoom level. Default is 1x
+        */
+        float getZoom() const { return m_zoom; }
+
     private:
 
+        sf::Vector2f m_viewSize;
         sf::View m_view;
         Axis m_lockAxis;
         float m_axisValue;
         bool m_lockRotation;
 
         sf::FloatRect m_bounds;
+        float m_zoom;
 
         friend class Scene;
         friend class CameraSystem;
