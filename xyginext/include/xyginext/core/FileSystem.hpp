@@ -111,6 +111,11 @@ namespace xy
         Linux: /home/squidward/.config/appname/
         Mac: /Users/squidward/Library/Application Support/appname/
         \endcode
+
+        WARNING some linux distros are known to return the current working directory
+        instead. This should be considered when using configuration files with the same
+        name as another which is expected to be stored in a unique directory.
+
         \param appName Name of the current application used to create the appname directory
         \returns Above formatted string, or an empty string if something went wrong
         */

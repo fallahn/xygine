@@ -134,131 +134,134 @@ bool ConfigObject::loadFromFile(const std::string& path)
     m_objects.clear();
 
     std::fstream file(path);
-    if (file.fail())
+    if(file.is_open())
     {
-        Logger::log(path + " file invalid or not found.", Logger::Type::Error);
-        return false;
-    }
-
-    //file not empty
-    file.seekg(0, file.end);
-    auto fileSize = file.tellg();
-    if (fileSize <= 0)
-    {
-        Logger::log(path + " invalid file size.", Logger::Type::Error);
-        return false;
-    }
-    file.seekg(file.beg);
-
-    if (file)
-    {
-        //remove any opening comments
-        std::string data;
-        while (data.empty() && !file.eof())
+        if (file.fail())
         {
-            std::getline(file, data);
-            removeComment(data);       
-        }
-        //check config is not opened with a property
-        if (isProperty(data))
-        {
-            Logger::log(path + ": Cannot start configuration file with a property", Logger::Type::Error);
-            return false;
-        }
-        
-        //make sure next line is a brace to ensure we have an object
-        std::string lastLine = data;
-        std::getline(file, data);
-        removeComment(data);
-        sf::Int32 braceCount = 0;
-        
-        ConfigObject* currentObject = this;
-
-        if (data[0] == '{')
-        {
-            //we have our opening object
-            auto objectName = getObjectName(lastLine);
-            setName(objectName.first);
-            m_id = objectName.second;
-            braceCount++;
-        }
-        else
-        {
-            Logger::log(path + " Invalid configuration header (missing '{' ?)", Logger::Type::Error);
+            Logger::log(path + " file invalid or not found.", Logger::Type::Error);
             return false;
         }
 
-        while (std::getline(file, data))
+        //file not empty
+        file.seekg(0, file.end);
+        auto fileSize = file.tellg();
+        if (fileSize <= 0)
         {
-            removeComment(data);
-            if (!data.empty())
+            Logger::log(path + " invalid file size.", Logger::Type::Error);
+            return false;
+        }
+        file.seekg(file.beg);
+
+        if (file)
+        {
+            //remove any opening comments
+            std::string data;
+            while (data.empty() && !file.eof())
             {
-                if (data[0] == '}')
-                {
-                    //close current object and move to parent
-                    braceCount--;
-                    if (braceCount > 0)
-                        currentObject = dynamic_cast<ConfigObject*>(currentObject->getParent());
-                }
-                else if (isProperty(data))
-                {			
-                    //insert name / value property into current object
-                    auto prop = getPropertyName(data);
-                    //TODO need to reinstate this and create a property
-                    //capable of storing arrays
-                    /*if (currentObject->findProperty(prop.first))
-                    {
-                        Logger::log("Property \'" + prop.first + "\' already exists in \'" + currentObject->getName() + "\', skipping entry...", Logger::Type::Warning);
-                        continue;
-                    }*/
+                std::getline(file, data);
+                removeComment(data);       
+            }
+            //check config is not opened with a property
+            if (isProperty(data))
+            {
+                Logger::log(path + ": Cannot start configuration file with a property", Logger::Type::Error);
+                return false;
+            }
+            
+            //make sure next line is a brace to ensure we have an object
+            std::string lastLine = data;
+            std::getline(file, data);
+            removeComment(data);
+            sf::Int32 braceCount = 0;
+            
+            ConfigObject* currentObject = this;
 
-                    if (prop.second.empty())
+            if (data[0] == '{')
+            {
+                //we have our opening object
+                auto objectName = getObjectName(lastLine);
+                setName(objectName.first);
+                m_id = objectName.second;
+                braceCount++;
+            }
+            else
+            {
+                Logger::log(path + " Invalid configuration header (missing '{' ?)", Logger::Type::Error);
+                return false;
+            }
+
+            while (std::getline(file, data))
+            {
+                removeComment(data);
+                if (!data.empty())
+                {
+                    if (data[0] == '}')
                     {
-                        Logger::log("\'" + currentObject->getName() + "\' property \'" + prop.first + "\' has no valid value", Logger::Type::Warning);
-                        continue;
+                        //close current object and move to parent
+                        braceCount--;
+                        if (braceCount > 0)
+                            currentObject = dynamic_cast<ConfigObject*>(currentObject->getParent());
                     }
-                    currentObject->addProperty(prop.first, prop.second);
-                }
-                else
-                {
-                    //add a new object and make it current
-                    std::string prevLine = data;
-                    std::getline(file, data);
-
-                    removeComment(data);
-                    if (data[0] == '{')
-                    {
-                        braceCount++;
-                        auto name = getObjectName(prevLine);
-                        if (currentObject->findObjectWithId(name.second))
+                    else if (isProperty(data))
+                    {			
+                        //insert name / value property into current object
+                        auto prop = getPropertyName(data);
+                        //TODO need to reinstate this and create a property
+                        //capable of storing arrays
+                        /*if (currentObject->findProperty(prop.first))
                         {
-                        //    Logger::log("Object with ID \'" + name.second + "\' already exists, skipping...", Logger::Type::Warning);
-                        //    //object with duplicate id already exists
-                        //    while (data.find('}') == std::string::npos
-                        //        && readTotal < fileSize) //just incase of infinite loop
-                        //    {
-                        //        //skip all the object properties before continuing
-                        //        data = std::string(Util::String::rwgets(dest, DEST_SIZE, rr.file, &readTotal));
-                        //    }
-                            braceCount--;
+                            Logger::log("Property \'" + prop.first + "\' already exists in \'" + currentObject->getName() + "\', skipping entry...", Logger::Type::Warning);
+                            continue;
+                        }*/
+
+                        if (prop.second.empty())
+                        {
+                            Logger::log("\'" + currentObject->getName() + "\' property \'" + prop.first + "\' has no valid value", Logger::Type::Warning);
                             continue;
                         }
-
-                        currentObject = currentObject->addObject(name.first, name.second);
+                        currentObject->addProperty(prop.first, prop.second);
                     }
-                    else //last line was probably garbage
+                    else
                     {
-                        continue;
-                    }
-                }
-            }		
-        }
+                        //add a new object and make it current
+                        std::string prevLine = data;
+                        std::getline(file, data);
 
-        if (braceCount != 0)
-        {
-            Logger::log("Brace count not at 0 after parsing \'" + path + "\'. Config data may not be correct.", Logger::Type::Warning);
+                        removeComment(data);
+                        if (data[0] == '{')
+                        {
+                            braceCount++;
+                            auto name = getObjectName(prevLine);
+                            if (currentObject->findObjectWithId(name.second))
+                            {
+                            //    Logger::log("Object with ID \'" + name.second + "\' already exists, skipping...", Logger::Type::Warning);
+                            //    //object with duplicate id already exists
+                            //    while (data.find('}') == std::string::npos
+                            //        && readTotal < fileSize) //just incase of infinite loop
+                            //    {
+                            //        //skip all the object properties before continuing
+                            //        data = std::string(Util::String::rwgets(dest, DEST_SIZE, rr.file, &readTotal));
+                            //    }
+                                braceCount--;
+                                continue;
+                            }
+
+                            currentObject = currentObject->addObject(name.first, name.second);
+                        }
+                        else //last line was probably garbage
+                        {
+                            continue;
+                        }
+                    }
+                }		
+            }
+
+            if (braceCount != 0)
+            {
+                Logger::log("Brace count not at 0 after parsing \'" + path + "\'. Config data may not be correct.", Logger::Type::Warning);
+            }
+            return true;
         }
-        return true;
     }
     
     Logger::log(path + " file invalid or not found.", Logger::Type::Error);
