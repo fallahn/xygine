@@ -151,6 +151,7 @@ void App::run()
 
             update(timePerFrame);
             
+            appInstance->m_renderWindow.setMouseCursorVisible(m_mouseCursorVisible || Console::isVisible());
         }
         
         ImGui::SFML::Update(m_renderWindow, sf::seconds(elapsedTime));
