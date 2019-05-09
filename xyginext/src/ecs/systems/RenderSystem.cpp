@@ -37,9 +37,12 @@ source distribution.
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/OpenGL.hpp>
 
+#include <limits>
+
 xy::RenderSystem::RenderSystem(xy::MessageBus& mb)
-    : xy::System(mb, typeid(xy::RenderSystem)),
-    m_wantsSorting  (true)
+    : xy::System    (mb, typeid(xy::RenderSystem)),
+    m_wantsSorting  (true),
+    m_filterFlags   (std::numeric_limits<std::uint64_t>::max())
 {
     requireComponent<xy::Drawable>();
     requireComponent<xy::Transform>();
@@ -109,7 +112,8 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         const auto bounds = tx.transformRect(drawable.getLocalBounds());
 
 
-        if (!drawable.m_cull || bounds.intersects(viewableArea))
+        if ((!drawable.m_cull || bounds.intersects(viewableArea))
+            && (drawable.m_filterFlags & m_filterFlags))
         {
             states = drawable.m_states;
             states.transform = tx;
