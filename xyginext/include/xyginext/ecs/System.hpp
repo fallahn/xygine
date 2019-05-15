@@ -72,7 +72,8 @@ namespace xy
         /*!
         \brief Returns a list of entities that this system is currently interested in
         */
-        std::vector<Entity> getEntities() const;
+        //std::vector<Entity>& getEntities();
+        const std::vector<Entity>& getEntities() const;
 
         /*!
         \brief Adds an entity to the list to process
@@ -116,7 +117,7 @@ namespace xy
         template <typename T>
         void requireComponent();
 
-        std::vector<Entity>& getEntities() { return m_entities; }
+        std::vector<Entity>& getEntities();
 
         /*!
         \brief Optional callback performed when an entity is added

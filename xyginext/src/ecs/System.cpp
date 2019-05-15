@@ -29,7 +29,12 @@ source distribution.
 
 using namespace xy;
 
-std::vector<Entity> System::getEntities() const
+std::vector<Entity>& System::getEntities()
+{
+    return m_entities;
+}
+
+const std::vector<Entity>& System::getEntities() const
 {
     return m_entities;
 }

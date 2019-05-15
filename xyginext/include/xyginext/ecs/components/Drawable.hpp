@@ -109,6 +109,27 @@ namespace xy
         void setBlendMode(sf::BlendMode);
 
         /*!
+        \brief Set filter flags for rendering.
+        Filter flags allow certain drawables to be omitted from a drawing
+        pass by the render system. This is useful for multipass effects which
+        require rendering different entities to different render buffers.
+        For example lighting objects may be flagged as such so that
+        when the lighting only flag is active on the render system only
+        illuminating objects are rendered to the output.
+        Flags are bitwise values so that drawables can be categorised in
+        multiple filters by setting the appropriate flags. The default value
+        is Uin64::max - ie all flags set (so will always pass the render filter).
+        \param flags a bitmask of filter flags
+        */
+        void setFilterFlags(std::uint64_t flags) { m_filterFlags = flags; }
+
+        /*!
+        \brief Returns the current filter flags of this drawable.
+        \see setFilterFlags()
+        */
+        std::uint64_t getFilterFlags() const { return m_filterFlags; }
+
+        /*!
         \brief Returns a pointer to the active texture
         */
         sf::Texture* getTexture();
@@ -215,6 +236,8 @@ namespace xy
 
         sf::Int32 m_zDepth = 0;
         bool m_wantsSorting = true;
+
+        std::uint64_t m_filterFlags;
 
         sf::FloatRect m_localBounds;
 

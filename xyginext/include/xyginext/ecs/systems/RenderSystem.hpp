@@ -59,9 +59,24 @@ namespace xy
         */
         void setCullingBorder(float size);
 
+        /*!
+        \brief Sets the filter flags which decide which drawables are rendered.
+        Setting this value to anything other than 0 will render all drawables
+        which have their matching flag set. As drawables by default are set to
+        uint64::max they will ALWAYS be drawn when this is non-zero value. Flags
+        must be set on both drawable components and the RenderSystem for the filter
+        to work. For example light emitting enitities can be rendered to a separate
+        buffer by setting the component flag to 0x1 (first bit) then setting this
+        filter to the same value. Returning it to uint64::max (all flags set) will
+        once again render all drawable with a non-zero bitmask.
+        Generally this is not used unless you have a specific multipass effect in mind.
+        */
+        void setFilterFlags(std::uint64_t flags) { m_filterFlags = flags; }
+
     private:
         bool m_wantsSorting;
         sf::Vector2f m_cullingBorder;
+        std::uint64_t m_filterFlags;
 
         void onEntityAdded(xy::Entity) override;
         void draw(sf::RenderTarget&, sf::RenderStates) const override;

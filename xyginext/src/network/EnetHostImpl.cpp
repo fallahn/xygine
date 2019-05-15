@@ -66,7 +66,7 @@ namespace
 }
 
 EnetHostImpl::EnetHostImpl()
-    :m_host(nullptr)
+    : m_host(nullptr)
 {
     if (!NetConf::instance)
     {
@@ -119,6 +119,9 @@ bool EnetHostImpl::start(const std::string& address, sf::Uint16 port, std::size_
         Logger::log("There was an error creating the server host", Logger::Type::Error);
         return false;
     }
+
+    //enables the default packet compression
+    enet_host_compress_with_range_coder(m_host);
 
     LOG("Created server host on port " + std::to_string(port), Logger::Type::Info);
     return true;
