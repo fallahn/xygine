@@ -118,7 +118,7 @@ namespace tmx
         \brief Returns the last GID of this tile set.
         This is the ID of the last tile in the tile set.
         */
-        std::uint32_t getLastGID() const { return m_firstGID + getTileCount() - 1; }
+        std::uint32_t getLastGID() const;
         /*!
         \brief Returns the name of this tile set.
         */
@@ -181,6 +181,21 @@ namespace tmx
         tiles which make up this tile set.
         */
         const std::vector<Tile>& getTiles() const { return m_tiles; }
+
+        /**
+         * \brief Checks if a tiled ID is in the range of the first ID and the last ID
+         * \param id Tile ID
+         * \return 
+         */
+        bool hasTile(std::uint32_t id) const { return id >= m_firstGID && id <= getLastGID(); };
+
+
+        /**
+         * \brief queries tiles and returns a tile with the given ID. Checks if the TileID is part of the Tileset with `hasTile(a_id)`
+         * \param id Tile ID. The Tile ID will be corrected internally.
+         * \return In case of a success it returns the correct tile. In terms of failure it will return a nullptr.
+         */
+        const Tile* getTile(std::uint32_t id) const;
 
     private:
 

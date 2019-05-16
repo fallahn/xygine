@@ -301,31 +301,22 @@ sf::FloatRect Drawable::getLocalBounds() const
 
 void Drawable::updateLocalBounds()
 {
-    m_localBounds.left = std::numeric_limits<float>::max();
-    m_localBounds.top = std::numeric_limits<float>::max();
-    m_localBounds.width = 0.f;
-    m_localBounds.height = 0.f;
+    auto xExtremes = std::minmax_element(m_vertices.begin(), m_vertices.end(),
+        [](const sf::Vertex& lhs, const sf::Vertex& rhs)
+        {
+            return lhs.position.x < rhs.position.x;
+        });
 
-    for (auto& v : m_vertices)
-    {
-        if (v.position.x < m_localBounds.left)
+    auto yExtremes = std::minmax_element(m_vertices.begin(), m_vertices.end(),
+        [](const sf::Vertex& lhs, const sf::Vertex& rhs)
         {
-            m_localBounds.left = v.position.x;
-        }
-        else if (v.position.x - m_localBounds.left > m_localBounds.width)
-        {
-            m_localBounds.width = v.position.x - m_localBounds.left;
-        }
+            return lhs.position.y < rhs.position.y;
+        });
 
-        if (v.position.y < m_localBounds.top)
-        {
-            m_localBounds.top = v.position.y;
-        }
-        else if (v.position.y - m_localBounds.top > m_localBounds.height)
-        {
-            m_localBounds.height = v.position.y - m_localBounds.top;
-        }
-    }
+    m_localBounds.left = xExtremes.first->position.x;
+    m_localBounds.top = yExtremes.first->position.y;
+    m_localBounds.width = xExtremes.second->position.x - m_localBounds.left;
+    m_localBounds.height = yExtremes.second->position.y - m_localBounds.top;
 }
 
 void Drawable::updateLocalBounds(sf::FloatRect rect)
