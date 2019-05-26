@@ -160,6 +160,7 @@ namespace xy
         const sf::Texture* m_texture;
         ResourceHandle  m_textureHandle;
         sf::Color m_colour;
+        sf::BlendMode m_blendMode;
         bool m_dirty;
 
         std::size_t m_animationCount;

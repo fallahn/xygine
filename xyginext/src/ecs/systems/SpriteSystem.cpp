@@ -81,6 +81,9 @@ void SpriteSystem::process(float)
             verts[2].color = sprite.m_colour;
             verts[3].color = sprite.m_colour;
 
+            //set blendmode
+            drawable.setBlendMode(sprite.m_blendMode);
+            
             drawable.setTexture(sprite.getTexture());
             drawable.updateLocalBounds();
 

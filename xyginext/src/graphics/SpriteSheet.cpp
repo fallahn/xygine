@@ -33,6 +33,7 @@ source distribution.
 using namespace xy;
 
 SpriteSheet::SpriteSheet()
+    : m_smooth(false)
 {
 
 }
@@ -198,18 +199,18 @@ bool SpriteSheet::loadFromFile(const std::string& path, std::function<sf::Textur
                 spriteComponent.setTexture(*texture);
             }
 
-            //if (auto* p = spr.findProperty("blendmode"))
-            //{
-            //    //override sheet mode
-            //    std::string mode = p->getValue<std::string>();
-            //    if (mode == "add") spriteComponent.setBlendMode(sf::BlendAdd);
-            //    else if (mode == "multiply") spriteComponent.setBlendMode(sf::BlendMultiply);
-            //    else if (mode == "none") spriteComponent.setBlendMode(sf::BlendNone);
-            //}
-            //else
-            //{
-            //    spriteComponent.setBlendMode(blendMode);
-            //}
+            if (auto* p = spr.findProperty("blendmode"))
+            {
+                //override sheet mode
+                std::string mode = p->getValue<std::string>();
+                if (mode == "add") spriteComponent.m_blendMode = sf::BlendAdd;
+                else if (mode == "multiply") spriteComponent.m_blendMode = sf::BlendMultiply;
+                else if (mode == "none") spriteComponent.m_blendMode = sf::BlendNone;
+            }
+            else
+            {
+                spriteComponent.m_blendMode = blendMode;
+            }
 
             if (auto* p = spr.findProperty("bounds"))
             {

@@ -85,6 +85,7 @@
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)extlibs\bin\msvc_x64\sfml\Debug;$(SolutionDir)x64\Debug;$(SolutionDir)extlibs\bin\msvc_x64\tmxlite\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-audio-d.lib;sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;xyginext-d.lib;libtmxlite-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <StackReserveSize>4194304</StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -125,6 +126,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)extlibs\bin\msvc_x64\sfml\Release;$(SolutionDir)x64\Release;$(SolutionDir)extlibs\bin\msvc_x64\tmxlite\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-audio.lib;sfml-system.lib;sfml-main.lib;xyginext.lib;libtmxlite-s.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
+      <StackReserveSize>4194304</StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
