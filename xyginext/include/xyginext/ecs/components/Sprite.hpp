@@ -161,6 +161,7 @@ namespace xy
         ResourceHandle  m_textureHandle;
         sf::Color m_colour;
         sf::BlendMode m_blendMode;
+        bool m_blendOverride;
         bool m_dirty;
 
         std::size_t m_animationCount;

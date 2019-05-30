@@ -206,10 +206,12 @@ bool SpriteSheet::loadFromFile(const std::string& path, std::function<sf::Textur
                 if (mode == "add") spriteComponent.m_blendMode = sf::BlendAdd;
                 else if (mode == "multiply") spriteComponent.m_blendMode = sf::BlendMultiply;
                 else if (mode == "none") spriteComponent.m_blendMode = sf::BlendNone;
+                spriteComponent.m_blendOverride = true;
             }
             else
             {
                 spriteComponent.m_blendMode = blendMode;
+                spriteComponent.m_blendOverride = true;
             }
 
             if (auto* p = spr.findProperty("bounds"))

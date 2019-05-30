@@ -80,14 +80,22 @@ void SpriteSystem::process(float)
             verts[1].color = sprite.m_colour;
             verts[2].color = sprite.m_colour;
             verts[3].color = sprite.m_colour;
-
-            //set blendmode
-            drawable.setBlendMode(sprite.m_blendMode);
             
             drawable.setTexture(sprite.getTexture());
             drawable.updateLocalBounds();
 
             sprite.m_dirty = false;
         }
+    }
+}
+
+//private
+void SpriteSystem::onEntityAdded(xy::Entity entity)
+{
+    //this applies a blend mode if it was loaded from a sprite sheet
+    if (entity.getComponent<xy::Sprite>().m_blendOverride)
+    {
+        //set blendmode
+        entity.getComponent<xy::Drawable>().setBlendMode(entity.getComponent<xy::Sprite>().m_blendMode);
     }
 }
