@@ -49,7 +49,8 @@ Drawable::Drawable()
     m_cull              (true),
     m_croppingArea      (-std::numeric_limits<float>::max() / 2.f, -std::numeric_limits<float>::max() / 2.f,
                         std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
-    m_cropped           (false)
+    m_cropped           (false),
+    m_glFlagIndex       (0)
 {
 
 }
@@ -67,7 +68,8 @@ Drawable::Drawable(const sf::Texture& texture)
     m_cull              (true),
     m_croppingArea      (-std::numeric_limits<float>::max() / 2.f, -std::numeric_limits<float>::max() / 2.f,
                         std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
-    m_cropped           (false)
+    m_cropped           (false),
+    m_glFlagIndex       (0)
 {
     m_states.texture = &texture;
 }
@@ -372,6 +374,18 @@ void Drawable::applyShader() const
     for (auto i = 0u; i < m_currentTexCount; ++i)
     {
         shader->setUniform(m_currentTexBindings[i], sf::Shader::CurrentTexture);
+    }
+}
+
+void Drawable::addGlFlag(std::int32_t flag)
+{
+    if (m_glFlagIndex < m_glFlags.size())
+    {
+        m_glFlags[m_glFlagIndex++] = flag;
+    }
+    else
+    {
+        xy::Logger::log("Failed adding flag to drawable, max flags reached", xy::Logger::Type::Warning);
     }
 }
 

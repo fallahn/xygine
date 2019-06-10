@@ -105,12 +105,12 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     sf::FloatRect viewableArea((view.getCenter() - (view.getSize() / 2.f)) - m_cullingBorder, view.getSize() + m_cullingBorder);
 
     glEnable(GL_SCISSOR_TEST);
+    glDepthFunc(GL_LEQUAL);
     for (auto entity : getEntities())
     {
         const auto& drawable = entity.getComponent<xy::Drawable>();
         const auto& tx = entity.getComponent<xy::Transform>().getWorldTransform();
         const auto bounds = tx.transformRect(drawable.getLocalBounds());
-
 
         if ((!drawable.m_cull || bounds.intersects(viewableArea))
             && (drawable.m_filterFlags & m_filterFlags))
@@ -145,7 +145,16 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
                 glScissor(0, 0, rtSize.x, rtSize.y);
             }
 
+            //apply any gl flags such as depth testing
+            for (auto i = 0u; i < drawable.m_glFlagIndex; ++i)
+            {
+                glEnable(drawable.m_glFlags[i]);
+            }
             rt.draw(drawable.m_vertices.data(), drawable.m_vertices.size(), drawable.m_primitiveType, states);
+            for (auto i = 0u; i < drawable.m_glFlagIndex; ++i)
+            {
+                glDisable(drawable.m_glFlags[i]);
+            }
         }
     }
     glDisable(GL_SCISSOR_TEST);

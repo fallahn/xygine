@@ -229,6 +229,14 @@ namespace xy
         */
         void applyShader() const;
 
+        /*!
+        \brief Adds an OpenGL flag to be applied with glEnable() before
+        the Drawable is rendered and glDisable() afterwards.
+        Multiple flags can be added. Generally only useful if you have a
+        specific need for it, and probably won't do what you expect...
+        */
+        void addGlFlag(std::int32_t);
+
     private:
         sf::PrimitiveType m_primitiveType = sf::Quads;
         sf::RenderStates m_states;
@@ -264,6 +272,9 @@ namespace xy
         sf::FloatRect m_croppingArea;
         sf::FloatRect m_croppingWorldArea;
         bool m_cropped;
+
+        std::array<std::int32_t, 4u> m_glFlags = {};
+        std::size_t m_glFlagIndex;
 
         friend class RenderSystem;
 
