@@ -32,6 +32,8 @@ source distribution.
 
 #include "xyginext/util/Rectangle.hpp"
 
+#include "../../detail/GLCheck.hpp"
+
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -104,8 +106,8 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     auto view = rt.getView();
     sf::FloatRect viewableArea((view.getCenter() - (view.getSize() / 2.f)) - m_cullingBorder, view.getSize() + m_cullingBorder);
 
-    glEnable(GL_SCISSOR_TEST);
-    glDepthFunc(GL_LEQUAL);
+    glCheck(glEnable(GL_SCISSOR_TEST));
+    glCheck(glDepthFunc(GL_LEQUAL));
     for (auto entity : getEntities())
     {
         const auto& drawable = entity.getComponent<xy::Drawable>();
@@ -136,26 +138,26 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
                 scissorStart.y = rtHeight - scissorStart.y;
                 scissorEnd.y = rtHeight - scissorEnd.y;
 
-                glScissor(scissorStart.x, scissorStart.y, scissorEnd.x - scissorStart.x, scissorEnd.y - scissorStart.y);
+                glCheck(glScissor(scissorStart.x, scissorStart.y, scissorEnd.x - scissorStart.x, scissorEnd.y - scissorStart.y));
             }
             else
             {
                 //just set the scissor to the view
                 auto rtSize = rt.getSize();
-                glScissor(0, 0, rtSize.x, rtSize.y);
+                glCheck(glScissor(0, 0, rtSize.x, rtSize.y));
             }
 
             //apply any gl flags such as depth testing
             for (auto i = 0u; i < drawable.m_glFlagIndex; ++i)
             {
-                glEnable(drawable.m_glFlags[i]);
+                glCheck(glEnable(drawable.m_glFlags[i]));
             }
             rt.draw(drawable.m_vertices.data(), drawable.m_vertices.size(), drawable.m_primitiveType, states);
             for (auto i = 0u; i < drawable.m_glFlagIndex; ++i)
             {
-                glDisable(drawable.m_glFlags[i]);
+                glCheck(glDisable(drawable.m_glFlags[i]));
             }
         }
     }
-    glDisable(GL_SCISSOR_TEST);
+    glCheck(glDisable(GL_SCISSOR_TEST));
 }

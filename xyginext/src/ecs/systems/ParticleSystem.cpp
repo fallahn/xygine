@@ -149,7 +149,7 @@ void ParticleSystem::process(float dt)
                     p.scale = settings.size;
 
                     //spawn particle in world position
-                    p.position = tx.getWorldTransform().transformPoint({});
+                    p.position = tx.getWorldTransform().transformPoint(tx.getOrigin());
 
                     //add random radius placement - TODO how to do with a position table? CAN'T HAVE +- 0!!
                     p.position.x += Util::Random::value(-settings.spawnRadius, settings.spawnRadius + epsilon);
