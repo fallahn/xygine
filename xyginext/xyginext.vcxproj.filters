@@ -545,6 +545,9 @@
     <ClInclude Include="include\xyginext\resources\SystemFont.hpp">
       <Filter>Header Files\resources</Filter>
     </ClInclude>
+    <ClInclude Include="include\xyginext\util\IO.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl">
