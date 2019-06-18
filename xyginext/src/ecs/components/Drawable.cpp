@@ -303,6 +303,8 @@ sf::FloatRect Drawable::getLocalBounds() const
 
 void Drawable::updateLocalBounds()
 {
+    if (m_vertices.empty()) return;
+
     auto xExtremes = std::minmax_element(m_vertices.begin(), m_vertices.end(),
         [](const sf::Vertex& lhs, const sf::Vertex& rhs)
         {
