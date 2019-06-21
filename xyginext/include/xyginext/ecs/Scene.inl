@@ -50,9 +50,12 @@ void Scene::setSystemActive(bool active)
 }
 
 template <typename T, typename... Args>
-void Scene::addDirector(Args&&... args)
+T& Scene::addDirector(Args&&... args)
 {
     static_assert(std::is_base_of<Director, T>::value, "Must be a director type");
+
+    XY_ASSERT(!directorExists<T>(), "A director of this type has already been added");
+
     m_directors.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
 
     //add a command system if it doesn't exist
@@ -64,6 +67,24 @@ void Scene::addDirector(Args&&... args)
     m_directors.back()->m_commandSystem = &m_systemManager.getSystem<CommandSystem>();
     m_directors.back()->m_messageBus = &m_messageBus;
     m_directors.back()->m_scene = this;
+
+    return *static_cast<T*>(m_directors.back().get());
+}
+
+template <typename T>
+T& Scene::getDirector()
+{
+    auto result = std::find_if(m_directors.begin(), m_directors.end(),
+        [](const std::unique_ptr<Director>& ptr)
+        {
+            return typeid(*ptr.get()) == typeid(T);
+        });
+
+    if (result == m_directors.end())
+    {
+        throw("Director not found");
+    }
+    return static_cast<T&>(*result->get());
 }
 
 template <typename T, typename... Args>
@@ -99,4 +120,16 @@ T& Scene::addPostProcess(Args&&... args)
     }
 
     return *dynamic_cast<T*>(m_postEffects.back().get());
+}
+
+//private
+template <typename T>
+bool Scene::directorExists() const
+{
+    auto result = std::find_if(m_directors.begin(), m_directors.end(),
+        [](const std::unique_ptr<Director>& ptr) 
+        {
+            return typeid(*ptr.get()) == typeid(T);
+        });
+    return result != m_directors.end();
 }

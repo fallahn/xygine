@@ -41,6 +41,7 @@ source distribution.
 
 #include <functional>
 #include <array>
+#include <optional>
 
 namespace xy
 {
@@ -128,11 +129,18 @@ namespace xy
         /*!
         \brief Adds a Director to the Scene.
         Directors are used to control in game entities and events through
-        observed messages and events.
+        observed messages and events. Returns a reference to the newly added
+        director.
         \see Director
         */
         template <typename T, typename... Args>
-        void addDirector(Args&&... args);
+        T& addDirector(Args&&... args);
+
+        /*!
+        \brief Returns a reference to the the requested Director, if it exists
+        */
+        template <typename T>
+        T& getDirector();
 
         /*!
         \brief Adds a post process effect to the scene.
@@ -205,6 +213,8 @@ namespace xy
         SystemManager m_systemManager;
 
         std::vector<std::unique_ptr<Director>> m_directors;
+        template <typename T>
+        bool directorExists() const;
 
         std::vector<sf::Drawable*> m_drawables;
 
