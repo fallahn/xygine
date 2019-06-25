@@ -25,48 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/System/Clock.hpp>
+#pragma once
 
-#include "imgui/imgui.h"
-#include "imgui/imgui-SFML.h"
+class TextEditor;
 
-#include "TextEditor.h"
-#include "WindowFunctions.hpp"
-
-int main(int argc, char** argsv)
-{
-    sf::RenderWindow window;
-    window.create({ 800, 600 }, "Shader Editor");
-    window.setVerticalSyncEnabled(true);
-
-    ImGui::SFML::Init(window);
-    sf::Clock frameClock;
-    TextEditor textEditor;
-    textEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::GLSL());
-
-    while (window.isOpen())
-    {
-        sf::Event evt;
-        while (window.pollEvent(evt))
-        {
-            ImGui::SFML::ProcessEvent(evt);
-            if (evt.type == sf::Event::Closed)
-            {
-                window.close();
-            }
-        }
-
-        ImGui::SFML::Update(window, frameClock.restart());
-
-        ImGui::ShowDemoWindow();
-        doTextEditor(textEditor);
-
-        window.clear();
-        ImGui::SFML::Render(window);
-        window.display();
-    }
-
-    return 0;
-}
+void doTextEditor(TextEditor&);
