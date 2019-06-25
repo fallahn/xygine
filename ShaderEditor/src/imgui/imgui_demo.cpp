@@ -2146,7 +2146,9 @@ static void ShowDemoWindowPopups()
         ImGui::TextWrapped("Modal windows are like popups but the user cannot close them by clicking outside the window.");
 
         if (ImGui::Button("Delete.."))
+        {
             ImGui::OpenPopup("Delete?");
+        }
 
         if (ImGui::BeginPopupModal("Delete?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
         {

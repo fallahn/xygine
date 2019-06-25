@@ -32,19 +32,23 @@ source distribution.
 #include "imgui/imgui.h"
 #include "imgui/imgui-SFML.h"
 
-#include "TextEditor.h"
+#include "EditorWindow.hpp"
 #include "WindowFunctions.hpp"
+#include "WindowFlags.hpp"
+
+#include <bitset>
 
 int main(int argc, char** argsv)
 {
     sf::RenderWindow window;
-    window.create({ 800, 600 }, "Shader Editor");
+    window.create({ 1024, 768 }, "Shader Editor");
     window.setVerticalSyncEnabled(true);
 
     ImGui::SFML::Init(window);
     sf::Clock frameClock;
-    TextEditor textEditor;
-    textEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::GLSL());
+
+    std::bitset<WindowFlags::Count> windowFlags;
+    EditorWindow textEditor;
 
     while (window.isOpen())
     {
@@ -59,9 +63,19 @@ int main(int argc, char** argsv)
         }
 
         ImGui::SFML::Update(window, frameClock.restart());
+        textEditor.update(windowFlags);
 
-        ImGui::ShowDemoWindow();
-        doTextEditor(textEditor);
+
+        if (windowFlags.test(ShowDemo))
+        {
+            ImGui::ShowDemoWindow();
+        }
+        if (windowFlags.test(RunShader))
+        {
+            //update the renderer
+
+            windowFlags.flip(RunShader);
+        }
 
         window.clear();
         ImGui::SFML::Render(window);

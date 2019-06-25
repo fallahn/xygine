@@ -25,15 +25,12 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "WindowFunctions.hpp"
-#include "TextEditor.h"
+#pragma once
 
-namespace
+enum WindowFlags
 {
+    ShowDemo,
+    RunShader,
 
-}
-
-void doTextEditor(TextEditor& editor)
-{
- 
-}
+    Count
+};

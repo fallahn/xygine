@@ -25,15 +25,25 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "WindowFunctions.hpp"
+#pragma once
+
 #include "TextEditor.h"
+#include "WindowFlags.hpp"
 
-namespace
+#include <string>
+#include <bitset>
+
+class EditorWindow final
 {
+public:
+    EditorWindow();
 
-}
+    void update(std::bitset<WindowFlags::Count>&);
 
-void doTextEditor(TextEditor& editor)
-{
- 
-}
+private:
+    TextEditor m_editor;
+    std::string m_currentFile;
+
+    void save(const std::string&);
+    void saveAs();
+};
