@@ -139,12 +139,14 @@
     <ClCompile Include="src\imgui\imgui_draw.cpp" />
     <ClCompile Include="src\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\TextEditor.cpp" />
     <ClCompile Include="src\tinyfiledialogs.c" />
     <ClCompile Include="src\WindowFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\EditorWindow.hpp" />
+    <ClInclude Include="src\Renderer.hpp" />
     <ClInclude Include="src\WindowFlags.hpp" />
     <ClInclude Include="src\WindowFunctions.hpp" />
   </ItemGroup>

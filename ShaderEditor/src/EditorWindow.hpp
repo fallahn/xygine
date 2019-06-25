@@ -40,6 +40,8 @@ public:
 
     void update(std::bitset<WindowFlags::Count>&);
 
+    std::string getString() const { return m_editor.GetText(); }
+
 private:
     TextEditor m_editor;
     std::string m_currentFile;

@@ -26,14 +26,43 @@ source distribution.
 *********************************************************************/
 
 #include "WindowFunctions.hpp"
-#include "TextEditor.h"
+#include "imgui/imgui.h"
 
 namespace
 {
 
 }
 
-void doTextEditor(TextEditor& editor)
+void showOptions(std::bitset<WindowFlags::Count>& windowFlags)
 {
- 
+    if (!ImGui::Begin("Options"))
+    {
+        ImGui::End();
+        return;
+    }
+
+    //TODO set up uniforms - ideally we want to parse this from the editor
+
+    if (ImGui::Button("Compile"))
+    {
+        windowFlags.set(RunShader);
+    }
+    ImGui::SameLine();
+    if (windowFlags.test(CompileSuccess))
+    {
+        //colours are ABGR
+        ImGui::PushStyleColor(ImGuiCol_Button, 0xff00ff00);
+        ImGui::PushStyleColor(ImGuiCol_Text, 0xff000000);
+        ImGui::Button("Succeeded");
+    }
+    else
+    {
+        ImGui::PushStyleColor(ImGuiCol_Button, 0xff0000ff);
+        ImGui::PushStyleColor(ImGuiCol_Text, 0xffffffff);
+        ImGui::Button("Failed");
+        ImGui::Text("See console for errors.");
+    }
+    ImGui::PopStyleColor(2);
+
+    ImGui::End();
 }

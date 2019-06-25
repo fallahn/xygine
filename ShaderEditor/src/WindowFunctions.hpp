@@ -27,6 +27,8 @@ source distribution.
 
 #pragma once
 
-class TextEditor;
+#include "WindowFlags.hpp"
 
-void doTextEditor(TextEditor&);
+#include <bitset>
+
+void showOptions(std::bitset<WindowFlags::Count>&);

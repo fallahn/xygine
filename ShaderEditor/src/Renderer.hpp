@@ -27,11 +27,30 @@ source distribution.
 
 #pragma once
 
-enum WindowFlags
-{
-    ShowDemo,
-    RunShader,
-    CompileSuccess,
+#include "WindowFlags.hpp"
 
-    Count
+#include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics/Shader.hpp>
+
+#include <array>
+#include <memory>
+#include <bitset>
+
+class Renderer final : public sf::Drawable, public sf::Transformable
+{
+public:
+    Renderer();
+
+    void compileShader(const std::string&, std::bitset<WindowFlags::Count>&);
+
+private:
+
+    std::size_t m_shaderIndex;
+    std::array<std::unique_ptr<sf::Shader>, 2u> m_shaders;
+
+    std::array<sf::Vertex, 4u> m_vertices;
+
+    void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };

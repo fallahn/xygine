@@ -35,6 +35,7 @@ source distribution.
 #include "EditorWindow.hpp"
 #include "WindowFunctions.hpp"
 #include "WindowFlags.hpp"
+#include "Renderer.hpp"
 
 #include <bitset>
 
@@ -49,6 +50,8 @@ int main(int argc, char** argsv)
 
     std::bitset<WindowFlags::Count> windowFlags;
     EditorWindow textEditor;
+    Renderer renderer;
+    renderer.setPosition(640.f, 400.f);
 
     while (window.isOpen())
     {
@@ -64,7 +67,7 @@ int main(int argc, char** argsv)
 
         ImGui::SFML::Update(window, frameClock.restart());
         textEditor.update(windowFlags);
-
+        showOptions(windowFlags);
 
         if (windowFlags.test(ShowDemo))
         {
@@ -73,11 +76,12 @@ int main(int argc, char** argsv)
         if (windowFlags.test(RunShader))
         {
             //update the renderer
-
-            windowFlags.flip(RunShader);
+            renderer.compileShader(textEditor.getString(), windowFlags);
+            windowFlags.set(RunShader, false);
         }
 
         window.clear();
+        window.draw(renderer);
         ImGui::SFML::Render(window);
         window.display();
     }
