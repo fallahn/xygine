@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include "Renderer.hpp"
+#include "imgui/imgui.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -37,11 +38,45 @@ Renderer::Renderer()
     m_vertices[3] = { sf::Vector2f(0.f, 256.f) };
 }
 
+void Renderer::update(std::bitset<WindowFlags::Count>& windowFlags)
+{
+    if (!ImGui::Begin("Options"))
+    {
+        ImGui::End();
+        return;
+    }
+
+    //TODO set up uniforms
+
+    if (ImGui::Button("Compile"))
+    {
+        windowFlags.set(RunShader);
+    }
+    ImGui::SameLine();
+    if (windowFlags.test(CompileSuccess))
+    {
+        //colours are ABGR
+        ImGui::PushStyleColor(ImGuiCol_Button, 0xff00ff00);
+        ImGui::PushStyleColor(ImGuiCol_Text, 0xff000000);
+        ImGui::Button("Succeeded");
+    }
+    else
+    {
+        ImGui::PushStyleColor(ImGuiCol_Button, 0xff0000ff);
+        ImGui::PushStyleColor(ImGuiCol_Text, 0xffffffff);
+        ImGui::Button("Failed");
+        ImGui::Text("See console for errors.");
+    }
+    ImGui::PopStyleColor(2);
+
+    ImGui::End();
+}
+
 //public
 void Renderer::compileShader(const std::string& source, std::bitset<WindowFlags::Count>& flags)
 {
     //TODO we want to be able to cover vertex shaders eventually too...
-    //TODO rather than return a bool pass in the window flags here and set a flag
+    //perhaps have two editor tabs?
 
     if (source.empty())
     {
@@ -53,6 +88,8 @@ void Renderer::compileShader(const std::string& source, std::bitset<WindowFlags:
     m_shaders[nextShader] = std::make_unique<sf::Shader>();
     if (m_shaders[nextShader]->loadFromMemory(source, sf::Shader::Fragment))
     {
+        //TODO lex/tokenise source to find uniforms
+
         m_shaderIndex = nextShader;
         flags.set(WindowFlags::CompileSuccess, true);
         return;

@@ -63,11 +63,18 @@ int main(int argc, char** argsv)
             {
                 window.close();
             }
+            else if (evt.type == sf::Event::Resized)
+            {
+                sf::View view;
+                view.setSize(sf::Vector2f(window.getSize()));
+                view.setCenter(view.getSize() / 2.f);
+                window.setView(view);
+            }
         }
 
         ImGui::SFML::Update(window, frameClock.restart());
         textEditor.update(windowFlags);
-        showOptions(windowFlags);
+        renderer.update(windowFlags);
 
         if (windowFlags.test(ShowDemo))
         {

@@ -43,6 +43,8 @@ class Renderer final : public sf::Drawable, public sf::Transformable
 public:
     Renderer();
 
+    void update(std::bitset<WindowFlags::Count>&);
+
     void compileShader(const std::string&, std::bitset<WindowFlags::Count>&);
 
 private:

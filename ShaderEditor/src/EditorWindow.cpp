@@ -94,6 +94,8 @@ void EditorWindow::update(std::bitset<WindowFlags::Count>& windowFlags)
                         m_editor.SetText(str);
 
                         m_currentFile = result;
+
+                        windowFlags.set(WindowFlags::RunShader);
                     }
                 }
             }
