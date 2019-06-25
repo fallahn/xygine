@@ -23,6 +23,7 @@ endif()
 # Only works with SFML version 2.5 and above
 SET(SFML_MIN_VERSION 2.5)
 find_package(SFML ${SFML_MIN_VERSION} REQUIRED graphics window system)
+find_package(OpenGL REQUIRED)
 
 # X11 is required on unices
 if(UNIX AND NOT APPLE)
@@ -41,6 +42,11 @@ add_executable(${PROJECT_NAME} ${PROJECT_SRC})
 
 # Linker settings
 #target_link_libraries(${PROJECT_NAME} xyginext)
+target_link_libraries(${PROJECT_NAME}
+                      sfml-graphics
+                      sfml-window
+                      sfml-system
+                      ${OPENGL_LIBRARIES})
 
 # Additional include directories
 #target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
@@ -56,4 +62,4 @@ endif()
 
 # Install assets folder
 #install(DIRECTORY assets
-#  DESTINATION .)
+#  DESTINATION .)u
