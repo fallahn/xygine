@@ -33,6 +33,7 @@ source distribution.
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Clock.hpp>
 
 #include <array>
@@ -59,8 +60,14 @@ private:
 
     sf::Clock m_shaderClock;
 
+    sf::Texture* m_firstTexture;
+    std::vector<std::unique_ptr<sf::Texture>> m_textures;
+
     std::unordered_map<std::string, std::pair<std::int32_t, std::any>> m_uniforms;
     void readUniforms();
+
+    void drawUniformTab(std::bitset<WindowFlags::Count>&);
+    void drawTextureTab();
 
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };

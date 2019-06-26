@@ -27,7 +27,9 @@ source distribution.
 
 #include "Renderer.hpp"
 #include "imgui/imgui.h"
+#include "imgui/imgui-SFML.h"
 #include "GLCheck.hpp"
+#include "tinyfiledialogs.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/OpenGL.hpp>
@@ -38,10 +40,25 @@ namespace
     const float InputWidth = 180.f;
     const float SliderMax = 100.f;
     const GLsizei MaxUniformChars = 36;
+
+    //TODO look up all file types supported by sfml
+    const char* filters[] = { "*.png", "*.jpg", "*.jpeg", "*.tga" };
+
+    auto comboCallback = [](void* vec, int idx, const char** out_text)
+    {
+        auto& vector = *static_cast<std::vector<std::string>*>(vec);
+        if (idx < 0 || idx >= static_cast<int>(vector.size()))
+        {
+            return false;
+        }
+        *out_text = vector.at(idx).c_str();
+        return true;
+    };
 }
 
 Renderer::Renderer()
-    : m_shaderIndex(1)
+    : m_shaderIndex (1),
+    m_firstTexture  (nullptr)
 {
     m_vertices[1] = { sf::Vector2f(256.f, 0.f) };
     m_vertices[2] = { sf::Vector2f(256.f, 256.f) };
@@ -87,132 +104,13 @@ void Renderer::update(std::bitset<WindowFlags::Count>& windowFlags)
         ImGui::Button("No Shader Created");
     }
 
-    //list uniforms
-    for (auto& [name, data] : m_uniforms)
-    {
-        //ImGui::Text(name.c_str());
-        //ImGui::SameLine();
-        switch (data.first)
-        {
-        case GL_FLOAT:
-        {
-            const char* items[] = { "Slider", "Value", "Time" };
-            static int selected = 0;
-            ImGui::PushItemWidth(ComboWidth);
-            ImGui::Combo("##Input0", &selected, items, IM_ARRAYSIZE(items));
-            ImGui::SameLine();
-            ImGui::PopItemWidth();
+    ImGui::BeginTabBar("##0");
 
-            ImGui::PushItemWidth(InputWidth);
-            if (selected == 2)
-            {
-                ImGui::Text(name.c_str());
-                m_shaders[m_shaderIndex]->setUniform(name, m_shaderClock.getElapsedTime().asSeconds());
-            }
-            else
-            {
-                auto& val = std::any_cast<float&>(data.second);
-                (selected == 1) ?
-                    ImGui::InputFloat(name.c_str(), &val) :
-                    ImGui::SliderFloat(name.c_str(), &val, 0.f, SliderMax);
 
-                m_shaders[m_shaderIndex]->setUniform(name, val);
-            }
-            ImGui::PopItemWidth();
-        }
-            break;
-        case GL_FLOAT_VEC2:
-        {
-            const char* items[] = { "Slider", "Value" };
-            static int selected = 0;
-            ImGui::PushItemWidth(ComboWidth);
-            ImGui::Combo("##Input1", &selected, items, IM_ARRAYSIZE(items));
-            ImGui::SameLine();
-            ImGui::PopItemWidth();
+    drawUniformTab(windowFlags);
+    drawTextureTab();
 
-            ImGui::PushItemWidth(InputWidth);
-            auto& val = std::any_cast<sf::Glsl::Vec2&>(data.second);
-            float arr[] = { val.x, val.y };
-            (selected == 1) ?
-                ImGui::InputFloat2(name.c_str(), arr) :
-                ImGui::SliderFloat2(name.c_str(), arr, 0.f, SliderMax);
-
-            val = { arr[0],arr[1] };
-            m_shaders[m_shaderIndex]->setUniform(name, val);
-            ImGui::PopItemWidth();
-        }
-            break;
-        case GL_FLOAT_VEC3:
-        {
-            const char* items[] = { "Slider", "Value", "Picker" };
-            static int selected = 0;
-            ImGui::PushItemWidth(ComboWidth);
-            ImGui::Combo("##Input2", &selected, items, IM_ARRAYSIZE(items));
-            ImGui::SameLine();
-            ImGui::PopItemWidth();
-
-            auto& val = std::any_cast<sf::Glsl::Vec3&>(data.second);
-            float arr[] = { val.x, val.y, val.z };
-
-            if (selected != 2)
-            {
-                ImGui::PushItemWidth(InputWidth);
-
-                (selected == 1) ?
-                    ImGui::InputFloat3(name.c_str(), arr) :
-                    ImGui::SliderFloat3(name.c_str(), arr, 0.f, SliderMax);
-
-                ImGui::PopItemWidth();
-            }
-            else
-            {
-                ImGui::ColorEdit3(name.c_str(), arr);
-            }
-            val = { arr[0],arr[1],arr[2] };
-            m_shaders[m_shaderIndex]->setUniform(name, val);
-        }
-            break;
-        case GL_FLOAT_VEC4:
-        {
-            const char* items[] = { "Slider", "Value", "Picker" };
-            static int selected = 0;
-            ImGui::PushItemWidth(ComboWidth);
-            ImGui::Combo("##Input3", &selected, items, IM_ARRAYSIZE(items));
-            ImGui::SameLine();
-            ImGui::PopItemWidth();
-
-            auto& val = std::any_cast<sf::Glsl::Vec4&>(data.second);
-            float arr[] = { val.x, val.y, val.z, val.w };
-
-            if (selected != 2)
-            {
-                ImGui::PushItemWidth(InputWidth);
-
-                (selected == 1) ?
-                    ImGui::InputFloat4(name.c_str(), arr) :
-                    ImGui::SliderFloat4(name.c_str(), arr, 0.f, SliderMax);
-
-                ImGui::PopItemWidth();
-            }
-            else
-            {
-                ImGui::ColorEdit4(name.c_str(), arr);
-            }
-            val = { arr[0],arr[1],arr[2],arr[3] };
-            m_shaders[m_shaderIndex]->setUniform(name, val);
-        }
-            break;
-        case GL_SAMPLER_2D:
-
-            break;
-        default:
-            ImGui::Text(name.c_str());
-            ImGui::SameLine();
-            ImGui::Text(" Uniform type not supported (yet)");
-            break;
-        }
-    }
-
+    ImGui::EndTabBar();
     ImGui::End();
 }
 
@@ -342,10 +240,241 @@ void Renderer::readUniforms()
     }
 }
 
+void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
+{
+    if (ImGui::BeginTabItem("Uniforms"))
+    {
+        //create the texture list first so we only do it once for all items
+        std::vector<std::string> textureItems;
+        for (auto i = 0u; i < m_textures.size(); ++i)
+        {
+            textureItems.push_back("Texture " + std::to_string(i));
+        }
+
+        //list uniforms
+        for (auto& [name, data] : m_uniforms)
+        {
+            switch (data.first)
+            {
+            case GL_FLOAT:
+            {
+                const char* items[] = { "Slider", "Value", "Time" };
+                static int selected = 0;
+                ImGui::PushItemWidth(ComboWidth);
+                ImGui::Combo("##Input0", &selected, items, IM_ARRAYSIZE(items));
+                ImGui::SameLine();
+                ImGui::PopItemWidth();
+
+                ImGui::PushItemWidth(InputWidth);
+                if (selected == 2)
+                {
+                    ImGui::Text(name.c_str());
+                    m_shaders[m_shaderIndex]->setUniform(name, m_shaderClock.getElapsedTime().asSeconds());
+                }
+                else
+                {
+                    auto& val = std::any_cast<float&>(data.second);
+                    (selected == 1) ?
+                        ImGui::InputFloat(name.c_str(), &val) :
+                        ImGui::SliderFloat(name.c_str(), &val, 0.f, SliderMax);
+
+                    m_shaders[m_shaderIndex]->setUniform(name, val);
+                }
+                ImGui::PopItemWidth();
+            }
+            break;
+            case GL_FLOAT_VEC2:
+            {
+                const char* items[] = { "Slider", "Value" };
+                static int selected = 0;
+                ImGui::PushItemWidth(ComboWidth);
+                ImGui::Combo("##Input1", &selected, items, IM_ARRAYSIZE(items));
+                ImGui::SameLine();
+                ImGui::PopItemWidth();
+
+                ImGui::PushItemWidth(InputWidth);
+                auto& val = std::any_cast<sf::Glsl::Vec2&>(data.second);
+                float arr[] = { val.x, val.y };
+                (selected == 1) ?
+                    ImGui::InputFloat2(name.c_str(), arr) :
+                    ImGui::SliderFloat2(name.c_str(), arr, 0.f, SliderMax);
+
+                val = { arr[0],arr[1] };
+                m_shaders[m_shaderIndex]->setUniform(name, val);
+                ImGui::PopItemWidth();
+            }
+            break;
+            case GL_FLOAT_VEC3:
+            {
+                const char* items[] = { "Slider", "Value", "Picker" };
+                static int selected = 0;
+                ImGui::PushItemWidth(ComboWidth);
+                ImGui::Combo("##Input2", &selected, items, IM_ARRAYSIZE(items));
+                ImGui::SameLine();
+                ImGui::PopItemWidth();
+
+                auto& val = std::any_cast<sf::Glsl::Vec3&>(data.second);
+                float arr[] = { val.x, val.y, val.z };
+
+                if (selected != 2)
+                {
+                    ImGui::PushItemWidth(InputWidth);
+
+                    (selected == 1) ?
+                        ImGui::InputFloat3(name.c_str(), arr) :
+                        ImGui::SliderFloat3(name.c_str(), arr, 0.f, SliderMax);
+
+                    ImGui::PopItemWidth();
+                }
+                else
+                {
+                    ImGui::ColorEdit3(name.c_str(), arr);
+                }
+                val = { arr[0],arr[1],arr[2] };
+                m_shaders[m_shaderIndex]->setUniform(name, val);
+            }
+            break;
+            case GL_FLOAT_VEC4:
+            {
+                const char* items[] = { "Slider", "Value", "Picker" };
+                static int selected = 0;
+                ImGui::PushItemWidth(ComboWidth);
+                ImGui::Combo("##Input3", &selected, items, IM_ARRAYSIZE(items));
+                ImGui::SameLine();
+                ImGui::PopItemWidth();
+
+                auto& val = std::any_cast<sf::Glsl::Vec4&>(data.second);
+                float arr[] = { val.x, val.y, val.z, val.w };
+
+                if (selected != 2)
+                {
+                    ImGui::PushItemWidth(InputWidth);
+
+                    (selected == 1) ?
+                        ImGui::InputFloat4(name.c_str(), arr) :
+                        ImGui::SliderFloat4(name.c_str(), arr, 0.f, SliderMax);
+
+                    ImGui::PopItemWidth();
+                }
+                else
+                {
+                    ImGui::ColorEdit4(name.c_str(), arr);
+                }
+                val = { arr[0],arr[1],arr[2],arr[3] };
+                m_shaders[m_shaderIndex]->setUniform(name, val);
+            }
+            break;
+            case GL_SAMPLER_2D:
+            {
+                if (m_textures.empty())
+                {
+                    ImGui::Text(name.c_str());
+                    ImGui::SameLine();
+                    ImGui::Text("No Textures Loaded");
+                }
+                else// if(m_textures.size() > 1)
+                {
+                    static int selectedItem = 0;
+                    ImGui::PushItemWidth(100.f);
+                    ImGui::Combo(name.c_str(), &selectedItem, comboCallback, static_cast<void*>(&textureItems), textureItems.size());
+                    ImGui::PopItemWidth();
+
+                    //woo, pointy.
+                    auto t = std::any_cast<sf::Texture*&>(data.second);
+                    t = m_textures[selectedItem].get();
+
+                    m_shaders[m_shaderIndex]->setUniform(name, *t);
+                }
+                /*else
+                {
+                    ImGui::Text(name.c_str());
+                    ImGui::SameLine();
+                    ImGui::Text("Texture 0");
+                    m_shaders[m_shaderIndex]->setUniform(name, sf::Shader::CurrentTexture);
+                }*/
+            }
+                break;
+            default:
+                ImGui::Text(name.c_str());
+                ImGui::SameLine();
+                ImGui::Text(" Uniform type not supported (yet)");
+                break;
+            }
+        }
+        ImGui::EndTabItem();
+    }
+}
+
+void Renderer::drawTextureTab()
+{
+    if (ImGui::BeginTabItem("Textures"))
+    {
+        if (ImGui::Button("Add Texture"))
+        {
+            const char* result = tinyfd_openFileDialog("Open...", "", 4, filters, "Image Files", 0);
+            if (result)
+            {
+                std::unique_ptr<sf::Texture> tex = std::make_unique<sf::Texture>();
+                if (tex->loadFromFile(result))
+                {
+                    if (m_textures.size() == 1)
+                    {
+                        m_firstTexture = tex.get();
+
+                        //set up the verts tex coord - sfml coords aren't normalised...
+                        sf::Vector2f size(tex->getSize());
+                        m_vertices[1].texCoords.x = size.x;
+                        m_vertices[2].texCoords = size;
+                        m_vertices[3].texCoords.y = size.y;
+                    }
+                    m_textures.push_back(std::move(tex));
+                }
+                else
+                {
+                    //idk, there should be some sort of error in the log anyway
+                }
+            }
+        }
+
+        int i = 0;
+        for (const auto& t : m_textures)
+        {
+            std::string label = "Texture " + std::to_string(i);
+            std::string buttonID = "Change##" + std::to_string(i);
+
+            ImGui::Image(*t, { 64.f, 64.f });
+            ImGui::SameLine();
+            ImGui::Text(label.c_str());
+            ImGui::SameLine();
+            if (ImGui::Button(buttonID.c_str()))
+            {
+                const char* result = tinyfd_openFileDialog("Open...", "", 4, filters, "Image Files", 0);
+                if (result)
+                {
+                    std::unique_ptr<sf::Texture> tex = std::make_unique<sf::Texture>();
+                    if (tex->loadFromFile(result))
+                    {
+                        m_textures[i].swap(tex);
+                        if (i == 0)
+                        {
+                            m_firstTexture = tex.get();
+                        }
+                    }
+                }
+            }
+
+            i++;
+        }
+
+        ImGui::EndTabItem();
+    }
+}
+
 void Renderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.shader = m_shaders[m_shaderIndex].get();
     states.transform *= getTransform();
+    states.texture = m_firstTexture;
 
     rt.draw(m_vertices.data(), m_vertices.size(), sf::Quads, states);
 }
