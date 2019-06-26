@@ -1,6 +1,7 @@
 set(PROJECT_SRC 
   ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/EditorWindow.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/glad.c
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Renderer.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/TextEditor.cpp

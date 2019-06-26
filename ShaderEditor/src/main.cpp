@@ -36,8 +36,10 @@ source distribution.
 #include "WindowFunctions.hpp"
 #include "WindowFlags.hpp"
 #include "Renderer.hpp"
+#include "glad.h"
 
 #include <bitset>
+#include <iostream>
 
 int main(int argc, char** argsv)
 {
@@ -45,13 +47,20 @@ int main(int argc, char** argsv)
     window.create({ 1024, 768 }, "Shader Editor");
     window.setVerticalSyncEnabled(true);
 
+    if (!gladLoadGL())
+    {
+        std::cerr << "Failed loading OpenGL functions\n";
+        window.close();
+        return -1;
+    }
+
     ImGui::SFML::Init(window);
     sf::Clock frameClock;
 
     std::bitset<WindowFlags::Count> windowFlags;
     EditorWindow textEditor;
     Renderer renderer;
-    renderer.setPosition(640.f, 400.f);
+    renderer.setPosition(670.f, 446.f);
 
     while (window.isOpen())
     {
@@ -70,6 +79,13 @@ int main(int argc, char** argsv)
                 view.setCenter(view.getSize() / 2.f);
                 window.setView(view);
             }
+#ifdef XY_DEBUG
+            else if (evt.type == sf::Event::KeyReleased
+                && evt.key.code == sf::Keyboard::Escape)
+            {
+                window.close();
+            }
+#endif //XY_DEBUG
         }
 
         ImGui::SFML::Update(window, frameClock.restart());

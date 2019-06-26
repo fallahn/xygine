@@ -33,10 +33,13 @@ source distribution.
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/Shader.hpp>
+#include <SFML/System/Clock.hpp>
 
 #include <array>
 #include <memory>
 #include <bitset>
+#include <unordered_map>
+#include <any>
 
 class Renderer final : public sf::Drawable, public sf::Transformable
 {
@@ -53,6 +56,11 @@ private:
     std::array<std::unique_ptr<sf::Shader>, 2u> m_shaders;
 
     std::array<sf::Vertex, 4u> m_vertices;
+
+    sf::Clock m_shaderClock;
+
+    std::unordered_map<std::string, std::pair<std::int32_t, std::any>> m_uniforms;
+    void readUniforms();
 
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };

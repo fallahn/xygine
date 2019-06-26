@@ -45,6 +45,9 @@ void EditorWindow::update(std::bitset<WindowFlags::Count>& windowFlags)
 {
     //based on https://github.com/BalazsJako/ColorTextEditorDemo 
 
+    ImGui::SetNextWindowPos({ 24.f, 24.f });
+    ImGui::SetNextWindowSize({ 546.f, 720.f });
+
     auto cpos = m_editor.GetCursorPosition();
     ImGui::Begin("Text Editor", nullptr, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
     ImGui::SetWindowSize(ImVec2(640, 480), ImGuiCond_FirstUseEver);
