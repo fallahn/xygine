@@ -43,6 +43,7 @@ add_executable(${PROJECT_NAME} ${PROJECT_SRC})
 # Linker settings
 #target_link_libraries(${PROJECT_NAME} xyginext)
 target_link_libraries(${PROJECT_NAME}
+                      ${CMAKE_DL_LIBS}
                       sfml-graphics
                       sfml-window
                       sfml-system
