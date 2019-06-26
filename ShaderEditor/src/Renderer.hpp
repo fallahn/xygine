@@ -63,7 +63,19 @@ private:
     sf::Texture* m_firstTexture;
     std::vector<std::unique_ptr<sf::Texture>> m_textures;
 
-    std::unordered_map<std::string, std::pair<std::int32_t, std::any>> m_uniforms;
+    struct Uniform final
+    {
+        Uniform() = default;
+        template <typename T>
+        Uniform(std::int32_t type, T d)
+            :GLType(type), data(std::make_any<T>(d))
+        {}
+        std::int32_t GLType = 0; //data type as returned by opengl
+        std::any data; //data taken from ui and fed to shader
+        std::int32_t UISelection = 0; //used for uniforms where the UI has a combobox
+    };
+
+    std::unordered_map<std::string, Uniform> m_uniforms;
     void readUniforms();
 
     void drawUniformTab(std::bitset<WindowFlags::Count>&);

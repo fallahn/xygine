@@ -189,28 +189,30 @@ void Renderer::readUniforms()
     {
         if (m_uniforms.count(name) != 0)
         {
-            if (m_uniforms[name].first != type)
+            if (m_uniforms[name].GLType != type)
             {
                 switch (type)
                 {
                 default: break;
                 case GL_FLOAT:
-                    m_uniforms[name] = std::make_pair(type, std::make_any<float>());
+                    m_uniforms[name] = {};
+                    m_uniforms[name].data = std::make_any<float>();
                     break;
                 case GL_FLOAT_VEC2:
-                    m_uniforms[name] = std::make_pair(type, std::make_any<sf::Glsl::Vec2>());
+                    m_uniforms[name] = {};
+                    m_uniforms[name].data = std::make_any<sf::Glsl::Vec2>();
                     break;
                 case GL_FLOAT_VEC3:
-                    m_uniforms[name] = std::make_pair(type, std::make_any<sf::Glsl::Vec3>());
+                    m_uniforms[name] = {};
+                    m_uniforms[name].data = std::make_any<sf::Glsl::Vec3>();
                     break;
                 case GL_FLOAT_VEC4:
-                    m_uniforms[name] = std::make_pair(type, std::make_any<sf::Glsl::Vec4>());
-                    //this is a mini hack to initialise alpha to 1 which could otherwise
-                    //cause confusing when using these values as a colour
-                    std::any_cast<sf::Glsl::Vec4&>(m_uniforms[name].second).w = 1.f;
+                    m_uniforms[name] = {};
+                    m_uniforms[name].data = std::make_any<sf::Glsl::Vec4>(1.f, 1.f, 1.f, 1.f);
                     break;
                 case GL_SAMPLER_2D:
-                    m_uniforms[name] = std::make_pair(type, std::make_any<sf::Texture*>());
+                    m_uniforms[name] = {};
+                    m_uniforms[name].data = std::make_any<sf::Texture*>(nullptr);
                     break;
                 }
             }
@@ -221,19 +223,22 @@ void Renderer::readUniforms()
             {
             default: break;
             case GL_FLOAT:
-                m_uniforms.insert(std::make_pair(name, std::make_pair(type, std::make_any<float>())));
+                m_uniforms.insert(std::make_pair(name, Uniform(type, 0.f)));
                 break;
             case GL_FLOAT_VEC2:
-                m_uniforms.insert(std::make_pair(name, std::make_pair(type, std::make_any<sf::Glsl::Vec2>())));
+                m_uniforms.insert(std::make_pair(name, Uniform(type, sf::Glsl::Vec2())));
                 break;
             case GL_FLOAT_VEC3:
-                m_uniforms.insert(std::make_pair(name, std::make_pair(type, std::make_any<sf::Glsl::Vec3>())));
+                m_uniforms.insert(std::make_pair(name, Uniform(type, sf::Glsl::Vec3())));
                 break;
             case GL_FLOAT_VEC4:
-                m_uniforms.insert(std::make_pair(name, std::make_pair(type, std::make_any<sf::Glsl::Vec4>())));
+                m_uniforms.insert(std::make_pair(name, Uniform(type, sf::Glsl::Vec4())));
                 break;
             case GL_SAMPLER_2D:
-                m_uniforms.insert(std::make_pair(name, std::make_pair(type, std::make_any<sf::Texture*>())));
+            {
+                sf::Texture* ptr = nullptr;
+                m_uniforms.insert(std::make_pair(name, Uniform(type, ptr)));
+            }
                 break;
             }
         }
@@ -252,29 +257,29 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
         }
 
         //list uniforms
-        for (auto& [name, data] : m_uniforms)
+        for (auto& [name, uniform] : m_uniforms)
         {
-            switch (data.first)
+            switch (uniform.GLType)
             {
             case GL_FLOAT:
             {
                 const char* items[] = { "Slider", "Value", "Time" };
-                static int selected = 0;
+
                 ImGui::PushItemWidth(ComboWidth);
-                ImGui::Combo("##Input0", &selected, items, IM_ARRAYSIZE(items));
+                ImGui::Combo("##Input0", &uniform.UISelection, items, IM_ARRAYSIZE(items));
                 ImGui::SameLine();
                 ImGui::PopItemWidth();
 
                 ImGui::PushItemWidth(InputWidth);
-                if (selected == 2)
+                if (uniform.UISelection == 2)
                 {
                     ImGui::Text(name.c_str());
                     m_shaders[m_shaderIndex]->setUniform(name, m_shaderClock.getElapsedTime().asSeconds());
                 }
                 else
                 {
-                    auto& val = std::any_cast<float&>(data.second);
-                    (selected == 1) ?
+                    auto& val = std::any_cast<float&>(uniform.data);
+                    (uniform.UISelection == 1) ?
                         ImGui::InputFloat(name.c_str(), &val) :
                         ImGui::SliderFloat(name.c_str(), &val, 0.f, SliderMax);
 
@@ -286,16 +291,16 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
             case GL_FLOAT_VEC2:
             {
                 const char* items[] = { "Slider", "Value" };
-                static int selected = 0;
+
                 ImGui::PushItemWidth(ComboWidth);
-                ImGui::Combo("##Input1", &selected, items, IM_ARRAYSIZE(items));
+                ImGui::Combo("##Input1", &uniform.UISelection, items, IM_ARRAYSIZE(items));
                 ImGui::SameLine();
                 ImGui::PopItemWidth();
 
                 ImGui::PushItemWidth(InputWidth);
-                auto& val = std::any_cast<sf::Glsl::Vec2&>(data.second);
+                auto& val = std::any_cast<sf::Glsl::Vec2&>(uniform.data);
                 float arr[] = { val.x, val.y };
-                (selected == 1) ?
+                (uniform.UISelection == 1) ?
                     ImGui::InputFloat2(name.c_str(), arr) :
                     ImGui::SliderFloat2(name.c_str(), arr, 0.f, SliderMax);
 
@@ -307,20 +312,20 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
             case GL_FLOAT_VEC3:
             {
                 const char* items[] = { "Slider", "Value", "Picker" };
-                static int selected = 0;
+
                 ImGui::PushItemWidth(ComboWidth);
-                ImGui::Combo("##Input2", &selected, items, IM_ARRAYSIZE(items));
+                ImGui::Combo("##Input2", &uniform.UISelection, items, IM_ARRAYSIZE(items));
                 ImGui::SameLine();
                 ImGui::PopItemWidth();
 
-                auto& val = std::any_cast<sf::Glsl::Vec3&>(data.second);
+                auto& val = std::any_cast<sf::Glsl::Vec3&>(uniform.data);
                 float arr[] = { val.x, val.y, val.z };
 
-                if (selected != 2)
+                if (uniform.UISelection != 2)
                 {
                     ImGui::PushItemWidth(InputWidth);
 
-                    (selected == 1) ?
+                    (uniform.UISelection == 1) ?
                         ImGui::InputFloat3(name.c_str(), arr) :
                         ImGui::SliderFloat3(name.c_str(), arr, 0.f, SliderMax);
 
@@ -343,7 +348,7 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
                 ImGui::SameLine();
                 ImGui::PopItemWidth();
 
-                auto& val = std::any_cast<sf::Glsl::Vec4&>(data.second);
+                auto& val = std::any_cast<sf::Glsl::Vec4&>(uniform.data);
                 float arr[] = { val.x, val.y, val.z, val.w };
 
                 if (selected != 2)
@@ -372,26 +377,18 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
                     ImGui::SameLine();
                     ImGui::Text("No Textures Loaded");
                 }
-                else// if(m_textures.size() > 1)
+                else
                 {
-                    static int selectedItem = 0;
                     ImGui::PushItemWidth(100.f);
-                    ImGui::Combo(name.c_str(), &selectedItem, comboCallback, static_cast<void*>(&textureItems), textureItems.size());
+                    ImGui::Combo(name.c_str(), &uniform.UISelection, comboCallback, static_cast<void*>(&textureItems), textureItems.size());
                     ImGui::PopItemWidth();
 
                     //woo, pointy.
-                    auto t = std::any_cast<sf::Texture*&>(data.second);
-                    t = m_textures[selectedItem].get();
+                    auto t = std::any_cast<sf::Texture*&>(uniform.data);
+                    t = m_textures[uniform.UISelection].get();
 
                     m_shaders[m_shaderIndex]->setUniform(name, *t);
                 }
-                /*else
-                {
-                    ImGui::Text(name.c_str());
-                    ImGui::SameLine();
-                    ImGui::Text("Texture 0");
-                    m_shaders[m_shaderIndex]->setUniform(name, sf::Shader::CurrentTexture);
-                }*/
             }
                 break;
             default:
@@ -417,7 +414,7 @@ void Renderer::drawTextureTab()
                 std::unique_ptr<sf::Texture> tex = std::make_unique<sf::Texture>();
                 if (tex->loadFromFile(result))
                 {
-                    if (m_textures.size() == 1)
+                    if (m_textures.empty())
                     {
                         m_firstTexture = tex.get();
 
@@ -451,7 +448,13 @@ void Renderer::drawTextureTab()
                 const char* result = tinyfd_openFileDialog("Open...", "", 4, filters, "Image Files", 0);
                 if (result)
                 {
-                    std::unique_ptr<sf::Texture> tex = std::make_unique<sf::Texture>();
+                    /*
+                    OK We can either load a new texture and swap if the load succeeds - but this won't update
+                    active uniforms immediately. On the other hand we can reload the existing texture, but load
+                    failures aren't then handled...
+                    */
+
+                    /*std::unique_ptr<sf::Texture> tex = std::make_unique<sf::Texture>();
                     if (tex->loadFromFile(result))
                     {
                         m_textures[i].swap(tex);
@@ -459,6 +462,16 @@ void Renderer::drawTextureTab()
                         {
                             m_firstTexture = tex.get();
                         }
+                    }*/
+
+                    m_textures[i]->loadFromFile(result);
+                    if (i == 0)
+                    {
+                        //update vertex coords because they aren't normalised *sigh*
+                        sf::Vector2f size(m_textures[i]->getSize());
+                        m_vertices[1].texCoords.x = size.x;
+                        m_vertices[2].texCoords = size;
+                        m_vertices[3].texCoords.y = size.y;
                     }
                 }
             }
