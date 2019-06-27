@@ -446,6 +446,7 @@ void Renderer::drawTextureTab()
         {
             std::string label = "Texture " + std::to_string(i);
             std::string buttonID = "Change##" + std::to_string(i);
+            std::string repeatLabel = "Wrap UV##" + std::to_string(i);
 
             ImGui::Image(*t, { 64.f, 64.f });
             ImGui::SameLine();
@@ -482,6 +483,15 @@ void Renderer::drawTextureTab()
                         m_vertices[3].texCoords.y = size.y;
                     }
                 }
+            }
+
+            bool repeat = t->isRepeated();
+            bool oldRepeat = repeat;
+            ImGui::SameLine();
+            ImGui::Checkbox(repeatLabel.c_str(), &repeat);
+            if (repeat != oldRepeat)
+            {
+                t->setRepeated(repeat);
             }
 
             i++;
