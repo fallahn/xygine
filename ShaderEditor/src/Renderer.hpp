@@ -63,6 +63,8 @@ private:
     sf::Texture* m_firstTexture;
     std::vector<std::unique_ptr<sf::Texture>> m_textures;
 
+    float m_previewZoom;
+
     struct Uniform final
     {
         Uniform() = default;
@@ -82,6 +84,7 @@ private:
 
     void drawUniformTab(std::bitset<WindowFlags::Count>&);
     void drawTextureTab();
+    void drawOptionsTab();
 
     void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };

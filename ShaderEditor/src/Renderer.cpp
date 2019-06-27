@@ -59,7 +59,8 @@ namespace
 
 Renderer::Renderer()
     : m_shaderIndex (1),
-    m_firstTexture  (nullptr)
+    m_firstTexture  (nullptr),
+    m_previewZoom   (1.f)
 {
     m_vertices[1] = { sf::Vector2f(MaxPreviewSize, 0.f) };
     m_vertices[2] = { sf::Vector2f(MaxPreviewSize, MaxPreviewSize) };
@@ -117,6 +118,7 @@ void Renderer::update(std::bitset<WindowFlags::Count>& windowFlags)
 
     drawUniformTab(windowFlags);
     drawTextureTab();
+    drawOptionsTab();
 
     ImGui::EndTabBar();
     ImGui::End();
@@ -188,6 +190,11 @@ void Renderer::updateVertices()
     m_vertices[3].position.y = size.y;
 
     setOrigin(size / 2.f);
+
+    //reset zoom in case we're loading a larger texture
+    float maxZoom = MaxPreviewSize / m_vertices[1].position.x;
+    float zoom = std::min(maxZoom, m_previewZoom);
+    setScale(zoom, zoom);
 }
 
 using namespace Detail;
@@ -528,6 +535,20 @@ void Renderer::drawTextureTab()
 
             i++;
         }
+
+        ImGui::EndTabItem();
+    }
+}
+
+void Renderer::drawOptionsTab()
+{
+    if (ImGui::BeginTabItem("View Options"))
+    {
+        ImGui::SliderFloat("Zoom", &m_previewZoom, 1.f, 50.f);
+
+        float maxZoom = MaxPreviewSize / m_vertices[1].position.x;
+        float zoom = std::min(maxZoom, m_previewZoom);
+        setScale(zoom, zoom);
 
         ImGui::EndTabItem();
     }
