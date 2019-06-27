@@ -189,6 +189,14 @@ void EditorWindow::update(std::bitset<WindowFlags::Count>& windowFlags)
         m_editor.CanUndo() ? "*" : " ",
         m_editor.GetLanguageDefinition().mName.c_str(), m_currentFile.c_str());
 
+    //done before Render() - below - because it resets the editor's
+    //internal flag.
+    if (m_editor.IsTextChanged())
+    {
+        windowFlags.set(WindowFlags::TextChanged);
+        windowFlags.set(WindowFlags::CompileSuccess, false);
+    }
+
     m_editor.Render("TextEditor");
     ImGui::End();
 

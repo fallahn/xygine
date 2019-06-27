@@ -32,6 +32,7 @@ enum WindowFlags
     ShowDemo,
     RunShader,
     CompileSuccess,
+    TextChanged,
 
     Count
 };

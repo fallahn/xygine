@@ -90,6 +90,12 @@ void Renderer::update(std::bitset<WindowFlags::Count>& windowFlags)
             ImGui::PushStyleColor(ImGuiCol_Text, 0xff000000);
             ImGui::Button("Succeeded");
         }
+        else if (windowFlags.test(TextChanged))
+        {
+            ImGui::PushStyleColor(ImGuiCol_Button, 0xff00f7ff);
+            ImGui::PushStyleColor(ImGuiCol_Text, 0xff000000);
+            ImGui::Button("Not Compiled");
+        }
         else
         {
             ImGui::PushStyleColor(ImGuiCol_Button, 0xff0000ff);
@@ -132,12 +138,14 @@ void Renderer::compileShader(const std::string& source, std::bitset<WindowFlags:
     {
         m_shaderIndex = nextShader;
         flags.set(WindowFlags::CompileSuccess, true);
+        flags.set(WindowFlags::TextChanged, false);
 
         readUniforms();
 
         return;
     }
     flags.set(WindowFlags::CompileSuccess, false);
+    flags.set(WindowFlags::TextChanged, false);
     return;
 }
 
