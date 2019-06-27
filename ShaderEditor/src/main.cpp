@@ -60,7 +60,7 @@ int main(int argc, char** argsv)
     std::bitset<WindowFlags::Count> windowFlags;
     EditorWindow textEditor;
     Renderer renderer;
-    renderer.setPosition(670.f, 446.f);
+    renderer.setPosition(798.f, 580.f);
 
     while (window.isOpen())
     {

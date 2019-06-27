@@ -75,6 +75,8 @@ private:
         std::int32_t UISelection = 0; //used for uniforms where the UI has a combobox
     };
 
+    void updateVertices();
+
     std::unordered_map<std::string, Uniform> m_uniforms;
     void readUniforms();
 

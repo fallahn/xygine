@@ -40,6 +40,7 @@ namespace
     const float InputWidth = 180.f;
     const float SliderMax = 100.f;
     const GLsizei MaxUniformChars = 36;
+    const float MaxPreviewSize = 318.f;
 
     //TODO look up all file types supported by sfml
     const char* filters[] = { "*.png", "*.jpg", "*.jpeg", "*.tga" };
@@ -60,9 +61,10 @@ Renderer::Renderer()
     : m_shaderIndex (1),
     m_firstTexture  (nullptr)
 {
-    m_vertices[1] = { sf::Vector2f(256.f, 0.f) };
-    m_vertices[2] = { sf::Vector2f(256.f, 256.f) };
-    m_vertices[3] = { sf::Vector2f(0.f, 256.f) };
+    m_vertices[1] = { sf::Vector2f(MaxPreviewSize, 0.f) };
+    m_vertices[2] = { sf::Vector2f(MaxPreviewSize, MaxPreviewSize) };
+    m_vertices[3] = { sf::Vector2f(0.f, MaxPreviewSize) };
+    setOrigin(MaxPreviewSize / 2.f, MaxPreviewSize / 2.f);
 }
 
 void Renderer::update(std::bitset<WindowFlags::Count>& windowFlags)
@@ -150,6 +152,44 @@ void Renderer::compileShader(const std::string& source, std::bitset<WindowFlags:
 }
 
 //private
+void Renderer::updateVertices()
+{
+    sf::Vector2f size(m_firstTexture->getSize());
+    auto coords = size;
+
+    float ratio = 1.f;
+    bool width = true;
+    if (size.x > size.y)
+    {
+        ratio = size.y / size.x;
+    }
+    else
+    {
+        ratio = size.x / size.y;
+        width = false;
+    }
+
+    if (width && size.x > MaxPreviewSize)
+    {
+        size.x = MaxPreviewSize;
+        size.y = MaxPreviewSize * ratio;
+    }
+    else if(!width && size.y > MaxPreviewSize)
+    {
+        size.y = MaxPreviewSize;
+        size.x = MaxPreviewSize * ratio;
+    }
+
+    m_vertices[1].texCoords.x = coords.x;
+    m_vertices[1].position.x = size.x;
+    m_vertices[2].texCoords = coords;
+    m_vertices[2].position = size;
+    m_vertices[3].texCoords.y = coords.y;
+    m_vertices[3].position.y = size.y;
+
+    setOrigin(size / 2.f);
+}
+
 using namespace Detail;
 void Renderer::readUniforms()
 {
@@ -426,11 +466,7 @@ void Renderer::drawTextureTab()
                     {
                         m_firstTexture = tex.get();
 
-                        //set up the verts tex coord - sfml coords aren't normalised...
-                        sf::Vector2f size(tex->getSize());
-                        m_vertices[1].texCoords.x = size.x;
-                        m_vertices[2].texCoords = size;
-                        m_vertices[3].texCoords.y = size.y;
+                        updateVertices();
                     }
                     m_textures.push_back(std::move(tex));
                 }
@@ -476,11 +512,7 @@ void Renderer::drawTextureTab()
                     m_textures[i]->loadFromFile(result);
                     if (i == 0)
                     {
-                        //update vertex coords because they aren't normalised *sigh*
-                        sf::Vector2f size(m_textures[i]->getSize());
-                        m_vertices[1].texCoords.x = size.x;
-                        m_vertices[2].texCoords = size;
-                        m_vertices[3].texCoords.y = size.y;
+                        updateVertices();
                     }
                 }
             }
