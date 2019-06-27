@@ -328,7 +328,7 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
                 ImGui::PushItemWidth(InputWidth);
                 if (uniform.UISelection == 2)
                 {
-                    ImGui::Text(name.c_str());
+                    ImGui::TextUnformatted(name.c_str());
                     m_shaders[m_shaderIndex]->setUniform(name, m_shaderClock.getElapsedTime().asSeconds());
                 }
                 else
@@ -428,7 +428,7 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
             {
                 if (m_textures.empty())
                 {
-                    ImGui::Text(name.c_str());
+                    ImGui::TextUnformatted(name.c_str());
                     ImGui::SameLine();
                     ImGui::Text("No Textures Loaded");
                 }
@@ -447,7 +447,7 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
             }
                 break;
             default:
-                ImGui::Text(name.c_str());
+                ImGui::TextUnformatted(name.c_str());
                 ImGui::SameLine();
                 ImGui::Text(" Uniform type not supported (yet)");
                 break;
@@ -493,7 +493,7 @@ void Renderer::drawTextureTab()
 
             ImGui::Image(*t, { 64.f, 64.f });
             ImGui::SameLine();
-            ImGui::Text(label.c_str());
+            ImGui::TextUnformatted(label.c_str());
             ImGui::SameLine();
             if (ImGui::Button(buttonID.c_str()))
             {
