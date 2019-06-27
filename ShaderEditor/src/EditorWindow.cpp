@@ -152,6 +152,11 @@ void EditorWindow::update(std::bitset<WindowFlags::Count>& windowFlags)
                 m_editor.SetSelection(TextEditor::Coordinates(), TextEditor::Coordinates(m_editor.GetTotalLines(), 0));
             }
 
+            if (ImGui::MenuItem("Compile Shader", "F7", nullptr))
+            {
+                windowFlags.set(WindowFlags::RunShader);
+            }
+
             ImGui::EndMenu();
         }
 
@@ -222,7 +227,7 @@ void EditorWindow::save(const std::string& path)
 
 void EditorWindow::saveAs()
 {
-    const char* result = tinyfd_saveFileDialog("Save...", "", 4, filters, "*.txt | *.vert | *.frag | *.glsl");
+    const char* result = tinyfd_saveFileDialog("Save...", m_currentFile.c_str(), 4, filters, "*.txt | *.vert | *.frag | *.glsl");
     if (result)
     {
         save(result);

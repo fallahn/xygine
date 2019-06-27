@@ -79,13 +79,24 @@ int main(int argc, char** argsv)
                 view.setCenter(view.getSize() / 2.f);
                 window.setView(view);
             }
-#ifdef XY_DEBUG
-            else if (evt.type == sf::Event::KeyReleased
-                && evt.key.code == sf::Keyboard::Escape)
+
+            else if (evt.type == sf::Event::KeyReleased)
             {
-                window.close();
-            }
+#ifdef XY_DEBUG
+                if(evt.key.code == sf::Keyboard::Escape)
+                {
+                    window.close();
+                }
 #endif //XY_DEBUG
+                switch (evt.key.code)
+                {
+                default: break;
+                case sf::Keyboard::F7:
+                    windowFlags.set(WindowFlags::RunShader);
+                    break;
+                }
+            }
+
         }
 
         ImGui::SFML::Update(window, frameClock.restart());
