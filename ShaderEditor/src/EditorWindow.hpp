@@ -46,6 +46,9 @@ private:
     TextEditor m_editor;
     std::string m_currentFile;
 
+    void open(std::bitset<WindowFlags::Count>&);
     void save(const std::string&);
     void saveAs();
+
+    void  doHotkeys(std::bitset<WindowFlags::Count>&);
 };

@@ -28,7 +28,10 @@ source distribution.
 #include "EditorWindow.hpp"
 #include "tinyfiledialogs.h"
 
+#include <SFML/Window/Keyboard.hpp>
+
 #include <fstream>
+#include <iostream>
 
 namespace
 {
@@ -85,24 +88,11 @@ void EditorWindow::update(std::bitset<WindowFlags::Count>& windowFlags)
                 ImGui::EndPopup();
             }
 
-            if (ImGui::MenuItem("Open"))
+            if (ImGui::MenuItem("Open", "Ctrl+O"))
             {
-                const char* result = tinyfd_openFileDialog("Open...", "", 4, filters, "*.txt | *.vert | *.frag | *.glsl", 0);
-                if (result)
-                {
-                    std::ifstream file(result);
-                    if (file.is_open() && file.good())
-                    {
-                        std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-                        m_editor.SetText(str);
-
-                        m_currentFile = result;
-
-                        windowFlags.set(WindowFlags::RunShader);
-                    }
-                }
+                open(windowFlags);
             }
-            if (ImGui::MenuItem("Save"))
+            if (ImGui::MenuItem("Save", "Ctrl+S"))
             {
                 if (!m_currentFile.empty())
                 {
@@ -128,22 +118,22 @@ void EditorWindow::update(std::bitset<WindowFlags::Count>& windowFlags)
             }
             ImGui::Separator();
 
-            if (ImGui::MenuItem("Undo", "ALT-Backspace", nullptr, !ro && m_editor.CanUndo()))
+            if (ImGui::MenuItem("Undo", "Ctrl+Z", nullptr, !ro && m_editor.CanUndo()))
             {
                 m_editor.Undo();
             }
-            if (ImGui::MenuItem("Redo", "Ctrl-Y", nullptr, !ro && m_editor.CanRedo()))
+            if (ImGui::MenuItem("Redo", "Ctrl+Y", nullptr, !ro && m_editor.CanRedo()))
             {
                 m_editor.Redo();
             }
 
             ImGui::Separator();
 
-            if (ImGui::MenuItem("Copy", "Ctrl-C", nullptr, m_editor.HasSelection()))
+            if (ImGui::MenuItem("Copy", "Ctrl+C", nullptr, m_editor.HasSelection()))
             {
                 m_editor.Copy();
             }
-            if (ImGui::MenuItem("Cut", "Ctrl-X", nullptr, !ro && m_editor.HasSelection()))
+            if (ImGui::MenuItem("Cut", "Ctrl+X", nullptr, !ro && m_editor.HasSelection()))
             {
                 m_editor.Cut();
             }
@@ -151,13 +141,13 @@ void EditorWindow::update(std::bitset<WindowFlags::Count>& windowFlags)
             {
                 m_editor.Delete();
             }
-            if (ImGui::MenuItem("Paste", "Ctrl-V", nullptr, !ro && ImGui::GetClipboardText() != nullptr))
+            if (ImGui::MenuItem("Paste", "Ctrl+V", nullptr, !ro && ImGui::GetClipboardText() != nullptr))
             {
                 m_editor.Paste();
             }
             ImGui::Separator();
 
-            if (ImGui::MenuItem("Select all", nullptr, nullptr))
+            if (ImGui::MenuItem("Select all", "Ctrl+A", nullptr))
             {
                 m_editor.SetSelection(TextEditor::Coordinates(), TextEditor::Coordinates(m_editor.GetTotalLines(), 0));
             }
@@ -196,9 +186,29 @@ void EditorWindow::update(std::bitset<WindowFlags::Count>& windowFlags)
 
     m_editor.Render("TextEditor");
     ImGui::End();
+
+    doHotkeys(windowFlags);
 }
 
 //private
+void EditorWindow::open(std::bitset<WindowFlags::Count>& windowFlags)
+{
+    const char* result = tinyfd_openFileDialog("Open...", "", 4, filters, "*.txt | *.vert | *.frag | *.glsl", 0);
+    if (result)
+    {
+        std::ifstream file(result);
+        if (file.is_open() && file.good())
+        {
+            std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            m_editor.SetText(str);
+
+            m_currentFile = result;
+
+            windowFlags.set(WindowFlags::RunShader);
+        }
+    }
+}
+
 void EditorWindow::save(const std::string& path)
 {
     auto textToSave = m_editor.GetText();
@@ -216,5 +226,29 @@ void EditorWindow::saveAs()
     if (result)
     {
         save(result);
+    }
+}
+
+void EditorWindow::doHotkeys(std::bitset<WindowFlags::Count>& windowFlags)
+{
+    ImGuiIO& io = ImGui::GetIO();
+    auto shift = io.KeyShift;
+    auto ctrl = io.ConfigMacOSXBehaviors ? io.KeySuper : io.KeyCtrl;
+    auto alt = io.ConfigMacOSXBehaviors ? io.KeyCtrl : io.KeyAlt;
+
+    if (ctrl && !shift && !alt && sf::Keyboard::isKeyPressed(sf::Keyboard::O))
+    {
+        open(windowFlags);
+    }
+    else if (ctrl && !shift && !alt && sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+    {
+        if (!m_currentFile.empty())
+        {
+            save(m_currentFile);
+        }
+        else
+        {
+            saveAs();
+        }
     }
 }
