@@ -40,11 +40,31 @@ source distribution.
 
 #include <bitset>
 #include <iostream>
+#include <fstream>
+#include <cstring>
 
 int main(int argc, char** argsv)
 {
+    sf::Vector2u windowSize(1024, 768);
+    const std::string settingsName("window.set");
+    std::ifstream file(settingsName, std::ios::binary);
+    if (file.is_open() && file.good())
+    {
+        file.seekg(0, file.end);
+        auto fileSize = file.tellg();
+        file.seekg(file.beg);
+
+        if (fileSize == sizeof(windowSize))
+        {
+            std::vector<char> buff(sizeof(windowSize));
+            file.read(buff.data(), buff.size());
+            std::memcpy(&windowSize, buff.data(), buff.size());
+        }
+        file.close();
+    }
+
     sf::RenderWindow window;
-    window.create({ 1024, 768 }, "Shader Editor");
+    window.create({ windowSize.x, windowSize.y }, "Shader Editor");
     window.setVerticalSyncEnabled(true);
 
     if (!gladLoadGL())
@@ -118,6 +138,18 @@ int main(int argc, char** argsv)
         window.clear();
         ImGui::SFML::Render(window);
         window.display();
+    }
+
+    //stash the window size
+    windowSize = window.getSize();
+    std::ofstream oFile(settingsName, std::ios::binary);
+    if (oFile.is_open() && oFile.good())
+    {
+        std::vector<char> buff(sizeof(windowSize));
+        std::memcpy(buff.data(), &windowSize, buff.size());
+
+        oFile.write(buff.data(), buff.size());
+        oFile.close();
     }
 
     return 0;
