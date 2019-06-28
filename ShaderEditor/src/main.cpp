@@ -60,7 +60,6 @@ int main(int argc, char** argsv)
     std::bitset<WindowFlags::Count> windowFlags;
     EditorWindow textEditor;
     Renderer renderer;
-    renderer.setPosition(798.f, 580.f);
 
     while (window.isOpen())
     {
@@ -114,8 +113,9 @@ int main(int argc, char** argsv)
             windowFlags.set(RunShader, false);
         }
 
+        renderer.draw();
+
         window.clear();
-        window.draw(renderer);
         ImGui::SFML::Render(window);
         window.display();
     }

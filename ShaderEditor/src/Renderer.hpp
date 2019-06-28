@@ -34,6 +34,7 @@ source distribution.
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/System/Clock.hpp>
 
 #include <array>
@@ -42,7 +43,7 @@ source distribution.
 #include <unordered_map>
 #include <any>
 
-class Renderer final : public sf::Drawable, public sf::Transformable
+class Renderer final : private sf::Transformable
 {
 public:
     Renderer();
@@ -50,6 +51,8 @@ public:
     void update(std::bitset<WindowFlags::Count>&);
 
     void compileShader(const std::string&, std::bitset<WindowFlags::Count>&);
+
+    void draw();
 
 private:
 
@@ -77,6 +80,8 @@ private:
         std::int32_t UISelection = 0; //used for uniforms where the UI has a combobox
     };
 
+    mutable sf::RenderTexture m_previewTexture;
+
     void updateVertices();
 
     std::unordered_map<std::string, Uniform> m_uniforms;
@@ -85,6 +90,4 @@ private:
     void drawUniformTab(std::bitset<WindowFlags::Count>&);
     void drawTextureTab();
     void drawOptionsTab();
-
-    void draw(sf::RenderTarget&, sf::RenderStates) const override;
 };

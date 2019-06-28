@@ -66,12 +66,16 @@ Renderer::Renderer()
     m_vertices[2] = { sf::Vector2f(MaxPreviewSize, MaxPreviewSize) };
     m_vertices[3] = { sf::Vector2f(0.f, MaxPreviewSize) };
     setOrigin(MaxPreviewSize / 2.f, MaxPreviewSize / 2.f);
+    setPosition(getOrigin());
+    setScale(1.f, -1.f);
+
+    m_previewTexture.create(static_cast<std::uint32_t>(MaxPreviewSize), static_cast<std::uint32_t>(MaxPreviewSize));
 }
 
 void Renderer::update(std::bitset<WindowFlags::Count>& windowFlags)
 {
-    ImGui::SetNextWindowPos({ 594.f, 24.f });
-    ImGui::SetNextWindowSize({ 408.f, 378.f });
+    ImGui::SetNextWindowPos({ 594.f, 24.f }, ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize({ 408.f, 358.f }, ImGuiCond_FirstUseEver);
 
     if (!ImGui::Begin("Options", nullptr, ImGuiWindowFlags_HorizontalScrollbar))
     {
@@ -122,6 +126,16 @@ void Renderer::update(std::bitset<WindowFlags::Count>& windowFlags)
 
     ImGui::EndTabBar();
     ImGui::End();
+
+    ImGui::SetNextWindowPos({ 594.f, 392.f }, ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize({ 408.f, 354.f }, ImGuiCond_FirstUseEver);
+    if (!ImGui::Begin("Preview", nullptr))
+    {
+        ImGui::End();
+        return;
+    }
+    ImGui::Image(m_previewTexture.getTexture());
+    ImGui::End();
 }
 
 //public
@@ -151,6 +165,19 @@ void Renderer::compileShader(const std::string& source, std::bitset<WindowFlags:
     flags.set(WindowFlags::CompileSuccess, false);
     flags.set(WindowFlags::TextChanged, false);
     return;
+}
+
+void Renderer::draw()
+{
+    sf::RenderStates states;
+    states.shader = m_shaders[m_shaderIndex].get();
+    states.transform *= getTransform();
+    states.texture = m_firstTexture;
+
+    m_previewTexture.clear(sf::Color::Transparent);
+    m_previewTexture.draw(m_vertices.data(), m_vertices.size(), sf::Quads, states);
+    m_previewTexture.display();
+
 }
 
 //private
@@ -194,7 +221,7 @@ void Renderer::updateVertices()
     //reset zoom in case we're loading a larger texture
     float maxZoom = MaxPreviewSize / m_vertices[1].position.x;
     float zoom = std::min(maxZoom, m_previewZoom);
-    setScale(zoom, zoom);
+    setScale(zoom, -zoom);
 }
 
 using namespace Detail;
@@ -559,17 +586,8 @@ void Renderer::drawOptionsTab()
 
         float maxZoom = MaxPreviewSize / m_vertices[1].position.x;
         float zoom = std::min(maxZoom, m_previewZoom);
-        setScale(zoom, zoom);
+        setScale(zoom, -zoom);
 
         ImGui::EndTabItem();
     }
-}
-
-void Renderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
-{
-    states.shader = m_shaders[m_shaderIndex].get();
-    states.transform *= getTransform();
-    states.texture = m_firstTexture;
-
-    rt.draw(m_vertices.data(), m_vertices.size(), sf::Quads, states);
 }
