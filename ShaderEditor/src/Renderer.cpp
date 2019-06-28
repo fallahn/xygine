@@ -311,6 +311,8 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
             textureItems.push_back("Texture " + std::to_string(i));
         }
 
+        std::int32_t uIdx = 0; //used to give unique ID to each uniform control
+
         //list uniforms
         for (auto& [name, uniform] : m_uniforms)
         {
@@ -320,8 +322,10 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
             {
                 const char* items[] = { "Slider", "Value", "Time" };
 
+                std::string label = "##float" + std::to_string(uIdx++);
+
                 ImGui::PushItemWidth(ComboWidth);
-                ImGui::Combo("##Input0", &uniform.UISelection, items, IM_ARRAYSIZE(items));
+                ImGui::Combo(label.c_str(), &uniform.UISelection, items, IM_ARRAYSIZE(items));
                 ImGui::SameLine();
                 ImGui::PopItemWidth();
 
@@ -347,8 +351,10 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
             {
                 const char* items[] = { "Slider", "Value" };
 
+                std::string label = "##vec2" + std::to_string(uIdx++);
+
                 ImGui::PushItemWidth(ComboWidth);
-                ImGui::Combo("##Input1", &uniform.UISelection, items, IM_ARRAYSIZE(items));
+                ImGui::Combo(label.c_str(), &uniform.UISelection, items, IM_ARRAYSIZE(items));
                 ImGui::SameLine();
                 ImGui::PopItemWidth();
 
@@ -368,8 +374,10 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
             {
                 const char* items[] = { "Slider", "Value", "Picker" };
 
+                std::string label = "##vec3" + std::to_string(uIdx++);
+
                 ImGui::PushItemWidth(ComboWidth);
-                ImGui::Combo("##Input2", &uniform.UISelection, items, IM_ARRAYSIZE(items));
+                ImGui::Combo(label.c_str(), &uniform.UISelection, items, IM_ARRAYSIZE(items));
                 ImGui::SameLine();
                 ImGui::PopItemWidth();
 
@@ -397,9 +405,12 @@ void Renderer::drawUniformTab(std::bitset<WindowFlags::Count>& windowFlags)
             case GL_FLOAT_VEC4:
             {
                 const char* items[] = { "Slider", "Value", "Picker" };
+
+                std::string label = "##vec4" + std::to_string(uIdx++);
+
                 static int selected = 0;
                 ImGui::PushItemWidth(ComboWidth);
-                ImGui::Combo("##Input3", &selected, items, IM_ARRAYSIZE(items));
+                ImGui::Combo(label.c_str(), &selected, items, IM_ARRAYSIZE(items));
                 ImGui::SameLine();
                 ImGui::PopItemWidth();
 
