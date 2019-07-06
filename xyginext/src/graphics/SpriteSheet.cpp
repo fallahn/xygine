@@ -78,6 +78,7 @@ bool SpriteSheet::saveToFile(const std::string &path)
             auto animObj = sprObj->addObject("animation", m_animations[sprite.first][i]);
             animObj->addProperty("framerate").setValue(anims[i].framerate);
             animObj->addProperty("loop").setValue(anims[i].looped);
+            animObj->addProperty("loop_start").setValue(static_cast<sf::Int32>(anims[i].loopStart));
             
             auto& frames = anims[i].frames;
             for (auto j(0u); j < anims[i].frameCount; j++)
@@ -246,6 +247,10 @@ bool SpriteSheet::loadFromFile(const std::string& path, std::function<sf::Textur
                         else if (name == "loop")
                         {
                             anim.looped = p.getValue<bool>();
+                        }
+                        else if (name == "loop_start")
+                        {
+                            anim.loopStart = p.getValue<sf::Int32>();
                         }
                     }
 
