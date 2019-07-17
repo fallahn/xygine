@@ -45,7 +45,8 @@ namespace xy
             \param frequency Frequency of generated sine wave
             \param amplitude Amplitude of generated sine wave
             \param updateRate Rate at which the wave table is likely to be stepped through, normally
-            the same rate at which the framework is updated (60hz)
+            the same rate at which the framework is updated (60hz). This would also be the sample rate
+            should you be creating a wave table for audio purposes
 
             Sinewaves are useful for a variety of things, including dictating the motion of animated
             objects. Precalculating a wavetable is more efficient than repeatedly calling sin()
@@ -63,6 +64,65 @@ namespace xy
                 }
 
                 return wavetable;
+            }
+
+            /*!
+            \brief Creates a vector containing a series of floating point values
+            representing a single cycle of a triangle wave.
+
+            \param frequency Frequency of generated wave
+            \param amplitude Amplitude of generated wave
+            \param updateRate Rate at which the wave table is likely to be stepped through, normally
+            the same rate at which the framework is updated (60hz). This would also be the sample rate
+            should you be creating a wave table for audio purposes
+
+            */
+            static inline std::vector<float> triangle(float frequency, float amplitude = 1.f, float samplerate = 60.f)
+            {
+                XY_ASSERT(frequency > 0 && amplitude > 0 && samplerate > 0, "");
+
+                std::vector<float> retval;
+                const float stepCount = (samplerate / frequency);
+                const float step = Const::TAU / stepCount;
+                const float invPi = 1.f / Const::PI;
+
+                for (float i = 0.f; i < stepCount; i++)
+                {
+                    retval.push_back(invPi * std::asin(std::sin(i * step)) * amplitude);
+                }
+
+                return retval;
+            }
+
+            /*!
+            \brief Creates a vector containing a series of floating point values
+            representing a single cycle of a square wave.
+
+            \param frequency Frequency of generated wave
+            \param amplitude Amplitude of generated wave
+            \param updateRate Rate at which the wave table is likely to be stepped through, normally
+            the same rate at which the framework is updated (60hz). This would also be the sample rate
+            should you be creating a wave table for audio purposes
+
+            */
+            static inline std::vector<float> square(float frequency, float amplitude = 1.f, float samplerate = 60.f)
+            {
+                XY_ASSERT(frequency > 0 && amplitude > 0 && samplerate > 0, "");
+
+                std::vector<float> retval;
+                const std::int32_t sampleCount = static_cast<std::int32_t>(samplerate / frequency);
+                for (auto i = 0; i < sampleCount; ++i)
+                {
+                    if (i < sampleCount / 2)
+                    {
+                        retval.push_back(amplitude);
+                    }
+                    else
+                    {
+                        retval.push_back(-amplitude);
+                    }
+                }
+                return retval;
             }
         }
     }
