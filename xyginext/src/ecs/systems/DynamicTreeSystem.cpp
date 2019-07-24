@@ -72,6 +72,9 @@ void DynamicTreeSystem::process(float)
         auto worldPosition = tx.getWorldPosition();
         auto worldBounds = tx.getWorldTransform().transformRect(bpc.m_bounds);
 
+        worldBounds.left += tx.getOrigin().x * tx.getScale().x;
+        worldBounds.top += tx.getOrigin().y * tx.getScale().y;
+
         moveNode(bpc.m_treeID, worldBounds, worldPosition - bpc.m_lastWorldPosition);
 
         bpc.m_lastWorldPosition = worldPosition;
