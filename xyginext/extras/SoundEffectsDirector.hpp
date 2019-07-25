@@ -29,6 +29,7 @@ source distribution.
 
 #include <xyginext/ecs/Director.hpp>
 #include <xyginext/ecs/Entity.hpp>
+#include <xyginext/resources/ResourceHandler.hpp>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -36,13 +37,7 @@ source distribution.
 
 namespace xy
 {
-    class AudioResource;
     class AudioEmitter;
-}
-
-namespace sf
-{
-    class SoundBuffer;
 }
 
 /*
@@ -59,7 +54,7 @@ class SFXDirector final : public xy::Director
 {
 public:
 
-    explicit SFXDirector(xy::AudioResource&);
+    SFXDirector();
 
     void handleEvent(const sf::Event&) override {}
     void handleMessage(const xy::Message&) override;
@@ -67,12 +62,12 @@ public:
 
 private:
 
-    xy::AudioResource& m_audioResource;
+    xy::ResourceHandler m_resources;
 
     std::vector<xy::Entity> m_entities;
     std::size_t m_nextFreeEntity;
 
     xy::Entity getNextFreeEntity();
     void resizeEntities(std::size_t);
-    xy::AudioEmitter& playSound(sf::SoundBuffer&, sf::Vector2f = {});
+    xy::AudioEmitter& playSound(std::int32_t, sf::Vector2f = {});
 };
