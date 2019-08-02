@@ -32,7 +32,6 @@ source distribution.
 #include <xyginext/ecs/Scene.hpp>
 
 #include <xyginext/resources/Resource.hpp>
-#include <xyginext/util/Random.hpp>
 
 #include <array>
 
@@ -41,7 +40,7 @@ namespace
     //IDs used to index paths below
     enum AudioID
     {
-        Sound01, Sound02, etc,
+        Sound01, Sound02, etc
 
         Count
     };
@@ -52,20 +51,21 @@ namespace
     {
         "assets/sound/effects/sound01.wav",
         "assets/sound/effects/sound02.wav",
-        "assets/sound/effects/etc3.wav",
+        "assets/sound/effects/etc3.wav",        
     };
+
+    std::array<std::size_t, AudioID::Count> audioIDs = {};
 
     const std::size_t MinEntities = 32;
 }
 
-SFXDirector::SFXDirector(xy::AudioResource& ar)
-    : m_audioResource   (ar),
-    m_nextFreeEntity    (0)
+SFXDirector::SFXDirector()
+    : m_nextFreeEntity    (0)
 {
     //pre-load sounds
-    for (const auto& str : paths)
+    for(auto i = 0; i < AudioID::Count; ++i)
     {
-        m_audioResource.get(str);
+        audioIDs[i] = m_resources.load<sf::SoundBuffer>(paths[i]);
     }
 }
 
@@ -79,7 +79,7 @@ void SFXDirector::handleMessage(const xy::Message& msg)
         //note playSound() returns a reference to the emitter just played
         //so that properties such as volume or attenuation can quickly be set
         
-        playSound(m_audioResource(paths[AudioID::Sound01], msg.getData<SomeEvent>().position);
+        playSound(AudioID::Sound01, msg.getData<SomeEvent>().position);
     }
     */
 }
@@ -119,21 +119,22 @@ void SFXDirector::resizeEntities(std::size_t size)
     {
         m_entities[i] = getScene().createEntity();
         m_entities[i].addComponent<xy::Transform>();
-        m_entities[i].addComponent<xy::AudioEmitter>().setSource(m_audioResource.get("placeholder"));
+        m_entities[i].addComponent<xy::AudioEmitter>();
     }
 }
 
-xy::AudioEmitter& SFXDirector::playSound(sf::SoundBuffer& buffer, sf::Vector2f position)
+xy::AudioEmitter& SFXDirector::playSound(std::int32_t audioID, sf::Vector2f position)
 {
     auto entity = getNextFreeEntity();
     entity.getComponent<xy::Transform>().setPosition(position);
     auto& emitter = entity.getComponent<xy::AudioEmitter>();
-    emitter.setSource(buffer);
-    //must reset values here incase they were changed prior to recycling from pool
+    emitter.setSource(m_resources.get<sf::SoundBuffer>(audioIDs[audioID]));
+    //must reset values here in case they were changed prior to recycling from pool
     emitter.setAttenuation(1.f);
     emitter.setMinDistance(5.f);
     emitter.setVolume(1.f);
     emitter.setPitch(1.f);
+    emitter.setChannel(1);
     emitter.play();
     return emitter;
 }
