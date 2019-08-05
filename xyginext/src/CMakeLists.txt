@@ -26,6 +26,7 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/SystemManager.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/AudioEmitter.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/BitmapText.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/Camera.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/Drawable.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/ParticleEmitter.cpp
@@ -35,6 +36,7 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/Transform.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/AudioSystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/BitmapTextSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/CallbackSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/CameraSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/CommandSystem.cpp
@@ -49,6 +51,7 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/TextSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/UISystem.cpp
 
+  ${CMAKE_CURRENT_SOURCE_DIR}/graphics/BitmapFont.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/graphics/SpriteSheet.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/graphics/postprocess/PostAntique.cpp

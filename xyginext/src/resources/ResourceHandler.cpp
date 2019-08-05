@@ -31,6 +31,7 @@ source distribution.
 
 #include "xyginext/resources/ResourceHandler.hpp"
 #include "xyginext/resources/SystemFont.hpp"
+#include "xyginext/graphics/BitmapFont.hpp"
 
 #include <cstring>
 
@@ -119,7 +120,18 @@ ResourceHandler::ResourceHandler()
         return sb;
     };
 
+    //bitmap font loader
+    ResourceLoader bmfLoader;
+    bmfLoader.loader = [](const std::string& path)
+    {
+        xy::BitmapFont bmf;
+        return bmf.loadTextureFromFile(path) ? bmf : std::any();
+    };
+
+    bmfLoader.fallback = []() {return std::any(); };
+
     getLoader<sf::Texture>() = texLoader;
     getLoader<sf::Font>() = fontLoader;
     getLoader<sf::SoundBuffer>() = soundLoader;
+    getLoader<xy::BitmapFont>() = bmfLoader;
 }

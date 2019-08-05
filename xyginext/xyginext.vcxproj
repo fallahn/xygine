@@ -148,6 +148,7 @@
     <ClCompile Include="src\detail\Operators.cpp" />
     <ClCompile Include="src\ecs\Component.cpp" />
     <ClCompile Include="src\ecs\components\AudioEmitter.cpp" />
+    <ClCompile Include="src\ecs\components\BitmapText.cpp" />
     <ClCompile Include="src\ecs\components\Camera.cpp" />
     <ClCompile Include="src\ecs\components\Drawable.cpp" />
     <ClCompile Include="src\ecs\components\ParticleEmitter.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="src\ecs\System.cpp" />
     <ClCompile Include="src\ecs\SystemManager.cpp" />
     <ClCompile Include="src\ecs\systems\AudioSystem.cpp" />
+    <ClCompile Include="src\ecs\systems\BitmapTextSystem.cpp" />
     <ClCompile Include="src\ecs\systems\CallbackSystem.cpp" />
     <ClCompile Include="src\ecs\systems\CameraSystem.cpp" />
     <ClCompile Include="src\ecs\systems\CommandSystem.cpp" />
@@ -175,6 +177,7 @@
     <ClCompile Include="src\ecs\systems\TextRenderer.cpp" />
     <ClCompile Include="src\ecs\systems\TextSystem.cpp" />
     <ClCompile Include="src\ecs\systems\UISystem.cpp" />
+    <ClCompile Include="src\graphics\BitmapFont.cpp" />
     <ClCompile Include="src\graphics\postprocess\PostAntique.cpp" />
     <ClCompile Include="src\graphics\postprocess\PostBloom.cpp" />
     <ClCompile Include="src\graphics\postprocess\PostBlur.cpp" />
@@ -224,6 +227,7 @@
     <ClInclude Include="include\xyginext\ecs\ComponentPool.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\AudioEmitter.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\AudioListener.hpp" />
+    <ClInclude Include="include\xyginext\ecs\components\BitmapText.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\BroadPhaseComponent.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\Callback.hpp" />
     <ClInclude Include="include\xyginext\ecs\components\Camera.hpp" />
@@ -241,6 +245,7 @@
     <ClInclude Include="include\xyginext\ecs\Scene.hpp" />
     <ClInclude Include="include\xyginext\ecs\System.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\AudioSystem.hpp" />
+    <ClInclude Include="include\xyginext\ecs\systems\BitmapTextSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\CallbackSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\CameraSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\CommandSystem.hpp" />
@@ -253,6 +258,7 @@
     <ClInclude Include="include\xyginext\ecs\systems\TextRenderer.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\TextSystem.hpp" />
     <ClInclude Include="include\xyginext\ecs\systems\UISystem.hpp" />
+    <ClInclude Include="include\xyginext\graphics\BitmapFont.hpp" />
     <ClInclude Include="include\xyginext\graphics\postprocess\Antique.hpp" />
     <ClInclude Include="include\xyginext\graphics\postprocess\Bloom.hpp" />
     <ClInclude Include="include\xyginext\graphics\postprocess\Blur.hpp" />
