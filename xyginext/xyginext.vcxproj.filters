@@ -303,6 +303,15 @@
     <ClCompile Include="src\imgui\imgui_widgets.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\graphics\BitmapFont.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\components\BitmapText.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ecs\systems\BitmapTextSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -547,6 +556,15 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\util\IO.hpp">
       <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\BitmapFont.hpp">
+      <Filter>Header Files\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\components\BitmapText.hpp">
+      <Filter>Header Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\ecs\systems\BitmapTextSystem.hpp">
+      <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

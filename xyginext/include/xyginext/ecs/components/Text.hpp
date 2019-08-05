@@ -69,7 +69,7 @@ namespace xy
         /*!
         \brief Construct an instance with a given font
         */
-        Text(const sf::Font&);
+        explicit Text(const sf::Font&);
 
         /*!
         \brief Set the font used with this text
