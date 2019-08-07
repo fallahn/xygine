@@ -45,7 +45,7 @@ ResourceHandler::ResourceHandler()
         //a bit convoluted but prevents a copy operation
         //which can throw occasional opengl errors
         auto tex = std::make_any<sf::Texture>();
-        auto& tr = *std::any_cast<sf::Texture>(&tex);
+        auto& tr = std::any_cast<sf::Texture&>(tex);
 		
 		if (tr.loadFromFile(xy::FileSystem::getResourcePath() + path))
 		{
@@ -60,7 +60,7 @@ ResourceHandler::ResourceHandler()
 		img.create(16, 16, sf::Color::Magenta);
 
 		auto tex = std::make_any<sf::Texture>();
-		auto& tr = *std::any_cast<sf::Texture>(&tex);
+		auto& tr = std::any_cast<sf::Texture&>(tex);
 		tr.loadFromImage(img);
 
         return tex;
@@ -124,8 +124,16 @@ ResourceHandler::ResourceHandler()
     ResourceLoader bmfLoader;
     bmfLoader.loader = [](const std::string& path)
     {
-        xy::BitmapFont bmf;
-        return bmf.loadTextureFromFile(path) ? bmf : std::any();
+        //a bit convoluted but prevents a copy operation
+        //which can throw occasional opengl errors
+        auto bmf = std::make_any<xy::BitmapFont>();
+        auto& br = std::any_cast<xy::BitmapFont&>(bmf);
+
+        if (br.loadTextureFromFile(xy::FileSystem::getResourcePath() + path))
+        {
+            return bmf;
+        }
+        return std::any();
     };
 
     bmfLoader.fallback = []() {return std::any(); };
