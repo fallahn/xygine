@@ -75,6 +75,11 @@ namespace xy
         template<class T>
         ResourceHandle load(const std::string& path)
         {
+            if (m_resourcePaths.count(path) != 0)
+            {
+                return m_resourcePaths[path];
+            }
+
             //Find the correct loader for the type
             std::type_index ti = typeid(T);
             
@@ -85,15 +90,19 @@ namespace xy
             //If it wasn't loaded, use fallback
             if (!m_resources.back().has_value())
             {
-				//check to see if we already cached the fallback
-				if (m_fallbackHandles.count(ti) == 0)
-				{
-					m_resources.back() = m_loaders[ti].fallback();
-					m_fallbackHandles[ti] = m_resources.size() - 1;
-				}
-				return m_fallbackHandles[ti];
+                //check to see if we already cached the fallback
+                if (m_fallbackHandles.count(ti) == 0)
+                {
+                    m_resources.back() = m_loaders[ti].fallback();
+                    m_fallbackHandles[ti] = m_resources.size() - 1;
+                }
+                return m_fallbackHandles[ti];
             }
-			return m_resources.size() - 1;
+
+            auto handle = m_resources.size() - 1;
+            m_resourcePaths.insert(std::make_pair(path, handle));
+
+            return handle;
         }
         
         /*!
@@ -132,10 +141,14 @@ namespace xy
         //Resource loaders mapped by their type index
         std::unordered_map<std::type_index, ResourceLoader> m_loaders;
 
-		//fallback indices mapped by their type index
-		std::unordered_map<std::type_index, ResourceHandle> m_fallbackHandles;
+        //fallback indices mapped by their type index
+        std::unordered_map<std::type_index, ResourceHandle> m_fallbackHandles;
+
+        //resource paths mapped to loaded resource. Used to prevent
+        //the same resource being loaded twice
+        std::unordered_map<std::string, std::size_t> m_resourcePaths;
     };
 
-	//just because I keep typing this incorrectly
-	using ResourceHolder = ResourceHandler;
+    //just because I keep typing this incorrectly
+    using ResourceHolder = ResourceHandler;
 }

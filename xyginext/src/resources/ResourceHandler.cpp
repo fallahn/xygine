@@ -46,22 +46,22 @@ ResourceHandler::ResourceHandler()
         //which can throw occasional opengl errors
         auto tex = std::make_any<sf::Texture>();
         auto& tr = *std::any_cast<sf::Texture>(&tex); //apple clang doesn't implement casting to references
-		
-		if (tr.loadFromFile(xy::FileSystem::getResourcePath() + path))
-		{
-			return tex;
-		}
-		return std::any();
+        
+        if (tr.loadFromFile(xy::FileSystem::getResourcePath() + path))
+        {
+            return tex;
+        }
+        return std::any();
     };
 
     texLoader.fallback = []()
     {
-		sf::Image img;
-		img.create(16, 16, sf::Color::Magenta);
+        sf::Image img;
+        img.create(16, 16, sf::Color::Magenta);
 
-		auto tex = std::make_any<sf::Texture>();
-		auto& tr = *std::any_cast<sf::Texture>(&tex);
-		tr.loadFromImage(img);
+        auto tex = std::make_any<sf::Texture>();
+        auto& tr = *std::any_cast<sf::Texture>(&tex);
+        tr.loadFromImage(img);
 
         return tex;
     };

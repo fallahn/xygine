@@ -104,7 +104,7 @@ public:
             return true;
         }
 
-        xy::Logger::log("Failed opening: " + std::to_string(path), xy::Logger::Type::Error);
+        xy::Logger::log("Failed opening: " + path, xy::Logger::Type::Error);
         return false;
     }
 
