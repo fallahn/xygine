@@ -108,7 +108,7 @@ sf::FloatRect BitmapText::getLocalBounds(xy::Entity entity)
     {
         text.updateVertices(drawable);
         drawable.setTexture(text.getFont()->getTexture());
-        drawable.setPrimitiveType(sf::PrimitiveType::Triangles);
+        drawable.setPrimitiveType(sf::PrimitiveType::Quads);
     }
     return drawable.getLocalBounds();
 }
