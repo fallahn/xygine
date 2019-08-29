@@ -34,7 +34,7 @@ source distribution.
 #include "xyginext/audio/Mixer.hpp"
 #include "xyginext/gui/GuiClient.hpp"
 
-#include "../imgui/imgui.h"
+#include "xyginext/gui/imgui.h"
 
 #include <SFML/System/Err.hpp>
 
@@ -46,10 +46,7 @@ source distribution.
 #include <streambuf>
 
 using namespace xy;
-namespace nim = ImGui;
-
-//this is a fallover from crogine - I'm keeping this in case I decide to implement it
-#define USE_IMGUI 1
+namespace ui = ImGui;
 
 namespace
 {
@@ -309,25 +306,24 @@ void Console::removeCommands(const ConsoleClient* client)
 
 void Console::draw()
 {
-#ifdef USE_IMGUI
     if (!visible) return;
     //ImGui::ShowDemoWindow();
-    nim::SetNextWindowSizeConstraints({ 640, 480 }, { 1024.f, 768.f });
-    if (nim::Begin("Console", &visible, ImGuiWindowFlags_NoScrollbar))
+    ui::SetNextWindowSizeConstraints({ 640, 480 }, { 1024.f, 768.f });
+    if (ui::Begin("Console", &visible, ImGuiWindowFlags_NoScrollbar))
     {
-        if (nim::BeginTabBar("Tabs"))
+        if (ui::BeginTabBar("Tabs"))
         {
             // Console
-            if (nim::BeginTabItem("Console"))
+            if (ui::BeginTabItem("Console"))
             {
-                nim::BeginChild("ScrollingRegion", ImVec2(0, -nim::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
-                nim::TextUnformatted(output.c_str(), output.c_str() + output.size());
-                nim::SetScrollHereY(1.f); //TODO track when the user scrolled and set to correct position
-                nim::EndChild();
+                ui::BeginChild("ScrollingRegion", ImVec2(0, -ui::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
+                ui::TextUnformatted(output.c_str(), output.c_str() + output.size());
+                ui::SetScrollHereY(1.f); //TODO track when the user scrolled and set to correct position
+                ui::EndChild();
 
-                nim::Separator();
+                ui::Separator();
 
-                nim::PushItemWidth(620.f);
+                ui::PushItemWidth(620.f);
 
                 bool focus = false;
                 if ((focus = ImGui::InputText(" ", input, MAX_INPUT_CHARS,
@@ -337,7 +333,7 @@ void Console::draw()
                     doCommand(input);
                 }
 
-                nim::PopItemWidth();
+                ui::PopItemWidth();
 
                 ImGui::SetItemDefaultFocus();
                 if (focus || ImGui::IsItemHovered()
@@ -347,37 +343,37 @@ void Console::draw()
                     ImGui::SetKeyboardFocusHere(-1);
                 }
 
-                nim::EndTabItem();
+                ui::EndTabItem();
             }
 
             // Video options
-            if (nim::BeginTabItem("Video"))
+            if (ui::BeginTabItem("Video"))
             {
-                nim::Combo("Resolution", &currentResolution, resolutionNames.data());
+                ui::Combo("Resolution", &currentResolution, resolutionNames.data());
 
                 XY_ASSERT(App::getRenderWindow(), "no valid window");
 
-                nim::Checkbox("Full Screen", &fullScreen);
+                ui::Checkbox("Full Screen", &fullScreen);
 
-                nim::Checkbox("V-Sync", &vSync);
+                ui::Checkbox("V-Sync", &vSync);
                 if (vSync)
                 {
                     useFrameLimit = false;
                 }
 
-                nim::Checkbox("Limit Framerate", &useFrameLimit);
+                ui::Checkbox("Limit Framerate", &useFrameLimit);
                 if (useFrameLimit)
                 {
                     vSync = false;
                 }
 
-                nim::SameLine();
-                nim::PushItemWidth(80.f);
-                nim::InputInt("Frame Rate", &frameLimit);
-                nim::PopItemWidth();
+                ui::SameLine();
+                ui::PushItemWidth(80.f);
+                ui::InputInt("Frame Rate", &frameLimit);
+                ui::PopItemWidth();
                 frameLimit = std::max(10, std::min(frameLimit, 360));
 
-                if (nim::Button("Apply", { 50.f, 20.f }))
+                if (ui::Button("Apply", { 50.f, 20.f }))
                 {
                     //apply settings
                     auto settings = App::getActiveInstance()->getVideoSettings();
@@ -389,38 +385,38 @@ void Console::draw()
 
                     App::getActiveInstance()->applyVideoSettings(settings);
                 }
-                nim::EndTabItem();
+                ui::EndTabItem();
             }
 
             // Audio
-            if (nim::BeginTabItem("Audio"))
+            if (ui::BeginTabItem("Audio"))
             {
-                nim::Text("NOTE: only AudioSystem sounds are affected.");
+                ui::Text("NOTE: only AudioSystem sounds are affected.");
 
                 static float maxVol = AudioMixer::getMasterVolume();
-                nim::SliderFloat("Master", &maxVol, 0.f, 1.f);
+                ui::SliderFloat("Master", &maxVol, 0.f, 1.f);
                 AudioMixer::setMasterVolume(maxVol);
 
                 static std::array<float, AudioMixer::MaxChannels> channelVol;
                 for (auto i = 0u; i < AudioMixer::MaxChannels; ++i)
                 {
                     channelVol[i] = AudioMixer::getVolume(i);
-                    nim::SliderFloat(AudioMixer::getLabel(i).c_str(), &channelVol[i], 0.f, 1.f);
+                    ui::SliderFloat(AudioMixer::getLabel(i).c_str(), &channelVol[i], 0.f, 1.f);
                     AudioMixer::setVolume(channelVol[i], i);
                 }
-                nim::EndTabItem();
+                ui::EndTabItem();
             }
 
             // Stats
-            if (nim::BeginTabItem("Stats"))
+            if (ui::BeginTabItem("Stats"))
             {
-                nim::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-                nim::NewLine();
+                ui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                ui::NewLine();
                 for (auto& line : m_debugLines)
                 {
                     ImGui::TextUnformatted(line.c_str());
                 }
-                nim::EndTabItem();
+                ui::EndTabItem();
             }
             m_debugLines.clear();
             m_debugLines.reserve(10);
@@ -432,7 +428,7 @@ void Console::draw()
                 if (ImGui::BeginTabItem(("Stat " + std::to_string(count)).c_str()))
                 {
                     func.first();
-                    nim::EndTabItem();
+                    ui::EndTabItem();
                 }
             }
 
@@ -443,16 +439,15 @@ void Console::draw()
                 if (ImGui::BeginTabItem(name.c_str()))
                 {
                     func();
-                    nim::EndTabItem();
+                    ui::EndTabItem();
                 }
             }
 
-            nim::EndTabBar();
+            ui::EndTabBar();
         }
         
     }
-    nim::End();
-#endif //USE_IMGUI
+    ui::End();
 }
 
 void Console::init()

@@ -59,7 +59,7 @@ MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx)
 
     registerConsoleTab("Help", [&]
     {
-        xy::Nim::image(m_textures.get("assets/images/help.png"));
+        xy::ui::image(m_textures.get("assets/images/help.png"));
     });
 
     m_scene.getActiveCamera().getComponent<xy::Camera>().setView(ctx.defaultView.getSize());
@@ -158,28 +158,28 @@ void MyFirstState::setup()
 
     auto windowFunc = [&, entity]() mutable
     {
-        xy::Nim::setNextWindowSize(WindowWidth, WindowHeight);
-        xy::Nim::setNextWindowConstraints(WindowWidth, WindowHeight, WindowWidth, WindowHeight);
-        xy::Nim::begin("Emitter Settings");
+        xy::ui::setNextWindowSize(WindowWidth, WindowHeight);
+        xy::ui::setNextWindowConstraints(WindowWidth, WindowHeight, WindowWidth, WindowHeight);
+        xy::ui::begin("Emitter Settings");
 
         bool load = false;
         bool save = false;
 
-        if (xy::Nim::beginMenuBar())
+        if (xy::ui::beginMenuBar())
         {
-            if (xy::Nim::beginMenu("File"))
+            if (xy::ui::beginMenu("File"))
             {
-                xy::Nim::menuItem("Load", load);
-                xy::Nim::menuItem("Save", save);
+                xy::ui::menuItem("Load", load);
+                xy::ui::menuItem("Save", save);
 
-                xy::Nim::endMenu();
+                xy::ui::endMenu();
             }
 
-            xy::Nim::endMenuBar();
+            xy::ui::endMenuBar();
         }
 
-        xy::Nim::text(m_workingDirectory);
-        if (xy::Nim::button("Browse Path"))
+        xy::ui::text(m_workingDirectory);
+        if (xy::ui::button("Browse Path"))
         {
             auto path = xy::FileSystem::openFolderDialogue();
             if (!path.empty())
@@ -196,58 +196,58 @@ void MyFirstState::setup()
                 }
             }
         }
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Current working directory. Set this to your project directory and textures will be loaded and saved in a path relative to this");
-        xy::Nim::separator();
+        xy::ui::sameLine(); xy::ui::showToolTip("Current working directory. Set this to your project directory and textures will be loaded and saved in a path relative to this");
+        xy::ui::separator();
 
-        xy::Nim::slider("Gravity X", m_emitterSettings->gravity.x, -1000.f, 1000.f, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Gravitational force applied to the velocity");
-        xy::Nim::slider("Gravity Y", m_emitterSettings->gravity.y, -1000.f, 1000.f, ItemWidth);
+        xy::ui::slider("Gravity X", m_emitterSettings->gravity.x, -1000.f, 1000.f, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("Gravitational force applied to the velocity");
+        xy::ui::slider("Gravity Y", m_emitterSettings->gravity.y, -1000.f, 1000.f, ItemWidth);
         
-        xy::Nim::slider("Velocity X", m_emitterSettings->initialVelocity.x, -1000.f, 1000.f, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Initial velocity of the particle");
-        xy::Nim::slider("Velocity Y", m_emitterSettings->initialVelocity.y, -1000.f, 1000.f, ItemWidth);
+        xy::ui::slider("Velocity X", m_emitterSettings->initialVelocity.x, -1000.f, 1000.f, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("Initial velocity of the particle");
+        xy::ui::slider("Velocity Y", m_emitterSettings->initialVelocity.y, -1000.f, 1000.f, ItemWidth);
 
-        xy::Nim::slider("Spread", m_emitterSettings->spread, 0.f, 360.f, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Spead, in degrees, applied to the inital velocity");
-        xy::Nim::slider("Lifetime", m_emitterSettings->lifetime, 0.1f, 10.f, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Lifetime of a particle in seconds");
-        xy::Nim::slider("Lifetime Variance", m_emitterSettings->lifetimeVariance, 0.f, 10.f, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Amount of random variation added to the lifetime of a particle, in seconds");
+        xy::ui::slider("Spread", m_emitterSettings->spread, 0.f, 360.f, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("Spead, in degrees, applied to the inital velocity");
+        xy::ui::slider("Lifetime", m_emitterSettings->lifetime, 0.1f, 10.f, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("Lifetime of a particle in seconds");
+        xy::ui::slider("Lifetime Variance", m_emitterSettings->lifetimeVariance, 0.f, 10.f, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("Amount of random variation added to the lifetime of a particle, in seconds");
 
-        xy::Nim::slider("Rotation Speed", m_emitterSettings->rotationSpeed, 0.f, 15.f, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Rotation in degrees per second - textured particles only");
-        xy::Nim::slider("Scale Affector", m_emitterSettings->scaleModifier, -5.f, 5.f, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("How rapidly a particle is scaled in size over its lifetime");
-        xy::Nim::slider("Size", m_emitterSettings->size, 0.1f, 100.f, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Initial size of a particle");
+        xy::ui::slider("Rotation Speed", m_emitterSettings->rotationSpeed, 0.f, 15.f, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("Rotation in degrees per second - textured particles only");
+        xy::ui::slider("Scale Affector", m_emitterSettings->scaleModifier, -5.f, 5.f, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("How rapidly a particle is scaled in size over its lifetime");
+        xy::ui::slider("Size", m_emitterSettings->size, 0.1f, 100.f, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("Initial size of a particle");
 
-        xy::Nim::slider("Emit Rate", m_emitterSettings->emitRate, 0.f, 150.f, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Number of particles emitted per second");
+        xy::ui::slider("Emit Rate", m_emitterSettings->emitRate, 0.f, 150.f, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("Number of particles emitted per second");
         std::int32_t count = m_emitterSettings->emitCount;
-        xy::Nim::input("Emit Count", count, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Number of particles emitted simultaneously");
+        xy::ui::input("Emit Count", count, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("Number of particles emitted simultaneously");
         count = std::max(count, 0);
         m_emitterSettings->emitCount = count;
 
-        xy::Nim::slider("Spawn Radius", m_emitterSettings->spawnRadius, 0.f, 500.f, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Radius around the emitter position in which particles are spawned");
-        xy::Nim::slider("Spawn Offset X", m_emitterSettings->spawnOffset.x, 0.f, 500.f, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Offsets the particle spawn position from the emitter position in world units");
-        xy::Nim::slider("Spawn Offset Y", m_emitterSettings->spawnOffset.y, 0.f, 500.f, ItemWidth);
+        xy::ui::slider("Spawn Radius", m_emitterSettings->spawnRadius, 0.f, 500.f, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("Radius around the emitter position in which particles are spawned");
+        xy::ui::slider("Spawn Offset X", m_emitterSettings->spawnOffset.x, 0.f, 500.f, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("Offsets the particle spawn position from the emitter position in world units");
+        xy::ui::slider("Spawn Offset Y", m_emitterSettings->spawnOffset.y, 0.f, 500.f, ItemWidth);
 
         count = m_emitterSettings->releaseCount;
-        xy::Nim::input("Release Count", count, ItemWidth);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Total number of particles to release before automatically stopping the emitter. 0 emits indefinitely, restart the emitter for updated values to take effect");
+        xy::ui::input("Release Count", count, ItemWidth);
+        xy::ui::sameLine(); xy::ui::showToolTip("Total number of particles to release before automatically stopping the emitter. 0 emits indefinitely, restart the emitter for updated values to take effect");
         count = std::max(count, 0);
         m_emitterSettings->releaseCount = count;
 
-        xy::Nim::checkbox("Random Initial Rotation", &m_emitterSettings->randomInitialRotation);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Applies a random initial rotation to spawned particles. Textured particles only");
+        xy::ui::checkbox("Random Initial Rotation", &m_emitterSettings->randomInitialRotation);
+        xy::ui::sameLine(); xy::ui::showToolTip("Applies a random initial rotation to spawned particles. Textured particles only");
         
         bool oldState = entity.getComponent<xy::Callback>().active;
         bool newState = oldState;
-        xy::Nim::checkbox("Animate Movement", &newState);
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Enable emitter movement");
+        xy::ui::checkbox("Animate Movement", &newState);
+        xy::ui::sameLine(); xy::ui::showToolTip("Enable emitter movement");
 
         if (oldState != newState)
         {
@@ -256,13 +256,13 @@ void MyFirstState::setup()
             entity.getComponent<xy::Transform>().setRotation(rotation);
         }
 
-        xy::Nim::colourPicker("Colour", m_emitterSettings->colour);
+        xy::ui::colourPicker("Colour", m_emitterSettings->colour);
 
-        xy::Nim::separator();
+        xy::ui::separator();
 
         //blendmode drop down
         std::int32_t idx = m_selectedBlendMode;
-        xy::Nim::simpleCombo("Blend Mode", idx, "Alpha\0Add\0Multiply\0\0", ItemWidth);
+        xy::ui::simpleCombo("Blend Mode", idx, "Alpha\0Add\0Multiply\0\0", ItemWidth);
         if (idx != m_selectedBlendMode)
         {
             m_selectedBlendMode = idx;
@@ -280,14 +280,14 @@ void MyFirstState::setup()
         }
         if (m_emitterSettings->texturePath.empty())
         {
-            xy::Nim::text("No texture loaded");
+            xy::ui::text("No texture loaded");
         }
         else
         {
-            xy::Nim::text(m_emitterSettings->texturePath);
+            xy::ui::text(m_emitterSettings->texturePath);
         }
 
-        if (xy::Nim::button("Browse Texture"))
+        if (xy::ui::button("Browse Texture"))
         {
             auto path = xy::FileSystem::openFileDialogue("png,jpg,bmp");
             if (!path.empty())
@@ -305,30 +305,30 @@ void MyFirstState::setup()
                 m_emitterSettings->texturePath = path;
             }
         }
-        xy::Nim::sameLine(); xy::Nim::showToolTip("For a relative path to a texture set the working directory, above");
+        xy::ui::sameLine(); xy::ui::showToolTip("For a relative path to a texture set the working directory, above");
 
-        xy::Nim::separator();
+        xy::ui::separator();
 
-        if (xy::Nim::button("Start"))
+        if (xy::ui::button("Start"))
         {
             entity.getComponent<xy::ParticleEmitter>().start();
         }
-        xy::Nim::sameLine();
-        if (xy::Nim::button("Stop"))
+        xy::ui::sameLine();
+        if (xy::ui::button("Stop"))
         {
             entity.getComponent<xy::ParticleEmitter>().stop();
         }
-        xy::Nim::sameLine();
-        if (xy::Nim::button("Reset"))
+        xy::ui::sameLine();
+        if (xy::ui::button("Reset"))
         {
             entity.getComponent<xy::ParticleEmitter>().settings = xy::EmitterSettings();
             entity.getComponent<xy::Callback>().active = false;
             entity.getComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
             entity.getComponent<xy::Transform>().setRotation(0.f);
         }
-        xy::Nim::sameLine(); xy::Nim::showToolTip("Reset the properties to their default values");
+        xy::ui::sameLine(); xy::ui::showToolTip("Reset the properties to their default values");
 
-        xy::Nim::separator();
+        xy::ui::separator();
 
         //load button
         //save button
@@ -375,7 +375,7 @@ void MyFirstState::setup()
             }
         }
 
-        xy::Nim::end();
+        xy::ui::end();
     };
     registerWindow(windowFunc);
 }

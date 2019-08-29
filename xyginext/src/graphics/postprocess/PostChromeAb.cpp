@@ -28,8 +28,6 @@ source distribution.
 #include "xyginext/graphics/postprocess/ChromeAb.hpp"
 #include "xyginext/core/App.hpp"
 
-#include "../../imgui/imgui.h"
-
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 
@@ -55,18 +53,6 @@ PostChromeAb::PostChromeAb(bool distort)
     {
         m_shader.loadFromMemory(CHRAB_NO_DISTORT, sf::Shader::Fragment);
     }
-
-#ifdef XY_DEBUG
-
-    //xy::App::addUserWindow(
-    //    [this]()
-    //{
-    //    nim::Begin("Abberation Params");
-    //    nim::SliderFloat("Distortion", &distortionAmount, 0.f, 0.1f);
-    //    nim::End();
-    //}, this);
-
-#endif //XY_DEBUG
 }
 
 //PostChromeAb::~PostChromeAb()

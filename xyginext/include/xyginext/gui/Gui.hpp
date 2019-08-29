@@ -27,6 +27,9 @@ source distribution.
 
 #pragma once
 
+#include "imgui.h"
+#include "imgui-SFML.h"
+
 #include "xyginext/Config.hpp"
 
 #include <SFML/Graphics/Color.hpp>
@@ -42,12 +45,13 @@ namespace sf
 namespace xy
 {
     /*!
-    \brief Exposes a selection of ImGui functions to the public API.
-    These can be used to create stand-alone windows or to add useful
-    information to the status window via GuiClient::registerTabControl().
+    \brief Utility functions which act as ImGui wrappers. These are for
+    a convenience, however it is possible to use ImGui directly if preferred.
+    Immediate mode ui information is rendered to the status window via 
+    GuiClient::registerTabControl().
     \see GuiClient
     */
-    namespace Nim
+    namespace ui
     {
         /*!
         \see ImGui::ImGuiStyle
@@ -100,7 +104,7 @@ namespace xy
                 Count
             };
             
-            float           Alpha = 1.f;                      // Global alpha applies to everything in Nim
+            float           Alpha = 1.f;                      // Global alpha applies to everything
             sf::Vector2i    WindowPadding = {8,8};              // Padding within a window
             float           WindowRounding = 7.f;             // Radius of window corners rounding. Set to 0.0f to have rectangular windows
             float           WindowBorderSize = 0.f;           // Thickness of border around windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly)
@@ -278,4 +282,6 @@ namespace xy
          */
         XY_EXPORT_API void setStyle(const Style& style);
     }
+    //for backwards compatability. She just won't let go...
+    namespace Nim = ui;
 }

@@ -61,6 +61,8 @@ namespace ImGui
 
 // Add this to your imconfig.h
 
+#include "../Config.hpp"
+
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
 

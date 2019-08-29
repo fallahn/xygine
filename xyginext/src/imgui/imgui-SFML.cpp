@@ -1,5 +1,5 @@
-#include "imgui-SFML.h"
-#include "imgui.h"
+#include "xyginext/gui/imgui-SFML.h"
+#include "xyginext/gui/imgui.h"
 
 #include <SFML/OpenGL.hpp>
 #include <SFML/Graphics/Color.hpp>

@@ -28,9 +28,6 @@ source distribution.
 #include "xyginext/gui/Gui.hpp"
 #include "xyginext/core/ConfigFile.hpp"
 
-#include "imgui.h"
-#include "imgui-SFML.h"
-
 // Saves the hassle of mapping strings to all style vars
 #define GET_VARIABLE_NAME(Variable) (#Variable)
 
@@ -38,62 +35,62 @@ using namespace xy;
 
 namespace
 {
-    static Nim::Style currentStyle;
+    static ui::Style currentStyle;
 }
 
-void Nim::begin(const std::string& title, bool* b)
+void ui::begin(const std::string& title, bool* b)
 {
     ImGui::Begin(title.c_str(), b, ImGuiWindowFlags_MenuBar);
 }
 
-void Nim::setNextWindowSize(float x, float y)
+void ui::setNextWindowSize(float x, float y)
 {
     ImGui::SetNextWindowSize({ x, y });
 }
 
-void Nim::setNextWindowConstraints(float minW, float minH, float maxW, float maxH)
+void ui::setNextWindowConstraints(float minW, float minH, float maxW, float maxH)
 {
     ImGui::SetNextWindowSizeConstraints({ minW, minH }, { maxW, maxH });
 }
 
-void Nim::setNextWindowPosition(float x, float y)
+void ui::setNextWindowPosition(float x, float y)
 {
     ImGui::SetNextWindowPos({ x, y });
 }
 
-void Nim::text(const std::string& str)
+void ui::text(const std::string& str)
 {
     ImGui::Text("%s", str.c_str());
 }
 
-bool Nim::button(const std::string& label, float w, float h)
+bool ui::button(const std::string& label, float w, float h)
 {
     return ImGui::Button(label.c_str(), { w,h });
 }
 
-void Nim::checkbox(const std::string& title, bool* value)
+void ui::checkbox(const std::string& title, bool* value)
 {
     ImGui::Checkbox(title.c_str(), value);
 }
 
-void Nim::slider(const std::string& title, float& value, float min, float max, float itemWidth)
+void ui::slider(const std::string& title, float& value, float min, float max, float itemWidth)
 {
     ImGui::PushItemWidth(itemWidth);
     ImGui::SliderFloat(title.c_str(), &value, min, max);
     ImGui::PopItemWidth();
 }
 
-void Nim::separator()
+void ui::separator()
 {
     ImGui::Separator();
 }
 
-void Nim::sameLine(float posX, float spacing)
+void ui::sameLine(float posX, float spacing)
 {
     ImGui::SameLine(posX, spacing);
 }
 
-bool Nim::simpleCombo(const std::string& label, std::int32_t& index, const char* items, float itemWidth)
+bool ui::simpleCombo(const std::string& label, std::int32_t& index, const char* items, float itemWidth)
 {
     ImGui::PushItemWidth(itemWidth);
     auto result = ImGui::Combo(label.c_str(), &index, items);
@@ -101,7 +98,7 @@ bool Nim::simpleCombo(const std::string& label, std::int32_t& index, const char*
     return result;
 }
 
-bool Nim::input(const std::string& label, std::int32_t& value, float itemWidth)
+bool ui::input(const std::string& label, std::int32_t& value, float itemWidth)
 {
     ImGui::PushItemWidth(itemWidth);
     auto result = ImGui::InputInt(label.c_str(), &value);
@@ -109,12 +106,12 @@ bool Nim::input(const std::string& label, std::int32_t& value, float itemWidth)
     return result;
 }
 
-bool Nim::radioButton(const std::string& title, std::int32_t& output, std::int32_t value)
+bool ui::radioButton(const std::string& title, std::int32_t& output, std::int32_t value)
 {
     return ImGui::RadioButton(title.c_str(), &output, value);
 }
 
-void Nim::showToolTip(const std::string& message)
+void ui::showToolTip(const std::string& message)
 {
     ImGui::TextDisabled("(?)");
     if (ImGui::IsItemHovered())
@@ -127,7 +124,7 @@ void Nim::showToolTip(const std::string& message)
     }
 }
 
-bool Nim::colourPicker(const std::string& label, sf::Color& output)
+bool ui::colourPicker(const std::string& label, sf::Color& output)
 {
     float op[4] = 
     {
@@ -149,52 +146,52 @@ bool Nim::colourPicker(const std::string& label, sf::Color& output)
     return false;
 }
 
-bool Nim::beginMenuBar()
+bool ui::beginMenuBar()
 {
     return ImGui::BeginMenuBar();
 }
 
-void Nim::endMenuBar()
+void ui::endMenuBar()
 {
     ImGui::EndMenuBar();
 }
 
-bool Nim::beginMenu(const std::string& title)
+bool ui::beginMenu(const std::string& title)
 {
     return ImGui::BeginMenu(title.c_str());
 }
 
-void Nim::endMenu()
+void ui::endMenu()
 {
     ImGui::EndMenu();
 }
 
-bool Nim::menuItem(const std::string& title, bool& selected)
+bool ui::menuItem(const std::string& title, bool& selected)
 {
     return ImGui::MenuItem(title.c_str(), nullptr, &selected);
 }
 
-void Nim::image(const sf::Texture& t, sf::Color tint, sf::Color border)
+void ui::image(const sf::Texture& t, sf::Color tint, sf::Color border)
 {
     ImGui::Image(t, tint, border);
 }
 
-void Nim::end()
+void ui::end()
 {
     ImGui::End();
 }
 
-bool Nim::wantsMouse()
+bool ui::wantsMouse()
 {
     return ImGui::GetIO().WantCaptureMouse;
 }
 
-bool Nim::wantsKeyboard()
+bool ui::wantsKeyboard()
 {
     return ImGui::GetIO().WantCaptureKeyboard;
 }
 
-const Nim::Style& Nim::getStyle()
+const ui::Style& ui::getStyle()
 {
     auto style = ImGui::GetStyle();
     auto& s = currentStyle;
@@ -231,7 +228,7 @@ const Nim::Style& Nim::getStyle()
     return currentStyle;
 }
 
-void Nim::setStyle(const Nim::Style& style)
+void ui::setStyle(const ui::Style& style)
 {
     // copy vars to imgui style
     currentStyle = style;
@@ -268,7 +265,7 @@ void Nim::setStyle(const Nim::Style& style)
         s.Colors[i] = style.colours[i];
 }
 
-bool Nim::Style::saveToFile(const std::string& path)
+bool ui::Style::saveToFile(const std::string& path)
 {
     xy::ConfigFile styleFile;
     
@@ -310,7 +307,7 @@ bool Nim::Style::saveToFile(const std::string& path)
     return styleFile.save(path);
 }
 
-bool Nim::Style::loadFromFile(const std::string& path)
+bool ui::Style::loadFromFile(const std::string& path)
 {
     xy::ConfigFile styleFile;
     if (!styleFile.loadFromFile(path))
@@ -356,5 +353,3 @@ bool Nim::Style::loadFromFile(const std::string& path)
     
     return true;
 }
-
-//I miss you like hell.

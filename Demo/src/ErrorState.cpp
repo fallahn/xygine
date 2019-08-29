@@ -53,17 +53,17 @@ ErrorState::ErrorState(xy::StateStack& stack, xy::State::Context ctx, const Shar
         auto boxSize = sf::Vector2f(400.f, 100.f);
         windowSize = (windowSize - boxSize) / 2.f;
 
-        xy::Nim::setNextWindowPosition(windowSize.x, windowSize.y);
-        xy::Nim::setNextWindowSize(boxSize.x, boxSize.y);
-        xy::Nim::begin("Error");      
-        xy::Nim::text(m_message);
-        if (xy::Nim::button("OK", 40.f, 16.f))
+        xy::ui::setNextWindowPosition(windowSize.x, windowSize.y);
+        xy::ui::setNextWindowSize(boxSize.x, boxSize.y);
+        xy::ui::begin("Error");      
+        xy::ui::text(m_message);
+        if (xy::ui::button("OK", 40.f, 16.f))
         {
             /*requestStackClear();
             requestStackPush(StateID::MainMenu);*/
             getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage)->action = MenuEvent::QuitGameClicked;
         }
-        xy::Nim::end();
+        xy::ui::end();
     });
 
     xy::App::setMouseCursorVisible(true);

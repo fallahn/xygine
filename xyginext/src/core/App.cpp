@@ -33,8 +33,8 @@ source distribution.
 #include "xyginext/detail/Operators.hpp"
 #include "xyginext/gui/GuiClient.hpp"
 
-#include "../imgui/imgui.h"
-#include "../imgui/imgui-SFML.h"
+#include "xyginext/gui/imgui.h"
+#include "xyginext/gui/imgui-SFML.h"
 #include "../imgui/imgui_internal.h"
 
 #include "../detail/GLCheck.hpp"

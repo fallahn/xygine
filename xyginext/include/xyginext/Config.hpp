@@ -35,6 +35,7 @@ source distribution.
 //windows compilers need specific (and different) keywords for export
 #define XY_EXPORT_API __declspec(dllexport)
 #define XY_IMPORT_API __declspec(dllimport)
+#define IMGUI_API __declspec(dllexport)
 
 //for vc compilers we also need to turn off this annoying C4251 warning
 #ifdef _MSC_VER
@@ -49,6 +50,7 @@ source distribution.
 //the same keyword is used for both importing and exporting
 #define XY_EXPORT_API __attribute__ ((__visibility__ ("default")))
 #define XY_IMPORT_API __attribute__ ((__visibility__ ("default")))
+#define IMGUI_API __attribute__ ((__visibility__ ("default")))
 #else
 
 //gcc < 4 has no mechanism to explicitly hide symbols, everything's exported

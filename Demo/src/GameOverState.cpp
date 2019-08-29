@@ -106,7 +106,7 @@ GameoverState::~GameoverState()
 bool GameoverState::handleEvent(const sf::Event& evt)
 {
     // Don't process events which the gui wants
-    if (xy::Nim::wantsMouse() || xy::Nim::wantsKeyboard())
+    if (xy::ui::wantsMouse() || xy::ui::wantsKeyboard())
     {
         return true;
     }

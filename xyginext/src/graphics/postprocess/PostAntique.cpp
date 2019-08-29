@@ -27,7 +27,6 @@ source distribution.
 
 #include "xyginext/graphics/postprocess/Antique.hpp"
 #include "xyginext/core/App.hpp"
-#include "../../imgui/imgui.h"
 
 #include <SFML/Graphics/RenderTexture.hpp>
 
@@ -108,21 +107,6 @@ PostAntique::PostAntique()
     {
         xy::Logger::log("Failed to create Antique post shader", xy::Logger::Type::Error);
     }
-
-#ifdef XY_DEBUG
-    //xy::App::addUserWindow(
-    //    [this]()
-    //{
-    //    nim::Begin("Shader Params");
-    //    nim::DragFloat("Tone Amount", &toneMix, 0.01f, 0.f, 1.f);
-    //    nim::DragFloat("Vignette Rad", &vignetteRadius, 0.01f, 0.f, 0.75f);
-    //    nim::DragFloat("Vignette Amount", &vignetteAmount, 0.01f, 0.f, 1.f);
-    //    nim::DragFloat("Flicker Amount", &flickerAmount, 0.001f, 0.f, 0.09f);
-    //    nim::DragFloat("Jitter Amount", &jitterAmount, 0.001f, 0.f, 0.1f);
-    //    nim::DragFloat("Noise Amount", &noiseAmount, 0.01f, 0.f, 2.f);
-    //    nim::End();
-    //}, this);
-#endif //XY_DEBUG
 }
 
 //PostAntique::~PostAntique()

@@ -35,7 +35,7 @@ namespace xy
 {
     /*!
     \brief Allows registering GUI controls with the default output
-    window, or registering custom windows using the Nim namespace.
+    window, or registering custom windows using the ui namespace.
     Classes which inherit this interface may register controls with
     the imgui renderer. This is usually used for debugging output or
     when creating tooling.
@@ -52,7 +52,7 @@ namespace xy
 
         /*!
         \brief Registers one or more gui controls with the default status window.
-        The given function should include the Nim/ImGui functions as they would
+        The given function should include the ui/ImGui functions as they would
         appear between the Begin() and End() commands *without* Begin() and End()
         themselves. These controls will then appear in the default status window
         all the time the object which inherits this interface exists.
@@ -63,7 +63,7 @@ namespace xy
 
         /*!
         \brief Registers one or more gui controls with the console window.
-        The given function should include the Nim/ImGui functions as they would
+        The given function should include the ui/ImGui functions as they would
         appear between the Begin() and End() commands *without* Begin() and End()
         themselves. These controls will then appear in a new tab in the console window
         all the time the object which inherits this interface exists.

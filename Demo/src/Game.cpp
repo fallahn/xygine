@@ -75,7 +75,7 @@ void Game::handleEvent(const sf::Event& evt)
             case sf::Keyboard::Escape:
                 
                 // Save the gui style
-                auto style = xy::Nim::getStyle();
+                auto style = xy::ui::getStyle();
                 if (!style.saveToFile(guiCfgPath))
                 {
                     xy::Logger::log("Failed to save gui style");
