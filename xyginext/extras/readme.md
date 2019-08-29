@@ -20,7 +20,7 @@ what that is, then maybe it'll be useful :)
 in the menu of the xygine Demo application.
  - SoundEffectsDirector.hpp/cpp An entity pool used for efficiently playing sound effects
  based on events received on the message bus. Implements the xy::Director interface
- - IniParse.hpp A header only Windows .ini file parser
+ - IniParse.hpp A header only Windows .ini file parser and writer.
 
 /*********************************************************************  
 (c) Matt Marchant 2017 - 2019  
