@@ -292,8 +292,8 @@ Once the lambda has been defined the command can be sent.
     m_gameScene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 
 Here it should be noted that commands are not executed immediately, rather they are 
-placed on a stack, ready for the next frame. At the beginning of the next frame the 
-entire stack is parsed and all the commands are executed sequentially. This is important 
+placed in a queue, ready for the next frame. At the beginning of the next frame the 
+entire queue is parsed and all the commands are executed sequentially. This is important 
 when creating a lambda expression for the action, should it capture any variables by 
 reference - the lambda is not executed in the same scope as it is written!!
 

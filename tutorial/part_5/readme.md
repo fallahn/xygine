@@ -137,7 +137,7 @@ In part four we covered using the `MessageBus` to raise messages if the `Ball` w
 out of play, and using the message handler to spawn a new `Ball` when it did. Hopefully, 
 when creating the `Block` entities, you employed this technique to raise a 
 `BlockEvent` message when a `Block` is destroyed. If not, reviewing the source in the 
-repository if necessary, add that now. We want to be able to recieve a message each time 
+repository if necessary, add that now. We want to be able to receive a message each time 
 a new `Block` is created, and each time one is destroyed.
 
 With the messages in place add two new members to `GameState`

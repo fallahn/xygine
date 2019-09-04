@@ -230,7 +230,7 @@ class. In `GameState::createScene()` underneath where the last System is added t
     m_gameScene.addDirector<FXDirector>(m_resources);
 
 Don't forget that `m_resources` needs to be passed to the function so that it is 
-correctly forwaded to the `FXDirector` constructor.
+correctly forwarded to the `FXDirector` constructor.
 
 That's it! Build and run the game, and when a `Block` is destroyed you should now see a 
 small shower of sparks and hear a sound play!
@@ -253,7 +253,7 @@ many more features that are available, a few of which are:
    `Scene::addPostProcess<T>()`, and of course you can implement your own.
 
  - Animated Sprites. `xy::Sprite` fully supports multiframe animation via the 
-   `SpriteAnimator` system, in combinations with the `SpriteAnimation` component and 
+   `SpriteAnimator` system, in combination with the `SpriteAnimation` component and 
    metadata provided by the `SpriteSheet` format.
 
  - Networking. xygine has complete network support via the Enet game networking library.

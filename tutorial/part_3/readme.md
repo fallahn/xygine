@@ -13,7 +13,7 @@ to create custom components and systems to add a ball.
 
 ### Resources
 
-In the last part to get the paddle rendering on the screen we added an `sf::Texture` 
+In the last part, to get the paddle rendering on the screen, we added an `sf::Texture` 
 member to the `GameState`, `m_paddleTexture` which is used to draw the paddle. As we'll 
 be progressively be adding more textures from now on, it's time to do a small amount of 
 refactoring. xygine has a `ResourceHandler` class which provides an interface for 
@@ -26,7 +26,7 @@ should loading a resource fail. For now we'll be using it to load all of the tex
 required for the game.
 
 When a resource is loaded the `ResourceHandler` returns a unique ID for that resource, 
-which can be used to quickly retreive it when it is needed at run time. A little book 
+which can be used to quickly retrieve it when it is needed at run time. A little book 
 keeping is needed then, to store these IDs.
 
 Create a new file in the include directory named `ResourceIDs.hpp`. Make sure to add it 

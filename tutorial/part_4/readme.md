@@ -38,7 +38,7 @@ potential collisions.
 
 This component has one property in particular which can also be useful in the soon-to-be 
 created `CollisionSystem`, namely an AABB (axis aligned bounding box) in the form of an 
-`sf::FloatRect`. This AABB is used by the dynamic tree to parition the `Scene`, and quickly 
+`sf::FloatRect`. This AABB is used by the dynamic tree to partition the `Scene`, and quickly 
 retrieve only other AABBs that are nearby.
 
 We'll come back to deploying the `BroadphaseComponent`s, but before that let's start on the 
@@ -287,7 +287,7 @@ be read out, in this case checking the action and spawning a new ball should the
 ball be despawned.
 
 That's it! Messages are quite a powerful concept in xygine and you should get used to 
-raising them for all pertinent events such as collisions, spawning, despawning as it makes 
+raising them for all pertinent events such as collisions, spawning and despawning as it makes 
 tracking the state of the game much easier.
 
 ---
