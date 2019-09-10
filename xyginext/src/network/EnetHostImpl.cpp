@@ -41,7 +41,7 @@ using namespace xy;
 
 namespace
 {
-    ENetPacket* createPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags)
+    ENetPacket* createPacket(sf::Uint32 id, const void* data, std::size_t size, NetFlag flags)
     {
         sf::Int32 packetFlags = 0;
         if (flags == NetFlag::Reliable)
@@ -207,7 +207,7 @@ void EnetHostImpl::broadcastPacket(sf::Uint32 id, void* data, std::size_t size, 
     }
 }
 
-void EnetHostImpl::sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
+void EnetHostImpl::sendPacket(const NetPeer& peer, sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
     if (peer)
     {

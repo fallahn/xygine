@@ -52,7 +52,7 @@ namespace xy
         void stop() override;
         bool pollEvent(NetEvent&) override;
         void broadcastPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
-        void sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
+        void sendPacket(const NetPeer& peer, sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
 
         std::size_t getConnectedPeerCount() const override;
         std::uint32_t getAddress() const override;

@@ -57,7 +57,7 @@ namespace xy
         void disconnect() override;
 
         bool pollEvent(NetEvent&) override;
-        void sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
+        void sendPacket(sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
 
         const NetPeer& getPeer() const override { return m_peer; }
 

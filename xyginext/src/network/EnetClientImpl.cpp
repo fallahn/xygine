@@ -206,7 +206,7 @@ bool EnetClientImpl::pollEvent(NetEvent& evt)
     return false;
 }
 
-void EnetClientImpl::sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
+void EnetClientImpl::sendPacket(sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
     if (m_peer)
     {

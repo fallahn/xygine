@@ -75,7 +75,7 @@ namespace xy
         virtual void disconnect() = 0;
 
         virtual bool pollEvent(NetEvent&) = 0;
-        virtual void sendPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
+        virtual void sendPacket(sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
 
         virtual const NetPeer& getPeer() const = 0;
     };
@@ -95,7 +95,7 @@ namespace xy
         virtual void stop() = 0;
         virtual bool pollEvent(NetEvent&) = 0;
         virtual void broadcastPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
-        virtual void sendPacket(const NetPeer& peer, sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
+        virtual void sendPacket(const NetPeer& peer, sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
 
         virtual std::size_t getConnectedPeerCount() const = 0;
         virtual std::uint32_t getAddress() const { return 0; }
