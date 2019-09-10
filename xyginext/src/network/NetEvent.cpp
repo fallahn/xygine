@@ -63,11 +63,13 @@ std::size_t NetEvent::Packet::getSize() const
 //private
 void NetEvent::Packet::setPacketData(const std::uint8_t* data, std::size_t size)
 {
-    //truncate large packets
-    size = std::min(size, m_data.size());
-
     if (size)
     {
+        if (size > m_data.size())
+        {
+            m_data.resize(size);
+        }
+
         std::memcpy(&m_id, data, sizeof(sf::Uint32));
         
         size -= sizeof(sf::Uint32);

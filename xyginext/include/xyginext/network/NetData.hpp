@@ -178,7 +178,7 @@ namespace xy
         private:
 
             sf::Uint32 m_id;
-            std::array<std::uint8_t, 1024> m_data;
+            std::vector<std::uint8_t> m_data;
             std::size_t m_size;
 
         }packet;
