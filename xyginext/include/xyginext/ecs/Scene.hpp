@@ -81,13 +81,13 @@ namespace xy
         Scene& operator = (Scene&&) = delete;
 
         /*!
-        \brief Executes one simulations step.
+        \brief Executes one simulation step.
         \param dt The time elapsed since the last simulation step
         */
         void update(float dt);
 
         /*!
-        \brief Creates a new entity in the Scene, and returns a copy of it
+        \brief Creates a new entity in the Scene, and returns a handle to it
         */
         Entity createEntity();
 
@@ -97,7 +97,9 @@ namespace xy
         void destroyEntity(Entity);
 
         /*|
-        \brief Returns the entity with the given ID if it exists
+        \brief Returns a handle to the entity with the given ID if it exists,
+        otherwise an invalid handle.
+        \see Entity::isValid()
         */
         Entity getEntity(Entity::ID) const;
 

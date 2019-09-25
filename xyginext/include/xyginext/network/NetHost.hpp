@@ -119,7 +119,7 @@ namespace xy
         \param channel Stream channel over which to send the data. Lower number
         channels have higher priority, with 0 being highest.
         */
-        void broadcastPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel = 0);
+        void broadcastPacket(sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel = 0);
 
         /*!
         \brief Sends a packet to the given peer if a connection is

@@ -44,6 +44,7 @@ SET(SFML_MIN_VERSION 2.5)
 find_package(SFML REQUIRED COMPONENTS graphics window audio system)
 
 # Also require OpenGL and ENet
+SET (OpenGL_GL_PREFERENCE "GLVND")
 find_package(OpenGL REQUIRED)
 find_package(ENet REQUIRED)
 

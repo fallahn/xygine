@@ -94,7 +94,7 @@ namespace xy
         virtual bool start(const std::string& address, sf::Uint16 port, std::size_t maxClient, std::size_t maxChannels, sf::Uint32 incoming, sf::Uint32 outgoing) = 0;
         virtual void stop() = 0;
         virtual bool pollEvent(NetEvent&) = 0;
-        virtual void broadcastPacket(sf::Uint32 id, void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
+        virtual void broadcastPacket(sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
         virtual void sendPacket(const NetPeer& peer, sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
 
         virtual std::size_t getConnectedPeerCount() const = 0;
