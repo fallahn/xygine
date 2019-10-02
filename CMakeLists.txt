@@ -22,6 +22,7 @@ option(BUILD_DEMO "Build the xygine demo" OFF)
 # We're using c++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_DEBUG_POSTFIX -d)
 
 # enable some warnings in debug builds with gcc/clang
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -77,16 +78,29 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
   add_definitions(-DXY_DEBUG)
 endif()
 
+if (NOT BUILD_SHARED_LIBS)
+    add_definitions(-DSFML_STATIC -DXY_STATIC)
+endif()
+
 # Create the xyginext ibrary target
 add_library(${PROJECT_NAME} ${PROJECT_SRC} ${NFD_SRC})
 
 # Linker settings
+if (BUILD_SHARED_LIBS)
 target_link_libraries(${PROJECT_NAME}
   sfml-graphics
   sfml-audio
   sfml-system
   ${ENET_LIBRARIES}
   ${OPENGL_LIBRARIES})
+else()
+target_link_libraries(${PROJECT_NAME}
+  sfml-graphics-s
+  sfml-audio-s
+  sfml-system-s
+  ${ENET_LIBRARIES}
+  ${OPENGL_LIBRARIES})
+endif()
 
 if (APPLE)
   target_link_libraries(${PROJECT_NAME} ${CORESERVICES_LIBRARY} ${APPKIT})
@@ -127,8 +141,12 @@ if (BUILD_DEMO)
     find_package(X11 REQUIRED)
     target_link_libraries(${DEMO_NAME} ${X11_LIBRARIES})
   endif()
-  
-  target_link_libraries(${DEMO_NAME} ${PROJECT_NAME} ${TMXLITE_LIBRARIES} sfml-graphics sfml-audio)
+
+  if(BUILD_SHARED_LIBS)  
+    target_link_libraries(${DEMO_NAME} ${PROJECT_NAME} ${TMXLITE_LIBRARIES} sfml-graphics sfml-audio)
+  else()
+    target_link_libraries(${DEMO_NAME} ${PROJECT_NAME} ${TMXLITE_LIBRARIES} sfml-graphics-s sfml-audio-s)
+  endif()
   target_include_directories(${DEMO_NAME} PRIVATE ${TMXLITE_INCLUDE_DIR} $<TARGET_PROPERTY:${PROJECT_NAME},INTERFACE_INCLUDE_DIRECTORIES>)
   
   
