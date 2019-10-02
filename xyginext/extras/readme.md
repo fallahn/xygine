@@ -21,6 +21,7 @@ in the menu of the xygine Demo application.
  - SoundEffectsDirector.hpp/cpp An entity pool used for efficiently playing sound effects
  based on events received on the message bus. Implements the xy::Director interface
  - IniParse.hpp A header only Windows .ini file parser and writer.
+ - KeyMapping.hpp A simple std::map containing string representations of the SFML sf::Keyboard::Key enum, removing the tedium associated with creating keybind options
 
 /*********************************************************************  
 (c) Matt Marchant 2017 - 2019  
