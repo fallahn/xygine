@@ -38,6 +38,7 @@ namespace xy
 {
     class ConsoleClient;
     class GuiClient;
+    class ConfigObject;
     
     /*!
     \brief Console class.
@@ -90,7 +91,7 @@ namespace xy
         \param name Name of the variable as it appears in the console.
         \param value the default value of the variable
         \param helpText Optional string describing the variable which appears the console
-        when search for variable names.
+        when searching for variable names.
         */
         static void addConvar(const std::string& name, const std::string& value, const std::string& helpText = std::string());
 
@@ -100,6 +101,12 @@ namespace xy
         template <typename T>
         static T getConvarValue(const std::string& convar);
         
+        /*!
+        \brief Returns a reference to the ConfigObject containing any existing convars.
+        The returned reference is const, use addConvar() to write to the ConfigObject
+        */
+        const ConfigObject& getConvars();
+
         /*!
          \brief Prints the name/value pair to the stats window
          */

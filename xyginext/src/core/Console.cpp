@@ -263,9 +263,15 @@ void Console::addConvar(const std::string& name, const std::string& defaultValue
         auto* obj = convars.addObject(name);
         obj->addProperty("value", defaultValue);
         obj->addProperty("help", helpStr);
+
+        convars.save(FileSystem::getConfigDirectory(App::getActiveInstance()->getApplicationName()) + convarName);
     }
 }
 
+const ConfigObject& Console::getConvars()
+{
+    return convars;
+}
 
 //private
 void Console::addCommand(const std::string& name, const Command& command, const ConsoleClient* client = nullptr)
@@ -573,13 +579,12 @@ void Console::init()
 
 
     //loads any convars which may have been saved
-    convars.loadFromFile(FileSystem::getConfigDirectory(APP_NAME) + convarName);
-    //TODO execute callback for each to make sure values are applied
+    convars.loadFromFile(FileSystem::getConfigDirectory(App::getActiveInstance()->getApplicationName()) + convarName);
 }
 
 void Console::finalise()
 {
-    convars.save(FileSystem::getConfigDirectory(APP_NAME) + convarName);
+    convars.save(FileSystem::getConfigDirectory(App::getActiveInstance()->getApplicationName()) + convarName);
 }
 
 int textEditCallback(ImGuiInputTextCallbackData* data)
