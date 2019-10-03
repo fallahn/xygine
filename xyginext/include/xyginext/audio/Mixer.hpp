@@ -88,6 +88,24 @@ namespace xy
         static float getVolume(sf::Uint8);
 
         /*!
+        \brief Sets the pre-fade volume.
+        This allows programatically altering the volume at run-time
+        without modifying the overall level of the mixer channel.
+        Unlike main mixer channels these values are not stored in the
+        application configuration between sessions, and are reset to
+        default volume of 1 each time the application is started.
+        \param vol The pre-fade volume to which to set the channel
+        \param channel ID of the channel whose volume should be set.
+        Valid values are 0 - 15.
+        */
+        static void setPrefadeVolume(float vol, sf::Uint8 channel);
+
+        /*!
+        \brief Returns the pre-fade volume of the requested channel
+        */
+        static float getPrefadeVolume(sf::Uint8 channel);
+
+        /*!
         \brief Sets a label for a channel.
         For example you might want to set channel 0 to 'Effects'
         and channel 1 to 'Music' for easy reference. Channel names
@@ -112,6 +130,7 @@ namespace xy
     private:
         static std::array<std::string, MaxChannels> m_labels;
         static std::array<float, MaxChannels> m_channels;
+        static std::array<float, MaxChannels> m_prefadeChannels;
         static float m_masterVol;
 
         friend class AudioSystem;

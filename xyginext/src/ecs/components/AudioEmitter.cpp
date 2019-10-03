@@ -129,7 +129,7 @@ void AudioEmitter::setChannel(sf::Uint8 chan)
     XY_ASSERT(chan < AudioMixer::MaxChannels, "Channel out of range");
     XY_ASSERT(m_impl, "No valid sound loaded");
     m_mixerChannel = chan;
-    m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel));
+    m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel) * AudioMixer::getPrefadeVolume(m_mixerChannel));
 }
 
 void AudioEmitter::setPlayingOffset(sf::Time offset)
@@ -204,7 +204,7 @@ sf::Time AudioEmitter::getPlayingOffset() const
 
 void AudioEmitter::applyMixerSettings()
 {
-    m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel));
+    m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel) * AudioMixer::getPrefadeVolume(m_mixerChannel));
 }
 
 bool AudioEmitter::isStreaming() const
