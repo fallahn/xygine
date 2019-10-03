@@ -78,6 +78,9 @@ namespace xy
         virtual void sendPacket(sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
 
         virtual const NetPeer& getPeer() const = 0;
+
+        virtual std::uint32_t getAddress() const { return 0; }
+        virtual std::uint16_t getPort() const { return 0; }
     };
 
     class XY_EXPORT_API NetHostImpl

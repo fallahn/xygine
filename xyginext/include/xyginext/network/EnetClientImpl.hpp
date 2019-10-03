@@ -60,10 +60,12 @@ namespace xy
         void sendPacket(sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
 
         const NetPeer& getPeer() const override { return m_peer; }
+        std::uint32_t getAddress() const override;
+        std::uint16_t getPort() const override;
 
     private:
 
-        _ENetHost * m_client;
+        _ENetHost* m_client;
         NetPeer m_peer;
     };
 }

@@ -152,6 +152,18 @@ namespace xy
         */
         const NetPeer& getPeer() const;
 
+        /*
+        \brief Returns a Uint32 containing the remote host's IP address
+        in network byte order if the client is connected, else returns 0
+        */
+        std::uint32_t getAddress() const;
+
+        /*
+        \brief Returns a Uint16 containing the port the client is connected
+        to, or 0 if it is not connected
+        */
+        std::uint16_t getPort() const;
+
     private:
 
         std::unique_ptr<NetClientImpl> m_impl;

@@ -66,3 +66,15 @@ const NetPeer& NetClient::getPeer() const
     XY_ASSERT(m_impl, "create() has not yet been called!");
     return m_impl->getPeer();
 }
+
+std::uint32_t NetClient::getAddress() const
+{
+    XY_ASSERT(m_impl, "create() has not yet been called!");
+    return m_impl->getAddress();
+}
+
+std::uint16_t NetClient::getPort() const
+{
+    XY_ASSERT(m_impl, "create() has not yet been called!");
+    return m_impl->getPort();
+}

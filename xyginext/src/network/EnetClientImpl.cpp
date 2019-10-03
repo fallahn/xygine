@@ -231,3 +231,13 @@ void EnetClientImpl::sendPacket(sf::Uint32 id, const void* data, std::size_t siz
         enet_peer_send(static_cast<_ENetPeer*>(const_cast<void*>(m_peer.getPeer())), channel, packet);
     }
 }
+
+std::uint32_t EnetClientImpl::getAddress() const
+{
+    return m_client ? m_client->address.host : 0;
+}
+
+std::uint16_t EnetClientImpl::getPort() const
+{
+    return m_client ? m_client->address.port : 0;
+}
