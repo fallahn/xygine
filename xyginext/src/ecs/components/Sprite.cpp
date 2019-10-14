@@ -61,11 +61,14 @@ m_animationCount(0)
 }*/
 
 //public
-void Sprite::setTexture(const sf::Texture& texture)
+void Sprite::setTexture(const sf::Texture& texture, bool resize)
 {
     m_texture = &texture;
-    auto size = static_cast<sf::Vector2f>(texture.getSize());
-    setTextureRect({ sf::Vector2f(), size });
+    if (resize)
+    {
+        auto size = static_cast<sf::Vector2f>(texture.getSize());
+        setTextureRect({ sf::Vector2f(), size });
+    }
 }
 
 /*

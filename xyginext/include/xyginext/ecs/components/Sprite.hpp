@@ -65,7 +65,7 @@ namespace xy
         \brief Sets the texture with which to draw this sprite.
         By default sprites are resized to the size of this texture
         */
-        void setTexture(const sf::Texture&);
+        void setTexture(const sf::Texture&, bool resize = true);
         //void setTexture(const xy::ResourceHandle&);
 
         /*!
