@@ -133,7 +133,6 @@ std::int32_t DynamicTreeSystem::addToTree(xy::Entity entity)
     auto treeID = allocateNode();
 
     const auto& tx = entity.getComponent<xy::Transform>();
-    auto worldPos = tx.getWorldPosition();
     auto bounds = tx.getWorldTransform().transformRect(entity.getComponent<BroadphaseComponent>().m_bounds);
 
     //fatten AABB
@@ -658,12 +657,12 @@ std::int32_t DynamicTreeSystem::computeHeight(std::int32_t treeID) const
     return std::max(heightA, heightB) + 1;
 }
 
-void DynamicTreeSystem::validateStructure(std::int32_t treeID) const
+void DynamicTreeSystem::validateStructure(std::int32_t) const
 {
 
 }
 
-void DynamicTreeSystem::validateMetrics(std::int32_t treeID) const
+void DynamicTreeSystem::validateMetrics(std::int32_t) const
 {
 
 }

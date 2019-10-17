@@ -118,12 +118,12 @@ void Text::setOutlineThickness(float thickness)
     }
 }
 
-void Text::setShader(sf::Shader* shader)
+void Text::setShader(sf::Shader*)
 {
     LOG("DEPRECATED: use Drawable::setShader() instead", xy::Logger::Type::Warning);
 }
 
-void Text::setBlendMode(sf::BlendMode mode)
+void Text::setBlendMode(sf::BlendMode)
 {
     LOG("DEPRECATED: use Drawable::setBlendMode() instead", xy::Logger::Type::Warning);
 }
@@ -190,7 +190,7 @@ sf::FloatRect Text::getLocalBounds(xy::Entity entity)
     return drawable.getLocalBounds();
 }
 
-void Text::setCroppingArea(sf::FloatRect area)
+void Text::setCroppingArea(sf::FloatRect)
 {
     LOG("DEPRECATED: Use Drawable::setCroppingArea() instead.", xy::Logger::Type::Warning);
 }

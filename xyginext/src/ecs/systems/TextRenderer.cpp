@@ -76,7 +76,7 @@ void TextRenderer::process(float)
     //}
 }
 
-void TextRenderer::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+void TextRenderer::draw(sf::RenderTarget& /*rt*/, sf::RenderStates /*states*/) const
 {
     //auto viewSize = rt.getView().getSize();
     //sf::FloatRect viewable(rt.getView().getCenter() - (viewSize / 2.f), viewSize);

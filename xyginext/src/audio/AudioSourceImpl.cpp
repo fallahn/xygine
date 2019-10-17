@@ -148,7 +148,7 @@ sf::Time AudioNull::getPlayingOffset() const
     return sf::seconds(0.f);
 }
 
-void AudioNull::setPlayingOffset(sf::Time offset)
+void AudioNull::setPlayingOffset(sf::Time)
 {
     LOG("No sound loaded. Offset not set", xy::Logger::Type::Warning);
 }
