@@ -218,6 +218,7 @@ namespace xy
         static NameValue getObjectName(std::string line);
         static NameValue getPropertyName(std::string line);
         static bool isProperty(const std::string& line);
+        //removes comments AND preceding whitespace
         static void removeComment(std::string& line);
 
         void write(std::ofstream& file, sf::Uint16 depth = 0u) const;

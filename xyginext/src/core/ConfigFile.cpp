@@ -172,17 +172,18 @@ bool ConfigObject::loadFromFile(const std::string& path)
             std::string lastLine = data;
             std::getline(file, data);
             removeComment(data);
-            sf::Int32 braceCount = 0;
-            
-            ConfigObject* currentObject = this;
 
+            //tracks brace balance
+            std::vector<ConfigObject*> objStack;
+            
             if (data[0] == '{')
             {
                 //we have our opening object
                 auto objectName = getObjectName(lastLine);
                 setName(objectName.first);
                 m_id = objectName.second;
-                braceCount++;
+
+                objStack.push_back(this);
             }
             else
             {
@@ -198,16 +199,13 @@ bool ConfigObject::loadFromFile(const std::string& path)
                     if (data[0] == '}')
                     {
                         //close current object and move to parent
-                        braceCount--;
-                        if (braceCount > 0)
-                            currentObject = dynamic_cast<ConfigObject*>(currentObject->getParent());
+                        objStack.pop_back();
                     }
                     else if (isProperty(data))
                     {			
                         //insert name / value property into current object
                         auto prop = getPropertyName(data);
-                        //TODO need to reinstate this and create a property
-                        //capable of storing arrays
+                        //TODO implement arrays and remove allowing duplicate proprties... although this will break all animated sprites!!
                         /*if (currentObject->findProperty(prop.first))
                         {
                             Logger::log("Property \'" + prop.first + "\' already exists in \'" + currentObject->getName() + "\', skipping entry...", Logger::Type::Warning);
@@ -216,10 +214,10 @@ bool ConfigObject::loadFromFile(const std::string& path)
 
                         if (prop.second.empty())
                         {
-                            Logger::log("\'" + currentObject->getName() + "\' property \'" + prop.first + "\' has no valid value", Logger::Type::Warning);
+                            Logger::log("\'" + objStack.back()->getName() + "\' property \'" + prop.first + "\' has no valid value", Logger::Type::Warning);
                             continue;
                         }
-                        currentObject->addProperty(prop.first, prop.second);
+                        objStack.back()->addProperty(prop.first, prop.second);
                     }
                     else
                     {
@@ -230,23 +228,23 @@ bool ConfigObject::loadFromFile(const std::string& path)
                         removeComment(data);
                         if (data[0] == '{')
                         {
-                            braceCount++;
                             auto name = getObjectName(prevLine);
-                            if (currentObject->findObjectWithId(name.second))
+                            if (name.second.empty() || objStack.back()->findObjectWithId(name.second) == nullptr)
                             {
-                            //    Logger::log("Object with ID \'" + name.second + "\' already exists, skipping...", Logger::Type::Warning);
-                            //    //object with duplicate id already exists
-                            //    while (data.find('}') == std::string::npos
-                            //        && readTotal < fileSize) //just incase of infinite loop
-                            //    {
-                            //        //skip all the object properties before continuing
-                            //        data = std::string(Util::String::rwgets(dest, DEST_SIZE, rr.file, &readTotal));
-                            //    }
-                                braceCount--;
-                                continue;
+                                //safe to add new object as the name doesn't exist
+                                objStack.push_back(objStack.back()->addObject(name.first, name.second));
                             }
+                            else
+                            {
+                                xy::Logger::log("Object with ID " + name.second + " has already been added, duplicate is skipped...", xy::Logger::Type::Warning);
 
-                            currentObject = currentObject->addObject(name.first, name.second);
+                                //fast forward to closing brace
+                                while (data[0] != '}')
+                                {
+                                    std::getline(file, data);
+                                    removeComment(data);
+                                }
+                            }
                         }
                         else //last line was probably garbage
                         {
@@ -256,7 +254,7 @@ bool ConfigObject::loadFromFile(const std::string& path)
                 }		
             }
 
-            if (braceCount != 0)
+            if (!objStack.empty())
             {
                 Logger::log("Brace count not at 0 after parsing \'" + path + "\'. Config data may not be correct.", Logger::Type::Warning);
             }
@@ -297,6 +295,11 @@ ConfigProperty* ConfigObject::findProperty(const std::string& name) const
 
 ConfigObject* ConfigObject::findObjectWithId(const std::string& id) const
 {
+    if (id.empty())
+    {
+        return nullptr;
+    }
+
     auto result = std::find_if(m_objects.begin(), m_objects.end(),
         [&id](const ConfigObject& p)
     {
