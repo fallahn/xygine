@@ -105,10 +105,10 @@ App::App(sf::ContextSettings contextSettings)
 
     m_videoSettings.Title = windowTitle;
 
-    update = [this](float dt)
+    /*update = [this](float dt)
     {
         updateApp(dt);
-    };
+    };*/
     eventHandler = std::bind(&App::handleEvent, this, _1);
 
     appInstance = this;
@@ -149,7 +149,7 @@ void App::run()
             handleEvents();
             handleMessages();
 
-            update(timePerFrame);
+            updateApp(timePerFrame);
             
             appInstance->m_renderWindow.setMouseCursorVisible(m_mouseCursorVisible || Console::isVisible());
         }
@@ -183,17 +183,17 @@ void App::run()
 
 void App::pause()
 {
-    update = [](float) {};
+    //update = [](float) {};
 }
 
 void App::resume()
 {
-    update = [this](float dt)
+    /*update = [this](float dt)
     {
         updateApp(dt);
     };
     frameClock.restart();
-    timeSinceLastUpdate = 0.f;
+    timeSinceLastUpdate = 0.f;*/
 }
 
 const App::VideoSettings& App::getVideoSettings() const

@@ -142,10 +142,12 @@ namespace xy
         /*!
         \brief Pauses the app's logic update function
         */
+        [[deprecated("Prefer manual update control via State Stack")]]
         void pause();
         /*!
         \brief Resumes the app's update function, if it is paused
         */
+        [[deprecated("Prefer manual update control via State Stack")]]
         void resume();
 
         /*!
