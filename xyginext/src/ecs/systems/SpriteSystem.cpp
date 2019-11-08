@@ -65,15 +65,15 @@ void SpriteSystem::process(float)
             verts.resize(4);
 
             verts[0].position = { 0.f, 0.f };
-            verts[1].position = { subRect.width, 0.f };
+            verts[3].position = { subRect.width, 0.f };
             verts[2].position = { subRect.width, subRect.height };
-            verts[3].position = { 0.f, subRect.height };
+            verts[1].position = { 0.f, subRect.height };
 
             //update vert coords
             verts[0].texCoords = { subRect.left, subRect.top };
-            verts[1].texCoords = { subRect.left + subRect.width, subRect.top };
+            verts[3].texCoords = { subRect.left + subRect.width, subRect.top };
             verts[2].texCoords = { subRect.left + subRect.width, subRect.top + subRect.height };
-            verts[3].texCoords = { subRect.left, subRect.top + subRect.height };
+            verts[1].texCoords = { subRect.left, subRect.top + subRect.height };
 
             //update colour
             verts[0].color = sprite.m_colour;
