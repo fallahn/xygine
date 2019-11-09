@@ -75,4 +75,20 @@ const ComponentMask& Entity::getComponentMask() const
     return m_entityManager->getComponentMask(*this);
 }
 
+void Entity::setLabel(const std::string& label)
+{
+    XY_ASSERT(m_entityManager, "Invalid Entity instance");
+    m_entityManager->setLabel(*this, label);
+
+#ifdef XY_DEBUG
+    m_label = m_entityManager->getLabel(*this).c_str();
+#endif
+}
+
+const std::string& Entity::getLabel() const
+{
+    XY_ASSERT(m_entityManager, "Invalid Entity instance");
+    return m_entityManager->getLabel(*this);
+}
+
 bool operator < (const Entity& l, const Entity& r) { return (l.getIndex() < r.getIndex()); }

@@ -125,6 +125,16 @@ namespace xy
         */
         bool isValid() const { return m_entityManager != nullptr; }
 
+        /*!
+        \brief Sets the label of this entity, useful for debugging
+        */
+        void setLabel(const std::string&);
+
+        /*!
+        \brief Returns the label assigned to t his entity. May be empty
+        */
+        const std::string& getLabel() const;
+
         bool operator == (Entity r)
         {
             return getIndex() == r.getIndex();
@@ -160,6 +170,10 @@ namespace xy
             return (l.getIndex() == r.getIndex());
         }
 	private:
+#ifdef XY_DEBUG
+        //this is just a convenience to make it easier to follow in a debugger
+        const char* m_label = nullptr;
+#endif
 
 		ID m_id;
         EntityManager* m_entityManager;
@@ -235,6 +249,17 @@ namespace xy
         */
         bool owns(Entity) const;
 
+        /*!
+        \breif Sets the label on the given entity
+        */
+        void setLabel(Entity, const std::string&);
+
+        /*!
+        \brief Returns the label assigned to the given entity.
+        May be empty.
+        */
+        const std::string& getLabel(Entity) const;
+
     private:
         MessageBus& m_messageBus;
         ComponentManager& m_componentManager;
@@ -243,6 +268,7 @@ namespace xy
         std::vector<std::unique_ptr<Detail::Pool>> m_componentPools; // < index is component ID. Pool index is entity ID.
         std::size_t m_initialPoolSize;
         std::vector<ComponentMask> m_componentMasks;
+        std::vector<std::string> m_labels;
 
         template <typename T>
         Detail::ComponentPool<T>& getPool();

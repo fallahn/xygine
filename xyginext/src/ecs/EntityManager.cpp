@@ -62,12 +62,18 @@ Entity EntityManager::createEntity()
         if (idx >= m_componentMasks.size())
         {
             m_componentMasks.resize(m_componentMasks.size() + MinComponentMasks);
+            m_labels.resize(m_componentMasks.size());
         }
     }
 
     XY_ASSERT(idx < m_generations.size(), "Index out of range");
     Entity e(idx, m_generations[idx]);
     e.m_entityManager = this;
+
+#ifdef XY_DEBUG
+    e.m_label = m_labels[idx].c_str();
+#endif
+
 
     return e;
 }
@@ -81,11 +87,16 @@ void EntityManager::destroyEntity(Entity entity)
     ++m_generations[index];
     m_freeIDs.push_back(index);
     m_componentMasks[index].reset();
+    m_labels[index].clear();
 
     //this is a bit of a kludge because transform components
     //need to be specifically reset to update the depth of any
     //newly orphaned children. We *could* reset all components
     //although this may just be unnecessary overhead.
+
+    //later note: potentially orphaned drawables may contain
+    //large unused vertex arrays - another case for reseting all components here...
+
     auto& pool = getPool<xy::Transform>();
     if (index < pool.size())
     {
@@ -124,4 +135,18 @@ const ComponentMask& EntityManager::getComponentMask(Entity entity) const
 bool EntityManager::owns(Entity entity) const
 {
     return (entity.m_entityManager == this);
+}
+
+void EntityManager::setLabel(Entity entity, const std::string& label)
+{
+    const auto index = entity.getIndex();
+    XY_ASSERT(index < m_labels.size(), "Invalid mask index (out of range)");
+    m_labels[index] = label;
+}
+
+const std::string& EntityManager::getLabel(Entity entity) const
+{
+    const auto index = entity.getIndex();
+    XY_ASSERT(index < m_componentMasks.size(), "Invalid mask index (out of range)");
+    return m_labels[index];
 }
