@@ -7,9 +7,12 @@ build_script:
     git pull
 
     ./bootstrap-vcpkg.bat
-    vcpkg update
+    
+    .\vcpkg update
 
-    vcpkg install sfml --head 
+    vcpkg install sfml 
+
+    #--head 
     
     vcpkg install enet
 
