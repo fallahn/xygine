@@ -31,6 +31,11 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wextra -Wreorder -Wheader-guard")
 endif()
 
+# disable deprecated warning in MSVC
+if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
+
 # Apple requires some extra guff
 if (APPLE)
   find_library(CORESERVICES_LIBRARY CoreServices)
