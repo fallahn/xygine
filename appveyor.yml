@@ -7,6 +7,7 @@ build_script:
     git pull
 
     ./bootstrap-vcpkg.bat
+    vcpkg update
 
     vcpkg install sfml --head 
     
@@ -16,7 +17,7 @@ build_script:
 
     # Build/Install tmxlite, which the demo requires
 
-    git clone https://github.com/fallahn/tmxlite
+    git clone https://github.com/fallahn/tmxlite.git
 
     cd tmxlite/tmxlite; mkdir build; cd build
 
