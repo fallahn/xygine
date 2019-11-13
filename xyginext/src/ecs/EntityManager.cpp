@@ -70,11 +70,6 @@ Entity EntityManager::createEntity()
     Entity e(idx, m_generations[idx]);
     e.m_entityManager = this;
 
-#ifdef XY_DEBUG
-    e.m_label = m_labels[idx].c_str();
-#endif
-
-
     return e;
 }
 
@@ -140,13 +135,13 @@ bool EntityManager::owns(Entity entity) const
 void EntityManager::setLabel(Entity entity, const std::string& label)
 {
     const auto index = entity.getIndex();
-    XY_ASSERT(index < m_labels.size(), "Invalid mask index (out of range)");
+    XY_ASSERT(index < m_labels.size(), "Invalid label index (out of range)");
     m_labels[index] = label;
 }
 
 const std::string& EntityManager::getLabel(Entity entity) const
 {
     const auto index = entity.getIndex();
-    XY_ASSERT(index < m_componentMasks.size(), "Invalid mask index (out of range)");
+    XY_ASSERT(index < m_componentMasks.size(), "Invalid label index (out of range)");
     return m_labels[index];
 }

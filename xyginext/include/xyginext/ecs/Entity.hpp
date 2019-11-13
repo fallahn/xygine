@@ -170,10 +170,6 @@ namespace xy
             return (l.getIndex() == r.getIndex());
         }
 	private:
-#ifdef XY_DEBUG
-        //this is just a convenience to make it easier to follow in a debugger
-        const char* m_label = nullptr;
-#endif
 
 		ID m_id;
         EntityManager* m_entityManager;

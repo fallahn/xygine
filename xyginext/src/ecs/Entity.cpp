@@ -79,10 +79,6 @@ void Entity::setLabel(const std::string& label)
 {
     XY_ASSERT(m_entityManager, "Invalid Entity instance");
     m_entityManager->setLabel(*this, label);
-
-#ifdef XY_DEBUG
-    m_label = m_entityManager->getLabel(*this).c_str();
-#endif
 }
 
 const std::string& Entity::getLabel() const
