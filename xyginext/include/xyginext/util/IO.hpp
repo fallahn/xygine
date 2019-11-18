@@ -31,12 +31,17 @@ source distribution.
 
 namespace xy::Util::IO
 {
-    static inline bool isExpectedSize(std::ifstream& file, std::size_t expectedSize)
+    static inline std::size_t getFileSize(std::ifstream& file)
     {
         file.seekg(0, file.end);
         auto fileSize = file.tellg();
         file.seekg(file.beg);
 
-        return fileSize == expectedSize;
+        return static_cast<std::size_t>(fileSize);
+    }
+
+    static inline bool isExpectedSize(std::ifstream& file, std::size_t expectedSize)
+    {
+        return getFileSize(file) == expectedSize;
     }
 }
