@@ -101,6 +101,7 @@ namespace xy
         
     private:
         std::string m_value;
+        bool m_isStringTypeValue;
         std::vector<float> valueAsArray() const;
     };
 

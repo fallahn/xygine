@@ -43,61 +43,72 @@ namespace
 //--------------------//
 ConfigProperty::ConfigProperty(const std::string& name, const std::string& value)
     : ConfigItem(name),
-    m_value(value) {}
+    m_value(value), m_isStringTypeValue(false) {}
 
 void ConfigProperty::setValue(const std::string& value)
 {
     m_value = value;
+    m_isStringTypeValue = true;
 }
 
 void ConfigProperty::setValue(sf::Int32 value)
 {
     m_value = std::to_string(value);
+    m_isStringTypeValue = false;
 }
 
 void ConfigProperty::setValue(float value)
 {
     m_value = std::to_string(value);
+    m_isStringTypeValue = false;
 }
 
 void ConfigProperty::setValue(bool value)
 {
     m_value = (value) ? "true" : "false";
+    m_isStringTypeValue = false;
 }
 
 void ConfigProperty::setValue(sf::Vector2f v)
 {
     m_value = std::to_string(v.x) + "," + std::to_string(v.y);
+    m_isStringTypeValue = false;
 }
 
 void ConfigProperty::setValue(sf::Vector2i v)
 {
     m_value = std::to_string(v.x) + "," + std::to_string(v.y);
+    m_isStringTypeValue = false;
 }
 
 void ConfigProperty::setValue(sf::Vector2u v)
 {
     m_value = std::to_string(v.x) + "," + std::to_string(v.y);
+    m_isStringTypeValue = false;
 }
 
 void ConfigProperty::setValue(sf::Vector3f v)
 {
     m_value = std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z);
+    m_isStringTypeValue = false;
 }
 
 void ConfigProperty::setValue(sf::FloatRect v)
 {
     m_value = std::to_string(v.left) + "," + std::to_string(v.top) + "," + std::to_string(v.width) + "," + std::to_string(v.height);
+    m_isStringTypeValue = false;
 }
 
 void ConfigProperty::setValue(sf::Color v)
 {
     m_value = std::to_string(v.r) + "," + std::to_string(v.g) + "," + std::to_string(v.b) + "," + std::to_string(v.a);
+    m_isStringTypeValue = false;
 }
 
 void ConfigProperty::setValue(xy::Vector4f v)
 {
     m_value = std::to_string(v.x) + "," + std::to_string(v.y) + "," + std::to_string(v.z) + "," + std::to_string(v.w);
+    m_isStringTypeValue = false;
 }
 
 //private
@@ -542,7 +553,15 @@ void ConfigObject::write(std::ofstream& file, sf::Uint16 depth) const
     file << indent << "{" << std::endl;
     for (const auto& p : m_properties)
     {
-        file << indent << indentBlock << p.getName() << " = " << p.getValue<std::string>() << std::endl;
+        file << indent << indentBlock << p.getName() << " = ";
+        if (p.m_isStringTypeValue)
+        {
+            file << "\"" << p.getValue<std::string>() << "\"" << std::endl;
+        }
+        else
+        {
+            file << p.getValue<std::string>() << std::endl;
+        }
     }
     for (const auto& o : m_objects)
     {
