@@ -152,11 +152,13 @@ namespace xy
         \brief Returns a reference to the vector of properties owned by this object
         */
         const std::vector<ConfigProperty>& getProperties() const;
+        std::vector<ConfigProperty>& getProperties();
 
         /*!
         \brief Returns a reference to the vector objects owned by this object
         */
         const std::vector<ConfigObject>& getObjects() const;
+        std::vector<ConfigObject>& getObjects();
 
         /*!
         \brief Adds a name / value property pair to this object

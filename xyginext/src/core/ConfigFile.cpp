@@ -360,7 +360,17 @@ const std::vector<ConfigProperty>& ConfigObject::getProperties() const
     return m_properties;
 }
 
+std::vector<ConfigProperty>& ConfigObject::getProperties()
+{
+    return m_properties;
+}
+
 const std::vector<ConfigObject>& ConfigObject::getObjects() const
+{
+    return m_objects;
+}
+
+std::vector<ConfigObject>& ConfigObject::getObjects()
 {
     return m_objects;
 }
