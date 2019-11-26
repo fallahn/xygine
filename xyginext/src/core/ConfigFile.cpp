@@ -412,12 +412,12 @@ void ConfigObject::removeProperty(const std::string& name)
     if (result != m_properties.end()) m_properties.erase(result);
 }
 
-ConfigObject ConfigObject::removeObject(const std::string& name)
+ConfigObject ConfigObject::removeObject(const std::string& name, const std::string& id)
 {
     auto result = std::find_if(m_objects.begin(), m_objects.end(),
-        [&name](const ConfigObject& p)
+        [&name, &id](const ConfigObject& p)
     {
-        return (p.getName() == name);
+        return (p.getName() == name && p.getId() == id);
     });
 
     if (result != m_objects.end())

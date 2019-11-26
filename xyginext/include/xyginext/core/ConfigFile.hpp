@@ -200,7 +200,8 @@ namespace xy
         \brief Removes an object (and all of its children) with the given name from
         this object if it exists
         */
-        ConfigObject removeObject(const std::string& name);
+        ConfigObject removeObject(const std::string& name, const std::string& = "");
+
 
         /*!
         \brief Writes this object and all its children to given path
