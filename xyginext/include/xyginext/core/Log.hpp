@@ -112,7 +112,7 @@ namespace xy
 
 #ifdef _MSC_VER
                 outstring += "\n";
-                OutputDebugString(outstring.c_str());
+                OutputDebugStringA(outstring.c_str());
 #endif //_MSC_VER
             }
             if (output == Output::File || output == Output::All)
@@ -121,11 +121,6 @@ namespace xy
                 std::ofstream file("output.log", std::ios::app);
                 if (file.good())
                 {
-                    /*std::time_t time = std::time(nullptr);
-                    auto tm = *std::localtime(&time);
-
-                    file.imbue(std::locale());
-                    file << std::put_time(&tm, "%d/%m/%y-%H:%M:%S: ");*/
                     file << SysTime::dateString() << "-" << SysTime::timeString() << ": " << outstring << std::endl;
                     file.close();
                 }
