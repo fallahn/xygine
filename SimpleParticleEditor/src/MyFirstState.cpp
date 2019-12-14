@@ -40,20 +40,25 @@ source distribution.
 #include <xyginext/gui/Gui.hpp>
 #include <xyginext/core/FileSystem.hpp>
 #include <xyginext/util/Vector.hpp>
+#include <xyginext/core/App.hpp>
 
 namespace
 {
     const float ItemWidth = 160.f;
     const float WindowWidth = 350.f;
     const float WindowHeight = 680.f;
+
+    const std::string cfgPath = xy::FileSystem::getConfigDirectory("particle editor") + "particle.cfg";
 }
 
 MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx)
-    : xy::State         (ss,ctx),
-    m_scene             (ctx.appInstance.getMessageBus()),
-    m_emitterSettings   (nullptr),
-    m_selectedBlendMode (0),
-    m_workingDirectory  ("Working Directory")
+    : xy::State             (ss,ctx),
+    m_scene                 (ctx.appInstance.getMessageBus()),
+    m_emitterSettings       (nullptr),
+    m_selectedBlendMode     (0),
+    m_workingDirectory      ("Working Directory"),
+    m_showBackgroundPicker  (false),
+    m_backgroundColour      (sf::Color::Black)
 {
     setup();
 
@@ -64,6 +69,13 @@ MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx)
 
     m_scene.getActiveCamera().getComponent<xy::Camera>().setView(ctx.defaultView.getSize());
     m_scene.getActiveCamera().getComponent<xy::Camera>().setViewport(ctx.defaultView.getViewport());
+}
+
+MyFirstState::~MyFirstState()
+{
+    m_config.findProperty("bg_colour")->setValue(m_backgroundColour);
+    m_config.findProperty("working_dir")->setValue(m_workingDirectory);
+    m_config.save(cfgPath);
 }
 
 bool MyFirstState::handleEvent(const sf::Event& evt)
@@ -98,6 +110,7 @@ void MyFirstState::setup()
     m_scene.addSystem<xy::ParticleSystem>(mb);
     m_scene.addSystem<xy::CallbackSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
+
 
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
@@ -175,28 +188,18 @@ void MyFirstState::setup()
                 xy::ui::endMenu();
             }
 
+            if (ImGui::BeginMenu("Options"))
+            {
+                ImGui::MenuItem("Preferences...", nullptr, &m_showBackgroundPicker);
+
+                ImGui::EndMenu();
+            }
+
             xy::ui::endMenuBar();
         }
 
+        xy::ui::text("Working directory:");
         xy::ui::text(m_workingDirectory);
-        if (xy::ui::button("Browse Path"))
-        {
-            auto path = xy::FileSystem::openFolderDialogue();
-            if (!path.empty())
-            {
-                m_workingDirectory = path;
-
-                //try trimming the loaded texture path
-                if (!m_emitterSettings->texturePath.empty())
-                {
-                    if (m_emitterSettings->texturePath.find(path) != std::string::npos)
-                    {
-                        m_emitterSettings->texturePath = m_emitterSettings->texturePath.substr(path.size());
-                    }
-                }
-            }
-        }
-        xy::ui::sameLine(); xy::ui::showToolTip("Current working directory. Set this to your project directory and textures will be loaded and saved in a path relative to this");
         xy::ui::separator();
 
         xy::ui::slider("Gravity X", m_emitterSettings->gravity.x, -1000.f, 1000.f, ItemWidth);
@@ -378,4 +381,63 @@ void MyFirstState::setup()
         xy::ui::end();
     };
     registerWindow(windowFunc);
+
+    registerWindow([&]() 
+        {
+            if (m_showBackgroundPicker)
+            {
+                ImGui::SetNextWindowPos({504.f, 20.f}, ImGuiCond_FirstUseEver);
+                ImGui::SetNextWindowSize({ 412.f, 94.f }, ImGuiCond_FirstUseEver);
+                if (ImGui::Begin("Options", &m_showBackgroundPicker))
+                {
+                    if (xy::ui::colourPicker("Background Colour", m_backgroundColour))
+                    {
+                        xy::App::setClearColour(m_backgroundColour);
+                    }
+
+                    if (xy::ui::button("Set Working Directory"))
+                    {
+                        auto path = xy::FileSystem::openFolderDialogue();
+                        if (!path.empty())
+                        {
+                            m_workingDirectory = path;
+
+                            //try trimming the loaded texture path
+                            if (!m_emitterSettings->texturePath.empty())
+                            {
+                                if (m_emitterSettings->texturePath.find(path) != std::string::npos)
+                                {
+                                    m_emitterSettings->texturePath = m_emitterSettings->texturePath.substr(path.size());
+                                }
+                            }
+                        }
+                    }
+                    xy::ui::sameLine(); xy::ui::showToolTip("Current working directory. Set this to your project directory and textures will be loaded and saved in a path relative to this");
+
+                    ImGui::End();
+                }
+            }
+        
+        });
+
+    m_config.loadFromFile(cfgPath);
+
+    if (auto* prop = m_config.findProperty("working_dir"); prop)
+    {
+        m_workingDirectory = prop->getValue<std::string>();
+    }
+    else
+    {
+        m_config.addProperty("working_dir").setValue(m_workingDirectory);
+    }
+
+    if (auto* prop = m_config.findProperty("bg_colour"); prop)
+    {
+        m_backgroundColour = prop->getValue<sf::Color>();
+        xy::App::setClearColour(m_backgroundColour);
+    }
+    else
+    {
+        m_config.addProperty("bg_colour").setValue(m_backgroundColour);
+    }
 }

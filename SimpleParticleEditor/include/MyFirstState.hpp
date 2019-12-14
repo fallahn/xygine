@@ -30,6 +30,7 @@ source distribution.
 #include "States.hpp"
 
 #include <xyginext/core/State.hpp>
+#include <xyginext/core/ConfigFile.hpp>
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/gui/GuiClient.hpp>
 #include <xyginext/resources/Resource.hpp>
@@ -45,6 +46,8 @@ class MyFirstState final : public xy::State, public xy::GuiClient
 {
 public:
     MyFirstState(xy::StateStack&, xy::State::Context);
+
+    ~MyFirstState();
 
     bool handleEvent(const sf::Event &evt) override;
     
@@ -64,6 +67,11 @@ private:
 
     xy::TextureResource m_textures;
     std::string m_workingDirectory;
+
+    bool m_showBackgroundPicker;
+    sf::Color m_backgroundColour;
+
+    xy::ConfigFile m_config;
 
     void setup();
 };
