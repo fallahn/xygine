@@ -280,6 +280,7 @@
     <ClInclude Include="include\xyginext\resources\ShaderResource.hpp" />
     <ClInclude Include="include\xyginext\resources\SystemFont.hpp" />
     <ClInclude Include="include\xyginext\util\Const.hpp" />
+    <ClInclude Include="include\xyginext\util\Easings.hpp" />
     <ClInclude Include="include\xyginext\util\IO.hpp" />
     <ClInclude Include="include\xyginext\util\Math.hpp" />
     <ClInclude Include="include\xyginext\util\Position.hpp" />

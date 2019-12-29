@@ -566,6 +566,9 @@
     <ClInclude Include="include\xyginext\ecs\systems\BitmapTextSystem.hpp">
       <Filter>Header Files\ecs\systems</Filter>
     </ClInclude>
+    <ClInclude Include="include\xyginext\util\Easings.hpp">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl">
