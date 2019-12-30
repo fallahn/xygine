@@ -234,9 +234,9 @@ void MyFirstState::setup()
 
         xy::ui::slider("Spawn Radius", m_emitterSettings->spawnRadius, 0.f, 500.f, ItemWidth);
         xy::ui::sameLine(); xy::ui::showToolTip("Radius around the emitter position in which particles are spawned");
-        xy::ui::slider("Spawn Offset X", m_emitterSettings->spawnOffset.x, 0.f, 500.f, ItemWidth);
+        xy::ui::slider("Spawn Offset X", m_emitterSettings->spawnOffset.x, -500.f, 500.f, ItemWidth);
         xy::ui::sameLine(); xy::ui::showToolTip("Offsets the particle spawn position from the emitter position in world units");
-        xy::ui::slider("Spawn Offset Y", m_emitterSettings->spawnOffset.y, 0.f, 500.f, ItemWidth);
+        xy::ui::slider("Spawn Offset Y", m_emitterSettings->spawnOffset.y, -500.f, 500.f, ItemWidth);
 
         count = m_emitterSettings->releaseCount;
         xy::ui::input("Release Count", count, ItemWidth);
