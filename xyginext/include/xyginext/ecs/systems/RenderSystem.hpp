@@ -73,6 +73,12 @@ namespace xy
         */
         void setFilterFlags(std::uint64_t flags) { m_filterFlags = flags; }
 
+        /*!
+        \breif Returns the current filter flags.
+        \see setFilterFlags
+        */
+        std::uint64_t getFilterFlags() const { return m_filterFlags; }
+
     private:
         bool m_wantsSorting;
         sf::Vector2f m_cullingBorder;
