@@ -58,7 +58,7 @@ void AudioSystem::handleMessage(const xy::Message& msg)
             auto& entities = getEntities();
             for (auto entity : entities)
             {
-                entity.getComponent<AudioEmitter>().applyMixerSettings();
+                entity.getComponent<AudioEmitter>().applyMixerSettings(m_volume);
             }
         }
     }
@@ -90,7 +90,7 @@ void AudioSystem::process(float)
 
 void AudioSystem::setVolume(float vol)
 {
-    m_volume = std::max(std::min(m_volume, 1.f), 0.f);
+    m_volume = std::max(std::min(vol, 1.f), 0.f);
 }
 
 //private
