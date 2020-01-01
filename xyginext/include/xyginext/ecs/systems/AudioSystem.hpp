@@ -29,6 +29,8 @@ source distribution.
 
 #include "xyginext/ecs/System.hpp"
 
+#include <SFML/Audio/SoundBuffer.hpp>
+
 namespace xy
 {
 	/*!
@@ -48,6 +50,14 @@ namespace xy
         void process(float) override;
 
     private:
+
+        //there's a bug in the SFML AlResource counter which
+        //sometimes causes the audio device to be unnecessarily
+        //destroyed. Creating a single resource here attempts to
+        //work around this by preventing the count reaching zero
+        //all the time the AudioSystem exists.
+        sf::SoundBuffer m_dummyBuffer;
+
         void onEntityRemoved(xy::Entity) override;
     };
 }
