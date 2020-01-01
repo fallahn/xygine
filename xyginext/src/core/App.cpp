@@ -380,6 +380,10 @@ void App::handleEvents()
             {
             case sf::Keyboard::F1:
                 Console::show();
+                if (!Console::isVisible())
+                {
+                    saveSettings();
+                }
                 break;
             case sf::Keyboard::F5:
                 saveScreenshot();
