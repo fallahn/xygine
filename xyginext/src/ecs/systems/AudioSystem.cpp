@@ -40,7 +40,8 @@ source distribution.
 using namespace xy;
 
 AudioSystem::AudioSystem(MessageBus& mb)
-    : System(mb, typeid(AudioSystem))
+    : System(mb, typeid(AudioSystem)),
+    m_volume(1.f)
 {
     requireComponent<AudioEmitter>();
     requireComponent<Transform>();
@@ -82,9 +83,14 @@ void AudioSystem::process(float)
 
         auto pos = tx.getWorldTransform().transformPoint({});
         audio.setPosition({ pos.x, pos.y, 0.f });
-        audio.applyMixerSettings();
+        audio.applyMixerSettings(m_volume);
         audio.update();
     }
+}
+
+void AudioSystem::setVolume(float vol)
+{
+    m_volume = std::max(std::min(m_volume, 1.f), 0.f);
 }
 
 //private

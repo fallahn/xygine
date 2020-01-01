@@ -202,9 +202,9 @@ sf::Time AudioEmitter::getPlayingOffset() const
     return m_impl->getPlayingOffset();
 }
 
-void AudioEmitter::applyMixerSettings()
+void AudioEmitter::applyMixerSettings(float multiplier)
 {
-    m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel) * AudioMixer::getPrefadeVolume(m_mixerChannel));
+    m_impl->setVolume(m_volume * AudioMixer::getVolume(m_mixerChannel) * AudioMixer::getPrefadeVolume(m_mixerChannel) * multiplier);
 }
 
 bool AudioEmitter::isStreaming() const

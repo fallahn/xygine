@@ -260,8 +260,10 @@ namespace xy
         \brief Applies the current mixer channel settings.
         Generally only used by audio systems which need to update
         an emitter with any changes in the mixer panel
+        \param multiplier Used to multiply the final output of the
+        emitter audio for fade or dimming effects
         */
-        void applyMixerSettings();
+        void applyMixerSettings(float multiplier = 1.f);
 
         /*!
         \brief Returns true if the audio is from a streaming source,

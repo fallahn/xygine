@@ -49,6 +49,23 @@ namespace xy
 
         void process(float) override;
 
+        /*!
+        \brief Sets the volume of AudioEmitters assigned to this system
+        When using multiple scenes either in the same state of multiple
+        active states it is sometimes desirable to set the volume of a 
+        group of emitters within a specific system. The accepted volume
+        is in the range, automatically clamped, of 0 - 1. This is
+        multiplied with emitter volume so that AudioEmitter settings are
+        left unaffected.
+        */
+        void setVolume(float volume);
+
+        /*!
+        \brief Returns the current volume of the system
+        \see setVolume
+        */
+        float getVolume() const { return m_volume; }
+
     private:
 
         //there's a bug in the SFML AlResource counter which
@@ -57,6 +74,8 @@ namespace xy
         //work around this by preventing the count reaching zero
         //all the time the AudioSystem exists.
         sf::SoundBuffer m_dummyBuffer;
+
+        float m_volume;
 
         void onEntityRemoved(xy::Entity) override;
     };
