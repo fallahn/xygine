@@ -237,6 +237,12 @@ namespace xy
         */
         void addGlFlag(std::int32_t);
 
+        /*!
+        \brief default flag value for drawables 
+        0b1000000000000000000000000000000000000000000000000000000000000000
+        */
+        static constexpr std::uint64_t DefaultFilterFlag = (1ull << 63);
+
     private:
         sf::PrimitiveType m_primitiveType = sf::Quads;
         sf::RenderStates m_states;

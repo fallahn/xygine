@@ -37,7 +37,7 @@ source distribution.
 using namespace xy;
 
 Drawable::Drawable()
-    : m_filterFlags     (std::numeric_limits<std::uint64_t>::max()),
+    : m_filterFlags     (DefaultFilterFlag),
     m_textureCount      (0),
     m_floatCount        (0),
     m_vec2Count         (0),
@@ -56,7 +56,7 @@ Drawable::Drawable()
 }
 
 Drawable::Drawable(const sf::Texture& texture)
-    : m_filterFlags     (std::numeric_limits<std::uint64_t>::max()),
+    : m_filterFlags     (DefaultFilterFlag),
     m_textureCount      (0),
     m_floatCount        (0),
     m_vec2Count         (0),
