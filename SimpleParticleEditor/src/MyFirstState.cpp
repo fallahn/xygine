@@ -56,7 +56,7 @@ MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx)
     m_scene                 (ctx.appInstance.getMessageBus()),
     m_emitterSettings       (nullptr),
     m_selectedBlendMode     (0),
-    m_workingDirectory      ("Working Directory"),
+    m_workingDirectory      ("None Selected..."),
     m_showBackgroundPicker  (false),
     m_backgroundColour      (sf::Color::Black)
 {
@@ -198,7 +198,7 @@ void MyFirstState::setup()
             xy::ui::endMenuBar();
         }
 
-        xy::ui::text("Working directory:");
+        xy::ui::text("Working Directory:");
         xy::ui::text(m_workingDirectory);
         xy::ui::separator();
 
