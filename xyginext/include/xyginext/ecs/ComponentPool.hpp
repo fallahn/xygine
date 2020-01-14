@@ -40,6 +40,7 @@ namespace xy
 		public:
 			virtual ~Pool() = default;
 			virtual void clear() = 0;
+			virtual void reset(std::size_t) = 0;
 		};
 
 		/*!
@@ -58,13 +59,15 @@ namespace xy
                 m_pool.resize(size); 
                 LOG("Warning component pool " + std::string(typeid(T).name()) + " has been resized to " + std::to_string(m_pool.size()) + " - existing component references may be invalidated", xy::Logger::Type::Warning);
             }
-			void clear() { m_pool.clear(); }
+			void clear() override { m_pool.clear(); }
 
             T& at(std::size_t idx) { return m_pool.at(idx); }
             const T& at(std::size_t idx) const { return m_pool.at(idx); }
 
             T& operator [] (std::size_t index) { XY_ASSERT(index < m_pool.size(), "Index out of range"); return m_pool[index]; }
 			const T& operator [] (std::size_t index) const { XY_ASSERT(index < m_pool.size(), "Index out of range"); return m_pool[index]; }
+
+			void reset(std::size_t index) override { m_pool[index] = T(); }
 
 		private:
 			std::vector<T> m_pool;

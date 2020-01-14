@@ -201,6 +201,12 @@ namespace xy
         */
         void forwardMessage(const Message&);
 
+        /*!
+        \brief Returns the active entity count.
+        Debugging util.
+        */
+        std::size_t getEntityCount() const { return m_entityManager.getEntityCount(); }
+
     private:
         MessageBus& m_messageBus;
         Entity::ID m_defaultCamera;

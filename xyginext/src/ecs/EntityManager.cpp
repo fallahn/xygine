@@ -41,7 +41,8 @@ EntityManager::EntityManager(MessageBus& mb, ComponentManager& cm, std::size_t p
     : m_messageBus      (mb),
     m_componentManager  (cm),
     m_componentPools    (Detail::MaxComponents),
-    m_initialPoolSize   (poolSize)
+    m_initialPoolSize   (poolSize),
+    m_entityCount       (0)
 {}
 
 //public
@@ -70,6 +71,15 @@ Entity EntityManager::createEntity()
     Entity e(idx, m_generations[idx]);
     e.m_entityManager = this;
 
+    m_entityCount++;
+
+#ifdef XY_DEBUG
+    if (m_entityCount == 1000)
+    {
+        xy::Logger::log("Entity count has reached 1000!", xy::Logger::Type::Warning);
+    }
+#endif //XY_DEBUG
+
     return e;
 }
 
@@ -84,6 +94,8 @@ void EntityManager::destroyEntity(Entity entity)
     m_componentMasks[index].reset();
     m_labels[index].clear();
 
+    m_entityCount--;
+
     //this is a bit of a kludge because transform components
     //need to be specifically reset to update the depth of any
     //newly orphaned children. We *could* reset all components
@@ -92,10 +104,21 @@ void EntityManager::destroyEntity(Entity entity)
     //later note: potentially orphaned drawables may contain
     //large unused vertex arrays - another case for reseting all components here...
 
-    auto& pool = getPool<xy::Transform>();
-    if (index < pool.size())
+    //a later later note: this is actually necessary for all moveable only
+    //component types, including user defined components...
+
+    //auto& pool = getPool<xy::Transform>();
+    //if (index < pool.size())
+    //{
+    //    pool[index] = /*std::move*/(xy::Transform());
+    //}
+
+    for (auto& pool : m_componentPools)
     {
-        pool[index] = /*std::move*/(xy::Transform());
+        if (pool)
+        {
+            pool->reset(index);
+        }
     }
 
     //let the world know the entity was destroyed

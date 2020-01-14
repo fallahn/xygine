@@ -43,72 +43,72 @@ source distribution.
 
 namespace xy
 {
-	namespace Detail
-	{
-		enum
-		{
-			MaxComponents = 64, //this is max number of types on a single entity (and max bits in a bitset)
-			IndexBits = 24,
-			GenerationBits = 8,
-			MaxIDsPerGeneration = 1024 //max number of IDs (and therefore max component buffer size) to generate before looking to recycle ID
-		};
-	}
-	
-	using ComponentMask = std::bitset<Detail::MaxComponents>;
+    namespace Detail
+    {
+        enum
+        {
+            MaxComponents = 64, //this is max number of types on a single entity (and max bits in a bitset)
+            IndexBits = 24,
+            GenerationBits = 8,
+            MaxIDsPerGeneration = 1024 //max number of IDs (and therefore max component buffer size) to generate before looking to recycle ID
+        };
+    }
+    
+    using ComponentMask = std::bitset<Detail::MaxComponents>;
     class EntityManager;
 
-	/*!
-	\brief Entity class - Basically just an ID.
-	The ID is generated as a combination of the index in the
-	memory pool and the generation - that is the nth time the
-	index has been used.
-	*/
-	class XY_EXPORT_API Entity final
-	{
-	public:
-		using ID = sf::Uint32;
-		using Generation = sf::Uint8;
+    /*!
+    \brief Entity class - Basically just an ID.
+    The ID is generated as a combination of the index in the
+    memory pool and the generation - that is the nth time the
+    index has been used.
+    */
+    class XY_EXPORT_API Entity final
+    {
+    public:
+        using ID = sf::Uint32;
+        using Generation = sf::Uint8;
 
-		Entity(ID index = std::numeric_limits<ID>::max(), Generation generation = 0);
+        Entity(ID index = std::numeric_limits<ID>::max(), Generation generation = 0);
 
-		/*
-		\brief Returns the index of this entity
-		*/
-		ID getIndex() const;
-		/*!
-		\brief Returns the generation of this entity
-		*/
-		Generation getGeneration() const;
+        /*
+        \brief Returns the index of this entity
+        */
+        ID getIndex() const;
+        /*!
+        \brief Returns the generation of this entity
+        */
+        Generation getGeneration() const;
 
-		/*!
-		\brief Returns true if the entity is marked for destruction
-		*/
-		bool destroyed() const;
+        /*!
+        \brief Returns true if the entity is marked for destruction
+        */
+        bool destroyed() const;
 
-		/*!
-		\brief Adds a copy of the given instance of a component to
-		the entity
-		*/
-		template <typename T>
-		void addComponent(const T&);
+        /*!
+        \brief Adds a copy of the given instance of a component to
+        the entity
+        */
+        template <typename T>
+        void addComponent(const T&);
 
-		/*
-		\brief Constructs a component from the given parameters,
-		adds it to the entity and returns a reference to it
-		*/
-		template <typename T, typename... Args>
-		T& addComponent(Args&&...);
+        /*
+        \brief Constructs a component from the given parameters,
+        adds it to the entity and returns a reference to it
+        */
+        template <typename T, typename... Args>
+        T& addComponent(Args&&...);
 
-		/*!
-		\brief returns true if the component type exists on thie entity
-		*/
-		template <typename T>
-		bool hasComponent() const;
+        /*!
+        \brief returns true if the component type exists on thie entity
+        */
+        template <typename T>
+        bool hasComponent() const;
 
-		/*!
-		\brief Returns a reference to the component if it exists
-		*/
-		template <typename T>
+        /*!
+        \brief Returns a reference to the component if it exists
+        */
+        template <typename T>
         T& getComponent();
 
         template <typename T>
@@ -169,12 +169,12 @@ namespace xy
         {
             return (l.getIndex() == r.getIndex());
         }
-	private:
+    private:
 
-		ID m_id;
+        ID m_id;
         EntityManager* m_entityManager;
         friend class EntityManager;
-	};
+    };
 
     class ComponentManager;
     class MessageBus;
@@ -256,6 +256,11 @@ namespace xy
         */
         const std::string& getLabel(Entity) const;
 
+        /*!
+        \brief Returns the number of active entities in the manager
+        */
+        std::size_t getEntityCount() const { return m_entityCount; }
+
     private:
         MessageBus& m_messageBus;
         ComponentManager& m_componentManager;
@@ -265,6 +270,8 @@ namespace xy
         std::size_t m_initialPoolSize;
         std::vector<ComponentMask> m_componentMasks;
         std::vector<std::string> m_labels;
+
+        std::size_t m_entityCount;
 
         template <typename T>
         Detail::ComponentPool<T>& getPool();
