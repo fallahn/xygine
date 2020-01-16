@@ -264,6 +264,8 @@ std::int32_t DynamicTreeSystem::allocateNode()
         m_nodeCapacity *= 2;
         m_nodes.resize(m_nodeCapacity);
 
+        LOG("Resized tree capacity to " + std::to_string(m_nodeCapacity), xy::Logger::Type::Info);
+
         //update the linked list for the new capacity
         for (auto i = m_nodeCount; i < m_nodeCapacity - 1; ++i)
         {
@@ -328,7 +330,7 @@ void DynamicTreeSystem::insertLeaf(std::int32_t treeID)
         //cost of creating a new node / parent for the leaf
         float cost = 2.f * combinedPerimeter;
 
-        //minimum cost for pushing the leaf donw the tree
+        //minimum cost for pushing the leaf down the tree
         float inheritedCost = 2.f * (combinedPerimeter - perimeter);
 
         //cost of descending to childA

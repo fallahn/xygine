@@ -50,70 +50,6 @@ namespace ui = ImGui;
 
 namespace
 {
-    /*
-    Used to redirect sfml's sf::err() to xy's log output
-    */
-    class LogStreamBuf : public std::streambuf
-    {
-    public:
-        LogStreamBuf()
-        {
-            static const std::size_t size = 64;
-            auto buffer = std::make_unique<char[]>(size);
-            setp(buffer.get(), buffer.get() + size);
-        }
-        ~LogStreamBuf()
-        {
-            //sync();
-        }
-
-    private:
-        int overflow(int character) override
-        {
-            if ((character != EOF) && (pptr() != epptr()))
-            {
-                return sputc(static_cast<char>(character));
-            }
-            else if (character != EOF)
-            {
-                sync();
-                return overflow(character);
-            }
-            else
-            {
-                return sync();
-            }
-        }
-
-        int sync() override
-        {
-            if (pbase() != pptr())
-            {
-                //print the contents of the write buffer into the logger
-                std::size_t size = static_cast<int>(pptr() - pbase());
-
-                m_stringstream.write(pbase(), size);
-
-                if (m_stringstream.str().find_first_of('\n') != std::string::npos)
-                {
-                    std::string str;
-                    std::getline(m_stringstream, str);
-                    Logger::log("sfml - " + str, xy::Logger::Type::Error);
-                    
-                    m_stringstream = std::stringstream();
-                }
-
-                setp(pbase(), epptr());
-            }
-
-            return 0;
-        }
-
-        std::stringstream m_stringstream;
-    };
-    LogStreamBuf logBuf;
-    std::ostream logStream(&logBuf);
-
     //static vars used by the console renderer
     std::vector<std::string> m_debugLines;
     std::vector<std::pair<std::function<void()>, const GuiClient*>> m_statusControls;
@@ -124,7 +60,7 @@ namespace
     std::vector<sf::Vector2u> resolutions;
     //int currentAALevel = 0;
     int currentResolution = 0;
-    std::array<char, 1024> resolutionNames{};
+    std::vector<char> resolutionNames{};
     bool fullScreen = false;
     bool vSync = false;
     bool useFrameLimit = false;
@@ -447,16 +383,12 @@ void Console::draw()
 
             ui::EndTabBar();
         }
-        
     }
     ui::End();
 }
 
 void Console::init()
 {
-    //divert sf::err to our log stream
-    //sf::err().rdbuf(logStream.rdbuf());
-
     auto modes = sf::VideoMode::getFullscreenModes();
     for (const auto& mode : modes)
     {
@@ -474,25 +406,29 @@ void Console::init()
         std::string width = std::to_string(r->x);
         std::string height = std::to_string(r->y);
 
-        auto totalLen = width.size() + height.size() + 4; // x \0
-        if (i >= resolutionNames.size() - totalLen)
-        {
-            break;
-        }
+        //auto totalLen = width.size() + height.size() + 4; // x \0
+        //if (i >= resolutionNames.size() - totalLen)
+        //{
+        //    break;
+        //}
 
         for (char c : width)
         {
-            resolutionNames[i++] = c;
+            resolutionNames.push_back(c);
         }
-        resolutionNames[i++] = ' ';
-        resolutionNames[i++] = 'x';
-        resolutionNames[i++] = ' ';
+
+        resolutionNames.push_back(' ');
+        resolutionNames.push_back('x');
+        resolutionNames.push_back(' ');
+
         for (char c : height)
         {
-            resolutionNames[i++] = c;
+            //resolutionNames[i++] = c;
+            resolutionNames.push_back(c);
         }
-        resolutionNames[i++] = '\0';
+        resolutionNames.push_back(0);
     }
+    resolutionNames.push_back(0);
 
     //------default commands------//
     //list all available commands to the console
