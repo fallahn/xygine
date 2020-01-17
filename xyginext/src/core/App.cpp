@@ -392,12 +392,6 @@ void App::handleEvents()
             }
         }
 
-        //if (/*Console::isVisible() &&*/
-        //    ImGui::SFML::ProcessEvent(evt))
-        //{
-        //    continue; //imgui consumes keyboard events
-        //}
-
         switch (evt.type)
         {
         case sf::Event::LostFocus:
