@@ -341,6 +341,7 @@ namespace xy
         static void removeWindows(const GuiClient*);
 
         friend class GuiClient;
+        friend class Console;
 
         void loadSettings();
         void saveSettings();

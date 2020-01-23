@@ -244,147 +244,159 @@ void Console::removeCommands(const ConsoleClient* client)
 
 void Console::draw()
 {
-    if (!visible) return;
-    //ImGui::ShowDemoWindow();
-    ui::SetNextWindowSizeConstraints({ 640, 480 }, { 1024.f, 768.f });
-    if (ui::Begin("Console", &visible, ImGuiWindowFlags_NoScrollbar))
+    if (visible)
     {
-        if (ui::BeginTabBar("Tabs"))
+        //ImGui::ShowDemoWindow();
+        ui::SetNextWindowSizeConstraints({ 640, 480 }, { 1024.f, 768.f });
+        if (ui::Begin("Console", &visible, ImGuiWindowFlags_NoScrollbar))
         {
-            // Console
-            if (ui::BeginTabItem("Console"))
+            if (ui::BeginTabBar("Tabs"))
             {
-                ui::BeginChild("ScrollingRegion", ImVec2(0, -ui::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
-                ui::TextUnformatted(output.c_str(), output.c_str() + output.size());
-                ui::SetScrollHereY(1.f); //TODO track when the user scrolled and set to correct position
-                ui::EndChild();
-
-                ui::Separator();
-
-                ui::PushItemWidth(620.f);
-
-                bool focus = false;
-                if ((focus = ImGui::InputText(" ", input, MAX_INPUT_CHARS,
-                    ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory,
-                    &textEditCallback)))
+                // Console
+                if (ui::BeginTabItem("Console"))
                 {
-                    doCommand(input);
-                }
+                    ui::BeginChild("ScrollingRegion", ImVec2(0, -ui::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
+                    ui::TextUnformatted(output.c_str(), output.c_str() + output.size());
+                    ui::SetScrollHereY(1.f); //TODO track when the user scrolled and set to correct position
+                    ui::EndChild();
 
-                ui::PopItemWidth();
+                    ui::Separator();
 
-                ImGui::SetItemDefaultFocus();
-                if (focus || ImGui::IsItemHovered()
-                    || (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) 
-                        && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0)))
-                {
-                    ImGui::SetKeyboardFocusHere(-1);
-                }
+                    ui::PushItemWidth(620.f);
 
-                ui::EndTabItem();
-            }
+                    bool focus = false;
+                    if ((focus = ImGui::InputText(" ", input, MAX_INPUT_CHARS,
+                        ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory,
+                        &textEditCallback)))
+                    {
+                        doCommand(input);
+                    }
 
-            // Video options
-            if (ui::BeginTabItem("Video"))
-            {
-                ui::Combo("Resolution", &currentResolution, resolutionNames.data());
+                    ui::PopItemWidth();
 
-                XY_ASSERT(App::getRenderWindow(), "no valid window");
+                    ImGui::SetItemDefaultFocus();
+                    if (focus || ImGui::IsItemHovered()
+                        || (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows)
+                            && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0)))
+                    {
+                        ImGui::SetKeyboardFocusHere(-1);
+                    }
 
-                ui::Checkbox("Full Screen", &fullScreen);
-
-                ui::Checkbox("V-Sync", &vSync);
-                if (vSync)
-                {
-                    useFrameLimit = false;
-                }
-
-                ui::Checkbox("Limit Framerate", &useFrameLimit);
-                if (useFrameLimit)
-                {
-                    vSync = false;
-                }
-
-                ui::SameLine();
-                ui::PushItemWidth(80.f);
-                ui::InputInt("Frame Rate", &frameLimit);
-                ui::PopItemWidth();
-                frameLimit = std::max(10, std::min(frameLimit, 360));
-
-                if (ui::Button("Apply", { 50.f, 20.f }))
-                {
-                    //apply settings
-                    auto settings = App::getActiveInstance()->getVideoSettings();
-                    settings.VideoMode.width = resolutions[currentResolution].x;
-                    settings.VideoMode.height = resolutions[currentResolution].y;
-                    settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
-                    settings.VSync = vSync;
-                    settings.FrameLimit = useFrameLimit ? frameLimit : 0;
-
-                    App::getActiveInstance()->applyVideoSettings(settings);
-                }
-                ui::EndTabItem();
-            }
-
-            // Audio
-            if (ui::BeginTabItem("Audio"))
-            {
-                ui::Text("NOTE: only AudioSystem sounds are affected.");
-
-                static float maxVol = AudioMixer::getMasterVolume();
-                ui::SliderFloat("Master", &maxVol, 0.f, 1.f);
-                AudioMixer::setMasterVolume(maxVol);
-
-                static std::array<float, AudioMixer::MaxChannels> channelVol;
-                for (auto i = 0u; i < AudioMixer::MaxChannels; ++i)
-                {
-                    channelVol[i] = AudioMixer::getVolume(i);
-                    ui::SliderFloat(AudioMixer::getLabel(i).c_str(), &channelVol[i], 0.f, 1.f);
-                    AudioMixer::setVolume(channelVol[i], i);
-                }
-                ui::EndTabItem();
-            }
-
-            // Stats
-            if (ui::BeginTabItem("Stats"))
-            {
-                ui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-                ui::NewLine();
-                for (auto& line : m_debugLines)
-                {
-                    ImGui::TextUnformatted(line.c_str());
-                }
-                ui::EndTabItem();
-            }
-            m_debugLines.clear();
-            m_debugLines.reserve(10);
-
-            //display any registered controls
-            int count(0);
-            for (const auto& func : m_statusControls)
-            {
-                if (ImGui::BeginTabItem(("Stat " + std::to_string(count)).c_str()))
-                {
-                    func.first();
                     ui::EndTabItem();
                 }
-            }
 
-            //display registered tabs
-            for (const auto& tab : m_consoleTabs)
-            {
-                const auto&[name, func, c] = tab;
-                if (ImGui::BeginTabItem(name.c_str()))
+                // Video options
+                if (ui::BeginTabItem("Video"))
                 {
-                    func();
+                    ui::Combo("Resolution", &currentResolution, resolutionNames.data());
+
+                    XY_ASSERT(App::getRenderWindow(), "no valid window");
+
+                    ui::Checkbox("Full Screen", &fullScreen);
+
+                    ui::Checkbox("V-Sync", &vSync);
+                    if (vSync)
+                    {
+                        useFrameLimit = false;
+                    }
+
+                    ui::Checkbox("Limit Framerate", &useFrameLimit);
+                    if (useFrameLimit)
+                    {
+                        vSync = false;
+                    }
+
+                    ui::SameLine();
+                    ui::PushItemWidth(80.f);
+                    ui::InputInt("Frame Rate", &frameLimit);
+                    ui::PopItemWidth();
+                    frameLimit = std::max(10, std::min(frameLimit, 360));
+
+                    if (ui::Button("Apply", { 50.f, 20.f }))
+                    {
+                        //apply settings
+                        auto settings = App::getActiveInstance()->getVideoSettings();
+                        settings.VideoMode.width = resolutions[currentResolution].x;
+                        settings.VideoMode.height = resolutions[currentResolution].y;
+                        settings.WindowStyle = (fullScreen) ? sf::Style::Fullscreen : sf::Style::Close;
+                        settings.VSync = vSync;
+                        settings.FrameLimit = useFrameLimit ? frameLimit : 0;
+
+                        App::getActiveInstance()->applyVideoSettings(settings);
+                    }
                     ui::EndTabItem();
                 }
-            }
 
-            ui::EndTabBar();
+                // Audio
+                if (ui::BeginTabItem("Audio"))
+                {
+                    ui::Text("NOTE: only AudioSystem sounds are affected.");
+
+                    static float maxVol = AudioMixer::getMasterVolume();
+                    ui::SliderFloat("Master", &maxVol, 0.f, 1.f);
+                    AudioMixer::setMasterVolume(maxVol);
+
+                    static std::array<float, AudioMixer::MaxChannels> channelVol;
+                    for (auto i = 0u; i < AudioMixer::MaxChannels; ++i)
+                    {
+                        channelVol[i] = AudioMixer::getVolume(i);
+                        ui::SliderFloat(AudioMixer::getLabel(i).c_str(), &channelVol[i], 0.f, 1.f);
+                        AudioMixer::setVolume(channelVol[i], i);
+                    }
+                    ui::EndTabItem();
+                }
+
+                // Stats
+                if (ui::BeginTabItem("Stats"))
+                {
+                    ui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+                    ui::NewLine();
+                    for (auto& line : m_debugLines)
+                    {
+                        ImGui::TextUnformatted(line.c_str());
+                    }
+                    ui::EndTabItem();
+                }
+                m_debugLines.clear();
+                m_debugLines.reserve(10);
+
+                //display any registered controls
+                int count(0);
+                for (const auto& func : m_statusControls)
+                {
+                    if (ImGui::BeginTabItem(("Stat " + std::to_string(count)).c_str()))
+                    {
+                        func.first();
+                        ui::EndTabItem();
+                    }
+                }
+
+                //display registered tabs
+                for (const auto& tab : m_consoleTabs)
+                {
+                    const auto& [name, func, c] = tab;
+                    if (ImGui::BeginTabItem(name.c_str()))
+                    {
+                        func();
+                        ui::EndTabItem();
+                    }
+                }
+
+                ui::EndTabBar();
+            }
         }
+        ui::End();
     }
-    ui::End();
+    else
+    {
+        return;
+    }
+
+    //separate clause to catch window closing
+    if (!visible)
+    {
+        App::getActiveInstance()->saveSettings();
+    }
 }
 
 void Console::init()
