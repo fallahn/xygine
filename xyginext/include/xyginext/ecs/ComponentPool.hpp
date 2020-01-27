@@ -33,8 +33,8 @@ source distribution.
 
 namespace xy
 {
-	namespace Detail
-	{
+    namespace Detail
+    {
 		class Pool
 		{
 		public:
@@ -55,16 +55,16 @@ namespace xy
 			bool empty() const { return m_pool.empty(); }
 			std::size_t size() const { return m_pool.size(); }
 			void resize(std::size_t size)
-            {
-                m_pool.resize(size); 
-                LOG("Warning component pool " + std::string(typeid(T).name()) + " has been resized to " + std::to_string(m_pool.size()) + " - existing component references may be invalidated", xy::Logger::Type::Warning);
-            }
+			{
+				m_pool.resize(size); 
+				LOG("Warning component pool " + std::string(typeid(T).name()) + " has been resized to " + std::to_string(m_pool.size()) + " - existing component references may be invalidated", xy::Logger::Type::Warning);
+			}
 			void clear() override { m_pool.clear(); }
 
-            T& at(std::size_t idx) { return m_pool.at(idx); }
-            const T& at(std::size_t idx) const { return m_pool.at(idx); }
+			T& at(std::size_t idx) { return m_pool.at(idx); }
+			const T& at(std::size_t idx) const { return m_pool.at(idx); }
 
-            T& operator [] (std::size_t index) { XY_ASSERT(index < m_pool.size(), "Index out of range"); return m_pool[index]; }
+			T& operator [] (std::size_t index) { XY_ASSERT(index < m_pool.size(), "Index out of range"); return m_pool[index]; }
 			const T& operator [] (std::size_t index) const { XY_ASSERT(index < m_pool.size(), "Index out of range"); return m_pool[index]; }
 
 			void reset(std::size_t index) override { m_pool[index] = T(); }
@@ -72,5 +72,5 @@ namespace xy
 		private:
 			std::vector<T> m_pool;
 		};
-	}
+    }
 }
