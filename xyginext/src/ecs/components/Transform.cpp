@@ -58,7 +58,7 @@ Transform::~Transform()
     }
 }
 
-Transform::Transform(Transform&& other)
+Transform::Transform(Transform&& other) noexcept
     : m_parent      (nullptr),
     m_depth         (0)
 {
@@ -98,10 +98,7 @@ Transform::Transform(Transform&& other)
         //update the children's new parent
         for (auto* c : m_children)
         {
-            if (c == this)
-            {
-                throw std::runtime_error("Transform already exists in child list");
-            }
+            XY_ASSERT(c != this, "FATAL can't parent to ourself!!");
 
             c->m_parent = this;
             c->setDepth(m_depth + 1);
@@ -124,7 +121,7 @@ Transform::Transform(Transform&& other)
     }
 }
 
-Transform& Transform::operator=(Transform&& other)
+Transform& Transform::operator=(Transform&& other) noexcept
 {
     if (&other != this && other.m_parent != this)
     {
@@ -162,10 +159,7 @@ Transform& Transform::operator=(Transform&& other)
         //update the children's new parent
         for (auto c : m_children)
         {
-            if (c == this)
-            {
-                throw std::runtime_error("Transform exists in list of children");
-            }
+            XY_ASSERT(c != this, "FATAL can't parent to ourself!");
             c->m_parent = this;
             c->setDepth(m_depth + 1);
         }

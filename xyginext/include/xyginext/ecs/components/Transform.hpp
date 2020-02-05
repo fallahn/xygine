@@ -47,9 +47,9 @@ namespace xy
         ~Transform();
 
         Transform(const Transform&) = delete;
-        Transform(Transform&&);
+        Transform(Transform&&) noexcept;
         Transform& operator = (const Transform&) = delete;
-        Transform& operator = (Transform&&);
+        Transform& operator = (Transform&&) noexcept;
 
         /*!
         \brief Adds a child transform to this one

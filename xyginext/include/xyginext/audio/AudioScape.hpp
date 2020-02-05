@@ -85,7 +85,7 @@ namespace xy
         \param rx Reference to an AudioResource object used to cache
         any non-streamed audio files.
         */
-        AudioScape(AudioResource& rx);
+        explicit AudioScape(AudioResource& rx);
 
         /*!
         \brief Attempts to load an AudioScape file from the given path

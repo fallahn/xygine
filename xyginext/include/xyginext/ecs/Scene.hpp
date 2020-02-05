@@ -71,7 +71,7 @@ namespace xy
         number of entity IDs is 1024 before they are recycled, values greater
         than this have no effect other than allocating unusable memory.
         */
-        Scene(MessageBus& messageBus, std::size_t initialPoolSize = 256);
+        explicit Scene(MessageBus& messageBus, std::size_t initialPoolSize = 256);
 
 
         ~Scene() = default;

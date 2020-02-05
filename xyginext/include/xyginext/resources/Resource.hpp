@@ -56,9 +56,7 @@ namespace xy
     class XY_EXPORT_API BaseResource
     {
     public:
-        BaseResource()
-        {
-        }
+        BaseResource() = default;
         virtual ~BaseResource() = default;
         BaseResource(const BaseResource&) = delete;
         BaseResource(BaseResource&&) = delete;
