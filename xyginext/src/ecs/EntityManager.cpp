@@ -96,23 +96,9 @@ void EntityManager::destroyEntity(Entity entity)
 
     m_entityCount--;
 
-    //this is a bit of a kludge because transform components
-    //need to be specifically reset to update the depth of any
-    //newly orphaned children. We *could* reset all components
-    //although this may just be unnecessary overhead.
-
-    //later note: potentially orphaned drawables may contain
-    //large unused vertex arrays - another case for reseting all components here...
-
-    //a later later note: this is actually necessary for all moveable only
-    //component types, including user defined components...
-
-    //auto& pool = getPool<xy::Transform>();
-    //if (index < pool.size())
-    //{
-    //    pool[index] = /*std::move*/(xy::Transform());
-    //}
-
+    //clears up any moveable components
+    //or drawables with vertex arrays
+    //which might otherwise get left behind
     for (auto& pool : m_componentPools)
     {
         if (pool)

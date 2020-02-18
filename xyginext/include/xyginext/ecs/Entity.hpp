@@ -123,7 +123,7 @@ namespace xy
         \brief Returns true if this entity has a valid scene associated with it
         ie it was created by Scene::createEntity()
         */
-        bool isValid() const { return m_entityManager != nullptr; }
+        bool isValid() const;
 
         /*!
         \brief Sets the label of this entity, useful for debugging

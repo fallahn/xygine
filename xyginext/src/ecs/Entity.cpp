@@ -75,6 +75,11 @@ const ComponentMask& Entity::getComponentMask() const
     return m_entityManager->getComponentMask(*this);
 }
 
+bool Entity::isValid() const
+{
+    return ((m_entityManager != nullptr) && (!m_entityManager->entityDestroyed(*this)));
+}
+
 void Entity::setLabel(const std::string& label)
 {
     XY_ASSERT(m_entityManager, "Invalid Entity instance");
