@@ -43,7 +43,7 @@ NetEvent::Packet::Packet()
 }
 
 //public
-sf::Uint32 NetEvent::Packet::getID() const
+std::uint8_t NetEvent::Packet::getID() const
 {
     XY_ASSERT(m_size, "Not a valid packet instance");
     return m_id;
@@ -70,10 +70,10 @@ void NetEvent::Packet::setPacketData(const std::uint8_t* data, std::size_t size)
             m_data.resize(size);
         }
 
-        std::memcpy(&m_id, data, sizeof(sf::Uint32));
+        std::memcpy(&m_id, data, sizeof(std::uint8_t));
         
-        size -= sizeof(sf::Uint32);
-        std::memcpy(m_data.data(), data + sizeof(sf::Uint32), size);
+        size -= sizeof(std::uint8_t);
+        std::memcpy(m_data.data(), data + sizeof(std::uint8_t), size);
         m_size = size;
     }
 }

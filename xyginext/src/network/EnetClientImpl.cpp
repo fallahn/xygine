@@ -206,7 +206,7 @@ bool EnetClientImpl::pollEvent(NetEvent& evt)
     return false;
 }
 
-void EnetClientImpl::sendPacket(sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
+void EnetClientImpl::sendPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
     if (m_peer)
     {
@@ -224,9 +224,9 @@ void EnetClientImpl::sendPacket(sf::Uint32 id, const void* data, std::size_t siz
             packetFlags |= ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT | ENET_PACKET_FLAG_UNSEQUENCED;
         }
 
-        ENetPacket* packet = enet_packet_create(&id, sizeof(sf::Uint32), packetFlags);
-        enet_packet_resize(packet, sizeof(sf::Uint32) + size);
-        std::memcpy(&packet->data[sizeof(sf::Uint32)], data, size);
+        ENetPacket* packet = enet_packet_create(&id, sizeof(std::uint8_t), packetFlags);
+        enet_packet_resize(packet, sizeof(std::uint8_t) + size);
+        std::memcpy(&packet->data[sizeof(std::uint8_t)], data, size);
 
         enet_peer_send(static_cast<_ENetPeer*>(const_cast<void*>(m_peer.getPeer())), channel, packet);
     }

@@ -34,13 +34,13 @@ bool NetHost::start(const std::string& address, sf::Uint16 port, std::size_t max
 }
 
 template <typename T>
-void NetHost::broadcastPacket(sf::Uint32 id, const T& data, NetFlag flags, sf::Uint8 channel)
+void NetHost::broadcastPacket(std::uint8_t id, const T& data, NetFlag flags, sf::Uint8 channel)
 {
     m_impl->broadcastPacket(id, (void*)&data, sizeof(T), flags, channel);
 }
 
 template <typename T>
-void NetHost::sendPacket(const NetPeer& peer, sf::Uint32 id, const T& data, NetFlag flags, sf::Uint8 channel)
+void NetHost::sendPacket(const NetPeer& peer, std::uint8_t id, const T& data, NetFlag flags, sf::Uint8 channel)
 {
     m_impl->sendPacket(peer, id, (void*)&data, sizeof(T), flags, channel);
 }

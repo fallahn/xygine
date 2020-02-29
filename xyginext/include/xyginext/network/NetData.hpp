@@ -151,7 +151,7 @@ namespace xy
             /*!
             \brief The unique ID this packet was tegged with when sent
             */
-            sf::Uint32 getID() const;
+            std::uint8_t getID() const;
 
             /*!
             \brief Used to retreive the data as a specific type.
@@ -177,7 +177,7 @@ namespace xy
             void setPacketData(const std::uint8_t*, std::size_t);
         private:
 
-            sf::Uint32 m_id;
+            std::uint8_t m_id;
             std::vector<std::uint8_t> m_data;
             std::size_t m_size;
 

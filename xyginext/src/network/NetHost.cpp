@@ -47,13 +47,13 @@ bool NetHost::pollEvent(NetEvent& evt)
     return m_impl->pollEvent(evt);
 }
 
-void NetHost::broadcastPacket(sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
+void NetHost::broadcastPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
     XY_ASSERT(m_impl, "start() has not yet been called!");
     m_impl->broadcastPacket(id, data, size, flags, channel);
 }
 
-void NetHost::sendPacket(const NetPeer& peer, sf::Uint32 id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
+void NetHost::sendPacket(const NetPeer& peer, std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
 {
     XY_ASSERT(m_impl, "start() has not yet been called!");
     m_impl->sendPacket(peer, id, data, size, flags, channel);
