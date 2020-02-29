@@ -71,7 +71,7 @@ bool Entity::destroyed() const
 
 const ComponentMask& Entity::getComponentMask() const
 {
-    XY_ASSERT(m_entityManager, "Invalid Entity instance");
+    XY_ASSERT(isValid(), "Invalid Entity instance");
     return m_entityManager->getComponentMask(*this);
 }
 
@@ -82,13 +82,13 @@ bool Entity::isValid() const
 
 void Entity::setLabel(const std::string& label)
 {
-    XY_ASSERT(m_entityManager, "Invalid Entity instance");
+    XY_ASSERT(isValid(), "Invalid Entity instance");
     m_entityManager->setLabel(*this, label);
 }
 
 const std::string& Entity::getLabel() const
 {
-    XY_ASSERT(m_entityManager, "Invalid Entity instance");
+    XY_ASSERT(isValid(), "Invalid Entity instance");
     return m_entityManager->getLabel(*this);
 }
 
