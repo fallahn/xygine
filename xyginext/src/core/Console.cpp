@@ -66,12 +66,10 @@ namespace
     bool useFrameLimit = false;
     int frameLimit = 10;
 
-    
-    std::string output;
 
     constexpr std::size_t MAX_INPUT_CHARS = 400;
     char input[MAX_INPUT_CHARS];
-    std::list<std::string> buffer;
+    std::list<std::pair<std::string, ImVec4>> buffer;
     const std::size_t MAX_BUFFER = 50;
 
     std::list<std::string> history;
@@ -84,6 +82,10 @@ namespace
 
     ConfigFile convars;
     const std::string convarName("convars.cfg");
+
+    const ImVec4 WarningColour(1.f, 0.6f, 0.f, 1.f);
+    const ImVec4 ErrorColour(1.f, 0.f, 0.f, 1.f);
+    const ImVec4 DefaultColour(1.f, 1.f, 1.f, 1.f);
 }
 int textEditCallback(ImGuiInputTextCallbackData* data);
 
@@ -92,19 +94,22 @@ void Console::print(const std::string& line)
 {
     if (line.empty()) return;
 
-    std::string timestamp("<" + SysTime::timeString() + "> ");
+    std::string timestamp(SysTime::timeString() + " ");
 
-    buffer.push_back(timestamp + line);
+    auto colour = DefaultColour;
+    if (line.find("ERROR") != std::string::npos)
+    {
+        colour = ErrorColour;
+    }
+    else if (line.find("WARNING") != std::string::npos)
+    {
+        colour = WarningColour;
+    }
+
+    buffer.push_back(std::make_pair(timestamp + line, colour));
     if (buffer.size() > MAX_BUFFER)
     {
         buffer.pop_front();
-    }
-
-    output.clear();
-    for (const auto& str : buffer)
-    {
-        output.append(str);
-        output.append("\n");
     }
 }
 
@@ -256,7 +261,16 @@ void Console::draw()
                 if (ui::BeginTabItem("Console"))
                 {
                     ui::BeginChild("ScrollingRegion", ImVec2(0, -ui::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
-                    ui::TextUnformatted(output.c_str(), output.c_str() + output.size());
+                    
+                    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1));
+                    for (const auto& [str, colour] : buffer)
+                    {
+                        ImGui::PushStyleColor(ImGuiCol_Text, colour);
+                        ImGui::TextUnformatted(str.c_str());
+                        ImGui::PopStyleColor();
+                    }
+                    ImGui::PopStyleVar();
+
                     ui::SetScrollHereY(1.f); //TODO track when the user scrolled and set to correct position
                     ui::EndChild();
 
