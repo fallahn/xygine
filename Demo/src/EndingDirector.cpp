@@ -426,7 +426,7 @@ void EndingDirector::spawnWideShot()
         }
     }
 
-    if (m_playerSprite.getAnimationCount() > 0)
+    if (!m_playerSprite.getAnimations().empty())
     {
         auto playerEnt = scene.createEntity();
         playerEnt.addComponent<xy::Transform>().setPosition(235.f, 240.f);

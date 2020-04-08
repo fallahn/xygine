@@ -50,15 +50,21 @@ void SpriteAnimator::process(float dt)
         if (animation.m_playing)
         {
             auto& sprite = entity.getComponent<Sprite>();
+            if (sprite.m_animations[animation.m_id].frames.empty())
+            {
+                animation.stop();
+                continue;
+            }
+
             animation.m_currentFrameTime -= dt;
-            if (animation.m_currentFrameTime < 0 && sprite.m_animations[animation.m_id].frameCount > 0)
+            if (animation.m_currentFrameTime < 0 /*&& sprite.m_animations[animation.m_id].frameCount > 0*/)
             {
                 XY_ASSERT(sprite.m_animations[animation.m_id].framerate > 0, "Illegal Frame Rate");
-                XY_ASSERT(sprite.m_animations[animation.m_id].frameCount > 0, "Illegal Frame Count");
+                XY_ASSERT(!sprite.m_animations[animation.m_id].frames.empty(), "Illegal Frame Count");
                 animation.m_currentFrameTime += (1.f / sprite.m_animations[animation.m_id].framerate);
 
                 auto lastFrame = animation.m_frameID;
-                animation.m_frameID = (animation.m_frameID + 1) % sprite.m_animations[animation.m_id].frameCount;
+                animation.m_frameID = (animation.m_frameID + 1) % sprite.m_animations[animation.m_id].frames.size();
 
                 if (animation.m_frameID < lastFrame)
                 {

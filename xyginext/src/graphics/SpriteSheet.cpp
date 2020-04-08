@@ -66,22 +66,22 @@ bool SpriteSheet::saveToFile(const std::string &path)
     sheetFile.addProperty("src", "\"" + m_texturePath + "\"");
     sheetFile.addProperty("smooth").setValue( m_smooth ? true : false);
     
-    for (auto& sprite : m_sprites)
+    for (const auto& [name, sprite] : m_sprites)
     {
-        auto sprObj = sheetFile.addObject("sprite", sprite.first);
-        sprObj->addProperty("bounds").setValue(sprite.second.getTextureRect());
-        sprObj->addProperty("colour").setValue(sprite.second.getColour());
+        auto sprObj = sheetFile.addObject("sprite", name);
+        sprObj->addProperty("bounds").setValue(sprite.getTextureRect());
+        sprObj->addProperty("colour").setValue(sprite.getColour());
         
-        auto& anims = sprite.second.getAnimations();
-        for (auto i(0u); i < sprite.second.getAnimationCount(); i++)
+        auto& anims = sprite.getAnimations();
+        for (auto i(0u); i < sprite.getAnimations().size(); i++)
         {
-            auto animObj = sprObj->addObject("animation", m_animations[sprite.first][i]);
+            auto animObj = sprObj->addObject("animation", m_animations[name][i]);
             animObj->addProperty("framerate").setValue(anims[i].framerate);
             animObj->addProperty("loop").setValue(anims[i].looped);
             animObj->addProperty("loop_start").setValue(static_cast<sf::Int32>(anims[i].loopStart));
             
             auto& frames = anims[i].frames;
-            for (auto j(0u); j < anims[i].frameCount; j++)
+            for (auto j(0u); j < anims[i].frames.size(); j++)
             {
                 animObj->addProperty("frame").setValue(frames[j]);
             }
@@ -230,7 +230,7 @@ bool SpriteSheet::loadFromFile(const std::string& path, std::function<sf::Textur
             {
                 if (sprOb.getName() == "animation")
                 {
-                    auto& anim = spriteComponent.m_animations[spriteComponent.m_animationCount];
+                    auto& anim = spriteComponent.m_animations.emplace_back();
 
                     const auto& properties = sprOb.getProperties();
                     for (const auto& p : properties)
@@ -238,7 +238,7 @@ bool SpriteSheet::loadFromFile(const std::string& path, std::function<sf::Textur
                         std::string name = p.getName();
                         if (name == "frame")
                         {
-                            anim.frames[anim.frameCount++] = p.getValue<sf::FloatRect>();
+                            anim.frames.emplace_back(p.getValue<sf::FloatRect>());
                         }
                         else if (name == "framerate")
                         {
@@ -256,9 +256,8 @@ bool SpriteSheet::loadFromFile(const std::string& path, std::function<sf::Textur
 
                     auto animId = sprOb.getId();
                     m_animations[spriteName].push_back(animId);
+                    anim.id.resize(animId.length());
                     animId.copy(anim.id.data(), animId.length());
-
-                    spriteComponent.m_animationCount++;
                 }
             }
 

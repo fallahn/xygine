@@ -35,8 +35,7 @@ Sprite::Sprite()
     : m_texture     (nullptr),
     m_colour        (sf::Color::White),
     m_blendOverride (false),
-    m_dirty         (true),
-    m_animationCount(0)
+    m_dirty         (true)
 {
 
 }
@@ -45,8 +44,7 @@ Sprite::Sprite(const sf::Texture& texture)
     : m_texture     (nullptr),
     m_colour        (sf::Color::White),
     m_blendOverride (false),
-    m_dirty         (true),
-    m_animationCount(0)
+    m_dirty         (true)
 {
     setTexture(texture);
 }
