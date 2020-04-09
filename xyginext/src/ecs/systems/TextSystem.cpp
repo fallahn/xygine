@@ -28,18 +28,16 @@ source distribution.
 #include "xyginext/ecs/systems/TextSystem.hpp"
 #include "xyginext/ecs/components/Drawable.hpp"
 #include "xyginext/ecs/components/Text.hpp"
-#include "xyginext/ecs/components/Transform.hpp"
 
 #include <SFML/Graphics/Font.hpp>
 
 using namespace xy;
 
-TextSystem::TextSystem(xy::MessageBus& mb)
-    : xy::System(mb, typeid(TextSystem))
+TextSystem::TextSystem(MessageBus& mb)
+    : System(mb, typeid(TextSystem))
 {
     requireComponent<Drawable>();
     requireComponent<Text>();
-    requireComponent<Transform>();
 }
 
 void TextSystem::process(float)

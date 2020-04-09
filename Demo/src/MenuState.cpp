@@ -441,7 +441,6 @@ void MenuState::createScene()
     });
     entity.getComponent<xy::UIHitBox>().area = bounds;
 
-
     m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(1.f);
 }
 
