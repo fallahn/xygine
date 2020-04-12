@@ -209,9 +209,9 @@ namespace xy
 
     private:
         MessageBus& m_messageBus;
-        Entity::ID m_defaultCamera;
-        Entity::ID m_activeCamera;
-        Entity::ID m_activeListener;
+        Entity m_defaultCamera;
+        Entity m_activeCamera;
+        Entity m_activeListener;
 
         std::vector<Entity> m_pendingEntities;
         std::vector<Entity> m_destroyedEntities;

@@ -66,13 +66,13 @@ Scene::Scene(MessageBus& mb, std::size_t poolSize)
     defaultCamera.getComponent<Camera>().setViewport(getDefaultViewport());
     defaultCamera.addComponent<AudioListener>();
 
-    m_defaultCamera = defaultCamera.getIndex();
+    m_defaultCamera = defaultCamera;
     m_activeCamera = m_defaultCamera;
     m_activeListener = m_defaultCamera;
 
     currentRenderPath = [this](sf::RenderTarget& rt, sf::RenderStates states)
     {
-        rt.setView(getEntity(m_activeCamera).getComponent<Camera>().m_view);
+        rt.setView(m_activeCamera.getComponent<Camera>().m_view);
         for (auto r : m_drawables)
         {
             rt.draw(*r, states);
@@ -138,7 +138,7 @@ void Scene::setPostEnabled(bool enabled)
     {       
         currentRenderPath = [this](sf::RenderTarget& rt, sf::RenderStates states)
         {
-            rt.setView(getEntity(m_activeCamera).getComponent<Camera>().m_view);
+            rt.setView(m_activeCamera.getComponent<Camera>().m_view);
             for (auto r : m_drawables)
             {
                 rt.draw(*r, states);
@@ -149,14 +149,14 @@ void Scene::setPostEnabled(bool enabled)
 
 Entity Scene::getDefaultCamera() const
 {
-    return m_entityManager.getEntity(m_defaultCamera);
+    return m_defaultCamera;
 }
 
 Entity Scene::setActiveCamera(Entity entity)
 {
     XY_ASSERT(entity.hasComponent<Transform>() && entity.hasComponent<Camera>(), "Entity requires at least a transform and a camera component");
     XY_ASSERT(m_entityManager.owns(entity), "This entity must belong to this scene!");
-    auto oldCam = m_entityManager.getEntity(m_activeCamera);
+    auto oldCam = m_activeCamera;
     m_activeCamera = entity.getIndex();
 
     return oldCam;
@@ -166,19 +166,19 @@ Entity Scene::setActiveListener(Entity entity)
 {
     XY_ASSERT(entity.hasComponent<Transform>() && entity.hasComponent<AudioListener>(), "Entity requires at least a transform and a camera component");
     XY_ASSERT(m_entityManager.owns(entity), "This entity must belong to this scene!");
-    auto oldListener = m_entityManager.getEntity(m_activeListener);
-    m_activeListener = entity.getIndex();
+    auto oldListener = m_activeListener;
+    m_activeListener = entity;
     return oldListener;
 }
 
 Entity Scene::getActiveListener() const
 {
-    return m_entityManager.getEntity(m_activeListener);
+    return m_activeListener;
 }
 
 Entity Scene::getActiveCamera() const
 {
-    return m_entityManager.getEntity(m_activeCamera);
+    return m_activeCamera;
 }
 
 void Scene::forwardEvent(const sf::Event& evt)
@@ -216,7 +216,7 @@ void Scene::forwardMessage(const Message& msg)
                 }
             }
             //updates the view of the default camera
-            getEntity(m_defaultCamera).getComponent<Camera>().setViewport(getDefaultViewport());
+            m_defaultCamera.getComponent<Camera>().setViewport(getDefaultViewport());
         }
     }
    
@@ -225,10 +225,14 @@ void Scene::forwardMessage(const Message& msg)
 //private
 void Scene::postRenderPath(sf::RenderTarget& rt, sf::RenderStates states)
 {
-    auto activeView = getEntity(m_activeCamera).getComponent<Camera>().m_view;
+    auto activeView = m_activeCamera.getComponent<Camera>().m_view;
 
     m_sceneBuffer.setView(activeView);
 
+    //TODO if rendering multiple/split views
+    //this needs to be done for each camera
+    //in this loop - this doesn't affect the
+    //default render path, however
     m_sceneBuffer.clear();
     for (auto r : m_drawables)
     {
