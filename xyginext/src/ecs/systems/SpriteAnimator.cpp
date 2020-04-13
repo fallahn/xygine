@@ -50,7 +50,8 @@ void SpriteAnimator::process(float dt)
         if (animation.m_playing)
         {
             auto& sprite = entity.getComponent<Sprite>();
-            if (sprite.m_animations[animation.m_id].frames.empty())
+            if (sprite.m_animations.empty() ||
+                sprite.m_animations[animation.m_id].frames.empty())
             {
                 animation.stop();
                 continue;
