@@ -157,7 +157,7 @@ Entity Scene::setActiveCamera(Entity entity)
     XY_ASSERT(entity.hasComponent<Transform>() && entity.hasComponent<Camera>(), "Entity requires at least a transform and a camera component");
     XY_ASSERT(m_entityManager.owns(entity), "This entity must belong to this scene!");
     auto oldCam = m_activeCamera;
-    m_activeCamera = entity.getIndex();
+    m_activeCamera = entity;
 
     return oldCam;
 }
