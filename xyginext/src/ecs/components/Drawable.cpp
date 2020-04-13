@@ -39,7 +39,7 @@ using namespace xy;
 Drawable::Drawable()
     : m_filterFlags     (DefaultFilterFlag),
     m_cull              (true),
-    m_croppingArea      (-std::numeric_limits<float>::max() / 2.f, -std::numeric_limits<float>::max() / 2.f,
+    m_croppingArea      (std::numeric_limits<float>::lowest() / 2.f, std::numeric_limits<float>::lowest() / 2.f,
                         std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
     m_cropped           (false),
     m_glFlagIndex       (0)
@@ -50,7 +50,7 @@ Drawable::Drawable()
 Drawable::Drawable(const sf::Texture& texture)
     : m_filterFlags     (DefaultFilterFlag),
     m_cull              (true),
-    m_croppingArea      (-std::numeric_limits<float>::max() / 2.f, -std::numeric_limits<float>::max() / 2.f,
+    m_croppingArea      (std::numeric_limits<float>::lowest() / 2.f, std::numeric_limits<float>::lowest() / 2.f,
                         std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
     m_cropped           (false),
     m_glFlagIndex       (0)

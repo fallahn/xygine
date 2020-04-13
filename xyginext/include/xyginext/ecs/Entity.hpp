@@ -171,7 +171,7 @@ namespace xy
         }
     private:
 
-        explicit Entity(ID index/* = std::numeric_limits<ID>::max()*/, Generation generation/* = 0*/);
+        explicit Entity(ID index, Generation generation);
 
         ID m_id;
         EntityManager* m_entityManager;
