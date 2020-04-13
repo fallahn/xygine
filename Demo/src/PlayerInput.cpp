@@ -47,7 +47,6 @@ PlayerInput::PlayerInput(xy::NetClient& nc, const InputBinding& ib)
     m_prevPad       (0),
     m_prevStick     (0),
     m_enabled       (false),
-    m_playerEntity  (0,0),
     m_inputBinding  (ib)
 {
 
@@ -127,7 +126,7 @@ void PlayerInput::handleEvent(const sf::Event& evt)
 
 void PlayerInput::update()
 {
-    if (m_playerEntity.getIndex() == 0) return;
+    if (!m_playerEntity.isValid()) return;
 
     //check state of controller axis
     checkControllerInput();

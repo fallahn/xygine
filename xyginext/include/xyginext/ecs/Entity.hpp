@@ -69,7 +69,7 @@ namespace xy
         using ID = sf::Uint32;
         using Generation = sf::Uint8;
 
-        Entity(ID index = std::numeric_limits<ID>::max(), Generation generation = 0);
+        Entity();
 
         /*
         \brief Returns the index of this entity
@@ -170,6 +170,8 @@ namespace xy
             return (l.getIndex() == r.getIndex());
         }
     private:
+
+        explicit Entity(ID index/* = std::numeric_limits<ID>::max()*/, Generation generation/* = 0*/);
 
         ID m_id;
         EntityManager* m_entityManager;
