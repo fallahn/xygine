@@ -89,18 +89,19 @@ void Scene::update(float dt)
         d->process(dt);
     }
 
-    for (const auto& entity : m_pendingEntities)
-    {
-        m_systemManager.addToSystems(entity);
-    }
-    m_pendingEntities.clear();
-
     for (const auto& entity : m_destroyedEntities)
     {
         m_systemManager.removeFromSystems(entity);
         m_entityManager.destroyEntity(entity);
     }
     m_destroyedEntities.clear();
+
+
+    for (const auto& entity : m_pendingEntities)
+    {
+        m_systemManager.addToSystems(entity);
+    }
+    m_pendingEntities.clear();
 
 
     m_systemManager.process(dt);

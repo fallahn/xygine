@@ -67,17 +67,20 @@ void DynamicTreeSystem::process(float)
     auto& entities = getEntities();
     for (auto entity : entities)
     {
-        auto& bpc = entity.getComponent<BroadphaseComponent>();
-        const auto& tx = entity.getComponent<xy::Transform>();
-        auto worldPosition = tx.getWorldPosition();
-        auto worldBounds = tx.getWorldTransform().transformRect(bpc.m_bounds);
+        if (!entity.destroyed())
+        {
+            auto& bpc = entity.getComponent<BroadphaseComponent>();
+            const auto& tx = entity.getComponent<xy::Transform>();
+            auto worldPosition = tx.getWorldPosition();
+            auto worldBounds = tx.getWorldTransform().transformRect(bpc.m_bounds);
 
-        worldBounds.left += tx.getOrigin().x * tx.getScale().x;
-        worldBounds.top += tx.getOrigin().y * tx.getScale().y;
+            worldBounds.left += tx.getOrigin().x * tx.getScale().x;
+            worldBounds.top += tx.getOrigin().y * tx.getScale().y;
 
-        moveNode(bpc.m_treeID, worldBounds, worldPosition - bpc.m_lastWorldPosition);
+            moveNode(bpc.m_treeID, worldBounds, worldPosition - bpc.m_lastWorldPosition);
 
-        bpc.m_lastWorldPosition = worldPosition;
+            bpc.m_lastWorldPosition = worldPosition;
+        }
     }
 }
 
