@@ -89,28 +89,33 @@ void EntityManager::destroyEntity(Entity entity)
     XY_ASSERT(index < m_generations.size(), "Index out of range");
     XY_ASSERT(m_generations[index] < 255, "Max generations reached!");
 
-    ++m_generations[index];
-    m_freeIDs.push_back(index);
-    m_componentMasks[index].reset();
-    m_labels[index].clear();
-
-    m_entityCount--;
-
-    //clears up any moveable components
-    //or drawables with vertex arrays
-    //which might otherwise get left behind
-    for (auto& pool : m_componentPools)
+    //make sure we don't destroy this entity more than once
+    //otherwise the ID will get marked as free multiple times
+    if (entity.getGeneration() == m_generations[index])
     {
-        if (pool)
-        {
-            pool->reset(index);
-        }
-    }
+        ++m_generations[index];
+        m_freeIDs.push_back(index);
+        m_componentMasks[index].reset();
+        m_labels[index].clear();
 
-    //let the world know the entity was destroyed
-    auto msg = m_messageBus.post<Message::SceneEvent>(Message::SceneMessage);
-    msg->entityID = index;
-    msg->event = Message::SceneEvent::EntityDestroyed;
+        m_entityCount--;
+
+        //clears up any moveable components
+        //or drawables with vertex arrays
+        //which might otherwise get left behind
+        for (auto& pool : m_componentPools)
+        {
+            if (pool)
+            {
+                pool->reset(index);
+            }
+        }
+
+        //let the world know the entity was destroyed
+        auto msg = m_messageBus.post<Message::SceneEvent>(Message::SceneMessage);
+        msg->entityID = index;
+        msg->event = Message::SceneEvent::EntityDestroyed;
+    }
 }
 
 bool EntityManager::entityDestroyed(Entity entity) const
