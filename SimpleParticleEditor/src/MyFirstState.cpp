@@ -111,7 +111,6 @@ void MyFirstState::setup()
     m_scene.addSystem<xy::CallbackSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
 
-
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
     entity.getComponent<xy::Transform>().move(100.f, 0.f);

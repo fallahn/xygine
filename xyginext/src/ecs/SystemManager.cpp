@@ -27,14 +27,32 @@ source distribution.
 
 #include "xyginext/ecs/Component.hpp"
 #include "xyginext/ecs/System.hpp"
+#include "xyginext/gui/Gui.hpp"
 
 using namespace xy;
 
 SystemManager::SystemManager(Scene& scene, ComponentManager& cm) 
     : m_scene           (scene),
-    m_componentManager  (cm)
+    m_componentManager  (cm),
+    m_showSystemInfo    (false)
 {
     m_systems.reserve(128);
+
+    registerWindow([&]()
+        {
+            if (m_showSystemInfo)
+            {
+                ImGui::SetNextWindowSize({ 220.f, 300.f });
+                if (ImGui::Begin("System Data", &m_showSystemInfo, ImGuiWindowFlags_AlwaysVerticalScrollbar))
+                {
+                    for (const auto* s : m_activeSystems)
+                    {
+                        ImGui::Text("%s\nEntities: %d", s->getType().name(), s->getEntities().size());
+                    }
+                }
+                ImGui::End();
+            }
+        });
 }
 
 void SystemManager::addToSystems(Entity entity)

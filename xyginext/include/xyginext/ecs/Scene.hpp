@@ -58,7 +58,7 @@ namespace xy
     entities else existing entities will not be processed by new systems.
     */
 
-    class XY_EXPORT_API Scene final : public sf::Drawable
+    class XY_EXPORT_API Scene final : public sf::Drawable, public xy::GuiClient
     {
     public:
         /*!
@@ -206,6 +206,12 @@ namespace xy
         Debugging util.
         */
         std::size_t getEntityCount() const { return m_entityManager.getEntityCount(); }
+
+        /*!
+        \brief Draws a window with some information on the current active systems.
+        Debug util - show ECS system info, not hardware system
+        */
+        void showSystemInfo(bool show = true) { m_systemManager.showSystemInfo(show); }
 
     private:
         MessageBus& m_messageBus;

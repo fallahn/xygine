@@ -31,6 +31,7 @@ source distribution.
 #include "xyginext/ecs/Entity.hpp"
 #include "xyginext/ecs/Component.hpp"
 #include "xyginext/core/MessageBus.hpp"
+#include "xyginext/gui/GuiClient.hpp"
 
 #include <vector>
 #include <typeindex>
@@ -169,7 +170,7 @@ namespace xy
         void processTypes(ComponentManager&);
     };
 
-    class XY_EXPORT_API SystemManager final
+    class XY_EXPORT_API SystemManager final : public GuiClient
     {
     public:
         SystemManager(Scene&, ComponentManager&);
@@ -235,11 +236,19 @@ namespace xy
         \brief Runs a simulation step by calling process() on each system
         */
         void process(float);
+
+        /*!
+        \brief Shows information in an ImGui window for each active system
+        */
+        void showSystemInfo(bool show = true) { m_showSystemInfo = show; }
+
     private:
         Scene& m_scene;
         ComponentManager& m_componentManager;
         std::vector<std::unique_ptr<System>> m_systems;
         std::vector<System*> m_activeSystems;
+
+        bool m_showSystemInfo;
 
         template <typename T>
         void removeFromActive();
