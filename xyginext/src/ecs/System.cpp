@@ -29,6 +29,14 @@ source distribution.
 
 using namespace xy;
 
+System::System(MessageBus& mb, UniqueType t)
+    : m_messageBus  (mb),
+    m_type          (t),
+    m_scene         (nullptr),
+    m_updateIndex   (0),
+    m_active        (false)
+{}
+
 std::vector<Entity>& System::getEntities()
 {
     return m_entities;

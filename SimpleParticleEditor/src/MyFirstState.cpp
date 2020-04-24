@@ -42,6 +42,8 @@ source distribution.
 #include <xyginext/util/Vector.hpp>
 #include <xyginext/core/App.hpp>
 
+#include <SFML/Window/Event.hpp>
+
 namespace
 {
     const float ItemWidth = 160.f;
@@ -80,6 +82,17 @@ MyFirstState::~MyFirstState()
 
 bool MyFirstState::handleEvent(const sf::Event& evt)
 {
+    if (evt.type == sf::Event::KeyReleased)
+    {
+        switch (evt.key.code)
+        {
+        default: break;
+        case sf::Keyboard::F2:
+            m_scene.showSystemInfo();
+            break;
+        }
+    }
+
     m_scene.forwardEvent(evt);
     return true;
 }

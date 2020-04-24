@@ -60,8 +60,8 @@ namespace xy
         Pass in a reference to the concrete implementation to generate
         a unique type ID for this system.
         */
-        System(MessageBus& mb, UniqueType t) 
-            : m_messageBus(mb), m_type(t), m_scene(nullptr), m_active(false){}
+        System(MessageBus& mb, UniqueType t);
+
 
         virtual ~System() = default;
 
@@ -160,6 +160,7 @@ namespace xy
         std::vector<Entity> m_entities;
 
         Scene* m_scene;
+        std::size_t m_updateIndex; //ensures when the system is active that it is updated in the order in which is was added to the manager
 
         bool m_active; //used by system manager to check if it has been added to the active list
         friend class SystemManager;

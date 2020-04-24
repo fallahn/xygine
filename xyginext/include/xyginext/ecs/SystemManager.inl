@@ -42,11 +42,12 @@ T& SystemManager::addSystem(Args&&... args)
         return *(dynamic_cast<T*>(result->get()));
     }
 
-    m_systems.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
-    m_systems.back()->setScene(m_scene);
-    m_systems.back()->processTypes(m_componentManager);
-    m_activeSystems.push_back(m_systems.back().get());
-    m_systems.back()->m_active = true;
+    auto& system = m_systems.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+    system->setScene(m_scene);
+    system->processTypes(m_componentManager);
+    system->m_updateIndex = m_activeSystems.size();
+    m_activeSystems.push_back(system.get());
+    system->m_active = true;
 
     return *(dynamic_cast<T*>(m_systems.back().get()));
 }
@@ -89,6 +90,13 @@ void SystemManager::setSystemActive(bool active)
             {
                 m_activeSystems.push_back((*result).get());
                 (*result)->m_active = true;
+
+                //return to correct order
+                std::sort(m_activeSystems.begin(), m_activeSystems.end(),
+                    [](const System* a, const System* b)
+                    {
+                        return a->m_updateIndex < b->m_updateIndex;
+                    });
             }
         }
     }

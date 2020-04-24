@@ -28,6 +28,9 @@ source distribution.
 #include "xyginext/ecs/Component.hpp"
 #include "xyginext/ecs/System.hpp"
 #include "xyginext/gui/Gui.hpp"
+#include "xyginext/core/SysTime.hpp"
+
+#include <fstream>
 
 using namespace xy;
 
@@ -42,13 +45,34 @@ SystemManager::SystemManager(Scene& scene, ComponentManager& cm)
         {
             if (m_showSystemInfo)
             {
-                ImGui::SetNextWindowSize({ 220.f, 300.f });
-                if (ImGui::Begin("System Data", &m_showSystemInfo, ImGuiWindowFlags_AlwaysVerticalScrollbar))
+                ImGui::SetNextWindowSize({ 220.f, 300.f }, ImGuiCond_FirstUseEver);
+                ImGui::SetNextWindowSizeConstraints({ 220.f, 300.f }, { 1920.f, 1080.f });
+                if (ImGui::Begin("System Data", &m_showSystemInfo))
                 {
+                    if (ImGui::Button("Save To File"))
+                    {
+                        std::string filename = SysTime::timeString() + "-" + SysTime::dateString() + ".txt";
+                        std::replace(filename.begin(), filename.end(), '/', '-');
+                        std::replace(filename.begin(), filename.end(), ':', '-');
+                        std::ofstream file(filename);
+
+                        if (file.is_open() && file.good())
+                        {
+                            for (const auto* s : m_activeSystems)
+                            {
+                                file << s->getType().name() << "Entities: " << s->getEntities().size() << "\n";
+                            }
+                        }
+                        file.close();
+                    }
+
+                    ImGui::BeginChild("inner"/*, {}, false, ImGuiWindowFlags_AlwaysVerticalScrollbar*/);
                     for (const auto* s : m_activeSystems)
                     {
-                        ImGui::Text("%s\nEntities: %d", s->getType().name(), s->getEntities().size());
+                        ImGui::Text("%s Entities: %d", s->getType().name(), s->getEntities().size());
                     }
+                    ImGui::EndChild();
+
                 }
                 ImGui::End();
             }
