@@ -9,14 +9,10 @@ project(${PROJECT_NAME})
 # Some default variables which the user may change
 SET(CMAKE_BUILD_TYPE        Debug CACHE STRING  "Choose the type of build (Debug or Release)")
 
-# We're using c++14
-set(CMAKE_CXX_STANDARD 14)
+# We're using c++17
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Apple doesn't like static constexpr if c++17 isn't enabled
-if (APPLE)
- set(CMAKE_CXX_STANDARD 17)
-endif()
 
 # enable some warnings in debug builds with gcc/clang
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")

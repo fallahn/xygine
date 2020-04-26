@@ -36,10 +36,23 @@ std::string Logger::m_stringOutput;
 //public
 std::ostream& Logger::log(Type type, Output output)
 {
-    static Detail::LogStream stream;
-    //stream.flush();
+    static Detail::LogStream stream(type, output, "", true);
     stream.setType(type);
     stream.setOutput(output);
+
+    switch (type)
+    {
+    case Type::Info:
+    default:
+        stream << "INFO: ";
+        break;
+    case Type::Error:
+        stream << "ERROR: ";
+        break;
+    case Type::Warning:
+        stream << "WARNING: ";
+        break;
+    }
 
     return stream;
 }
@@ -66,13 +79,18 @@ void Logger::log(const std::string& message, Type type, Output output)
         outstring.push_back('\n');
     }
 
+    logPreFormatted(outstring, type, output);
+}
+
+void Logger::logPreFormatted(const std::string& outstring, Type type, Output output)
+{
     sf::Lock lock(m_mutex);
     if (output == Output::Console || output == Output::All)
     {
         (type == Type::Error) ?
-            std::cerr << outstring /*<< std::endl*/
+            std::cerr << outstring << /*std::endl*/std::flush
             :
-            std::cout << outstring/* << std::endl*/;
+            std::cout << outstring << /*std::endl*/std::flush;
 #ifndef NO_UI_LOG
         Console::print(outstring);
 #endif //NO_UI_LOG
@@ -82,7 +100,6 @@ void Logger::log(const std::string& message, Type type, Output output)
         updateOutString(maxBuffer);
 
 #ifdef _MSC_VER
-        outstring += "\n";
         OutputDebugStringA(outstring.c_str());
 #endif //_MSC_VER
     }
@@ -97,7 +114,7 @@ void Logger::log(const std::string& message, Type type, Output output)
         }
         else
         {
-            log(message, type, Output::Console);
+            logPreFormatted(outstring, type, Output::Console);
             log("Above message was intended for log file. Opening file probably failed.", Type::Warning, Output::Console);
         }
     }
@@ -121,10 +138,11 @@ void Logger::updateOutString(std::size_t maxBuffer)
 //logger stream buffer used with LogStream
 using namespace Detail;
 
-LogBuf::LogBuf(Logger::Type type, Logger::Output output, const std::string& prefix)
-    : m_type(type),
-    m_output(output),
-    m_prefix(prefix)
+LogBuf::LogBuf(Logger::Type type, Logger::Output output, const std::string& prefix, bool preFormatted)
+    : m_type        (type),
+    m_output        (output),
+    m_prefix        (prefix),
+    m_preFormatted  (preFormatted)
 {
     static const std::size_t size = 64;
     char* buffer = new char[size];
@@ -162,12 +180,21 @@ int LogBuf::sync()
     if (pbase() != pptr())
     {
         //print the contents of the write buffer into the logger
+        //TODO this would be better to write directly to the target
+        //output here instead of forwarding to existing log functions
         std::size_t size = static_cast<int>(pptr() - pbase());
 
         std::stringstream ss;
         ss.write(pbase(), size);
-        Logger::log(m_prefix + ss.str(), m_type, m_output);
-        
+
+        if (m_preFormatted)
+        {
+            Logger::logPreFormatted(ss.str(), m_type, m_output);
+        }
+        else
+        {
+            Logger::log(m_prefix + ss.str(), m_type, m_output);
+        }
         setp(pbase(), epptr());
     }
 
@@ -175,8 +202,8 @@ int LogBuf::sync()
 }
 
 //used to print to the logger with c++ streams
-LogStream::LogStream(Logger::Type type, Logger::Output output, const std::string& prefix)
-    : m_buffer  (type, output, prefix),
+LogStream::LogStream(Logger::Type type, Logger::Output output, const std::string& prefix, bool preFormatted)
+    : m_buffer  (type, output, prefix, preFormatted),
     std::ostream(&m_buffer)
 {
 

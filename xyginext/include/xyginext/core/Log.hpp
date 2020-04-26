@@ -56,6 +56,11 @@ source distribution.
 
 namespace xy
 {
+    namespace Detail
+    {
+        class LogBuf;
+    }
+
     /*!
     \brief Class to allowing messages to be logged to a combination
     of one or more destinations such as the console, log file or
@@ -107,6 +112,10 @@ namespace xy
         static std::string m_stringOutput;
 
         static void updateOutString(std::size_t maxBuffer);
+
+        static void logPreFormatted(const std::string&, Type, Output);
+
+        friend class xy::Detail::LogBuf;
     };
 
     namespace Detail
@@ -116,7 +125,7 @@ namespace xy
         class LogBuf : public std::streambuf
         {
         public:
-            LogBuf(xy::Logger::Type, xy::Logger::Output, const std::string&);
+            LogBuf(xy::Logger::Type, xy::Logger::Output, const std::string&, bool preFormatted);
             ~LogBuf();
 
             void setType(xy::Logger::Type type) { m_type = type; }
@@ -126,6 +135,7 @@ namespace xy
             xy::Logger::Type m_type;
             xy::Logger::Output m_output;
             std::string m_prefix;
+            bool m_preFormatted;
 
             int overflow(int character) override;
             int sync() override;
@@ -134,7 +144,7 @@ namespace xy
         class LogStream : public std::ostream
         {
         public:
-            LogStream(xy::Logger::Type = xy::Logger::Type::Info, xy::Logger::Output = xy::Logger::Output::Console, const std::string& prefix = "");
+            LogStream(xy::Logger::Type = xy::Logger::Type::Info, xy::Logger::Output = xy::Logger::Output::Console, const std::string& prefix = "", bool preFormatted = false);
 
             void setType(xy::Logger::Type type) { m_buffer.setType(type); }
             void setOutput(xy::Logger::Output output) { m_buffer.setOutput(output); }
@@ -166,9 +176,9 @@ std::ostream& operator << (std::ostream& stream, sf::Rect<T> r)
     return stream;
 }
 
-#define LOG_INFO xy::Logger::log(xy::Logger::Type::Info)
-#define LOG_WARN xy::Logger::log(xy::Logger::Type::Warning)
-#define LOG_ERROR xy::Logger::log(xy::Logger::Type::Error)
+#define LogI xy::Logger::log(xy::Logger::Type::Info)
+#define LogW xy::Logger::log(xy::Logger::Type::Warning)
+#define LogE xy::Logger::log(xy::Logger::Type::Error)
 
 
 #ifndef XY_DEBUG
