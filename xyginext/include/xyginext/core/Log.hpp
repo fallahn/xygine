@@ -49,6 +49,8 @@ source distribution.
 #include <Windows.h>
 #endif //_MSC_VER
 
+
+
 namespace xy
 {
     /*!
@@ -151,6 +153,32 @@ namespace xy
                 count--;
             }
         }
+    };
+
+    //used for custom log streams such as
+    //redirecting sf::err() to the console
+    class LogBuf : public std::streambuf
+    {
+    public:
+        LogBuf(Logger::Type, Logger::Output, const std::string&);
+        ~LogBuf();
+        
+    private:
+        Logger::Type m_type;
+        Logger::Output m_output;
+        std::string m_prefix;
+
+        int overflow(int character) override;
+        int sync() override;
+    };
+
+    class LogStream : public std::ostream
+    {
+    public:
+        LogStream(Logger::Type = Logger::Type::Info, Logger::Output = Logger::Output::Console, const std::string& prefix = "");
+
+    private:
+        LogBuf m_buffer;
     };
 }
 #ifndef XY_DEBUG

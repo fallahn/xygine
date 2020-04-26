@@ -8,6 +8,7 @@ set(PROJECT_SRC ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/core/ConfigFile.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/Console.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/ConsoleClient.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/Log.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/FileSystem.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/MessageBus.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/core/State.cpp

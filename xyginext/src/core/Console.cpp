@@ -415,6 +415,9 @@ void Console::draw()
 
 void Console::init()
 {
+    static LogStream buffStream(Logger::Type::Error, Logger::Output::Console, "[SFML] ");
+    sf::err().rdbuf(buffStream.rdbuf());
+
     auto modes = sf::VideoMode::getFullscreenModes();
     for (const auto& mode : modes)
     {
