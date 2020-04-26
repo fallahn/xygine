@@ -29,6 +29,98 @@ source distribution.
 
 using namespace xy;
 
+sf::Mutex Logger::m_mutex;
+std::list<std::string> Logger::m_buffer;
+std::string Logger::m_stringOutput;
+
+//public
+std::ostream& Logger::log(Type type, Output output)
+{
+    static Detail::LogStream stream;
+    //stream.flush();
+    stream.setType(type);
+    stream.setOutput(output);
+
+    return stream;
+}
+
+void Logger::log(const std::string& message, Type type, Output output)
+{
+    std::string outstring;
+    switch (type)
+    {
+    case Type::Info:
+    default:
+        outstring = "INFO: " + message;
+        break;
+    case Type::Error:
+        outstring = "ERROR: " + message;
+        break;
+    case Type::Warning:
+        outstring = "WARNING: " + message;
+        break;
+    }
+
+    if (outstring.back() != '\n')
+    {
+        outstring.push_back('\n');
+    }
+
+    sf::Lock lock(m_mutex);
+    if (output == Output::Console || output == Output::All)
+    {
+        (type == Type::Error) ?
+            std::cerr << outstring /*<< std::endl*/
+            :
+            std::cout << outstring/* << std::endl*/;
+#ifndef NO_UI_LOG
+        Console::print(outstring);
+#endif //NO_UI_LOG
+        const std::size_t maxBuffer = 30;
+        m_buffer.push_back(outstring);
+        if (m_buffer.size() > maxBuffer)m_buffer.pop_front();
+        updateOutString(maxBuffer);
+
+#ifdef _MSC_VER
+        outstring += "\n";
+        OutputDebugStringA(outstring.c_str());
+#endif //_MSC_VER
+    }
+    if (output == Output::File || output == Output::All)
+    {
+        //output to a log file
+        std::ofstream file("output.log", std::ios::app);
+        if (file.good())
+        {
+            file << SysTime::dateString() << "-" << SysTime::timeString() << ": " << outstring << std::endl;
+            file.close();
+        }
+        else
+        {
+            log(message, type, Output::Console);
+            log("Above message was intended for log file. Opening file probably failed.", Type::Warning, Output::Console);
+        }
+    }
+}
+
+//private
+void Logger::updateOutString(std::size_t maxBuffer)
+{
+    static size_t count = 0;
+    m_stringOutput.append(m_buffer.back());
+    m_stringOutput.append("\n");
+    count++;
+
+    if (count > maxBuffer)
+    {
+        m_stringOutput = m_stringOutput.substr(m_stringOutput.find_first_of('\n') + 1, m_stringOutput.size());
+        count--;
+    }
+}
+
+//logger stream buffer used with LogStream
+using namespace Detail;
+
 LogBuf::LogBuf(Logger::Type type, Logger::Output output, const std::string& prefix)
     : m_type(type),
     m_output(output),
@@ -75,13 +167,14 @@ int LogBuf::sync()
         std::stringstream ss;
         ss.write(pbase(), size);
         Logger::log(m_prefix + ss.str(), m_type, m_output);
-
+        
         setp(pbase(), epptr());
     }
 
     return 0;
 }
 
+//used to print to the logger with c++ streams
 LogStream::LogStream(Logger::Type type, Logger::Output output, const std::string& prefix)
     : m_buffer  (type, output, prefix),
     std::ostream(&m_buffer)

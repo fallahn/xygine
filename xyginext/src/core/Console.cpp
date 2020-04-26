@@ -415,7 +415,7 @@ void Console::draw()
 
 void Console::init()
 {
-    static LogStream buffStream(Logger::Type::Error, Logger::Output::Console, "[SFML] ");
+    static Detail::LogStream buffStream(Logger::Type::Error, Logger::Output::Console, "[SFML] ");
     sf::err().rdbuf(buffStream.rdbuf());
 
     auto modes = sf::VideoMode::getFullscreenModes();
@@ -698,4 +698,3 @@ void Console::printStat(const std::string& name, const std::string& value)
 {
     m_debugLines.push_back(name + ":" + value);
 }
-
