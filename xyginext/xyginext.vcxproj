@@ -205,6 +205,7 @@
     <ClCompile Include="src\core\dialogues\nfd\nfd_common.c" />
     <ClCompile Include="src\core\dialogues\nfd\nfd_win.cpp" />
     <ClCompile Include="src\core\FileSystem.cpp" />
+    <ClCompile Include="src\core\Log.cpp" />
     <ClCompile Include="src\core\MessageBus.cpp" />
     <ClCompile Include="src\core\State.cpp" />
     <ClCompile Include="src\core\StateStack.cpp" />

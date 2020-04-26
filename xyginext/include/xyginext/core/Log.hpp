@@ -35,6 +35,9 @@ source distribution.
 
 #include <SFML/System/Lock.hpp>
 #include <SFML/System/Mutex.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/System/Vector3.hpp>
+#include <SFML/Graphics/Rect.hpp>
 
 #include <string>
 #include <iostream>
@@ -49,8 +52,15 @@ source distribution.
 #include <Windows.h>
 #endif //_MSC_VER
 
+
+
 namespace xy
 {
+    namespace Detail
+    {
+        class LogBuf;
+    }
+
     /*!
     \brief Class to allowing messages to be logged to a combination
     of one or more destinations such as the console, log file or
@@ -72,87 +82,105 @@ namespace xy
             Warning,
             Error
         };
+
+        /*!
+        \brief Outputs to the log via the stream operator <<
+        Simplified output interface wo allow logging similar to cout or cerr
+        \param type Type of output. Defaults to Info
+        \param output Output destination. Defaults to Console.
+        Example:
+        \code
+        Logger::log() << "Hello\n";
+        Logger::log(Logger::Type::Error) << "something is wrong!" << std::endl;
+        \endcode
+        */
+        static std::ostream& log(Type = Type::Info, Output = Output::Console);
+
         /*!
         \brief Logs a message to a given destination.
         \param message Message to log
         \param type Whether this message gets tagged as information, a warning or an error
         \param output Destination for the message. Can be the console via cout, a log file on disk, or both
         */
-        static void log(const std::string& message, Type type = Type::Info, Output output = Output::Console)
-        {
-            std::string outstring;
-            switch (type)
-            {
-            case Type::Info:
-            default:
-                outstring = "INFO: " + message;
-                break;
-            case Type::Error:
-                outstring = "ERROR: " + message;
-                break;
-            case Type::Warning:
-                outstring = "WARNING: " + message;
-                break;
-            }
+        static void log(const std::string& message, Type type = Type::Info, Output output = Output::Console);
 
-            sf::Lock lock(mutex());
-            if (output == Output::Console || output == Output::All)
-            {
-                (type == Type::Error) ?
-                    std::cerr << outstring << std::endl
-                    :
-                    std::cout << outstring << std::endl;
-#ifndef NO_UI_LOG
-                Console::print(outstring);
-#endif //NO_UI_LOG
-                const std::size_t maxBuffer = 30;
-                buffer().push_back(outstring);
-                if (buffer().size() > maxBuffer)buffer().pop_front(); //no majick here pl0x
-                updateOutString(maxBuffer);
-
-#ifdef _MSC_VER
-                outstring += "\n";
-                OutputDebugStringA(outstring.c_str());
-#endif //_MSC_VER
-            }
-            if (output == Output::File || output == Output::All)
-            {
-                //output to a log file
-                std::ofstream file("output.log", std::ios::app);
-                if (file.good())
-                {
-                    file << SysTime::dateString() << "-" << SysTime::timeString() << ": " << outstring << std::endl;
-                    file.close();
-                }
-                else
-                {
-                    log(message, type, Output::Console);
-                    log("Above message was intended for log file. Opening file probably failed.", Type::Warning, Output::Console);
-                }
-            }
-        }
-
-        static const std::string& bufferString(){ return stringOutput(); }
+        //static const std::string& bufferString() { return m_stringOutput; }
 
     private:
-        static sf::Mutex& mutex(){ static sf::Mutex m; return m; }
-        static std::list<std::string>& buffer(){ static std::list<std::string> buffer; return buffer; }
-        static std::string& stringOutput() { static std::string output; return output; }
-        static void updateOutString(std::size_t maxBuffer)
-        {
-            static size_t count = 0;
-            stringOutput().append(buffer().back());
-            stringOutput().append("\n");
-            count++;
+        static sf::Mutex m_mutex;
+        static std::list<std::string> m_buffer;
+        static std::string m_stringOutput;
 
-            if (count > maxBuffer)
-            {
-                stringOutput() = stringOutput().substr(stringOutput().find_first_of('\n') + 1, stringOutput().size());
-                count--;
-            }
-        }
+        static void updateOutString(std::size_t maxBuffer);
+
+        static void logPreFormatted(const std::string&, Type, Output);
+
+        friend class xy::Detail::LogBuf;
     };
+
+    namespace Detail
+    {
+        //used for custom log streams such as
+        //redirecting sf::err() to the console
+        class LogBuf : public std::streambuf
+        {
+        public:
+            LogBuf(xy::Logger::Type, xy::Logger::Output, const std::string&, bool preFormatted);
+            ~LogBuf();
+
+            void setType(xy::Logger::Type type) { m_type = type; }
+            void setOutput(xy::Logger::Output output) { m_output = output; }
+
+        private:
+            xy::Logger::Type m_type;
+            xy::Logger::Output m_output;
+            std::string m_prefix;
+            bool m_preFormatted;
+
+            int overflow(int character) override;
+            int sync() override;
+        };
+
+        class LogStream : public std::ostream
+        {
+        public:
+            LogStream(xy::Logger::Type = xy::Logger::Type::Info, xy::Logger::Output = xy::Logger::Output::Console, const std::string& prefix = "", bool preFormatted = false);
+
+            void setType(xy::Logger::Type type) { m_buffer.setType(type); }
+            void setOutput(xy::Logger::Output output) { m_buffer.setOutput(output); }
+
+        private:
+            LogBuf m_buffer;
+        };
+    }
 }
+
+template <typename T>
+std::ostream& operator << (std::ostream& stream, sf::Vector2<T> v)
+{
+    stream << "{ " << v.x << ", " << v.y << " }";
+    return stream;
+}
+
+template <typename T>
+std::ostream& operator << (std::ostream& stream, sf::Vector3<T> v)
+{
+    stream << "{ " << v.x << ", " << v.y << ", " << v.z << " }";
+    return stream;
+}
+
+template <typename T>
+std::ostream& operator << (std::ostream& stream, sf::Rect<T> r)
+{
+    stream << "{ " << r.left << ", " << r.top << ", " << r.width << ", " << r.height << " }";
+    return stream;
+}
+
+#define LogI xy::Logger::log(xy::Logger::Type::Info)
+#define LogW xy::Logger::log(xy::Logger::Type::Warning)
+#define LogE xy::Logger::log(xy::Logger::Type::Error)
+
+
 #ifndef XY_DEBUG
 #define LOG(message, type)
 #else

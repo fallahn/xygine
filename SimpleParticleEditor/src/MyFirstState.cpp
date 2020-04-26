@@ -43,6 +43,7 @@ source distribution.
 #include <xyginext/core/App.hpp>
 
 #include <SFML/Window/Event.hpp>
+#include <SFML/System/Err.hpp>
 
 namespace
 {
