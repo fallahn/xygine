@@ -31,6 +31,7 @@ source distribution.
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <algorithm>
 
 using namespace xy;

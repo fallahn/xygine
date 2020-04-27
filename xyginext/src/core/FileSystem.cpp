@@ -34,6 +34,7 @@ source distribution.
 #include <sys/stat.h>
 
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 
 //TODO check this macro works on all windows compilers

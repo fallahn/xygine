@@ -982,7 +982,7 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                         {
                             auto crateEnt = manifold.otherEntity;
                             crateEnt.getComponent<Crate>().state = Crate::Breaking;
-                            std::cout << "NPCs face met the wall: " << npc.velocity.y << std::endl;
+                            //std::cout << "NPCs face met the wall: " << npc.velocity.y << std::endl;
                         }
                     }
                     else //bonk head

@@ -27,6 +27,10 @@ source distribution.
 
 #include <xyginext/core/Log.hpp>
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
 using namespace xy;
 
 sf::Mutex Logger::m_mutex;
@@ -144,7 +148,7 @@ LogBuf::LogBuf(Logger::Type type, Logger::Output output, const std::string& pref
     m_prefix        (prefix),
     m_preFormatted  (preFormatted)
 {
-    static const std::size_t size = 64;
+    static const std::size_t size = 128;
     char* buffer = new char[size];
     setp(buffer, buffer + size);
 }

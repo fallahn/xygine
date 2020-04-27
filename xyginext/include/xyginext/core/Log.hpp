@@ -40,19 +40,13 @@ source distribution.
 #include <SFML/Graphics/Rect.hpp>
 
 #include <string>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <sstream>
 #include <list>
-#include <ctime>
+#include <sstream>
 
 #ifdef _MSC_VER
 #define NOMINMAX
 #include <Windows.h>
 #endif //_MSC_VER
-
-
 
 namespace xy
 {
@@ -103,8 +97,6 @@ namespace xy
         \param output Destination for the message. Can be the console via cout, a log file on disk, or both
         */
         static void log(const std::string& message, Type type = Type::Info, Output output = Output::Console);
-
-        //static const std::string& bufferString() { return m_stringOutput; }
 
     private:
         static sf::Mutex m_mutex;
