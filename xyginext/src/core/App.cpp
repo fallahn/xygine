@@ -38,6 +38,16 @@ source distribution.
 #include "../imgui/imgui_internal.h"
 
 #include "../detail/GLCheck.hpp"
+#ifdef _MSC_VER
+#ifdef XY_DEBUG
+//prints callstack
+//note this can be enabled for linux/mac
+//I just don't know which libraries need
+//to be linked
+#include "../detail/ust.hpp"
+#include <signal.h>
+#endif
+#endif
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -60,6 +70,12 @@ namespace
     const std::string windowTitle("xyginext game (Release Build) - F1: Open Console");
 #else
     const std::string windowTitle("xyginext game (Debug Build) - F1: Open Console");
+#ifdef _MSC_VER
+    void winAbort(int)
+    {
+        Logger::log(Logger::Type::Error, Logger::Output::All) << "Call Stack:\n" << ust::generate() << std::endl;
+    }
+#endif
 #endif //XY_DEBUG
 
     sf::Clock frameClock;
@@ -117,6 +133,13 @@ App::App(sf::ContextSettings contextSettings)
     {
         Logger::log("Something went wrong loading OpenGL. Particles may be unavailable", Logger::Type::Error, Logger::Output::All);
     }
+
+#ifdef XY_DEBUG
+#ifdef _MSC_VER
+    //register custom abort which prints the call stack
+    signal(SIGABRT, &winAbort);
+#endif
+#endif
 }
 
 //public

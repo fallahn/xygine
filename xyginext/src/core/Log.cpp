@@ -113,7 +113,7 @@ void Logger::logPreFormatted(const std::string& outstring, Type type, Output out
         std::ofstream file("output.log", std::ios::app);
         if (file.good())
         {
-            file << SysTime::dateString() << "-" << SysTime::timeString() << ": " << outstring << std::endl;
+            file << /*SysTime::dateString() << "-" << SysTime::timeString() << ": "<< */ outstring << std::flush;
             file.close();
         }
         else

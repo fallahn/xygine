@@ -61,6 +61,7 @@ template <typename T>
 T& Entity::getComponent()
 {
     XY_ASSERT(isValid(), "Not a valid Entity");
+    XY_ASSERT(hasComponent<T>(), std::string(typeid(T).name()) + ": Component does not exist!");
     return m_entityManager->getComponent<T>(*this);
 }
 
@@ -68,5 +69,6 @@ template <typename T>
 const T& Entity::getComponent() const
 {
     XY_ASSERT(isValid(), "Not a valid Entity");
+    XY_ASSERT(hasComponent<T>(), std::string(typeid(T).name()) + ": Component does not exist!");
     return m_entityManager->getComponent<T>(*this);
 }

@@ -124,7 +124,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)extlibs\bin\msvc_x64\sfml\Debug;%(AdditionalLibraryDirectories);$(SolutionDir)extlibs\bin\msvc_x64\enet</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-audio-d.lib;sfml-system-d.lib;sfml-graphics-d.lib;sfml-window-d.lib;opengl32.lib;enet-d.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-audio-d.lib;sfml-system-d.lib;sfml-graphics-d.lib;sfml-window-d.lib;opengl32.lib;enet-d.lib;winmm.lib;ws2_32.lib;dbghelp.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <StackReserveSize>4194304</StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
@@ -355,6 +355,7 @@
     <ClInclude Include="include\xyginext\util\Vector.hpp" />
     <ClInclude Include="include\xyginext\util\Wavetable.hpp" />
     <ClInclude Include="src\detail\GLCheck.hpp" />
+    <ClInclude Include="src\detail\ust.hpp" />
     <ClInclude Include="src\network\NetConf.hpp" />
   </ItemGroup>
   <ItemGroup>

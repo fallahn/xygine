@@ -572,6 +572,9 @@
     <ClInclude Include="include\xyginext\util\Easings.hpp">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="src\detail\ust.hpp">
+      <Filter>Header Files\detail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\xyginext\ecs\Entity.inl">

@@ -80,9 +80,6 @@ T& EntityManager::getComponent(Entity entity)
     const auto componentID = m_componentManager.getID<T>();
     const auto entityID = entity.getIndex();
 
-    XY_ASSERT(hasComponent<T>(entity), "Component does not exist!");
-
-
     XY_ASSERT(componentID < m_componentPools.size(), "Component index out of range");
     auto* pool = (dynamic_cast<Detail::ComponentPool<T>*>(m_componentPools[componentID].get()));
 

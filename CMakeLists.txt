@@ -107,6 +107,12 @@ target_link_libraries(${PROJECT_NAME}
   ${OPENGL_LIBRARIES})
 endif()
 
+# debug output libs for visual studio
+if (CMAKE_BUILD_TYPE MATCHES Debug AND MSVC) 
+  target_link_libraries(${PROJECT_NAME}
+    dgbhelp shlwapi)
+endif()
+
 if (APPLE)
   target_link_libraries(${PROJECT_NAME} ${CORESERVICES_LIBRARY} ${APPKIT})
 elseif(UNIX)
