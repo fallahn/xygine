@@ -59,8 +59,43 @@ namespace xy
         };
 
         sf::FloatRect area;
-        bool active;
+        bool active = false; //TODO do we need this as the system's SelectedIndex property activates the necessary control
         std::array<sf::Uint32, CallbackID::Count> callbacks{};
-        sf::Int32 ID = -1;
+        std::int32_t ID = -1; //TODO I can't remember what this is for but I don't want to remove it...
+
+        /*!
+        \brief Sets the group of UIHitbox controls to which
+        this component belongs.
+        By default all UIHitbox components are added to
+        group 0. When creating multiple menus it is sometimes
+        advantagous to activate smaller groups of components
+        at a time. Use UISystem::setActiveGroup() to control
+        which group of UIHitboxes currently receive input.
+        */
+        void setGroup(std::size_t group)
+        {
+            m_previousGroup = m_group;
+            m_group = group;
+            m_updateGroup = true;
+        }
+
+        /*!
+        \brief Defines the order in which components in a group are selected.
+        By default this is set based on the order in which components
+        are added to a group.
+        */
+        void setSelectionIndex(std::size_t index)
+        {
+            m_selectionIndex = index;
+            m_updateGroup = true;
+        }
+
+    private:
+        std::size_t m_previousGroup = 0;
+        std::size_t m_group = 0;
+        std::size_t m_selectionIndex = 0;
+        bool m_updateGroup = false;
+
+        friend class UISystem;
     };
 }

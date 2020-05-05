@@ -34,6 +34,7 @@ source distribution.
 #include <SFML/Window/Keyboard.hpp>
 
 #include <functional>
+#include <unordered_map>
 
 namespace xy
 {
@@ -131,7 +132,9 @@ namespace xy
         };
 
         /*!
-        \brief Selects the input at the given index if it exists
+        \brief Selects the input at the given index if it exists.
+        This is applied to the active group of components.
+        \see setActiveGroup()
         */
         void selectInput(std::size_t);
 
@@ -144,6 +147,16 @@ namespace xy
         \param active If true enables controlling the mouse cursor with the controller
         */
         void setJoypadCursorActive(bool active);
+
+        /*!
+        \brief Sets the active group of UIHitbox components.
+        By default all components are added to group 0. If a single
+        UISystem handles multiple menus, for example, UIHitbox components
+        can be grouped by a given index, one for each menu. This function
+        will set the active group of UIHitbox components to recieve events.
+        \see UIHitbox::setGroup()
+        */
+        void setActiveGroup(std::size_t);
 
     private:
 
@@ -175,6 +188,9 @@ namespace xy
         };
 
         bool m_joypadCursorActive;
+
+        std::unordered_map<std::size_t, std::vector<Entity>> m_groups;
+        std::size_t m_activeGroup;
 
         void selectNext();
         void selectPrev();

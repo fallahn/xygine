@@ -68,6 +68,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Main);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
         m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
@@ -128,12 +129,14 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     tx2.move(0.f, -64.f);
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Main);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
         m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
             m_menuTarget.x -= xy::DefaultSceneSize.x;
+            m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Player);
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
@@ -142,6 +145,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
         if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
         {
             m_menuTarget.x -= xy::DefaultSceneSize.x;
+            m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Player);
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
@@ -150,6 +154,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
         if (button == 0)
         {
             m_menuTarget.x -= xy::DefaultSceneSize.x;
+            m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Player);
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
@@ -179,6 +184,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Main);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
         m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
@@ -238,6 +244,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
     tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Player);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
         m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
@@ -298,6 +305,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
     tx2.move(0.f, -64.f);
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Player);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
         m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
@@ -305,6 +313,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
         {
             m_menuTarget.x -= xy::DefaultSceneSize.x;
             m_sharedStateData.playerCount = 1;
+            m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Network);
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
@@ -314,6 +323,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
         {
             m_menuTarget.x -= xy::DefaultSceneSize.x;
             m_sharedStateData.playerCount = 1;
+            m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Network);
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
@@ -323,6 +333,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
         {
             m_menuTarget.x -= xy::DefaultSceneSize.x;
             m_sharedStateData.playerCount = 1;
+            m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Network);
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
@@ -352,12 +363,14 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
     tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Player);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
         m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
             m_menuTarget.x += xy::DefaultSceneSize.x;
+            m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Main);
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
@@ -366,6 +379,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
         if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
         {
             m_menuTarget.x += xy::DefaultSceneSize.x;
+            m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Main);
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
@@ -374,6 +388,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
         if (button == 0)
         {
             m_menuTarget.x += xy::DefaultSceneSize.x;
+            m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Main);
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
@@ -408,6 +423,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Network);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
         m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
@@ -479,6 +495,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     tx2.move(0.f, -64.f);
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds();
     entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Network);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
         m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
@@ -536,12 +553,14 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     tx.setPosition(entity.getComponent<xy::Transform>().getOrigin());
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Network);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
         m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
             m_menuTarget.x += xy::DefaultSceneSize.x;
+            m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Player);
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::KeyUp] =
@@ -550,6 +569,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
         if (key == sf::Keyboard::Space || key == sf::Keyboard::Return)
         {
             m_menuTarget.x += xy::DefaultSceneSize.x;
+            m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Player);
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
@@ -558,6 +578,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
         if (button == 0)
         {
             m_menuTarget.x += xy::DefaultSceneSize.x;
+            m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Player);
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
@@ -592,6 +613,7 @@ void MenuState::createKeybindInputs(xy::Entity towerEnt, sf::Uint8 player)
         entity.addComponent<xy::Transform>().setPosition(buttonPositions[i]);
         towerTx.addChild(entity.getComponent<xy::Transform>());
         entity.addComponent<xy::UIHitBox>().area = { 0.f, 0.f, 192.f, 64.f };
+        entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Keybind);
         entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
             m_helpScene.getSystem<xy::UISystem>().addMouseButtonCallback([&, i, player](
                 xy::Entity buttonEnt, sf::Uint64 flags)

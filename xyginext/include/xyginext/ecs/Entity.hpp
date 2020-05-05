@@ -58,10 +58,12 @@ namespace xy
     class EntityManager;
 
     /*!
-    \brief Entity class - Basically just an ID.
-    The ID is generated as a combination of the index in the
-    memory pool and the generation - that is the nth time the
-    index has been used.
+    \brief Entity class
+    Entity objects are handles to the underlying collection of
+    components, and as such should be treated similarly to a pointer.
+    That is, they are lightweight enough to copy around, but
+    you should remain aware of the lifetime of the entity being
+    handled, using Entity::isValid() or Entity::destroyed()
     */
     class XY_EXPORT_API Entity final
     {

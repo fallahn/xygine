@@ -53,7 +53,9 @@ UISystem::UISystem(MessageBus& mb)
     m_selectedIndex     (0),
     m_controllerMask    (0),
     m_prevControllerMask(0),
-    m_joypadCursorActive(true)
+    m_joypadCursorActive(false),
+    m_groups            (1),
+    m_activeGroup       (0)
 {
     requireComponent<UIHitBox>();
     requireComponent<Transform>();
@@ -279,13 +281,55 @@ void UISystem::process(float)
         m_controllerMask = 0;
     }
 
+    auto& entities = getEntities();
+    for (auto& e : entities)
+    {
+        //check to see if the hitbox group changed - remove from old first before adding to new
+        //make sure group exists and assert that it's one or less than the current number of groups
+        auto& input = e.getComponent<UIHitBox>();
+
+        if (input.m_updateGroup)
+        {
+            //remove from old group first
+            m_groups[input.m_previousGroup].erase(std::remove_if(m_groups[input.m_previousGroup].begin(),
+                m_groups[input.m_previousGroup].end(),
+                [e](Entity entity)
+                {
+                    return e == entity;
+                }), m_groups[input.m_previousGroup].end());
+
+            //create new group if needed
+            if (m_groups.count(input.m_group) == 0)
+            {
+                m_groups.insert(std::make_pair(input.m_group, std::vector<Entity>()));
+            }
+
+            //add to group
+            if (input.m_selectionIndex == 0)
+            {
+                //set a default order
+                input.m_selectionIndex = m_groups[input.m_group].size();
+            }
+            m_groups[input.m_group].push_back(e);
+
+            //sort the group by selection index
+            std::sort(m_groups[input.m_group].begin(), m_groups[input.m_group].end(),
+                [](xy::Entity a, xy::Entity b)
+                {
+                    return a.getComponent<UIHitBox>().m_selectionIndex < b.getComponent<UIHitBox>().m_selectionIndex;
+                });
+
+
+            input.m_updateGroup = false;
+        }
+    }
+
+
     auto view = App::getRenderWindow()->getView();
     sf::FloatRect viewableArea((view.getCenter() - (view.getSize() / 2.f)), view.getSize());
 
-    //TODO we probably want some partitioning? Checking every entity for a collision could be a bit pants
     std::size_t currentIndex = 0;
-    auto& entities = getEntities();
-    for (auto& e : entities)
+    for(auto e : m_groups[m_activeGroup])
     {
         //TODO probably want to cache these and only update if control moved
         auto tx = e.getComponent<Transform>().getWorldTransform();
@@ -295,6 +339,7 @@ void UISystem::process(float)
         auto area = tx.transformRect(input.area);
 
         //skip UI elements currently out of view
+        //TODO this is broken in split screen views - see issue #122
         if (!area.intersects(viewableArea))
         {
             continue;
@@ -357,14 +402,14 @@ void UISystem::process(float)
                 m_keyboardCallbacks[input.callbacks[UIHitBox::KeyUp]](e, key);
             }
 
-            for (auto pair : m_controllerDownEvents)
+            for (auto [joyID, joyButton] : m_controllerDownEvents)
             {
-                m_controllerCallbacks[input.callbacks[UIHitBox::ControllerButtonDown]](e, pair.first, pair.second);
+                m_controllerCallbacks[input.callbacks[UIHitBox::ControllerButtonDown]](e, joyID, joyButton);
             }
 
-            for (auto pair : m_controllerUpEvents)
+            for (auto [joyID, joyButton] : m_controllerUpEvents)
             {
-                m_controllerCallbacks[input.callbacks[UIHitBox::ControllerButtonUp]](e, pair.first, pair.second);
+                m_controllerCallbacks[input.callbacks[UIHitBox::ControllerButtonUp]](e, joyID, joyButton);
             }
         }
         currentIndex++;
@@ -423,7 +468,7 @@ sf::Uint32 UISystem::addControllerCallback(const ControllerCallback& cb)
 
 void UISystem::selectInput(std::size_t idx)
 {
-    XY_ASSERT(!getEntities().empty(), "No inputs are added!");
+    XY_ASSERT(!m_groups[m_activeGroup].empty(), "No inputs are added!");
     idx = std::min(idx, getEntities().size() - 1);
 
     unselect(m_selectedIndex);
@@ -436,11 +481,24 @@ void UISystem::setJoypadCursorActive(bool active)
     m_joypadCursorActive = active;
 }
 
+void UISystem::setActiveGroup(std::size_t group)
+{
+    XY_ASSERT(m_groups.count(group) != 0, "Group doesn't exist");
+    XY_ASSERT(!m_groups[group].empty(), "Group is empty");
+
+    unselect(m_selectedIndex);
+
+    m_activeGroup = group;
+    m_selectedIndex = 0;
+
+    select(m_selectedIndex);
+}
+
 //private
 void UISystem::selectNext()
 {
     //call unselected on prev ent
-    auto& entities = getEntities();
+    auto& entities = m_groups[m_activeGroup];
     unselect(m_selectedIndex);
 
     //get new index
@@ -453,7 +511,7 @@ void UISystem::selectNext()
 void UISystem::selectPrev()
 {
     //call unselected on prev ent
-    auto& entities = getEntities();
+    auto& entities = m_groups[m_activeGroup];
     unselect(m_selectedIndex);
 
     //get new index
@@ -465,27 +523,39 @@ void UISystem::selectPrev()
 
 void UISystem::unselect(std::size_t entIdx)
 {
-    auto& entities = getEntities();
+    auto& entities = m_groups[m_activeGroup];
     auto idx = entities[entIdx].getComponent<UIHitBox>().callbacks[UIHitBox::Unselected];
     m_selectionCallbacks[idx](entities[entIdx]);    
 }
 
 void UISystem::select(std::size_t entIdx)
 {
-    auto& entities = getEntities();
+    auto& entities = m_groups[m_activeGroup];
     auto idx = entities[entIdx].getComponent<UIHitBox>().callbacks[UIHitBox::Selected];
     m_selectionCallbacks[idx](entities[entIdx]);
 }
 
-void UISystem::onEntityAdded(xy::Entity)
+void UISystem::onEntityAdded(xy::Entity entity)
 {
-    //selectNext();
-    //selectPrev();
+    //add to group 0 by default, process() will move the entity if needed
+    m_groups[0].push_back(entity);
+    unselect(m_groups[0].size() - 1);
     select(0);
-    unselect(getEntities().size() - 1);
 }
 
-void UISystem::onEntityRemoved(xy::Entity)
+void UISystem::onEntityRemoved(xy::Entity entity)
 {
-    selectPrev();
+    //remove the entity from its group
+    auto group = entity.getComponent<UIHitBox>().m_group;
+
+    if (m_activeGroup == group)
+    {
+        selectPrev();
+    }
+
+    m_groups[group].erase(std::remove_if(m_groups[group].begin(), m_groups[group].end(), 
+        [entity](Entity e)
+        {
+            return e == entity;
+        }), m_groups[group].end());
 }

@@ -104,7 +104,10 @@ namespace xy
         void bindUniformToCurrentTexture(const std::string& name);
 
         /*!
-        \brief Sets the blend mode used when drawing
+        \brief Sets the blend mode used when drawing.
+        Note that this is overriden and has no effect if the Drawable
+        component is used on an Entity with a Sprite loaded from a
+        SpriteSheet, as the SpriteSheet definition takes precedence.
         */
         void setBlendMode(sf::BlendMode);
 

@@ -44,6 +44,14 @@ namespace xy
     class Transform;
 }
 
+namespace MenuID
+{
+    enum
+    {
+        Main, Player, Network, Keybind
+    };
+}
+
 class LoadingScreen;
 
 class MenuState final : public xy::State

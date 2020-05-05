@@ -115,10 +115,10 @@ bool MenuState::handleEvent(const sf::Event& evt)
         return true;
     }
     
-    m_scene.getSystem<xy::UISystem>().handleEvent(evt);
+    if(!m_helpShown) m_scene.getSystem<xy::UISystem>().handleEvent(evt);
     m_scene.forwardEvent(evt);
 
-    m_helpScene.getSystem<xy::UISystem>().handleEvent(evt);
+    if(m_helpShown) m_helpScene.getSystem<xy::UISystem>().handleEvent(evt);
     m_helpScene.forwardEvent(evt);
 
     return true;
@@ -428,7 +428,9 @@ void MenuState::createScene()
     //help sign
     entity = m_scene.createEntity();
     bounds = entity.addComponent<xy::Sprite>(m_resource.get<sf::Texture>(m_helpSignRes)).getTextureBounds();
+    bounds.width /= 2.f;
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize.x - (bounds.width + 202.f), xy::DefaultSceneSize.y - bounds.height);
+    entity.getComponent<xy::Sprite>().setTextureRect(bounds);
     entity.addComponent<xy::Drawable>().setDepth(9);
     entity.addComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
         m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([&mb](xy::Entity, sf::Uint64 flags)
@@ -439,7 +441,28 @@ void MenuState::createScene()
             msg->action = MenuEvent::HelpButtonClicked;
         }
     });
+
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] =  m_scene.getSystem<xy::UISystem>().addSelectionCallback(
+        [](xy::Entity entity)
+        {
+            auto& sprite = entity.getComponent<xy::Sprite>();
+            auto rect = sprite.getTextureRect();
+            rect.left = rect.width;
+            sprite.setTextureRect(rect);
+        });
+
+    entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = m_scene.getSystem<xy::UISystem>().addSelectionCallback(
+        [](xy::Entity entity)
+        {
+            auto& sprite = entity.getComponent<xy::Sprite>();
+            auto rect = sprite.getTextureRect();
+            rect.left = 0.f;
+            sprite.setTextureRect(rect);
+        });
+
     entity.getComponent<xy::UIHitBox>().area = bounds;
+    entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Main);
+    entity.getComponent<xy::UIHitBox>().setSelectionIndex(4);
 
     m_scene.getActiveCamera().getComponent<xy::AudioListener>().setVolume(1.f);
 }
@@ -504,6 +527,7 @@ void MenuState::createHelp()
         }
     });
     entity.getComponent<xy::UIHitBox>().area = { 0.f, 0.f, 64.f, 64.f };
+    entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Keybind);
     auto& tx = entity.addComponent<xy::Transform>();
     tx.setPosition(1518.f, 20.f);
     /*entity.addComponent<xy::Text>(m_fontResource.get("assets/fonts/Cave-Story.ttf")).setString("X");
@@ -678,6 +702,7 @@ void MenuState::showHelpMenu()
         m_leftMenuTarget.x = -320.f;
         m_rightMenuTarget.x = xy::DefaultSceneSize.x;
         m_helpTextTarget.y = xy::DefaultSceneSize.y;
+        m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Main);
     }
     else
     {
@@ -687,6 +712,7 @@ void MenuState::showHelpMenu()
         m_leftMenuTarget.x = 0.f;
         m_rightMenuTarget.x = xy::DefaultSceneSize.x - 320.f;
         m_helpTextTarget.y = 768.f;
+        m_helpScene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Keybind);
     }
     
     m_helpShown = !m_helpShown;
