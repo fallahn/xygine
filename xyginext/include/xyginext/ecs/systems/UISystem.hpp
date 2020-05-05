@@ -51,6 +51,7 @@ namespace xy
         //which contain the input which triggered it. Use the Flags enum to find the input type
         using MouseButtonCallback = std::function<void(Entity, sf::Uint64 flags)>;
         using MovementCallback = std::function<void(Entity, sf::Vector2f)>;
+        using MouseWheelCallback = std::function<void(Entity, bool, float)>;
         using KeyboardCallback = std::function<void(Entity, sf::Keyboard::Key)>;
         using SelectionChangedCallback = std::function<void(Entity)>;
         using ControllerCallback = std::function<void(Entity, sf::Uint32, sf::Uint32)>;
@@ -80,7 +81,7 @@ namespace xy
         component.callbacks[UIInput::MouseDown] = id;
         Note that a single callback ID may be assigned to multiple UIHitbox components
         */
-        sf::Uint32 addMouseButtonCallback(const MouseButtonCallback&);
+        std::uint32_t addMouseButtonCallback(const MouseButtonCallback&);
 
         /*!
         \brief Adds a mouse or touch input movement callback.
@@ -89,7 +90,18 @@ namespace xy
         mouse enter/exit events
         Note that a single callback ID may be assigned to multiple UIHitbox components
         */
-        sf::Uint32 addMouseMoveCallback(const MovementCallback&);
+        std::uint32_t addMouseMoveCallback(const MovementCallback&);
+
+        /*!
+        \brief Adds a mouse wheel input callback.
+        Mouse wheel callbacks handle scroll events from the mouse wheel.
+        Callback parameters are:
+        Entity the current UI entity which triggered this callback
+        bool true if the mouse wheel is vertical (most common) false if it is horizontal
+        float delta - positive is up/left, negative is down/right. May be non-integral on some mice
+        \returns A callback ID which may be assigned to multiple UIHitboxes
+        */
+        std::uint32_t addMouseWheelCallback(const MouseWheelCallback&);
 
         /*!
         \brief Adds a KeyEvent callback.
@@ -101,7 +113,7 @@ namespace xy
         component.callbacks[UIInput::KeyDown] = id;
         Note that a single callback ID may be assigned to multiple UIHitbox components
         */
-        sf::Uint32 addKeyCallback(const KeyboardCallback&);
+        std::uint32_t addKeyCallback(const KeyboardCallback&);
 
         /*!
         \brief Adds a selection changed callback.
@@ -110,14 +122,14 @@ namespace xy
         which is affected by the callback.
         Note that a single callback ID may be assigned to multiple UIHitbox components
         */
-        sf::Uint32 addSelectionCallback(const SelectionChangedCallback&);
+        std::uint32_t addSelectionCallback(const SelectionChangedCallback&);
 
         /*!
         \brief Adds a Controller Button callback.
         The callback passes in the entity which is affects, as well as the controller
         ID and Button ID which triggered the event
         */
-        sf::Uint32 addControllerCallback(const ControllerCallback&);
+        std::uint32_t addControllerCallback(const ControllerCallback&);
 
         /*!
         \brief Input flags.
@@ -162,6 +174,7 @@ namespace xy
 
         std::vector<MouseButtonCallback> m_buttonCallbacks;
         std::vector<MovementCallback> m_movementCallbacks;
+        std::vector<MouseWheelCallback> m_wheelCallbacks;
         std::vector<KeyboardCallback> m_keyboardCallbacks;
         std::vector<SelectionChangedCallback> m_selectionCallbacks;
         std::vector<ControllerCallback> m_controllerCallbacks;
@@ -173,6 +186,13 @@ namespace xy
 
         std::vector<Flags> m_mouseDownEvents;
         std::vector<Flags> m_mouseUpEvents;
+
+        struct WheelEvent final
+        {
+            bool vertical = true;
+            float delta = 0.f;
+        };
+        std::vector<WheelEvent> m_mouseWheelEvents;
 
         std::size_t m_selectedIndex;
         std::vector<sf::Keyboard::Key> m_keyDownEvents;

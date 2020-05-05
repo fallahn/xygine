@@ -157,6 +157,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
             m_scene.getSystem<xy::UISystem>().setActiveGroup(MenuID::Player);
         }
     });
+
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Selected] = selectedID;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::Unselected] = unselectedID;
     parentTx.addChild(entity.getComponent<xy::Transform>());

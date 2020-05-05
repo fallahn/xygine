@@ -63,6 +63,7 @@ UISystem::UISystem(MessageBus& mb)
     //default callbacks for components which don't have one assigned
     m_buttonCallbacks.push_back([](Entity, sf::Uint64) {}); 
     m_movementCallbacks.push_back([](Entity, sf::Vector2f) {});
+    m_wheelCallbacks.push_back([](Entity, bool, float) {});
     m_keyboardCallbacks.push_back([](Entity, sf::Keyboard::Key) {});
     m_selectionCallbacks.push_back([](Entity) {});
     m_controllerCallbacks.push_back([](Entity, sf::Uint32, sf::Uint32) {});
@@ -75,6 +76,13 @@ void UISystem::handleEvent(const sf::Event& evt)
     switch (evt.type)
     {
     default: break;
+    case sf::Event::MouseWheelScrolled:
+    {
+        auto& wheel = m_mouseWheelEvents.emplace_back();
+        wheel.delta = evt.mouseWheelScroll.delta;
+        wheel.vertical = evt.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel;
+    }
+        break;
     case sf::Event::MouseMoved:
         m_eventPosition = toWorldCoords(evt.mouseMove.x, evt.mouseMove.y);
         m_movementDelta = m_eventPosition - m_prevMousePosition;
@@ -392,6 +400,12 @@ void UISystem::process(float)
 
         if (currentIndex == m_selectedIndex)
         {
+
+            for (auto [vertical, delta] : m_mouseWheelEvents)
+            {
+                m_wheelCallbacks[input.callbacks[UIHitBox::MouseWheel]](e, vertical, delta);
+            }
+
             for (auto key : m_keyDownEvents)
             {
                 m_keyboardCallbacks[input.callbacks[UIHitBox::KeyDown]](e, key);
@@ -423,6 +437,7 @@ void UISystem::process(float)
 
     m_mouseUpEvents.clear();
     m_mouseDownEvents.clear();
+    m_mouseWheelEvents.clear();
 
     m_keyDownEvents.clear();
     m_keyUpEvents.clear();
@@ -436,34 +451,40 @@ void UISystem::handleMessage(const Message&)
 
 }
 
-sf::Uint32 UISystem::addMouseButtonCallback(const MouseButtonCallback& cb)
+std::uint32_t UISystem::addMouseButtonCallback(const MouseButtonCallback& cb)
 {
     m_buttonCallbacks.push_back(cb);
-    return static_cast<sf::Uint32>(m_buttonCallbacks.size() - 1);
+    return static_cast<std::uint32_t>(m_buttonCallbacks.size() - 1);
 }
 
-sf::Uint32 UISystem::addMouseMoveCallback(const MovementCallback& cb)
+std::uint32_t UISystem::addMouseMoveCallback(const MovementCallback& cb)
 {
     m_movementCallbacks.push_back(cb);
-    return static_cast<sf::Uint32>(m_movementCallbacks.size() - 1);
+    return static_cast<std::uint32_t>(m_movementCallbacks.size() - 1);
 }
 
-sf::Uint32 UISystem::addKeyCallback(const KeyboardCallback& cb)
+std::uint32_t UISystem::addMouseWheelCallback(const MouseWheelCallback& cb)
+{
+    m_wheelCallbacks.push_back(cb);
+    return static_cast<std::uint32_t>(m_wheelCallbacks.size() - 1);
+}
+
+std::uint32_t UISystem::addKeyCallback(const KeyboardCallback& cb)
 {
     m_keyboardCallbacks.push_back(cb);
-    return static_cast<sf::Uint32>(m_keyboardCallbacks.size() - 1);
+    return static_cast<std::uint32_t>(m_keyboardCallbacks.size() - 1);
 }
 
-sf::Uint32 UISystem::addSelectionCallback(const SelectionChangedCallback& cb)
+std::uint32_t UISystem::addSelectionCallback(const SelectionChangedCallback& cb)
 {
     m_selectionCallbacks.push_back(cb);
-    return static_cast<sf::Uint32>(m_selectionCallbacks.size() - 1);
+    return static_cast<std::uint32_t>(m_selectionCallbacks.size() - 1);
 }
 
-sf::Uint32 UISystem::addControllerCallback(const ControllerCallback& cb)
+std::uint32_t UISystem::addControllerCallback(const ControllerCallback& cb)
 {
     m_controllerCallbacks.push_back(cb);
-    return static_cast<sf::Uint32>(m_controllerCallbacks.size() - 1);
+    return static_cast<std::uint32_t>(m_controllerCallbacks.size() - 1);
 }
 
 void UISystem::selectInput(std::size_t idx)

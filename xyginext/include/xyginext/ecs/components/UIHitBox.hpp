@@ -49,6 +49,7 @@ namespace xy
             MouseDown,
             MouseUp,
             MouseMotion,
+            MouseWheel,
             KeyDown,
             KeyUp,
             Selected,
