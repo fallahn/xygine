@@ -36,7 +36,7 @@ namespace xy
     namespace Util
     {
         /*!
-        /brief Port of https://github.com/nicolausYes/easing-functions
+        \brief Port of https://github.com/nicolausYes/easing-functions
         Each function takes a given amount of time / progress in a normalised
         0 - 1 range, and returns a value 0 - 1 based on the current position
         along a curve. Examples of each curve can be found at https://easings.net/en

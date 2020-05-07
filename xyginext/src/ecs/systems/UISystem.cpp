@@ -289,49 +289,7 @@ void UISystem::process(float)
         m_controllerMask = 0;
     }
 
-    auto& entities = getEntities();
-    for (auto& e : entities)
-    {
-        //check to see if the hitbox group changed - remove from old first before adding to new
-        //make sure group exists and assert that it's one or less than the current number of groups
-        auto& input = e.getComponent<UIHitBox>();
-
-        if (input.m_updateGroup)
-        {
-            //remove from old group first
-            m_groups[input.m_previousGroup].erase(std::remove_if(m_groups[input.m_previousGroup].begin(),
-                m_groups[input.m_previousGroup].end(),
-                [e](Entity entity)
-                {
-                    return e == entity;
-                }), m_groups[input.m_previousGroup].end());
-
-            //create new group if needed
-            if (m_groups.count(input.m_group) == 0)
-            {
-                m_groups.insert(std::make_pair(input.m_group, std::vector<Entity>()));
-            }
-
-            //add to group
-            if (input.m_selectionIndex == 0)
-            {
-                //set a default order
-                input.m_selectionIndex = m_groups[input.m_group].size();
-            }
-            m_groups[input.m_group].push_back(e);
-
-            //sort the group by selection index
-            std::sort(m_groups[input.m_group].begin(), m_groups[input.m_group].end(),
-                [](xy::Entity a, xy::Entity b)
-                {
-                    return a.getComponent<UIHitBox>().m_selectionIndex < b.getComponent<UIHitBox>().m_selectionIndex;
-                });
-
-
-            input.m_updateGroup = false;
-        }
-    }
-
+    updateGroupAssignments();
 
     auto view = App::getRenderWindow()->getView();
     sf::FloatRect viewableArea((view.getCenter() - (view.getSize() / 2.f)), view.getSize());
@@ -504,6 +462,8 @@ void UISystem::setJoypadCursorActive(bool active)
 
 void UISystem::setActiveGroup(std::size_t group)
 {
+    updateGroupAssignments();
+
     XY_ASSERT(m_groups.count(group) != 0, "Group doesn't exist");
     XY_ASSERT(!m_groups[group].empty(), "Group is empty");
 
@@ -556,12 +516,60 @@ void UISystem::select(std::size_t entIdx)
     m_selectionCallbacks[idx](entities[entIdx]);
 }
 
+void UISystem::updateGroupAssignments()
+{
+    auto& entities = getEntities();
+    for (auto& e : entities)
+    {
+        //check to see if the hitbox group changed - remove from old first before adding to new
+        auto& input = e.getComponent<UIHitBox>();
+
+        if (input.m_updateGroup)
+        {
+            //only swap group if we changed - we may have only changed index order
+            if (input.m_previousGroup != input.m_group)
+            {
+                //remove from old group first
+                m_groups[input.m_previousGroup].erase(std::remove_if(m_groups[input.m_previousGroup].begin(),
+                    m_groups[input.m_previousGroup].end(),
+                    [e](Entity entity)
+                    {
+                        return e == entity;
+                    }), m_groups[input.m_previousGroup].end());
+
+                //create new group if needed
+                if (m_groups.count(input.m_group) == 0)
+                {
+                    m_groups.insert(std::make_pair(input.m_group, std::vector<Entity>()));
+                }
+
+                //add to group
+                if (input.m_selectionIndex == 0)
+                {
+                    //set a default order
+                    input.m_selectionIndex = m_groups[input.m_group].size();
+                }
+                m_groups[input.m_group].push_back(e);
+            }
+
+
+            //sort the group by selection index
+            std::sort(m_groups[input.m_group].begin(), m_groups[input.m_group].end(),
+                [](xy::Entity a, xy::Entity b)
+                {
+                    return a.getComponent<UIHitBox>().m_selectionIndex < b.getComponent<UIHitBox>().m_selectionIndex;
+                });
+
+
+            input.m_updateGroup = false;
+        }
+    }
+}
+
 void UISystem::onEntityAdded(xy::Entity entity)
 {
     //add to group 0 by default, process() will move the entity if needed
     m_groups[0].push_back(entity);
-    unselect(m_groups[0].size() - 1);
-    select(0);
 }
 
 void UISystem::onEntityRemoved(xy::Entity entity)

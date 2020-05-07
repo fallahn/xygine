@@ -95,7 +95,7 @@ namespace xy
         std::size_t m_previousGroup = 0;
         std::size_t m_group = 0;
         std::size_t m_selectionIndex = 0;
-        bool m_updateGroup = false;
+        bool m_updateGroup = true; //do order sorting by default
 
         friend class UISystem;
     };

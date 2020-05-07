@@ -166,9 +166,19 @@ namespace xy
         UISystem handles multiple menus, for example, UIHitbox components
         can be grouped by a given index, one for each menu. This function
         will set the active group of UIHitbox components to recieve events.
-        \see UIHitbox::setGroup()
+        \see xy::UIHitbox::setGroup()
         */
         void setActiveGroup(std::size_t);
+
+        /*!
+        \brief Returns the current active group
+        */
+        std::size_t getActiveGroup() const { return m_activeGroup; }
+
+        /*!
+        \brief Returns the selected control index within the current group
+        */
+        std::size_t getSelectedInput() const { return m_selectedIndex; }
 
     private:
 
@@ -217,6 +227,8 @@ namespace xy
 
         void unselect(std::size_t);
         void select(std::size_t);
+
+        void updateGroupAssignments();
 
         void onEntityAdded(xy::Entity) override;
         void onEntityRemoved(xy::Entity) override;

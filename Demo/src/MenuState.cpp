@@ -497,6 +497,11 @@ void MenuState::createMenu()
     createSecondMenu(tx, selectedID, unselectedID, font);
     createThirdMenu(tx, selectedID, unselectedID, font);
 
+    auto entity = m_scene.createEntity();
+    entity.addComponent<xy::Transform>().setPosition(20.f, 1040.f);
+    entity.addComponent<xy::Drawable>().setDepth(20);
+    entity.addComponent<xy::Text>(font).setString("Get the full version on Steam! https://store.steampowered.com/app/770050/Castle_Clamber/");
+
     //apply the default view
     auto view = getContext().defaultView;
     auto& camera = m_scene.getActiveCamera().getComponent<xy::Camera>();
