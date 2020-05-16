@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include "MyFirstState.hpp"
+#include "ParticleState.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/ParticleEmitter.hpp>
@@ -51,10 +51,10 @@ namespace
     const float WindowWidth = 350.f;
     const float WindowHeight = 680.f;
 
-    const std::string cfgPath = xy::FileSystem::getConfigDirectory("particle editor") + "particle.cfg";
+    const std::string cfgPath = xy::FileSystem::getConfigDirectory("xy_editor") + "particle.cfg";
 }
 
-MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx)
+ParticleState::ParticleState(xy::StateStack& ss, xy::State::Context ctx)
     : xy::State             (ss,ctx),
     m_scene                 (ctx.appInstance.getMessageBus()),
     m_emitterSettings       (nullptr),
@@ -74,14 +74,14 @@ MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx)
     m_scene.getActiveCamera().getComponent<xy::Camera>().setViewport(ctx.defaultView.getViewport());
 }
 
-MyFirstState::~MyFirstState()
+ParticleState::~ParticleState()
 {
     m_config.findProperty("bg_colour")->setValue(m_backgroundColour);
     m_config.findProperty("working_dir")->setValue(m_workingDirectory);
     m_config.save(cfgPath);
 }
 
-bool MyFirstState::handleEvent(const sf::Event& evt)
+bool ParticleState::handleEvent(const sf::Event& evt)
 {
     if (evt.type == sf::Event::KeyReleased)
     {
@@ -98,18 +98,18 @@ bool MyFirstState::handleEvent(const sf::Event& evt)
     return true;
 }
 
-void MyFirstState::handleMessage(const xy::Message& msg)
+void ParticleState::handleMessage(const xy::Message& msg)
 {
     m_scene.forwardMessage(msg);
 }
 
-bool MyFirstState::update(float dt)
+bool ParticleState::update(float dt)
 {
     m_scene.update(dt);
     return true;
 }
 
-void MyFirstState::draw()
+void ParticleState::draw()
 {
     auto rw = getContext().appInstance.getRenderWindow();
     rw->draw(m_scene);
@@ -117,7 +117,7 @@ void MyFirstState::draw()
 
 
 //private
-void MyFirstState::setup()
+void ParticleState::setup()
 {
     auto& mb = xy::App::getActiveInstance()->getMessageBus();
 

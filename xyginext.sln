@@ -10,7 +10,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Demo", "Demo\Demo.vcxproj",
 		{33E0B54E-2EFA-4060-8E87-B854753C326D} = {33E0B54E-2EFA-4060-8E87-B854753C326D}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleParticleEditor", "SimpleParticleEditor\SimpleParticleEditor.vcxproj", "{D093CFB8-53EA-492F-9052-B4F6C8E19775}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleEditor", "SimpleParticleEditor\SimpleParticleEditor.vcxproj", "{D093CFB8-53EA-492F-9052-B4F6C8E19775}"
 	ProjectSection(ProjectDependencies) = postProject
 		{33E0B54E-2EFA-4060-8E87-B854753C326D} = {33E0B54E-2EFA-4060-8E87-B854753C326D}
 	EndProjectSection
@@ -55,7 +55,6 @@ Global
 		{33E0B54E-2EFA-4060-8E87-B854753C326D}.ReleaseWithDebug|x86.ActiveCfg = Release|Win32
 		{33E0B54E-2EFA-4060-8E87-B854753C326D}.ReleaseWithDebug|x86.Build.0 = Release|Win32
 		{A27B06A1-8A42-4F1E-BBAA-6A9DF8FA3484}.Debug|x64.ActiveCfg = Debug|x64
-		{A27B06A1-8A42-4F1E-BBAA-6A9DF8FA3484}.Debug|x64.Build.0 = Debug|x64
 		{A27B06A1-8A42-4F1E-BBAA-6A9DF8FA3484}.Debug|x86.ActiveCfg = Debug|Win32
 		{A27B06A1-8A42-4F1E-BBAA-6A9DF8FA3484}.Debug|x86.Build.0 = Debug|Win32
 		{A27B06A1-8A42-4F1E-BBAA-6A9DF8FA3484}.Release|x64.ActiveCfg = Release|x64
@@ -67,6 +66,7 @@ Global
 		{A27B06A1-8A42-4F1E-BBAA-6A9DF8FA3484}.ReleaseWithDebug|x86.ActiveCfg = Release|Win32
 		{A27B06A1-8A42-4F1E-BBAA-6A9DF8FA3484}.ReleaseWithDebug|x86.Build.0 = Release|Win32
 		{D093CFB8-53EA-492F-9052-B4F6C8E19775}.Debug|x64.ActiveCfg = Debug|x64
+		{D093CFB8-53EA-492F-9052-B4F6C8E19775}.Debug|x64.Build.0 = Debug|x64
 		{D093CFB8-53EA-492F-9052-B4F6C8E19775}.Debug|x86.ActiveCfg = Debug|Win32
 		{D093CFB8-53EA-492F-9052-B4F6C8E19775}.Debug|x86.Build.0 = Debug|Win32
 		{D093CFB8-53EA-492F-9052-B4F6C8E19775}.Release|x64.ActiveCfg = Release|x64

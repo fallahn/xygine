@@ -107,7 +107,8 @@ Sprite SpriteSheet::getSprite(const std::string& name) const
     {
         return m_sprites[name];
     }
-    LOG(name + " not found in sprite sheet", Logger::Type::Warning);
+
+    LogW << name << " not found in sprite sheet" << std::endl;
     return {};
 }
 

@@ -23,6 +23,7 @@
     <ProjectGuid>{D093CFB8-53EA-492F-9052-B4F6C8E19775}</ProjectGuid>
     <RootNamespace>SimpleParticleEditor</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ResourceEditor</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -129,11 +130,13 @@
   <ItemGroup>
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\MyFirstState.cpp" />
+    <ClCompile Include="src\ParticleState.cpp" />
+    <ClCompile Include="src\SpriteState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp" />
-    <ClInclude Include="include\MyFirstState.hpp" />
+    <ClInclude Include="include\ParticleState.hpp" />
+    <ClInclude Include="include\SpriteState.hpp" />
     <ClInclude Include="include\States.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

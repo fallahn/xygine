@@ -50,10 +50,19 @@ namespace xy
         //passes in the entity for whom the callback was triggered and a copy of the flags
         //which contain the input which triggered it. Use the Flags enum to find the input type
         using MouseButtonCallback = std::function<void(Entity, sf::Uint64 flags)>;
+        //passes in the entity for which the callback is called, plus the delta movement
+        //of the mouse move which triggered the callback
         using MovementCallback = std::function<void(Entity, sf::Vector2f)>;
+        //passes in the entity for which the callback is called, whether the mousewheel
+        //is vertical (true) or horizontal (false) and the delta movement
         using MouseWheelCallback = std::function<void(Entity, bool, float)>;
+        //passes in the entity for which the callback was called, plus the
+        //keyboard ident of the key which triggered the callback
         using KeyboardCallback = std::function<void(Entity, sf::Keyboard::Key)>;
+        //passes in the entity whose selection state was changed
         using SelectionChangedCallback = std::function<void(Entity)>;
+        //passes in the entity for which the callback was triggered, followed
+        //by the ID of the controller, and the ID of button which triggered the callback
         using ControllerCallback = std::function<void(Entity, sf::Uint32, sf::Uint32)>;
 
         explicit UISystem(MessageBus&);

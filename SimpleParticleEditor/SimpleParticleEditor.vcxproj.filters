@@ -21,7 +21,10 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MyFirstState.cpp">
+    <ClCompile Include="src\ParticleState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpriteState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,10 +32,13 @@
     <ClInclude Include="include\Game.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MyFirstState.hpp">
+    <ClInclude Include="include\States.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\States.hpp">
+    <ClInclude Include="include\ParticleState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpriteState.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

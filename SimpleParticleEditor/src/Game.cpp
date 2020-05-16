@@ -27,7 +27,8 @@ source distribution.
 
 #include "Game.hpp"
 #include "States.hpp"
-#include "MyFirstState.hpp"
+#include "ParticleState.hpp"
+#include "SpriteState.hpp"
 
 #include <SFML/Window/Event.hpp>
 
@@ -61,10 +62,10 @@ void Game::draw()
 
 bool Game::initialise()
 {
-    setWindowTitle("Simple Particle Editor - Press F1 for Options");
+    setWindowTitle("xygine Resource Editor - Press F1 for Options");
 
     registerStates();
-    m_stateStack.pushState(States::MyFirstState);
+    m_stateStack.pushState(States::ParticleState);
 
     getRenderWindow()->setKeyRepeatEnabled(false);
 
@@ -79,5 +80,6 @@ void Game::finalise()
 
 void Game::registerStates()
 {
-    m_stateStack.registerState<MyFirstState>(States::MyFirstState);
+    m_stateStack.registerState<ParticleState>(States::ParticleState);
+    m_stateStack.registerState<SpriteState>(States::SpriteState);
 }
