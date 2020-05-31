@@ -14,6 +14,7 @@ namespace sf
     class Event;
     class RenderTarget;
     class RenderWindow;
+    class RenderTexture;
     class Sprite;
     class Texture;
     class Window;
@@ -64,6 +65,13 @@ namespace SFML
         const sf::Color& tintColor = sf::Color::White,
         const sf::Color& borderColor = sf::Color::Transparent);
     IMGUI_API void Image(const sf::Texture& texture, const sf::Vector2f& size, const sf::FloatRect& textureRect,
+        const sf::Color& tintColor = sf::Color::White,
+        const sf::Color& borderColor = sf::Color::Transparent);
+
+    IMGUI_API void Image(const sf::RenderTexture& texture, 
+        const sf::Color& tintColor = sf::Color::White, 
+        const sf::Color& borderColor = sf::Color::Transparent);
+    IMGUI_API void Image(const sf::RenderTexture& texture, const sf::Vector2f& size,
         const sf::Color& tintColor = sf::Color::White,
         const sf::Color& borderColor = sf::Color::Transparent);
 
