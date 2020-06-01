@@ -1,5 +1,6 @@
 /*********************************************************************
 (c) Jonny Paton 2018
+(c) Matt Marchant 2019
 
 xygineXT - Zlib license.
 
@@ -26,15 +27,51 @@ source distribution.
 
 #pragma once
 
-#include <xyginext/core/State.hpp>
+#include "States.hpp"
 
-namespace States
+#include <xyginext/core/State.hpp>
+#include <xyginext/core/ConfigFile.hpp>
+#include <xyginext/ecs/Scene.hpp>
+#include <xyginext/gui/GuiClient.hpp>
+#include <xyginext/resources/Resource.hpp>
+
+#include <string>
+
+namespace xy
 {
-    enum State
-    {
-        ParticleState,
-        SpriteState
-    };
+    struct EmitterSettings;
 }
 
+class ParticleState final : public xy::State, public xy::GuiClient
+{
+public:
+    ParticleState(xy::StateStack&, xy::State::Context);
 
+    ~ParticleState();
+
+    bool handleEvent(const sf::Event &evt) override;
+    
+    void handleMessage(const xy::Message &) override;
+    
+    bool update(float dt) override;
+    
+    void draw() override;
+    
+    xy::StateID stateID() const override { return States::ParticleState; }
+
+private:    
+    xy::Scene m_scene;
+    xy::EmitterSettings* m_emitterSettings;
+
+    std::int32_t m_selectedBlendMode;
+
+    xy::TextureResource m_textures;
+    std::string m_workingDirectory;
+
+    bool m_showBackgroundPicker;
+    sf::Color m_backgroundColour;
+
+    xy::ConfigFile m_config;
+
+    void setup();
+};

@@ -7,6 +7,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Touch.hpp>
 #include <SFML/Window/Window.hpp>
@@ -503,6 +504,17 @@ void Image(const sf::Texture& texture, const sf::Vector2f& size, const sf::Float
     ImVec2 uv1((textureRect.left + textureRect.width) / textureSize.x,
         (textureRect.top + textureRect.height) / textureSize.y);
     ImGui::Image((void*)(std::size_t)texture.getNativeHandle(), size, uv0, uv1, tintColor, borderColor);
+}
+
+void Image(const sf::RenderTexture& texture, const sf::Color& tintColor, const sf::Color& borderColor)
+{
+    ImGui::Image(texture, static_cast<sf::Vector2f>(texture.getSize()), tintColor, borderColor);
+}
+
+void Image(const sf::RenderTexture& texture, const sf::Vector2f& size, const sf::Color& tintColor, const sf::Color& borderColor)
+{
+    ImTextureID textureID = (void*)(std::size_t)(texture.getTexture().getNativeHandle());
+    ImGui::Image(textureID, size, ImVec2(0, 1), ImVec2(1, 0), tintColor, borderColor);
 }
 
 void Image(const sf::Sprite& sprite,

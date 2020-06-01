@@ -1,6 +1,6 @@
 /*********************************************************************
 (c) Jonny Paton 2018
-(c) Matt Marchant 2019
+(c) Matt Marchant 2020
 
 xygineXT - Zlib license.
 
@@ -37,17 +37,12 @@ source distribution.
 
 #include <string>
 
-namespace xy
-{
-    struct EmitterSettings;
-}
-
-class MyFirstState final : public xy::State, public xy::GuiClient
+class SpriteState final : public xy::State, public xy::GuiClient
 {
 public:
-    MyFirstState(xy::StateStack&, xy::State::Context);
+    SpriteState(xy::StateStack&, xy::State::Context);
 
-    ~MyFirstState();
+    ~SpriteState();
 
     bool handleEvent(const sf::Event &evt) override;
     
@@ -57,19 +52,10 @@ public:
     
     void draw() override;
     
-    xy::StateID stateID() const override { return States::MyFirstState; }
+    xy::StateID stateID() const override { return States::SpriteState; }
 
 private:    
     xy::Scene m_scene;
-    xy::EmitterSettings* m_emitterSettings;
-
-    std::int32_t m_selectedBlendMode;
-
-    xy::TextureResource m_textures;
-    std::string m_workingDirectory;
-
-    bool m_showBackgroundPicker;
-    sf::Color m_backgroundColour;
 
     xy::ConfigFile m_config;
 
