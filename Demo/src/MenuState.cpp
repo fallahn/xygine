@@ -143,6 +143,7 @@ bool MenuState::update(float dt)
 {
     m_scene.update(dt);
     m_helpScene.update(dt);
+
     return true;
 }
 

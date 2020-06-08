@@ -74,15 +74,22 @@ namespace xy
         void setFilterFlags(std::uint64_t flags) { m_filterFlags = flags; }
 
         /*!
-        \breif Returns the current filter flags.
+        \brief Returns the current filter flags.
         \see setFilterFlags
         */
         std::uint64_t getFilterFlags() const { return m_filterFlags; }
+
+        /*!
+        \brief Returns the number of drawables rendered in the last draw call
+        */
+        std::size_t getDrawCount() const { return m_lastDrawCount; }
 
     private:
         bool m_wantsSorting;
         sf::Vector2f m_cullingBorder;
         std::uint64_t m_filterFlags;
+
+        mutable std::size_t m_lastDrawCount;
 
         void onEntityAdded(xy::Entity) override;
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
