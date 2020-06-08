@@ -132,7 +132,8 @@ void ParticleDirector::handleMessage(const xy::Message& msg)
     else if (msg.id == MessageID::AnimationMessage)
     {
         const auto& data = msg.getData<AnimationEvent>();
-        if (data.entity.hasComponent<Actor>())
+        if (data.entity.isValid() &&
+            data.entity.hasComponent<Actor>())
         {
             auto actorID = data.entity.getComponent<Actor>().type;
             switch (actorID)
