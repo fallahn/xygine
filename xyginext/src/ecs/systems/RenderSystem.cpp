@@ -44,10 +44,17 @@ source distribution.
 xy::RenderSystem::RenderSystem(xy::MessageBus& mb)
     : xy::System    (mb, typeid(xy::RenderSystem)),
     m_wantsSorting  (true),
-    m_filterFlags   (std::numeric_limits<std::uint64_t>::max())
+    m_filterFlags   (std::numeric_limits<std::uint64_t>::max()),
+    m_lastDrawCount (0)
 {
     requireComponent<xy::Drawable>();
     requireComponent<xy::Transform>();
+
+    if (!sf::VertexBuffer::isAvailable())
+    {
+        //TODO create a fallback to vertex arrays in this case
+        LogE << "Vertex buffers are unavailable on this platform *sadface*" << std::endl;
+    }
 }
 
 //public
@@ -106,6 +113,9 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     auto view = rt.getView();
     sf::FloatRect viewableArea((view.getCenter() - (view.getSize() / 2.f)) - m_cullingBorder, view.getSize() + m_cullingBorder);
 
+    m_lastDrawCount = 0;
+
+
     glCheck(glEnable(GL_SCISSOR_TEST));
     glCheck(glDepthFunc(GL_LEQUAL));
     for (auto entity : getEntities())
@@ -153,6 +163,7 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
                 glCheck(glEnable(drawable.m_glFlags[i]));
             }
             rt.draw(drawable.m_vertices.data(), drawable.m_vertices.size(), drawable.m_primitiveType, states);
+            m_lastDrawCount++;
             for (auto i = 0u; i < drawable.m_glFlagIndex; ++i)
             {
                 glCheck(glDisable(drawable.m_glFlags[i]));

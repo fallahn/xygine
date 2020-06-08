@@ -34,6 +34,7 @@ source distribution.
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Glsl.hpp>
+#include <SFML/Graphics/VertexBuffer.hpp>
 #include <SFML/System/Vector3.hpp>
 
 #include <vector>
@@ -44,7 +45,7 @@ namespace xy
 {
     /*!
     \brief Drawable component.
-    The drawable component encapsulates an sf::VertexArray which can be used to draw
+    The drawable component encapsulates an sf::VertexBuffer which can be used to draw
     custom shapes, as well as being required for entities which have a sprite or text
     component. The purpose of the Drawable component is to allow mixing Sprite, Text
     and custom drawable types in a single drawing pass with variable depth. A Scene
@@ -56,6 +57,12 @@ namespace xy
         Drawable();
         explicit Drawable(const sf::Texture&);
         
+        Drawable(const Drawable&) = delete;
+        Drawable& operator = (const Drawable&) = delete;
+
+        Drawable(Drawable&&) noexcept;
+        Drawable& operator = (Drawable&&);
+
         /*!
         \brief Sets the texture with which to render this drawable.
         Setting this to nullptr removes the texture. This has no effect
@@ -191,6 +198,19 @@ namespace xy
         sf::PrimitiveType getPrimitiveType() const { return m_primitiveType; }
 
         /*!
+        \brief Set the Usage type for the underlying sf::VertexBuffer.
+        Defaults to sf::VertexBuffer::Dynamic
+        \see sf::VertexBuffer::Usage
+        */
+        void setUsage(sf::VertexBuffer::Usage);
+
+        /*!
+        \brief Returns the current Usage value of the underlying sf::VertexBuffer
+        \see sf::VertexBuffer::Usage
+        */
+        sf::VertexBuffer::Usage getUsage() const;
+
+        /*!
         \brief Returns the local bounds of the Drawable's vertex array.
         This should be updated by any systems which implement custom drawables
         else culling will failed and drawable will not appear on screen
@@ -251,7 +271,9 @@ namespace xy
         sf::RenderStates m_states;
         std::vector<sf::Vertex> m_vertices;
 
-        sf::Int32 m_zDepth = 0;
+        sf::VertexBuffer m_buffer;
+
+        std::int32_t m_zDepth = 0;
         bool m_wantsSorting = true;
 
         std::uint64_t m_filterFlags;
