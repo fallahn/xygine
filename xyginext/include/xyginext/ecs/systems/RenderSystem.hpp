@@ -90,6 +90,7 @@ namespace xy
         std::uint64_t m_filterFlags;
 
         mutable std::size_t m_lastDrawCount;
+        mutable bool m_depthWriteEnabled;
 
         void onEntityAdded(xy::Entity) override;
         void draw(sf::RenderTarget&, sf::RenderStates) const override;

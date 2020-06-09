@@ -261,6 +261,17 @@ namespace xy
         void addGlFlag(std::int32_t);
 
         /*!
+        \brief Enables or disables writing to the depth buffer.
+        Default is true.
+        */
+        void setDepthWriteEnabled(bool enabled) { m_depthWriteEnabled = enabled; }
+
+        /*!
+        \brief Returns true if depth writes are enabled, else false
+        */
+        bool getDepthWriteEnabled() const { return m_depthWriteEnabled; }
+
+        /*!
         \brief default flag value for drawables 
         0b1000000000000000000000000000000000000000000000000000000000000000
         */
@@ -336,6 +347,7 @@ namespace xy
 
         std::array<std::int32_t, 4u> m_glFlags = {};
         std::size_t m_glFlagIndex;
+        bool m_depthWriteEnabled;
 
         friend class RenderSystem;
 

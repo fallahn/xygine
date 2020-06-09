@@ -42,10 +42,11 @@ source distribution.
 #include <limits>
 
 xy::RenderSystem::RenderSystem(xy::MessageBus& mb)
-    : xy::System    (mb, typeid(xy::RenderSystem)),
-    m_wantsSorting  (true),
-    m_filterFlags   (std::numeric_limits<std::uint64_t>::max()),
-    m_lastDrawCount (0)
+    : xy::System        (mb, typeid(xy::RenderSystem)),
+    m_wantsSorting      (true),
+    m_filterFlags       (std::numeric_limits<std::uint64_t>::max()),
+    m_lastDrawCount     (0),
+    m_depthWriteEnabled (true)
 {
     requireComponent<xy::Drawable>();
     requireComponent<xy::Transform>();
@@ -155,6 +156,12 @@ void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
                 //just set the scissor to the view
                 auto rtSize = rt.getSize();
                 glCheck(glScissor(0, 0, rtSize.x, rtSize.y));
+            }
+
+            if (m_depthWriteEnabled != drawable.m_depthWriteEnabled)
+            {
+                m_depthWriteEnabled = drawable.m_depthWriteEnabled;
+                glCheck(glDepthMask(m_depthWriteEnabled));
             }
 
             //apply any gl flags such as depth testing
