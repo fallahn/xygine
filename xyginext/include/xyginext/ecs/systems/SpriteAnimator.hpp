@@ -44,6 +44,6 @@ namespace xy
         void process(float) override;
 
     private:
-
+        void onEntityAdded(xy::Entity) override;
     };
 }

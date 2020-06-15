@@ -28,6 +28,7 @@ source distribution.
 #include "xyginext/ecs/systems/SpriteAnimator.hpp"
 #include "xyginext/ecs/components/Sprite.hpp"
 #include "xyginext/ecs/components/SpriteAnimation.hpp"
+#include "xyginext/ecs/components/Drawable.hpp"
 
 #include "xyginext/core/Message.hpp"
 
@@ -84,4 +85,10 @@ void SpriteAnimator::process(float dt)
             }
         }
     }
+}
+
+//private
+void SpriteAnimator::onEntityAdded(xy::Entity entity)
+{
+    entity.getComponent<xy::Drawable>().setUsage(sf::VertexBuffer::Usage::Stream);
 }

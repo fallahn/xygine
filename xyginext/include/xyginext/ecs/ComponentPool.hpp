@@ -67,7 +67,7 @@ namespace xy
 			T& operator [] (std::size_t index) { XY_ASSERT(index < m_pool.size(), "Index out of range"); return m_pool[index]; }
 			const T& operator [] (std::size_t index) const { XY_ASSERT(index < m_pool.size(), "Index out of range"); return m_pool[index]; }
 
-			void reset(std::size_t index) override { m_pool[index] = T(); }
+			void reset(std::size_t index) override { if (index < m_pool.size()) m_pool[index] = T(); }
 
 		private:
 			std::vector<T> m_pool;
