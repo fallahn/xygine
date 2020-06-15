@@ -46,7 +46,8 @@ Drawable::Drawable()
     m_croppingArea      (std::numeric_limits<float>::lowest() / 2.f, std::numeric_limits<float>::lowest() / 2.f,
                         std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
     m_cropped           (false),
-    m_glFlagIndex       (0)
+    m_glFlagIndex       (0),
+    m_depthWriteEnabled (true)
 {
     m_buffer.create(0);
 }
@@ -61,7 +62,8 @@ Drawable::Drawable(const sf::Texture& texture)
     m_croppingArea      (std::numeric_limits<float>::lowest() / 2.f, std::numeric_limits<float>::lowest() / 2.f,
                         std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
     m_cropped           (false),
-    m_glFlagIndex       (0)
+    m_glFlagIndex       (0),
+    m_depthWriteEnabled (true)
 {
     m_states.texture = &texture;
     m_buffer.create(0);
