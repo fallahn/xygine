@@ -63,12 +63,19 @@ namespace xy
         */
         sf::Shader& getShader() { return m_shader; }
 
+        /*!
+        \brief Disables rendering the particle system.
+        Useful for multi-pass effects where particles should be omitted
+        */
+        void setVisisble(bool visible) { m_visible = visible; }
+
     private:
 
         void onEntityAdded(xy::Entity) override;
         void onEntityRemoved(xy::Entity) override;
 
         mutable sf::Shader m_shader;
+        bool m_visible;
 
         struct EmitterArray
         {

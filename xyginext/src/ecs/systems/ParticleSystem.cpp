@@ -88,6 +88,7 @@ namespace
 
 ParticleSystem::ParticleSystem(xy::MessageBus& mb)
     : xy::System        (mb, typeid(ParticleSystem)),
+    m_visible           (true),
     m_arrayCount        (0),
     m_activeArrayCount  (0)
 {
@@ -254,28 +255,31 @@ void ParticleSystem::onEntityRemoved(xy::Entity)
 
 void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    auto view = rt.getView();
-    sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
-    
-    //scale particles to match screen size
-    float ratio = static_cast<float>(rt.getSize().x) / viewableArea.width;
-    m_shader.setUniform("u_screenScale", ratio);
-
-    states.shader = &m_shader;
-    states.texture = &m_dummyTexture;
-    
-    glCheck(glEnable(GL_PROGRAM_POINT_SIZE));
-    glCheck(glEnable(GL_POINT_SPRITE));
-    for (auto i = 0u; i < m_activeArrayCount; ++i)
+    if (m_visible)
     {
-        if (m_emitterArrays[i].bounds.intersects(viewableArea))
+        auto view = rt.getView();
+        sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
+
+        //scale particles to match screen size
+        float ratio = static_cast<float>(rt.getSize().x) / viewableArea.width;
+        m_shader.setUniform("u_screenScale", ratio);
+
+        states.shader = &m_shader;
+        states.texture = &m_dummyTexture;
+
+        glCheck(glEnable(GL_PROGRAM_POINT_SIZE));
+        glCheck(glEnable(GL_POINT_SPRITE));
+        for (auto i = 0u; i < m_activeArrayCount; ++i)
         {
-            m_shader.setUniform("u_texture", *m_emitterArrays[i].texture);
-            states.blendMode = m_emitterArrays[i].blendMode;
-            rt.draw(m_emitterArrays[i].vertices.data(), m_emitterArrays[i].count, sf::Points, states);
-            //DPRINT("Particle Count", std::to_string(m_emitterArrays[i].count));
+            if (m_emitterArrays[i].bounds.intersects(viewableArea))
+            {
+                m_shader.setUniform("u_texture", *m_emitterArrays[i].texture);
+                states.blendMode = m_emitterArrays[i].blendMode;
+                rt.draw(m_emitterArrays[i].vertices.data(), m_emitterArrays[i].count, sf::Points, states);
+                //DPRINT("Particle Count", std::to_string(m_emitterArrays[i].count));
+            }
         }
+        glCheck(glDisable(GL_PROGRAM_POINT_SIZE));
+        glCheck(glDisable(GL_POINT_SPRITE));
     }
-    glCheck(glDisable(GL_PROGRAM_POINT_SIZE));
-    glCheck(glDisable(GL_POINT_SPRITE));
 }
