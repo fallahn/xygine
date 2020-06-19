@@ -104,6 +104,10 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
                     blendmode = sf::BlendAlpha;
                 }
             }
+            else if (name == "acceleration")
+            {
+                acceleration = p.getValue<float>();
+            }
             else if (name == "gravity")
             {
                 gravity = p.getValue<sf::Vector2f>();
@@ -228,6 +232,10 @@ bool EmitterSettings::loadFromFile(const std::string& path, ResourceHandler& tex
                 {
                     blendmode = sf::BlendAlpha;
                 }
+            }
+            else if (name == "acceleration")
+            {
+                acceleration = p.getValue<float>();
             }
             else if (name == "gravity")
             {
@@ -354,6 +362,7 @@ bool EmitterSettings::saveToFile(const std::string& path)
         cfg.addProperty("blendmode", "alpha");
     }
 
+    cfg.addProperty("acceleration").setValue(acceleration);
     cfg.addProperty("gravity").setValue(gravity);
     cfg.addProperty("velocity").setValue(initialVelocity);
     cfg.addProperty("spread").setValue(spread * 2.f);

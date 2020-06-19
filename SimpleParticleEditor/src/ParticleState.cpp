@@ -49,7 +49,7 @@ namespace
 {
     const float ItemWidth = 160.f;
     const float WindowWidth = 350.f;
-    const float WindowHeight = 680.f;
+    const float WindowHeight = 720.f;
 
     const std::string cfgPath = xy::FileSystem::getConfigDirectory("xy_editor") + "particle.cfg";
 }
@@ -222,6 +222,8 @@ void ParticleState::setup()
         xy::ui::slider("Velocity X", m_emitterSettings->initialVelocity.x, -1000.f, 1000.f, ItemWidth);
         xy::ui::sameLine(); xy::ui::showToolTip("Initial velocity of the particle");
         xy::ui::slider("Velocity Y", m_emitterSettings->initialVelocity.y, -1000.f, 1000.f, ItemWidth);
+
+        xy::ui::slider("Acceleration", m_emitterSettings->acceleration, 0.f, 2.f, ItemWidth);
 
         xy::ui::slider("Spread", m_emitterSettings->spread, 0.f, 360.f, ItemWidth);
         xy::ui::sameLine(); xy::ui::showToolTip("Spead, in degrees, applied to the inital velocity");

@@ -147,6 +147,7 @@ void ParticleSystem::process(float dt)
                     p.velocity = Util::Vector::rotate(settings.initialVelocity, rotation + Util::Random::value(-settings.spread, (settings.spread + epsilon)));
                     p.rotation = (settings.randomInitialRotation) ?  Util::Random::value(-Util::Const::TAU, Util::Const::TAU) : rotation * xy::Util::Const::degToRad;
                     p.scale = settings.size;
+                    p.acceleration = settings.acceleration;
 
                     //spawn particle in world position
                     p.position = tx.getWorldTransform().transformPoint(tx.getOrigin());
@@ -175,7 +176,11 @@ void ParticleSystem::process(float dt)
             auto& p = emitter.m_particles[i];
 
             p.velocity += p.gravity * dt;
-            for (auto f : emitter.settings.forces) p.velocity += f * dt;
+            for (auto f : emitter.settings.forces)
+            {
+                p.velocity += f * dt;
+            }
+            p.velocity *= p.acceleration;
             p.position += p.velocity * dt;
 
             p.lifetime -= dt;

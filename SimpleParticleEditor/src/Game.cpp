@@ -42,6 +42,19 @@ Game::Game()
 //private
 void Game::handleEvent(const sf::Event& evt)
 {    
+#ifdef XY_DEBUG
+    if (evt.type == sf::Event::KeyReleased)
+    {
+        switch (evt.key.code)
+        {
+        default: break;
+        case sf::Keyboard::Escape:
+            quit();
+            break;
+        }
+    }
+#endif
+
     m_stateStack.handleEvent(evt);
 }
 

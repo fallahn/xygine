@@ -61,6 +61,7 @@ namespace xy
         sf::Color colour;
         float rotation = 0.f;
         float scale = 1.f;
+        float acceleration = 0.f;
     };
 
     /*!
@@ -79,6 +80,7 @@ namespace xy
         float rotationSpeed = 0.f;
         bool randomInitialRotation = true;
         float scaleModifier = 0.f;
+        float acceleration = 1.f;
         float size = 10.f; //! <diameter of particle
         float emitRate = 10.f; //! <particles per second
         sf::Uint32 emitCount = 1; //! <amount released at once
