@@ -38,7 +38,6 @@ using namespace xy;
 
 Drawable::Drawable()
     : m_primitiveType   (sf::Quads),
-    m_buffer            (m_primitiveType, sf::VertexBuffer::Dynamic),
     m_zDepth            (0),
     m_wantsSorting      (true),
     m_filterFlags       (DefaultFilterFlag),
@@ -49,12 +48,11 @@ Drawable::Drawable()
     m_glFlagIndex       (0),
     m_depthWriteEnabled (true)
 {
-    m_buffer.create(0);
+
 }
 
 Drawable::Drawable(const sf::Texture& texture)
     : m_primitiveType   (sf::Quads),
-    m_buffer            (m_primitiveType, sf::VertexBuffer::Dynamic),
     m_zDepth            (0),
     m_wantsSorting      (true),    
     m_filterFlags       (DefaultFilterFlag),
@@ -66,45 +64,6 @@ Drawable::Drawable(const sf::Texture& texture)
     m_depthWriteEnabled (true)
 {
     m_states.texture = &texture;
-    m_buffer.create(0);
-}
-
-Drawable::Drawable(Drawable&& other) noexcept
-{
-    *this = std::move(other);
-}
-
-Drawable& Drawable::operator=(Drawable&& other)
-{
-    if (&other != this)
-    {
-        std::swap(m_primitiveType, other.m_primitiveType);
-        std::swap(m_states, other.m_states);
-        std::swap(m_vertices, other.m_vertices);
-        m_buffer.swap(other.m_buffer);
-        std::swap(m_zDepth, other.m_zDepth);
-        std::swap(m_wantsSorting, other.m_wantsSorting);
-        std::swap(m_filterFlags, other.m_filterFlags);
-        std::swap(m_localBounds, other.m_localBounds);
-
-std::swap(m_textureBindings, other.m_textureBindings);
-std::swap(m_floatBindings, other.m_floatBindings);
-std::swap(m_vec2Bindings, other.m_vec2Bindings);
-std::swap(m_vec3Bindings, other.m_vec3Bindings);
-std::swap(m_boolBindings, other.m_boolBindings);
-std::swap(m_colourBindings, other.m_colourBindings);
-std::swap(m_matBindings, other.m_matBindings);
-std::swap(m_currentTexBindings, other.m_currentTexBindings);
-
-std::swap(m_cull, other.m_cull);
-std::swap(m_croppingArea, other.m_croppingArea);
-std::swap(m_croppingWorldArea, other.m_croppingWorldArea);
-std::swap(m_cropped, other.m_cropped);
-std::swap(m_glFlags, other.m_glFlags);
-std::swap(m_glFlagIndex, other.m_glFlagIndex);
-    }
-
-    return *this;
 }
 
 void Drawable::setTexture(const sf::Texture* texture)
@@ -180,16 +139,6 @@ void Drawable::setCroppingArea(sf::FloatRect area)
     m_croppingArea = area;
 }
 
-void Drawable::setUsage(sf::VertexBuffer::Usage usage)
-{
-    m_buffer.setUsage(usage);
-}
-
-sf::VertexBuffer::Usage Drawable::getUsage() const
-{
-    return m_buffer.getUsage();
-}
-
 sf::Texture* Drawable::getTexture()
 {
     return const_cast<sf::Texture*>(m_states.texture);
@@ -207,10 +156,9 @@ sf::FloatRect Drawable::getLocalBounds() const
 
 void Drawable::updateLocalBounds()
 {
-    m_buffer.update(m_vertices.data(), m_vertices.size(), 0);
-
     if (m_vertices.empty())
     {
+        m_localBounds = {};
         return;
     }
     //m_vertices.clear();
@@ -293,11 +241,4 @@ void Drawable::addGlFlag(std::int32_t flag)
     {
         xy::Logger::log("Failed adding flag to drawable, max flags reached", xy::Logger::Type::Warning);
     }
-}
-
-//private
-void Drawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
-{
-    //rt.draw(m_vertices.data(), m_vertices.size(), m_primitiveType, states);
-    rt.draw(m_buffer, states);
 }

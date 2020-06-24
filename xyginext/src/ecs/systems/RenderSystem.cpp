@@ -50,12 +50,6 @@ xy::RenderSystem::RenderSystem(xy::MessageBus& mb)
 {
     requireComponent<xy::Drawable>();
     requireComponent<xy::Transform>();
-
-    if (!sf::VertexBuffer::isAvailable())
-    {
-        //TODO create a fallback to vertex arrays in this case
-        LogE << "Vertex buffers are unavailable on this platform *sadface*" << std::endl;
-    }
 }
 
 //public

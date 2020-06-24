@@ -50,7 +50,6 @@ set(PROJECT_SRC  ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/RenderSystem.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/SpriteAnimator.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/SpriteSystem.hpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/TextRenderer.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/UISystem.hpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/graphics/SpriteSheet.hpp

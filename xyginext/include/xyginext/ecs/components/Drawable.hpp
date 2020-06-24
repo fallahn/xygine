@@ -32,9 +32,7 @@ source distribution.
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
-#include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Glsl.hpp>
-#include <SFML/Graphics/VertexBuffer.hpp>
 #include <SFML/System/Vector3.hpp>
 
 #include <vector>
@@ -51,17 +49,11 @@ namespace xy
     and custom drawable types in a single drawing pass with variable depth. A Scene
     must have a RenderSystem added to it to enable any drawable entities.
     */
-    class XY_EXPORT_API Drawable final : public sf::Drawable
+    class XY_EXPORT_API Drawable final
     {
     public:
         Drawable();
         explicit Drawable(const sf::Texture&);
-        
-        Drawable(const Drawable&) = delete;
-        Drawable& operator = (const Drawable&) = delete;
-
-        Drawable(Drawable&&) noexcept;
-        Drawable& operator = (Drawable&&);
 
         /*!
         \brief Sets the texture with which to render this drawable.
@@ -198,19 +190,6 @@ namespace xy
         sf::PrimitiveType getPrimitiveType() const { return m_primitiveType; }
 
         /*!
-        \brief Set the Usage type for the underlying sf::VertexBuffer.
-        Defaults to sf::VertexBuffer::Dynamic
-        \see sf::VertexBuffer::Usage
-        */
-        void setUsage(sf::VertexBuffer::Usage);
-
-        /*!
-        \brief Returns the current Usage value of the underlying sf::VertexBuffer
-        \see sf::VertexBuffer::Usage
-        */
-        sf::VertexBuffer::Usage getUsage() const;
-
-        /*!
         \brief Returns the local bounds of the Drawable's vertex array.
         This should be updated by any systems which implement custom drawables
         else culling will failed and drawable will not appear on screen
@@ -282,8 +261,6 @@ namespace xy
         sf::RenderStates m_states;
         std::vector<sf::Vertex> m_vertices;
 
-        sf::VertexBuffer m_buffer;
-
         std::int32_t m_zDepth = 0;
         bool m_wantsSorting = true;
 
@@ -350,7 +327,5 @@ namespace xy
         bool m_depthWriteEnabled;
 
         friend class RenderSystem;
-
-        void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }
