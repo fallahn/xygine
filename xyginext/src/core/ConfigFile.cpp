@@ -166,11 +166,14 @@ bool ConfigObject::loadFromFile(const std::string& path)
 
         if (file)
         {
+            std::size_t lineNumber = 0;
+
             //remove any opening comments
             std::string data;
             while (data.empty() && !file.eof())
             {
                 std::getline(file, data);
+                lineNumber++;
                 removeComment(data);       
             }
             //check config is not opened with a property
@@ -183,6 +186,7 @@ bool ConfigObject::loadFromFile(const std::string& path)
             //make sure next line is a brace to ensure we have an object
             std::string lastLine = data;
             std::getline(file, data);
+            lineNumber++;
             removeComment(data);
 
             //tracks brace balance
@@ -205,6 +209,7 @@ bool ConfigObject::loadFromFile(const std::string& path)
 
             while (std::getline(file, data))
             {
+                lineNumber++;
                 removeComment(data);
                 if (!data.empty())
                 {
@@ -236,6 +241,7 @@ bool ConfigObject::loadFromFile(const std::string& path)
                         //add a new object and make it current
                         std::string prevLine = data;
                         std::getline(file, data);
+                        lineNumber++;
 
                         removeComment(data);
                         if (data[0] == '{')
@@ -258,8 +264,10 @@ bool ConfigObject::loadFromFile(const std::string& path)
                                 }
                             }
                         }
-                        else //last line was probably garbage
+                        else if(!data.empty()) //last line was probably garbage
                         {
+                            LogW << path << std::endl;
+                            LogW << "Missing brace following object, or garbage property on or near line " << lineNumber << std::endl;
                             continue;
                         }
                     }
