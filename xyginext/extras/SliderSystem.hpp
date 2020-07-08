@@ -34,7 +34,7 @@ source distribution.
 /*
 This slider system creates simple sliding animations
 between two given points. Typically used when moving
-UI elements around the screen to provide some fluis motion.
+UI elements around the screen to provide some fluid motion.
 
 Add SliderSystem.cpp to your project and use it as any other
 xygine system.

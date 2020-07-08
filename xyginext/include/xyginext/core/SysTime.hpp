@@ -48,6 +48,7 @@ namespace xy
         struct XY_EXPORT_API Data final
         {
             Data();
+            Data(std::uint64_t); //!< Construct from epoch time
 
             int seconds() const; //!< Seconds after the minute
             int minutes() const; //!< Minutes after the hour
@@ -83,6 +84,19 @@ namespace xy
         formatted string
         */
         static std::string timeString();
+
+        /*!
+        \brief Returns the date as a dd/mm/yyyy
+        formatted string from the given SysTime::Data struct
+        */
+        static std::string dateString(Data);
+
+        /*!
+        \brief Returns the time as a HH:MM:ss
+        formatted string from the given SysTime::Data struct
+        */
+        static std::string timeString(Data);
+
     private:
         
     };

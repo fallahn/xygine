@@ -43,6 +43,11 @@ SysTime::Data::Data()
     update();
 }
 
+SysTime::Data::Data(std::uint64_t epoch)
+{
+    m_time = std::localtime(reinterpret_cast<std::time_t*>(&epoch));
+}
+
 void SysTime::Data::update() const
 {
     auto time = std::time(nullptr);
@@ -99,6 +104,11 @@ std::uint64_t SysTime::epoch()
 std::string SysTime::dateString()
 {
     Data d;
+    return dateString(d);
+}
+
+std::string SysTime::dateString(Data d)
+{
     std::stringstream ss;
     ss << std::setw(2) << std::setfill('0') << d.days() << "/"
         << std::setw(2) << std::setfill('0') << d.months() << "/"
@@ -110,6 +120,11 @@ std::string SysTime::dateString()
 std::string SysTime::timeString()
 {
     Data d;
+    return timeString(d);
+}
+
+std::string SysTime::timeString(Data d)
+{
     std::stringstream ss;
     ss << std::setw(2) << std::setfill('0') << d.hours() << ":"
         << std::setw(2) << std::setfill('0') << d.minutes() << ":"
