@@ -362,11 +362,12 @@ void Text::addQuad(std::vector<sf::Vertex>& vertices, sf::Vector2f position, sf:
     float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width);
     float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height);
     
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left - outlineThickness, position.y + bottom - outlineThickness), colour, sf::Vector2f(u1, v2)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right - outlineThickness, position.y + top - outlineThickness), colour, sf::Vector2f(u2, v1)));
     vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left - outlineThickness, position.y + top - outlineThickness), colour, sf::Vector2f(u1, v1)));
-    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right - outlineThickness, position.y + top - outlineThickness), colour, sf::Vector2f(u2, v1)));
-    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left - outlineThickness, position.y + bottom - outlineThickness), colour, sf::Vector2f(u1, v2)));
-    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left - outlineThickness, position.y + bottom - outlineThickness), colour, sf::Vector2f(u1, v2)));
-    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right - outlineThickness, position.y + top - outlineThickness), colour, sf::Vector2f(u2, v1)));
+
     vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right - outlineThickness, position.y + bottom - outlineThickness), colour, sf::Vector2f(u2, v2)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + right - outlineThickness, position.y + top - outlineThickness), colour, sf::Vector2f(u2, v1)));
+    vertices.push_back(sf::Vertex(sf::Vector2f(position.x + left - outlineThickness, position.y + bottom - outlineThickness), colour, sf::Vector2f(u1, v2)));
 }
 
