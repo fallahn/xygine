@@ -72,10 +72,12 @@ void DynamicTreeSystem::process(float)
             auto& bpc = entity.getComponent<BroadphaseComponent>();
             const auto& tx = entity.getComponent<xy::Transform>();
             auto worldPosition = tx.getWorldPosition();
-            auto worldBounds = tx.getWorldTransform().transformRect(bpc.m_bounds);
+            auto worldBounds = bpc.m_bounds;
 
             worldBounds.left += tx.getOrigin().x * tx.getScale().x;
             worldBounds.top += tx.getOrigin().y * tx.getScale().y;
+
+            worldBounds = tx.getWorldTransform().transformRect(worldBounds);
 
             moveNode(bpc.m_treeID, worldBounds, worldPosition - bpc.m_lastWorldPosition);
 
@@ -136,7 +138,11 @@ std::int32_t DynamicTreeSystem::addToTree(xy::Entity entity)
     auto treeID = allocateNode();
 
     const auto& tx = entity.getComponent<xy::Transform>();
-    auto bounds = tx.getWorldTransform().transformRect(entity.getComponent<BroadphaseComponent>().m_bounds);
+    auto bounds = entity.getComponent<BroadphaseComponent>().m_bounds;
+    bounds.left += tx.getOrigin().x * tx.getScale().x;
+    bounds.top += tx.getOrigin().y * tx.getScale().y;
+    bounds = tx.getWorldTransform().transformRect(bounds);
+
 
     //fatten AABB
     bounds.left -= FattenAmount;
