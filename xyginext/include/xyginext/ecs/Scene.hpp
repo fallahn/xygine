@@ -213,6 +213,11 @@ namespace xy
         */
         void showSystemInfo(bool show = true) { m_systemManager.showSystemInfo(show); }
 
+        /*!
+        \brief Returns a reference to the Scene's MessageBus
+        */
+        MessageBus& getMessageBus() { return m_messageBus; }
+
     private:
         MessageBus& m_messageBus;
         Entity m_defaultCamera;
