@@ -46,5 +46,27 @@ namespace xy
         bool active = false; //!< disabling callbacks when not in use can avoid unnecessary cache misses looking up callback functions
         CallbackFunction function;
         std::any userData; //!< Optionally store any data required by the function here (or use a functor)
+
+        /*!
+        \brief Utility to set user data
+        \param Constructor parameters for T
+        NOTE that this OVERWRITES any user data. To modify
+        existing user data use a reference from getUserData()
+         - or modify the userData member directly
+        */
+        template <typename T, typename... Args>
+        void setUserData(Args&&... args)
+        {
+            userData = std::make_any<T>(std::forward<Args>(args)...);
+        }
+
+        /*!
+        \nrief Returns a reference to stored user data
+        */
+        template <typename T>
+        T& getUserData()
+        {
+            return std::any_cast<T&>(userData);
+        }
     };
 }
