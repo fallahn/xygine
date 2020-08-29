@@ -242,3 +242,9 @@ void Drawable::addGlFlag(std::int32_t flag)
         xy::Logger::log("Failed adding flag to drawable, max flags reached", xy::Logger::Type::Warning);
     }
 }
+
+//private
+void Drawable::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    target.draw(m_vertices.data(), m_vertices.size(), m_primitiveType, states);
+}

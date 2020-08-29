@@ -33,6 +33,7 @@ source distribution.
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Glsl.hpp>
+#include <SFML/Graphics/Drawable.hpp>
 #include <SFML/System/Vector3.hpp>
 
 #include <vector>
@@ -49,7 +50,7 @@ namespace xy
     and custom drawable types in a single drawing pass with variable depth. A Scene
     must have a RenderSystem added to it to enable any drawable entities.
     */
-    class XY_EXPORT_API Drawable final
+    class XY_EXPORT_API Drawable final : public sf::Drawable
     {
     public:
         Drawable();
@@ -327,5 +328,7 @@ namespace xy
         bool m_depthWriteEnabled;
 
         friend class RenderSystem;
+
+        void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
 }
