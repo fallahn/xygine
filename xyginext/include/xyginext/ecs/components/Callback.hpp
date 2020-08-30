@@ -61,7 +61,7 @@ namespace xy
         }
 
         /*!
-        \nrief Returns a reference to stored user data
+        \brief Returns a reference to stored user data
         */
         template <typename T>
         T& getUserData()
