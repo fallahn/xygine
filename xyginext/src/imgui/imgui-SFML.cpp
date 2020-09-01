@@ -647,6 +647,8 @@ void RenderDrawLists(ImDrawData* draw_data)
     glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+    /*int oldView[4];
+    glGetIntegerv(GL_VIEWPORT, oldView);*/
     glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
 
     glMatrixMode(GL_TEXTURE);
@@ -695,6 +697,7 @@ void RenderDrawLists(ImDrawData* draw_data)
 #else
     glPopAttrib();
 #endif
+    //glViewport(oldView[0], oldView[1], oldView[2], oldView[3]);
 }
 
 bool imageButtonImpl(const sf::Texture& texture, const sf::FloatRect& textureRect, const sf::Vector2f& size, const int framePadding,

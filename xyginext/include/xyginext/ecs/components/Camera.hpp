@@ -30,6 +30,7 @@ source distribution.
 #include "xyginext/Config.hpp"
 
 #include <SFML/Graphics/View.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 
 namespace xy
 {
@@ -133,6 +134,11 @@ namespace xy
         \brief Returns the current zoom level. Default is 1x
         */
         float getZoom() const { return m_zoom; }
+
+        /*!
+        \brief Applies the current view to the given RenderTarget
+        */
+        void applyView(sf::RenderTarget& rt) { rt.setView(m_view); }
 
     private:
 
