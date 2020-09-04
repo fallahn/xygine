@@ -34,6 +34,7 @@ source distribution.
 #include <xyginext/ecs/Scene.hpp>
 #include <xyginext/gui/GuiClient.hpp>
 #include <xyginext/resources/Resource.hpp>
+#include <xyginext/graphics/SpriteSheet.hpp>
 
 #include <string>
 
@@ -71,7 +72,13 @@ private:
     bool m_showBackgroundPicker;
     sf::Color m_backgroundColour;
 
+    bool m_showSpriteBrowser;
+
     xy::ConfigFile m_config;
 
+    xy::SpriteSheet m_spriteSheet;
+    xy::Entity m_sprite;
+
     void setup();
+    void setSprite(const xy::Sprite&);
 };
