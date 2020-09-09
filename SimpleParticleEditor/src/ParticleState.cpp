@@ -309,6 +309,9 @@ void ParticleState::setup()
             xy::ui::checkbox("Random Initial Rotation", &m_emitterSettings->randomInitialRotation);
             xy::ui::sameLine(); xy::ui::showToolTip("Applies a random initial rotation to spawned particles. Textured particles only");
 
+            xy::ui::checkbox("Inherit Rotation", &m_emitterSettings->inheritRotation);
+            xy::ui::sameLine(); xy::ui::showToolTip("Sets the initial rotation to that of the emitter");
+
             bool oldState = entity.getComponent<xy::Callback>().active;
             bool newState = oldState;
             xy::ui::checkbox("Animate Movement", &newState);

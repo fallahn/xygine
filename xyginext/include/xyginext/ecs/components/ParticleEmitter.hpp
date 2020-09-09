@@ -69,26 +69,34 @@ namespace xy
     */
     struct XY_EXPORT_API EmitterSettings final
     {
+        std::string texturePath;
+
         sf::BlendMode blendmode = sf::BlendAlpha;
         sf::Vector2f gravity;
         sf::Vector2f initialVelocity = { 0.f, -100.f };
-        float spread = 0.f;
+        sf::Vector2f spawnOffset; //!< initial spawn position is offset this much
+
         std::array<sf::Vector2f, 4> forces{};
+        sf::Color colour = sf::Color::White;
+
+        sf::Uint32 emitCount = 1; //!< amount released at once
+        sf::Int32 releaseCount = 0; //!< number of particles released before stopping (0 for infinite)
+
         float lifetime = 1.f;
         float lifetimeVariance = 0.f;
-        sf::Color colour = sf::Color::White;
-        float rotationSpeed = 0.f;
-        bool randomInitialRotation = true;
+        float spread = 0.f;
         float scaleModifier = 0.f;
         float acceleration = 1.f;
-        float size = 10.f; //! <diameter of particle
-        float emitRate = 10.f; //! <particles per second
-        sf::Uint32 emitCount = 1; //! <amount released at once
+        float size = 10.f; //!< diameter of particle
+        float emitRate = 10.f; //!< particles per second
+        float rotationSpeed = 0.f;
         float spawnRadius = 10.f;
-        sf::Vector2f spawnOffset; //! <initial spawn position is offset this much
-        sf::Int32 releaseCount = 0; //! <number of particles released before stopping (0 for infinite)
+
         sf::Texture* texture = nullptr;
-        std::string texturePath;
+
+        bool randomInitialRotation = true;
+        bool inheritRotation = true;
+
         bool loadFromFile(const std::string&, TextureResource&);
         bool loadFromFile(const std::string&, ResourceHandler&);
         bool saveToFile(const std::string&); //! <saves the current settings to a config file

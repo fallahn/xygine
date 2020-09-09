@@ -168,6 +168,10 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             {
                 releaseCount = p.getValue<sf::Int32>();
             }
+            else if (name == "inherit_rotation")
+            {
+                inheritRotation = p.getValue<bool>();
+            }
         }
 
         const auto& objects = cfg.getObjects();
@@ -297,6 +301,10 @@ bool EmitterSettings::loadFromFile(const std::string& path, ResourceHandler& tex
             {
                 releaseCount = p.getValue<sf::Int32>();
             }
+            else if (name == "inherit_rotation")
+            {
+                inheritRotation = p.getValue<bool>();
+            }
         }
         
         const auto& objects = cfg.getObjects();
@@ -378,6 +386,7 @@ bool EmitterSettings::saveToFile(const std::string& path)
     cfg.addProperty("spawn_radius").setValue(spawnRadius);
     cfg.addProperty("spawn_offset").setValue(spawnOffset);
     cfg.addProperty("release_count").setValue(releaseCount);
+    cfg.addProperty("inherit_rotation").setValue(inheritRotation);
 
     auto forceObj = cfg.addObject("forces");
     for (const auto& f : forces)
