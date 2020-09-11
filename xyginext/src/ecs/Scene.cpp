@@ -89,6 +89,10 @@ void Scene::update(float dt)
         d->process(dt);
     }
 
+    //destroyed entities are double buffered so
+    //that removeFromSystems() (which calls System::onEntityRemoved())
+    //can safely delete further entities without modifying this vector
+    m_destroyedEntities.swap(m_destroyedBuffer);
     for (auto entity : m_destroyedEntities)
     {
         m_systemManager.removeFromSystems(entity);
@@ -116,7 +120,7 @@ Entity Scene::createEntity()
 
 void Scene::destroyEntity(Entity entity)
 {
-    m_destroyedEntities.push_back(entity);
+    m_destroyedBuffer.push_back(entity);
     entity.m_destroyed = true;
 }
 

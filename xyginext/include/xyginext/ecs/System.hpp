@@ -121,7 +121,9 @@ namespace xy
         std::vector<Entity>& getEntities();
 
         /*!
-        \brief Optional callback performed when an entity is added
+        \brief Optional callback performed when an entity is added.
+        This should not be used to create further entities, else behaviour
+        is undefined.
         */
         virtual void onEntityAdded(Entity) {}
 
