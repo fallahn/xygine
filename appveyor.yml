@@ -1,5 +1,6 @@
 image: Visual Studio 2019
-configuration: Release
+platform: x64
+configuration: debug
 build_script:
 - ps: >-
     cd C:/tools/vcpkg
@@ -22,9 +23,9 @@ build_script:
 
     cd tmxlite/tmxlite; mkdir build; cd build
 
-    cmake .. -DCMAKE_TOOLCHAIN_FILE=C:/Tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX=C:/tools/vcpkg/installed -DCMAKE_BUILD_TYPE=Release
+    cmake .. -DCMAKE_TOOLCHAIN_FILE=C:/Tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX=C:/tools/vcpkg/installed -DCMAKE_BUILD_TYPE=Debug
 
-    cmake --build . --target install --config Release
+    cmake --build . --target install --config Debug
 
     cd ../../../xygine
 
