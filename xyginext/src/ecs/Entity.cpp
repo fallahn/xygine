@@ -37,15 +37,17 @@ namespace
 }
 
 Entity::Entity()
-    : m_id((0 << Detail::IndexBits) | std::numeric_limits<ID>::max()),
-    m_entityManager(nullptr)
+    : m_id          ((0 << Detail::IndexBits) | std::numeric_limits<ID>::max()),
+    m_entityManager (nullptr),
+    m_destroyed     (false)
 {
 
 }
 
 Entity::Entity(Entity::ID index, Entity::Generation generation)
     : m_id          ((generation << Detail::IndexBits) | index),
-    m_entityManager (nullptr)
+    m_entityManager (nullptr),
+    m_destroyed     (false)
 {
 
 }
@@ -73,7 +75,7 @@ Entity::Generation Entity::getGeneration() const
 bool Entity::destroyed() const
 {
     XY_ASSERT(m_entityManager, "Invalid Entity instance");
-    return m_entityManager->entityDestroyed(*this);
+    return m_destroyed || m_entityManager->entityDestroyed(*this);
 }
 
 const ComponentMask& Entity::getComponentMask() const

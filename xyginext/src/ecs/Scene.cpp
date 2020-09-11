@@ -83,13 +83,13 @@ Scene::Scene(MessageBus& mb, std::size_t poolSize)
 //public
 void Scene::update(float dt)
 {
-    //update directors first as they'll be working on data from the last frame
+    //update directors first as they'll be working on data from the previous frame
     for (auto& d : m_directors)
     {
         d->process(dt);
     }
 
-    for (const auto& entity : m_destroyedEntities)
+    for (auto entity : m_destroyedEntities)
     {
         m_systemManager.removeFromSystems(entity);
         m_entityManager.destroyEntity(entity);
@@ -97,7 +97,7 @@ void Scene::update(float dt)
     m_destroyedEntities.clear();
 
 
-    for (const auto& entity : m_pendingEntities)
+    for (auto entity : m_pendingEntities)
     {
         m_systemManager.addToSystems(entity);
     }
@@ -117,6 +117,7 @@ Entity Scene::createEntity()
 void Scene::destroyEntity(Entity entity)
 {
     m_destroyedEntities.push_back(entity);
+    entity.m_destroyed = true;
 }
 
 Entity Scene::getEntity(Entity::ID id) const

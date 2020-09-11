@@ -25,8 +25,6 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//flexible logging class
-
 #pragma once
 
 #include "xyginext/core/FileSystem.hpp"
@@ -37,6 +35,7 @@ source distribution.
 #include <SFML/System/Mutex.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
+#include <SFML/System/Clock.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
 #include <string>
@@ -102,6 +101,7 @@ namespace xy
         static sf::Mutex m_mutex;
         static std::list<std::string> m_buffer;
         static std::string m_stringOutput;
+        static sf::Clock m_messageClock; //< number of seconds since the last message
 
         static void updateOutString(std::size_t maxBuffer);
 

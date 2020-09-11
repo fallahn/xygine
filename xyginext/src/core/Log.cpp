@@ -36,6 +36,7 @@ using namespace xy;
 sf::Mutex Logger::m_mutex;
 std::list<std::string> Logger::m_buffer;
 std::string Logger::m_stringOutput;
+sf::Clock Logger::m_messageClock;
 
 //public
 std::ostream& Logger::log(Type type, Output output)
@@ -63,18 +64,18 @@ std::ostream& Logger::log(Type type, Output output)
 
 void Logger::log(const std::string& message, Type type, Output output)
 {
-    std::string outstring;
+    std::string outstring;// (std::to_string(m_messageClock.restart().asSeconds()));
     switch (type)
     {
     case Type::Info:
     default:
-        outstring = "INFO: " + message;
+        outstring += "INFO: " + message;
         break;
     case Type::Error:
-        outstring = "ERROR: " + message;
+        outstring += "ERROR: " + message;
         break;
     case Type::Warning:
-        outstring = "WARNING: " + message;
+        outstring += "WARNING: " + message;
         break;
     }
 

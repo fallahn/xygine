@@ -176,8 +176,10 @@ namespace xy
         explicit Entity(ID index, Generation generation);
 
         ID m_id;
+        bool m_destroyed;
         EntityManager* m_entityManager;
         friend class EntityManager;
+        friend class Scene;
     };
 
     class ComponentManager;
