@@ -69,7 +69,7 @@ SystemManager::SystemManager(Scene& scene, ComponentManager& cm)
                     ImGui::BeginChild("inner"/*, {}, false, ImGuiWindowFlags_AlwaysVerticalScrollbar*/);
                     for (const auto* s : m_activeSystems)
                     {
-                        ImGui::Text("%s Entities: %d", s->getType().name(), s->getEntities().size());
+                        ImGui::Text("%s Entities: %lu", s->getType().name(), s->getEntities().size());
                     }
                     ImGui::EndChild();
 
