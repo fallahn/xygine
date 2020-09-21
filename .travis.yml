@@ -46,11 +46,11 @@ matrix:
       env:
         - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
 
-    - name: "macOS Xcode 10 Dynamic"
+    - name: "macOS Xcode 11.6 Dynamic"
       os: osx
       osx_image: xcode11.6
 
-    - name: "macOS Xcode 10 Static"
+    - name: "macOS Xcode 11.6 Static"
       os: osx
       osx_image: xcode11.6
       env:
