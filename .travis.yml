@@ -1,83 +1,68 @@
-language: c++
-sudo: false
+language: cpp
+
 addons:
   apt:
     packages:
-    - cmake
+    - libgtk-3-dev
+    - libenet-dev
+
+    # sfml
     - libxrandr-dev
     - libudev-dev
     - libopenal-dev
     - libflac-dev
     - libvorbis-dev
-    - libenet-dev
-    - libgtk-3-dev
-    - g++-7
-    - gcc-7
-    - clang
-    - libgl1-mesa-dev
-    sources:
-    - ubuntu-toolchain-r-test
-before_script:
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/gcc
-  gcc /usr/bin/gcc-7 90; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo update-alternatives --install /usr/bin/g++
-  g++ /usr/bin/g++-7 90; fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; brew install enet; fi
-- git clone https://github.com/sfml/sfml && cd sfml
-- git checkout tags/2.5.1
-- mkdir build && cd build
-- cmake .. -G"$GENERATOR" $CMAKE_FLAGS && sudo cmake --build . --target install && cd ../..
-- git clone https://github.com/fallahn/tmxlite
-- cd tmxlite/tmxlite && mkdir build && cd build
-- cmake .. -G"$GENERATOR" $CMAKE_FLAGS -DCMAKE_BUILD_TYPE=Release && sudo cmake --build
-  . --target install --config Release && cd ../../../
+
 script:
-- mkdir build && cd build
-- cmake ../ -G"$GENERATOR" $CMAKE_FLAGS -DBUILD_DEMO=ON && sudo cmake --build . --target install
-- sudo cmake --build . --target package
-- cd ../cmake_template && mkdir build && cd build
-- cmake ../ -G"$GENERATOR" $CMAKE_FLAGS && sudo cmake --build .
-- cd ../../ && mkdir deploy
-- cp build/*.zip deploy
+  # Generate cmake
+  - cmake -S . -B build $CMAKE_FLAGS -DCMAKE_INSTALL_PREFIX=install -DBUILD_DEMO=ON -DSFML_DEPENDENCIES_INSTALL_PREFIX=install
+
+  # build
+  - cmake --build build --target install
+
 matrix:
-  fast_finish: true
   include:
-  - os: linux
-    compiler: gcc
-    env:
-    - GENERATOR="Unix Makefiles"
-    - CMAKE_FLAGS=""
-  - os: linux
-    compiler: clang
-    env:
-    - GENERATOR="Unix Makefiles"
-    - CMAKE_FLAGS=""
-  - os: osx
-    osx_image: xcode10
-    env:
-    - GENERATOR="Xcode"
-    - CMAKE_FLAGS=""
-  - os: osx
-    osx_image: xcode10
-    env:
-    - GENERATOR="Xcode"
-    - CMAKE_FLAGS="-DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake"
-  allow_failures:
-  - os: osx
-    osx_image: xcode10
-    env:
-    - GENERATOR="Xcode"
-    - CMAKE_FLAGS="-DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/iOS.toolchain.cmake"
-deploy:
-  provider: releases
-  api_key:
-    secure: QXXzmYECNj059cmvLbBTnjlNpIwJhbXlppmlmwpknz2/LBLWJiL4xUHVz61if06TmhPJwakxVwN+JqPsD3rWERpdo63foelvduEflO6Gdx8eEwbmMA3nWNXwy8mllBkq7vy1dYdP1x/SmW6o1Q8PuwgqQa+QArV5GI5k6KxF4oo1tRwiZQ58gr11DliQ0pUmSa8qYsaEppD6YOoEIztjVLKAGh/2i0o2r8pVLIT7dkbuEoTfhtxgLYxP9rIdv/g6nyQz6BVQAcPj3gMkgKfHfR8d1T7YTXYHt9mPhwW+a1HO5tzkXfkPQWElG/zyl2/UzUJMPsS6vl5lmw/zcPozT1SYCyuArp1bh14FMmuEI4t1W97NwDVHl9RdAI7zfssQKtWcJvSZR+lyO6Mau6GY69PmUMKoQTluwFrBFpf0SCYzhYUfqlq3USR2BPj8Dg1uDDEo7HfvsoqgNYR4rn55dEdzuuYGSPJM47hedvLwpRupXHoGvmn3cjU54cP2vDQAWptQXbT7S9nGvK+1M9E9U7RIa5eeIb3MM8PYycEq9ySy37+Wx8xpXQP5dATcjkZEoYC7u2w3nn7pHDDXoeLzIN8ad4SrO7mYMVdSQaCEdYPiiasSKpx2zWjEe4PlV2tSSuU0c4LUl3PHsfp3zCOKndaFwSaWXW1EnOU7/UAvzdI=
-  file_glob: true
-  file: deploy/*.zip
-  overwrite: true
-  skip_cleanup: true
-  prerelease: true
-  on:
-   tags: true
+    - name: "Linux gcc Dynamic"
+      os: linux
+      dist: focal
+      compiler: gcc
+  
+    - name: "Linux gcc Static"
+      os: linux
+      dist: focal
+      compiler: gcc
+      env:
+        - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
 
+    - name: "Linux clang Dynamic"
+      os: linux
+      dist: focal
+      compiler: clang
 
+    - name: "Linux clang Static"
+      os: linux
+      dist: focal
+      compiler: clang
+      env:
+        - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
+
+    - name: "macOS Xcode 10 Dynamic"
+      os: osx
+      osx_image: xcode11.6
+
+    - name: "macOS Xcode 10 Static"
+      os: osx
+      osx_image: xcode11.6
+      env:
+       - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
+
+    - name: "Visual Studio Dynamic"
+      os: windows
+
+    - name: "Visual Studio Static"
+      os: windows
+      env:
+        - CMAKE_FLAGS="-DBUILD_SHARED_LIBS=FALSE"
+
+notifications:
+  email: false
