@@ -19,6 +19,11 @@ option(CMAKE_BUILD_TYPE "Choose the type of build (Debug or Release)" Debug)
 option(BUILD_SHARED_LIBS "Whether to build shared libraries" ON)
 option(BUILD_DEMO "Build the xygine demo" OFF)
 
+# CMake package config setup
+set(CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/generated/${PROJECT_NAME}-config.cmake")
+set(CONFIG_DEST "lib${LIB_SUFFIX}/cmake/${PROJECT_NAME}")
+set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
+
 # We're using c++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -82,7 +87,8 @@ if (NOT ENet_FOUND)
 
   # ENet's cmake is unbelievably basic, so we have to set some stuff ourselves
   set(ENET_INCLUDE_DIR "${enet_SOURCE_DIR}/include")
-  set(ENET_LIBRARIES $<TARGET_FILE:enet>)
+  set(ENET_LIBRARIES enet)
+  install(TARGETS enet EXPORT ${TARGETS_EXPORT_NAME})
   if (WIN32)
     list(APPEND ENET_LIBRARIES ws2_32 winmm)
   endif()
@@ -125,21 +131,13 @@ endif()
 add_library(${PROJECT_NAME} ${PROJECT_SRC} ${NFD_SRC})
 
 # Linker settings
-if (BUILD_SHARED_LIBS)
 target_link_libraries(${PROJECT_NAME}
   sfml-graphics
   sfml-audio
   sfml-system
   ${ENET_LIBRARIES}
-  ${OPENGL_LIBRARIES})
-else()
-target_link_libraries(${PROJECT_NAME}
-  sfml-graphics-s
-  sfml-audio-s
-  sfml-system-s
-  ${ENET_LIBRARIES}
-  ${OPENGL_LIBRARIES})
-endif()
+  ${OPENGL_LIBRARIES}
+  ${CMAKE_DL_LIBS})
 
 # debug output libs for visual studio
 if (CMAKE_BUILD_TYPE MATCHES Debug AND MSVC) 
@@ -192,7 +190,7 @@ if (BUILD_DEMO)
     )
     FetchContent_MakeAvailable(tmxlite)
     add_subdirectory(${tmxlite_SOURCE_DIR}/tmxlite)
-    set(TMXLITE_LIBRARIES $<TARGET_LINKER_FILE:tmxlite>)
+    set(TMXLITE_LIBRARIES tmxlite)
     set(TMXLITE_INCLUDE_DIR ${tmxlite_SOURCE_DIR}/tmxlite/include)
   endif()
 
@@ -201,21 +199,12 @@ if (BUILD_DEMO)
     target_link_libraries(${DEMO_NAME} ${X11_LIBRARIES})
   endif()
 
-  if(BUILD_SHARED_LIBS)  
-    target_link_libraries(${DEMO_NAME} ${PROJECT_NAME} ${TMXLITE_LIBRARIES} sfml-graphics sfml-audio)
-  else()
-    target_link_libraries(${DEMO_NAME} ${PROJECT_NAME} ${TMXLITE_LIBRARIES} sfml-graphics-s sfml-audio-s)
-  endif()
+  target_link_libraries(${DEMO_NAME} ${PROJECT_NAME} ${TMXLITE_LIBRARIES} sfml-graphics sfml-audio)
   target_include_directories(${DEMO_NAME} PRIVATE ${TMXLITE_INCLUDE_DIR} $<TARGET_PROPERTY:${PROJECT_NAME},INTERFACE_INCLUDE_DIRECTORIES>)
   
   
   install(TARGETS ${DEMO_NAME} DESTINATION .)
 endif()
-
-# CMake package config setup
-set(CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/generated/${PROJECT_NAME}-config.cmake")
-set(CONFIG_DEST "lib${LIB_SUFFIX}/cmake/${PROJECT_NAME}")
-set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
