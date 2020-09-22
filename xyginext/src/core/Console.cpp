@@ -86,6 +86,9 @@ namespace
     const ImVec4 WarningColour(1.f, 0.6f, 0.f, 1.f);
     const ImVec4 ErrorColour(1.f, 0.f, 0.f, 1.f);
     const ImVec4 DefaultColour(1.f, 1.f, 1.f, 1.f);
+
+    std::size_t TabIndex = 0;
+    bool FirstOpen = false;
 }
 int textEditCallback(ImGuiInputTextCallbackData* data);
 
@@ -116,6 +119,7 @@ void Console::print(const std::string& line)
 void Console::show()
 {
     visible = !visible;
+    FirstOpen = visible;
 
     const auto& size = App::getRenderWindow()->getSize();
     for (auto i = 0u; i < resolutions.size(); ++i)
@@ -214,6 +218,12 @@ const ConfigObject& Console::getConvars()
     return convars;
 }
 
+void Console::setSelectedTab(std::size_t index)
+{
+    TabIndex = index;
+    FirstOpen = true;
+}
+
 //private
 void Console::addCommand(const std::string& name, const Command& command, const ConsoleClient* client = nullptr)
 {
@@ -257,8 +267,11 @@ void Console::draw()
         {
             if (ui::BeginTabBar("Tabs"))
             {
-                // Console
-                if (ui::BeginTabItem("Console"))
+                std::size_t currentTab = 0;
+                std::int32_t flags = (currentTab == TabIndex && FirstOpen) ? ImGuiTabItemFlags_SetSelected : 0;
+
+                //console
+                if (ui::BeginTabItem("Console", nullptr, flags))
                 {
                     ui::BeginChild("ScrollingRegion", ImVec2(0, -ui::GetFrameHeightWithSpacing()), false, ImGuiWindowFlags_HorizontalScrollbar);
                     
@@ -299,8 +312,11 @@ void Console::draw()
                     ui::EndTabItem();
                 }
 
-                // Video options
-                if (ui::BeginTabItem("Video"))
+                currentTab++;
+                flags = (currentTab == TabIndex && FirstOpen) ? ImGuiTabItemFlags_SetSelected : 0;
+
+                //video options
+                if (ui::BeginTabItem("Video", nullptr, flags))
                 {
                     ui::Combo("Resolution", &currentResolution, resolutionNames.data());
 
@@ -341,10 +357,13 @@ void Console::draw()
                     ui::EndTabItem();
                 }
 
-                // Audio
-                if (ui::BeginTabItem("Audio"))
+                currentTab++;
+                flags = (currentTab == TabIndex && FirstOpen) ? ImGuiTabItemFlags_SetSelected : 0;
+
+                //audio
+                if (ui::BeginTabItem("Audio", nullptr, flags))
                 {
-                    ui::Text("NOTE: only AudioSystem sounds are affected.");
+                    ui::Text("NOTE: only xy::AudioSystem sounds are affected.");
 
                     static float maxVol = AudioMixer::getMasterVolume();
                     ui::SliderFloat("Master", &maxVol, 0.f, 1.f);
@@ -360,8 +379,11 @@ void Console::draw()
                     ui::EndTabItem();
                 }
 
-                // Stats
-                if (ui::BeginTabItem("Stats"))
+                currentTab++;
+                flags = (currentTab == TabIndex && FirstOpen) ? ImGuiTabItemFlags_SetSelected : 0;
+
+                //stats
+                if (ui::BeginTabItem("Stats", nullptr, flags))
                 {
                     ui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
                     ui::NewLine();
@@ -388,8 +410,11 @@ void Console::draw()
                 //display registered tabs
                 for (const auto& tab : m_consoleTabs)
                 {
+                    currentTab++;
+                    flags = (currentTab == TabIndex && FirstOpen) ? ImGuiTabItemFlags_SetSelected : 0;
+
                     const auto& [name, func, c] = tab;
-                    if (ImGui::BeginTabItem(name.c_str()))
+                    if (ImGui::BeginTabItem(name.c_str(), nullptr, flags))
                     {
                         func();
                         ui::EndTabItem();
@@ -400,6 +425,8 @@ void Console::draw()
             }
         }
         ui::End();
+
+        FirstOpen = false;
     }
     else
     {

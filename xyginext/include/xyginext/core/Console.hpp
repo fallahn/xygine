@@ -105,12 +105,19 @@ namespace xy
         \brief Returns a reference to the ConfigObject containing any existing convars.
         The returned reference is const, use addConvar() to write to the ConfigObject
         */
-        const ConfigObject& getConvars();
+        static const ConfigObject& getConvars();
 
         /*!
          \brief Prints the name/value pair to the stats window
          */
         static void printStat(const std::string&, const std::string&);
+
+        /*
+        \brief Set the active tab when the console is opened.
+        \param index The tab index to select when the console is openened.
+        Defaults to zero if the index is out of range.
+        */
+        static void setSelectedTab(std::size_t index);
 
     private:
         friend class App;
