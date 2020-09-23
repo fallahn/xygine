@@ -55,7 +55,8 @@ UISystem::UISystem(MessageBus& mb)
     m_prevControllerMask(0),
     m_joypadCursorActive(false),
     m_groups            (1),
-    m_activeGroup       (0)
+    m_activeGroup       (0),
+    m_columnCount       (1)
 {
     requireComponent<UIHitBox>();
     requireComponent<Transform>();
@@ -125,12 +126,16 @@ void UISystem::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         case sf::Keyboard::Left:
+            selectPrev(1);
+            break;
         case sf::Keyboard::Up:
-            selectPrev();
+            selectPrev(m_columnCount);
             break;
         case sf::Keyboard::Right:
+            selectNext(1);
+            break;
         case sf::Keyboard::Down:
-            selectNext();
+            selectNext(m_columnCount);
             break;
         default:
             m_keyUpEvents.push_back(evt.key.code);
@@ -274,12 +279,16 @@ void UISystem::process(float)
                     {
                     default: break;
                     case ControllerBits::Left:
+                        selectNext(1);
+                        break;
                     case ControllerBits::Up:
-                        selectNext();
+                        selectNext(m_columnCount);
                         break;
                     case ControllerBits::Right:
+                        selectPrev(1);
+                        break;
                     case ControllerBits::Down:
-                        selectPrev();
+                        selectPrev(m_columnCount);
                         break;
                     }
                 }
@@ -475,28 +484,33 @@ void UISystem::setActiveGroup(std::size_t group)
     select(m_selectedIndex);
 }
 
+void UISystem::setColumnCount(std::size_t count)
+{
+    m_columnCount = std::max(std::size_t(1), count);
+}
+
 //private
-void UISystem::selectNext()
+void UISystem::selectNext(std::size_t stride)
 {
     //call unselected on prev ent
     auto& entities = m_groups[m_activeGroup];
     unselect(m_selectedIndex);
 
     //get new index
-    m_selectedIndex = (m_selectedIndex + 1) % entities.size();
+    m_selectedIndex = (m_selectedIndex + stride) % entities.size();
 
     //and do selected callback
     select(m_selectedIndex);
 }
 
-void UISystem::selectPrev()
+void UISystem::selectPrev(std::size_t stride)
 {
     //call unselected on prev ent
     auto& entities = m_groups[m_activeGroup];
     unselect(m_selectedIndex);
 
     //get new index
-    m_selectedIndex = (m_selectedIndex + entities.size() - 1) % entities.size();
+    m_selectedIndex = (m_selectedIndex + (entities.size() - stride)) % entities.size();
 
     //and do selected callback
     select(m_selectedIndex);
@@ -579,7 +593,7 @@ void UISystem::onEntityRemoved(xy::Entity entity)
 
     if (m_activeGroup == group)
     {
-        selectPrev();
+        selectPrev(1);
     }
 
     m_groups[group].erase(std::remove_if(m_groups[group].begin(), m_groups[group].end(), 

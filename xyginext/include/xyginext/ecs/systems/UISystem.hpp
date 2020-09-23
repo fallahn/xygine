@@ -189,6 +189,24 @@ namespace xy
         */
         std::size_t getSelectedInput() const { return m_selectedIndex; }
 
+        /*
+        \brief Set the number of columns displayed in the active group.
+        By default the 'up' and 'down' controls move the selected control index
+        in the same direction as the 'left' and 'right' controls - that is, +1
+        or -1 from the currently selected index. In layouts where multiple
+        columns of UI controls exists this feels counter-intuitive as the selected
+        index does not visually move up and down the screen. By setting this value
+        to the number of columns in the display the 'up' and 'down' controls will
+        jump by +/- this number of indices, effectively moving an entire row at a
+        time. This value is not saved per group so when setting a new group active
+        that has a different number of columns, this function should be used to
+        set the new active value.
+
+        \param count The number of columns in the display (or number of indices to
+        skip when moving up/down). Must be greater than zero.
+        */
+        void setColumnCount(std::size_t count);
+
     private:
 
         std::vector<MouseButtonCallback> m_buttonCallbacks;
@@ -231,8 +249,10 @@ namespace xy
         std::unordered_map<std::size_t, std::vector<Entity>> m_groups;
         std::size_t m_activeGroup;
 
-        void selectNext();
-        void selectPrev();
+        std::size_t m_columnCount;
+
+        void selectNext(std::size_t);
+        void selectPrev(std::size_t);
 
         void unselect(std::size_t);
         void select(std::size_t);
