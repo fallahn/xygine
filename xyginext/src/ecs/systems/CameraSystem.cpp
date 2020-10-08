@@ -48,7 +48,7 @@ void CameraSystem::process(float)
     for (auto& entity : entities)
     {
         auto& cam = entity.getComponent<Camera>();
-        const auto& xForm = entity.getComponent<Transform>();
+        auto& xForm = entity.getComponent<Transform>();
        
         auto position = xForm.getWorldTransform().transformPoint({});
 
@@ -63,11 +63,16 @@ void CameraSystem::process(float)
         }
 
         //check if camera locked within bounds
+        auto oldPos = position;
         auto offset = cam.m_view.getSize() / 2.f;
         position.x = Util::Math::clamp(position.x, cam.m_bounds.left + offset.x, (cam.m_bounds.left + cam.m_bounds.width) - offset.x);
         position.y = Util::Math::clamp(position.y, cam.m_bounds.top + offset.y, (cam.m_bounds.top + cam.m_bounds.height) - offset.y);
 
         cam.m_view.setCenter(position);
+
+        //correct the camera's transform
+        auto correction = position - oldPos;
+        xForm.move(correction);
 
         //check rotation lock
         if (!cam.m_lockRotation)
