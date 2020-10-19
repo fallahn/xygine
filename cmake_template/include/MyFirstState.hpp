@@ -34,7 +34,6 @@ class MyFirstState final : public xy::State
 public:
     MyFirstState(xy::StateStack&, xy::State::Context);
 
-private:
     bool handleEvent(const sf::Event &evt) override;
     
     void handleMessage(const xy::Message &) override;
@@ -44,7 +43,8 @@ private:
     void draw() override;
     
     xy::StateID stateID() const override;
-    
+
+private:    
+
     xy::Scene m_scene;
-    
 };

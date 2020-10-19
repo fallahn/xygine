@@ -27,13 +27,14 @@ source distribution.
 #include "MyFirstState.hpp"
 #include "States.hpp"
 
-MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx) :
-xy::State(ss,ctx),
-m_scene(ctx.appInstance.getMessageBus())
+MyFirstState::MyFirstState(xy::StateStack& ss, xy::State::Context ctx) 
+    : xy::State (ss, ctx),
+    m_scene     (ctx.appInstance.getMessageBus())
 {
 
 }
 
+//public
 bool MyFirstState::handleEvent(const sf::Event& evt)
 {
     m_scene.forwardEvent(evt);
