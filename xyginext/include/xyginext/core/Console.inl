@@ -40,7 +40,7 @@ inline std::string Console::getConvarValue(const std::string& name)
 }
 
 template <>
-inline sf::Int32 Console::getConvarValue(const std::string& name)
+inline std::int32_t Console::getConvarValue(const std::string& name)
 {
     if (auto* obj = Console::convars.findObjectWithName(name))
     {

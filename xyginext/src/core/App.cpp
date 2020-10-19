@@ -315,7 +315,7 @@ void App::applyVideoSettings(const VideoSettings& settings)
         sf::Vector2u windowPos = { sf::VideoMode::getDesktopMode().width / 2, sf::VideoMode::getDesktopMode().height / 2 };
         windowPos.x -= settings.VideoMode.width / 2;
         windowPos.y -= settings.VideoMode.height / 2;
-        m_renderWindow.setPosition({ static_cast<sf::Int32>(windowPos.x), static_cast<sf::Int32>(windowPos.y) });
+        m_renderWindow.setPosition({ static_cast<std::int32_t>(windowPos.x), static_cast<std::int32_t>(windowPos.y) });
     }
 
     auto* msg = m_messageBus.post<Message::WindowEvent>(Message::WindowMessage);
@@ -609,7 +609,7 @@ void App::loadSettings()
                 }
                 else if (p.getName() == "framelimit")
                 {
-                    vSettings.FrameLimit = p.getValue<sf::Int32>();
+                    vSettings.FrameLimit = p.getValue<std::int32_t>();
                 }
             }
 

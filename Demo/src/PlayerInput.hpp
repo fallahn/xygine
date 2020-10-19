@@ -66,11 +66,11 @@ private:
 
     xy::NetClient& m_netClient;
 
-    sf::Uint16 m_currentInput;
+    std::uint16_t m_currentInput;
     sf::Clock m_clientTimer;
 
-    sf::Uint16 m_prevPad;
-    sf::Uint16 m_prevStick;
+    std::uint16_t m_prevPad;
+    std::uint16_t m_prevStick;
 
     bool m_enabled;
 

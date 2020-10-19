@@ -42,7 +42,7 @@ namespace xy
     {
     public:
 
-        using ID = sf::Uint32;
+        using ID = std::uint32_t;
 
         /*!
         \brief Returns a unique ID based on the component type

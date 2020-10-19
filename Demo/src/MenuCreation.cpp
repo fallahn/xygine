@@ -41,7 +41,7 @@ source distribution.
 
 #include <xyginext/ecs/systems/UISystem.hpp>
 
-void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, sf::Uint32 unselectedID, sf::Font& font)
+void MenuState::createFirstMenu(xy::Transform& parentTx, std::uint32_t selectedID, std::uint32_t unselectedID, sf::Font& font)
 {
     float xPosition = (xy::DefaultSceneSize.x / 2.f);
     
@@ -70,7 +70,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Main);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -92,7 +92,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -131,7 +131,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Main);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -149,7 +149,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -187,7 +187,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Main);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -205,7 +205,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -218,7 +218,7 @@ void MenuState::createFirstMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     parentTx.addChild(entity.getComponent<xy::Transform>());
 }
 
-void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID, sf::Uint32 unselectedID, sf::Font& font)
+void MenuState::createSecondMenu(xy::Transform& parentTx, std::uint32_t selectedID, std::uint32_t unselectedID, sf::Font& font)
 {
     float xPosition = (xy::DefaultSceneSize.x / 2.f) + xy::DefaultSceneSize.x;
     
@@ -247,7 +247,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Player);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -269,7 +269,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -308,7 +308,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Player);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -328,7 +328,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -366,7 +366,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Player);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -384,7 +384,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -397,7 +397,7 @@ void MenuState::createSecondMenu(xy::Transform& parentTx, sf::Uint32 selectedID,
     parentTx.addChild(entity.getComponent<xy::Transform>());
 }
 
-void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, sf::Uint32 unselectedID, sf::Font& font)
+void MenuState::createThirdMenu(xy::Transform& parentTx, std::uint32_t selectedID, std::uint32_t unselectedID, sf::Font& font)
 {
     float xPosition = (xy::DefaultSceneSize.x / 2.f) + (xy::DefaultSceneSize.x * 2.f);
 
@@ -426,7 +426,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Network);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -446,7 +446,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -498,7 +498,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Network);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -518,7 +518,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -556,7 +556,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Network);
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -574,7 +574,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -587,7 +587,7 @@ void MenuState::createThirdMenu(xy::Transform& parentTx, sf::Uint32 selectedID, 
     parentTx.addChild(entity.getComponent<xy::Transform>());
 }
 
-void MenuState::createKeybindInputs(xy::Entity towerEnt, sf::Uint8 player)
+void MenuState::createKeybindInputs(xy::Entity towerEnt, std::uint8_t player)
 {
     static const std::array<sf::Vector2f, 4u> buttonPositions =
     {{
@@ -617,7 +617,7 @@ void MenuState::createKeybindInputs(xy::Entity towerEnt, sf::Uint8 player)
         entity.getComponent<xy::UIHitBox>().setGroup(MenuID::Keybind);
         entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
             m_helpScene.getSystem<xy::UISystem>().addMouseButtonCallback([&, i, player](
-                xy::Entity buttonEnt, sf::Uint64 flags)
+                xy::Entity buttonEnt, std::uint64_t flags)
         {
             auto* msg = getContext().appInstance.getMessageBus().post<MenuEvent>(MessageID::MenuMessage);
             msg->action = MenuEvent::KeybindClicked;

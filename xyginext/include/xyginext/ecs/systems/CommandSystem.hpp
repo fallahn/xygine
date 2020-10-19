@@ -40,7 +40,7 @@ namespace xy
     */
     struct XY_EXPORT_API Command final
     {
-        sf::Uint32 targetFlags = 0;
+        std::uint32_t targetFlags = 0;
         std::function<void(Entity, float)> action;
     };
 

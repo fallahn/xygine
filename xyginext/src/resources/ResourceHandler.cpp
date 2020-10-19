@@ -112,7 +112,7 @@ ResourceHandler::ResourceHandler()
 
     soundLoader.fallback = []()
     {
-        std::array<sf::Int16, 20u> buffer;
+        std::array<std::int16_t, 20u> buffer;
         std::memset(buffer.data(), 0, buffer.size());
         
         sf::SoundBuffer sb;

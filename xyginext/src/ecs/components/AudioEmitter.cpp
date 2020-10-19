@@ -124,7 +124,7 @@ void AudioEmitter::setLooped(bool loop)
     m_impl->setLooped(loop);
 }
 
-void AudioEmitter::setChannel(sf::Uint8 chan)
+void AudioEmitter::setChannel(std::uint8_t chan)
 {
     XY_ASSERT(chan < AudioMixer::MaxChannels, "Channel out of range");
     XY_ASSERT(m_impl, "No valid sound loaded");

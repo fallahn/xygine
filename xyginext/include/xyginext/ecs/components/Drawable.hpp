@@ -153,13 +153,13 @@ namespace xy
         inversely the greater the value the further forward it is drawn.
         Default value is 0.
         */
-        void setDepth(sf::Int32 depth);
+        void setDepth(std::int32_t depth);
 
         /*!
         \brief Returns the Z depth value
         \see setDepth();
         */
-        sf::Int32 getDepth() const { return m_zDepth; }
+        std::int32_t getDepth() const { return m_zDepth; }
 
         /*!
         \brief Set an area to which to crop the drawable.

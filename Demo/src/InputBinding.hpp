@@ -30,6 +30,7 @@ source distribution.
 #include <SFML/Window/Keyboard.hpp>
 
 #include <array>
+#include <cstdint>
 
 struct InputBinding final
 {
@@ -38,6 +39,6 @@ struct InputBinding final
         Jump, Shoot, Left, Right, Count
     };
     std::array<sf::Keyboard::Key, Count> keys{};
-    std::array<sf::Uint32, 2u> buttons = { {0, 1} };
-    sf::Uint32 controllerID = 100;
+    std::array<std::uint32_t, 2u> buttons = { {0, 1} };
+    std::uint32_t controllerID = 100;
 };

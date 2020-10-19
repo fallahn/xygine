@@ -68,18 +68,18 @@ namespace xy
         /*!
         \brief Returns the current frame ID
         */
-        sf::Uint32 getFrameID() const { return m_frameID; }
+        std::uint32_t getFrameID() const { return m_frameID; }
         
         /*!
         \brief Set the current frame ID
         */
-        void setFrameID(sf::Uint32 frameID) { m_frameID = frameID; }
+        void setFrameID(std::uint32_t frameID) { m_frameID = frameID; }
 
     private:
         std::size_t m_id = 0;
         bool m_playing = false;
         float m_currentFrameTime = 0.f;
-        sf::Uint32 m_frameID = 0;
+        std::uint32_t m_frameID = 0;
 
         friend class SpriteAnimator;
     };

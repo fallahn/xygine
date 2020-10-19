@@ -758,7 +758,7 @@ void NPCSystem::onEntityAdded(xy::Entity /*entity*/)
     m_currentThinkTime = (m_currentThinkTime + 1) % thinkTimes.size();*/
 }
 
-void NPCSystem::despawn(xy::Entity entity, sf::Uint8 playerNumber, sf::Uint8 cause)
+void NPCSystem::despawn(xy::Entity entity, std::uint8_t playerNumber, std::uint8_t cause)
 {
     XY_ASSERT(entity.hasComponent<NPC>(), "Not an NPC");
 

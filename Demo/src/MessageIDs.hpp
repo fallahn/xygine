@@ -71,7 +71,7 @@ struct SceneEvent final
         ActorRemoved
     }type;
     xy::Entity entity;
-    sf::Int32 actorID = -1;
+    std::int32_t actorID = -1;
     float x = 0.f;
     float y = 0.f;
 };
@@ -84,8 +84,8 @@ struct NpcEvent final
         Spawned,
         GotAngry
     }type = Died;
-    sf::Int32 entityID = 0;
-    sf::Uint8 playerID = 0; //who gets points?
+    std::int32_t entityID = 0;
+    std::uint8_t playerID = 0; //who gets points?
     enum
     {
         Bubble,
@@ -95,20 +95,20 @@ struct NpcEvent final
         Explosion,
         OutOfBounds
     };
-    sf::Uint8 causeOfDeath = Bubble;
+    std::uint8_t causeOfDeath = Bubble;
 };
 
 //when an item such as fruit or bonus collected
 struct ItemEvent final
 {
     xy::Entity player;
-    sf::Int32 actorID = -1;
+    std::int32_t actorID = -1;
 };
 
 struct AnimationEvent final
 {
-    sf::Int32 newAnim = -1;
-    sf::Int32 oldAnim = -1;
+    std::int32_t newAnim = -1;
+    std::int32_t oldAnim = -1;
     xy::Entity entity;
     float x = 0.f;
     float y = 0.f;
@@ -132,7 +132,7 @@ struct NetworkEvent final
     {
         Connected, Disconnected
     }type = Connected;
-    sf::Uint8 playerID = 0;
+    std::uint8_t playerID = 0;
 };
 
 struct MenuEvent final
@@ -145,8 +145,8 @@ struct MenuEvent final
         UnpauseGame,
         KeybindClicked
     }action;
-    sf::Uint8 index = 0;
-    sf::Uint8 player = 0;
+    std::uint8_t index = 0;
+    std::uint8_t player = 0;
 };
 
 struct GameEvent final
@@ -155,5 +155,5 @@ struct GameEvent final
     {
         Restarted
     }action;
-    sf::Uint8 playerID = 0;
+    std::uint8_t playerID = 0;
 };

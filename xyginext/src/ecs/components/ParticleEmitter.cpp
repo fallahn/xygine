@@ -154,7 +154,7 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             }
             else if (name == "emit_count")
             {
-                emitCount = p.getValue<sf::Int32>();
+                emitCount = p.getValue<std::int32_t>();
             }
             else if (name == "spawn_radius")
             {
@@ -166,7 +166,7 @@ bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& tex
             }
             else if (name == "release_count")
             {
-                releaseCount = p.getValue<sf::Int32>();
+                releaseCount = p.getValue<std::int32_t>();
             }
             else if (name == "inherit_rotation")
             {
@@ -287,7 +287,7 @@ bool EmitterSettings::loadFromFile(const std::string& path, ResourceHandler& tex
             }
             else if (name == "emit_count")
             {
-                emitCount = p.getValue<sf::Int32>();
+                emitCount = p.getValue<std::int32_t>();
             }
             else if (name == "spawn_radius")
             {
@@ -299,7 +299,7 @@ bool EmitterSettings::loadFromFile(const std::string& path, ResourceHandler& tex
             }
             else if (name == "release_count")
             {
-                releaseCount = p.getValue<sf::Int32>();
+                releaseCount = p.getValue<std::int32_t>();
             }
             else if (name == "inherit_rotation")
             {
@@ -382,7 +382,7 @@ bool EmitterSettings::saveToFile(const std::string& path)
     cfg.addProperty("scale_affector").setValue(scaleModifier);
     cfg.addProperty("size").setValue(size);
     cfg.addProperty("emit_rate").setValue(emitRate);
-    cfg.addProperty("emit_count").setValue(static_cast<sf::Int32>(emitCount));
+    cfg.addProperty("emit_count").setValue(static_cast<std::int32_t>(emitCount));
     cfg.addProperty("spawn_radius").setValue(spawnRadius);
     cfg.addProperty("spawn_offset").setValue(spawnOffset);
     cfg.addProperty("release_count").setValue(releaseCount);

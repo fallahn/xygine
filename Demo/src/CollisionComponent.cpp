@@ -33,7 +33,7 @@ namespace
 {
     constexpr std::size_t ManSize = sizeof(Manifold::penetration) + sizeof(Manifold::normal) + sizeof(Manifold::otherType);
     constexpr std::size_t HitboxSize = sizeof(CollisionType::ID) + sizeof(std::size_t);
-    constexpr std::size_t ComponentSize = sizeof(std::size_t) + sizeof(sf::Uint32) + sizeof(sf::Uint32);
+    constexpr std::size_t ComponentSize = sizeof(std::size_t) + sizeof(std::uint32_t) + sizeof(std::uint32_t);
 }
 
 CollisionComponent::CollisionComponent()
@@ -71,7 +71,7 @@ void CollisionComponent::addHitbox(sf::FloatRect rect, CollisionType::ID type)
     }
 }
 
-std::vector<sf::Uint8> CollisionComponent::serialise() const
+std::vector<std::uint8_t> CollisionComponent::serialise() const
 {
     std::size_t size = 0;
     for (auto i = 0u; i < m_hitboxCount; ++i)
@@ -80,7 +80,7 @@ std::vector<sf::Uint8> CollisionComponent::serialise() const
     }
     size += ComponentSize;
 
-    std::vector<sf::Uint8> data(size);
+    std::vector<std::uint8_t> data(size);
     auto ptr = data.data();
 
     //catbits, maskbits, hitbox count
@@ -121,7 +121,7 @@ std::vector<sf::Uint8> CollisionComponent::serialise() const
     return data;
 }
 
-void CollisionComponent::deserialise(const std::vector<sf::Uint8>& data)
+void CollisionComponent::deserialise(const std::vector<std::uint8_t>& data)
 {
     auto ptr = data.data();
 

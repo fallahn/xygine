@@ -60,7 +60,7 @@ EnetClientImpl::~EnetClientImpl()
 }
 
 //public
-bool EnetClientImpl::create(std::size_t maxChannels, std::size_t maxClients, sf::Uint32 incoming, sf::Uint32 outgoing)
+bool EnetClientImpl::create(std::size_t maxChannels, std::size_t maxClients, std::uint32_t incoming, std::uint32_t outgoing)
 {
     if (m_client)
     {
@@ -90,7 +90,7 @@ bool EnetClientImpl::create(std::size_t maxChannels, std::size_t maxClients, sf:
     return true;
 }
 
-bool EnetClientImpl::connect(const std::string& address, sf::Uint16 port, sf::Uint32 timeout)
+bool EnetClientImpl::connect(const std::string& address, std::uint16_t port, std::uint32_t timeout)
 {
     XY_ASSERT(timeout > 0, "Timeout should probably be at least 1000ms");
     XY_ASSERT(port > 0, "Invalid port number");
@@ -206,11 +206,11 @@ bool EnetClientImpl::pollEvent(NetEvent& evt)
     return false;
 }
 
-void EnetClientImpl::sendPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
+void EnetClientImpl::sendPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel)
 {
     if (m_peer)
     {
-        sf::Int32 packetFlags = 0;
+        std::int32_t packetFlags = 0;
         if (flags == NetFlag::Reliable)
         {
             packetFlags |= ENET_PACKET_FLAG_RELIABLE;

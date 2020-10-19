@@ -102,11 +102,11 @@ private:
     void createHelp();
     void showHelpMenu();
 
-    void createFirstMenu(xy::Transform&, sf::Uint32, sf::Uint32, sf::Font&);
-    void createSecondMenu(xy::Transform&, sf::Uint32, sf::Uint32, sf::Font&);
-    void createThirdMenu(xy::Transform&, sf::Uint32, sf::Uint32, sf::Font&);
+    void createFirstMenu(xy::Transform&, std::uint32_t, std::uint32_t, sf::Font&);
+    void createSecondMenu(xy::Transform&, std::uint32_t, std::uint32_t, sf::Font&);
+    void createThirdMenu(xy::Transform&, std::uint32_t, std::uint32_t, sf::Font&);
 
-    void createKeybindInputs(xy::Entity, sf::Uint8);
+    void createKeybindInputs(xy::Entity, std::uint8_t);
 
     void updateLoadingScreen(float, sf::RenderWindow&) override;
 };

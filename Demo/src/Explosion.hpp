@@ -38,7 +38,7 @@ source distribution.
 struct Explosion final
 {
     float lifetime = 0.8f;
-    sf::Uint8 owner = 3;
+    std::uint8_t owner = 3;
 };
 
 class ExplosionSystem final : public xy::System

@@ -73,7 +73,7 @@ namespace xy
         a custom netowrking implmentation.
         */
         template <typename T = EnetClientImpl>
-        bool create(std::size_t maxChannels, std::size_t maxClients = 1, sf::Uint32 incoming = 0, sf::Uint32 outgoing = 0);
+        bool create(std::size_t maxChannels, std::size_t maxClients = 1, std::uint32_t incoming = 0, std::uint32_t outgoing = 0);
 
         /*!
         \brief Attempts to connect to a server on the given IPv4 address or host name.
@@ -87,7 +87,7 @@ namespace xy
         attempt will not wait for a response from the server.
         \returns true on success or false if the attempt timed out.
         */
-        bool connect(const std::string& address, sf::Uint16 port, sf::Uint32 timeout = 5000);
+        bool connect(const std::string& address, std::uint16_t port, std::uint32_t timeout = 5000);
 
         /*!
         \brief Returns true if connected to a NetHost and is ready to poll for events
@@ -129,7 +129,7 @@ namespace xy
         channels have higher priority, with 0 being highest.
         */
         template <typename T>
-        void sendPacket(std::uint8_t id, const T& data, NetFlag flags, sf::Uint8 channel = 0);
+        void sendPacket(std::uint8_t id, const T& data, NetFlag flags, std::uint8_t channel = 0);
 
         /*!
         \brief Sends the given array of bytes out over the connection if it
@@ -143,7 +143,7 @@ namespace xy
         \param channel Stream channel over which to send the data. Lower number
         channels have higher priority, with 0 being highest.
         */
-        void sendPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel = 0);
+        void sendPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel = 0);
 
         /*!
         \brief Returns a reference to the client's peer.

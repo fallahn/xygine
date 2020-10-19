@@ -31,7 +31,7 @@ source distribution.
 using namespace xy;
 
 //public
-bool NetClient::connect(const std::string& address, sf::Uint16 port, sf::Uint32 timeout)
+bool NetClient::connect(const std::string& address, std::uint16_t port, std::uint32_t timeout)
 {
     XY_ASSERT(m_impl, "create() has not yet been called!");
     return m_impl->connect(address, port, timeout);
@@ -55,7 +55,7 @@ bool NetClient::pollEvent(NetEvent& evt)
     return m_impl->pollEvent(evt);
 }
 
-void NetClient::sendPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
+void NetClient::sendPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel)
 {
     XY_ASSERT(m_impl, "create() has not yet been called!");
     m_impl->sendPacket(id, data, size, flags, channel);

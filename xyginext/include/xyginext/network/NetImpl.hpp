@@ -69,13 +69,13 @@ namespace xy
         NetClientImpl& operator = (const NetClientImpl&) = delete;
         NetClientImpl& operator = (NetClientImpl&&) = delete;
 
-        virtual bool create(std::size_t maxChannels, std::size_t maxClients, sf::Uint32 incoming, sf::Uint32 outgoing) = 0;
-        virtual bool connect(const std::string& address, sf::Uint16 port, sf::Uint32 timeout) = 0;
+        virtual bool create(std::size_t maxChannels, std::size_t maxClients, std::uint32_t incoming, std::uint32_t outgoing) = 0;
+        virtual bool connect(const std::string& address, std::uint16_t port, std::uint32_t timeout) = 0;
         virtual bool connected() const = 0;
         virtual void disconnect() = 0;
 
         virtual bool pollEvent(NetEvent&) = 0;
-        virtual void sendPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
+        virtual void sendPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel) = 0;
 
         virtual const NetPeer& getPeer() const = 0;
 
@@ -94,11 +94,11 @@ namespace xy
         NetHostImpl& operator = (const NetHostImpl&) = delete;
         NetHostImpl& operator = (NetHostImpl&&) = delete;
 
-        virtual bool start(const std::string& address, sf::Uint16 port, std::size_t maxClient, std::size_t maxChannels, sf::Uint32 incoming, sf::Uint32 outgoing) = 0;
+        virtual bool start(const std::string& address, std::uint16_t port, std::size_t maxClient, std::size_t maxChannels, std::uint32_t incoming, std::uint32_t outgoing) = 0;
         virtual void stop() = 0;
         virtual bool pollEvent(NetEvent&) = 0;
-        virtual void broadcastPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
-        virtual void sendPacket(const NetPeer& peer, std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) = 0;
+        virtual void broadcastPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel) = 0;
+        virtual void sendPacket(const NetPeer& peer, std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel) = 0;
 
         virtual std::size_t getConnectedPeerCount() const = 0;
         virtual std::uint32_t getAddress() const { return 0; }

@@ -130,7 +130,7 @@ bool AudioNull::isLooped() const
     return false;
 }
 
-sf::Int32 AudioNull::getStatus() const
+std::int32_t AudioNull::getStatus() const
 {
     //LOG("No sound loaded. Sound not playing", xy::Logger::Type::Warning);
     return sf::Sound::Status::Stopped;
@@ -253,7 +253,7 @@ bool AudioSound::isLooped() const
     return m_sound.getLoop();
 }
 
-sf::Int32 AudioSound::getStatus() const
+std::int32_t AudioSound::getStatus() const
 {
     return m_sound.getStatus();
 }
@@ -370,7 +370,7 @@ bool AudioMusic::isLooped() const
     return m_music.getLoop();
 }
 
-sf::Int32 AudioMusic::getStatus() const
+std::int32_t AudioMusic::getStatus() const
 {
     return m_music.getStatus();
 }

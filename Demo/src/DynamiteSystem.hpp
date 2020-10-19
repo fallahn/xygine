@@ -39,7 +39,7 @@ namespace xy
 struct Dynamite final
 {
     float lifetime = 1.f;
-    std::function<void(sf::Uint8, sf::Vector2f)> callback;
+    std::function<void(std::uint8_t, sf::Vector2f)> callback;
     enum class State
     {
         Falling, Idle

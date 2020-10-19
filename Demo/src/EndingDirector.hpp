@@ -53,8 +53,8 @@ private:
     xy::SpriteSheet m_spriteSheet;
     xy::Sprite m_playerSprite;
 
-    void spawnBubble(sf::Uint32);
-    void spawnFood(sf::Uint32);
+    void spawnBubble(std::uint32_t);
+    void spawnFood(std::uint32_t);
     void spawnPause();
     void spawnWideShot();
 
@@ -63,5 +63,5 @@ private:
         Collect, Pop, Land,
         Q1, Q2, Q3, Shout, Angry
     };
-    void playSound(sf::Uint32, xy::Entity);
+    void playSound(std::uint32_t, xy::Entity);
 };

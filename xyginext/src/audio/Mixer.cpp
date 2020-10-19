@@ -75,7 +75,7 @@ float AudioMixer::getMasterVolume()
     return AudioMixer::m_masterVol;
 }
 
-void AudioMixer::setVolume(float vol, sf::Uint8 channel)
+void AudioMixer::setVolume(float vol, std::uint8_t channel)
 {
     XY_ASSERT(channel < MaxChannels, "Channel index out of range");
     AudioMixer::m_channels[channel] = Util::Math::clamp(vol, 0.f, 1.f);
@@ -84,13 +84,13 @@ void AudioMixer::setVolume(float vol, sf::Uint8 channel)
     msg->type = Message::AudioEvent::ChannelVolumeChanged;
 }
 
-float AudioMixer::getVolume(sf::Uint8 channel)
+float AudioMixer::getVolume(std::uint8_t channel)
 {
     XY_ASSERT(channel < MaxChannels, "Channel index out of range");
     return AudioMixer::m_channels[channel];
 }
 
-void AudioMixer::setPrefadeVolume(float vol, sf::Uint8 channel)
+void AudioMixer::setPrefadeVolume(float vol, std::uint8_t channel)
 {
     XY_ASSERT(channel < MaxChannels, "Channel index out of range");
     AudioMixer::m_prefadeChannels[channel] = Util::Math::clamp(vol, 0.f, 1.f);
@@ -99,19 +99,19 @@ void AudioMixer::setPrefadeVolume(float vol, sf::Uint8 channel)
     msg->type = Message::AudioEvent::ChannelVolumeChanged;
 }
 
-float AudioMixer::getPrefadeVolume(sf::Uint8 channel)
+float AudioMixer::getPrefadeVolume(std::uint8_t channel)
 {
     XY_ASSERT(channel < MaxChannels, "Channel index out of range");
     return AudioMixer::m_prefadeChannels[channel];
 }
 
-void AudioMixer::setLabel(const std::string& label, sf::Uint8 channel)
+void AudioMixer::setLabel(const std::string& label, std::uint8_t channel)
 {
     XY_ASSERT(channel < MaxChannels, "Channel index out of range");
     m_labels[channel] = label;
 }
 
-const std::string& AudioMixer::getLabel(sf::Uint8 channel)
+const std::string& AudioMixer::getLabel(std::uint8_t channel)
 {
     XY_ASSERT(channel < MaxChannels, "Channel index out of range");
     return m_labels[channel];

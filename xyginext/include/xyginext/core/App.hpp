@@ -86,11 +86,11 @@ namespace xy
         */
         struct VideoSettings final
         {
-            sf::Int32 WindowStyle;
+            std::int32_t WindowStyle;
             sf::VideoMode VideoMode;
             sf::ContextSettings ContextSettings;
             bool VSync;
-            sf::Uint32 FrameLimit;
+            std::uint32_t FrameLimit;
             std::vector<sf::VideoMode> AvailableVideoModes;
             std::string Title;
 

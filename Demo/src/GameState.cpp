@@ -105,13 +105,13 @@ namespace
     struct BonusUI final
     {
         Bonus::Value value = Bonus::B;
-        sf::Uint8 playerID = 0;
+        std::uint8_t playerID = 0;
     };
 
 #ifdef XY_DEBUG
-    sf::Int8 debugActorCount = 0;
-    sf::Uint8 debugPlayerState = 0;
-    sf::Uint8 debugActorUpdate = 0;
+    std::int8_t debugActorCount = 0;
+    std::uint8_t debugPlayerState = 0;
+    std::uint8_t debugActorUpdate = 0;
     sf::Vector2f debugCrownVel;
     sf::CircleShape debugShape;
 #endif
@@ -196,7 +196,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         case sf::Keyboard::Escape:
         case sf::Keyboard::Pause:
             requestStackPush(StateID::Pause);
-            m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+            m_client.sendPacket(PacketID::RequestServerPause, std::uint8_t(0), xy::NetFlag::Reliable, 1);
             break;
         }
     }
@@ -207,7 +207,7 @@ bool GameState::handleEvent(const sf::Event& evt)
             if (evt.joystickButton.button == 7) //start on xbox
             {
                 requestStackPush(StateID::Pause);
-                m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+                m_client.sendPacket(PacketID::RequestServerPause, std::uint8_t(0), xy::NetFlag::Reliable, 1);
             }
         }
     }
@@ -285,7 +285,7 @@ void GameState::handleMessage(const xy::Message& msg)
             break;
         case MenuEvent::UnpauseGame:
             requestStackPop();
-            m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
+            m_client.sendPacket(PacketID::RequestServerPause, std::uint8_t(1), xy::NetFlag::Reliable, 1);
             break;
         }
     }
@@ -298,7 +298,7 @@ void GameState::handleMessage(const xy::Message& msg)
             if (getStackSize() == 1)
             {
                 requestStackPush(StateID::Pause);
-                m_client.sendPacket(PacketID::RequestServerPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+                m_client.sendPacket(PacketID::RequestServerPause, std::uint8_t(0), xy::NetFlag::Reliable, 1);
             }
         }
     }
@@ -626,7 +626,7 @@ bool GameState::loadScene(const MapData& data, sf::Vector2f position)
 
     m_mapTextures[m_currentMapTexture].create(size.x, size.y);
     m_mapTextures[m_currentMapTexture].clear(sf::Color::Transparent);
-    sf::Uint8 flags = 0;
+    std::uint8_t flags = 0;
 
     const auto& layers = map.getLayers();
     for (const auto& layer : layers)
@@ -865,7 +865,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     default: break;
 #ifdef XY_DEBUG
     case PacketID::DebugMapCount:
-        debugActorCount = evt.packet.as<sf::Int8>();
+        debugActorCount = evt.packet.as<std::int8_t>();
         break;
     case PacketID::DebugCrownVelocity:
         debugCrownVel = evt.packet.as<sf::Vector2f>();
@@ -876,11 +876,11 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         requestStackPush(StateID::Error);
         return;
     case PacketID::CrateChange:
-        luggageChange(evt.packet.as<sf::Uint32>());
+        luggageChange(evt.packet.as<std::uint32_t>());
         break;
     case PacketID::HatChange:
     {
-        auto info = evt.packet.as<sf::Uint8>();
+        auto info = evt.packet.as<std::uint8_t>();
         switch (info)
         {
         case HatFlag::OneOff:
@@ -900,7 +900,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         break;
     case PacketID::RequestClientPause: //other player paused server
     {
-        auto pause = evt.packet.as<sf::Uint8>();
+        auto pause = evt.packet.as<std::uint8_t>();
         if (pause == 0)
         {
             //show screen
@@ -921,7 +921,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         break;
     case PacketID::ServerMessage:
     {
-        sf::Int32 idx = evt.packet.as<sf::Int32>();
+        std::int32_t idx = evt.packet.as<std::int32_t>();
         xy::Logger::log(serverMessages[idx], xy::Logger::Type::Info);
 
         if (idx == MessageIdent::MapFailed)
@@ -1026,7 +1026,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
             spawnMapActors();
 
             //send ready signal
-            m_client.sendPacket(PacketID::ClientReady, sf::Uint8(m_sharedData.playerCount), xy::NetFlag::Reliable, 1);
+            m_client.sendPacket(PacketID::ClientReady, std::uint8_t(m_sharedData.playerCount), xy::NetFlag::Reliable, 1);
             
             for (auto i = 0u; i < m_sharedData.playerCount; ++i)
             {
@@ -1065,12 +1065,12 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         /*ClientState state;
         std::memcpy(&state, evt.packet.getData(), sizeof(state));
         auto size = evt.packet.getSize() - sizeof(state);
-        std::vector<sf::Uint8> collisionData(size);
-        std::memcpy(collisionData.data(), (sf::Uint8*)evt.packet.getData() + sizeof(state), size);*/
+        std::vector<std::uint8_t> collisionData(size);
+        std::memcpy(collisionData.data(), (std::uint8_t*)evt.packet.getData() + sizeof(state), size);*/
        
 #ifdef XY_DEBUG
         debugShape.setPosition(state.x, state.y);
-        debugPlayerState = sf::Uint8(state.sync.state);
+        debugPlayerState = std::uint8_t(state.sync.state);
 #endif 
         
         //reconcile - seems a bit contrived, but must match the player input with 2 local players
@@ -1129,7 +1129,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
         break;
     case PacketID::LevelUpdate:
     {
-        auto level = evt.packet.as<sf::Uint8>();
+        auto level = evt.packet.as<std::uint8_t>();
         updateLevelDisplay(level);
     }
         break;
@@ -1143,7 +1143,7 @@ void GameState::handlePacket(const xy::NetEvent& evt)
     {
         if (getStackSize() == 1)
         {
-            m_sharedData.continueCount = evt.packet.as<sf::Uint8>();
+            m_sharedData.continueCount = evt.packet.as<std::uint8_t>();
             requestStackPush(StateID::GameOver);
             
             for (auto i = 0u; i < m_sharedData.playerCount; ++i)
@@ -1216,9 +1216,9 @@ void GameState::handleTimeout()
     }
 }
 
-sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
+std::int32_t GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
 {
-    sf::Int32 flags = 0;
+    std::int32_t flags = 0;
     
     auto name = xy::Util::String::toLower(layer->getName());
     if (name == "geometry")
@@ -1252,7 +1252,7 @@ sf::Int32 GameState::parseObjLayer(const std::unique_ptr<tmx::Layer>& layer)
     return flags;
 }
 
-sf::Int32 GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, const tmx::Map& map)
+std::int32_t GameState::parseTileLayer(const std::unique_ptr<tmx::Layer>& layer, const tmx::Map& map)
 {
     const auto& tilesets = map.getTilesets();
     if (tilesets.empty())
@@ -1377,7 +1377,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
     msg->x = actorEvent.x;
     msg->y = actorEvent.y;
 
-    auto addSprite = [&](xy::Entity sprEnt, sf::Int32 id)
+    auto addSprite = [&](xy::Entity sprEnt, std::int32_t id)
     {
         sprEnt.addComponent<xy::Sprite>() = m_sprites[id];
         sprEnt.addComponent<xy::Drawable>();
@@ -1814,7 +1814,7 @@ void GameState::spawnRoundSkip()
     msg->type = MapEvent::BonusSwitch;
 }
 
-void GameState::spawnTowerDude(sf::Int16 actorType)
+void GameState::spawnTowerDude(std::int16_t actorType)
 {
     auto towerEnt = m_scene.createEntity(); //little dude climbing tower
     towerEnt.addComponent<xy::Transform>();
@@ -1861,9 +1861,9 @@ void GameState::updateUI(const InventoryUpdate& data)
     }
 
     //check if greater than high score and update
-    if (data.score > m_scores.getProperties()[0].getValue<sf::Int32>())
+    if (data.score > m_scores.getProperties()[0].getValue<std::int32_t>())
     {
-        m_scores.findProperty("hiscore")->setValue(static_cast<sf::Int32>(data.score));
+        m_scores.findProperty("hiscore")->setValue(static_cast<std::int32_t>(data.score));
         m_scores.save(xy::FileSystem::getConfigDirectory(dataDir) + scoreFile);
 
         xy::Command cmd;
@@ -1893,7 +1893,7 @@ void GameState::updateUI(const InventoryUpdate& data)
         scoreEnt.getComponent<xy::Text>().setAlignment(xy::Text::Alignment::Centre);
         scoreEnt.addComponent<xy::Drawable>().setDepth(2);
 
-        if (data.amount == std::numeric_limits<sf::Uint32>::max())
+        if (data.amount == std::numeric_limits<std::uint32_t>::max())
         {
             //this is a 1up bonus
             scoreEnt.getComponent<xy::Text>().setString("1 UP!");
@@ -1973,7 +1973,7 @@ void GameState::updateUI(const InventoryUpdate& data)
     m_scene.getSystem<xy::CommandSystem>().sendCommand(bonusCommand);
 }
 
-void GameState::giveHat(sf::Uint8 player)
+void GameState::giveHat(std::uint8_t player)
 {
     xy::Command cmd;
     cmd.targetFlags = player == 0 ? CommandID::PlayerOne : CommandID::PlayerTwo;
@@ -2005,7 +2005,7 @@ void GameState::giveHat(sf::Uint8 player)
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 }
 
-void GameState::takeHat(sf::Uint8 player)
+void GameState::takeHat(std::uint8_t player)
 {
     xy::Command cmd;
     cmd.targetFlags = player == 0 ? CommandID::PlayerOne : CommandID::PlayerTwo;
@@ -2029,11 +2029,11 @@ void GameState::takeHat(sf::Uint8 player)
     m_scene.getSystem<xy::CommandSystem>().sendCommand(cmd);
 }
 
-void GameState::luggageChange(sf::Uint32 data)
+void GameState::luggageChange(std::uint32_t data)
 {
-    sf::Int16 actorID = ((data & 0xffff0000) >> 16);
+    std::int16_t actorID = ((data & 0xffff0000) >> 16);
     bool pickedUp = (data & Luggage::PickedUp);
-    sf::Uint32 playerTarget = (data & Luggage::PlayerOne) ? CommandID::PlayerOne : CommandID::PlayerTwo;
+    std::uint32_t playerTarget = (data & Luggage::PlayerOne) ? CommandID::PlayerOne : CommandID::PlayerTwo;
     bool explosive = (data & Luggage::Explosive);
 
     //hide or show the client side actor sprite
@@ -2085,7 +2085,7 @@ void GameState::luggageChange(sf::Uint32 data)
     }
 }
 
-void GameState::updateLevelDisplay(sf::Uint8 level)
+void GameState::updateLevelDisplay(std::uint8_t level)
 {
     xy::Command cmd;
     cmd.targetFlags = CommandID::LevelCounter;
@@ -2139,7 +2139,7 @@ void GameState::transitionToEnd()
         currentTime += dt;
         float alpha = std::min(1.f, currentTime / fadeTime);
         
-        sf::Uint8 alphaB = static_cast<sf::Uint8>(alpha * 255.f);
+        std::uint8_t alphaB = static_cast<std::uint8_t>(alpha * 255.f);
         ent.getComponent<xy::Sprite>().setColour({ 255,255,255,alphaB });
 
         if (alphaB == 255)

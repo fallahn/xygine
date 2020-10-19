@@ -68,8 +68,8 @@ namespace xy
     class XY_EXPORT_API Entity final
     {
     public:
-        using ID = sf::Uint32;
-        using Generation = sf::Uint8;
+        using ID = std::uint32_t;
+        using Generation = std::uint8_t;
 
         Entity();
 

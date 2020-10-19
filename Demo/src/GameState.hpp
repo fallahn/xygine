@@ -107,8 +107,8 @@ private:
     std::array<sf::RenderTexture, 2u> m_mapTextures;
     std::size_t m_currentMapTexture;
 
-    sf::Int32 parseObjLayer(const std::unique_ptr<tmx::Layer>&);
-    sf::Int32 parseTileLayer(const std::unique_ptr<tmx::Layer>&, const tmx::Map& map);
+    std::int32_t parseObjLayer(const std::unique_ptr<tmx::Layer>&);
+    std::int32_t parseTileLayer(const std::unique_ptr<tmx::Layer>&, const tmx::Map& map);
 
     void spawnActor(const ActorEvent&);
     void spawnClient(const ClientData&);
@@ -117,16 +117,16 @@ private:
     void spawnMapActors();
     void spawnWarning();
     void spawnRoundSkip();
-    void spawnTowerDude(sf::Int16);
+    void spawnTowerDude(std::int16_t);
 
     void updateUI(const InventoryUpdate&);
-    void updateLevelDisplay(sf::Uint8);
+    void updateLevelDisplay(std::uint8_t);
 
     xy::EmitterSettings m_hatEmitter;
-    void giveHat(sf::Uint8);
-    void takeHat(sf::Uint8);
+    void giveHat(std::uint8_t);
+    void takeHat(std::uint8_t);
 
-    void luggageChange(sf::Uint32);
+    void luggageChange(std::uint32_t);
 
     void updateLoadingScreen(float, sf::RenderWindow&) override;
 

@@ -60,23 +60,23 @@ struct Velocity final
 //projectiles and bonuses
 struct Actor final
 {
-    sf::Int16 type = -1;
-    sf::Int16 id = -1;
+    std::int16_t type = -1;
+    std::int16_t id = -1;
 };
 
 //this is sent to a client when it has connected successfully
-static constexpr sf::Uint8 MaxChars = 11;
-static constexpr sf::Uint8 MaxNPCs = 8;
-static constexpr sf::Uint8 MaxCrates = 8;
+static constexpr std::uint8_t MaxChars = 11;
+static constexpr std::uint8_t MaxNPCs = 8;
+static constexpr std::uint8_t MaxCrates = 8;
 struct MapData final
 {
     char mapName[MaxChars]{};
     char mapSha[41]{}; //sha1 is always 40 chars long
     Actor NPCs[MaxNPCs]{};
-    sf::Int8 NPCCount = 0;
+    std::int8_t NPCCount = 0;
     Actor crates[MaxCrates]{};
-    sf::Int8 crateCount = 0;
-    sf::Uint8 colourQuad = 0;
+    std::int8_t crateCount = 0;
+    std::uint8_t colourQuad = 0;
 };
 
 //the actor ID, spawn position and Player number
@@ -86,8 +86,8 @@ struct ClientData final
     Actor actor;
     float spawnX = 0.f;
     float spawnY = 0.f;
-    sf::Uint64 peerID = 0;
-    sf::Uint8 playerNumber = 0;
+    std::uint64_t peerID = 0;
+    std::uint8_t playerNumber = 0;
 };
 
 //actor and its position
@@ -97,21 +97,21 @@ struct ActorState
     float x = 0.f;
     float y = 0.f;
     Actor actor;
-    sf::Int32 serverTime = 0;
+    std::int32_t serverTime = 0;
     float animationDirection = 1.f;
-    sf::Int32 animationID = 0;
+    std::int32_t animationID = 0;
 };
 //client state for client side reconciliation
 struct ClientState final : public ActorState
 {
-    sf::Int64 clientTime = 0;
+    std::int64_t clientTime = 0;
     Player::SyncState sync;
     //Player::State playerState = Player::State::Walking;
     //float playerVelocity = 0.f;
     //float playerTimer = 0.f;
-    //sf::Uint8 playerCanLand = 0;
-    //sf::Uint8 playerLives = 3;
-    //sf::Uint8 boolFlags;
+    //std::uint8_t playerCanLand = 0;
+    //std::uint8_t playerLives = 3;
+    //std::uint8_t boolFlags;
 };
 
 //actor events for spawn/despawn etc
@@ -126,9 +126,9 @@ struct ActorEvent final : public ActorState
 //update to the server from the client's input
 struct InputUpdate final
 {
-    sf::Uint16 input = 0; //input mask
-    sf::Int64 clientTime = 0; //client timestamp this input was received
-    sf::Uint8 playerNumber = 0; //player one or two
+    std::uint16_t input = 0; //input mask
+    std::int64_t clientTime = 0; //client timestamp this input was received
+    std::uint8_t playerNumber = 0; //player one or two
 };
 
 namespace InputFlag
@@ -147,15 +147,15 @@ namespace InputFlag
 //player inventory update
 struct InventoryUpdate final
 {
-    sf::Uint8 playerID = 0;
-    sf::Int32 score = 0;
-    sf::Uint32 amount = 0;
-    sf::Uint8 lives = 0;
-    sf::Uint8 bonusFlags = 0;
+    std::uint8_t playerID = 0;
+    std::int32_t score = 0;
+    std::uint32_t amount = 0;
+    std::uint8_t lives = 0;
+    std::uint8_t bonusFlags = 0;
 };
 
 struct CollisionFlagsUpdate final
 {
-    sf::Int16 actor = -1;
-    sf::Uint32 newflags = 0;
+    std::int16_t actor = -1;
+    std::uint32_t newflags = 0;
 };

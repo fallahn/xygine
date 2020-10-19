@@ -41,17 +41,17 @@ source distribution.
 
 namespace
 {
-    const sf::Uint32 NpcScore = 500;
-    const sf::Uint32 PowerupScore = 750;
-    const sf::Uint32 GooblyScore = 850;
-    const sf::Uint32 SmallFruitScore = 350;
-    const sf::Uint32 BonusScore = 100;
-    const sf::Uint32 BonusCompletionScore = 2500;
-    const sf::Uint32 HatPickUpScore = 50;
-    const sf::Uint32 CrateScore = 1000;
+    const std::uint32_t NpcScore = 500;
+    const std::uint32_t PowerupScore = 750;
+    const std::uint32_t GooblyScore = 850;
+    const std::uint32_t SmallFruitScore = 350;
+    const std::uint32_t BonusScore = 100;
+    const std::uint32_t BonusCompletionScore = 2500;
+    const std::uint32_t HatPickUpScore = 50;
+    const std::uint32_t CrateScore = 1000;
 
-    const sf::Uint32 lifeScore = 10000; //extra life is awarded in multiples of this
-    const sf::Uint8 maxLives = 6;
+    const std::uint32_t lifeScore = 10000; //extra life is awarded in multiples of this
+    const std::uint8_t maxLives = 6;
 
     const float HatAwardTime = 5.f;
 }
@@ -105,7 +105,7 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
             }
             else
             {
-                sf::Uint32 score = 0;
+                std::uint32_t score = 0;
                 switch (data.causeOfDeath)
                 {
                 case NpcEvent::Bubble:
@@ -127,7 +127,7 @@ void InventoryDirector::handleMessage(const xy::Message& msg)
         break;
     case MessageID::ItemMessage:
     {
-        sf::Uint32 amount = 0;
+        std::uint32_t amount = 0;
         const auto& data = msg.getData<ItemEvent>();
         auto playerID = data.player.getComponent<Player>().playerNumber;
 
@@ -232,7 +232,7 @@ void InventoryDirector::process(float dt)
 }
 
 //private
-void InventoryDirector::sendUpdate(sf::Uint8 player, sf::Uint32 amount)
+void InventoryDirector::sendUpdate(std::uint8_t player, std::uint32_t amount)
 {
         InventoryUpdate update;
         update.lives = m_playerValues[player].lives;
@@ -244,13 +244,13 @@ void InventoryDirector::sendUpdate(sf::Uint8 player, sf::Uint32 amount)
         m_host.broadcastPacket(PacketID::InventoryUpdate, update, xy::NetFlag::Reliable, 1);
 }
 
-void InventoryDirector::checkLifeBonus(sf::Uint8 player, sf::Uint32 oldScore)
+void InventoryDirector::checkLifeBonus(std::uint8_t player, std::uint32_t oldScore)
 {
     auto newScore = m_playerValues[player].score / lifeScore;
     if (newScore > oldScore && m_playerValues[player].lives < maxLives)
     {
         m_playerValues[player].lives++;
-        sendUpdate(player, std::numeric_limits<sf::Uint32>::max()); //flag to say this is a life update rather than score
+        sendUpdate(player, std::numeric_limits<std::uint32_t>::max()); //flag to say this is a life update rather than score
 
         xy::Command cmd;
         cmd.targetFlags = (player == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;

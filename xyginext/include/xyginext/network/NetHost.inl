@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 template <typename T>
-bool NetHost::start(const std::string& address, sf::Uint16 port, std::size_t maxClients, std::size_t maxChannels, sf::Uint32 incoming, sf::Uint32 outgoing)
+bool NetHost::start(const std::string& address, std::uint16_t port, std::size_t maxClients, std::size_t maxChannels, std::uint32_t incoming, std::uint32_t outgoing)
 {
     static_assert(std::is_base_of<NetHostImpl, T>(), "");
     m_impl = std::make_unique<T>();
@@ -34,13 +34,13 @@ bool NetHost::start(const std::string& address, sf::Uint16 port, std::size_t max
 }
 
 template <typename T>
-void NetHost::broadcastPacket(std::uint8_t id, const T& data, NetFlag flags, sf::Uint8 channel)
+void NetHost::broadcastPacket(std::uint8_t id, const T& data, NetFlag flags, std::uint8_t channel)
 {
     m_impl->broadcastPacket(id, (void*)&data, sizeof(T), flags, channel);
 }
 
 template <typename T>
-void NetHost::sendPacket(const NetPeer& peer, std::uint8_t id, const T& data, NetFlag flags, sf::Uint8 channel)
+void NetHost::sendPacket(const NetPeer& peer, std::uint8_t id, const T& data, NetFlag flags, std::uint8_t channel)
 {
     m_impl->sendPacket(peer, id, (void*)&data, sizeof(T), flags, channel);
 }

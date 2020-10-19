@@ -52,7 +52,7 @@ void ConfigProperty::setValue(const std::string& value)
     m_isStringTypeValue = true;
 }
 
-void ConfigProperty::setValue(sf::Int32 value)
+void ConfigProperty::setValue(std::int32_t value)
 {
     m_value = std::to_string(value);
     m_isStringTypeValue = false;
@@ -551,7 +551,7 @@ bool ConfigObject::save(const std::string& path) const
     return false;
 }
 
-void ConfigObject::write(std::ofstream& file, sf::Uint16 depth) const
+void ConfigObject::write(std::ofstream& file, std::uint16_t depth) const
 {
     //add the correct amount of indenting based on this objects's depth
     std::string indent;

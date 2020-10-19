@@ -70,7 +70,7 @@ struct Manifold final
 class Hitbox final
 {
 public:
-    static constexpr sf::Uint32 MaxCollisions = 16;
+    static constexpr std::uint32_t MaxCollisions = 16;
     
     CollisionType::ID getType() const { return m_collisionType; }
     void setType(CollisionType::ID type) { m_collisionType = type; }
@@ -94,7 +94,7 @@ private:
 class CollisionComponent final
 {
 public:
-    static constexpr sf::Uint32 MaxHitBoxes = 2;
+    static constexpr std::uint32_t MaxHitBoxes = 2;
 
     CollisionComponent();
 
@@ -107,23 +107,23 @@ public:
     //returns the combined bounds for all hitboxes for a broadphase pass
     sf::FloatRect getLocalBounds() const { return m_localBounds; }
 
-    void setCollisionCategoryBits(sf::Uint32 bits) { m_categoryBits = bits; }
+    void setCollisionCategoryBits(std::uint32_t bits) { m_categoryBits = bits; }
 
-    void setCollisionMaskBits(sf::Uint32 bits) { m_maskBits = bits; }
+    void setCollisionMaskBits(std::uint32_t bits) { m_maskBits = bits; }
 
-    sf::Uint32 getCollisionCategoryBits() const { return m_categoryBits; }
+    std::uint32_t getCollisionCategoryBits() const { return m_categoryBits; }
 
-    std::vector<sf::Uint8> serialise() const;
+    std::vector<std::uint8_t> serialise() const;
 
-    void deserialise(const std::vector<sf::Uint8>&);
+    void deserialise(const std::vector<std::uint8_t>&);
 
 private:
     std::size_t m_hitboxCount = 0;
     std::array<Hitbox, MaxHitBoxes> m_hitboxes{};
     sf::FloatRect m_localBounds{};
 
-    sf::Uint32 m_categoryBits = 1;
-    sf::Uint32 m_maskBits = std::numeric_limits<sf::Uint32>::max();
+    std::uint32_t m_categoryBits = 1;
+    std::uint32_t m_maskBits = std::numeric_limits<std::uint32_t>::max();
 
     friend class CollisionSystem;
 };

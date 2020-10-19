@@ -68,7 +68,7 @@ void Text::setFont(const sf::Font& font)
     m_dirty = true;
 }
 
-void Text::setCharacterSize(sf::Uint32 size)
+void Text::setCharacterSize(std::uint32_t size)
 {
     m_charSize = size;
     m_dirty = true;
@@ -133,7 +133,7 @@ const sf::Font* Text::getFont() const
     return m_font;
 }
 
-sf::Uint32 Text::getCharacterSize() const
+std::uint32_t Text::getCharacterSize() const
 {
     return m_charSize;
 }
@@ -235,11 +235,11 @@ void Text::updateVertices(Drawable& drawable)
     float maxX = 0.f;
     float maxY = 0.f;
     
-    sf::Uint32 prevChar = 0;
+    std::uint32_t prevChar = 0;
     const auto& string = m_string;
     for (auto i = 0u; i < string.getSize(); ++i)
     {
-        sf::Uint32 currChar = string[i];
+        std::uint32_t currChar = string[i];
         
         x += m_font->getKerning(prevChar, currChar, m_charSize);
         prevChar = currChar;

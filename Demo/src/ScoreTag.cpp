@@ -62,7 +62,7 @@ void ScoreTagSystem::process(float dt)
 
         auto alpha = 255.f * (tag.lifetime / tag.MaxLife);
 
-        tag.colour.a = static_cast<sf::Uint8>(alpha);
+        tag.colour.a = static_cast<std::uint8_t>(alpha);
         
         entity.getComponent<xy::Text>().setFillColour(tag.colour);
         entity.getComponent<xy::Transform>().move(0.f, speed * dt);

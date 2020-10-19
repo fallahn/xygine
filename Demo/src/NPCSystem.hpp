@@ -46,7 +46,7 @@ struct NPC final
     sf::Vector2f lastVelocity; //so can be restored when bubble bursts
     float thinkTimer = 0.f;
     bool canLand = true;
-    sf::Int32 bubbleOwner = -1;
+    std::int32_t bubbleOwner = -1;
     bool angry = false;
     xy::Entity target; //used if targetting a player
     float failSafeTimer = 8.f;//FailSafeTime; //this is reduced if the NPC goes out of bounds, to remove stuck NPCs
@@ -61,7 +61,7 @@ public:
 
     void process(float) override;
 
-    void despawn(xy::Entity, sf::Uint8, sf::Uint8);
+    void despawn(xy::Entity, std::uint8_t, std::uint8_t);
 private:
 
     xy::NetHost& m_host;

@@ -32,7 +32,7 @@ source distribution.
 struct Luggage final
 {
     bool enabled = false;
-    sf::Uint32 entityID = 0;
+    std::uint32_t entityID = 0;
 
     enum
     {

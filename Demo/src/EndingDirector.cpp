@@ -61,7 +61,7 @@ namespace
     struct SpeechCallback final
     {
     public:
-        explicit SpeechCallback(sf::Uint32 id, CallbackData data)
+        explicit SpeechCallback(std::uint32_t id, CallbackData data)
             : m_id(id), m_data(data)
         {
             XY_ASSERT(data.scene, "Missing Scene Pointer");
@@ -88,7 +88,7 @@ namespace
         }
 
     private:
-        sf::Uint32 m_id;
+        std::uint32_t m_id;
         CallbackData m_data;
         float m_currentTime = 0.f;
         static constexpr float MaxTime = 3.2f;
@@ -190,7 +190,7 @@ void EndingDirector::handleEvent(const sf::Event&) {}
 void EndingDirector::process(float) {}
 
 //private
-void EndingDirector::spawnBubble(sf::Uint32 id)
+void EndingDirector::spawnBubble(std::uint32_t id)
 {
     auto& scene = getScene();
     auto bubbleEnt = scene.createEntity();
@@ -242,7 +242,7 @@ void EndingDirector::spawnBubble(sf::Uint32 id)
     bubbleEnt.getComponent<xy::Callback>().function = SpeechCallback(id, data);
 }
 
-void EndingDirector::spawnFood(sf::Uint32 id)
+void EndingDirector::spawnFood(std::uint32_t id)
 {
     auto& scene = getScene();
 
@@ -400,8 +400,8 @@ void EndingDirector::spawnWideShot()
 
     //flowers
     float xPos = xy::Util::Random::value(60.f, 90.f);
-    sf::Uint8 darkness = 140;
-    sf::Int32 depth = 13;
+    std::uint8_t darkness = 140;
+    std::int32_t depth = 13;
     for (auto i = 0; i < 12; ++i)
     {
         auto entity = scene.createEntity();
@@ -421,7 +421,7 @@ void EndingDirector::spawnWideShot()
         {
             auto value = xy::Util::Random::value(20.f, 80.f);
             xPos += value;
-            darkness = xy::Util::Math::clamp(sf::Uint8(darkness + static_cast<sf::Uint8>(value - 20.f)), sf::Uint8(140), sf::Uint8(255));
+            darkness = xy::Util::Math::clamp(std::uint8_t(darkness + static_cast<std::uint8_t>(value - 20.f)), std::uint8_t(140), std::uint8_t(255));
             depth += 2;
         }
     }
@@ -470,7 +470,7 @@ void EndingDirector::spawnWideShot()
     sendCommand(cmd);
 }
 
-void EndingDirector::playSound(sf::Uint32 id, xy::Entity entity)
+void EndingDirector::playSound(std::uint32_t id, xy::Entity entity)
 {
     switch (id)
     {

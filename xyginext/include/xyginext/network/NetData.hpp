@@ -58,11 +58,11 @@ namespace xy
         template<typename T = _ENetPeer>
         std::string getAddress() const; //! <String containing the IPv4 address
         template<typename T = _ENetPeer>
-        sf::Uint16 getPort() const; //! <Port number
+        std::uint16_t getPort() const; //! <Port number
         template<typename T = _ENetPeer>
-        sf::Uint64 getID() const; //! <Unique ID
+        std::uint64_t getID() const; //! <Unique ID
         template<typename T = _ENetPeer>
-        sf::Uint32 getRoundTripTime() const; //! <Mean round trip time in milliseconds of a reliable packet
+        std::uint32_t getRoundTripTime() const; //! <Mean round trip time in milliseconds of a reliable packet
 
         enum class State
         {
@@ -111,9 +111,9 @@ namespace xy
     {
         //used for kludgery - don't call directly!
         XY_EXPORT_API std::string getEnetPeerAddress(void*);
-        XY_EXPORT_API sf::Uint16 getEnetPeerPort(void*);
-        XY_EXPORT_API sf::Uint32 getEnetPeerID(void*);
-        XY_EXPORT_API sf::Uint32 getEnetRoundTrip(void*);
+        XY_EXPORT_API std::uint16_t getEnetPeerPort(void*);
+        XY_EXPORT_API std::uint32_t getEnetPeerID(void*);
+        XY_EXPORT_API std::uint32_t getEnetRoundTrip(void*);
         XY_EXPORT_API NetPeer::State getEnetPeerState(void*);
     }
 
@@ -124,7 +124,7 @@ namespace xy
     */
     struct XY_EXPORT_API NetEvent final
     {
-        sf::Uint8 channel = 0; //! <channel event was received on
+        std::uint8_t channel = 0; //! <channel event was received on
         enum
         {
             None,

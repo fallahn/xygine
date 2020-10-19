@@ -51,7 +51,7 @@ namespace xy
     {
     public:
 
-        using ID = sf::Int32;
+        using ID = std::int32_t;
 
         ShaderResource();
         ~ShaderResource() = default;

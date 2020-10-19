@@ -74,7 +74,7 @@ namespace xy
         the other functions in this class
         */
         template <typename T = EnetHostImpl>
-        bool start(const std::string& address, sf::Uint16 port, std::size_t maxClient, std::size_t maxChannels, sf::Uint32 incoming = 0, sf::Uint32 outgoing = 0);
+        bool start(const std::string& address, std::uint16_t port, std::size_t maxClient, std::size_t maxChannels, std::uint32_t incoming = 0, std::uint32_t outgoing = 0);
 
         /*!
         \brief Stops the host, if it is running
@@ -106,7 +106,7 @@ namespace xy
         channels have higher priority, with 0 being highest.
         */
         template <typename T>
-        void broadcastPacket(std::uint8_t id, const T& data, NetFlag flags, sf::Uint8 channel = 0);
+        void broadcastPacket(std::uint8_t id, const T& data, NetFlag flags, std::uint8_t channel = 0);
 
         /*!
         \brief Broadcasts the given stream of bytes to all connected clients
@@ -119,7 +119,7 @@ namespace xy
         \param channel Stream channel over which to send the data. Lower number
         channels have higher priority, with 0 being highest.
         */
-        void broadcastPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel = 0);
+        void broadcastPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel = 0);
 
         /*!
         \brief Sends a packet to the given peer if a connection is
@@ -138,7 +138,7 @@ namespace xy
         channels have higher priority, with 0 being highest.
         */
         template <typename T>
-        void sendPacket(const NetPeer& peer, std::uint8_t id, const T& data, NetFlag flags, sf::Uint8 channel = 0);
+        void sendPacket(const NetPeer& peer, std::uint8_t id, const T& data, NetFlag flags, std::uint8_t channel = 0);
 
         /*!
         \brief Sends the given array of bytes out over the given peer if it
@@ -153,7 +153,7 @@ namespace xy
         \param channel Stream channel over which to send the data. Lower number
         channels have higher priority, with 0 being highest.
         */
-        void sendPacket(const NetPeer& peer, std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel = 0);
+        void sendPacket(const NetPeer& peer, std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel = 0);
 
 
         /*!

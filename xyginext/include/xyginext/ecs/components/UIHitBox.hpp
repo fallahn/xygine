@@ -61,7 +61,7 @@ namespace xy
 
         sf::FloatRect area;
         bool active = false; //TODO do we need this as the system's SelectedIndex property activates the necessary control
-        std::array<sf::Uint32, CallbackID::Count> callbacks{};
+        std::array<std::uint32_t, CallbackID::Count> callbacks{};
         std::int32_t ID = -1; //TODO I can't remember what this is for but I don't want to remove it...
 
         /*!

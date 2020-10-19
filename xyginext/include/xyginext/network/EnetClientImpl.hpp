@@ -51,13 +51,13 @@ namespace xy
         EnetClientImpl& operator = (const EnetClientImpl&) = delete;
         EnetClientImpl& operator = (EnetClientImpl&&) = delete;
 
-        bool create(std::size_t maxChannels, std::size_t maxClients, sf::Uint32 incoming, sf::Uint32 outgoing) override;
-        bool connect(const std::string& address, sf::Uint16 port, sf::Uint32 timeout) override;
+        bool create(std::size_t maxChannels, std::size_t maxClients, std::uint32_t incoming, std::uint32_t outgoing) override;
+        bool connect(const std::string& address, std::uint16_t port, std::uint32_t timeout) override;
         bool connected() const override;
         void disconnect() override;
 
         bool pollEvent(NetEvent&) override;
-        void sendPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
+        void sendPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel) override;
 
         const NetPeer& getPeer() const override { return m_peer; }
         std::uint32_t getAddress() const override;

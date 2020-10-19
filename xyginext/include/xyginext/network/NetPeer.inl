@@ -8,21 +8,21 @@ inline std::string NetPeer::getAddress<_ENetPeer>() const
 }
 
 template <>
-inline sf::Uint16 NetPeer::getPort<_ENetPeer>() const
+inline std::uint16_t NetPeer::getPort<_ENetPeer>() const
 {
     IMPL_WARN
     return Detail::getEnetPeerPort(m_peer);
 }
 
 template <>
-inline sf::Uint64 NetPeer::getID<_ENetPeer>() const
+inline std::uint64_t NetPeer::getID<_ENetPeer>() const
 {
     IMPL_WARN
     return Detail::getEnetPeerID(m_peer);
 }
 
 template <>
-inline sf::Uint32 NetPeer::getRoundTripTime<_ENetPeer>()const
+inline std::uint32_t NetPeer::getRoundTripTime<_ENetPeer>()const
 {
     IMPL_WARN
     return Detail::getEnetRoundTrip(m_peer);

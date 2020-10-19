@@ -31,6 +31,8 @@ source distribution.
 
 #include <SFML/Config.hpp>
 
+#include <cstdint>
+
 namespace xy
 {
     /*!
@@ -51,6 +53,6 @@ namespace xy
     */
     struct XY_EXPORT_API CommandTarget final
     {
-        sf::Uint32 ID = 0;
+        std::uint32_t ID = 0;
     };
 }

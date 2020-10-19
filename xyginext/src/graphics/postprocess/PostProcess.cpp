@@ -69,7 +69,7 @@ void PostProcess::applyShader(const sf::Shader& shader, sf::RenderTarget& dest)
     dest.draw(vertexArray.data(), vertexArray.size(), sf::Quads, states);
 }
 
-void PostProcess::resizeBuffer(sf::Int32 w, sf::Int32 h)
+void PostProcess::resizeBuffer(std::int32_t w, std::int32_t h)
 {
     m_bufferSize = { w,h };
     bufferResized();

@@ -48,11 +48,11 @@ namespace xy
         EnetHostImpl& operator = (const EnetHostImpl&) = delete;
         EnetHostImpl& operator = (EnetHostImpl&&) = delete;
 
-        bool start(const std::string& address, sf::Uint16 port, std::size_t maxClient, std::size_t maxChannels, sf::Uint32 incoming, sf::Uint32 outgoing) override;
+        bool start(const std::string& address, std::uint16_t port, std::size_t maxClient, std::size_t maxChannels, std::uint32_t incoming, std::uint32_t outgoing) override;
         void stop() override;
         bool pollEvent(NetEvent&) override;
-        void broadcastPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
-        void sendPacket(const NetPeer& peer, std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel) override;
+        void broadcastPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel) override;
+        void sendPacket(const NetPeer& peer, std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel) override;
 
         std::size_t getConnectedPeerCount() const override;
         std::uint32_t getAddress() const override;

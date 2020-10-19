@@ -49,7 +49,7 @@ namespace xy
     public:
         //passes in the entity for whom the callback was triggered and a copy of the flags
         //which contain the input which triggered it. Use the Flags enum to find the input type
-        using MouseButtonCallback = std::function<void(Entity, sf::Uint64 flags)>;
+        using MouseButtonCallback = std::function<void(Entity, std::uint64_t flags)>;
         //passes in the entity for which the callback is called, plus the delta movement
         //of the mouse move which triggered the callback
         using MovementCallback = std::function<void(Entity, sf::Vector2f)>;
@@ -63,7 +63,7 @@ namespace xy
         using SelectionChangedCallback = std::function<void(Entity)>;
         //passes in the entity for which the callback was triggered, followed
         //by the ID of the controller, and the ID of button which triggered the callback
-        using ControllerCallback = std::function<void(Entity, sf::Uint32, sf::Uint32)>;
+        using ControllerCallback = std::function<void(Entity, std::uint32_t, std::uint32_t)>;
 
         explicit UISystem(MessageBus&);
 
@@ -235,10 +235,10 @@ namespace xy
         std::vector<sf::Keyboard::Key> m_keyDownEvents;
         std::vector<sf::Keyboard::Key> m_keyUpEvents;
 
-        std::vector<std::pair<sf::Uint32, sf::Uint32>> m_controllerDownEvents;
-        std::vector<std::pair<sf::Uint32, sf::Uint32>> m_controllerUpEvents;
-        sf::Uint8 m_controllerMask;
-        sf::Uint8 m_prevControllerMask;
+        std::vector<std::pair<std::uint32_t, std::uint32_t>> m_controllerDownEvents;
+        std::vector<std::pair<std::uint32_t, std::uint32_t>> m_controllerUpEvents;
+        std::uint8_t m_controllerMask;
+        std::uint8_t m_prevControllerMask;
         enum ControllerBits
         {
             Up = 0x1, Down = 0x2, Left = 0x4, Right = 0x8

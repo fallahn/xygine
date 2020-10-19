@@ -76,7 +76,7 @@ void Drawable::setShader(sf::Shader* shader)
     m_states.shader = shader;
 }
 
-void Drawable::setDepth(sf::Int32 depth)
+void Drawable::setDepth(std::int32_t depth)
 {
     if (m_zDepth != depth)
     {
