@@ -40,21 +40,21 @@ std::string Detail::getEnetPeerAddress(void* peer)
     return xy::Util::String::fromNetworkOrderIPv4(bytes);
 }
 
-sf::Uint16 Detail::getEnetPeerPort(void* peer)
+std::uint16_t Detail::getEnetPeerPort(void* peer)
 {
     XY_ASSERT(peer, "Not a valid peer");
 
     return static_cast<_ENetPeer*>(peer)->address.port;
 }
 
-sf::Uint32 Detail::getEnetPeerID(void* peer)
+std::uint32_t Detail::getEnetPeerID(void* peer)
 {
     XY_ASSERT(peer, "Not a valid peer");
 
     return static_cast<_ENetPeer*>(peer)->connectID;
 }
 
-sf::Uint32 Detail::getEnetRoundTrip(void* peer)
+std::uint32_t Detail::getEnetRoundTrip(void* peer)
 {
     XY_ASSERT(peer, "Not a valid peer");
 

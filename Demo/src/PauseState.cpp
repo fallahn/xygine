@@ -181,7 +181,7 @@ void PauseState::load()
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -197,7 +197,7 @@ void PauseState::load()
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -229,7 +229,7 @@ void PauseState::load()
     tx2.setPosition(entity.getComponent<xy::Transform>().getOrigin());
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -251,7 +251,7 @@ void PauseState::load()
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {

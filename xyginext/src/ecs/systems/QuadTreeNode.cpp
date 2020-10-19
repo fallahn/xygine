@@ -34,7 +34,7 @@ source distribution.
 
 using namespace xy;
 
-QuadTreeNode::QuadTreeNode(sf::FloatRect area, sf::Int32 level, QuadTreeNode* parent, QuadTree* quadTree)
+QuadTreeNode::QuadTreeNode(sf::FloatRect area, std::int32_t level, QuadTreeNode* parent, QuadTree* quadTree)
     : m_parent      (parent),
     m_tree          (quadTree),
     m_hasChildren   (false),
@@ -75,7 +75,7 @@ sf::FloatRect QuadTreeNode::getArea() const
     return m_area;
 }
 
-sf::Int32 QuadTreeNode::getNumEntsBelow() const
+std::int32_t QuadTreeNode::getNumEntsBelow() const
 {
     return m_numEntsBelow;
 }
@@ -317,7 +317,7 @@ void QuadTreeNode::split()
     sf::Vector2f areaPosition(m_area.left, m_area.top);
     sf::Vector2f areaCentre = Util::Rectangle::centre(m_area);
 
-    sf::Int32 nextLevel = m_level + 1;
+    std::int32_t nextLevel = m_level + 1;
     for (auto x = 0; x < 2; ++x)
     {
         for (auto y = 0; y < 2; ++y)

@@ -121,5 +121,5 @@ public:
 private:
     xy::Scene& m_scene;
     sf::Vector2f m_velocity;
-    sf::Uint8 m_bounce = 4;
+    std::uint8_t m_bounce = 4;
 };

@@ -138,7 +138,7 @@ static const sf::FloatRect MapBounds(0.f, 0.f, 16.f * 64.f, 17.f * 64.f);
 static const sf::Vector2f PlayerOneSpawn(104.f, 920.f);
 static const sf::Vector2f PlayerTwoSpawn(920.f, 920.f);
 static const float PlayerInvincibleTime = 2.f;
-static const sf::Uint8 PlayerStartLives = 3;
+static const std::uint8_t PlayerStartLives = 3;
 
 static const sf::Vector2f PowerupOneSpawn(352.f, 960.f);
 static const sf::Vector2f PowerupTwoSpawn(672.f, 960.f);
@@ -150,7 +150,7 @@ static const sf::Vector2f TowerSpawnTwo(MapBounds.width + 128.f, 1024.f);
 static const sf::Color BubbleColourOne(255, 212, 0);
 static const sf::Color BubbleColourTwo(255, 0, 212);
 
-static const sf::Uint8 MapsToWin = 24; //divisible by 4 for colour cycle
+static const std::uint8_t MapsToWin = 24; //divisible by 4 for colour cycle
 
 //this is relative to player which looks left by default
 //and has an origin at the bottom centre

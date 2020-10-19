@@ -39,7 +39,7 @@ using namespace xy;
 
 namespace
 {
-    sf::Vector2f toWorldCoords(sf::Int32 x, sf::Int32 y)
+    sf::Vector2f toWorldCoords(std::int32_t x, std::int32_t y)
     {
         XY_ASSERT(App::getRenderWindow(), "no valid window");
         return App::getRenderWindow()->mapPixelToCoords({ x, y });
@@ -62,12 +62,12 @@ UISystem::UISystem(MessageBus& mb)
     requireComponent<Transform>();
 
     //default callbacks for components which don't have one assigned
-    m_buttonCallbacks.push_back([](Entity, sf::Uint64) {}); 
+    m_buttonCallbacks.push_back([](Entity, std::uint64_t) {}); 
     m_movementCallbacks.push_back([](Entity, sf::Vector2f) {});
     m_wheelCallbacks.push_back([](Entity, bool, float) {});
     m_keyboardCallbacks.push_back([](Entity, sf::Keyboard::Key) {});
     m_selectionCallbacks.push_back([](Entity) {});
-    m_controllerCallbacks.push_back([](Entity, sf::Uint32, sf::Uint32) {});
+    m_controllerCallbacks.push_back([](Entity, std::uint32_t, std::uint32_t) {});
 }
 
 void UISystem::handleEvent(const sf::Event& evt)

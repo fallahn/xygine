@@ -50,19 +50,19 @@ private:
     
     struct Inventory final
     {
-        sf::Uint32 score = 0;
-        sf::Uint8 lives = 0;
-        sf::Uint8 bonusFlags = 0;
+        std::uint32_t score = 0;
+        std::uint8_t lives = 0;
+        std::uint8_t bonusFlags = 0;
         bool hat = false;
     };
     std::array<Inventory, 2> m_playerValues{};
 
-    std::array<std::pair<sf::Uint8, sf::Uint32>, 12> m_updateQueue;
+    std::array<std::pair<std::uint8_t, std::uint32_t>, 12> m_updateQueue;
     std::size_t m_queuePos;
 
     float m_hatTime;
 
-    void sendUpdate(sf::Uint8, sf::Uint32);
+    void sendUpdate(std::uint8_t, std::uint32_t);
 
-    void checkLifeBonus(sf::Uint8, sf::Uint32);
+    void checkLifeBonus(std::uint8_t, std::uint32_t);
 };

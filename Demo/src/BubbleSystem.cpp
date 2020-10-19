@@ -125,7 +125,7 @@ void BubbleSystem::process(float dt)
                 bubble.velocity.x = 0.f;
                 bubble.velocity.y = BubbleVerticalVelocity;
 
-                sf::Uint32 flags = CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC | CollisionFlags::HardBounds;
+                std::uint32_t flags = CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC | CollisionFlags::HardBounds;
                 entity.getComponent<CollisionComponent>().setCollisionMaskBits(flags);
 
                 CollisionFlagsUpdate update;
@@ -169,7 +169,7 @@ void BubbleSystem::doCollision(xy::Entity entity)
                     bubble.velocity.x = 0.f;
                     bubble.velocity.y = BubbleVerticalVelocity;
 
-                    sf::Uint32 flags = CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC | CollisionFlags::HardBounds;
+                    std::uint32_t flags = CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC | CollisionFlags::HardBounds;
                     entity.getComponent<CollisionComponent>().setCollisionMaskBits(flags);
 
                     CollisionFlagsUpdate update;

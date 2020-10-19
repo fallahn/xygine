@@ -65,7 +65,7 @@ namespace xy
             virtual float getAttenuation() const = 0;
             virtual bool isLooped() const = 0;
 
-            virtual sf::Int32 getStatus() const = 0;
+            virtual std::int32_t getStatus() const = 0;
             virtual sf::Time getDuration() const = 0;
             virtual sf::Time getPlayingOffset() const = 0;
             virtual void setPlayingOffset(sf::Time) = 0;
@@ -102,7 +102,7 @@ namespace xy
             float getAttenuation() const override;
             bool isLooped() const override;
 
-            sf::Int32 getStatus() const override;
+            std::int32_t getStatus() const override;
             sf::Time getDuration() const override;
             sf::Time getPlayingOffset() const override;
             void setPlayingOffset(sf::Time) override;
@@ -136,7 +136,7 @@ namespace xy
             float getAttenuation() const override;
             bool isLooped() const override;
 
-            sf::Int32 getStatus() const override;
+            std::int32_t getStatus() const override;
             sf::Time getDuration() const override;
             sf::Time getPlayingOffset() const override;
             void setPlayingOffset(sf::Time) override;
@@ -173,7 +173,7 @@ namespace xy
             float getAttenuation() const override;
             bool isLooped() const override;
 
-            sf::Int32 getStatus() const override;
+            std::int32_t getStatus() const override;
             sf::Time getDuration() const override;
             sf::Time getPlayingOffset() const override;
             void setPlayingOffset(sf::Time) override;

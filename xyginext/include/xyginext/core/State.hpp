@@ -47,7 +47,7 @@ namespace sf
 
 namespace xy
 {
-    using StateID = sf::Int32;
+    using StateID = std::int32_t;
     
     class StateStack;
     class App;

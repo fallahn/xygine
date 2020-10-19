@@ -76,7 +76,7 @@ void LuggageDirector::handleMessage(const xy::Message& msg)
                     luggage.entityID = 0;
 
                     //broadcast
-                    sf::Uint32 flags = (crateEnt.getComponent<Actor>().id << 16);
+                    std::uint32_t flags = (crateEnt.getComponent<Actor>().id << 16);
                     flags |= Luggage::Dropped;
                     if (playerEnt.getComponent<Player>().playerNumber == 0)
                     {
@@ -126,7 +126,7 @@ void LuggageDirector::handleMessage(const xy::Message& msg)
                                 luggage.entityID = crateEnt.getIndex();
 
                                 //broadcast
-                                sf::Uint32 flags = (crateEnt.getComponent<Actor>().id << 16);
+                                std::uint32_t flags = (crateEnt.getComponent<Actor>().id << 16);
                                 flags |= Luggage::PickedUp;
                                 if (playerEnt.getComponent<Player>().playerNumber == 0)
                                 {
@@ -183,7 +183,7 @@ void LuggageDirector::handleMessage(const xy::Message& msg)
                 luggage.entityID = 0;
 
                 //broadcast
-                sf::Uint32 flags = (crateEnt.getComponent<Actor>().id << 16);
+                std::uint32_t flags = (crateEnt.getComponent<Actor>().id << 16);
                 flags |= Luggage::Dropped;
                 if (playerEnt.getComponent<Player>().playerNumber == 0)
                 {

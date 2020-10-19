@@ -155,10 +155,10 @@ AudioEmitter AudioScape::getEmitter(const std::string& name) const
             }
             else if (propertyName == "mixer_channel")
             {
-                auto channel = prop.getValue<sf::Int32>();
+                auto channel = prop.getValue<std::int32_t>();
                 if (channel > -1 && channel < AudioMixer::MaxChannels)
                 {
-                    emitter.setChannel(static_cast<sf::Uint8>(channel));
+                    emitter.setChannel(static_cast<std::uint8_t>(channel));
                 }
             }
         }

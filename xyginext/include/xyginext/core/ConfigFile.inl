@@ -32,9 +32,9 @@ inline std::string ConfigProperty::getValue<std::string>() const
 }
 
 template <>
-inline sf::Int32 ConfigProperty::getValue<sf::Int32>() const
+inline std::int32_t ConfigProperty::getValue<std::int32_t>() const
 {
-    sf::Int32 retVal;
+    std::int32_t retVal;
     std::istringstream is(m_value);
     if (is >> retVal) return retVal;
     return 0;
@@ -68,7 +68,7 @@ inline sf::Vector2i ConfigProperty::getValue<sf::Vector2i>() const
 {
     auto values = valueAsArray();
     
-    return { static_cast<sf::Int32>(values[0]), static_cast<sf::Int32>(values[1]) };
+    return { static_cast<std::int32_t>(values[0]), static_cast<std::int32_t>(values[1]) };
 }
 
 template <>
@@ -76,7 +76,7 @@ inline sf::Vector2u ConfigProperty::getValue<sf::Vector2u>() const
 {
     auto values = valueAsArray();
     
-    return { static_cast<sf::Uint32>(values[0]), static_cast<sf::Uint32>(values[1]) };
+    return { static_cast<std::uint32_t>(values[0]), static_cast<std::uint32_t>(values[1]) };
 }
 
 
@@ -99,7 +99,7 @@ template <>
 inline sf::Color ConfigProperty::getValue<sf::Color>() const
 {
     auto values = valueAsArray();
-    return { static_cast<sf::Uint8>(values[0]), static_cast<sf::Uint8>(values[1]), static_cast<sf::Uint8>(values[2]), static_cast<sf::Uint8>(values[3]) };
+    return { static_cast<std::uint8_t>(values[0]), static_cast<std::uint8_t>(values[1]), static_cast<std::uint8_t>(values[2]), static_cast<std::uint8_t>(values[3]) };
 }
 
 template <>

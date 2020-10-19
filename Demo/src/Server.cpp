@@ -118,7 +118,7 @@ GameServer::~GameServer()
 }
 
 //public
-sf::Int32 GameServer::getServerTime()
+std::int32_t GameServer::getServerTime()
 {
     XY_ASSERT(ServerInstance, "");
     return ServerInstance->m_serverTime.getElapsedTime().asMilliseconds();
@@ -220,7 +220,7 @@ void GameServer::update()
                     pauseTimeout = 0.f;
 
                     //broadcast paused to clients
-                    m_host.broadcastPacket(PacketID::RequestClientPause, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+                    m_host.broadcastPacket(PacketID::RequestClientPause, std::uint8_t(0), xy::NetFlag::Reliable, 1);
                 }               
             }
             //and unpause if client is idling
@@ -228,7 +228,7 @@ void GameServer::update()
             if (pauseTimeout > MaxPauseTime)
             {
                 m_stateFlags.set(Paused, false);
-                m_host.broadcastPacket(PacketID::RequestClientPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
+                m_host.broadcastPacket(PacketID::RequestClientPause, std::uint8_t(1), xy::NetFlag::Reliable, 1);
             }
         }
 
@@ -278,7 +278,7 @@ void GameServer::update()
                     state.sync = player.sync;
 
                     //auto collisionState = ent.getComponent<CollisionComponent>().serialise();
-                    //std::vector<sf::Uint8> data(sizeof(ClientState) + collisionState.size()); //TODO recycle this to save on reallocations
+                    //std::vector<std::uint8_t> data(sizeof(ClientState) + collisionState.size()); //TODO recycle this to save on reallocations
                     //auto ptr = data.data();
                     //std::memcpy(ptr, &state, sizeof(state));
                     //ptr += sizeof(state);
@@ -322,7 +322,7 @@ void GameServer::handleConnect(const xy::NetEvent& evt)
     if (m_clients[0].data.actor.id != ActorID::None
         && m_clients[1].data.actor.id != ActorID::None)
     {
-        m_host.sendPacket(evt.peer, PacketID::ServerFull, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+        m_host.sendPacket(evt.peer, PacketID::ServerFull, std::uint8_t(0), xy::NetFlag::Reliable, 1);
         return;
     }
 
@@ -375,7 +375,7 @@ void GameServer::handleDisconnect(const xy::NetEvent& evt)
         if (m_stateFlags.test(Paused))
         {
             m_stateFlags.set(Paused, false);
-            m_host.broadcastPacket(PacketID::RequestClientPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
+            m_host.broadcastPacket(PacketID::RequestClientPause, std::uint8_t(1), xy::NetFlag::Reliable, 1);
         }
     }
 }
@@ -387,7 +387,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
     default: break;
     case PacketID::RequestServerPause:
     {
-        auto pause = evt.packet.as<sf::Uint8>();
+        auto pause = evt.packet.as<std::uint8_t>();
         if (pause == 0 && !m_stateFlags.test(Paused))
         {
             m_stateFlags.set(PendingPause, true);
@@ -397,7 +397,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
             if (m_stateFlags.test(Paused))
             {
                 m_stateFlags.set(Paused, false);
-                m_host.broadcastPacket(PacketID::RequestClientPause, sf::Uint8(1), xy::NetFlag::Reliable, 1);
+                m_host.broadcastPacket(PacketID::RequestClientPause, std::uint8_t(1), xy::NetFlag::Reliable, 1);
             }
         }
     }
@@ -405,7 +405,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         //if client loaded send initial positions
     case PacketID::ClientReady:
     {
-        sf::Uint8 playerCount = evt.packet.as<sf::Uint8>();
+        std::uint8_t playerCount = evt.packet.as<std::uint8_t>();
 
         for (auto i = 0; i < playerCount; ++i)
         {
@@ -469,7 +469,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         break;
     case PacketID::ClientContinue:
     {
-        auto id = evt.packet.as<sf::Int16>();
+        auto id = evt.packet.as<std::int16_t>();
         auto entity = m_scene.getEntity(id);
 
         //reset the player info
@@ -512,7 +512,7 @@ void GameServer::handlePacket(const xy::NetEvent& evt)
         break;
     case PacketID::MapReady:
     {
-        sf::Int16 actor = evt.packet.as<sf::Int16>();
+        std::int16_t actor = evt.packet.as<std::int16_t>();
         if (actor == ActorID::PlayerOne)
         {
             m_clients[0].ready = true;
@@ -539,7 +539,7 @@ void GameServer::checkRoundTime(float dt)
         && m_currentRoundTime >= (m_roundTimeout - roundWarnTime))
     {
         //send warning message
-        m_host.broadcastPacket(PacketID::RoundWarning, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+        m_host.broadcastPacket(PacketID::RoundWarning, std::uint8_t(0), xy::NetFlag::Reliable, 1);
     }
     else if (lastTime < m_roundTimeout &&
         m_currentRoundTime >= m_roundTimeout && m_mapData.NPCCount > 0)
@@ -681,7 +681,7 @@ void GameServer::checkMapStatus(float dt)
                 if (client.level > MapsToWin)
                 {
                     //game completed tell client
-                    m_host.sendPacket(client.peer, PacketID::GameComplete, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+                    m_host.sendPacket(client.peer, PacketID::GameComplete, std::uint8_t(0), xy::NetFlag::Reliable, 1);
                 }
                 else
                 {
@@ -767,7 +767,7 @@ void GameServer::loadMap()
 {
     m_mapData.NPCCount = 0; //make sure count was reset
     m_mapData.crateCount = 0;
-    sf::Uint8 teleportCount = 0;
+    std::uint8_t teleportCount = 0;
 
     tmx::Map map;
     if (map.load(xy::FileSystem::getResourcePath() + "assets/maps/" + m_mapFiles[m_currentMap]))
@@ -780,7 +780,7 @@ void GameServer::loadMap()
         m_scene.getSystem<PowerupSystem>().setSpawnFlags(0);
 
         //load collision geometry
-        sf::Uint8 flags = 0;
+        std::uint8_t flags = 0;
         const auto& layers = map.getLayers();
         for (const auto& layer : layers)
         {
@@ -815,7 +815,7 @@ void GameServer::loadMap()
                         {
                             if (m_mapData.crateCount == MaxCrates) continue;
 
-                            sf::Uint8 crateFlags = 0;
+                            std::uint8_t crateFlags = 0;
                             const auto& properties = obj.getProperties();
                             for (const auto& prop : properties)
                             {
@@ -1025,7 +1025,7 @@ void GameServer::beginNewRound()
                 if (m_clients[0].data.actor.id != ActorID::None
                     && m_clients[1].data.actor.id != ActorID::None)
                 {
-                    m_host.sendPacket(*m_queuedClient, PacketID::ServerFull, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+                    m_host.sendPacket(*m_queuedClient, PacketID::ServerFull, std::uint8_t(0), xy::NetFlag::Reliable, 1);
                 }
                 else
                 {
@@ -1041,7 +1041,7 @@ void GameServer::beginNewRound()
     }
 }
 
-sf::Int32 GameServer::spawnPlayer(std::size_t player)
+std::int32_t GameServer::spawnPlayer(std::size_t player)
 {
     auto entity = m_scene.createEntity();
     entity.addComponent<Actor>().type = (player == 0) ? ActorID::PlayerOne : ActorID::PlayerTwo;
@@ -1060,7 +1060,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     entity.addComponent<AnimationController>();
 
     //add client controller
-    entity.addComponent<Player>().playerNumber = static_cast<sf::Uint8>(player);
+    entity.addComponent<Player>().playerNumber = static_cast<std::uint8_t>(player);
     entity.getComponent<Player>().spawnPosition = entity.getComponent<xy::Transform>().getPosition();
     if (player == 1) entity.getComponent<Player>().sync.direction = Player::Direction::Left;
     entity.addComponent<xy::CommandTarget>().ID = (player == 0) ? CommandID::PlayerOne : CommandID::PlayerTwo;
@@ -1073,7 +1073,7 @@ sf::Int32 GameServer::spawnPlayer(std::size_t player)
     return entity.getIndex();
 }
 
-xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
+xy::Entity GameServer::spawnNPC(std::int32_t id, sf::Vector2f pos)
 {
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(pos);
@@ -1086,7 +1086,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     entity.addComponent<xy::CommandTarget>().ID = CommandID::MapItem | CommandID::NPC;
 
     entity.addComponent<NPC>();
-    sf::Uint32 collisionFlags = CollisionFlags::NPCMask;
+    std::uint32_t collisionFlags = CollisionFlags::NPCMask;
     switch (id)
     {
     default: break;
@@ -1134,7 +1134,7 @@ xy::Entity GameServer::spawnNPC(sf::Int32 id, sf::Vector2f pos)
     return entity;
 }
 
-void GameServer::spawnCrate(sf::Vector2f position, sf::Uint8 flags)
+void GameServer::spawnCrate(sf::Vector2f position, std::uint8_t flags)
 {
     auto offset = CrateOrigin;
     offset.y = -offset.y; //tiled objects have their origin bottom left
@@ -1173,7 +1173,7 @@ void GameServer::handleMessage(const xy::Message& msg)
         if (data.type == NpcEvent::Died)
         {
             //remove from list of actors
-            sf::Int8 i = 0;
+            std::int8_t i = 0;
             for (; i < m_mapData.NPCCount; ++i)
             {
                 if (m_mapData.NPCs[i].id == data.entityID)
@@ -1204,7 +1204,7 @@ void GameServer::handleMessage(const xy::Message& msg)
 
 
                 //notify clients
-                m_host.broadcastPacket(PacketID::RoundSkip, sf::Uint8(0), xy::NetFlag::Reliable, 1);
+                m_host.broadcastPacket(PacketID::RoundSkip, std::uint8_t(0), xy::NetFlag::Reliable, 1);
 
                 //reset bonus jigger
                 auto player = data.player;
@@ -1223,12 +1223,12 @@ void GameServer::handleMessage(const xy::Message& msg)
         if (data.type == PlayerEvent::GotHat)
         {
             auto type = (data.entity.getComponent<Player>().playerNumber == 0) ? HatFlag::OneOn : HatFlag::TwoOn;
-            m_host.broadcastPacket(PacketID::HatChange, sf::Uint8(type), xy::NetFlag::Reliable, 1);
+            m_host.broadcastPacket(PacketID::HatChange, std::uint8_t(type), xy::NetFlag::Reliable, 1);
         }
         else if (data.type == PlayerEvent::LostHat)
         {
             auto type = (data.entity.getComponent<Player>().playerNumber == 0) ? HatFlag::OneOff : HatFlag::TwoOff;
-            m_host.broadcastPacket(PacketID::HatChange, sf::Uint8(type), xy::NetFlag::Reliable, 1);
+            m_host.broadcastPacket(PacketID::HatChange, std::uint8_t(type), xy::NetFlag::Reliable, 1);
         }
     }
         break;

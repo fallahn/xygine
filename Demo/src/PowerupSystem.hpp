@@ -48,14 +48,14 @@ struct Powerup final
         Idle, Active, Dying
     }state = State::Idle;
 
-    sf::Uint8 owner = 0;
+    std::uint8_t owner = 0;
     float lifetime = 10.f;
     sf::Vector2f velocity;
 
     //used in flame and water types to spread around
-    sf::Uint8 generation = 0;
-    static constexpr sf::Uint8 MaxFlameGenerations = 4;
-    static constexpr sf::Uint8 MaxWaterGenerations = 8;
+    std::uint8_t generation = 0;
+    static constexpr std::uint8_t MaxFlameGenerations = 4;
+    static constexpr std::uint8_t MaxWaterGenerations = 8;
 
     enum class SpreadDirection
     {
@@ -76,11 +76,11 @@ public:
         Lightning = 0x2,
         Water = 0x4
     };
-    void setSpawnFlags(sf::Uint8);
+    void setSpawnFlags(std::uint8_t);
 
 private:
     xy::NetHost& m_host;
-    sf::Uint8 m_spawnFlags;
+    std::uint8_t m_spawnFlags;
 
     sf::Clock m_flameClock;
     sf::Clock m_lightningClock;
@@ -95,7 +95,7 @@ private:
     void defaultCollision(xy::Entity, float);
     void fireCollision(xy::Entity);
 
-    void spawn(sf::Int32 actorID, sf::Uint8 player);
-    void spawnFlame(sf::Vector2f position, sf::Uint8 player, Powerup::SpreadDirection, sf::Uint8 generation);
+    void spawn(std::int32_t actorID, std::uint8_t player);
+    void spawnFlame(sf::Vector2f position, std::uint8_t player, Powerup::SpreadDirection, std::uint8_t generation);
     void despawn(xy::Entity);
 };

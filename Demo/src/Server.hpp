@@ -53,7 +53,7 @@ public:
 
     bool ready() { return m_ready; }
 
-    static sf::Int32 getServerTime();
+    static std::int32_t getServerTime();
 
 private:
     xy::NetHost m_host;
@@ -73,7 +73,7 @@ private:
     xy::MessageBus m_messageBus;
     xy::Scene m_scene;
     MapData m_mapData;
-    sf::Uint32 m_mapSkipCount;
+    std::uint32_t m_mapSkipCount;
 
     std::vector<std::string> m_mapFiles;
     std::size_t m_currentMap;
@@ -102,10 +102,10 @@ private:
     void loadMap();
     void beginNewRound();
 
-    sf::Int32 spawnPlayer(std::size_t);
+    std::int32_t spawnPlayer(std::size_t);
 
-    xy::Entity spawnNPC(sf::Int32, sf::Vector2f);
-    void spawnCrate(sf::Vector2f, sf::Uint8);
+    xy::Entity spawnNPC(std::int32_t, sf::Vector2f);
+    void spawnCrate(sf::Vector2f, std::uint8_t);
 
     void handleMessage(const xy::Message&);
 
@@ -114,8 +114,8 @@ private:
         ClientData data;
         xy::NetPeer peer;
         bool ready = false;
-        sf::Uint8 level = 1;
-        sf::Uint8 continues = 3;
+        std::uint8_t level = 1;
+        std::uint8_t continues = 3;
         bool luggageEnabled = false;
     };
     std::array<Client, 2u> m_clients;

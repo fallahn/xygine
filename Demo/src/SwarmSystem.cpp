@@ -108,7 +108,7 @@ void SwarmSystem::process(float dt)
         for (auto& bug : swarm.bugs)
         {
             bug.position += (bug.velocity * BugSpeed * dt);
-            dwb.getVertices().push_back(sf::Vertex(tx.transformPoint(bug.position), sf::Color(20, 250, 120, static_cast<sf::Uint8>(255.f * bug.brightness))));
+            dwb.getVertices().push_back(sf::Vertex(tx.transformPoint(bug.position), sf::Color(20, 250, 120, static_cast<std::uint8_t>(255.f * bug.brightness))));
         }
         dwb.updateLocalBounds();
     }

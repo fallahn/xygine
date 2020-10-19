@@ -185,7 +185,7 @@ void ParticleSystem::process(float dt)
             p.position += p.velocity * dt;
 
             p.lifetime -= dt;
-            p.colour.a = static_cast<sf::Uint8>(255.f * (std::max(p.lifetime / p.maxLifetime, 0.f)));
+            p.colour.a = static_cast<std::uint8_t>(255.f * (std::max(p.lifetime / p.maxLifetime, 0.f)));
 
             p.rotation += emitter.settings.rotationSpeed * dt;
             p.scale += ((p.scale * emitter.settings.scaleModifier) * dt);

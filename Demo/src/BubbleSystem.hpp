@@ -39,7 +39,7 @@ namespace xy
 
 struct Bubble final
 {
-    sf::Uint8 player = 0;
+    std::uint8_t player = 0;
     enum
     {
         Spawning,

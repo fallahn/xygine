@@ -80,7 +80,7 @@ namespace xy
 
         /*!
         \brief Attempts to retrieve the value as the requested type.
-        Valid types are : std::string, sf::Int32, float, bool, sf::Vector2f,
+        Valid types are : std::string, std::int32_t, float, bool, sf::Vector2f,
         sf::Vector3f, sf::FloatRect, sf::Color, xy::Vector4f
         */
         template <typename T>
@@ -88,7 +88,7 @@ namespace xy
 
         //sets the property's value
         void setValue(const std::string& v);
-        void setValue(sf::Int32 v);
+        void setValue(std::int32_t v);
         void setValue(float v);
         void setValue(bool v);
         void setValue(sf::Vector2f v);
@@ -225,7 +225,7 @@ namespace xy
         //removes comments AND preceding whitespace
         static void removeComment(std::string& line);
 
-        void write(std::ofstream& file, sf::Uint16 depth = 0u) const;
+        void write(std::ofstream& file, std::uint16_t depth = 0u) const;
     };
 
     using ConfigFile = xy::ConfigObject;

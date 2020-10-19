@@ -51,7 +51,7 @@ struct Crate final
     sf::Vector2f velocity;
     bool groundContact = false;
     bool lethal = false;
-    sf::Uint8 lastOwner = 3;
+    std::uint8_t lastOwner = 3;
 
     sf::Vector2f spawnPosition;
     bool respawn = false;

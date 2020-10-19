@@ -51,12 +51,12 @@ namespace
     const float minJumpVelocity = -initialJumpVelocity * 0.2f; //see http://info.sonicretro.org/SPG:Jumping#Jump_Velocit
     const float dyingTime = 2.f;
 
-    const sf::Uint32 UpMask = CollisionFlags::PlayerMask & ~(CollisionFlags::Bubble/*|CollisionFlags::Platform*/);
-    const sf::Uint32 DownMask = CollisionFlags::PlayerMask;
+    const std::uint32_t UpMask = CollisionFlags::PlayerMask & ~(CollisionFlags::Bubble/*|CollisionFlags::Platform*/);
+    const std::uint32_t DownMask = CollisionFlags::PlayerMask;
 
-    const sf::Uint8 BodyClear = 0x1;
-    const sf::Uint8 FootClear = 0x2;
-    const sf::Uint8 PlayerClear = BodyClear | FootClear;
+    const std::uint8_t BodyClear = 0x1;
+    const std::uint8_t FootClear = 0x2;
+    const std::uint8_t PlayerClear = BodyClear | FootClear;
 }
 
 PlayerSystem::PlayerSystem(xy::MessageBus& mb, bool server)
@@ -258,7 +258,7 @@ void PlayerSystem::reconcile(const ClientState& state, xy::Entity entity)
 }
 
 //private
-sf::Vector2f PlayerSystem::parseInput(sf::Uint16 mask)
+sf::Vector2f PlayerSystem::parseInput(std::uint16_t mask)
 {
     sf::Vector2f motion;
     if (mask & InputFlag::Left)
@@ -281,7 +281,7 @@ float PlayerSystem::getDelta(const History& history, std::size_t idx)
     return static_cast<float>(delta) / 1000000.f;
 }
 
-void PlayerSystem::processInput(sf::Uint16 currentMask, float delta, xy::Entity entity)
+void PlayerSystem::processInput(std::uint16_t currentMask, float delta, xy::Entity entity)
 {
     auto& player = entity.getComponent<Player>();
     auto& tx = entity.getComponent<xy::Transform>();

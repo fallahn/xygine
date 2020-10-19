@@ -181,7 +181,7 @@ void GameCompleteState::loadScene()
         static float currentTime = fadeTime;
         
         float alpha = std::max(0.f, 255.f * (currentTime / fadeTime));
-        ent.getComponent<xy::Sprite>().setColour({ 255, 255, 255, static_cast<sf::Uint8>(alpha) });
+        ent.getComponent<xy::Sprite>().setColour({ 255, 255, 255, static_cast<std::uint8_t>(alpha) });
 
         if (alpha == 0)
         {
@@ -342,7 +342,7 @@ void GameCompleteState::showSummary()
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -360,7 +360,7 @@ void GameCompleteState::showSummary()
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {

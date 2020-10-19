@@ -164,7 +164,7 @@ namespace xy
     {
         std::unique_ptr<sf::SoundBuffer> errorHandle() override
         {
-            std::array<sf::Int16, 20u> buffer;
+            std::array<std::int16_t, 20u> buffer;
             std::memset(buffer.data(), 0, buffer.size());
             auto sb = std::make_unique<sf::SoundBuffer>();
             sb->loadFromSamples(buffer.data(), buffer.size(), 1, 48000);

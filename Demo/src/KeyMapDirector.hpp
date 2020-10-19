@@ -40,8 +40,8 @@ namespace xy
 
 struct KeyMapInput final
 {
-    sf::Int8 player = -1;
-    sf::Uint8 index = 0;
+    std::int8_t player = -1;
+    std::uint8_t index = 0;
 };
 
 class KeyMapDirector final : public xy::Director

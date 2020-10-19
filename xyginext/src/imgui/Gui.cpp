@@ -136,10 +136,10 @@ bool ui::colourPicker(const std::string& label, sf::Color& output)
 
     if (ImGui::ColorEdit4(label.c_str(), op))
     {
-        output.r = static_cast<sf::Uint8>(op[0] * 255.f);
-        output.g = static_cast<sf::Uint8>(op[1] * 255.f);
-        output.b = static_cast<sf::Uint8>(op[2] * 255.f);
-        output.a = static_cast<sf::Uint8>(op[3] * 255.f);
+        output.r = static_cast<std::uint8_t>(op[0] * 255.f);
+        output.g = static_cast<std::uint8_t>(op[1] * 255.f);
+        output.b = static_cast<std::uint8_t>(op[2] * 255.f);
+        output.a = static_cast<std::uint8_t>(op[3] * 255.f);
 
         return true;
     }

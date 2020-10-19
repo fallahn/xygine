@@ -129,7 +129,7 @@ void PowerupSystem::process(float dt)
     }
 }
 
-void PowerupSystem::setSpawnFlags(sf::Uint8 flags)
+void PowerupSystem::setSpawnFlags(std::uint8_t flags)
 {
     m_spawnFlags = flags;
 }
@@ -326,7 +326,7 @@ void PowerupSystem::defaultCollision(xy::Entity entity, float)
                     powerup.lifetime = 1.f;
                     entity.getComponent<AnimationController>().nextAnimation = AnimationController::Die;
 
-                    sf::Uint8 cause = 0;
+                    std::uint8_t cause = 0;
                     switch (powerup.type)
                     {
                     default: break;
@@ -395,7 +395,7 @@ void PowerupSystem::fireCollision(xy::Entity entity)
     }
 }
 
-void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
+void PowerupSystem::spawn(std::int32_t actorID, std::uint8_t player)
 {
     bool top = (xy::Util::Random::value(0, 1) == 0);
      
@@ -442,7 +442,7 @@ void PowerupSystem::spawn(sf::Int32 actorID, sf::Uint8 player)
     m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 }
 
-void PowerupSystem::spawnFlame(sf::Vector2f position, sf::Uint8 player, Powerup::SpreadDirection direction, sf::Uint8 generation)
+void PowerupSystem::spawnFlame(sf::Vector2f position, std::uint8_t player, Powerup::SpreadDirection direction, std::uint8_t generation)
 {
     //doesn't matter which actor id because flame anim the same on both
     auto entity = getScene()->createEntity();

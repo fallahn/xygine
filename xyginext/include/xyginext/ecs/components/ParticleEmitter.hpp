@@ -79,8 +79,8 @@ namespace xy
         std::array<sf::Vector2f, 4> forces{};
         sf::Color colour = sf::Color::White;
 
-        sf::Uint32 emitCount = 1; //!< amount released at once
-        sf::Int32 releaseCount = 0; //!< number of particles released before stopping (0 for infinite)
+        std::uint32_t emitCount = 1; //!< amount released at once
+        std::int32_t releaseCount = 1; //!< number of particles released before stopping (0 for infinite)
 
         float lifetime = 1.f;
         float lifetimeVariance = 0.f;
@@ -130,11 +130,11 @@ namespace xy
         */
         EmitterSettings settings;
 
-        static constexpr sf::Uint32 MaxParticles = 1000u;
+        static constexpr std::uint32_t MaxParticles = 1000u;
         
     private:
 
-        sf::Uint32 m_arrayIndex;
+        std::uint32_t m_arrayIndex;
 
         std::array<Particle, MaxParticles> m_particles;
         std::size_t m_nextFreeParticle;
@@ -144,7 +144,7 @@ namespace xy
 
         sf::FloatRect m_bounds;
 
-        sf::Int32 m_releaseCount;
+        std::int32_t m_releaseCount;
 
         friend class ParticleSystem;
     };

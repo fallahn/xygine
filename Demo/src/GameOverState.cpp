@@ -56,7 +56,7 @@ namespace
         explicit Timer(xy::MessageBus& mb) : messageBus(mb) {}
         void operator () (xy::Entity entity, float dt)
         {
-            entity.getComponent<xy::Text>().setString(std::to_string(std::max(static_cast<sf::Int32>(time), 0)));
+            entity.getComponent<xy::Text>().setString(std::to_string(std::max(static_cast<std::int32_t>(time), 0)));
 
             time -= dt;
             if (time < 0)
@@ -253,7 +253,7 @@ void GameoverState::loadContinue(const SharedStateData& data)
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -271,7 +271,7 @@ void GameoverState::loadContinue(const SharedStateData& data)
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -307,7 +307,7 @@ void GameoverState::loadContinue(const SharedStateData& data)
     bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -325,7 +325,7 @@ void GameoverState::loadContinue(const SharedStateData& data)
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -425,7 +425,7 @@ void GameoverState::loadGameOver(const SharedStateData& data)
     tx2.move(0.f, (-bounds.height / 2.f) * 0.75f);
     entity.addComponent<xy::UIHitBox>().area = bounds;
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -443,7 +443,7 @@ void GameoverState::loadGameOver(const SharedStateData& data)
         }
     });
     entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+        m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     {
         if (button == 0)
         {
@@ -478,7 +478,7 @@ void GameoverState::loadGameOver(const SharedStateData& data)
     //bounds = entity.getComponent<xy::Sprite>().getTextureBounds(); //these have been updated by setTextureRect
     //entity.addComponent<xy::UIHitBox>().area = bounds;
     //entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::MouseUp] =
-    //    m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, sf::Uint64 flags)
+    //    m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([this](xy::Entity, std::uint64_t flags)
     //{
     //    if (flags & xy::UISystem::LeftMouse)
     //    {
@@ -496,7 +496,7 @@ void GameoverState::loadGameOver(const SharedStateData& data)
     //    }
     //});
     //entity.getComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::CallbackID::ControllerButtonUp] =
-    //    m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, sf::Uint32, sf::Uint32 button)
+    //    m_scene.getSystem<xy::UISystem>().addControllerCallback([this](xy::Entity, std::uint32_t, std::uint32_t button)
     //{
     //    if (button == 0)
     //    {

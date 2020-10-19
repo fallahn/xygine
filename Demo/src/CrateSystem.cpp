@@ -375,7 +375,7 @@ void CrateSystem::destroy(xy::Entity entity)
 
     const auto& crate = entity.getComponent<Crate>();
 
-    auto spawnExplosion = [&, evt](sf::Uint8 owner, sf::Vector2f position) mutable
+    auto spawnExplosion = [&, evt](std::uint8_t owner, sf::Vector2f position) mutable
     {
         auto expEnt = getScene()->createEntity();
         expEnt.addComponent<Explosion>().owner = owner;

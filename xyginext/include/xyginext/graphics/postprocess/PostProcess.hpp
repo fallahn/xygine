@@ -94,7 +94,7 @@ namespace xy
         \brief Used by xygine to update the post process should the buffer be resized.
         This should not be called by the user.
         */
-        void resizeBuffer(sf::Int32 w, sf::Int32 h);
+        void resizeBuffer(std::int32_t w, std::int32_t h);
 
     protected:
         static void applyShader(const sf::Shader&, sf::RenderTarget&);

@@ -185,7 +185,7 @@ namespace xy
         are assigned to channel 0
         \see Mixer
         */
-        void setChannel(sf::Uint8);
+        void setChannel(std::uint8_t);
 
         /*!
         \brief Set the playing offset in Time since the beginning
@@ -236,7 +236,7 @@ namespace xy
         /*!
         \brief Returns the current mixer channel assignment
         */
-        sf::Uint8 getChannel() const { return m_mixerChannel; }
+        std::uint8_t getChannel() const { return m_mixerChannel; }
 
         /*!
         \brief Returns the current status of the sound.
@@ -280,7 +280,7 @@ namespace xy
         void update();
 
     private:
-        sf::Uint8 m_mixerChannel;
+        std::uint8_t m_mixerChannel;
         float m_volume;
         std::unique_ptr<Detail::AudioSourceImpl> m_impl;
 

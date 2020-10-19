@@ -80,12 +80,12 @@ namespace xy
         \param channel ID (0 - 15) of the channel whose
         volume should be set.
         */
-        static void setVolume(float vol, sf::Uint8 channel);
+        static void setVolume(float vol, std::uint8_t channel);
 
         /*!
         \brief Returns the current volume of the requested channel
         */
-        static float getVolume(sf::Uint8);
+        static float getVolume(std::uint8_t);
 
         /*!
         \brief Sets the pre-fade volume.
@@ -98,12 +98,12 @@ namespace xy
         \param channel ID of the channel whose volume should be set.
         Valid values are 0 - 15.
         */
-        static void setPrefadeVolume(float vol, sf::Uint8 channel);
+        static void setPrefadeVolume(float vol, std::uint8_t channel);
 
         /*!
         \brief Returns the pre-fade volume of the requested channel
         */
-        static float getPrefadeVolume(sf::Uint8 channel);
+        static float getPrefadeVolume(std::uint8_t channel);
 
         /*!
         \brief Sets a label for a channel.
@@ -113,13 +113,13 @@ namespace xy
         \param label String to use as channel label
         \param channel To to which to apply the label
         */
-        static void setLabel(const std::string& label, sf::Uint8 channel);
+        static void setLabel(const std::string& label, std::uint8_t channel);
 
         /*!
         \brief Returns the current label assigned to the requested channel.
         \param channel Number of the channel from which to retrieve the label
         */
-        static const std::string& getLabel(sf::Uint8 channel);
+        static const std::string& getLabel(std::uint8_t channel);
 
         /*!
         \brief Maximum number of available channels.

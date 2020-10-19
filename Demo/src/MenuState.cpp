@@ -207,7 +207,7 @@ void MenuState::loadKeybinds()
     //-----player one-----//
     if ((property = binds->findProperty("controller_id")))
     {
-        m_sharedStateData.inputBindings[0].controllerID = property->getValue<sf::Int32>();
+        m_sharedStateData.inputBindings[0].controllerID = property->getValue<std::int32_t>();
     }
     else
     {
@@ -218,7 +218,7 @@ void MenuState::loadKeybinds()
 
     if ((property = binds->findProperty("left")))
     {
-        m_sharedStateData.inputBindings[0].keys[InputBinding::Left] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Left] = static_cast<sf::Keyboard::Key>(property->getValue<std::int32_t>());
     }
     else
     {
@@ -229,7 +229,7 @@ void MenuState::loadKeybinds()
 
     if ((property = binds->findProperty("right")))
     {
-        m_sharedStateData.inputBindings[0].keys[InputBinding::Right] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Right] = static_cast<sf::Keyboard::Key>(property->getValue<std::int32_t>());
     }
     else
     {
@@ -240,7 +240,7 @@ void MenuState::loadKeybinds()
 
     if ((property = binds->findProperty("jump")))
     {
-        m_sharedStateData.inputBindings[0].keys[InputBinding::Jump] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Jump] = static_cast<sf::Keyboard::Key>(property->getValue<std::int32_t>());
     }
     else
     {
@@ -251,7 +251,7 @@ void MenuState::loadKeybinds()
 
     if ((property = binds->findProperty("shoot")))
     {
-        m_sharedStateData.inputBindings[0].keys[InputBinding::Shoot] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+        m_sharedStateData.inputBindings[0].keys[InputBinding::Shoot] = static_cast<sf::Keyboard::Key>(property->getValue<std::int32_t>());
     }
     else
     {
@@ -265,7 +265,7 @@ void MenuState::loadKeybinds()
     binds = m_keyBinds.findObjectWithName("player_two");
     if ((property = binds->findProperty("controller_id")))
     {
-        m_sharedStateData.inputBindings[1].controllerID = property->getValue<sf::Int32>();
+        m_sharedStateData.inputBindings[1].controllerID = property->getValue<std::int32_t>();
     }
     else
     {
@@ -276,7 +276,7 @@ void MenuState::loadKeybinds()
 
     if ((property = binds->findProperty("left")))
     {
-        m_sharedStateData.inputBindings[1].keys[InputBinding::Left] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Left] = static_cast<sf::Keyboard::Key>(property->getValue<std::int32_t>());
     }
     else
     {
@@ -287,7 +287,7 @@ void MenuState::loadKeybinds()
 
     if ((property = binds->findProperty("right")))
     {
-        m_sharedStateData.inputBindings[1].keys[InputBinding::Right] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Right] = static_cast<sf::Keyboard::Key>(property->getValue<std::int32_t>());
     }
     else
     {
@@ -298,7 +298,7 @@ void MenuState::loadKeybinds()
 
     if ((property = binds->findProperty("jump")))
     {
-        m_sharedStateData.inputBindings[1].keys[InputBinding::Jump] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Jump] = static_cast<sf::Keyboard::Key>(property->getValue<std::int32_t>());
     }
     else
     {
@@ -309,7 +309,7 @@ void MenuState::loadKeybinds()
 
     if ((property = binds->findProperty("shoot")))
     {
-        m_sharedStateData.inputBindings[1].keys[InputBinding::Shoot] = static_cast<sf::Keyboard::Key>(property->getValue<sf::Int32>());
+        m_sharedStateData.inputBindings[1].keys[InputBinding::Shoot] = static_cast<sf::Keyboard::Key>(property->getValue<std::int32_t>());
     }
     else
     {
@@ -400,8 +400,8 @@ void MenuState::createScene()
 
     //and a couple of flowers
     xPos = xy::Util::Random::value(60.f, 90.f);
-    sf::Uint8 darkness = 140;
-    sf::Int32 depth = -3;
+    std::uint8_t darkness = 140;
+    std::int32_t depth = -3;
     for (auto i = 0; i < 12; ++i)
     {
         entity = m_scene.createEntity();
@@ -421,7 +421,7 @@ void MenuState::createScene()
         {
             auto value = xy::Util::Random::value(20.f, 80.f);
             xPos += value;
-            darkness = xy::Util::Math::clamp(sf::Uint8(darkness + static_cast<sf::Uint8>(value - 20.f)), sf::Uint8(140), sf::Uint8(255));
+            darkness = xy::Util::Math::clamp(std::uint8_t(darkness + static_cast<std::uint8_t>(value - 20.f)), std::uint8_t(140), std::uint8_t(255));
             depth+=2;
         }
     }
@@ -434,7 +434,7 @@ void MenuState::createScene()
     entity.getComponent<xy::Sprite>().setTextureRect(bounds);
     entity.addComponent<xy::Drawable>().setDepth(9);
     entity.addComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
-        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([&mb](xy::Entity, sf::Uint64 flags)
+        m_scene.getSystem<xy::UISystem>().addMouseButtonCallback([&mb](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {
@@ -524,7 +524,7 @@ void MenuState::createHelp()
     //clicker
     auto entity = m_helpScene.createEntity();
     entity.addComponent<xy::UIHitBox>().callbacks[xy::UIHitBox::MouseUp] =
-        m_helpScene.getSystem<xy::UISystem>().addMouseButtonCallback([&mb](xy::Entity, sf::Uint64 flags)
+        m_helpScene.getSystem<xy::UISystem>().addMouseButtonCallback([&mb](xy::Entity, std::uint64_t flags)
     {
         if (flags & xy::UISystem::LeftMouse)
         {

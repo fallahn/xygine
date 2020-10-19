@@ -47,7 +47,7 @@ namespace xy
     {
         friend class MessageBus;
     public:
-        using ID = sf::Int32;
+        using ID = std::int32_t;
         enum Type
         {
             AudioMessage = 0,
@@ -83,7 +83,7 @@ namespace xy
                 GainedFocus
             }type;
 
-            sf::Uint32 width, height;
+            std::uint32_t width, height;
         };
 
         /*!
@@ -95,7 +95,7 @@ namespace xy
             {
                 EntityDestroyed
             }event;
-            sf::Int32 entityID = -1;
+            std::int32_t entityID = -1;
         };
 
         /*!

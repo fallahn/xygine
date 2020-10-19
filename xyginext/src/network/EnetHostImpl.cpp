@@ -43,7 +43,7 @@ namespace
 {
     ENetPacket* createPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags)
     {
-        sf::Int32 packetFlags = 0;
+        std::int32_t packetFlags = 0;
         if (flags == NetFlag::Reliable)
         {
             packetFlags |= ENET_PACKET_FLAG_RELIABLE;
@@ -80,7 +80,7 @@ EnetHostImpl::~EnetHostImpl()
 }
 
 //public
-bool EnetHostImpl::start(const std::string& address, sf::Uint16 port, std::size_t maxClients, std::size_t maxChannels, sf::Uint32 incoming, sf::Uint32 outgoing)
+bool EnetHostImpl::start(const std::string& address, std::uint16_t port, std::size_t maxClients, std::size_t maxChannels, std::uint32_t incoming, std::uint32_t outgoing)
 {
     if (m_host)
     {
@@ -199,7 +199,7 @@ bool EnetHostImpl::pollEvent(NetEvent& evt)
     return false;
 }
 
-void EnetHostImpl::broadcastPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
+void EnetHostImpl::broadcastPacket(std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel)
 {
     if (m_host)
     {
@@ -207,7 +207,7 @@ void EnetHostImpl::broadcastPacket(std::uint8_t id, const void* data, std::size_
     }
 }
 
-void EnetHostImpl::sendPacket(const NetPeer& peer, std::uint8_t id, const void* data, std::size_t size, NetFlag flags, sf::Uint8 channel)
+void EnetHostImpl::sendPacket(const NetPeer& peer, std::uint8_t id, const void* data, std::size_t size, NetFlag flags, std::uint8_t channel)
 {
     if (peer)
     {

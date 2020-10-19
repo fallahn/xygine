@@ -36,8 +36,8 @@ source distribution.
 struct ClientState;
 struct Input final
 {
-    sf::Uint16 mask = 0;
-    sf::Int64 timestamp = 0;
+    std::uint16_t mask = 0;
+    std::int64_t timestamp = 0;
 };
 
 struct HistoryState final
@@ -53,15 +53,15 @@ struct Player final
     History history;
     std::size_t currentInput = 0;
     std::size_t lastUpdatedInput = history.size() - 1;
-    sf::Uint8 playerNumber = 0;
+    std::uint8_t playerNumber = 0;
     sf::Vector2f spawnPosition;
 
-    enum class State : sf::Uint8
+    enum class State : std::uint8_t
     {
         Walking, Jumping, Dying, Dead, Disabled //disable the player during map transitions
     };
 
-    enum class Direction :sf::Uint8
+    enum class Direction :std::uint8_t
     {
         Left, Right
     };
@@ -80,14 +80,14 @@ struct Player final
         State state = State::Jumping;
         Direction direction = Direction::Right;
 
-        sf::Uint8 flags = 0;
+        std::uint8_t flags = 0;
 
         sf::Vector2f velocity; //only the Y velocity is actually used in movement - the x value is used to track how much initial velocity to spawn bubble with
-        sf::Uint8 canLand = 0; //only for 1 way platforms
+        std::uint8_t canLand = 0; //only for 1 way platforms
 
         float timer = 2.f; //times invulnerability when spawning, and time to respawn
-        sf::Uint8 lives = 3;
-        sf::Uint8 bonusFlags = 0;
+        std::uint8_t lives = 3;
+        std::uint8_t bonusFlags = 0;
     }sync;
 };
 
@@ -105,10 +105,10 @@ private:
 
     bool m_isServer;
 
-    sf::Vector2f parseInput(sf::Uint16);
+    sf::Vector2f parseInput(std::uint16_t);
     float getDelta(const History&, std::size_t);
 
-    void processInput(sf::Uint16, float, xy::Entity);
+    void processInput(std::uint16_t, float, xy::Entity);
 
     void resolveCollision(xy::Entity);
 

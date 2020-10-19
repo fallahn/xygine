@@ -147,7 +147,7 @@ bool IntroState::update(float dt)
     switch (m_fade)
     {
     case Fade::In:
-        colour.a = static_cast<sf::Uint8>(std::min(1.f - ((m_fadeTime / fadeTime) * 255.f), 0.f));
+        colour.a = static_cast<std::uint8_t>(std::min(1.f - ((m_fadeTime / fadeTime) * 255.f), 0.f));
         if (m_fadeTime >= fadeTime)
         {
             m_fade = Fade::Hold;
@@ -163,7 +163,7 @@ bool IntroState::update(float dt)
         }
         break;
     case Fade::Out:
-        colour.a = static_cast<sf::Uint8>(std::min((m_fadeTime / fadeTime) * 255.f, 255.f));
+        colour.a = static_cast<std::uint8_t>(std::min((m_fadeTime / fadeTime) * 255.f, 255.f));
         if (m_fadeTime >= fadeTime)
         {
             requestStackPop();
