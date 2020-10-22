@@ -28,6 +28,7 @@ source distribution.
 #pragma once
 
 #include "xyginext/core/Assert.hpp"
+#include "xyginext/detail/NoResize.hpp"
 
 #include <vector>
 
@@ -50,7 +51,14 @@ namespace xy
 		class ComponentPool final : public Pool
 		{
 		public:
-			explicit ComponentPool(std::size_t size = 256) : m_pool(size) { }
+			explicit ComponentPool(std::size_t size = 256) : m_pool(size)
+			{
+				if constexpr (std::is_base_of_v<NonResizeable, T>)
+				{
+					m_pool.reserve(1024);
+					LOG("Reserved maximum pool size of 1024 for " + std::string(typeid(T).name()), xy::Logger::Type::Info);
+				}
+			}
 
 			bool empty() const { return m_pool.empty(); }
 			std::size_t size() const { return m_pool.size(); }

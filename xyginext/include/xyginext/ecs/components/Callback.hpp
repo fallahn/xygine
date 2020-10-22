@@ -28,6 +28,7 @@ source distribution.
 #pragma once
 
 #include "xyginext/Config.hpp"
+#include "xyginext/detail/NoResize.hpp"
 
 #include <functional>
 #include <any>
@@ -41,7 +42,7 @@ namespace xy
     \brief Allows attaching a callback function to an entity.
     \see CallbackSystem
     */
-    struct XY_EXPORT_API Callback final
+    struct XY_EXPORT_API Callback final : public Detail::NonResizeable
     {
         bool active = false; //!< disabling callbacks when not in use can avoid unnecessary cache misses looking up callback functions
         CallbackFunction function;
