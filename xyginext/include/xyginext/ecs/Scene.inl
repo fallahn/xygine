@@ -30,7 +30,7 @@ template <typename T, typename... Args>
 T& Scene::addSystem(Args&&... args)
 {
     auto& system = m_systemManager.addSystem<T>(std::forward<Args>(args)...);
-    if (std::is_base_of<sf::Drawable, T>::value)
+    if constexpr (std::is_base_of<sf::Drawable, T>::value)
     {
         m_drawables.push_back(dynamic_cast<sf::Drawable*>(&system));
     }
