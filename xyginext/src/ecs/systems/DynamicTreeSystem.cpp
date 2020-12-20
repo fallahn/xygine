@@ -74,8 +74,8 @@ void DynamicTreeSystem::process(float)
             auto worldPosition = tx.getWorldPosition();
             auto worldBounds = bpc.m_bounds;
 
-            worldBounds.left += tx.getOrigin().x * tx.getScale().x;
-            worldBounds.top += tx.getOrigin().y * tx.getScale().y;
+            worldBounds.left += tx.getOrigin().x;
+            worldBounds.top += tx.getOrigin().y;
 
             worldBounds = tx.getWorldTransform().transformRect(worldBounds);
 
@@ -139,8 +139,8 @@ std::int32_t DynamicTreeSystem::addToTree(xy::Entity entity)
 
     const auto& tx = entity.getComponent<xy::Transform>();
     auto bounds = entity.getComponent<BroadphaseComponent>().m_bounds;
-    bounds.left += tx.getOrigin().x * tx.getScale().x;
-    bounds.top += tx.getOrigin().y * tx.getScale().y;
+    bounds.left += tx.getOrigin().x;
+    bounds.top += tx.getOrigin().y;
     bounds = tx.getWorldTransform().transformRect(bounds);
 
 
