@@ -481,6 +481,21 @@ void App::handleEvents()
             case sf::Keyboard::F5:
                 saveScreenshot();
                 break;
+            case sf::Keyboard::Return:
+                if (evt.key.alt)
+                {
+                    auto settings = App::getActiveInstance()->getVideoSettings();
+                    settings.WindowStyle = (settings.WindowStyle == sf::Style::Close) ? sf::Style::Fullscreen : sf::Style::Close;
+                    App::getActiveInstance()->applyVideoSettings(settings);
+
+                    //hack to hide console if it's open as the full screen
+                    //checkbox won't be updated
+                    if (Console::isVisible())
+                    {
+                        Console::show();
+                    }
+                }
+                break;
             default:break;
             }
         }
