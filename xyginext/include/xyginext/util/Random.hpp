@@ -70,6 +70,17 @@ namespace xy
                 return dist(engine);
             }
             /*!
+            \brief Returns a pseudo random unsigned integer value
+            \param begin Minimum value
+            \param end Maximum value
+            */
+            static inline std::size_t value(std::size_t begin, std::size_t end)
+            {
+                XY_ASSERT(begin < end, "first value is not less than last value");
+                std::uniform_int_distribution<std::size_t> dist(begin, end);
+                return dist(rndEngine);
+            }
+            /*!
             \brief Returns a poission disc sampled distribution of points within a given area
             \param area sf::FloatRect within which the points are distributed
             \param minDist minimum distance between points
