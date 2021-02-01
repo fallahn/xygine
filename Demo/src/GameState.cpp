@@ -1445,7 +1445,7 @@ void GameState::spawnActor(const ActorEvent& actorEvent)
         break;
     case ActorID::FruitSmall:
         entity.addComponent<xy::Sprite>() = m_sprites[SpriteID::FruitSmall];
-        entity.addComponent<xy::SpriteAnimation>().play(xy::Util::Random::value(0, m_sprites[SpriteID::FruitSmall].getAnimations().size() - 1));
+        entity.addComponent<xy::SpriteAnimation>().play(xy::Util::Random::value(0u, m_sprites[SpriteID::FruitSmall].getAnimations().size() - 1));
         entity.addComponent<xy::Drawable>().setDepth(2);
         entity.getComponent<xy::Transform>().setOrigin(SmallFoodOrigin);
         break;
