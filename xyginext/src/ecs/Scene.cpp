@@ -239,7 +239,7 @@ void Scene::postRenderPath(sf::RenderTarget& rt, sf::RenderStates states)
     //this needs to be done for each camera
     //in this loop - this doesn't affect the
     //default render path, however
-    m_sceneBuffer.clear();
+    m_sceneBuffer.clear(sf::Color::Transparent);
     for (auto r : m_drawables)
     {
         m_sceneBuffer.draw(*r, states);
