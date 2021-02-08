@@ -247,6 +247,15 @@ namespace xy
         */
         static bool isMouseCursorVisible();
 
+        /*!
+        \brief Resets the frame time.
+        Useful after long operations such as loading resources for a new
+        state, where the initial frame will have a very large delta time.
+        Resetting the time will prevent State::update() being called
+        many times at the beginning on a new state.
+        */
+        static void resetFrametime();
+
     protected:
         /*!
         \brief Function for despatching all window events

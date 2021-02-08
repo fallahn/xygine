@@ -434,6 +434,12 @@ bool App::isMouseCursorVisible()
     return m_mouseCursorVisible || Console::isVisible();
 }
 
+void App::resetFrametime()
+{
+    XY_ASSERT(appInstance, "No valid instance");
+    frameClock.restart();
+}
+
 //protected
 bool App::initialise() { return true; }
 

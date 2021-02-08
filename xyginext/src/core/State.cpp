@@ -102,6 +102,7 @@ void State::quitLoadingScreen()
     m_loadingThread.wait();
     //LOG("Thread quit.", Logger::Type::Info);
     //m_context.appInstance.resume();
+    App::resetFrametime();
 }
 
 void State::updateLoadingScreen(float dt, sf::RenderWindow& rw)
