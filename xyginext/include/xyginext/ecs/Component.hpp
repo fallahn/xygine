@@ -35,6 +35,7 @@ source distribution.
 #include <vector>
 #include <typeindex>
 #include <algorithm>
+#include <cstdint>
 
 namespace xy
 {
