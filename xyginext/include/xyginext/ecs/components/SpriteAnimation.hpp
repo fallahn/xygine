@@ -41,7 +41,7 @@ namespace xy
         /*!
         \brief Play the animation at the given index if it exists
         \param index The animation index to play. This can be read from xy::SpriteSheet::getAnimationIndex()
-        \param rewind Set this to tru to play the animation from the beginning, else false to resume from
+        \param rewind Set this to true to play the animation from the beginning, else false to resume from
         the current frame (typically when unpausing an animation)
         */
         void play(std::size_t index, bool rewind = false) 

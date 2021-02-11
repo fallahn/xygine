@@ -175,10 +175,15 @@ void Drawable::updateLocalBounds()
             return lhs.position.y < rhs.position.y;
         });
 
+    static constexpr float Epsilon = 0.001f;
     m_localBounds.left = xExtremes.first->position.x;
     m_localBounds.top = yExtremes.first->position.y;
     m_localBounds.width = xExtremes.second->position.x - m_localBounds.left;
     m_localBounds.height = yExtremes.second->position.y - m_localBounds.top;
+
+    //prevents zero sized AABBs with straight lines or single points
+    m_localBounds.width += Epsilon;
+    m_localBounds.height += Epsilon;
 }
 
 void Drawable::updateLocalBounds(sf::FloatRect rect)
