@@ -28,6 +28,7 @@ source distribution.
 #pragma once
 
 #include <cmath>
+#include <type_traits>
 
 namespace xy
 {
@@ -42,12 +43,13 @@ namespace xy
             \brief Clamps a given value to the given upper and lower bounds
             */
             template <typename T>
-            static inline T clamp(const T& n, const T& lower, const T& upper)
+            static inline T clamp(T n, T lower, T upper)
             {
                 return std::max(lower, std::min(n, upper));
             }
             /*!
             \brief Rounds a floating point value to the nearest whole number
+            Note since C++11 you should probably prefer std::round()
             */
             static inline float round(float v)
             {
@@ -62,6 +64,19 @@ namespace xy
                 if (diff > 180.f) diff -= 360.f;
                 else if (diff < -180.f) diff += 360.f;
                 return diff;
+            }
+
+            /*!
+            \brief Returns the normlised sign of the given value
+            \param an int convertible value
+            \returns -1 if the givene value is negative, 1 if it is positive or 0
+            if it has no value.
+            */
+            template <typename T>
+            static inline std::int32_t sgn(T val)
+            {
+                static_assert(std::is_convertible<T, std::int32_t>::value);
+                return (T(0) < val) - (val < T(0));
             }
         }
     }
