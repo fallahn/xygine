@@ -36,6 +36,7 @@ source distribution.
 #include <xyginext/ecs/systems/ParticleSystem.hpp>
 #include <xyginext/ecs/systems/CallbackSystem.hpp>
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
+#include <xyginext/ecs/systems/CameraSystem.hpp>
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 
 #include <xyginext/gui/Gui.hpp>
@@ -125,6 +126,7 @@ void ParticleState::setup()
 
     m_scene.addSystem<xy::CallbackSystem>(mb);
     m_scene.addSystem<xy::SpriteSystem>(mb);
+    m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
 
@@ -522,7 +524,8 @@ void ParticleState::setSprite(const xy::Sprite& sprite)
 {
     m_sprite.getComponent<xy::Sprite>() = sprite;
     auto bounds = sprite.getTextureBounds();
-    m_sprite.getComponent<xy::Transform>().setOrigin(bounds.width / 2.f, bounds.height / 2.f);
+    m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition((xy::DefaultSceneSize / 2.f) + sf::Vector2f(bounds.width / 2.f, bounds.height / 2.f));
+    //m_sprite.getComponent<xy::Transform>().setOrigin(bounds.width / 2.f, bounds.height / 2.f);
 
 
     //need to correct the texture path

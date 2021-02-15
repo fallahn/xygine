@@ -80,7 +80,7 @@ namespace xy
         sf::Color colour = sf::Color::White;
 
         std::uint32_t emitCount = 1; //!< amount released at once
-        std::int32_t releaseCount = 1; //!< number of particles released before stopping (0 for infinite)
+        std::int32_t releaseCount = 0; //!< number of particles released before stopping (0 for infinite)
 
         float lifetime = 1.f;
         float lifetimeVariance = 0.f;
