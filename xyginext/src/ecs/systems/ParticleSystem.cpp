@@ -78,8 +78,18 @@ namespace
 
         void main()
         {
-            vec2 texCoord = v_rotation * (gl_PointCoord - vec2(0.5));
-            gl_FragColor = gl_Color * texture2D(u_texture, texCoord + vec2(0.5));
+            float frameCount = 6.0;
+            float frameWidth = 1.0 / frameCount;
+            float currentFrame = 1.0;
+
+            vec2 coord = gl_PointCoord;
+            coord.x *= frameWidth;
+            coord.x += currentFrame * frameWidth;            
+
+            vec2 centreOffset = vec2(0.5);// vec2((currentFrame * frameWidth) + (frameWidth / 2.f), 0.5);
+
+            vec2 texCoord = v_rotation * (gl_PointCoord - centreOffset);
+            gl_FragColor = gl_Color * texture2D(u_texture, texCoord + centreOffset);
         })";
 
     const std::size_t MaxParticleSystems = 64; //max VBOs, must be divisible by min count
@@ -172,6 +182,7 @@ void ParticleSystem::process(float dt)
         //update each particle
         sf::Vector2f minBounds(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
         sf::Vector2f maxBounds;
+        float framerate = emitter.settings.framerate / 1.f;
         for (auto i = 0u; i < emitter.m_nextFreeParticle; ++i)
         {
             auto& p = emitter.m_particles[i];
@@ -190,6 +201,16 @@ void ParticleSystem::process(float dt)
             p.rotation += emitter.settings.rotationSpeed * dt;
             p.scale += ((p.scale * emitter.settings.scaleModifier) * dt);
 
+            if (emitter.settings.animate)
+            {
+                p.frameTime += dt;
+                if (p.frameTime > framerate)
+                {
+                    p.frameID++;
+                    p.frameTime -= framerate;
+                }
+            }
+
             //update bounds for culling
             if (p.position.x < minBounds.x) minBounds.x = p.position.x;
             if (p.position.y < minBounds.y) minBounds.y = p.position.y;
@@ -203,7 +224,8 @@ void ParticleSystem::process(float dt)
         //go over again and remove dead particles with pop/swap
         for (auto i = 0u; i < emitter.m_nextFreeParticle; ++i)
         {
-            if (emitter.m_particles[i].lifetime < 0)
+            if (emitter.m_particles[i].lifetime < 0
+                || emitter.m_particles[i].frameID == emitter.settings.frameCount)
             {
                 emitter.m_nextFreeParticle--;
                 std::swap(emitter.m_particles[i], emitter.m_particles[emitter.m_nextFreeParticle]);
@@ -257,7 +279,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     if (m_visible)
     {
-        auto view = rt.getView();
+        const auto& view = rt.getView();
         sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
 
         //scale particles to match screen size

@@ -37,6 +37,7 @@ source distribution.
 
 #include <array>
 #include <string>
+#include <any>
 
 namespace sf
 {
@@ -53,12 +54,15 @@ namespace xy
     */
     struct Particle final
     {
+        sf::Color colour;
+        std::uint32_t frameID = 0;
+
         sf::Vector2f position;
         sf::Vector2f velocity;
         sf::Vector2f gravity;
         float lifetime = 0.f;
         float maxLifetime = 1.f;
-        sf::Color colour;
+        float frameTime = 0.f;
         float rotation = 0.f;
         float scale = 1.f;
         float acceleration = 0.f;
@@ -76,11 +80,12 @@ namespace xy
         sf::Vector2f initialVelocity = { 0.f, -100.f };
         sf::Vector2f spawnOffset; //!< initial spawn position is offset this much
 
-        std::array<sf::Vector2f, 4> forces{};
+        std::array<sf::Vector2f, 4u> forces{};
         sf::Color colour = sf::Color::White;
 
-        std::uint32_t emitCount = 1; //!< amount released at once
+        std::uint32_t emitCount = 1u; //!< amount released at once
         std::int32_t releaseCount = 0; //!< number of particles released before stopping (0 for infinite)
+        std::uint32_t frameCount = 1u; //!< must be at least one. Texture width is divided by this to calc frame coords
 
         float lifetime = 1.f;
         float lifetimeVariance = 0.f;
@@ -91,15 +96,22 @@ namespace xy
         float emitRate = 10.f; //!< particles per second
         float rotationSpeed = 0.f;
         float spawnRadius = 10.f;
+        float framerate = 1.f; //!< must be greater than zero
 
-        sf::Texture* texture = nullptr;
+        sf::Texture* texture = nullptr; //!< Animated textues should have all frames in a single row.
 
         bool randomInitialRotation = true;
         bool inheritRotation = true;
 
+        bool animate = false; //!< If true the particle will attempt to play through all animation frames once.
+        bool useRandomFrame = false; //!< If true the particle will pick a frame at random when spawning
+
         bool loadFromFile(const std::string&, TextureResource&);
         bool loadFromFile(const std::string&, ResourceHandler&);
         bool saveToFile(const std::string&); //! <saves the current settings to a config file
+
+    private:
+        bool loadFromFile(const std::string&, std::any&, bool);
     };
 
     /*!
