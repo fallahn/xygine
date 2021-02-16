@@ -73,23 +73,37 @@ namespace
         #version 120
 
         uniform sampler2D u_texture;
+        uniform float u_frameCount;
+        uniform vec2 u_textureSize;
         
         varying mat2 v_rotation;
 
         void main()
         {
-            float frameCount = 6.0;
-            float frameWidth = 1.0 / frameCount;
+            //vec2 textureSize = vec2(96.0, 16.0);            
+
+            //float frameCount = 6.0;
+            float frameWidth = 1.0 / u_frameCount;
             float currentFrame = 1.0;
 
             vec2 coord = gl_PointCoord;
             coord.x *= frameWidth;
-            coord.x += currentFrame * frameWidth;            
+            coord.x += currentFrame * frameWidth;
 
-            vec2 centreOffset = vec2(0.5);// vec2((currentFrame * frameWidth) + (frameWidth / 2.f), 0.5);
+            vec2 centreOffset = vec2((currentFrame * frameWidth) + (frameWidth / 2.f), 0.5);
 
-            vec2 texCoord = v_rotation * (gl_PointCoord - centreOffset);
-            gl_FragColor = gl_Color * texture2D(u_texture, texCoord + centreOffset);
+            //convert to texture space
+            coord *= u_textureSize;
+            centreOffset *= u_textureSize;
+
+            coord = v_rotation * (coord - centreOffset);
+            coord += centreOffset;
+            coord /= u_textureSize;
+
+            gl_FragColor = gl_Color * texture2D(u_texture, coord);
+
+            //vec2 texCoord = v_rotation * (gl_PointCoord - centreOffset);
+            //gl_FragColor = gl_Color * texture2D(u_texture, texCoord + centreOffset);
         })";
 
     const std::size_t MaxParticleSystems = 64; //max VBOs, must be divisible by min count
@@ -240,6 +254,7 @@ void ParticleSystem::process(float dt)
             vertArray.texture = (emitter.settings.texture) ? emitter.settings.texture : &m_dummyTexture;
             vertArray.bounds = emitter.m_bounds;
             vertArray.blendMode = emitter.settings.blendmode;
+            vertArray.frameCount = emitter.settings.frameCount;
 
             for (auto i = 0u; i < emitter.m_nextFreeParticle; ++i)
             {
@@ -277,6 +292,8 @@ void ParticleSystem::onEntityRemoved(xy::Entity)
 
 void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    //TODO lookup and cache shader uniforms - however this will need special
+    //care when setting custom shaders
     if (m_visible)
     {
         const auto& view = rt.getView();
@@ -296,6 +313,9 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
             if (m_emitterArrays[i].bounds.intersects(viewableArea))
             {
                 m_shader.setUniform("u_texture", *m_emitterArrays[i].texture);
+                m_shader.setUniform("u_textureSize", sf::Glsl::Vec2(m_emitterArrays[i].texture->getSize()));
+                m_shader.setUniform("u_frameCount", static_cast<float>(m_emitterArrays[i].frameCount));
+
                 states.blendMode = m_emitterArrays[i].blendMode;
                 rt.draw(m_emitterArrays[i].vertices.data(), m_emitterArrays[i].count, sf::Points, states);
                 //DPRINT("Particle Count", std::to_string(m_emitterArrays[i].count));
