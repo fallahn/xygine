@@ -209,6 +209,8 @@ void ParticleSystem::process(float dt)
                     p.rotation = (settings.randomInitialRotation) ?  Util::Random::value(-Util::Const::TAU, Util::Const::TAU) : rotation * xy::Util::Const::degToRad;
                     p.scale = settings.size;
                     p.acceleration = settings.acceleration;
+                    p.frameID = settings.useRandomFrame ? xy::Util::Random::value(0, settings.frameCount - 1) : 0;
+                    p.frameTime = 0.f;
 
                     //spawn particle in world position
                     p.position = tx.getWorldTransform().transformPoint(tx.getOrigin());
@@ -232,7 +234,8 @@ void ParticleSystem::process(float dt)
         //update each particle
         sf::Vector2f minBounds(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
         sf::Vector2f maxBounds;
-        float framerate = emitter.settings.framerate / 1.f;
+
+        float framerate = 1.f / emitter.settings.framerate;
         for (auto i = 0u; i < emitter.m_nextFreeParticle; ++i)
         {
             auto& p = emitter.m_particles[i];
@@ -382,7 +385,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates) const
                 glCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), data + Vertex::ColourOffset));
                 glCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), data + Vertex::UVOffset));
 
-                glCheck(glDrawArrays(GL_POINTS, 0, m_emitterArrays[i].count));
+                glCheck(glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(m_emitterArrays[i].count)));
             }
         }
 
