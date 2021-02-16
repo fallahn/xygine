@@ -111,7 +111,12 @@ namespace xy
         bool saveToFile(const std::string&); //! <saves the current settings to a config file
 
     private:
-        bool loadFromFile(const std::string&, std::any&, bool);
+        struct ResourcePointer final
+        {
+            TextureResource* tr = nullptr;
+            ResourceHandler* rh = nullptr;
+        };
+        bool loadFromFile(const std::string&, ResourcePointer);
     };
 
     /*!

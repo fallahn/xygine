@@ -62,14 +62,16 @@ void ParticleEmitter::stop()
 //----emitter settings loader----//
 bool EmitterSettings::loadFromFile(const std::string& path, TextureResource& textureResource)
 {
-    auto resource = std::make_any<TextureResource*>(&textureResource);
-    return loadFromFile(path, resource, true);
+    ResourcePointer rp;
+    rp.tr = &textureResource;
+    return loadFromFile(path, rp);
 }
 
 bool EmitterSettings::loadFromFile(const std::string& path, ResourceHandler& textureResource)
 {
-    auto resource = std::make_any<ResourceHandler*>(&textureResource);
-    return loadFromFile(path, resource, false);
+    ResourcePointer rp;
+    rp.rh = &textureResource;
+    return loadFromFile(path, rp);
 }
 
 bool EmitterSettings::saveToFile(const std::string& path)
@@ -136,7 +138,7 @@ bool EmitterSettings::saveToFile(const std::string& path)
 }
 
 //private
-bool EmitterSettings::loadFromFile(const std::string& path, std::any& resource, bool isTextureResource)
+bool EmitterSettings::loadFromFile(const std::string& path, ResourcePointer resources)
 {
     ConfigFile cfg;
     if (!cfg.loadFromFile(xy::FileSystem::getResourcePath() + path)) return false;
@@ -160,15 +162,15 @@ bool EmitterSettings::loadFromFile(const std::string& path, std::any& resource, 
                         path = path.substr(1);
                     }
 
-                    if (isTextureResource)
+                    if (resources.tr)
                     {
-                        texture = &std::any_cast<TextureResource*>(resource)->get(path);
+                        texture = &resources.tr->get(path);
                     }
                     else
                     {
-                        auto& tr = *std::any_cast<ResourceHolder*>(resource);
-                        auto handle = tr.load<sf::Texture>(p.getValue<std::string>());
-                        texture = &tr.get<sf::Texture>(handle);
+                        XY_ASSERT(resources.rh != nullptr, "");
+                        auto handle = resources.rh->load<sf::Texture>(p.getValue<std::string>());
+                        texture = &resources.rh->get<sf::Texture>(handle);
                     }
                     texturePath = path;
                 }
