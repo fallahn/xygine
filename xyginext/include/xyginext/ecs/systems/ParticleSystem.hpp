@@ -77,9 +77,37 @@ namespace xy
         mutable sf::Shader m_shader;
         bool m_visible;
 
-        struct EmitterArray
+        struct Vertex final
         {
-            std::array<sf::Vertex, ParticleEmitter::MaxParticles> vertices;
+            struct
+            {
+                float x = 0.f;
+                float y = 0.f;
+                float currentFrame = 0.f;
+            }position;
+
+            struct
+            {
+                std::uint8_t r = 0;
+                std::uint8_t g = 0;
+                std::uint8_t b = 0;
+                std::uint8_t a = 0;
+            }colour;
+
+            struct
+            {
+                float rotation = 0.f;
+                float scale = 1.f;
+            }uv;
+
+            static constexpr std::size_t PositionOffset = 0;
+            static constexpr std::size_t ColourOffset = sizeof(position);
+            static constexpr std::size_t UVOffset = ColourOffset + sizeof(colour);
+        };
+
+        struct EmitterArray final
+        {
+            std::array<Vertex, ParticleEmitter::MaxParticles> vertices;
             std::size_t count = 0;
             sf::Texture* texture = nullptr;
             sf::FloatRect bounds;
@@ -91,7 +119,7 @@ namespace xy
         std::size_t m_arrayCount;
         std::size_t m_activeArrayCount;
 
-        sf::Texture m_dummyTexture;//used to enable tex coords within which we fudge rotation and scale
+        sf::Texture m_fallbackTexture;
 
         void draw(sf::RenderTarget&, sf::RenderStates) const override;
     };
