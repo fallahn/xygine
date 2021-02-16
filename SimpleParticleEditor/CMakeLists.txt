@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 
 # Rename this variable to change the project name
-SET(PROJECT_NAME simple_particle_editor)
+SET(PROJECT_NAME resource_editor)
 
 # Set up the project
 project(${PROJECT_NAME})
