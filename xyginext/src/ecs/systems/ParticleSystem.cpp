@@ -49,48 +49,12 @@ using namespace xy;
 
 namespace
 {
-    //convert an sf::BlendMode::Factor constant to the corresponding OpenGL constant.
-    //taken from sf::RenderTarget source
-    std::uint32_t factorToGlConstant(sf::BlendMode::Factor blendFactor)
-    {
-        switch (blendFactor)
-        {
-        case sf::BlendMode::Zero:             return GL_ZERO;
-        case sf::BlendMode::One:              return GL_ONE;
-        case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
-        case sf::BlendMode::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
-        case sf::BlendMode::DstColor:         return GL_DST_COLOR;
-        case sf::BlendMode::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
-        case sf::BlendMode::SrcAlpha:         return GL_SRC_ALPHA;
-        case sf::BlendMode::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
-        case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
-        case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
-        }
-
-        return GL_ZERO;
-    }
-
-
-    //convert an sf::BlendMode::BlendEquation constant to the corresponding OpenGL constant.
-    //taken from sf::RenderTarget source
-    std::uint32_t equationToGlConstant(sf::BlendMode::Equation blendEquation)
-    {
-        switch (blendEquation)
-        {
-        case sf::BlendMode::Add:             return GL_FUNC_ADD;
-        case sf::BlendMode::Subtract:        return GL_FUNC_SUBTRACT;
-        case sf::BlendMode::ReverseSubtract: return GL_FUNC_REVERSE_SUBTRACT;
-        }
-        return GL_FUNC_ADD;
-    }
-
     const std::string VertexShader = R"(
         #version 120    
         
         uniform float u_screenScale;
 
         varying mat2 v_rotation;
-        varying float v_currentFrame;
         
         void main()
         {
@@ -100,12 +64,8 @@ namespace
             v_rotation[0] = vec2(rot.y, -rot.x);
             v_rotation[1] = rot;
 
-            //current frame is stored in Z coord.
-            v_currentFrame = gl_Vertex.z;
-
             gl_FrontColor = gl_Color;
-            vec4 position = vec4(gl_Vertex.xy, 0.0, 1.0);
-            gl_Position = gl_ModelViewProjectionMatrix * position;
+            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
             gl_PointSize = rotScale.y * u_screenScale;
         })";
 
@@ -113,34 +73,13 @@ namespace
         #version 120
 
         uniform sampler2D u_texture;
-        uniform float u_frameCount;
-        uniform vec2 u_textureSize;
         
         varying mat2 v_rotation;
-        varying float v_currentFrame;
 
         void main()
         {
-            float frameWidth = 1.0 / u_frameCount;
-
-            vec2 coord = gl_PointCoord;
-            coord.x *= frameWidth;
-            coord.x += v_currentFrame * frameWidth;
-
-            vec2 centreOffset = vec2((v_currentFrame * frameWidth) + (frameWidth / 2.f), 0.5);
-
-            //convert to texture space
-            coord *= u_textureSize;
-            centreOffset *= u_textureSize;
-
-            //rotate
-            coord = v_rotation * (coord - centreOffset);
-            coord += centreOffset;
-
-            //and back to UV space
-            coord /= u_textureSize;
-
-            gl_FragColor = gl_Color * texture2D(u_texture, coord);
+            vec2 texCoord = v_rotation * (gl_PointCoord - vec2(0.5));
+            gl_FragColor = gl_Color * texture2D(u_texture, texCoord + vec2(0.5));
         })";
 
     const std::size_t MaxParticleSystems = 64; //max VBOs, must be divisible by min count
@@ -165,8 +104,9 @@ ParticleSystem::ParticleSystem(xy::MessageBus& mb)
     m_emitterArrays.resize(MinParticleSystems);
 
     sf::Image img;
-    img.create(16, 16, sf::Color::White);
-    m_fallbackTexture.loadFromImage(img);
+    img.create(1, 1, sf::Color::White);
+    m_dummyTexture.loadFromImage(img);
+    //m_dummyTexture.setRepeated(true);
 }
 
 ParticleSystem::~ParticleSystem()
@@ -209,8 +149,6 @@ void ParticleSystem::process(float dt)
                     p.rotation = (settings.randomInitialRotation) ?  Util::Random::value(-Util::Const::TAU, Util::Const::TAU) : rotation * xy::Util::Const::degToRad;
                     p.scale = settings.size;
                     p.acceleration = settings.acceleration;
-                    p.frameID = settings.useRandomFrame ? xy::Util::Random::value(0, static_cast<std::int32_t>(settings.frameCount) - 1) : 0;
-                    p.frameTime = 0.f;
 
                     //spawn particle in world position
                     p.position = tx.getWorldTransform().transformPoint(tx.getOrigin());
@@ -234,8 +172,6 @@ void ParticleSystem::process(float dt)
         //update each particle
         sf::Vector2f minBounds(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
         sf::Vector2f maxBounds;
-
-        float framerate = 1.f / emitter.settings.framerate;
         for (auto i = 0u; i < emitter.m_nextFreeParticle; ++i)
         {
             auto& p = emitter.m_particles[i];
@@ -254,16 +190,6 @@ void ParticleSystem::process(float dt)
             p.rotation += emitter.settings.rotationSpeed * dt;
             p.scale += ((p.scale * emitter.settings.scaleModifier) * dt);
 
-            if (emitter.settings.animate)
-            {
-                p.frameTime += dt;
-                if (p.frameTime > framerate)
-                {
-                    p.frameID++;
-                    p.frameTime -= framerate;
-                }
-            }
-
             //update bounds for culling
             if (p.position.x < minBounds.x) minBounds.x = p.position.x;
             if (p.position.y < minBounds.y) minBounds.y = p.position.y;
@@ -277,8 +203,7 @@ void ParticleSystem::process(float dt)
         //go over again and remove dead particles with pop/swap
         for (auto i = 0u; i < emitter.m_nextFreeParticle; ++i)
         {
-            if (emitter.m_particles[i].lifetime < 0
-                || emitter.m_particles[i].frameID == emitter.settings.frameCount)
+            if (emitter.m_particles[i].lifetime < 0)
             {
                 emitter.m_nextFreeParticle--;
                 std::swap(emitter.m_particles[i], emitter.m_particles[emitter.m_nextFreeParticle]);
@@ -290,26 +215,18 @@ void ParticleSystem::process(float dt)
         {
             auto& vertArray = m_emitterArrays[m_activeArrayCount++];
             vertArray.count = 0;
-            vertArray.texture = (emitter.settings.texture) ? emitter.settings.texture : &m_fallbackTexture;
+            vertArray.texture = (emitter.settings.texture) ? emitter.settings.texture : &m_dummyTexture;
             vertArray.bounds = emitter.m_bounds;
             vertArray.blendMode = emitter.settings.blendmode;
-            vertArray.frameCount = emitter.settings.frameCount;
 
             for (auto i = 0u; i < emitter.m_nextFreeParticle; ++i)
             {
-                auto& vert = vertArray.vertices[vertArray.count++];
-                const auto& particle = emitter.m_particles[i];
-                vert.position.x = particle.position.x;
-                vert.position.y = particle.position.y;
-                vert.position.currentFrame = static_cast<float>(particle.frameID);
-
-                vert.colour.r = particle.colour.r;
-                vert.colour.g = particle.colour.g;
-                vert.colour.b = particle.colour.b;
-                vert.colour.a = particle.colour.a;
-
-                vert.uv.rotation = particle.rotation;
-                vert.uv.scale = particle.scale;
+                vertArray.vertices[vertArray.count++] = 
+                {
+                    emitter.m_particles[i].position,
+                    emitter.m_particles[i].colour,
+                    sf::Vector2f(emitter.m_particles[i].rotation, emitter.m_particles[i].scale)
+                };
             }
         }
     }
@@ -336,61 +253,32 @@ void ParticleSystem::onEntityRemoved(xy::Entity)
 }
 
 
-void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates) const
+void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    //TODO lookup and cache shader uniforms - however this will need special
-    //care when setting custom shaders
     if (m_visible)
     {
-        const auto& view = rt.getView();
+        auto view = rt.getView();
         sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
-
-        //apply the shader
-        sf::Shader::bind(&m_shader);
 
         //scale particles to match screen size
         float ratio = static_cast<float>(rt.getSize().x) / viewableArea.width;
         m_shader.setUniform("u_screenScale", ratio);
 
-        //we shouldn't need to apply the view as SFML ought to have
-        //set it up before the RenderTarget calls this function
+        states.shader = &m_shader;
+        states.texture = &m_dummyTexture;
 
         glCheck(glEnable(GL_PROGRAM_POINT_SIZE));
         glCheck(glEnable(GL_POINT_SPRITE));
-
-        //TODO can we ask SFML if this is already enabled?
-        glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
-
-        //set up the model matrix. SFML promises to keep this as always active
-        //particles are always emitted in world space so we use an identity matrix
-        //and load it just once before rendering the particle arrays
-        glCheck(glLoadIdentity());
-
         for (auto i = 0u; i < m_activeArrayCount; ++i)
         {
             if (m_emitterArrays[i].bounds.intersects(viewableArea))
             {
-                //TODO can we query SFML to find out if this texture is already bound?
-                //bind() doesn't track this for us.
-                sf::Texture::bind(m_emitterArrays[i].texture);
-                m_shader.setUniform("u_frameCount", static_cast<float>(m_emitterArrays[i].frameCount));
                 m_shader.setUniform("u_texture", *m_emitterArrays[i].texture);
-                m_shader.setUniform("u_textureSize", sf::Glsl::Vec2(m_emitterArrays[i].texture->getSize()));
-
-                //blend mode
-                glCheck(glBlendFunc(factorToGlConstant(m_emitterArrays[i].blendMode.colorSrcFactor), factorToGlConstant(m_emitterArrays[i].blendMode.colorDstFactor)));
-
-                const auto* data = reinterpret_cast<const char*>(m_emitterArrays[i].vertices.data());
-                glCheck(glVertexPointer(3, GL_FLOAT, sizeof(Vertex), data + Vertex::PositionOffset));
-                glCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), data + Vertex::ColourOffset));
-                glCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), data + Vertex::UVOffset));
-
-                glCheck(glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(m_emitterArrays[i].count)));
+                states.blendMode = m_emitterArrays[i].blendMode;
+                rt.draw(m_emitterArrays[i].vertices.data(), m_emitterArrays[i].count, sf::Points, states);
+                //DPRINT("Particle Count", std::to_string(m_emitterArrays[i].count));
             }
         }
-
-        sf::Shader::bind(nullptr);
-
         glCheck(glDisable(GL_PROGRAM_POINT_SIZE));
         glCheck(glDisable(GL_POINT_SPRITE));
     }

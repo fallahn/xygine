@@ -36,7 +36,6 @@ source distribution.
 #include <xyginext/ecs/systems/ParticleSystem.hpp>
 #include <xyginext/ecs/systems/CallbackSystem.hpp>
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
-#include <xyginext/ecs/systems/CameraSystem.hpp>
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 
 #include <xyginext/gui/Gui.hpp>
@@ -51,7 +50,7 @@ namespace
 {
     const float ItemWidth = 160.f;
     const float WindowWidth = 350.f;
-    const float WindowHeight = 480.f;
+    const float WindowHeight = 720.f;
 
     const std::string cfgPath = xy::FileSystem::getConfigDirectory("xy_editor") + "particle.cfg";
 }
@@ -126,7 +125,6 @@ void ParticleState::setup()
 
     m_scene.addSystem<xy::CallbackSystem>(mb);
     m_scene.addSystem<xy::SpriteSystem>(mb);
-    m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
 
@@ -264,159 +262,118 @@ void ParticleState::setup()
             xy::ui::text(m_workingDirectory);
             xy::ui::separator();
 
-            if (ImGui::BeginTabBar("Emitter"))
+            xy::ui::slider("Gravity X", m_emitterSettings->gravity.x, -1000.f, 1000.f, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("Gravitational force applied to the velocity");
+            xy::ui::slider("Gravity Y", m_emitterSettings->gravity.y, -1000.f, 1000.f, ItemWidth);
+
+            xy::ui::slider("Velocity X", m_emitterSettings->initialVelocity.x, -1000.f, 1000.f, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("Initial velocity of the particle");
+            xy::ui::slider("Velocity Y", m_emitterSettings->initialVelocity.y, -1000.f, 1000.f, ItemWidth);
+
+            xy::ui::slider("Acceleration", m_emitterSettings->acceleration, 0.f, 2.f, ItemWidth);
+
+            xy::ui::slider("Spread", m_emitterSettings->spread, 0.f, 360.f, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("Spead, in degrees, applied to the inital velocity");
+            xy::ui::slider("Lifetime", m_emitterSettings->lifetime, 0.1f, 10.f, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("Lifetime of a particle in seconds");
+            xy::ui::slider("Lifetime Variance", m_emitterSettings->lifetimeVariance, 0.f, 10.f, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("Amount of random variation added to the lifetime of a particle, in seconds");
+
+            xy::ui::slider("Rotation Speed", m_emitterSettings->rotationSpeed, 0.f, 15.f, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("Rotation in degrees per second - textured particles only");
+            xy::ui::slider("Scale Affector", m_emitterSettings->scaleModifier, -5.f, 5.f, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("How rapidly a particle is scaled in size over its lifetime");
+            xy::ui::slider("Size", m_emitterSettings->size, 0.1f, 100.f, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("Initial size of a particle");
+
+            xy::ui::slider("Emit Rate", m_emitterSettings->emitRate, 0.f, 150.f, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("Number of particles emitted per second");
+            std::int32_t count = m_emitterSettings->emitCount;
+            xy::ui::input("Emit Count", count, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("Number of particles emitted simultaneously");
+            count = std::max(count, 0);
+            m_emitterSettings->emitCount = count;
+
+            xy::ui::slider("Spawn Radius", m_emitterSettings->spawnRadius, 0.f, 500.f, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("Radius around the emitter position in which particles are spawned");
+            xy::ui::slider("Spawn Offset X", m_emitterSettings->spawnOffset.x, -500.f, 500.f, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("Offsets the particle spawn position from the emitter position in world units");
+            xy::ui::slider("Spawn Offset Y", m_emitterSettings->spawnOffset.y, -500.f, 500.f, ItemWidth);
+
+            count = m_emitterSettings->releaseCount;
+            xy::ui::input("Release Count", count, ItemWidth);
+            xy::ui::sameLine(); xy::ui::showToolTip("Total number of particles to release before automatically stopping the emitter. 0 emits indefinitely, restart the emitter for updated values to take effect");
+            count = std::max(count, 0);
+            m_emitterSettings->releaseCount = count;
+
+            xy::ui::checkbox("Random Initial Rotation", &m_emitterSettings->randomInitialRotation);
+            xy::ui::sameLine(); xy::ui::showToolTip("Applies a random initial rotation to spawned particles. Textured particles only");
+
+            xy::ui::checkbox("Inherit Rotation", &m_emitterSettings->inheritRotation);
+            xy::ui::sameLine(); xy::ui::showToolTip("Sets the initial rotation to that of the emitter");
+
+            bool oldState = entity.getComponent<xy::Callback>().active;
+            bool newState = oldState;
+            xy::ui::checkbox("Animate Movement", &newState);
+            xy::ui::sameLine(); xy::ui::showToolTip("Enable emitter movement");
+
+            if (oldState != newState)
             {
-                if (ImGui::BeginTabItem("Forces"))
+                entity.getComponent<xy::Callback>().active = newState;
+                float rotation = newState ? xy::Util::Vector::rotation(entity.getComponent<sf::Vector2f>()) : 0.f;
+                entity.getComponent<xy::Transform>().setRotation(rotation);
+            }
+
+            xy::ui::colourPicker("Colour", m_emitterSettings->colour);
+
+            xy::ui::separator();
+
+            //blendmode drop down
+            std::int32_t idx = m_selectedBlendMode;
+            xy::ui::simpleCombo("Blend Mode", idx, "Alpha\0Add\0Multiply\0\0", ItemWidth);
+            if (idx != m_selectedBlendMode)
+            {
+                m_selectedBlendMode = idx;
+                switch (idx)
                 {
-                    xy::ui::slider("Gravity X", m_emitterSettings->gravity.x, -1000.f, 1000.f, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Gravitational force applied to the velocity");
-                    xy::ui::slider("Gravity Y", m_emitterSettings->gravity.y, -1000.f, 1000.f, ItemWidth);
-
-                    xy::ui::slider("Velocity X", m_emitterSettings->initialVelocity.x, -1000.f, 1000.f, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Initial velocity of the particle");
-                    xy::ui::slider("Velocity Y", m_emitterSettings->initialVelocity.y, -1000.f, 1000.f, ItemWidth);
-
-                    xy::ui::slider("Acceleration", m_emitterSettings->acceleration, 0.f, 2.f, ItemWidth);
-                    ImGui::EndTabItem();
-                }
-
-                if (ImGui::BeginTabItem("Properties"))
-                {
-                    xy::ui::slider("Spread", m_emitterSettings->spread, 0.f, 360.f, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Spead, in degrees, applied to the inital velocity");
-                    xy::ui::slider("Lifetime", m_emitterSettings->lifetime, 0.1f, 10.f, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Lifetime of a particle in seconds");
-                    xy::ui::slider("Lifetime Variance", m_emitterSettings->lifetimeVariance, 0.f, 10.f, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Amount of random variation added to the lifetime of a particle, in seconds");
-
-                    xy::ui::slider("Rotation Speed", m_emitterSettings->rotationSpeed, 0.f, 15.f, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Rotation in degrees per second - textured particles only");
-                    xy::ui::slider("Scale Affector", m_emitterSettings->scaleModifier, -5.f, 5.f, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("How rapidly a particle is scaled in size over its lifetime");
-                    xy::ui::slider("Size", m_emitterSettings->size, 0.1f, 100.f, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Initial size of a particle");
-
-                    xy::ui::slider("Emit Rate", m_emitterSettings->emitRate, 0.f, 150.f, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Number of particles emitted per second");
-                    std::int32_t count = m_emitterSettings->emitCount;
-                    xy::ui::input("Emit Count", count, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Number of particles emitted simultaneously");
-                    count = std::max(count, 0);
-                    m_emitterSettings->emitCount = count;
-
-                    xy::ui::slider("Spawn Radius", m_emitterSettings->spawnRadius, 0.f, 500.f, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Radius around the emitter position in which particles are spawned");
-                    xy::ui::slider("Spawn Offset X", m_emitterSettings->spawnOffset.x, -500.f, 500.f, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Offsets the particle spawn position from the emitter position in world units");
-                    xy::ui::slider("Spawn Offset Y", m_emitterSettings->spawnOffset.y, -500.f, 500.f, ItemWidth);
-
-                    count = m_emitterSettings->releaseCount;
-                    xy::ui::input("Release Count", count, ItemWidth);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Total number of particles to release before automatically stopping the emitter. 0 emits indefinitely, restart the emitter for updated values to take effect");
-                    count = std::max(count, 0);
-                    m_emitterSettings->releaseCount = count;
-
-                    xy::ui::checkbox("Random Initial Rotation", &m_emitterSettings->randomInitialRotation);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Applies a random initial rotation to spawned particles. Textured particles only");
-
-                    xy::ui::checkbox("Inherit Rotation", &m_emitterSettings->inheritRotation);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Sets the initial rotation to that of the emitter");
-
-                    ImGui::EndTabItem();
-                }
-
-                if (ImGui::BeginTabItem("Appearance"))
-                {
-                    ImGui::Text("Animation");
-                    ImGui::Checkbox("Animate", &m_emitterSettings->animate);
-                    ImGui::SameLine(); xy::ui::showToolTip("Plays all animation frames then kills the particle. Particles will die immediately if the only have one frame!");
-
-                    ImGui::Checkbox("Random Start Frame", &m_emitterSettings->useRandomFrame);
-                    ImGui::SameLine(); xy::ui::showToolTip("Start on a random frame. If an animation is not playing gives the appearance of random particles.");
-
-                    if (ImGui::InputFloat("Frame rate", &m_emitterSettings->framerate))
-                    {
-                        m_emitterSettings->framerate = std::max(m_emitterSettings->framerate, 1.f);
-                    }
-
-                    std::int32_t frameCount = m_emitterSettings->frameCount;
-                    if (ImGui::InputInt("Frame Count", &frameCount))
-                    {
-                        frameCount = std::max(1, frameCount);
-                        m_emitterSettings->frameCount = frameCount;
-                    }
-
-                    ImGui::NewLine();
-                    ImGui::Separator();
-                    ImGui::NewLine();
-
-                    bool oldState = entity.getComponent<xy::Callback>().active;
-                    bool newState = oldState;
-                    xy::ui::checkbox("Animate Movement", &newState);
-                    xy::ui::sameLine(); xy::ui::showToolTip("Enable emitter movement");
-
-                    if (oldState != newState)
-                    {
-                        entity.getComponent<xy::Callback>().active = newState;
-                        float rotation = newState ? xy::Util::Vector::rotation(entity.getComponent<sf::Vector2f>()) : 0.f;
-                        entity.getComponent<xy::Transform>().setRotation(rotation);
-                    }
-
-                    xy::ui::colourPicker("Colour", m_emitterSettings->colour);
-
-                    xy::ui::separator();
-
-                    //blendmode drop down
-                    std::int32_t idx = m_selectedBlendMode;
-                    xy::ui::simpleCombo("Blend Mode", idx, "Alpha\0Add\0Multiply\0\0", ItemWidth);
-                    if (idx != m_selectedBlendMode)
-                    {
-                        m_selectedBlendMode = idx;
-                        switch (idx)
-                        {
-                        case 0:
-                            m_emitterSettings->blendmode = sf::BlendAlpha;
-                            break;
-                        case 1:
-                            m_emitterSettings->blendmode = sf::BlendAdd;
-                            break;
-                        case 2:
-                            m_emitterSettings->blendmode = sf::BlendMultiply;
-                        }
-                    }
-                    if (m_emitterSettings->texturePath.empty())
-                    {
-                        xy::ui::text("No texture loaded");
-                    }
-                    else
-                    {
-                        xy::ui::text(m_emitterSettings->texturePath);
-                    }
-
-                    if (xy::ui::button("Browse Texture"))
-                    {
-                        auto path = xy::FileSystem::openFileDialogue("png,jpg,bmp");
-                        if (!path.empty())
-                        {
-                            m_emitterSettings->texture = &m_textures.get(path);
-
-                            //try correcting with current working directory
-                            if (!m_workingDirectory.empty())
-                            {
-                                if (path.find(m_workingDirectory) != std::string::npos)
-                                {
-                                    path = path.substr(m_workingDirectory.size());
-                                }
-                            }
-                            m_emitterSettings->texturePath = path;
-                        }
-                    }
-                    xy::ui::sameLine(); xy::ui::showToolTip("For a relative path to a texture set the working directory, above");
-
-                    ImGui::EndTabItem();
+                case 0:
+                    m_emitterSettings->blendmode = sf::BlendAlpha;
+                    break;
+                case 1:
+                    m_emitterSettings->blendmode = sf::BlendAdd;
+                    break;
+                case 2:
+                    m_emitterSettings->blendmode = sf::BlendMultiply;
                 }
             }
-            ImGui::EndTabBar();
+            if (m_emitterSettings->texturePath.empty())
+            {
+                xy::ui::text("No texture loaded");
+            }
+            else
+            {
+                xy::ui::text(m_emitterSettings->texturePath);
+            }
+
+            if (xy::ui::button("Browse Texture"))
+            {
+                auto path = xy::FileSystem::openFileDialogue("png,jpg,bmp");
+                if (!path.empty())
+                {
+                    m_emitterSettings->texture = &m_textures.get(path);
+
+                    //try correcting with current working directory
+                    if (!m_workingDirectory.empty())
+                    {
+                        if (path.find(m_workingDirectory) != std::string::npos)
+                        {
+                            path = path.substr(m_workingDirectory.size());
+                        }
+                    }
+                    m_emitterSettings->texturePath = path;
+                }
+            }
+            xy::ui::sameLine(); xy::ui::showToolTip("For a relative path to a texture set the working directory, above");
 
             xy::ui::separator();
 
@@ -565,8 +522,7 @@ void ParticleState::setSprite(const xy::Sprite& sprite)
 {
     m_sprite.getComponent<xy::Sprite>() = sprite;
     auto bounds = sprite.getTextureBounds();
-    m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition((xy::DefaultSceneSize / 2.f) + sf::Vector2f(bounds.width / 2.f, bounds.height / 2.f));
-    //m_sprite.getComponent<xy::Transform>().setOrigin(bounds.width / 2.f, bounds.height / 2.f);
+    m_sprite.getComponent<xy::Transform>().setOrigin(bounds.width / 2.f, bounds.height / 2.f);
 
 
     //need to correct the texture path
