@@ -113,6 +113,7 @@ namespace
         #version 120
 
         uniform sampler2D u_texture;
+
         uniform float u_frameCount;
         uniform vec2 u_textureSize;
         
@@ -342,8 +343,23 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates) const
     //care when setting custom shaders
     if (m_visible)
     {
+        rt.pushGLStates();
+
         const auto& view = rt.getView();
         sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
+
+        //apply the view as SFML would
+        auto viewport = rt.getViewport(view);
+        auto top = rt.getSize().y - (viewport.top + viewport.height);
+        glCheck(glViewport(viewport.left, top, viewport.width, viewport.height));
+
+        //set the projection matrix
+        glCheck(glMatrixMode(GL_PROJECTION));
+        glCheck(glLoadMatrixf(view.getTransform().getMatrix()));
+
+        //go back to model-view mode
+        glCheck(glMatrixMode(GL_MODELVIEW));
+
 
         //apply the shader
         sf::Shader::bind(&m_shader);
@@ -361,7 +377,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates) const
         //TODO can we ask SFML if this is already enabled?
         glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
 
-        //set up the model matrix. SFML promises to keep this as always active
+        //set up the model matrix
         //particles are always emitted in world space so we use an identity matrix
         //and load it just once before rendering the particle arrays
         glCheck(glLoadIdentity());
@@ -374,7 +390,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates) const
                 //bind() doesn't track this for us.
                 sf::Texture::bind(m_emitterArrays[i].texture);
                 m_shader.setUniform("u_frameCount", static_cast<float>(m_emitterArrays[i].frameCount));
-                m_shader.setUniform("u_texture", *m_emitterArrays[i].texture);
+                m_shader.setUniform("u_texture", sf::Shader::CurrentTexture);
                 m_shader.setUniform("u_textureSize", sf::Glsl::Vec2(m_emitterArrays[i].texture->getSize()));
 
                 //blend mode
@@ -393,5 +409,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates) const
 
         glCheck(glDisable(GL_PROGRAM_POINT_SIZE));
         glCheck(glDisable(GL_POINT_SPRITE));
+
+        rt.popGLStates();
     }
 }

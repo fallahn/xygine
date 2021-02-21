@@ -132,13 +132,13 @@ void ParticleState::setup()
 
     m_sprite = m_scene.createEntity();
     m_sprite.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    m_sprite.getComponent<xy::Transform>().move(100.f, 0.f);
+    //m_sprite.getComponent<xy::Transform>().move(100.f, 0.f);
     m_sprite.addComponent<xy::Drawable>();
     m_sprite.addComponent<xy::Sprite>();
 
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
-    entity.getComponent<xy::Transform>().move(100.f, 0.f);
+    //entity.getComponent<xy::Transform>().move(100.f, 0.f);
     entity.addComponent<xy::ParticleEmitter>().start();
     m_emitterSettings = &entity.getComponent<xy::ParticleEmitter>().settings;
     entity.addComponent<sf::Vector2f>() = {0.707f, 0.707f};

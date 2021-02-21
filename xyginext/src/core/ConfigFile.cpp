@@ -231,7 +231,7 @@ bool ConfigObject::loadFromFile(const std::string& path)
 
                         if (prop.second.empty())
                         {
-                            Logger::log("\'" + objStack.back()->getName() + "\' property \'" + prop.first + "\' has no valid value", Logger::Type::Warning);
+                            Logger::log("\'" + objStack.back()->getName() + ": " + objStack.back()->getId() +  "\' property \'" + prop.first + "\' has no valid value", Logger::Type::Warning);
                             continue;
                         }
                         objStack.back()->addProperty(prop.first, prop.second);
