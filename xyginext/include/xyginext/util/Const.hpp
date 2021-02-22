@@ -33,11 +33,11 @@ namespace xy
     {
         namespace Const
         {
-            static const float PI = 3.1412f;
-            static const float degToRad = PI / 180.f;
-            static const float radToDeg = 180.f / PI;
-            static const float TAU = PI * 2.f;
-            static const float E = 2.71828f;
+            static constexpr float PI = 3.1412f;
+            static constexpr float degToRad = PI / 180.f;
+            static constexpr float radToDeg = 180.f / PI;
+            static constexpr float TAU = PI * 2.f;
+            static constexpr float E = 2.71828f;
         } //Const
     }//Util
 }//xy
