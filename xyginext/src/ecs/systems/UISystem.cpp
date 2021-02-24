@@ -62,12 +62,13 @@ UISystem::UISystem(MessageBus& mb)
     requireComponent<Transform>();
 
     //default callbacks for components which don't have one assigned
-    m_buttonCallbacks.push_back([](Entity, std::uint64_t) {}); 
+    m_mouseButtonCallbacks.push_back([](Entity, std::uint64_t) {}); 
     m_movementCallbacks.push_back([](Entity, sf::Vector2f) {});
     m_wheelCallbacks.push_back([](Entity, bool, float) {});
     m_keyboardCallbacks.push_back([](Entity, sf::Keyboard::Key) {});
     m_selectionCallbacks.push_back([](Entity) {});
     m_controllerCallbacks.push_back([](Entity, std::uint32_t, std::uint32_t) {});
+    m_buttonCallbacks.push_back([](Entity, ButtonEvent) {});
 }
 
 void UISystem::handleEvent(const sf::Event& evt)
@@ -105,6 +106,13 @@ void UISystem::handleEvent(const sf::Event& evt)
             m_mouseDownEvents.push_back(MiddleMouse);
             break;
         }
+
+        {
+            auto& buttonEvent = m_mouseButtonDownEvents.emplace_back();
+            buttonEvent.type = evt.type;
+            buttonEvent.mouseButton = evt.mouseButton.button;
+        }
+
         break;
     case sf::Event::MouseButtonReleased:
         m_eventPosition = toWorldCoords(evt.mouseButton.x, evt.mouseButton.y);
@@ -120,6 +128,12 @@ void UISystem::handleEvent(const sf::Event& evt)
         case sf::Mouse::Middle:
             m_mouseUpEvents.push_back(Flags::MiddleMouse);
             break;
+        }
+
+        {
+            auto& buttonEvent = m_mouseButtonUpEvents.emplace_back();
+            buttonEvent.type = evt.type;
+            buttonEvent.mouseButton = evt.mouseButton.button;
         }
         break;
     case sf::Event::KeyReleased:
@@ -139,6 +153,11 @@ void UISystem::handleEvent(const sf::Event& evt)
             break;
         default:
             m_keyUpEvents.push_back(evt.key.code);
+            {
+                auto& buttonEvent = m_buttonUpEvents.emplace_back();
+                buttonEvent.type = evt.type;
+                buttonEvent.key = evt.key.code;
+            }
             break;
         }
         break;
@@ -152,6 +171,11 @@ void UISystem::handleEvent(const sf::Event& evt)
             break;
         default:
             m_keyDownEvents.push_back(evt.key.code);
+            {
+                auto& buttonEvent = m_buttonDownEvents.emplace_back();
+                buttonEvent.type = evt.type;
+                buttonEvent.key = evt.key.code;
+            }
             break;
         }
         break;
@@ -173,6 +197,12 @@ void UISystem::handleEvent(const sf::Event& evt)
             break;
         }
         m_controllerDownEvents.push_back(std::make_pair(evt.joystickButton.joystickId, evt.joystickButton.button));
+        {
+            auto& buttonEvent = m_buttonDownEvents.emplace_back();
+            buttonEvent.type = evt.type;
+            buttonEvent.joystick.joystickID = evt.joystickButton.joystickId;
+            buttonEvent.joystick.joyButton = evt.joystickButton.button;
+        }
         break;
     case sf::Event::JoystickButtonReleased:
         if (m_joypadCursorActive
@@ -192,6 +222,12 @@ void UISystem::handleEvent(const sf::Event& evt)
             break;
         }
         m_controllerUpEvents.push_back(std::make_pair(evt.joystickButton.joystickId, evt.joystickButton.button));
+        {
+            auto& buttonEvent = m_buttonUpEvents.emplace_back();
+            buttonEvent.type = evt.type;
+            buttonEvent.joystick.joystickID = evt.joystickButton.joystickId;
+            buttonEvent.joystick.joyButton = evt.joystickButton.button;
+        }
         break;
     case sf::Event::JoystickMoved:
         switch (evt.joystickMove.axis)
@@ -356,16 +392,26 @@ void UISystem::process(float)
         {
             for (auto f : m_mouseDownEvents)
             {
-                m_buttonCallbacks[input.callbacks[UIHitBox::MouseDown]](e, f);
+                m_mouseButtonCallbacks[input.callbacks[UIHitBox::MouseDown]](e, f);
             }
 
             for (auto f : m_mouseUpEvents)
             {
-                m_buttonCallbacks[input.callbacks[UIHitBox::MouseUp]](e, f);
+                m_mouseButtonCallbacks[input.callbacks[UIHitBox::MouseUp]](e, f);
+            }
+
+            for (auto f : m_mouseButtonDownEvents)
+            {
+                m_buttonCallbacks[input.callbacks[UIHitBox::ButtonDown]](e, f);
+            }
+
+            for (auto f : m_mouseButtonUpEvents)
+            {
+                m_buttonCallbacks[input.callbacks[UIHitBox::ButtonUp]](e, f);
             }
         }
 
-        if (currentIndex == m_selectedIndex)
+        else if (currentIndex == m_selectedIndex)
         {
 
             for (auto [vertical, delta] : m_mouseWheelEvents)
@@ -392,6 +438,16 @@ void UISystem::process(float)
             {
                 m_controllerCallbacks[input.callbacks[UIHitBox::ControllerButtonUp]](e, joyID, joyButton);
             }
+
+            for (auto evt : m_buttonDownEvents)
+            {
+                m_buttonCallbacks[input.callbacks[UIHitBox::ButtonDown]](e, evt);
+            }
+
+            for (auto evt : m_buttonUpEvents)
+            {
+                m_buttonCallbacks[input.callbacks[UIHitBox::ButtonUp]](e, evt);
+            }
         }
         currentIndex++;
     }
@@ -411,6 +467,11 @@ void UISystem::process(float)
 
     m_controllerDownEvents.clear();
     m_controllerUpEvents.clear();
+
+    m_mouseButtonDownEvents.clear();
+    m_mouseButtonUpEvents.clear();
+    m_buttonDownEvents.clear();
+    m_buttonUpEvents.clear();
 }
 
 void UISystem::handleMessage(const Message&)
@@ -420,8 +481,8 @@ void UISystem::handleMessage(const Message&)
 
 std::uint32_t UISystem::addMouseButtonCallback(const MouseButtonCallback& cb)
 {
-    m_buttonCallbacks.push_back(cb);
-    return static_cast<std::uint32_t>(m_buttonCallbacks.size() - 1);
+    m_mouseButtonCallbacks.push_back(cb);
+    return static_cast<std::uint32_t>(m_mouseButtonCallbacks.size() - 1);
 }
 
 std::uint32_t UISystem::addMouseMoveCallback(const MovementCallback& cb)
@@ -452,6 +513,12 @@ std::uint32_t UISystem::addControllerCallback(const ControllerCallback& cb)
 {
     m_controllerCallbacks.push_back(cb);
     return static_cast<std::uint32_t>(m_controllerCallbacks.size() - 1);
+}
+
+std::uint32_t UISystem::addButtonCallback(const ButtonCallback& callback)
+{
+    m_buttonCallbacks.push_back(callback);
+    return static_cast<std::uint32_t>(m_buttonCallbacks.size() - 1);
 }
 
 void UISystem::selectInput(std::size_t idx)

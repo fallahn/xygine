@@ -32,12 +32,37 @@ source distribution.
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Event.hpp>
 
 #include <functional>
 #include <unordered_map>
 
 namespace xy
 {
+    /*!
+    \brief Unified button event
+    Allows a single callback to be assigned to multiple keyboard/controller
+    button events more easily, as opposed to multiple instances of the same
+    callback assigned to keyboard/mousebutton/controller button events
+    individually. This method should be prefered although individual callbacks
+    remain for backwards compatibility.
+    */
+    struct ButtonEvent final
+    {
+        sf::Event::EventType type = sf::Event::Count;
+
+        union
+        {
+            sf::Mouse::Button mouseButton;
+            sf::Keyboard::Key key;
+            struct
+            {
+                std::uint32_t joystickID;
+                std::uint32_t joyButton;
+            }joystick;
+        };
+    };
+
     /*!
     \brief Updates entities with UIHitBox components.
     Any entity with a UIHitBox component will be processed by this system,
@@ -64,6 +89,9 @@ namespace xy
         //passes in the entity for which the callback was triggered, followed
         //by the ID of the controller, and the ID of button which triggered the callback
         using ControllerCallback = std::function<void(Entity, std::uint32_t, std::uint32_t)>;
+        //passes in the entity for which the callback was triggered,
+        //and the ButtonEvent struct contaning the event data
+        using ButtonCallback = std::function<void(Entity, ButtonEvent)>;
 
         explicit UISystem(MessageBus&);
 
@@ -141,8 +169,16 @@ namespace xy
         std::uint32_t addControllerCallback(const ControllerCallback&);
 
         /*!
+        \brief Adds a ButtonEvent callback.
+        The returned id can be assigned to any UIInput::ButtonDown or UIInput::ButtonUp event and used
+        to handle keyboard, mouse button or controller input button events, by
+        first checking the ButtonEvent::type.
+        */
+        std::uint32_t addButtonCallback(const ButtonCallback&);
+
+        /*!
         \brief Input flags.
-        Use these with the callback bitmask to find which input triggered it
+        Use these with the MouseButton callback bitmask to find which input triggered it
         */
         enum Flags
         {
@@ -209,12 +245,13 @@ namespace xy
 
     private:
 
-        std::vector<MouseButtonCallback> m_buttonCallbacks;
+        std::vector<MouseButtonCallback> m_mouseButtonCallbacks;
         std::vector<MovementCallback> m_movementCallbacks;
         std::vector<MouseWheelCallback> m_wheelCallbacks;
         std::vector<KeyboardCallback> m_keyboardCallbacks;
         std::vector<SelectionChangedCallback> m_selectionCallbacks;
         std::vector<ControllerCallback> m_controllerCallbacks;
+        std::vector<ButtonCallback> m_buttonCallbacks;
 
         sf::Vector2f m_prevMousePosition;
         sf::Vector2f m_previousEventPosition; //in screen coords
@@ -243,6 +280,14 @@ namespace xy
         {
             Up = 0x1, Down = 0x2, Left = 0x4, Right = 0x8
         };
+
+        std::vector<ButtonEvent> m_buttonDownEvents;
+        std::vector<ButtonEvent> m_buttonUpEvents;
+
+        //these have to be kept separate so we can test
+        //that the mouse cursor is over a control
+        std::vector<ButtonEvent> m_mouseButtonDownEvents;
+        std::vector<ButtonEvent> m_mouseButtonUpEvents;
 
         bool m_joypadCursorActive;
 

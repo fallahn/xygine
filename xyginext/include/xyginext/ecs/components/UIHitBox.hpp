@@ -56,6 +56,9 @@ namespace xy
             Unselected,
             ControllerButtonDown,
             ControllerButtonUp,
+            ButtonDown,
+            ButtonUp,
+
             Count
         };
 
