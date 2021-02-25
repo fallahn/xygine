@@ -312,6 +312,9 @@
     <ClCompile Include="src\core\Log.cpp">
       <Filter>Source Files\core</Filter>
     </ClCompile>
+    <ClCompile Include="src\graphics\UILayout.cpp">
+      <Filter>Source Files\graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\xyginext\Config.hpp">
@@ -571,6 +574,9 @@
     </ClInclude>
     <ClInclude Include="include\xyginext\detail\NoResize.hpp">
       <Filter>Header Files\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xyginext\graphics\UILayout.hpp">
+      <Filter>Header Files\graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

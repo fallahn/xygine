@@ -250,6 +250,7 @@
     <ClCompile Include="src\graphics\postprocess\PostOldSchool.cpp" />
     <ClCompile Include="src\graphics\postprocess\PostProcess.cpp" />
     <ClCompile Include="src\graphics\SpriteSheet.cpp" />
+    <ClCompile Include="src\graphics\UILayout.cpp" />
     <ClCompile Include="src\imgui\Gui.cpp" />
     <ClCompile Include="src\imgui\GuiClient.cpp" />
     <ClCompile Include="src\imgui\imgui-SFML.cpp" />
@@ -331,6 +332,7 @@
     <ClInclude Include="include\xyginext\graphics\postprocess\OldSchool.hpp" />
     <ClInclude Include="include\xyginext\graphics\postprocess\PostProcess.hpp" />
     <ClInclude Include="include\xyginext\graphics\SpriteSheet.hpp" />
+    <ClInclude Include="include\xyginext\graphics\UILayout.hpp" />
     <ClInclude Include="include\xyginext\gui\Gui.hpp" />
     <ClInclude Include="include\xyginext\gui\GuiClient.hpp" />
     <ClInclude Include="include\xyginext\network\EnetClientImpl.hpp" />

@@ -53,6 +53,7 @@ set(PROJECT_SRC ${PROJECT_SRC}
 
   ${CMAKE_CURRENT_SOURCE_DIR}/graphics/BitmapFont.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/graphics/SpriteSheet.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/graphics/UILayout.cpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/graphics/postprocess/PostAntique.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/graphics/postprocess/PostBloom.cpp

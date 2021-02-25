@@ -31,7 +31,6 @@ set(PROJECT_SRC  ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/Camera.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/CommandTarget.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/Drawable.hpp
-  #${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/NetInterpolation.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/ParticleEmitter.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/QuadTreeItem.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/components/Sprite.hpp
@@ -44,7 +43,6 @@ set(PROJECT_SRC  ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/CallbackSystem.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/CameraSystem.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/CommandSystem.hpp
-  #${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/InterpolationSystem.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/ParticleSystem.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/QuadTree.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/RenderSystem.hpp
@@ -52,7 +50,9 @@ set(PROJECT_SRC  ${PROJECT_SRC}
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/SpriteSystem.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/ecs/systems/UISystem.hpp
 
+  ${CMAKE_CURRENT_SOURCE_DIR}/graphics/BitmapFont.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/graphics/SpriteSheet.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/graphics/UILayout.hpp
 
   ${CMAKE_CURRENT_SOURCE_DIR}/graphics/postprocess/Antique.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/graphics/postprocess/Bloom.hpp

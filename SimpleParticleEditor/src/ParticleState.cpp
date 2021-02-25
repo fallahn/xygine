@@ -47,6 +47,8 @@ source distribution.
 #include <SFML/Window/Event.hpp>
 #include <SFML/System/Err.hpp>
 
+#include <xyginext/graphics/UILayout.hpp>
+
 namespace
 {
     const float ItemWidth = 160.f;
