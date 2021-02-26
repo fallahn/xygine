@@ -204,6 +204,22 @@ namespace xy
         video modes are modified
         */
         void setWindowIcon(const std::string&);
+        
+        /*!
+        \brief Set the window icon from the given image.
+        The image is copied to the App instance, so does not need to be
+        resource managed.
+        \param img The image to use
+        */
+        void setWindowIcon(const sf::Image& img);
+
+        /*!
+        \brief Sets the window icon from an array of pixel data.
+        The data should be in RGBA format.
+        \param data Pointer to the icon data
+        \param size The size of the data array in bytes.
+        */
+        void setWindowIcon(const void* data, std::size_t size);
 
         /*!
         \brief Returns a reference to the current render window

@@ -396,6 +396,26 @@ void App::setWindowIcon(const std::string& path)
     }
 }
 
+void App::setWindowIcon(const sf::Image& img)
+{
+    m_windowIcon = img;
+    auto size = m_windowIcon.getSize();
+    m_renderWindow.setIcon(size.x, size.y, m_windowIcon.getPixelsPtr());
+}
+
+void App::setWindowIcon(const void* data, std::size_t size)
+{
+    if (m_windowIcon.loadFromMemory(data, size))
+    {
+        auto size = m_windowIcon.getSize();
+        m_renderWindow.setIcon(size.x, size.y, m_windowIcon.getPixelsPtr());
+    }
+    else
+    {
+        LogE << "Failed to load window icon from pixel data." << std::endl;
+    }
+}
+
 sf::RenderWindow* App::getRenderWindow()
 {
     //XY_ASSERT(renderWindow, "Window not created");

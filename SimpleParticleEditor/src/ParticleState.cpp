@@ -49,6 +49,9 @@ source distribution.
 
 #include <xyginext/graphics/UILayout.hpp>
 
+#include <iomanip>
+#include <fstream>
+
 namespace
 {
     const float ItemWidth = 160.f;
@@ -56,6 +59,34 @@ namespace
     const float WindowHeight = 480.f;
 
     const std::string cfgPath = xy::FileSystem::getConfigDirectory("xy_editor") + "particle.cfg";
+
+    void outputIcon(const sf::Image& img, const std::string& outPath)
+    {
+        std::stringstream ss;
+        ss << "#pragma once" << std::endl << std::endl;
+        ss << "static const unsigned char icon[] = {" << std::endl;
+        ss << std::showbase << std::internal << std::setfill('0');
+
+        auto i = 0;
+        for (auto y = 0; y < 16; ++y)
+        {
+            for (auto x = 0; x < 16; ++x)
+            {
+                ss << std::hex << (int)img.getPixelsPtr()[i++] << ", ";
+                ss << std::hex << (int)img.getPixelsPtr()[i++] << ", ";
+                ss << std::hex << (int)img.getPixelsPtr()[i++] << ", ";
+                ss << std::hex << (int)img.getPixelsPtr()[i++] << ", ";
+            }
+            ss << std::endl;
+        }
+
+        ss << "};";
+
+        std::ofstream file(outPath);
+        file << ss.rdbuf();
+        file.close();
+    }
+
 }
 
 ParticleState::ParticleState(xy::StateStack& ss, xy::State::Context ctx)
@@ -251,6 +282,26 @@ void ParticleState::setup()
             {
                 ImGui::MenuItem("Preferences...", nullptr, &m_showBackgroundPicker);
                 ImGui::MenuItem("Load Sprite", nullptr, &m_showSpriteBrowser);
+
+                //TODO move this to somewhere more relevant
+                if (ImGui::MenuItem("Create Icon File"))
+                {
+                    auto inFile = xy::FileSystem::openFileDialogue("", "png,jpg,bmp");
+                    sf::Image img;
+                    if (!inFile.empty()
+                        && img.loadFromFile(inFile))
+                    {
+                        auto outFile = xy::FileSystem::saveFileDialogue("", "hpp");
+                        if (!outFile.empty())
+                        {
+                            if (xy::FileSystem::getFileExtension(outFile) != ".hpp")
+                            {
+                                outFile += ".hpp";
+                            }
+                            outputIcon(img, outFile);
+                        }
+                    }
+                }
 
                 ImGui::EndMenu();
             }
