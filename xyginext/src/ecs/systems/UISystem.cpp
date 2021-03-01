@@ -627,7 +627,9 @@ void UISystem::updateGroupAssignments()
                     m_groups.insert(std::make_pair(input.m_group, std::vector<Entity>()));
                 }
 
-                //add to group
+                //add to group - this only really works
+                //if all inputs are 0 - if there are a mixed set
+                //of values then the order is unpredictable.
                 if (input.m_selectionIndex == 0)
                 {
                     //set a default order

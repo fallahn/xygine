@@ -64,6 +64,17 @@ bool UILayout::loadFromFile(const std::string& path)
 
     for (const auto* obj : validObjects)
     {
+        //check for default group value
+        std::uint32_t defaultGroup = 0u;
+        const auto& objProps = obj->getProperties();
+        for (const auto& prop : objProps)
+        {
+            if (prop.getName() == "group")
+            {
+                defaultGroup = static_cast<std::uint32_t>(prop.getValue<std::int32_t>());
+            }
+        }
+
         std::vector<const ConfigObject*> validElements;
         const auto& panelObjs = obj->getObjects();
 
@@ -85,6 +96,7 @@ bool UILayout::loadFromFile(const std::string& path)
             for (const auto* element : validElements)
             {
                 UIElement e;
+                e.groupID = defaultGroup;
 
                 const auto& properties = element->getProperties();
                 for (const auto& prop : properties)
@@ -105,6 +117,10 @@ bool UILayout::loadFromFile(const std::string& path)
                     else if (name == "label")
                     {
                         e.label = prop.getValue<std::string>();
+                    }
+                    else if (name == "index")
+                    {
+                        e.selectionIndex = static_cast<std::uint32_t>(prop.getValue<std::int32_t>());
                     }
                 }
 

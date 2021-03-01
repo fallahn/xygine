@@ -47,7 +47,8 @@ namespace xy
     {
         sf::Vector2f position; //!< The position of the element
         sf::FloatRect bounds; //!< Hitbox bounds of the element
-        std::uint32_t groupID = 0; //!< Group ID of the element
+        std::uint32_t groupID = 0; //!< Group ID of the element \see UIHitBox::setGroup()
+        std::uint32_t selectionIndex = 0; //!< Defines the order in which inputs are selected \see UIHitBox::setSelectionIndex()
         std::string label; //!< A string which can be used as a label with xy::Text
     };
 
@@ -69,11 +70,42 @@ namespace xy
         bounds = 0,0,120,20
         group = 0
         label = "some string"
+        index = 3
     }
     \endcode
 
     Position and bounds properties are required, but group and
     label properties are optional. Groups will default to 0.
+    Index properties a 1 based, and start from the beginning of
+    the current panel. When moving the selection left/right in
+    the UISystem the index defines in which order inputs are selected.
+    If all inputs in a panel have the value 0, or no index property
+    then the selection order is that which the inputs are added
+    to the current panel.
+
+    Panels my also contain a 'group' property to which any contained
+    inputs will default. Inputs within a panel with a different
+    group ID will override the panel ID value.
+
+    \begincode
+    panel <panel_name>
+    {
+        group = 1
+
+        input <name>
+        {
+            position = 0,20
+            bounds = 0,0, 50, 12
+        }
+
+        input <other_name>
+        {
+            position = 60, 20
+            bounds= -10, -10, 100, 20
+            group = 4
+        }
+    }
+    \endcode
 
     UILayout files are useful for quickly iterating on a UI design
     as well as creating UI layouts with a graphical tool/editor.
