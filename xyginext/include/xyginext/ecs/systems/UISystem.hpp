@@ -101,14 +101,14 @@ namespace xy
         void handleEvent(const sf::Event&);
 
         /*!
-        \brief Performs processing
-        */
-        void process(float) override;
-
-        /*!
         \brief Message handler
         */
         void handleMessage(const Message&) override;
+
+        /*!
+        \brief Performs processing
+        */
+        void process(float) override;
 
         /*!
         \brief Adds a mouse button event callback.

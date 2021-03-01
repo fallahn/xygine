@@ -272,6 +272,11 @@ void UISystem::handleEvent(const sf::Event& evt)
     }
 }
 
+void UISystem::handleMessage(const Message&)
+{
+
+}
+
 void UISystem::process(float)
 {    
     //parse any controller events
@@ -365,10 +370,13 @@ void UISystem::process(float)
                 input.active = true;
                 m_movementCallbacks[input.callbacks[UIHitBox::MouseEnter]](e, m_movementDelta);
 
-                //update selection
-                unselect(m_selectedIndex);
-                m_selectedIndex = currentIndex;
-                select(m_selectedIndex);
+                //update selection - don't fire if this is already selected
+                if (currentIndex != m_selectedIndex)
+                {
+                    unselect(m_selectedIndex);
+                    m_selectedIndex = currentIndex;
+                    select(m_selectedIndex);
+                }
             }
 
             if (Util::Vector::lengthSquared(m_movementDelta) > 0)
@@ -472,11 +480,6 @@ void UISystem::process(float)
     m_mouseButtonUpEvents.clear();
     m_buttonDownEvents.clear();
     m_buttonUpEvents.clear();
-}
-
-void UISystem::handleMessage(const Message&)
-{
-
 }
 
 std::uint32_t UISystem::addMouseButtonCallback(const MouseButtonCallback& cb)
