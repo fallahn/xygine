@@ -633,6 +633,8 @@ void RenderDrawLists(ImDrawData* draw_data)
     glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
     glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &last_element_array_buffer);
 #else
+    GLint last_texture = 0;
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
     glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
 #endif
 
@@ -695,6 +697,8 @@ void RenderDrawLists(ImDrawData* draw_data)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, last_element_array_buffer);
     glDisable(GL_SCISSOR_TEST);
 #else
+    glBindTexture(GL_TEXTURE_2D, last_texture);
+    glDisable(GL_SCISSOR_TEST);
     glPopAttrib();
 #endif
     //glViewport(oldView[0], oldView[1], oldView[2], oldView[3]);
