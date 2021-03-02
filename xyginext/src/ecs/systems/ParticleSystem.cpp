@@ -343,7 +343,8 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates) const
     //care when setting custom shaders
     if (m_visible)
     {
-        rt.pushGLStates();
+        //rt.pushGLStates();
+        rt.resetGLStates();
 
         const auto& view = rt.getView();
         sf::FloatRect viewableArea(view.getCenter() - (view.getSize() / 2.f), view.getSize());
@@ -405,11 +406,14 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates) const
             }
         }
 
+        glCheck(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+
         sf::Shader::bind(nullptr);
+        sf::Texture::bind(nullptr);
 
         glCheck(glDisable(GL_PROGRAM_POINT_SIZE));
         glCheck(glDisable(GL_POINT_SPRITE));
 
-        rt.popGLStates();
+        //rt.popGLStates();
     }
 }

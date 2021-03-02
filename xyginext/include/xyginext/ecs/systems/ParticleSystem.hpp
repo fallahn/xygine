@@ -67,7 +67,7 @@ namespace xy
         \brief Disables rendering the particle system.
         Useful for multi-pass effects where particles should be omitted
         */
-        void setVisisble(bool visible) { m_visible = visible; }
+        void setVisible(bool visible) { m_visible = visible; }
 
     private:
 
