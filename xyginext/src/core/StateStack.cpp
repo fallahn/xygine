@@ -147,7 +147,7 @@ sf::View StateStack::updateView()
 State::Ptr StateStack::createState(StateID id)
 {
     auto result = m_factories.find(id);
-    XY_ASSERT(result != m_factories.end(), "state factory is empty");
+    XY_ASSERT(result != m_factories.end(), std::to_string(id) + ": state not found (not registered?)");
 
     return result->second();
 }
