@@ -1,5 +1,5 @@
 /*********************************************************************
-(c) Matt Marchant 2017 - 2018
+(c) Matt Marchant 2017 - 2021
 http://trederia.blogspot.com
 
 xygineXT - Zlib license.
@@ -243,7 +243,7 @@ PhysicsObjects.
 class PhysicsSystem final : public xy::System
 {
 public:
-    explicit PhysicsSystem(xy::MessageBus&);
+    explicit PhysicsSystem(xy::MessageBus&, sf::Vector2f gravity = { 0.f,0.f });
     ~PhysicsSystem();
 
     void process(float) override;
@@ -263,10 +263,37 @@ public:
     */
     void removeObject(PhysicsObject&);
 
+    /*!
+    \brief Creates a pivot constraint between two given entities.
+    Entities will freely rotate around the given point.
+    \param objectA The entity to which the first PhysicsObject belongs
+    \param objectB The entity to which the second PhysicsObject belongs
+    \param position World position of the constraint
+    \returns A pointer to the chipmunk constraint created
+    */
+    cpConstraint* addPivotConstraint(xy::Entity objectA, xy::Entity objectB, sf::Vector2f position);
+
+    /*!
+    \brief Creates a simple motor constraint between two bodies
+    \param objectA The entity to which the first PhysicsObject belongs
+    \param objectB The entity to which the second PhysicsObject belongs
+    \param rate Initial rotation rate
+    \returns A pointer to the chipmunk constraint created
+    */
+    cpConstraint* addMotorConstraint(xy::Entity objectA, xy::Entity objectB, float rate);
+
     void onEntityRemoved(xy::Entity) override;
 
 private:
     cpSpace* m_space;
+
+    struct ConstraintPair final
+    {
+        cpConstraint* constraint;
+        xy::Entity a;
+        xy::Entity b;
+    };
+    std::vector<ConstraintPair> m_constraints;
 
     friend class PhysicsObject;
 };

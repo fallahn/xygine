@@ -1,5 +1,5 @@
 /*********************************************************************
-(c) Matt Marchant 2017 - 2018
+(c) Matt Marchant 2017 - 2021
 http://trederia.blogspot.com
 
 xygineXT - Zlib license.
@@ -29,17 +29,17 @@ source distribution.
 
 #include <xyginext/ecs/components/Transform.hpp>
 
-PhysicsSystem::PhysicsSystem(xy::MessageBus& mb)
+PhysicsSystem::PhysicsSystem(xy::MessageBus& mb, sf::Vector2f gravity)
     : xy::System(mb, typeid(PhysicsSystem)),
     m_space     (nullptr)
 {
     requireComponent<PhysicsObject>();
     requireComponent<xy::Transform>();
 
-    auto gravity = cpv(0.f, -99.f);
+    auto grav = cpv(Convert::toPhysFloat(gravity.x), Convert::toPhysFloat(gravity.y));
 
     m_space = cpSpaceNew();
-    cpSpaceSetGravity(m_space, gravity);
+    cpSpaceSetGravity(m_space, grav);
     cpSpaceSetSleepTimeThreshold(m_space, 1.0);
 }
 
@@ -47,6 +47,11 @@ PhysicsSystem::~PhysicsSystem()
 {
     if (m_space)
     {
+        for (const auto& c : m_constraints)
+        {
+            cpSpaceRemoveConstraint(m_space, c.constraint);
+        }
+
         auto& entities = getEntities();
         for (auto entity : entities)
         {
@@ -118,7 +123,56 @@ void PhysicsSystem::removeObject(PhysicsObject& obj)
     obj.m_system = nullptr;
 }
 
+cpConstraint* PhysicsSystem::addPivotConstraint(xy::Entity objectA, xy::Entity objectB, sf::Vector2f position)
+{
+    XY_ASSERT(objectA.isValid() && objectB.isValid(), "Invalid object");
+    XY_ASSERT(objectA.hasComponent<PhysicsObject>() && objectB.hasComponent<PhysicsObject>(), "Requires physics object component");
+
+    auto* bodyA = objectA.getComponent<PhysicsObject>().getBody();
+    auto* bodyB = objectB.getComponent<PhysicsObject>().getBody();
+
+    ConstraintPair cp;
+    cp.a = objectA;
+    cp.b = objectB;
+    cp.constraint = cpSpaceAddConstraint(m_space, cpPivotJointNew(bodyA, bodyB, Convert::toPhysVec(position)));
+
+    m_constraints.push_back(cp);
+    return cp.constraint;
+}
+
+cpConstraint* PhysicsSystem::addMotorConstraint(xy::Entity objectA, xy::Entity objectB, float rate)
+{
+    XY_ASSERT(objectA.isValid() && objectB.isValid(), "Invalid object");
+    XY_ASSERT(objectA.hasComponent<PhysicsObject>() && objectB.hasComponent<PhysicsObject>(), "Requires physics object component");
+
+    auto* bodyA = objectA.getComponent<PhysicsObject>().getBody();
+    auto* bodyB = objectB.getComponent<PhysicsObject>().getBody();
+
+    ConstraintPair cp;
+    cp.a = objectA;
+    cp.b = objectB;
+    cp.constraint = cpSpaceAddConstraint(m_space, cpSimpleMotorNew(bodyA, bodyB, Convert::toRadians(rate)));
+
+    m_constraints.push_back(cp);
+    return cp.constraint;
+}
+
 void PhysicsSystem::onEntityRemoved(xy::Entity entity)
 {
+    //remove all constraints which use this entity
+    m_constraints.erase(std::remove_if(
+    m_constraints.begin(), m_constraints.end(),
+        [&,entity](const ConstraintPair& cp)
+        {
+            if (cp.a == entity
+                || cp.b == entity)
+            {
+                cpSpaceRemoveConstraint(m_space, cp.constraint);
+                return true;
+            }
+            return false;
+        }
+    ), m_constraints.end());
+
     removeObject(entity.getComponent<PhysicsObject>());
 }

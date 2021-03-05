@@ -80,23 +80,13 @@ PhysicsObject& PhysicsObject::operator=(PhysicsObject&& other) noexcept
 {
     if (&other != this)
     {
-        m_type = other.m_type;
-        other.m_type = Type::None;
-
-        m_body = other.m_body;
-        other.m_body = nullptr;
-
-        m_shapeCount = other.m_shapeCount;
-        other.m_shapeCount = 0;
-
-        for (auto i = 0u; i < m_shapes.size(); ++i)
-        {
-            m_shapes[i] = other.m_shapes[i];
-            other.m_shapes[i] = nullptr;
-        }
-
-        m_system = other.m_system;
-        other.m_system = nullptr;
+        //swap these so if this object already has properties
+        //set the ctor of the other object tidies up properly
+        std::swap(m_type, other.m_type);
+        std::swap(m_body, other.m_body);
+        std::swap(m_shapeCount, other.m_shapeCount);
+        std::swap(m_shapes, other.m_shapes);
+        std::swap(m_system, other.m_system);
     }
 
     return *this;
