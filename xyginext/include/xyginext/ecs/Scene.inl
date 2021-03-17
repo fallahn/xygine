@@ -94,7 +94,7 @@ T& Scene::addPostProcess(Args&&... args)
     auto size = App::getRenderWindow()->getSize();
     if (m_postEffects.empty())
     {
-        if (m_sceneBuffer.create(size.x, size.y))
+        if (m_sceneBuffer.create(size.x, size.y, sf::ContextSettings(24)))
         {
             //set render path
             currentRenderPath = std::bind(&Scene::postRenderPath, this, std::placeholders::_1, std::placeholders::_2);

@@ -25,6 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#include "../detail/GLCheck.hpp"
+
 #include "xyginext/core/App.hpp"
 #include "xyginext/ecs/Scene.hpp"
 #include "xyginext/ecs/components/Camera.hpp"
@@ -137,7 +139,7 @@ void Scene::setPostEnabled(bool enabled)
         
         XY_ASSERT(App::getRenderWindow(), "no valid window");
         auto size = App::getRenderWindow()->getSize();
-        m_sceneBuffer.create(size.x, size.y, sf::ContextSettings(32));
+        m_sceneBuffer.create(size.x, size.y, sf::ContextSettings(24));
         for (auto& p : m_postEffects) p->resizeBuffer(size.x, size.y);
     }
     else
@@ -211,7 +213,7 @@ void Scene::forwardMessage(const Message& msg)
             //update post effect buffers if they exist
             if (m_sceneBuffer.getTexture().getNativeHandle() > 0)
             {
-                m_sceneBuffer.create(data.width, data.height);
+                m_sceneBuffer.create(data.width, data.height, sf::ContextSettings(24));
 
                 for (auto& b : m_postBuffers)
                 {
@@ -239,7 +241,11 @@ void Scene::postRenderPath(sf::RenderTarget& rt, sf::RenderStates states)
     //this needs to be done for each camera
     //in this loop - this doesn't affect the
     //default render path, however
-    m_sceneBuffer.clear(sf::Color::Transparent);
+    //m_sceneBuffer.clear(sf::Color::Transparent);
+    m_sceneBuffer.setActive();
+    glCheck(glClearColor(0.f, 0.f, 0.f, 0.f));
+    glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
     for (auto r : m_drawables)
     {
         m_sceneBuffer.draw(*r, states);
