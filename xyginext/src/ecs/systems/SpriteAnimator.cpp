@@ -51,6 +51,7 @@ void SpriteAnimator::process(float dt)
         {
             auto& sprite = entity.getComponent<Sprite>();
             if (sprite.m_animations.empty() ||
+                animation.m_id >= sprite.m_animations.size() || //TODO it'd be more optimal to range check this when playing the animation, but we can't read the animation size from there
                 sprite.m_animations[animation.m_id].frames.empty())
             {
                 animation.stop();
