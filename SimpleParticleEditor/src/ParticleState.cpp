@@ -586,9 +586,8 @@ void ParticleState::setup()
                             }
                         }
                     }
-
-                    ImGui::End();
                 }
+                ImGui::End();
             }
         });
 
