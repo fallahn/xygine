@@ -106,7 +106,7 @@ void xy::RenderSystem::onEntityAdded(xy::Entity)
 void xy::RenderSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     auto view = rt.getView();
-    sf::FloatRect viewableArea((view.getCenter() - (view.getSize() / 2.f)) - m_cullingBorder, view.getSize() + m_cullingBorder);
+    sf::FloatRect viewableArea((view.getCenter() - (view.getSize() / 2.f)) - m_cullingBorder, view.getSize() + (m_cullingBorder * 2.f));
 
     m_lastDrawCount = 0;
 
