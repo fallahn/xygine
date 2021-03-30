@@ -130,6 +130,7 @@ void Text::setBlendMode(sf::BlendMode)
 
 const sf::Font* Text::getFont() const
 {
+    XY_ASSERT(m_font, "Font not set");
     return m_font;
 }
 

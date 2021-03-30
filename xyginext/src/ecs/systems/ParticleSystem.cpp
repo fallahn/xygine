@@ -210,7 +210,7 @@ void ParticleSystem::process(float dt)
                     p.rotation = (settings.randomInitialRotation) ?  Util::Random::value(-Util::Const::TAU, Util::Const::TAU) : rotation * xy::Util::Const::degToRad;
                     p.scale = settings.size;
                     p.acceleration = settings.acceleration;
-                    p.frameID = settings.useRandomFrame ? xy::Util::Random::value(0, static_cast<std::int32_t>(settings.frameCount) - 1) : 0;
+                    p.frameID = (settings.useRandomFrame && settings.frameCount > 1) ? xy::Util::Random::value(0, static_cast<std::int32_t>(settings.frameCount) - 1) : 0;
                     p.frameTime = 0.f;
 
                     //spawn particle in world position
