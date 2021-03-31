@@ -39,9 +39,10 @@ source distribution.
 
 using namespace xy;
 
-AudioSystem::AudioSystem(MessageBus& mb)
-    : System(mb, typeid(AudioSystem)),
-    m_volume(1.f)
+AudioSystem::AudioSystem(MessageBus& mb, bool updateListener)
+    : System        (mb, typeid(AudioSystem)),
+    m_volume        (1.f),
+    m_updateListener(updateListener)
 {
     requireComponent<AudioEmitter>();
     requireComponent<Transform>();
@@ -66,13 +67,17 @@ void AudioSystem::handleMessage(const xy::Message& msg)
 
 void AudioSystem::process(float)
 {
-    //set listener position to active camera
-    auto listenerEnt = getScene()->getActiveListener();
-    auto listenerPos = listenerEnt.getComponent<xy::Transform>().getWorldTransform().transformPoint({});
-    const auto& listener = listenerEnt.getComponent<AudioListener>();
+    if (m_updateListener)
+    {
+        //set listener position to active camera
+        auto listenerEnt = getScene()->getActiveListener();
+        auto listenerPos = listenerEnt.getComponent<xy::Transform>().getWorldTransform().transformPoint({});
+        const auto& listener = listenerEnt.getComponent<AudioListener>();
 
-    sf::Listener::setPosition({ listenerPos.x, listenerPos.y, listener.m_depth });
-    sf::Listener::setGlobalVolume(listener.m_volume * AudioMixer::getMasterVolume() * 100.f);
+        sf::Listener::setPosition({ listenerPos.x, listenerPos.y, listener.m_depth });
+        sf::Listener::setGlobalVolume(listener.m_volume * AudioMixer::getMasterVolume() * 100.f);
+    }
+
 
     auto& entities = getEntities();
     for (auto& entity : entities)

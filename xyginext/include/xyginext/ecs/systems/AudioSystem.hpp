@@ -35,15 +35,24 @@ namespace xy
 {
 	/*!
 	\brief Audio System.
-	While AudioEmitter components will still be audible without and active AudioSystem,
-	and AudioSystem instance is required in the scene to update positional audio, as well
-	as apply the values stored in the AudioMixer. It is, therefore, recommended that any
-	scene which employs AudioEmitter components also has an AudioSystem.
+	AudioSystem instance is required in the scene to update positional audio, as well
+	as apply the values stored in the AudioMixer. Positional audio is applied to both
+    entities with an AudioEmitter component, as well as optionally updating the
+    Listener property of the Scene to which this system is added.
 	*/
     class XY_EXPORT_API AudioSystem final : public System
     {
     public:
-        explicit AudioSystem(MessageBus&);
+        /*!
+        \brief Constructor
+        \param MessageBus A reference to the active message bus
+        \param updateListener In cases where muliple AudioSystems are
+        active, eg in both a Scene which renders a game, and another
+        Scene which renders the UI, it may not be desirable for the
+        AudioSystem instance in the UI Scene to overwrite the Listener
+        properties, in which case this should be set false. Defaults to true.
+        */
+        explicit AudioSystem(MessageBus& messageBus, bool updateListener = true);
 
         void handleMessage(const xy::Message&) override;
 
@@ -76,6 +85,7 @@ namespace xy
         sf::SoundBuffer m_dummyBuffer;
 
         float m_volume;
+        bool m_updateListener;
 
         void onEntityRemoved(xy::Entity) override;
     };
