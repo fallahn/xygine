@@ -1,7 +1,7 @@
 xygineXT
 --------
 
-[![Build Status](https://travis-ci.org/fallahn/xygine.svg?branch=master)](https://travis-ci.org/fallahn/xygine)
+[![Build Status](https://travis-ci.org/fallahn/xygine.svg?branch=master)](https://travis-ci.org/fallahn/xygine) ![Github Actions](https://github.com/fallahn/xygine/actions/workflows/cmake.yml/badge.svg)
 
 
 The next iteration of xygine....
@@ -95,7 +95,7 @@ https://github.com/eliasdaler/imgui-sfml
 
 
 /*********************************************************************  
-(c) Matt Marchant & contributors 2017 - 2019  
+(c) Matt Marchant & contributors 2017 - 2021  
 http://trederia.blogspot.com  
 
 xygineXT - Zlib license.  
