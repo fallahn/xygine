@@ -1,6 +1,6 @@
 name: CMake
 
-on: [push]
+on: [push, pull_request]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -12,12 +12,26 @@ jobs:
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-latest
+    name: ${{ matrix.platform.name }} ${{ matrix.config.name }}
+    runs-on: ${{ matrix.platform.os }}
 
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: Windows VS2019, os: windows-latest }
+        - { name: Linux GCC,      os: ubuntu-latest  }
+        - { name: Linux Clang,    os: ubuntu-latest, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
+        - { name: MacOS XCode,    os: macos-latest   }
+        config:
+        - { name: Shared, flags: -DBUILD_SHARED_LIBS=ON }
+        - { name: Static, flags: -DBUILD_SHARED_LIBS=OFF }
+        
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install Dependencies
+    - name: Install linux Dependencies
+      if: runner.os == 'Linux'
       run: sudo apt-get install libgtk-3-dev libenet-dev libxrandr-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev
 
     - name: Create Build Environment
