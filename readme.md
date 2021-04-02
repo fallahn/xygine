@@ -1,7 +1,7 @@
 xygineXT
 --------
 
-[![Build Status](https://travis-ci.org/fallahn/xygine.svg?branch=master)](https://travis-ci.org/fallahn/xygine) ![Github Actions](https://github.com/fallahn/xygine/actions/workflows/cmake.yml/badge.svg)
+[![Github Actions](https://github.com/fallahn/xygine/actions/workflows/cmake.yml/badge.svg)](https://github.com/fallahn/xygine/actions) 
 
 
 The next iteration of xygine....
