@@ -32,10 +32,12 @@ source distribution.
 #include <xyginext/ecs/components/Camera.hpp>
 #include <xyginext/ecs/components/Callback.hpp>
 #include <xyginext/ecs/components/Drawable.hpp>
+#include <xyginext/ecs/components/SpriteAnimation.hpp>
 
 #include <xyginext/ecs/systems/ParticleSystem.hpp>
 #include <xyginext/ecs/systems/CallbackSystem.hpp>
 #include <xyginext/ecs/systems/SpriteSystem.hpp>
+#include <xyginext/ecs/systems/SpriteAnimator.hpp>
 #include <xyginext/ecs/systems/CameraSystem.hpp>
 #include <xyginext/ecs/systems/RenderSystem.hpp>
 
@@ -159,6 +161,7 @@ void ParticleState::setup()
 
     m_scene.addSystem<xy::CallbackSystem>(mb);
     m_scene.addSystem<xy::SpriteSystem>(mb);
+    m_scene.addSystem<xy::SpriteAnimator>(mb);
     m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
@@ -168,6 +171,7 @@ void ParticleState::setup()
     //m_sprite.getComponent<xy::Transform>().move(100.f, 0.f);
     m_sprite.addComponent<xy::Drawable>();
     m_sprite.addComponent<xy::Sprite>();
+    m_sprite.addComponent<xy::SpriteAnimation>();
 
     auto entity = m_scene.createEntity();
     entity.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
@@ -585,6 +589,57 @@ void ParticleState::setup()
                                 setSprite(sprite);
                             }
                         }
+
+                        ImGui::Separator();
+                        ImGui::NewLine();
+                        ImGui::Text("Transform");
+
+                        auto bounds = m_sprite.getComponent<xy::Sprite>().getTextureBounds();
+
+                        if (bounds.width > 0 && bounds.height > 0)
+                        {
+                            auto origin = m_sprite.getComponent<xy::Transform>().getOrigin();
+
+                            if (ImGui::SliderFloat("Origin x", &origin.x, 0.f, bounds.width))
+                            {
+                                m_sprite.getComponent<xy::Transform>().setOrigin(origin);
+                            }
+
+                            if (ImGui::SliderFloat("Origin Y", &origin.y, 0.f, bounds.height))
+                            {
+                                m_sprite.getComponent<xy::Transform>().setOrigin(origin);
+                            }
+                        }
+
+                        auto scale = m_sprite.getComponent<xy::Transform>().getScale();
+
+                        if (ImGui::SliderFloat("Scale x", &scale.x, 0.1f, 10.f))
+                        {
+                            m_sprite.getComponent<xy::Transform>().setScale(scale);
+                        }
+
+                        if (ImGui::SliderFloat("Scale Y", &scale.y, 0.1f, 10.f))
+                        {
+                            m_sprite.getComponent<xy::Transform>().setScale(scale);
+                        }
+
+                        if (auto animCount = m_sprite.getComponent<xy::Sprite>().getAnimationCount(); animCount > 0)
+                        {
+                            ImGui::Separator();
+                            ImGui::NewLine();
+                            ImGui::Text("Animations");
+
+                            //TODO be less lazy about this
+                            for (auto i = 0u; i < animCount; ++i)
+                            {
+                                auto label = "Play##" + std::to_string(i);
+
+                                if (ImGui::Button(label.c_str()))
+                                {
+                                    m_sprite.getComponent<xy::SpriteAnimation>().play(i);
+                                }
+                            }
+                        }
                     }
                 }
                 ImGui::End();
@@ -615,11 +670,13 @@ void ParticleState::setup()
 
 void ParticleState::setSprite(const xy::Sprite& sprite)
 {
+    m_sprite.getComponent<xy::Transform>().setOrigin(0.f, 0.f);
+    m_sprite.getComponent<xy::Transform>().setScale(1.f, 1.f);
+    m_sprite.getComponent<xy::SpriteAnimation>().stop();
+
     m_sprite.getComponent<xy::Sprite>() = sprite;
     auto bounds = sprite.getTextureBounds();
     m_scene.getActiveCamera().getComponent<xy::Transform>().setPosition((xy::DefaultSceneSize / 2.f) + sf::Vector2f(bounds.width / 2.f, bounds.height / 2.f));
-    //m_sprite.getComponent<xy::Transform>().setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-
 
     //need to correct the texture path
     auto spritePath = m_spriteSheet.getTexturePath();
