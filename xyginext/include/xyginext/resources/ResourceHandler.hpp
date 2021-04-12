@@ -60,7 +60,7 @@ namespace xy
     Then they can use the handle to retreive the resource when required
      
     */
-    class XY_EXPORT_API ResourceHandler
+    class XY_API ResourceHandler
     {
     public:
         

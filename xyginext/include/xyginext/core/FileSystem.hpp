@@ -39,7 +39,7 @@ namespace xy
     /*!
     \brief Utilities for manipulating the current file system
     */
-    class XY_EXPORT_API FileSystem final
+    class XY_API FileSystem final
     {
     public:
         /*!

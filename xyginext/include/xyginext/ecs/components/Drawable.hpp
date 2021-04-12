@@ -50,7 +50,7 @@ namespace xy
     and custom drawable types in a single drawing pass with variable depth. A Scene
     must have a RenderSystem added to it to enable any drawable entities.
     */
-    class XY_EXPORT_API Drawable final : public sf::Drawable
+    class XY_API Drawable final : public sf::Drawable
     {
     public:
         Drawable();

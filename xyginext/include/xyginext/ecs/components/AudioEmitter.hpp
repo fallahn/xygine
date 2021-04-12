@@ -56,7 +56,7 @@ namespace xy
     (usually the active scene camera), unless it has been set
     to absolute positioning. Requires a scene to have an AudioSystem.
     */
-    class XY_EXPORT_API AudioEmitter final
+    class XY_API AudioEmitter final
     {
     public:
         enum Status

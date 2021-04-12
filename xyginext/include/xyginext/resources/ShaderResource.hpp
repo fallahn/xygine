@@ -47,7 +47,7 @@ namespace xy
     /*!
     \brief Specialised resource manager for shaders
     */
-    class XY_EXPORT_API ShaderResource final
+    class XY_API ShaderResource final
     {
     public:
 

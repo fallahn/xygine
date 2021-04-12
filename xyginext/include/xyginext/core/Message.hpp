@@ -43,7 +43,7 @@ namespace xy
     Message::Type::Count
     \see MessageBus
     */
-    class XY_EXPORT_API Message final
+    class XY_API Message final
     {
         friend class MessageBus;
     public:

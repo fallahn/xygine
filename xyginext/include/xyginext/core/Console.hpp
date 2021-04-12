@@ -49,7 +49,7 @@ namespace xy
     The Console functions are not threadsafe - appropriate care
     should be taken when using the Console from multiple threads.
     */
-    class XY_EXPORT_API Console final
+    class XY_API Console final
     {
     public:
         /*!

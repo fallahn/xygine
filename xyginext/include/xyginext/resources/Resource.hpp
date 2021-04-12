@@ -53,7 +53,7 @@ namespace xy
     shader is loaded at a time.
     */
     template <class T>
-    class XY_EXPORT_API BaseResource
+    class BaseResource
     {
     public:
         BaseResource() = default;
@@ -111,7 +111,7 @@ namespace xy
     /*!
     \brief Resource manager for textures
     */
-    class XY_EXPORT_API TextureResource final : public BaseResource<sf::Texture>
+    class XY_API TextureResource final : public BaseResource<sf::Texture>
     {
     public:
         void setFallbackColour(const sf::Color colour) { m_fallbackColour = colour; }
@@ -133,7 +133,7 @@ namespace xy
     /*!
     \brief Resource manager for sf::Image types
     */
-    class XY_EXPORT_API ImageResource final : public BaseResource<sf::Image>
+    class XY_API ImageResource final : public BaseResource<sf::Image>
     {
         /*!
         \see BaseResource
@@ -149,7 +149,7 @@ namespace xy
     /*!
     \brief Resource manager for Fonts
     */
-    class XY_EXPORT_API FontResource final : public BaseResource<sf::Font>
+    class XY_API FontResource final : public BaseResource<sf::Font>
     {
     public:
         FontResource();
@@ -160,7 +160,7 @@ namespace xy
     /*!
     \brief Resource manager for sound files
     */
-    class XY_EXPORT_API AudioResource final : public BaseResource<sf::SoundBuffer>
+    class XY_API AudioResource final : public BaseResource<sf::SoundBuffer>
     {
         std::unique_ptr<sf::SoundBuffer> errorHandle() override
         {

@@ -69,7 +69,7 @@ namespace xy
     which detects user input and activates the appropriate callback as necessary.
     \see UIHitBox
     */
-    class XY_EXPORT_API UISystem final : public System
+    class XY_API UISystem final : public System
     {
     public:
         //passes in the entity for whom the callback was triggered and a copy of the flags

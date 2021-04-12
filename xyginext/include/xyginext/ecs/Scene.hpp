@@ -58,7 +58,7 @@ namespace xy
     entities else existing entities will not be processed by new systems.
     */
 
-    class XY_EXPORT_API Scene final : public sf::Drawable, public xy::GuiClient
+    class XY_API Scene final : public sf::Drawable, public xy::GuiClient
     {
     public:
         /*!

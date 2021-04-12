@@ -37,7 +37,7 @@ namespace xy
     \brief Antique Post process effect.
     Creates an old 'filmic' look, with dust, jitter and desaturation.
     */
-    class XY_EXPORT_API PostAntique final : public xy::PostProcess
+    class XY_API PostAntique final : public xy::PostProcess
     {
     public:
         PostAntique();

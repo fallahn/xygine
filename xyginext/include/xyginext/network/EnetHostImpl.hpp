@@ -38,7 +38,7 @@ namespace xy
     \brief Default implementation of the networking library.
     This should never be used directly.
     */
-    class XY_EXPORT_API EnetHostImpl final : public NetHostImpl
+    class XY_API EnetHostImpl final : public NetHostImpl
     {
     public:
         EnetHostImpl();

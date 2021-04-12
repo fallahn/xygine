@@ -71,7 +71,7 @@ namespace xy
     /*!
     \brief Settings used by a particle emitter to initialise new particles
     */
-    struct XY_EXPORT_API EmitterSettings final
+    struct XY_API EmitterSettings final
     {
         std::string texturePath;
 
@@ -123,7 +123,7 @@ namespace xy
     \brief Particle Emitter.
     Component struct used to emit particles from an entity
     */
-    class XY_EXPORT_API ParticleEmitter final
+    class XY_API ParticleEmitter final
     {
     public:
         ParticleEmitter();

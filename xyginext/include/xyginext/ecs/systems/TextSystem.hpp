@@ -40,7 +40,7 @@ namespace xy
     appears above other drawables. This should be the first
     thing to check if text appears 'invisible'.
     */
-    class XY_EXPORT_API TextSystem final : public xy::System
+    class XY_API TextSystem final : public xy::System
     {
     public:
         explicit TextSystem(xy::MessageBus&);

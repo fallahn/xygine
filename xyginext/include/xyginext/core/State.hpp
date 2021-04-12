@@ -60,7 +60,7 @@ namespace xy
     data required to display different states such as the main menu, pause
     screen, or game state
     */
-    class XY_EXPORT_API State
+    class XY_API State
     {
     public:
         using Ptr = std::unique_ptr<State>;
@@ -75,7 +75,7 @@ namespace xy
         A state's context can be retreived at any time with getContext()
         so that the App properties or RenderWindow can easily be accessed
         */
-        struct XY_EXPORT_API Context
+        struct XY_API Context
         {
             Context(sf::RenderWindow& renderWindow, App& app);
             sf::RenderWindow& renderWindow;

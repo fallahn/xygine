@@ -39,7 +39,7 @@ namespace xy::Detail
     will have no effect), and will have the maximum memory pool size of 1024
     components allocated to them immediately.
     */
-    class XY_EXPORT_API NonResizeable
+    class XY_API NonResizeable
     {
     public: virtual ~NonResizeable() {};
     };

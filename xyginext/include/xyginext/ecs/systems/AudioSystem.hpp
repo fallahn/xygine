@@ -40,7 +40,7 @@ namespace xy
     entities with an AudioEmitter component, as well as optionally updating the
     Listener property of the Scene to which this system is added.
 	*/
-    class XY_EXPORT_API AudioSystem final : public System
+    class XY_API AudioSystem final : public System
     {
     public:
         /*!

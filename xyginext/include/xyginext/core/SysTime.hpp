@@ -39,13 +39,13 @@ namespace xy
     appropriate care should be taken when accessing the 
     time from multiple threads.
     */
-    class XY_EXPORT_API SysTime final
+    class XY_API SysTime final
     {
     public:
         /*!
         \brief Struct containing data/time information
         */
-        struct XY_EXPORT_API Data final
+        struct XY_API Data final
         {
             Data();
             Data(std::uint64_t); //!< Construct from epoch time

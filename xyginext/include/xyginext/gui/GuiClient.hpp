@@ -40,7 +40,7 @@ namespace xy
     the imgui renderer. This is usually used for debugging output or
     when creating tooling.
     */
-    class XY_EXPORT_API GuiClient
+    class XY_API GuiClient
     {
     public:
         GuiClient() = default;

@@ -53,7 +53,7 @@ namespace xy
     using the events it has observed to decide when new enemies should
     be spawned, where a player should restart and so on.
     */
-    class XY_EXPORT_API Director
+    class XY_API Director
     {
     public:
         Director();

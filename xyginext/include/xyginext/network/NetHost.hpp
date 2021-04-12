@@ -45,7 +45,7 @@ namespace xy
     Network hosts, or servers, can have multiple clients connected
     to them, via a reliable UDP stream.
     */
-    class XY_EXPORT_API NetHost final
+    class XY_API NetHost final
     {
     public:
         NetHost() = default;

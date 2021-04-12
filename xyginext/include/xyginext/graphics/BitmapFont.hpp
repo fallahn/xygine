@@ -49,7 +49,7 @@ namespace xy
     \see BitmapText
     */
 
-    class XY_EXPORT_API BitmapFont final
+    class XY_API BitmapFont final
     {
     public:
         BitmapFont();

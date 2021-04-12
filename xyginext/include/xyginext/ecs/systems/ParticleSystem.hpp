@@ -44,7 +44,7 @@ namespace xy
     Responsible for updating all ParticelEmitter components in the scene,
     and rendering the output.
     */
-    class XY_EXPORT_API ParticleSystem final : public xy::System, public sf::Drawable
+    class XY_API ParticleSystem final : public xy::System, public sf::Drawable
     {
     public:
         explicit ParticleSystem(xy::MessageBus&);

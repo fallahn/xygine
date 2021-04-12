@@ -35,7 +35,15 @@ source distribution.
 //windows compilers need specific (and different) keywords for export
 #define XY_EXPORT_API __declspec(dllexport)
 #define XY_IMPORT_API __declspec(dllimport)
+
+#ifdef BUILD_XY
+#define XY_API XY_EXPORT_API
 #define IMGUI_API __declspec(dllexport)
+#else
+#define XY_API XY_IMPORT_API
+#define IMGUI_API __declspec(dllimport)
+#endif //BUILD_XY
+
 
 //for vc compilers we also need to turn off this annoying C4251 warning
 #ifdef _MSC_VER

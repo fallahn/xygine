@@ -43,7 +43,7 @@ namespace xy
     noise and scanlines to try and recreate the overall effect of
     and old CRT type monitor
     */
-    class XY_EXPORT_API PostChromeAb final : public PostProcess
+    class XY_API PostChromeAb final : public PostProcess
     {
     public:
         /*!

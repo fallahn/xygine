@@ -65,7 +65,7 @@ namespace xy
     you should remain aware of the lifetime of the entity being
     handled, using Entity::isValid() or Entity::destroyed()
     */
-    class XY_EXPORT_API Entity final
+    class XY_API Entity final
     {
     public:
         using ID = std::uint32_t;
@@ -187,7 +187,7 @@ namespace xy
     /*!
     \brief Manages the relationship between an Entity and its components
     */
-    class XY_EXPORT_API EntityManager final
+    class XY_API EntityManager final
     {
     public:
         EntityManager(MessageBus&, ComponentManager&, std::size_t = 256);
@@ -287,4 +287,4 @@ namespace xy
 #include "EntityManager.inl"
 }
 
-XY_EXPORT_API bool operator < (const xy::Entity& l, const xy::Entity& r);
+XY_API bool operator < (const xy::Entity& l, const xy::Entity& r);

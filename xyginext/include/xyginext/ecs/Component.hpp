@@ -39,7 +39,7 @@ source distribution.
 
 namespace xy
 {
-    class XY_EXPORT_API ComponentManager final
+    class XY_API ComponentManager final
     {
     public:
 

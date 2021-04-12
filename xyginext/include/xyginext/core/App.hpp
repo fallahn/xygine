@@ -74,7 +74,7 @@ namespace xy
     event handling. All events and system messages are despatched
     from here so that they are available across the entire application.
     */
-    class XY_EXPORT_API App
+    class XY_API App
     {
     public:
 

@@ -87,7 +87,7 @@ namespace xy
             \param maxPoints maximum number of points to try generating
             \param engine Seeded random engine to use. Defaults to (non-threadsafe) instance seeded with current time
             */
-            XY_EXPORT_API std::vector<sf::Vector2f> poissonDiscDistribution(const sf::FloatRect& area, float minDist, std::size_t maxPoints, std::mt19937& engine = rndEngine);
+            XY_API std::vector<sf::Vector2f> poissonDiscDistribution(const sf::FloatRect& area, float minDist, std::size_t maxPoints, std::mt19937& engine = rndEngine);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace xy
     component will be actively partitioned an in QuadTree
     system which is added to the entities scene.
     */
-    class XY_EXPORT_API QuadTreeItem final
+    class XY_API QuadTreeItem final
     {
     public:
         /*!

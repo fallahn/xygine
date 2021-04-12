@@ -41,7 +41,7 @@ namespace xy
     of console commands which refer to specific instances of
     an object.
     */
-    class XY_EXPORT_API ConsoleClient
+    class XY_API ConsoleClient
     {
     public:
         ConsoleClient() = default;

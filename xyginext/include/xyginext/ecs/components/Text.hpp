@@ -59,7 +59,7 @@ namespace xy
     appears above other drawables. This should be the first
     thing to check if text appears 'invisible'.
     */
-    class XY_EXPORT_API Text final
+    class XY_API Text final
     {
     public:
         /*!

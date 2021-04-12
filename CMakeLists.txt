@@ -37,8 +37,12 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # disable deprecated warning in MSVC
+# enable correct import/export symbols in shared builds
 if(MSVC)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+  if(BUILD_SHARED_LIBS)
+    add_definitions(-DBUILD_XY)
+  endif()
 endif()
 
 # Apple requires some extra guff

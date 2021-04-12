@@ -42,7 +42,7 @@ namespace xy
     \brief Allows attaching a callback function to an entity.
     \see CallbackSystem
     */
-    struct XY_EXPORT_API Callback final : public Detail::NonResizeable
+    struct XY_API Callback final : public Detail::NonResizeable
     {
         bool active = false; //!< disabling callbacks when not in use can avoid unnecessary cache misses looking up callback functions
         CallbackFunction function;

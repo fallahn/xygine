@@ -53,7 +53,7 @@ namespace xy
 
     \see AudioEmitter::setChannel()
     */
-    class XY_EXPORT_API AudioMixer final
+    class XY_API AudioMixer final
     {
     public:
         /*!

@@ -41,7 +41,7 @@ namespace xy
     \brief Default networking library implmentation.
     This should never be used directly.
     */
-    class XY_EXPORT_API EnetClientImpl final : public NetClientImpl
+    class XY_API EnetClientImpl final : public NetClientImpl
     {
     public:
         EnetClientImpl();

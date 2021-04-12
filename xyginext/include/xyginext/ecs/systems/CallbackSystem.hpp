@@ -44,7 +44,7 @@ namespace xy
     or for rapid prototying of ideas that may or may not be expanded to a full
     system.
     */
-    class XY_EXPORT_API CallbackSystem final : public System
+    class XY_API CallbackSystem final : public System
     {
     public:
         explicit CallbackSystem(MessageBus&);

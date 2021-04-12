@@ -44,7 +44,7 @@ namespace xy
     /*!
     \brief Base class for all items loaded from a configuration file
     */
-    class XY_EXPORT_API ConfigItem
+    class XY_API ConfigItem
     {
     public:
         ConfigItem(const std::string& name);
@@ -72,7 +72,7 @@ namespace xy
     \brief Properties are a name / value pair which can only reside in 
     configuration objects.
     */
-    class XY_EXPORT_API ConfigProperty final : public ConfigItem
+    class XY_API ConfigProperty final : public ConfigItem
     {
         friend class ConfigObject;
     public:
@@ -112,7 +112,7 @@ namespace xy
     or configuration properties. All objects require a name,
     and may have an optional id as a string value.
     */
-    class XY_EXPORT_API ConfigObject final : public ConfigItem
+    class XY_API ConfigObject final : public ConfigItem
     {
     public:
         using NameValue = std::pair<std::string, std::string>;
