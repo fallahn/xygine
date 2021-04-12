@@ -44,7 +44,7 @@ namespace xy
     \brief Creates a clientside host which can be used to create
     a peer connected to a NetHost server.
     */
-    class XY_EXPORT_API NetClient final
+    class XY_API NetClient final
     {
     public:
         NetClient() = default;

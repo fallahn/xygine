@@ -45,7 +45,7 @@ namespace xy
     Creates a glowing 'bloom' effect on brighter objects
     within a scene
     */
-    class XY_EXPORT_API PostBloom final : public PostProcess
+    class XY_API PostBloom final : public PostProcess
     {
 
     public:

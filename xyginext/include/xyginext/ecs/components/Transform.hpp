@@ -40,7 +40,7 @@ namespace xy
     friendly format, parentable to other transforms in a scene graph hierachy.
     Transforms are non-copyable, but are moveable
     */
-    class XY_EXPORT_API Transform final : public sf::Transformable
+    class XY_API Transform final : public sf::Transformable
     {
     public:
         Transform();

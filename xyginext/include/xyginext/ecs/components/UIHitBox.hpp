@@ -39,7 +39,7 @@ namespace xy
     /*!
     \brief Used to trigger callbacks when hit events occur in the component's area
     */
-    class XY_EXPORT_API UIHitBox final
+    class XY_API UIHitBox final
     {
     public:
         enum CallbackID

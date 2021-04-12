@@ -40,7 +40,7 @@ namespace xy
     take on the transform of any transform component, and also be
     used to bound the game world view.
     */
-    class XY_EXPORT_API Camera final
+    class XY_API Camera final
     {
     public:
         enum Axis

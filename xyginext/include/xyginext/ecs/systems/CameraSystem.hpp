@@ -39,7 +39,7 @@ namespace xy
     which uses any camera other than the default one.
     \see Camera
     */
-    class XY_EXPORT_API CameraSystem : public System
+    class XY_API CameraSystem : public System
     {
     public:
         explicit CameraSystem(MessageBus&);

@@ -37,8 +37,12 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # disable deprecated warning in MSVC
+# enable correct import/export symbols in shared builds
 if(MSVC)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+  if(BUILD_SHARED_LIBS)
+    add_definitions(-DBUILD_XY)
+  endif()
 endif()
 
 # Apple requires some extra guff
@@ -186,7 +190,7 @@ if (BUILD_DEMO)
     FetchContent_Declare(
       tmxlite
       GIT_REPOSITORY https://github.com/fallahn/tmxlite
-      GIT_TAG        v1.2.1
+      GIT_TAG        1.2.2
     )
     FetchContent_MakeAvailable(tmxlite)
     add_subdirectory(${tmxlite_SOURCE_DIR}/tmxlite)

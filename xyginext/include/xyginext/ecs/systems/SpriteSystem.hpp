@@ -36,7 +36,7 @@ namespace xy
     Entities with Sprite components also require
     a Drawable component, as well as a Scene with a RenderSystem.
     */
-    class XY_EXPORT_API SpriteSystem final : public xy::System
+    class XY_API SpriteSystem final : public xy::System
     {
     public:
         explicit SpriteSystem(MessageBus&);

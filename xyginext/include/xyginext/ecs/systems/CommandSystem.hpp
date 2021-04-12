@@ -38,7 +38,7 @@ namespace xy
     Each command encapsulates a mask of target IDs
     as well as a command in the form of a std::function
     */
-    struct XY_EXPORT_API Command final
+    struct XY_API Command final
     {
         std::uint32_t targetFlags = 0;
         std::function<void(Entity, float)> action;
@@ -48,7 +48,7 @@ namespace xy
     \brief The command system is used to execute commands which are
     targetted at specific IDs
     */
-    class XY_EXPORT_API CommandSystem final : public xy::System
+    class XY_API CommandSystem final : public xy::System
     {
     public:
         explicit CommandSystem(MessageBus&);

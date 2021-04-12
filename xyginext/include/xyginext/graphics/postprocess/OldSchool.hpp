@@ -38,7 +38,7 @@ namespace xy
     \brief Applies a colour dithering / degredation effect to 
     emulate the appearance of older 16 or 8 bit graphics modes
     */
-    class XY_EXPORT_API PostOldSchool final : public PostProcess
+    class XY_API PostOldSchool final : public PostProcess
     {
     public:
         PostOldSchool();

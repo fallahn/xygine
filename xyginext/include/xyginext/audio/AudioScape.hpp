@@ -77,7 +77,7 @@ namespace xy
     Emitter properties are optional (except path and streaming) and any omitted properties
     will fall back to their default values.
     */
-    class XY_EXPORT_API AudioScape final
+    class XY_API AudioScape final
     {
     public:
         /*!

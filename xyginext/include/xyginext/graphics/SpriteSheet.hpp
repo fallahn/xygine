@@ -42,7 +42,7 @@ namespace xy
     \brief Supports loading multiple sprites from a single
     texture atlas via the ConfigFile format.
     */
-    class XY_EXPORT_API SpriteSheet final
+    class XY_API SpriteSheet final
     {
     public:
         SpriteSheet();

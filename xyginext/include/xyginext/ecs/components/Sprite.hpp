@@ -47,7 +47,7 @@ namespace xy
     Sprite components require their entity to also have a Drawable component
     and a Transform component.
     */
-    class XY_EXPORT_API Sprite final
+    class XY_API Sprite final
     {
     public:
         /*!

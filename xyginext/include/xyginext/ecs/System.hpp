@@ -49,7 +49,7 @@ namespace xy
     are created. Concrete system types should declare a list component types via requireComponent()
     on construction, so that only entities with the relevant components are added to the system.
     */
-    class XY_EXPORT_API System
+    class XY_API System
     {
     public:
 
@@ -173,7 +173,7 @@ namespace xy
         void processTypes(ComponentManager&);
     };
 
-    class XY_EXPORT_API SystemManager final : public GuiClient
+    class XY_API SystemManager final : public GuiClient
     {
     public:
         SystemManager(Scene&, ComponentManager&);

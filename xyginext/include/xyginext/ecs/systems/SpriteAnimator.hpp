@@ -36,7 +36,7 @@ namespace xy
     Updates all active animations on entities which have Sprite and
     SpriteAnimation components.
     */
-    class XY_EXPORT_API SpriteAnimator final : public System
+    class XY_API SpriteAnimator final : public System
     {
     public:
         explicit SpriteAnimator(MessageBus&);

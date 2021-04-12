@@ -51,7 +51,7 @@ namespace xy
     whose flags match one or more of the flags belonging to the command.
     \see CommandSystem
     */
-    struct XY_EXPORT_API CommandTarget final
+    struct XY_API CommandTarget final
     {
         std::uint32_t ID = 0;
     };

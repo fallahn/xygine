@@ -52,7 +52,7 @@ namespace xy
     the current scene to render them.
     \see BitmapFont
     */
-    class XY_EXPORT_API BitmapText final
+    class XY_API BitmapText final
     {
     public:
         /*!

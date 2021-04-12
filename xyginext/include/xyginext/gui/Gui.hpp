@@ -135,61 +135,61 @@ namespace xy
             
             std::array<sf::Color, Colour::Count>         colours;
             
-            XY_EXPORT_API   bool loadFromFile(const std::string& path);
-            XY_EXPORT_API   bool saveToFile(const std::string& path);
+            XY_API   bool loadFromFile(const std::string& path);
+            XY_API   bool saveToFile(const std::string& path);
             
         };
         
         /*!
         \see ImGui::Begin()
         */
-        XY_EXPORT_API void begin(const std::string& title, bool* open = nullptr);
+        XY_API void begin(const std::string& title, bool* open = nullptr);
 
         /*!
         \see ImGui::SetNextWindowSize()
         */
-        XY_EXPORT_API void setNextWindowSize(float x, float y);
+        XY_API void setNextWindowSize(float x, float y);
 
         /*!
         \see ImGui::SetNextWindowSizeConstraints()
         */
-        XY_EXPORT_API void setNextWindowConstraints(float minW, float minY, float maxW, float maxY);
+        XY_API void setNextWindowConstraints(float minW, float minY, float maxW, float maxY);
 
         /*!
         \brief Set the next window position in *window* coordinates
         \see ImGui::SetNextWindowPos()
         */
-        XY_EXPORT_API void setNextWindowPosition(float x, float y);
+        XY_API void setNextWindowPosition(float x, float y);
 
         /*!
         \see ImGui::Text()
         */
-        XY_EXPORT_API void text(const std::string& str);
+        XY_API void text(const std::string& str);
 
         /*!
         \see ImGui::Button()
         */
-        XY_EXPORT_API bool button(const std::string& label, float w = 0.f, float h = 0.f);
+        XY_API bool button(const std::string& label, float w = 0.f, float h = 0.f);
 
         /*!
         \see ImGui::CheckBox()
         */
-        XY_EXPORT_API void checkbox(const std::string& title, bool* value);
+        XY_API void checkbox(const std::string& title, bool* value);
 
         /*!
         \see ImGui::FloatSlider()
         */
-        XY_EXPORT_API void slider(const std::string& title, float& value, float min, float max, float itemWidth = 200.f);
+        XY_API void slider(const std::string& title, float& value, float min, float max, float itemWidth = 200.f);
 
         /*!
         \see ImGui::Separator()
         */
-        XY_EXPORT_API void separator();
+        XY_API void separator();
 
         /*!
         \see ImGui::SameLine()
         */
-        XY_EXPORT_API void sameLine(float posX = 0.f, float spacing = -1.f);
+        XY_API void sameLine(float posX = 0.f, float spacing = -1.f);
 
         /*!
         \brief Simple combo box
@@ -197,12 +197,12 @@ namespace xy
         \param index Reference to the integer variable which holds the selected index
         \param items A string containing a null delimited list of items eg "item01\0item02\0item the third\0\0"
         */
-        XY_EXPORT_API bool simpleCombo(const std::string& title, std::int32_t& index, const char* items, float itemWidth = 200.f);
+        XY_API bool simpleCombo(const std::string& title, std::int32_t& index, const char* items, float itemWidth = 200.f);
 
         /*!
         \see ImGui::InputInt()
         */
-        XY_EXPORT_API bool input(const std::string& label, std::int32_t& value, float itemWidth = 200.f);
+        XY_API bool input(const std::string& label, std::int32_t& value, float itemWidth = 200.f);
 
         /*!
         \param title String containing title of the radio button
@@ -210,44 +210,44 @@ namespace xy
         \param value The value of the radio button which will be placed in output when the radio button is selected
         \see ImGui::RadioButton
         */
-        XY_EXPORT_API bool radioButton(const std::string& title, std::int32_t& output, std::int32_t value);
+        XY_API bool radioButton(const std::string& title, std::int32_t& output, std::int32_t value);
 
         /*!
         \brief Displays a tool tip when the previously drawn item is hovered.
         \param message String containing the message to display
         */
-        XY_EXPORT_API void showToolTip(const std::string& message);
+        XY_API void showToolTip(const std::string& message);
 
         /*!
         \brief Displays an RGBA colour picker and places the result in output
         \param output Reference to an sf::Colour in which to store the result
         */
-        XY_EXPORT_API bool colourPicker(const std::string& label, sf::Color& output);
+        XY_API bool colourPicker(const std::string& label, sf::Color& output);
 
         /*!
         \see ImGui::BeginMenuBar()
         */
-        XY_EXPORT_API bool beginMenuBar();
+        XY_API bool beginMenuBar();
 
         /*!
         \see ImGui::EndMenuBar()
         */
-        XY_EXPORT_API void endMenuBar();
+        XY_API void endMenuBar();
 
         /*!
         \see ImGui::BeginMenu()
         */
-        XY_EXPORT_API bool beginMenu(const std::string& title);
+        XY_API bool beginMenu(const std::string& title);
 
         /*!
         \see ImGui::EndMenu()
         */
-        XY_EXPORT_API void endMenu();
+        XY_API void endMenu();
 
         /*!
         \see ImGui::MenuItem()
         */
-        XY_EXPORT_API bool menuItem(const std::string& title, bool& selected);
+        XY_API bool menuItem(const std::string& title, bool& selected);
 
         /*!
         \brief Draws an image using the given texture
@@ -255,32 +255,32 @@ namespace xy
         \param tint Colour to multiply with the texture when drawing
         \param border Colour to use when drawing the border
         */
-        XY_EXPORT_API void image(const sf::Texture& texture, sf::Color tint = sf::Color::White, sf::Color border = sf::Color::Black);
+        XY_API void image(const sf::Texture& texture, sf::Color tint = sf::Color::White, sf::Color border = sf::Color::Black);
 
         /*!
         \see ImGui::End()
         */
-        XY_EXPORT_API void end();
+        XY_API void end();
         
         /*!
          \see ImGui::GetIo().WantCaptureMouse
          */
-        XY_EXPORT_API bool wantsMouse();
+        XY_API bool wantsMouse();
         
         /*!
          \see ImGui::GetIo().WantCaptureKeyboard
          */
-        XY_EXPORT_API bool wantsKeyboard();
+        XY_API bool wantsKeyboard();
         
         /*!
          \brief Get the current style
          */
-        XY_EXPORT_API const Style& getStyle();
+        XY_API const Style& getStyle();
         
         /*!
          \brief Set the current style
          */
-        XY_EXPORT_API void setStyle(const Style& style);
+        XY_API void setStyle(const Style& style);
     }
     //for backwards compatability. She just won't let go...
     namespace Nim = ui;

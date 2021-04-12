@@ -40,7 +40,7 @@ namespace xy
     NOTE multiple components which rely on a Drawable component cannot exist on the same entity,
     as only one set of vertices will be available.
     */
-    class XY_EXPORT_API RenderSystem final : public xy::System, public sf::Drawable 
+    class XY_API RenderSystem final : public xy::System, public sf::Drawable 
     {
     public:
         explicit RenderSystem(xy::MessageBus&);

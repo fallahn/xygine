@@ -53,7 +53,7 @@ namespace xy
     \brief A peer represents a single, multichannel connection between
     a client and a host.
     */
-    struct XY_EXPORT_API NetPeer final
+    struct XY_API NetPeer final
     {
         template<typename T = _ENetPeer>
         std::string getAddress() const; //! <String containing the IPv4 address
@@ -110,11 +110,11 @@ namespace xy
     namespace Detail
     {
         //used for kludgery - don't call directly!
-        XY_EXPORT_API std::string getEnetPeerAddress(void*);
-        XY_EXPORT_API std::uint16_t getEnetPeerPort(void*);
-        XY_EXPORT_API std::uint32_t getEnetPeerID(void*);
-        XY_EXPORT_API std::uint32_t getEnetRoundTrip(void*);
-        XY_EXPORT_API NetPeer::State getEnetPeerState(void*);
+        XY_API std::string getEnetPeerAddress(void*);
+        XY_API std::uint16_t getEnetPeerPort(void*);
+        XY_API std::uint32_t getEnetPeerID(void*);
+        XY_API std::uint32_t getEnetRoundTrip(void*);
+        XY_API NetPeer::State getEnetPeerState(void*);
     }
 
     /*!
@@ -122,7 +122,7 @@ namespace xy
     These are used to poll NetHost and NetClient objects
     for network activity
     */
-    struct XY_EXPORT_API NetEvent final
+    struct XY_API NetEvent final
     {
         std::uint8_t channel = 0; //! <channel event was received on
         enum
@@ -138,7 +138,7 @@ namespace xy
         Contains packet data recieved by PacketRecieved event.
         Not valid for other event types.
         */
-        struct XY_EXPORT_API Packet final
+        struct XY_API Packet final
         {
             Packet();
             ~Packet() = default;

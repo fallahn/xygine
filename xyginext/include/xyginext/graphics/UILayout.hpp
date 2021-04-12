@@ -111,7 +111,7 @@ namespace xy
     as well as creating UI layouts with a graphical tool/editor.
     */
 
-    class XY_EXPORT_API UILayout final
+    class XY_API UILayout final
     {
     public:
         using ElementMap = std::unordered_map<std::string, UIElement>;

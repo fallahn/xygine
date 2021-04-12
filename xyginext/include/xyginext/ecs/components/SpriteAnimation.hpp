@@ -36,7 +36,7 @@ namespace xy
     \brief Component which contains information about the currently
     playing sprite animation. Requires a SpriteAnimator system in the scene.
     */
-    struct XY_EXPORT_API SpriteAnimation final
+    struct XY_API SpriteAnimation final
     {
         /*!
         \brief Play the animation at the given index if it exists

@@ -80,7 +80,7 @@ namespace xy
     redundant.
     */
 
-    class XY_EXPORT_API DynamicTreeSystem final : public xy::System
+    class XY_API DynamicTreeSystem final : public xy::System
     {
     public:
         explicit DynamicTreeSystem(xy::MessageBus&);

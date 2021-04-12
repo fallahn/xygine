@@ -105,7 +105,7 @@ namespace xy
     of dynamic objects consider using xy::DynamicTreeSystem instead.
     \see DynamicTreeSystem
     */
-    class XY_EXPORT_API QuadTree final : public xy::System
+    class XY_API QuadTree final : public xy::System
 #ifdef DDRAW
         , public sf::Drawable
 #endif

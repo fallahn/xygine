@@ -36,7 +36,7 @@ namespace xy
     Entities with a BitmapText component also require a Transform
     component and Drawable component.
     */
-    class XY_EXPORT_API BitmapTextSystem final : public xy::System
+    class XY_API BitmapTextSystem final : public xy::System
     {
     public:
         explicit BitmapTextSystem(xy::MessageBus&);

@@ -42,7 +42,7 @@ namespace xy
     testing. Narrow phase collision should be performed independently
     \see DynamicTreeSystem
     */
-    struct XY_EXPORT_API BroadphaseComponent final
+    struct XY_API BroadphaseComponent final
     {
     public:
         /*!

@@ -43,7 +43,7 @@ namespace xy
     setEnabled(). Blur amount is animated when
     enabling or disabling for a smoother transition.
     */
-    class XY_EXPORT_API PostBlur final : public PostProcess
+    class XY_API PostBlur final : public PostProcess
     {
     public:
         PostBlur();

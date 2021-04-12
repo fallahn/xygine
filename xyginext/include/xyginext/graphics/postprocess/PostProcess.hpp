@@ -53,7 +53,7 @@ namespace xy
     after a scene is rendered. Multiple post processes can be chained
     but be aware that too many will affect performance.
     */
-    class XY_EXPORT_API PostProcess
+    class XY_API PostProcess
     {
     public:
 

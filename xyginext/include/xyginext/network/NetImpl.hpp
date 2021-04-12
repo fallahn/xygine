@@ -58,7 +58,7 @@ namespace xy
         Unreliable = 0x4 //! <packet will be fragmented and sent unreliably if it exceeds MTU
     };
 
-    class XY_EXPORT_API NetClientImpl
+    class XY_API NetClientImpl
     {
     public:
         NetClientImpl() = default;
@@ -83,7 +83,7 @@ namespace xy
         virtual std::uint16_t getPort() const { return 0; }
     };
 
-    class XY_EXPORT_API NetHostImpl
+    class XY_API NetHostImpl
     {
     public:
         NetHostImpl() = default;

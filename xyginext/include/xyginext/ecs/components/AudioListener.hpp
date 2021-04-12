@@ -41,7 +41,7 @@ namespace xy
     When using mono AudioEmitters spatialisation is calculated based
     on an AudioSource's position relative to the active AudioListener.
     */
-    class XY_EXPORT_API AudioListener final
+    class XY_API AudioListener final
     {
     public:
         /*!
