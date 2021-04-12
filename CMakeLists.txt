@@ -190,7 +190,7 @@ if (BUILD_DEMO)
     FetchContent_Declare(
       tmxlite
       GIT_REPOSITORY https://github.com/fallahn/tmxlite
-      GIT_TAG        v1.2.2
+      GIT_TAG        1.2.2
     )
     FetchContent_MakeAvailable(tmxlite)
     add_subdirectory(${tmxlite_SOURCE_DIR}/tmxlite)
