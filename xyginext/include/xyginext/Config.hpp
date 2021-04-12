@@ -67,11 +67,14 @@ source distribution.
 #define IMGUI_API
 #endif //__GNUC__
 
+#define XY_API XY_EXPORT_API
+
 #endif //_WIN32
 
 #else
 
 //static build doesn't need import/export macros
+#define XY_API
 #define XY_EXPORT_API
 #define XY_IMPORT_API
 #define IMGUI_API
