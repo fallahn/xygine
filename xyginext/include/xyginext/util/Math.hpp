@@ -69,7 +69,7 @@ namespace xy
             /*!
             \brief Returns the normlised sign of the given value
             \param an int convertible value
-            \returns -1 if the givene value is negative, 1 if it is positive or 0
+            \returns -1 if the given value is negative, 1 if it is positive or 0
             if it has no value.
             */
             template <typename T>

@@ -349,6 +349,7 @@
     <ClInclude Include="include\xyginext\util\Easings.hpp" />
     <ClInclude Include="include\xyginext\util\IO.hpp" />
     <ClInclude Include="include\xyginext\util\Math.hpp" />
+    <ClInclude Include="include\xyginext\util\Network.hpp" />
     <ClInclude Include="include\xyginext\util\Position.hpp" />
     <ClInclude Include="include\xyginext\util\Random.hpp" />
     <ClInclude Include="include\xyginext\util\Rectangle.hpp" />
