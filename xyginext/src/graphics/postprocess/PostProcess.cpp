@@ -64,7 +64,7 @@ void PostProcess::applyShader(const sf::Shader& shader, sf::RenderTarget& dest)
     //All the seagulls are belong to us.
     sf::RenderStates states;
     states.shader = &shader;
-    states.blendMode = sf::BlendNone;
+    //states.blendMode = sf::BlendNone;
 
     dest.draw(vertexArray.data(), vertexArray.size(), sf::Quads, states);
 }

@@ -74,6 +74,8 @@ private:
 
     bool m_showSpriteBrowser;
 
+    bool m_yUp;
+
     xy::ConfigFile m_config;
 
     xy::SpriteSheet m_spriteSheet;
@@ -81,4 +83,7 @@ private:
 
     void setup();
     void setSprite(const xy::Sprite&);
+
+    void loadConfig();
+    void saveConfig();
 };

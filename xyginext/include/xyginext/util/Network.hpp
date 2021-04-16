@@ -81,7 +81,7 @@ namespace xy
             /*!
             \brief Compresses a 3 component vector into an array of 3 16 bit integers
             \param v The vector to compress
-            \param range The expected positive/negative range within which the component values
+            \param range The positive/negative range within which the component values
             are expected to fall
             \returns Array of 3 16 bit integers
             \see decompressVec3() compressFloat()
@@ -114,7 +114,7 @@ namespace xy
             /*!
             \brief Compresses a 2 component vector into an array of 2 16 bit integers
             \param v The vector to compress
-            \param range The expected positive/negative range within which the component values
+            \param range The positive/negative range within which the component values
             are expected to fall
             \returns Array of 2 16 bit integers
             \see decompressVec2() compressFloat()
@@ -131,7 +131,7 @@ namespace xy
             \brief Decompresses an array of 16 bit integers compressed with compressVec2
             \param v An array of 16 bit integers
             \param range The range value with which the vector was compressed.
-            \returns A glm::vec2
+            \returns sf::Vector2f
             \see compressVec2() compressFloat()
             */
             static inline sf::Vector2f decompressVec2(std::array<std::int16_t, 2u> v, std::int16_t range = 256)

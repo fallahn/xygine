@@ -1,6 +1,6 @@
 /*********************************************************************
 (c) Jonny Paton 2018
-(c) Matt Marchant 2019
+(c) Matt Marchant 2019 - 2021
 
 xygineXT - Zlib license.
 
@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include "ParticleState.hpp"
+#include "PostVerticalFlip.hpp"
 
 #include <xyginext/ecs/components/Transform.hpp>
 #include <xyginext/ecs/components/ParticleEmitter.hpp>
@@ -99,7 +100,8 @@ ParticleState::ParticleState(xy::StateStack& ss, xy::State::Context ctx)
     m_workingDirectory      ("None Selected..."),
     m_showBackgroundPicker  (false),
     m_backgroundColour      (sf::Color::Black),
-    m_showSpriteBrowser     (false)
+    m_showSpriteBrowser     (false),
+    m_yUp                   (false)
 {
     setup();
 
@@ -114,9 +116,7 @@ ParticleState::ParticleState(xy::StateStack& ss, xy::State::Context ctx)
 
 ParticleState::~ParticleState()
 {
-    m_config.findProperty("bg_colour")->setValue(m_backgroundColour);
-    m_config.findProperty("working_dir")->setValue(m_workingDirectory);
-    m_config.save(cfgPath);
+    saveConfig();
 }
 
 bool ParticleState::handleEvent(const sf::Event& evt)
@@ -165,6 +165,9 @@ void ParticleState::setup()
     m_scene.addSystem<xy::CameraSystem>(mb);
     m_scene.addSystem<xy::RenderSystem>(mb);
     m_scene.addSystem<xy::ParticleSystem>(mb);
+
+    m_scene.addPostProcess<PostVerticalFlip>();
+    m_scene.setPostEnabled(false);
 
     m_sprite = m_scene.createEntity();
     m_sprite.addComponent<xy::Transform>().setPosition(xy::DefaultSceneSize / 2.f);
@@ -318,6 +321,7 @@ void ParticleState::setup()
         if (ImGui::Begin("Emitter Settings"))
         {
             xy::ui::text("Working Directory:");
+            ImGui::SameLine(); xy::ui::showToolTip(m_workingDirectory);
             xy::ui::text(m_workingDirectory);
             xy::ui::separator();
 
@@ -534,6 +538,18 @@ void ParticleState::setup()
                     }
                     xy::ui::sameLine(); xy::ui::showToolTip("Current working directory. Set this to your project directory and textures will be loaded and saved in a path relative to this");
 
+                    if (ImGui::Checkbox("Use Y up", &m_yUp))
+                    {
+                        m_scene.setPostEnabled(m_yUp);
+                    }
+                    ImGui::SameLine(); xy::ui::showToolTip("Use Y coordinates which start at the bottom an move up - useful for Crogine");
+
+                    if (ImGui::Button("Save & Close"))
+                    {
+                        saveConfig();
+                        m_showBackgroundPicker = false;
+                    }
+
                     ImGui::End();
                 }
             }
@@ -646,26 +662,7 @@ void ParticleState::setup()
             }
         });
 
-    m_config.loadFromFile(cfgPath);
-
-    if (auto* prop = m_config.findProperty("working_dir"); prop)
-    {
-        m_workingDirectory = prop->getValue<std::string>();
-    }
-    else
-    {
-        m_config.addProperty("working_dir").setValue(m_workingDirectory);
-    }
-
-    if (auto* prop = m_config.findProperty("bg_colour"); prop)
-    {
-        m_backgroundColour = prop->getValue<sf::Color>();
-        xy::App::setClearColour(m_backgroundColour);
-    }
-    else
-    {
-        m_config.addProperty("bg_colour").setValue(m_backgroundColour);
-    }
+        loadConfig();
 }
 
 void ParticleState::setSprite(const xy::Sprite& sprite)
@@ -691,4 +688,46 @@ void ParticleState::setSprite(const xy::Sprite& sprite)
         texPath += spritePath;
         m_sprite.getComponent<xy::Sprite>().setTexture(m_textures.get(texPath), false);
     }
+}
+
+void ParticleState::loadConfig()
+{
+    m_config.loadFromFile(cfgPath);
+
+    if (auto* prop = m_config.findProperty("working_dir"); prop)
+    {
+        m_workingDirectory = prop->getValue<std::string>();
+    }
+    else
+    {
+        m_config.addProperty("working_dir").setValue(m_workingDirectory);
+    }
+
+    if (auto* prop = m_config.findProperty("bg_colour"); prop)
+    {
+        m_backgroundColour = prop->getValue<sf::Color>();
+        xy::App::setClearColour(m_backgroundColour);
+    }
+    else
+    {
+        m_config.addProperty("bg_colour").setValue(m_backgroundColour);
+    }
+
+    if (auto* prop = m_config.findProperty("y_up"); prop)
+    {
+        m_yUp = prop->getValue<bool>();
+        m_scene.setPostEnabled(m_yUp);
+    }
+    else
+    {
+        m_config.addProperty("y_up").setValue(m_yUp);
+    }
+}
+
+void ParticleState::saveConfig()
+{
+    m_config.findProperty("bg_colour")->setValue(m_backgroundColour);
+    m_config.findProperty("working_dir")->setValue(m_workingDirectory);
+    m_config.findProperty("y_up")->setValue(m_yUp);
+    m_config.save(cfgPath);
 }

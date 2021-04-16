@@ -131,11 +131,13 @@
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ParticleState.cpp" />
+    <ClCompile Include="src\PostVerticalFlip.cpp" />
     <ClCompile Include="src\SpriteState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp" />
     <ClInclude Include="include\ParticleState.hpp" />
+    <ClInclude Include="include\PostVerticalFlip.hpp" />
     <ClInclude Include="include\SpriteState.hpp" />
     <ClInclude Include="include\States.hpp" />
   </ItemGroup>
