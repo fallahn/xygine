@@ -176,7 +176,6 @@ namespace xy
         explicit Entity(ID index, Generation generation);
 
         ID m_id;
-        bool m_destroyed;
         EntityManager* m_entityManager;
         friend class EntityManager;
         friend class Scene;
@@ -202,14 +201,23 @@ namespace xy
         \brief Creates a new Entity
         */
         Entity createEntity();
+
         /*!
         \brief Destroys the given Entity
         */
         void destroyEntity(Entity);
+
         /*!
         \brief Returns true if the entity is destroyed or marked for destruction
         */
         bool entityDestroyed(Entity) const;
+
+        /*!
+        \brief Returns true if this entity is invalid, either through expiration
+        or through nor being created via a valid Scene
+        */
+        bool entityValid(Entity entity) const;
+
         /*!
         \brief Returns the entity at the given index if it exists TODO what if it doesn't?
         */
@@ -267,6 +275,11 @@ namespace xy
         */
         std::size_t getEntityCount() const { return m_entityCount; }
 
+        /*!
+        \brief Used by a Scene to mark that the Entity is waiting to be destroyed
+        */
+        void markDestroyed(Entity entity);
+
     private:
         MessageBus& m_messageBus;
         ComponentManager& m_componentManager;
@@ -276,6 +289,7 @@ namespace xy
         std::size_t m_initialPoolSize;
         std::vector<ComponentMask> m_componentMasks;
         std::vector<std::string> m_labels;
+        std::vector<bool> m_destructionFlags;
 
         std::size_t m_entityCount;
 

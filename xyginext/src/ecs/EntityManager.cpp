@@ -64,12 +64,15 @@ Entity EntityManager::createEntity()
         {
             m_componentMasks.resize(m_componentMasks.size() + MinComponentMasks);
             m_labels.resize(m_componentMasks.size());
+            m_destructionFlags.resize(m_componentMasks.size());
         }
     }
 
     XY_ASSERT(idx < m_generations.size(), "Index out of range");
     Entity e(idx, m_generations[idx]);
     e.m_entityManager = this;
+
+    m_destructionFlags[idx] = false;
 
     m_entityCount++;
 
@@ -122,8 +125,17 @@ bool EntityManager::entityDestroyed(Entity entity) const
 {
     const auto id = entity.getIndex();
     XY_ASSERT(id < m_generations.size(), "Generation index out of range");
+    XY_ASSERT(id < m_destructionFlags.size(), "Generation index out of range");
     
-    return (m_generations[id] != entity.getGeneration());
+    return (m_destructionFlags[id]);
+}
+
+bool EntityManager::entityValid(Entity entity) const
+{
+    const auto id = entity.getIndex();
+    XY_ASSERT(id < m_generations.size(), "Generation index out of range");
+
+    return (m_generations[id] == entity.getGeneration());
 }
 
 Entity EntityManager::getEntity(Entity::ID id) const
@@ -158,4 +170,11 @@ const std::string& EntityManager::getLabel(Entity entity) const
     const auto index = entity.getIndex();
     XY_ASSERT(index < m_componentMasks.size(), "Invalid label index (out of range)");
     return m_labels[index];
+}
+
+void EntityManager::markDestroyed(Entity entity)
+{
+    const auto index = entity.getIndex();
+    XY_ASSERT(index < m_componentMasks.size(), "Invalid index (out of range)");
+    m_destructionFlags[index] = true;
 }

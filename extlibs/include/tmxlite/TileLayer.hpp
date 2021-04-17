@@ -25,10 +25,10 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef TMXLITE_TILELAYER_HPP_
-#define TMXLITE_TILELAYER_HPP_
+#pragma once
 
 #include <tmxlite/Layer.hpp>
+#include <tmxlite/Types.hpp>
 
 namespace tmx
 {
@@ -48,6 +48,16 @@ namespace tmx
         };
 
         /*!
+        \brief Represents a chunk of tile data, if this is an infinite map
+        */
+        struct Chunk final
+        {
+            Vector2i position; //<! coordinate in tiles, not pixels
+            Vector2i size; //!< size in tiles, not pixels
+            std::vector<Tile> tiles;
+        };
+
+        /*!
         \brief Flags used to tell if a tile is flipped when drawn
         */
         enum FlipFlag
@@ -61,30 +71,40 @@ namespace tmx
         ~TileLayer() = default;
 
         Type getType() const override { return Layer::Type::Tile; }
-        void parse(const pugi::xml_node&) override;
+        void parse(const pugi::xml_node&, Map*) override;
 
         /*!
         \brief Returns the list of tiles used to make up the layer
+        If this is empty then the map is most likely infinite, in
+        which case the tile data is stored in chunks.
+        \see getChunks()
         */
         const std::vector<Tile>& getTiles() const { return m_tiles; }
 
+        /*!
+        \brief Returns a vector of chunks which make up this layer
+        if the map is set to infinite. This will be empty if the map
+        is not infinite.
+        \see getTiles()
+        */
+        const std::vector<Chunk>& getChunks() const { return m_chunks; }
+
     private:
         std::vector<Tile> m_tiles;
+        std::vector<Chunk> m_chunks;
         std::size_t m_tileCount;
 
         void parseBase64(const pugi::xml_node&);
         void parseCSV(const pugi::xml_node&);
         void parseUnencoded(const pugi::xml_node&);
 
-        void createTiles(const std::vector<std::uint32_t>&);
+        void createTiles(const std::vector<std::uint32_t>&, std::vector<Tile>& destination);
     };
 
     template <>
     inline TileLayer& Layer::getLayerAs<TileLayer>()
     {
         assert(getType() == Type::Tile);
-        return *dynamic_cast<TileLayer*>(this);
+        return *static_cast<TileLayer*>(this);
     }
 }
-
-#endif //TMXLITE_TILE_LAYER_HPP_

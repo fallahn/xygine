@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef TMXLITE_IMAGELAYER_HPP_
-#define TMXLITE_IMAGELAYER_HPP_
+#pragma once
 
 #include <tmxlite/Config.hpp>
 #include <tmxlite/Layer.hpp>
@@ -46,7 +45,7 @@ namespace tmx
         ~ImageLayer() = default;
 
         Type getType() const override { return Layer::Type::Image; }
-        void parse(const pugi::xml_node&) override;
+        void parse(const pugi::xml_node&, Map*) override;
 
         /*!
         \brief Returns the path, relative to the working directory,
@@ -80,7 +79,6 @@ namespace tmx
     inline ImageLayer& Layer::getLayerAs<ImageLayer>()
     {
         assert(getType() == Type::Image);
-        return *dynamic_cast<ImageLayer*>(this);
+        return *static_cast<ImageLayer*>(this);
     }
 }
-#endif //TMXLITE_IMAGELAYER_HPP_

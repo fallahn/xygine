@@ -841,7 +841,8 @@ void NPCSystem::collisionNormal(xy::Entity entity)
                 case CollisionType::Bubble:
                     //switch to bubble state if bubble in spawn state
                 {
-                    if (manifold.otherEntity.hasComponent<Bubble>())
+                    if (manifold.otherEntity.isValid() &&
+                        manifold.otherEntity.hasComponent<Bubble>())
                     {
                         const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
                         if (bubble.state == Bubble::Spawning)
@@ -1010,7 +1011,8 @@ void NPCSystem::collisionFalling(xy::Entity entity)
                 case CollisionType::Bubble:
                     //switch to bubble state if bubble in spawn state
                 {
-                    if (manifold.otherEntity.hasComponent<Bubble>())
+                    if (manifold.otherEntity.isValid() &&
+                        manifold.otherEntity.hasComponent<Bubble>())
                     {
                         const auto& bubble = manifold.otherEntity.getComponent<Bubble>();
                         if (bubble.state == Bubble::Spawning)

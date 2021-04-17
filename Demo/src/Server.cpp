@@ -241,20 +241,23 @@ void GameServer::update()
             const auto& actors = m_scene.getSystem<ActorSystem>().getActors();
             for (const auto& actor : actors)
             {
-                const auto& actorComponent = actor.getComponent<Actor>();
-                const auto& tx = actor.getComponent<xy::Transform>().getPosition();
-                const auto& anim = actor.getComponent<AnimationController>();
+                if (!actor.destroyed())
+                {
+                    const auto& actorComponent = actor.getComponent<Actor>();
+                    const auto& tx = actor.getComponent<xy::Transform>().getPosition();
+                    const auto& anim = actor.getComponent<AnimationController>();
 
-                ActorState state;
-                state.actor.id = actorComponent.id;
-                state.actor.type = actorComponent.type;
-                state.x = tx.x;
-                state.y = tx.y;
-                state.serverTime = m_serverTime.getElapsedTime().asMilliseconds();
-                state.animationDirection = anim.direction;
-                state.animationID = anim.nextAnimation;
+                    ActorState state;
+                    state.actor.id = actorComponent.id;
+                    state.actor.type = actorComponent.type;
+                    state.x = tx.x;
+                    state.y = tx.y;
+                    state.serverTime = m_serverTime.getElapsedTime().asMilliseconds();
+                    state.animationDirection = anim.direction;
+                    state.animationID = anim.nextAnimation;
 
-                m_host.broadcastPacket(PacketID::ActorUpdate, state, xy::NetFlag::Unreliable);
+                    m_host.broadcastPacket(PacketID::ActorUpdate, state, xy::NetFlag::Unreliable);
+                }
             }
 
             //check if all players are dead

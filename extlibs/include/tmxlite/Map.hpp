@@ -25,17 +25,18 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef TMXLITE_MAP_HPP_
-#define TMXLITE_MAP_HPP_
+#pragma once
 
 #include <tmxlite/Tileset.hpp>
 #include <tmxlite/Layer.hpp>
 #include <tmxlite/Property.hpp>
 #include <tmxlite/Types.hpp>
+#include <tmxlite/Object.hpp>
 
 #include <string>
 #include <vector>
 #include <map>
+#include <unordered_map>
 
 namespace tmx
 {
@@ -106,6 +107,15 @@ namespace tmx
         In debug mode this will attempt to log any errors to the console.
         */
         bool load(const std::string&);
+
+        /*!
+        \brief Loads a map from a document stored in a string
+        \param data A std::string containing the map data to load
+        \param workingDir A std::string containing the working directory
+        in which to find assets such as tile sets or images
+        \returns true if successful, else false
+        */
+        bool loadFromString(const std::string& data, const std::string& workingDir);
 
         /*!
         \brief Returns the version of the tile map last parsed.
@@ -181,11 +191,42 @@ namespace tmx
         */
         const std::map<std::uint32_t, Tileset::Tile>& getAnimatedTiles() const { return m_animTiles; }
 
+        /*!
+        \brief Returns the current working directory of the map. Images and
+        other resources are loaded relative to this.
+        */
+        const std::string& getWorkingDirectory() const { return m_workingDirectory; }
+
+        /*!
+        \brief Returns an unordered_map of template objects indexed by file name
+        */
+        std::unordered_map<std::string, Object>& getTemplateObjects() { return m_templateObjects; }
+        const std::unordered_map<std::string, Object>& getTemplateObjects() const { return m_templateObjects; }
+
+        /*!
+        \brief Returns an unordered_map of tilesets used by templated objects.
+        If Object::getTilesetName() is not empty it can be used to retreive a tileset
+        from this map. Otherwise the object's tileset can be found from in the map's
+        global tilesets returned by getTilesets().
+        */
+        std::unordered_map<std::string, Tileset>& getTemplateTilesets() { return m_templateTilesets; }
+        const std::unordered_map<std::string, Tileset>& getTemplateTilesets() const { return m_templateTilesets; }
+
+        /*!
+        \brief Returns true if this is in infinite tile map.
+        Infinite maps store their tile data in for tile layers in chunks. If
+        this is an infinite map use TileLayer::getChunks() to get tile IDs
+        rather than TileLayer::getTiles().
+        \see TileLayer
+        */
+        bool isInfinite() const { return m_infinite; }
+
 
     private:
         Version m_version;
         Orientation m_orientation;
         RenderOrder m_renderOrder;
+        bool m_infinite;
 
         Vector2u m_tileCount;
         Vector2u m_tileSize;
@@ -203,11 +244,13 @@ namespace tmx
         std::vector<Property> m_properties;
         std::map<std::uint32_t, Tileset::Tile> m_animTiles;
 
+        std::unordered_map<std::string, Object> m_templateObjects;
+        std::unordered_map<std::string, Tileset> m_templateTilesets;
+
+        bool parseMapNode(const pugi::xml_node&);
+
         //always returns false so we can return this
         //on load failure
         bool reset();
-
-        struct Key {};
     };
 }
-#endif //TMXLITE_MAP_HPP_

@@ -108,38 +108,41 @@ void BubbleSystem::process(float dt)
     auto& entities = getEntities();
     for (auto& entity : entities)
     {
-        doCollision(entity);        
-        
-        auto& bubble = entity.getComponent<Bubble>();
-        auto& tx = entity.getComponent<xy::Transform>();
-        tx.move(bubble.velocity * dt);
-        
-        bubble.lifetime -= dt;
-        if(bubble.state == Bubble::Spawning)
+        doCollision(entity);
+
+        if (!entity.destroyed()) //collision may have killed the entity
         {
-            bubble.spawntime -= dt;
-            bubble.velocity.x *= 0.98f;
-            if (bubble.spawntime < 0)
+            auto& bubble = entity.getComponent<Bubble>();
+            auto& tx = entity.getComponent<xy::Transform>();
+            tx.move(bubble.velocity * dt);
+
+            bubble.lifetime -= dt;
+            if (bubble.state == Bubble::Spawning)
             {
-                bubble.state = Bubble::Normal;
-                bubble.velocity.x = 0.f;
-                bubble.velocity.y = BubbleVerticalVelocity;
+                bubble.spawntime -= dt;
+                bubble.velocity.x *= 0.98f;
+                if (bubble.spawntime < 0)
+                {
+                    bubble.state = Bubble::Normal;
+                    bubble.velocity.x = 0.f;
+                    bubble.velocity.y = BubbleVerticalVelocity;
 
-                std::uint32_t flags = CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC | CollisionFlags::HardBounds;
-                entity.getComponent<CollisionComponent>().setCollisionMaskBits(flags);
+                    std::uint32_t flags = CollisionFlags::Solid | CollisionFlags::Player | CollisionFlags::NPC | CollisionFlags::HardBounds;
+                    entity.getComponent<CollisionComponent>().setCollisionMaskBits(flags);
 
-                CollisionFlagsUpdate update;
-                update.actor = entity.getComponent<Actor>().id;
-                update.newflags = flags;
-                m_host.broadcastPacket(PacketID::CollisionFlag, update, xy::NetFlag::Reliable, 1);
+                    CollisionFlagsUpdate update;
+                    update.actor = entity.getComponent<Actor>().id;
+                    update.newflags = flags;
+                    m_host.broadcastPacket(PacketID::CollisionFlag, update, xy::NetFlag::Reliable, 1);
+                }
+                break;
             }
-            break;
-        }
 
-        if (bubble.lifetime < 0
-            || !MapBounds.contains(tx.getPosition()))
-        {
-            killBubble(entity);
+            if (bubble.lifetime < 0
+                || !MapBounds.contains(tx.getPosition()))
+            {
+                killBubble(entity);
+            }
         }
     }
 }
@@ -239,7 +242,6 @@ void BubbleSystem::doCollision(xy::Entity entity)
 void BubbleSystem::killBubble(xy::Entity entity)
 {
     const auto& tx = entity.getComponent<xy::Transform>();
-    getScene()->destroyEntity(entity);
 
     //broadcast to client
     ActorEvent evt;
@@ -251,5 +253,6 @@ void BubbleSystem::killBubble(xy::Entity entity)
 
     m_host.broadcastPacket(PacketID::ActorEvent, evt, xy::NetFlag::Reliable, 1);
 
+    getScene()->destroyEntity(entity);
     //TODO raise message
 }

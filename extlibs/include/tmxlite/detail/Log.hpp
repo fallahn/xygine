@@ -40,13 +40,13 @@ source distribution.
 
 #ifdef _MSC_VER
 #define NOMINMAX
-#include <Windows.h>
+#include <windows.h>
 #endif //_MSC_VER
 
 
 #ifdef __ANDROID__
 	#include <android/log.h>
-
+    #include <cstring>
 
 	#define  LOG_TAG    "TMXlite-Debug" 
 	//#define  ALOG(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
@@ -108,7 +108,7 @@ namespace tmx
 					
 					int outstringLength = outstring.length();
 					char outstring_chararray[outstringLength+1];
-					strcpy(outstring_chararray, outstring.c_str()); 
+					std::strcpy(outstring_chararray, outstring.c_str()); 
 					LOGE("%s",outstring_chararray);
 #endif
                     std::cerr << outstring << std::endl;
@@ -116,7 +116,7 @@ namespace tmx
 #ifdef __ANDROID__
 					int outstringLength = outstring.length();
 					char outstring_chararray[outstringLength+1];
-					strcpy(outstring_chararray, outstring.c_str()); 
+					std::strcpy(outstring_chararray, outstring.c_str()); 
 					LOGI("%s", outstring_chararray);
 #endif
                     std::cout << outstring << std::endl;
@@ -128,7 +128,7 @@ namespace tmx
 
 #ifdef _MSC_VER
                 outstring += "\n";
-                OutputDebugString(outstring.c_str());
+                OutputDebugStringA(outstring.c_str());
 #endif //_MSC_VER
             }
             if (output == Output::File || output == Output::All)
