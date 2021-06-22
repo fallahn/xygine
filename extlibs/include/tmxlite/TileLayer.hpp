@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2016 - 2019
+Matt Marchant 2016 - 2021
 http://trederia.blogspot.com
 
 tmxlite - Zlib license.
@@ -68,7 +68,6 @@ namespace tmx
         };
             
         explicit TileLayer(std::size_t);
-        ~TileLayer() = default;
 
         Type getType() const override { return Layer::Type::Tile; }
         void parse(const pugi::xml_node&, Map*) override;

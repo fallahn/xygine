@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2016
+Matt Marchant 2016 - 2021
 http://trederia.blogspot.com
 
 tmxlite - Zlib license.
@@ -64,12 +64,21 @@ namespace tmx
         };
             
         Property();
-        ~Property() = default;
+
+        static Property fromBoolean(bool value);
+        static Property fromFloat(float value);
+        static Property fromInt(int value);
+        static Property fromString(const std::string& value);
+        static Property fromColour(const Colour& value);
+        static Property fromFile(const std::string& value);
+        static Property fromObject(int value);
 
         /*!
         \brief Attempts to parse the given node as a property
+        \param isObjectTypes Set to true if the parsing is done from an object types files.
         */
-        void parse(const pugi::xml_node&);
+        void parse(const pugi::xml_node&, bool isObjectTypes = false);
+
         /*!
         \brief Returns the type of data stored in the property.
         This should generally be called first before trying to
@@ -77,34 +86,42 @@ namespace tmx
         will lead to undefined behaviour.
         */
         Type getType() const { return m_type; }
+
         /*!
         \brief Returns the name of this property
         */
         const std::string& getName() const { return m_name; }
+
         /*!
         \brief Returns the property's value as a boolean
         */
         bool getBoolValue() const { assert(m_type == Type::Boolean); return m_boolValue; }
+
         /*!
         \brief Returns the property's value as a float
         */
         float getFloatValue() const { assert(m_type == Type::Float); return m_floatValue; }
+
         /*!
         \brief Returns the property's value as an integer
         */
         int getIntValue() const { assert(m_type == Type::Int); return m_intValue; }
+
         /*!
         \brief Returns the property's value as a string
         */
         const std::string& getStringValue() const { assert(m_type == Type::String); return m_stringValue; }
+
         /*!
         \brief Returns the property's value as a Colour struct
         */
         const Colour& getColourValue() const { assert(m_type == Type::Colour); return m_colourValue; }
+
         /*!
         \brief Returns the file path property as a string, relative to the map file
         */
         const std::string& getFileValue() const { assert(m_type == Type::File); return m_stringValue; }
+
         /*!
         \brief Returns the property's value as an integer object handle
         */
