@@ -128,7 +128,7 @@
     <TargetName>$(ProjectName)-d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugAsan|x64'">
-    <TargetName>$(ProjectName)-d-a</TargetName>
+    <TargetName>$(ProjectName)-asan</TargetName>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">
