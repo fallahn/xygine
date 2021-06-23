@@ -118,7 +118,7 @@ std::vector<float> ConfigProperty::valueAsArray() const
     std::vector<float> retval;
     std::size_t start = 0u;
     auto next = m_value.find_first_of(',');
-    std::size_t end = std::min(m_value.length(), std::size_t(20));
+    std::size_t end = std::min(m_value.length(), std::size_t(200));
 
     while (next != std::string::npos && start < end)
     {
