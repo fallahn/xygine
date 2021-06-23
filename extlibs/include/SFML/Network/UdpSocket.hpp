@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -78,9 +78,10 @@ public:
     ///
     /// Binding the socket to a port is necessary for being
     /// able to receive data on that port.
-    /// You can use the special value Socket::AnyPort to tell the
-    /// system to automatically pick an available port, and then
-    /// call getLocalPort to retrieve the chosen port.
+    ///
+    /// When providing sf::Socket::AnyPort as port, the listener
+    /// will request an available port from the system.
+    /// The chosen port can be retrieved by calling getLocalPort().
     ///
     /// Since the socket can only be bound to a single port at
     /// any given moment, if it is already bound when this

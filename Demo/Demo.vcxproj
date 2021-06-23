@@ -130,7 +130,7 @@
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)extlibs\bin\msvc_x64\sfml\Debug;$(SolutionDir)x64\DebugAsan;$(SolutionDir)extlibs\bin\msvc_x64\tmxlite\Asan;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)extlibs\bin\msvc_x64\sfml\DebugAsan;$(SolutionDir)x64\DebugAsan;$(SolutionDir)extlibs\bin\msvc_x64\tmxlite\Asan;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-audio-d.lib;sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;xyginext-d-a.lib;libtmxlite-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <StackReserveSize>4194304</StackReserveSize>
     </Link>

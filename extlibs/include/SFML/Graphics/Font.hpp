@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -166,6 +166,10 @@ public:
     /// might be available. If the glyph is not available at the
     /// requested size, an empty glyph is returned.
     ///
+    /// You may want to use \ref hasGlyph to determine if the
+    /// glyph exists before requesting it. If the glyph does not
+    /// exist, a font specific default is returned.
+    ///
     /// Be aware that using a negative value for the outline
     /// thickness will cause distorted rendering.
     ///
@@ -178,6 +182,24 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     const Glyph& getGlyph(Uint32 codePoint, unsigned int characterSize, bool bold, float outlineThickness = 0) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Determine if this font has a glyph representing the requested code point
+    ///
+    /// Most fonts only include a very limited selection of glyphs from
+    /// specific Unicode subsets, like Latin, Cyrillic, or Asian characters.
+    ///
+    /// While code points without representation will return a font specific
+    /// default character, it might be useful to verify whether specific
+    /// code points are included to determine whether a font is suited
+    /// to display text in a specific language.
+    ///
+    /// \param codePoint Unicode code point to check
+    ///
+    /// \return True if the codepoint has a glyph representation, false otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    bool hasGlyph(Uint32 codePoint) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the kerning offset of two glyphs
@@ -195,7 +217,7 @@ public:
     /// \return Kerning value for \a first and \a second, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    float getKerning(Uint32 first, Uint32 second, unsigned int characterSize) const;
+    float getKerning(Uint32 first, Uint32 second, unsigned int characterSize, bool bold = false) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the line spacing
@@ -252,6 +274,32 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     const Texture& getTexture(unsigned int characterSize) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Enable or disable the smooth filter
+    ///
+    /// When the filter is activated, the font appears smoother
+    /// so that pixels are less noticeable. However if you want
+    /// the font to look exactly the same as its source file,
+    /// you should disable it.
+    /// The smooth filter is enabled by default.
+    ///
+    /// \param smooth True to enable smoothing, false to disable it
+    ///
+    /// \see isSmooth
+    ///
+    ////////////////////////////////////////////////////////////
+    void setSmooth(bool smooth);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell whether the smooth filter is enabled or not
+    ///
+    /// \return True if smoothing is enabled, false if it is disabled
+    ///
+    /// \see setSmooth
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isSmooth() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -351,6 +399,7 @@ private:
     void*                      m_streamRec;   //!< Pointer to the stream rec instance (it is typeless to avoid exposing implementation details)
     void*                      m_stroker;     //!< Pointer to the stroker (it is typeless to avoid exposing implementation details)
     int*                       m_refCount;    //!< Reference counter used by implicit sharing
+    bool                       m_isSmooth;    //!< Status of the smooth filter
     Info                       m_info;        //!< Information about the font
     mutable PageTable          m_pages;       //!< Table containing the glyphs pages by character size
     mutable std::vector<Uint8> m_pixelBuffer; //!< Pixel buffer holding a glyph's pixels before being written to the texture

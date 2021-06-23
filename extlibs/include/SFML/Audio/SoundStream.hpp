@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2019 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2021 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -251,6 +251,20 @@ protected:
     ////////////////////////////////////////////////////////////
     virtual Int64 onLoop();
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the processing interval
+    ///
+    /// The processing interval controls the period at which the
+    /// audio buffers are filled by calls to onGetData. A smaller
+    /// interval may be useful for low-latency streams. Note that
+    /// the given period is only a hint and the actual period may
+    /// vary. The default processing interval is 10 ms.
+    ///
+    /// \param interval Processing interval
+    ///
+    ////////////////////////////////////////////////////////////
+    void setProcessingInterval(Time interval);
+
 private:
 
     ////////////////////////////////////////////////////////////
@@ -315,8 +329,9 @@ private:
     unsigned int  m_sampleRate;               //!< Frequency (samples / second)
     Uint32        m_format;                   //!< Format of the internal sound buffers
     bool          m_loop;                     //!< Loop flag (true to loop, false to play once)
-    Uint64        m_samplesProcessed;         //!< Number of buffers processed since beginning of the stream
+    Uint64        m_samplesProcessed;         //!< Number of samples processed since beginning of the stream
     Int64         m_bufferSeeks[BufferCount]; //!< If buffer is an "end buffer", holds next seek position, else NoLoop. For play offset calculation.
+    Time          m_processingInterval;       //!< Interval for checking and filling the internal sound buffers.
 };
 
 } // namespace sf
@@ -392,7 +407,7 @@ private:
 ///         // Change the current position in the stream source
 ///         ...
 ///     }
-/// }
+/// };
 ///
 /// // Usage
 /// CustomStream stream;
