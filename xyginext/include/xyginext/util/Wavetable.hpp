@@ -84,11 +84,11 @@ namespace xy
                 std::vector<float> retval;
                 const float stepCount = (samplerate / frequency);
                 const float step = Const::TAU / stepCount;
-                const float invPi = 1.f / Const::PI;
+                constexpr float invPi = 1.f / Const::PI;
 
                 for (float i = 0.f; i < stepCount; i++)
                 {
-                    retval.push_back(invPi * std::asin(std::sin(i * step)) * amplitude);
+                    retval.push_back(invPi * std::asin(std::sin(i * step)) * amplitude * 2.f);
                 }
 
                 return retval;
