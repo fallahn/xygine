@@ -61,7 +61,7 @@ namespace xy
 
             static inline float easeInOutSine(float t)
             {
-                return 0.5f * (1.f + std::sin(cro::Util::Const::PI * (t - 0.5f)));
+                return 0.5f * (1.f + std::sin(xy::Util::Const::PI * (t - 0.5f)));
             }
 
             static inline constexpr float easeInQuad(float t)
@@ -244,13 +244,13 @@ namespace xy
             static inline float easeInElastic(float t)
             {
                 float t2 = t * t;
-                return t2 * t2 * std::sin(t * cro::Util::Const::PI * 4.5f);
+                return t2 * t2 * std::sin(t * xy::Util::Const::PI * 4.5f);
             }
 
             static inline float easeOutElastic(float t)
             {
                 float t2 = (t - 1.f) * (t - 1.f);
-                return 1.f - t2 * t2 * std::cos(t * cro::Util::Const::PI * 4.5f);
+                return 1.f - t2 * t2 * std::cos(t * xy::Util::Const::PI * 4.5f);
             }
 
             static inline float easeInOutElastic(float t)
@@ -259,38 +259,38 @@ namespace xy
                 if (t < 0.45f)
                 {
                     t2 = t * t;
-                    return 8.f * t2 * t2 * std::sin(t * cro::Util::Const::PI * 9.f);
+                    return 8.f * t2 * t2 * std::sin(t * xy::Util::Const::PI * 9.f);
                 }
                 else if (t < 0.55f)
                 {
-                    return 0.5f + 0.75f * std::sin(t * cro::Util::Const::PI * 4.f);
+                    return 0.5f + 0.75f * std::sin(t * xy::Util::Const::PI * 4.f);
                 }
                 else
                 {
                     t2 = (t - 1.f) * (t - 1.f);
-                    return 1.f - 8.f * t2 * t2 * std::sin(t * cro::Util::Const::PI * 9.f);
+                    return 1.f - 8.f * t2 * t2 * std::sin(t * xy::Util::Const::PI * 9.f);
                 }
             }
 
             static inline float easeInBounce(float t)
             {
-                return std::pow(2.f, 6.f * (t - 1.f)) * std::abs(std::sin(t * cro::Util::Const::PI * 3.5f));
+                return std::pow(2.f, 6.f * (t - 1.f)) * std::abs(std::sin(t * xy::Util::Const::PI * 3.5f));
             }
 
             static inline float easeOutBounce(float t)
             {
-                return 1.f - std::pow(2.f, -6.f * t) * std::abs(std::cos(t * cro::Util::Const::PI * 3.5f));
+                return 1.f - std::pow(2.f, -6.f * t) * std::abs(std::cos(t * xy::Util::Const::PI * 3.5f));
             }
 
             static inline float easeInOutBounce(float t)
             {
                 if (t < 0.5f)
                 {
-                    return 8.f * std::pow(2.f, 8.f * (t - 1.f)) * std::abs(std::sin(t * cro::Util::Const::PI * 7.f));
+                    return 8.f * std::pow(2.f, 8.f * (t - 1.f)) * std::abs(std::sin(t * xy::Util::Const::PI * 7.f));
                 }
                 else
                 {
-                    return 1.f - 8.f * std::pow(2.f, -8.f * t) * std::abs(std::sin(t * cro::Util::Const::PI * 7.f));
+                    return 1.f - 8.f * std::pow(2.f, -8.f * t) * std::abs(std::sin(t * xy::Util::Const::PI * 7.f));
                 }
             }
         }
