@@ -272,6 +272,14 @@ namespace xy
         */
         static void resetFrametime();
 
+        /*!
+        \brief Returns a reference to the system default Arrow cursor.
+        Use this to reset the window's mouse cursor when removing any
+        custom cursors which have been set. This cursor is guaranteed
+        to live at lease as long as the active application
+        */
+        static const sf::Cursor& getDefaultCursor();
+
     protected:
         /*!
         \brief Function for despatching all window events
@@ -348,6 +356,7 @@ namespace xy
         std::function<void(const sf::Event&)> eventHandler;
 
         static bool m_mouseCursorVisible;
+        sf::Cursor m_defaultCursor;
 
         void saveScreenshot();
 

@@ -203,6 +203,8 @@ App::App(sf::ContextSettings contextSettings)
         Logger::log("Something went wrong loading OpenGL. Particles may be unavailable", Logger::Type::Error, Logger::Output::All);
     }
 
+    m_defaultCursor.loadFromSystem(sf::Cursor::Arrow);
+
 #ifdef XY_DEBUG
 #ifdef _MSC_VER
     //register custom abort which prints the call stack
@@ -458,6 +460,12 @@ void App::resetFrametime()
 {
     XY_ASSERT(appInstance, "No valid instance");
     frameClock.restart();
+}
+
+const sf::Cursor& App::getDefaultCursor()
+{
+    XY_ASSERT(appInstance, "App not running");
+    return appInstance->m_defaultCursor;
 }
 
 //protected
