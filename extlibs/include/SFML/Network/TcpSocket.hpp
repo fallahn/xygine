@@ -68,7 +68,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of the connected peer
     ///
-    /// If the socket is not connected, this function returns
+    /// It the socket is not connected, this function returns
     /// sf::IpAddress::None.
     ///
     /// \return Address of the remote peer
