@@ -70,6 +70,7 @@ void PostBloom::apply(const sf::RenderTexture& src, sf::RenderTarget& dest)
 
     blurMultipass(m_secondPassTextures);
 
+    m_firstPassTextures[1].clear();
     add(m_firstPassTextures[0], m_secondPassTextures[0], m_firstPassTextures[1]);
     m_firstPassTextures[1].display();
 
@@ -101,6 +102,7 @@ void PostBloom::filterBright(const sf::RenderTexture& src, sf::RenderTexture& ds
     auto& shader = m_shaderResource.get(Shader::BrightnessExtract);
 
     shader.setUniform("u_sourceTexture", src.getTexture());
+    dst.clear();
     applyShader(shader, dst);
     dst.display();
 }
@@ -122,6 +124,7 @@ void PostBloom::blur(const sf::RenderTexture& src, sf::RenderTexture& dst, const
     shader.setUniform("u_sourceTexture", src.getTexture());
     shader.setUniform("u_offset", offset);
 
+    dst.clear();
     applyShader(shader, dst);
     dst.display();
 }
@@ -133,6 +136,7 @@ void PostBloom::downSample(const sf::RenderTexture& src, sf::RenderTexture& dst)
     shader.setUniform("u_sourceTexture", src.getTexture());
     shader.setUniform("u_sourceSize", sf::Vector2f(src.getSize()));
 
+    dst.clear();
     applyShader(shader, dst);
     dst.display();
 }
