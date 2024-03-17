@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xygine", "xygine\xygine.vcxproj", "{A279F449-8C13-4804-BEA7-21FA0407C9BA}"
 EndProject
@@ -39,8 +39,8 @@ Global
 		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Debug|Mixed Platforms.Build.0 = DebugShared|Win32
 		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Debug|Win32.ActiveCfg = DebugShared|Win32
 		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Debug|Win32.Build.0 = DebugShared|Win32
-		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Debug|x64.ActiveCfg = DebugStatic|Win32
-		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Debug|x64.Build.0 = DebugStatic|Win32
+		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Debug|x64.ActiveCfg = DebugShared|x64
+		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Debug|x64.Build.0 = DebugShared|x64
 		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Debug|x86.ActiveCfg = DebugShared|Win32
 		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Debug|x86.Build.0 = DebugShared|Win32
 		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Release|Any CPU.ActiveCfg = ReleaseShared|Win32
@@ -49,8 +49,8 @@ Global
 		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Release|Mixed Platforms.Build.0 = ReleaseShared|Win32
 		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Release|Win32.ActiveCfg = ReleaseShared|Win32
 		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Release|Win32.Build.0 = ReleaseShared|Win32
-		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Release|x64.ActiveCfg = DebugStatic|Win32
-		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Release|x64.Build.0 = DebugStatic|Win32
+		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Release|x64.ActiveCfg = ReleaseShared|x64
+		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Release|x64.Build.0 = ReleaseShared|x64
 		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Release|x86.ActiveCfg = ReleaseShared|Win32
 		{A279F449-8C13-4804-BEA7-21FA0407C9BA}.Release|x86.Build.0 = ReleaseShared|Win32
 		{9CDD6F16-5985-4EE8-8111-6D4AF787899A}.Debug|Any CPU.ActiveCfg = Debug|Win32
@@ -117,5 +117,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BF1F5334-8C68-425C-BB2F-C1C13C577C7D}
 	EndGlobalSection
 EndGlobal

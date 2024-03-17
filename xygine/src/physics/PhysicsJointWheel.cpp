@@ -63,7 +63,9 @@ float WheelJoint::getTranslation() const
 float WheelJoint::getSpeed() const
 {
     XY_ASSERT(getJointAs<b2WheelJoint>(), "Joint not yet added to rigidbody");
-    return World::boxToSfFloat(getJointAs<b2WheelJoint>()->GetJointAngularSpeed());
+    //this is a kludge around the fact we had to revert to B2D 2.3.1 as 2.3.2 seems
+    //to be lost to the mists of version control.
+    return 0.f;// World::boxToSfFloat(getJointAs<b2WheelJoint>()->GetJointAngularSpeed());
 }
 
 void WheelJoint::motorEnabled(bool enabled)

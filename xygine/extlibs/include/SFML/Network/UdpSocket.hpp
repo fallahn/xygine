@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2016 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2017 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -95,9 +95,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Unbind the socket from the local port to which it is bound
     ///
-    /// The port that the socket was previously using is immediately
-    /// available after this function is called. If the
-    /// socket is not bound to a port, this function has no effect.
+    /// The port that the socket was previously bound to is immediately
+    /// made available to the operating system after this function is called.
+    /// This means that a subsequent call to bind() will be able to re-bind
+    /// the port if no other process has done so in the mean time.
+    /// If the socket is not bound to a port, this function has no effect.
     ///
     /// \see bind
     ///

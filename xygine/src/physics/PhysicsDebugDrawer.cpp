@@ -126,19 +126,21 @@ void DebugDraw::DrawTransform(const b2Transform& xf)
     DrawSegment(p1, p2, b2Color(0, 1, 0));
 }
 
-void DebugDraw::DrawPoint(const b2Vec2& p, float32 size, const b2Color& colour)
-{
-    size *= 2.f;
-    sf::Color newColour = World::boxToSfColour(colour);
-    std::vector<sf::Vertex> verts =
-    {
-        { World::boxToSfVec(p) - sf::Vector2f(size, 0.f), newColour },
-        { World::boxToSfVec(p) + sf::Vector2f(size, 0.f), newColour },
-        { World::boxToSfVec(p) + sf::Vector2f(size, 0.f), sf::Color::Transparent },
-        { World::boxToSfVec(p) + sf::Vector2f(0.f, size), sf::Color::Transparent },
-        { World::boxToSfVec(p) + sf::Vector2f(0.f, size), newColour },
-        { World::boxToSfVec(p) - sf::Vector2f(0.f, size), newColour }
-    };
+//this was added in B2D 2.3.2 but I can't seem to find  a release for that...
 
-    m_renderTarget.draw(verts.data(), verts.size(), sf::PrimitiveType::LinesStrip);
-}
+//void DebugDraw::DrawPoint(const b2Vec2& p, float32 size, const b2Color& colour)
+//{
+//    size *= 2.f;
+//    sf::Color newColour = World::boxToSfColour(colour);
+//    std::vector<sf::Vertex> verts =
+//    {
+//        { World::boxToSfVec(p) - sf::Vector2f(size, 0.f), newColour },
+//        { World::boxToSfVec(p) + sf::Vector2f(size, 0.f), newColour },
+//        { World::boxToSfVec(p) + sf::Vector2f(size, 0.f), sf::Color::Transparent },
+//        { World::boxToSfVec(p) + sf::Vector2f(0.f, size), sf::Color::Transparent },
+//        { World::boxToSfVec(p) + sf::Vector2f(0.f, size), newColour },
+//        { World::boxToSfVec(p) - sf::Vector2f(0.f, size), newColour }
+//    };
+//
+//    m_renderTarget.draw(verts.data(), verts.size(), sf::PrimitiveType::LinesStrip);
+//}
