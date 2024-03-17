@@ -46,26 +46,30 @@ sf::Shader& ShaderResource::get(ShaderResource::ID type)
     return *result->second;
 }
 
-void ShaderResource::preload(ShaderResource::ID id, const std::string& vertShader, const std::string& fragShader)
+bool ShaderResource::preload(ShaderResource::ID id, const std::string& vertShader, const std::string& fragShader)
 {
     auto shader = std::make_unique<sf::Shader>();
 #ifndef _DEBUG_
-    shader->loadFromMemory(vertShader, fragShader);
+    auto success = shader->loadFromMemory(vertShader, fragShader);
 #else
-    XY_ASSERT(shader->loadFromMemory(vertShader, fragShader), "failed to create shader");
+    //XY_ASSERT(shader->loadFromMemory(vertShader, fragShader), "failed to create shader");
+    auto success = shader->loadFromMemory(vertShader, fragShader);
 #endif //_DEBUG_
 
     m_shaders.insert(std::make_pair(id, std::move(shader)));
+    return success;
 }
 
-void ShaderResource::preload(ShaderResource::ID id, const std::string& src, sf::Shader::Type type)
+bool ShaderResource::preload(ShaderResource::ID id, const std::string& src, sf::Shader::Type type)
 {
     auto shader = std::make_unique<sf::Shader>();
 #ifndef _DEBUG_
-    shader->loadFromMemory(src, type);
+    auto success = shader->loadFromMemory(src, type);
 #else
-    XY_ASSERT(shader->loadFromMemory(src, type), "failed to create shader");
+    //XY_ASSERT(shader->loadFromMemory(src, type), "failed to create shader");
+    auto success = shader->loadFromMemory(src, type);
 #endif //_DEBUG_
 
     m_shaders.insert(std::make_pair(id, std::move(shader)));
+    return success;
 }

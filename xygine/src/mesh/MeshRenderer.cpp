@@ -424,68 +424,75 @@ xy::Material& MeshRenderer::addMaterial(std::uint32_t id, Material::Description 
     auto shaderID = description + materialShaderOffset;
     if (!m_shaderResource.exists(shaderID))
     {
+        bool shaderSuccess = false;
+
         //create the shader
         switch (description)
         {
         default: break;
         case Material::Coloured:
-            m_shaderResource.preload(shaderID,
+            shaderSuccess = m_shaderResource.preload(shaderID,
                 DEFERRED_COLOURED_VERTEX, DEFERRED_COLOURED_FRAGMENT);
             break;
         case Material::ColouredBumped:
-            m_shaderResource.preload(shaderID,
+            shaderSuccess = m_shaderResource.preload(shaderID,
                 DEFERRED_COLOURED_BUMPED_VERTEX, DEFERRED_COLOURED_BUMPED_FRAGMENT);
             break;
         case Material::ColouredSkinned:
-            m_shaderResource.preload(shaderID,
+            shaderSuccess = m_shaderResource.preload(shaderID,
                 "#version 150\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
                 "#version 150\n#define SKINNED\n" + xy::Shader::Mesh::DeferredFragment);
             break;
         case Material::ColouredSkinnedBumped:
-            m_shaderResource.preload(shaderID,
+            shaderSuccess = m_shaderResource.preload(shaderID,
                 "#version 150\n#define SKINNED\n#define BUMP\n" + xy::Shader::Mesh::DeferredVertex,
                 "#version 150\n#define SKINNED\n#define BUMP\n" + xy::Shader::Mesh::DeferredFragment);
             break;
         case Material::Textured:
-            m_shaderResource.preload(shaderID,
+            shaderSuccess = m_shaderResource.preload(shaderID,
                 "#version 150\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredVertex,
                 "#version 150\n#define TEXTURED\n" + xy::Shader::Mesh::DeferredFragment);
             break;
         case Material::TexturedBumped:
-            m_shaderResource.preload(shaderID,
+            shaderSuccess = m_shaderResource.preload(shaderID,
                 "#version 150\n#define TEXTURED\n#define BUMP\n" + xy::Shader::Mesh::DeferredVertex,
                 "#version 150\n#define TEXTURED\n#define BUMP\n" + xy::Shader::Mesh::DeferredFragment);
             break;
         case Material::TexturedSkinned:
-            m_shaderResource.preload(shaderID,
+            shaderSuccess = m_shaderResource.preload(shaderID,
                 "#version 150\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
                 "#version 150\n#define TEXTURED\n#define SKINNED\n" + xy::Shader::Mesh::DeferredFragment);
             break;
         case Material::TexturedSkinnedBumped:
-            m_shaderResource.preload(shaderID,
+            shaderSuccess = m_shaderResource.preload(shaderID,
                 "#version 150\n#define TEXTURED\n#define BUMP\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
                 "#version 150\n#define TEXTURED\n#define BUMP\n#define SKINNED\n" + xy::Shader::Mesh::DeferredFragment);
             break;
         case Material::VertexColoured:
-            m_shaderResource.preload(shaderID,
+            shaderSuccess = m_shaderResource.preload(shaderID,
                 "#version 150\n#define VERTEX_COLOUR\n" + xy::Shader::Mesh::DeferredVertex,
                 "#version 150\n#define VERTEX_COLOUR\n" + xy::Shader::Mesh::DeferredFragment);
             break;
         case Material::VertexColouredBumped:
-            m_shaderResource.preload(shaderID,
+            shaderSuccess = m_shaderResource.preload(shaderID,
                 "#version 150\n#define VERTEX_COLOUR\n#define BUMP\n" + xy::Shader::Mesh::DeferredVertex,
                 "#version 150\n#define VERTEX_COLOUR\n#define BUMP\n" + xy::Shader::Mesh::DeferredFragment);
             break;
         case Material::VertexColouredSkinned:
-            m_shaderResource.preload(shaderID,
+            shaderSuccess = m_shaderResource.preload(shaderID,
                 "#version 150\n#define VERTEX_COLOUR\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
                 "#version 150\n#define VERTEX_COLOUR\n#define SKINNED\n" + xy::Shader::Mesh::DeferredFragment);
             break;
         case Material::VertexColouredSkinnedBumped:
-            m_shaderResource.preload(shaderID,
+            shaderSuccess = m_shaderResource.preload(shaderID,
                 "#version 150\n#define VERTEX_COLOUR\n#define BUMP\n#define SKINNED\n" + xy::Shader::Mesh::DeferredVertex,
                 "#version 150\n#define VERTEX_COLOUR\n#define BUMP\n#define SKINNED\n" + xy::Shader::Mesh::DeferredFragment);
             break;
+        }
+
+        if (!shaderSuccess)
+        {
+            xy::Logger::log("Failed creating shader for mesh material", xy::Logger::Type::Error);
         }
     }
 

@@ -83,7 +83,7 @@ namespace xy
         The string can either be a constant stored within a source file, or loaded
         from an external file at run time.
         */
-        void preload(ID, const std::string&, const std::string&);
+        bool preload(ID, const std::string&, const std::string&);
 
         /*!
         \brief Preloads a shader.
@@ -99,7 +99,7 @@ namespace xy
         \param sf::Shader::Type Shader type describing whether the source is a vertex
         or fragment shader.
         */
-        void preload(ID, const std::string&, sf::Shader::Type);
+        bool preload(ID, const std::string&, sf::Shader::Type);
 
         /*!
         \brief Returns true if the given ID is already in use
